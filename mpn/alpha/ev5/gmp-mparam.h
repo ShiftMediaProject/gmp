@@ -28,14 +28,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIVREM_1_UNNORM_THRESHOLD            0  /* always */
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD         32
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          2
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         7
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        18
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     73
+#define MOD_1N_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
+#define MOD_1U_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD     MP_SIZE_T_MAX
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD     MP_SIZE_T_MAX
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
 #define USE_PREINV_DIVREM_1                  1  /* preinv always */
 #define DIVEXACT_1_THRESHOLD                 0  /* always */
-#define BMOD_1_TO_MOD_1_THRESHOLD           87
+#define BMOD_1_TO_MOD_1_THRESHOLD        MP_SIZE_T_MAX  /* never */
 
 #define MUL_TOOM22_THRESHOLD                16
 #define MUL_TOOM33_THRESHOLD                53
@@ -147,7 +147,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD                51
 #define DC_BDIV_Q_THRESHOLD                120
 
-#define INV_MULMOD_BNM1_THRESHOLD          100
+#define INV_MULMOD_BNM1_THRESHOLD           34
 #define INV_NEWTON_THRESHOLD               188
 #define INV_APPR_THRESHOLD                 189
 
