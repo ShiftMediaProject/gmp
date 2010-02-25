@@ -241,7 +241,7 @@ main (int argc, char **argv)
       if (t % 17 == 0)
 	dp[dn - 1] = GMP_NUMB_MAX;
 
-      switch (t % 16)
+      switch ((int) t % 16)
 	{
 	case 0:
 	  clearn = random_word (rands) % nn;
