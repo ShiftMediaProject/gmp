@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_TOOM22_THRESHOLD                28
 #define MUL_TOOM33_THRESHOLD                81
-#define MUL_TOOM44_THRESHOLD               120
+#define MUL_TOOM44_THRESHOLD               234
 #define MUL_TOOM6H_THRESHOLD               466
 #define MUL_TOOM8H_THRESHOLD               478
 
