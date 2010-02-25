@@ -125,18 +125,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  90
-#define MULLO_MUL_N_THRESHOLD             4167
+#define MULLO_MUL_N_THRESHOLD             3574
 
 #define DC_DIV_QR_THRESHOLD                100
 #define DC_DIVAPPR_Q_THRESHOLD             342
 #define DC_BDIV_QR_THRESHOLD               119
 #define DC_BDIV_Q_THRESHOLD                246
 
-#define INV_MULMOD_BNM1_THRESHOLD           12
+#define INV_MULMOD_BNM1_THRESHOLD           34
 #define INV_NEWTON_THRESHOLD               274
 #define INV_APPR_THRESHOLD                 268
 
-#define BINV_NEWTON_THRESHOLD              327
+#define BINV_NEWTON_THRESHOLD              278
 #define REDC_1_TO_REDC_N_THRESHOLD          70
 
 #define MU_DIV_QR_THRESHOLD                979
