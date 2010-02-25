@@ -744,6 +744,7 @@ main ()
 	  else if (model == 0x27)	modelstr = "atom";  /* Saltwell */
 	  else if (model == 0x2c)	modelstr = "corei"; /* WSM Gulftown */
 	  else if (model == 0x2e)	modelstr = "corei"; /* NHM Beckton */
+	  else modelstr = "corei"; /* default */
 	  break;
 	case 15:
 	  modelstr = "pentium4";

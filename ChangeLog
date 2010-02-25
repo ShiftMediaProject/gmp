@@ -10,6 +10,8 @@
 
 2010-02-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Make "corei" default for unrecognised Intel P6 CPUs.
+
 	* tests/mpz/t-perfpow.c (check_random): Use mp_limb_t type for limb
 	variables.
 
