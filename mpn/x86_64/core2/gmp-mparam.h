@@ -36,7 +36,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_TOOM22_THRESHOLD                23
 #define MUL_TOOM33_THRESHOLD                65
-#define MUL_TOOM44_THRESHOLD               183
+#define MUL_TOOM44_THRESHOLD               106
 #define MUL_TOOM6H_THRESHOLD               254
 #define MUL_TOOM8H_THRESHOLD               381
 
@@ -47,7 +47,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 26
-#define SQR_TOOM3_THRESHOLD                 97
+#define SQR_TOOM3_THRESHOLD                 85
 #define SQR_TOOM4_THRESHOLD                148
 #define SQR_TOOM6_THRESHOLD                270
 #define SQR_TOOM8_THRESHOLD                296
@@ -151,7 +151,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     { 262144,19}, { 524288,20}, {1048576,21}, {2097152,22}, \
     {4194304,23}, {8388608,24} }
 #define SQR_FFT_TABLE3_SIZE 178
-#define SQR_FFT_THRESHOLD                 3520
+#define SQR_FFT_THRESHOLD                 2752
 
 #define MULLO_BASECASE_THRESHOLD             3
 #define MULLO_DC_THRESHOLD                  20
@@ -162,11 +162,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD                57
 #define DC_BDIV_Q_THRESHOLD                156
 
-#define INV_MULMOD_BNM1_THRESHOLD          126
-#define INV_NEWTON_THRESHOLD               198
-#define INV_APPR_THRESHOLD                 178
+#define INV_MULMOD_BNM1_THRESHOLD           50
+#define INV_NEWTON_THRESHOLD               172
+#define INV_APPR_THRESHOLD                 173
 
-#define BINV_NEWTON_THRESHOLD              260
+#define BINV_NEWTON_THRESHOLD              234
 #define REDC_1_TO_REDC_2_THRESHOLD          10
 #define REDC_2_TO_REDC_N_THRESHOLD          63
 
