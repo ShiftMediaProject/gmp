@@ -19,4 +19,6 @@
 #endif
 #endif
 
+#define COUNT 1000
+
 #include "toom-shared.h"

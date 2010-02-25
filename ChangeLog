@@ -10,6 +10,9 @@
 
 2010-02-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-toom6h.c (COUNT): Define.
+	* tests/mpn/t-toom8h.c (COUNT): Define.
+
 	* tests/mpn/t-div.c: Cast a switch index to placate HP's cc.
 	* tests/mpn/t-bdiv.c: Likewise.
 
