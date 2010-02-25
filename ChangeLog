@@ -1,3 +1,13 @@
+2010-02-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/devel/try.c (param_init): Support mpz_legendre.
+	(choice_array): Added mpz_kronecker (apparently forgotten) and
+	mpz_legendre.
+	(call): Added TYPE_MPZ_LEGENDRE.
+	(try_one): Added support for DATA_SRC1_ODD_PRIME.
+
+	* tests/refmpz.c (refmpz_legendre): Rewrote using powm.
+
 2010-02-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-div.c: Cast a switch index to placate HP's cc.

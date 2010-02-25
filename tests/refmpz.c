@@ -191,10 +191,40 @@ refmpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   return refmpz_kronecker (a, b_odd);
 }
 
+/* Legendre symbol via powm. p must be an odd prime. */
 int
-refmpz_legendre (mpz_srcptr a, mpz_srcptr b)
+refmpz_legendre (mpz_srcptr a, mpz_srcptr p)
 {
-  return refmpz_jacobi (a, b);
+  int res;
+
+  mpz_t r;
+  mpz_t e;
+
+  ASSERT_ALWAYS (mpz_sgn (p) > 0);
+  ASSERT_ALWAYS (mpz_odd_p (p));
+  
+  mpz_init (r);
+  mpz_init (e);
+
+  mpz_fdiv_r (r, a, p);
+
+  mpz_set (e, p);
+  mpz_sub_ui (e, e, 1);
+  mpz_fdiv_q_2exp (e, e, 1);
+  mpz_powm (r, r, e, p);
+
+  /* Normalize to a more or less symmetric range around zero */
+  if (mpz_cmp (r, e) > 0)
+    mpz_sub (r, r, p);
+
+  ASSERT_ALWAYS (mpz_cmpabs_ui (r, 1) <= 0);
+
+  res = mpz_sgn (r);
+
+  mpz_clear (r);
+  mpz_clear (e);
+
+  return res;
 }
 
 

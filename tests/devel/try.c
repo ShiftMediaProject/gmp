@@ -354,9 +354,10 @@ struct try_t {
 #define DATA_SRC0_ODD         3
 #define DATA_SRC0_HIGHBIT     4
 #define DATA_SRC1_ODD         5
-#define DATA_SRC1_HIGHBIT     6
-#define DATA_MULTIPLE_DIVISOR 7
-#define DATA_UDIV_QRNND       8
+#define DATA_SRC1_ODD_PRIME   6
+#define DATA_SRC1_HIGHBIT     7
+#define DATA_MULTIPLE_DIVISOR 8
+#define DATA_UDIV_QRNND       9
   char  data;
 
 /* Default is allow full overlap. */
@@ -633,6 +634,7 @@ validate_sqrtrem (void)
 #define TYPE_MPZ_KRONECKER_SI 66
 #define TYPE_MPZ_UI_KRONECKER 67
 #define TYPE_MPZ_SI_KRONECKER 68
+#define TYPE_MPZ_LEGENDRE     69
 
 #define TYPE_AND_N            70
 #define TYPE_NAND_N           71
@@ -1051,6 +1053,17 @@ param_init (void)
   p->data = DATA_GCD;
   REFERENCE (refmpn_gcd);
 
+
+  p = &param[TYPE_MPZ_LEGENDRE];
+  p->retval = 1;
+  p->src[0] = 1;
+  p->size = SIZE_ALLOW_ZERO;
+  p->src[1] = 1;
+  p->data = DATA_SRC1_ODD_PRIME;
+  p->size2 = 1;
+  p->carry = CARRY_BIT;
+  p->carry_sign = 1;
+  REFERENCE (refmpz_legendre);
 
   p = &param[TYPE_MPZ_JACOBI];
   p->retval = 1;
@@ -1588,7 +1601,9 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_gcd_1),        TYPE_GCD_1            },
   { TRY(mpn_gcd),          TYPE_GCD              },
+  { TRY(mpz_legendre),     TYPE_MPZ_LEGENDRE     },
   { TRY(mpz_jacobi),       TYPE_MPZ_JACOBI       },
+  { TRY(mpz_kronecker),    TYPE_MPZ_KRONECKER    },
   { TRY(mpz_kronecker_ui), TYPE_MPZ_KRONECKER_UI },
   { TRY(mpz_kronecker_si), TYPE_MPZ_KRONECKER_SI },
   { TRY(mpz_ui_kronecker), TYPE_MPZ_UI_KRONECKER },
@@ -2259,6 +2274,14 @@ call (struct each_t *e, tryfun_t function)
     }
     break;
 
+  case TYPE_MPZ_LEGENDRE:
+    {
+      mpz_t  a, b;
+      PTR(a) = e->s[0].p; SIZ(a) = (carry==0 ? size : -size);
+      PTR(b) = e->s[1].p; SIZ(b) = size2;
+      e->retval = CALLING_CONVENTIONS (function) (a, b);
+    }
+    break;
   case TYPE_MPZ_JACOBI:
   case TYPE_MPZ_KRONECKER:
     {
@@ -2632,6 +2655,36 @@ try_one (void)
       case DATA_SRC1_ODD:
 	if (i == 1)
 	  s[i].p[0] |= 1;
+	break;
+
+      case DATA_SRC1_ODD_PRIME:
+	if (i == 1)
+	  {
+	    if (refmpn_zero_p (s[i].p+1, SRC_SIZE(i)-1)
+		&& s[i].p[0] <=3)
+	      s[i].p[0] = 3;
+	    else
+	      {
+		mpz_t p;
+		mpz_init (p);
+		for (;;)
+		  {
+		    _mpz_realloc (p, SRC_SIZE(i));
+		    MPN_COPY (PTR(p), s[i].p, SRC_SIZE(i));
+		    SIZ(p) = SRC_SIZE(i);
+		    MPN_NORMALIZE (PTR(p), SIZ(p));
+		    mpz_nextprime (p, p);
+		    if (mpz_size (p) <= SRC_SIZE(i))
+		      break;
+
+		    t_random (s[i].p, SRC_SIZE(i));
+		  }
+		MPN_COPY (s[i].p, PTR(p), SIZ(p));
+		if (SIZ(p) < SRC_SIZE(i))
+		  MPN_ZERO (s[i].p + SIZ(p), SRC_SIZE(i) - SIZ(p));
+		mpz_clear (p);
+	      }		    
+	  }
 	break;
 
       case DATA_SRC1_HIGHBIT:
