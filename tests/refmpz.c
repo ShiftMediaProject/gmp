@@ -184,11 +184,10 @@ refmpz_kronecker (mpz_srcptr a_orig, mpz_srcptr b_orig)
 int
 refmpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
-  mpz_t  b_odd;
-  mpz_init_set (b_odd, b);
-  if (mpz_sgn (b_odd) != 0)
-    mpz_fdiv_q_2exp (b_odd, b_odd, mpz_scan1 (b_odd, 0L));
-  return refmpz_kronecker (a, b_odd);
+  ASSERT_ALWAYS (mpz_sgn (b) > 0);
+  ASSERT_ALWAYS (mpz_odd_p (b));
+
+  return refmpz_kronecker (a, b);
 }
 
 /* Legendre symbol via powm. p must be an odd prime. */

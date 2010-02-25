@@ -1,5 +1,10 @@
 2010-02-25  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/devel/try.c (param_init, call): Don't pass negative values
+	for the second argument to mpz_jacobi and refmpz_jacobi.
+
+	* tests/refmpz.c (refmpz_jacobi): Require that b is odd and positive.
+
 	* tests/devel/try.c (param_init): Support mpz_legendre.
 	(choice_array): Added mpz_kronecker (apparently forgotten) and
 	mpz_legendre.
