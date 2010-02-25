@@ -719,6 +719,101 @@ check_a_zero (void)
 }
 
 
+/* Assumes that b = prod p_k^e_k */
+int
+ref_jacobi (mpz_srcptr a, mpz_srcptr b, unsigned nprime,
+	    mpz_t prime[], unsigned *exp)
+{
+  unsigned i;
+  int res;
+
+  for (i = 0, res = 1; i < nprime; i++)
+    if (exp[i])
+      {
+	int legendre = refmpz_legendre (a, prime[i]);
+	if (!legendre)
+	  return 0;
+	if (exp[i] & 1)
+	  res *= legendre;
+      }
+  return res;
+}
+
+void
+check_jacobi_factored (void)
+{
+#define PRIME_N 10
+#define PRIME_MAX_SIZE 50
+#define PRIME_MAX_EXP 4
+#define PRIME_A_COUNT 10
+#define PRIME_B_COUNT 5
+#define PRIME_MAX_B_SIZE 2000
+
+  gmp_randstate_ptr rands = RANDS;
+  mpz_t prime[PRIME_N];
+  unsigned exp[PRIME_N];
+  mpz_t a, b, t, bs;
+  unsigned i;
+
+  mpz_init (a);
+  mpz_init (b);
+  mpz_init (t);
+  mpz_init (bs);
+
+  /* Generate primes */
+  for (i = 0; i < PRIME_N; i++)
+    {
+      mp_size_t size;
+      mpz_init (prime[i]);
+      mpz_urandomb (bs, rands, 32);
+      size = mpz_get_ui (bs) % PRIME_MAX_SIZE + 2;
+      mpz_rrandomb (prime[i], rands, size);
+      if (mpz_cmp_ui (prime[i], 3) <= 0)
+	mpz_set_ui (prime[i], 3);
+      else
+	mpz_nextprime (prime[i], prime[i]);
+    }
+
+  for (i = 0; i < PRIME_B_COUNT; i++)
+    {
+      unsigned j, k;
+      mp_bitcnt_t bsize;
+
+      mpz_set_ui (b, 1);
+      bsize = 1;
+
+      for (j = 0; j < PRIME_N && bsize < PRIME_MAX_B_SIZE; j++)
+	{
+	  mpz_urandomb (bs, rands, 32);
+	  exp[j] = mpz_get_ui (bs) % PRIME_MAX_EXP;
+	  mpz_pow_ui (t, prime[j], exp[j]);
+	  mpz_mul (b, b, t);
+	  bsize = mpz_sizeinbase (b, 2);
+	}
+      for (k = 0; k < PRIME_A_COUNT; k++)
+	{
+	  int answer;
+	  mpz_rrandomb (a, rands, bsize + 2);
+	  answer = ref_jacobi (a, b, j, prime, exp);
+	  try_all (a, b, answer);
+	}
+    }
+  for (i = 0; i < PRIME_N; i++)
+    mpz_clear (prime[i]);
+
+  mpz_clear (a);
+  mpz_clear (b);
+  mpz_clear (t);
+  mpz_clear (bs);
+
+#undef PRIME_N
+#undef PRIME_MAX_SIZE
+#undef PRIME_MAX_EXP
+#undef PRIME_A_COUNT
+#undef PRIME_B_COUNT
+#undef PRIME_MAX_B_SIZE
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -741,6 +836,7 @@ try(a,b,answer) =\n\
   check_data ();
   check_squares_zi ();
   check_a_zero ();
+  check_jacobi_factored ();
 
   tests_end ();
   exit (0);
