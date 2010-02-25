@@ -1,5 +1,8 @@
 2010-02-25  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpz/t-jac.c (ref_jacobi): New reference implementation,
+	using factorization and legendre symbols computed by powm.
+
 	* tests/devel/try.c (param_init, call): Don't pass negative values
 	for the second argument to mpz_jacobi and refmpz_jacobi.
 
