@@ -52,7 +52,7 @@ ifdef(`HAVE_ABI_2_0w',
 PROLOGUE(func_nc)
 ifdef(`HAVE_ABI_2_0w',
 `	b		L(com)
-	ldi		0, %r22
+	nop
 ',`	b		L(com)
 	ldw		-52(%r30), %r22
 ')

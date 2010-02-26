@@ -1,3 +1,7 @@
+2010-02-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/pa64/aors_n.asm: Fix typo in last change.
+
 2010-02-25  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (ref_jacobi): New reference implementation,
