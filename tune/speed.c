@@ -434,6 +434,7 @@ const struct routine_t {
   { "udiv_qrnnd",             speed_udiv_qrnnd,             FLAG_R_OPTIONAL },
   { "udiv_qrnnd_preinv1",     speed_udiv_qrnnd_preinv1,     FLAG_R_OPTIONAL },
   { "udiv_qrnnd_preinv2",     speed_udiv_qrnnd_preinv2,     FLAG_R_OPTIONAL },
+  { "udiv_qrnnd_preinv3",     speed_udiv_qrnnd_preinv3,     FLAG_R_OPTIONAL },
   { "udiv_qrnnd_c",           speed_udiv_qrnnd_c,           FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_udiv_qrnnd
   { "mpn_udiv_qrnnd",         speed_mpn_udiv_qrnnd,         FLAG_R_OPTIONAL },

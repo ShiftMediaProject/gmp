@@ -346,6 +346,7 @@ double speed_operator_mod __GMP_PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd __GMP_PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv1 __GMP_PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv2 __GMP_PROTO ((struct speed_params *s));
+double speed_udiv_qrnnd_preinv3 __GMP_PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_c __GMP_PROTO ((struct speed_params *s));
 double speed_umul_ppmm __GMP_PROTO ((struct speed_params *s));
 
