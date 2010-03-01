@@ -1,3 +1,10 @@
+2010-02-26  Niels Möller  <<nisse@lysator.liu.se>>
+
+	* tune/speed.c (routine): Added udiv_qrnnd_preinv3.
+
+	* tune/common.c (speed_udiv_qrnnd_preinv3): New function.
+	* tune/speed.h: Added prototype for it.
+
 2010-02-26  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): New test. Currently
