@@ -1,3 +1,7 @@
+2010-03-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/core2/divrem_1.asm: New file.
+
 2010-02-26  Niels Möller  <<nisse@lysator.liu.se>>
 
 	* tune/speed.c (routine): Added udiv_qrnnd_preinv3.
