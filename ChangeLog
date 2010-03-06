@@ -1,5 +1,9 @@
 2010-03-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/mod_1_1.asm: New file.
+	* mpn/x86_64/mod_1_2.asm: New file.
+	* mpn/x86_64/mod_1_4.asm: Update cycle counts.
+
 	* tests/tests.h (TESTS_REPS): Fix typo.
 
 2010-03-03  Torbjorn Granlund  <tege@gmplib.org>
