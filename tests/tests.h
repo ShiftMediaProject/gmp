@@ -482,7 +482,7 @@ istringstream : public std::istrstream {
       repfactor = strtol (envval, &end, 0);				\
       if (*end || repfactor <= 0)					\
 	{								\
-	  fprintf (stderr, "Invalid repfactor: %s.\n", repfactor);	\
+	  fprintf (stderr, "Invalid repfactor: %ld.\n", repfactor);	\
 	  exit (1);							\
 	}								\
       count *= repfactor;						\
