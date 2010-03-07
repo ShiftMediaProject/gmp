@@ -1,4 +1,11 @@
+2010-03-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.c (routine): Force r argument for several mod_1 calls.
+
 2010-03-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/divrem_1.asm: Disable SPECIAL_CODE_FOR_NORMALIZED_DIVISOR.
+	Misc clean up.
 
 	* mpn/x86_64/mod_1_1.asm: New file.
 	* mpn/x86_64/mod_1_2.asm: New file.

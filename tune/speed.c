@@ -198,18 +198,18 @@ const struct routine_t {
   { "mpn_divrem_1c",     speed_mpn_divrem_1c, FLAG_R },
   { "mpn_divrem_1cf",    speed_mpn_divrem_1cf,FLAG_R },
 #endif
-  { "mpn_mod_1",         speed_mpn_mod_1,     FLAG_R_OPTIONAL },
+  { "mpn_mod_1",         speed_mpn_mod_1,     FLAG_R },
 #if HAVE_NATIVE_mpn_mod_1c
-  { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R_OPTIONAL },
+  { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R },
 #endif
   { "mpn_preinv_divrem_1",  speed_mpn_preinv_divrem_1,  FLAG_R },
   { "mpn_preinv_divrem_1f", speed_mpn_preinv_divrem_1f, FLAG_R },
   { "mpn_preinv_mod_1",  speed_mpn_preinv_mod_1, FLAG_R },
 
-  { "mpn_mod_1_1",       speed_mpn_mod_1_1,       FLAG_R_OPTIONAL },
-  { "mpn_mod_1s_2",      speed_mpn_mod_1_2,       FLAG_R_OPTIONAL },
-  { "mpn_mod_1s_3",      speed_mpn_mod_1_3,       FLAG_R_OPTIONAL },
-  { "mpn_mod_1s_4",      speed_mpn_mod_1_4,       FLAG_R_OPTIONAL },
+  { "mpn_mod_1_1",       speed_mpn_mod_1_1,       FLAG_R },
+  { "mpn_mod_1s_2",      speed_mpn_mod_1_2,       FLAG_R },
+  { "mpn_mod_1s_3",      speed_mpn_mod_1_3,       FLAG_R },
+  { "mpn_mod_1s_4",      speed_mpn_mod_1_4,       FLAG_R },
 
   { "mpn_divrem_1_div",  speed_mpn_divrem_1_div,  FLAG_R },
   { "mpn_divrem_1_inv",  speed_mpn_divrem_1_inv,  FLAG_R },
