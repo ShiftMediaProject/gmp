@@ -1,3 +1,7 @@
+2010-03-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-bin.c (randomwalk): New test-generator function.
+
 2010-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/divrem_1.asm: New file.
