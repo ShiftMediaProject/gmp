@@ -1,5 +1,9 @@
 2010-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/divrem_1.asm: Make fraction code take documented # of
+	cycles.  Annotate code for more CPUs.  Misc cleanups.
+	* mpn/x86_64/core2/divrem_1.asm: Annotate code for more CPUs.
+
 	* mpn/alpha/ev6/mod_1_4.asm: New file.
 
 	* mpn/ia64/mod_34lsub1.asm: New file.

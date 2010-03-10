@@ -1,6 +1,7 @@
 dnl  x86-64 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 2004, 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2007, 2008, 2009, 2010 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,23 +22,23 @@ include(`../config.m4')
 
 
 C		norm	unorm	frac
-C K8		13	13	12
-C P4		44.2	44.2	42.3
-C P6 core2	25	24.5	19.3
-C P6 corei7	21.5	20.7	18
-C P6 atom	42	52	37
+C AMD K8,K9	13	13	12
+C AMD K10	13	13	12
+C Intel P4	48	48	43
+C Intel core2	24.62	24.62	19.5
+C Intel corei	20	20	18
+C Intel atom	43	52	36
+C VIA nano	 ?	 ?	 ?
 
 C TODO
-C  * Compute the inverse without relying on the div instruction.
-C    Newton's method and mulq, or perhaps the faster fdiv.
+C  * Compute the inverse without relying on the slow div instruction, instead
+C    call invert_limb.
 C  * Tune prologue.
-C  * Optimize for Core 2.
 
 C The code for unnormalized divisors works also for normalized divisors, but
-C for some reason it runs really slowly (on K8) for that case.  Use special
-C code until we can address this.  The Intel Atom is also affected, but
-C understandably (shld slowness).
-define(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',1)
+C for some reason it runs really slowly (on K8) for that case.  Intel Atom runs
+C the code for unnormalized poorly due to shld slowness.
+define(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',0)
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -70,7 +71,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_preinv_divrem_1)
-	xor	%eax, %eax
+	xor	R32(%rax), R32(%rax)
 	push	%r13
 	push	%r12
 	push	%rbp
@@ -83,8 +84,10 @@ PROLOGUE(mpn_preinv_divrem_1)
 
 	lea	-8(qp,un_param,8), qp
 
+ifelse(SPECIAL_CODE_FOR_NORMALIZED_DIVISOR,1,`
 	test	d, d
 	js	L(nent)
+')
 	mov	40(%rsp), R8(cnt)
 	shl	R8(cnt), d
 	jmp	L(uent)
@@ -92,7 +95,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_divrem_1)
-	xor	%eax, %eax
+	xor	R32(%rax), R32(%rax)
 	push	%r13
 	push	%r12
 	push	%rbp
@@ -108,7 +111,7 @@ PROLOGUE(mpn_divrem_1)
 	xor	R32(%rbp), R32(%rbp)
 
 
-ifdef(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',`
+ifelse(SPECIAL_CODE_FOR_NORMALIZED_DIVISOR,1,`
 	test	d, d
 	jns	L(unnormalized)
 
@@ -120,8 +123,8 @@ L(normalized):
 	mov	%rbp, %rax
 	sub	d, %rbp
 	cmovb	%rax, %rbp
-	sbb	%eax, %eax
-	inc	%eax
+	sbb	R32(%rax), R32(%rax)
+	inc	R32(%rax)
 	mov	%rax, (qp)
 	lea	-8(qp), qp
 L(8):
@@ -131,32 +134,33 @@ L(8):
 	div	d			C FREE rax rdx rcx r9 r10 r11
 	mov	%rax, dinv
 	mov	%rbp, %rax
+	lea	(%rbp), %rax		C
 	jmp	L(nent)
 
 	ALIGN(16)
-L(nloop):				C		    cycK8  cycP6  cycP4
+L(nloop):				C	    K8-K10  P6-CNR P6-NHM  P4
 	mov	(up,un,8), %r10		C
-	lea	1(%rax), %rbp		C
-	mul	dinv			C		     0,13   0,19  0,45
-	add	%r10, %rax		C		     4      8     12
-	adc	%rbp, %rdx		C		     5      9     13
-	mov	%rax, %rbp		C		     5      9     13
-	mov	%rdx, %r13		C		     6      11    23
-	imul	d, %rdx			C		     6      11    23
-	sub	%rdx, %r10		C		     10     16    33
+	mul	dinv			C	      0,13   0,20   0,18   0,45
+	add	%r10, %rax		C	      4      8      3     12
+	adc	%rbp, %rdx		C	      5      9     10     13
+	mov	%rax, %rbp		C	      5      9      4     13
+	mov	%rdx, %r13		C	      6     11     12     23
+	imul	d, %rdx			C	      6     11     11     23
+	sub	%rdx, %r10		C	     10     16     14     33
 	mov	d, %rax			C
-	add	%r10, %rax		C		     11     17    34
-	cmp	%rbp, %r10		C		     11     17    34
-	cmovb	%r10, %rax		C		     12     18    35
+	add	%r10, %rax		C	     11     17     15     34
+	cmp	%rbp, %r10		C	     11     17     15     34
+	cmovb	%r10, %rax		C	     12     18     16     35
 	adc	$-1, %r13		C
 	cmp	d, %rax			C
 	jae	L(nfx)			C
 L(nok):	mov	%r13, (qp)		C
+	lea	1(%rax), %rbp		C
 	sub	$8, qp			C
 L(nent):dec	un			C
 	jns	L(nloop)		C
 
-	xor	%ecx, %ecx
+	xor	R32(%rcx), R32(%rcx)
 	jmp	L(87)
 
 L(nfx):	sub	d, %rax
@@ -177,7 +181,7 @@ L(unnormalized):
 	dec	un
 L(44):
 	bsr	d, %rcx
-	not	%ecx
+	not	R32(%rcx)
 	sal	%cl, d
 	sal	%cl, %rbp
 	mov	d, %rdx
@@ -193,13 +197,12 @@ L(uent):
 	shr	%cl, %rax
 	shld	%cl, %rbp, %rax
 	sub	$2, un
+	lea	1(%rax), %r11
 	js	L(ulast)
 
 	ALIGN(16)
 L(uloop):
-	nop
 	mov	(up,un,8), %r10
-	lea	1(%rax), %r11
 	shld	%cl, %r10, %rbp
 	mul	dinv
 	add	%rbp, %rax
@@ -215,13 +218,14 @@ L(uloop):
 	adc	$-1, %r13
 	cmp	d, %rax
 	jae	L(ufx)
-L(uok):	mov	%r13, (qp)
+L(uok):
+	mov	%r13, (qp)
 	sub	$8, qp
 	dec	un
 	mov	%r10, %rbp
+	lea	1(%rax), %r11
 	jns	L(uloop)
 L(ulast):
-	lea	1(%rax), %r11
 	sal	%cl, %rbp
 	mul	dinv
 	add	%rbp, %rax
@@ -254,21 +258,21 @@ L(87):	mov	d, %rbp
 	jmp	L(87b)
 
 	ALIGN(16)
-L(floop):				C		    cycK8  cycP6  cycP4
-	lea	1(%rax), %r11		C
-	mul	dinv			C		     0,12
-	add	%r11, %rdx		C		     5
-	mov	%rax, %r11		C		     4
-	mov	%rdx, %r13		C		     6
-	imul	%rbp, %rdx		C		     6
+L(floop):				C	    K8-K10  P6-CNR P6-NHM  P4
+	mul	dinv			C	      0,12   0,17   0,17
+	add	%r11, %rdx		C	      5      8     10
+	mov	%rax, %r11		C	      4      8      3
+	mov	%rdx, %r13		C	      6      9     11
+	imul	%rbp, %rdx		C	      6      9     11
 	mov	d, %rax			C
-	add	%rdx, %rax		C		     10
-	cmp	%r11, %rdx		C		     10
-	cmovb	%rdx, %rax		C		     11
+	add	%rdx, %rax		C	     10     14     14
+	cmp	%r11, %rdx		C	     10     14     14
+	cmovb	%rdx, %rax		C	     11     15     15
 	adc	$-1, %r13		C
 	mov	%r13, (qp)		C
 	sub	$8, qp			C
-L(87b):	dec	fn			C
+L(87b):	lea	1(%rax), %r11		C
+	dec	fn			C
 	jns	L(floop)		C
 
 	shr	%cl, %rax
