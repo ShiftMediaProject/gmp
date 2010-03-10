@@ -1,3 +1,15 @@
+2010-03-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_jacobi_base): Consider mpn_jacobi_base_4.
+	* tune/speed.c (routine): Added mpn_jacobi_base_4.
+	* tune/common.c (speed_mpn_jacobi_base_4): New function.
+	* tune/speed.h (speed_mpn_jacobi_base_4): Declare it.
+	* tune/Makefile.am (libspeed_la_SOURCES): Added jacbase4.c.
+	* tune/jacbase4.c: New file.
+
+	* mpn/generic/jacbase.c (mpn_jacobi_base): New function, for
+	JACOBI_BASE_METHOD 4.
+
 2010-03-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): Also generate inputs

@@ -108,7 +108,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   }
 #endif
 
-
+#if JACOBI_BASE_METHOD < 4
 /* Calculate the value of the Jacobi symbol (a/b) of two mp_limb_t's, but
    with a restricted range of inputs accepted, namely b>1, b odd, and a<=b.
 
@@ -166,3 +166,59 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
  done:
   return JACOBI_BIT1_TO_PN (result_bit1);
 }
+#endif
+
+#if JACOBI_BASE_METHOD == 4
+/* Computes (a/b) for odd b and any a. The initial bit is taken as a
+ * parameter. We have no need for the convention that the sign is in
+ * bit 1, internally we use bit 0. */
+int
+mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
+{
+  int c;
+
+  ASSERT (b & 1);
+
+  if (a == 0)
+    /* Ok, here we use that the sign is bit 1, after all. */
+    return b == 1 ? (1-(bit & 2)) : 0;
+  
+  bit >>= 1;
+
+  /* Below, we represent a and b shifted right so that the least
+     significant one bit is implicit. */
+
+  b >>= 1;
+
+  count_trailing_zeros (c, a);
+  bit ^= c & (b ^ (b >> 1));
+
+  /* We may have c==GMP_LIMB_BITS-1, so we cant use a>>c+1. */
+  a >>= c;
+  a >>= 1;
+
+  while (a != b)
+    {
+      mp_limb_t t = a - b;
+      mp_limb_t bgta = LIMB_HIGHBIT_TO_MASK (t);
+
+      /* If b > a, invoke reciprocity */
+      bit ^= (bgta & a & b);
+      
+      /* b <-- min (a, b) */
+      b += (bgta & t);
+
+      /* a <-- |a - b| */
+      a = (t ^ bgta) - bgta;
+
+      /* Number of trailing zeros is the same no matter if we look at
+       * t or a, but using t gives more parallelism. */
+      count_trailing_zeros (c, t);
+      c ++;
+      /* (2/b) = -1 if b = 3 or 5 mod 8 */
+      bit ^= c & (b ^ (b >> 1));
+      a >>= c;
+    }
+  return a == 0 ? 1-2*(bit & 1) : 0;
+}  
+#endif /* JACOBI_BASE_METHOD == 4 */

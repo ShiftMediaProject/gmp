@@ -200,6 +200,7 @@ double speed_mpn_jacobi_base __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_3 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base_4 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_lshift __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_lshiftc __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1 __GMP_PROTO ((struct speed_params *s));
