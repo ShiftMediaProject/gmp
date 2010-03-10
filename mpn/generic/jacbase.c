@@ -172,6 +172,8 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
 /* Computes (a/b) for odd b and any a. The initial bit is taken as a
  * parameter. We have no need for the convention that the sign is in
  * bit 1, internally we use bit 0. */
+
+/* FIXME: Could try table-based count_trailing_zeros. */
 int
 mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
 {
@@ -193,7 +195,7 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
   count_trailing_zeros (c, a);
   bit ^= c & (b ^ (b >> 1));
 
-  /* We may have c==GMP_LIMB_BITS-1, so we cant use a>>c+1. */
+  /* We may have c==GMP_LIMB_BITS-1, so we can't use a>>c+1. */
   a >>= c;
   a >>= 1;
 
