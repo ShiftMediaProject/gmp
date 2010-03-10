@@ -1,5 +1,7 @@
 2010-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/alpha/ev6/mod_1_4.asm: New file.
+
 	* mpn/ia64/mod_34lsub1.asm: New file.
 
 2010-03-07  Torbjorn Granlund  <tege@gmplib.org>
