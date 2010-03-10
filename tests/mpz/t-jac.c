@@ -847,6 +847,11 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
   mpz_t step;
   TMP_SDECL;
 
+  ASSERT_ALWAYS (mpz_sgn (step_in) > 0);
+
+  /* Negative n could be supported, but currently aren't. */
+  ASSERT_ALWAYS (mpz_sgn (n) >= 0);
+
   mpz_init (step);
 
   switch ( (mpz_odd_p (n) << 1) + mpz_odd_p (step_in))
@@ -951,7 +956,7 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 void
 check_large_quotients (void)
 {
-#define COUNT 3
+#define COUNT 4
 #define MAX_THRESHOLD 30
 
   gmp_randstate_ptr rands = RANDS;
@@ -969,13 +974,27 @@ check_large_quotients (void)
       unsigned j;
       unsigned chain_len;
       int answer;
-      
-      /* Code copied from t-gcd.c */
+      mp_bitcnt_t gcd_size;
+
+      /* Code originally copied from t-gcd.c */
       mpz_set_ui (op1, 0);
-      mpz_set_ui (op2, 1);
-      
       mpz_urandomb (bs, rands, 32);
-      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * MAX_THRESHOLD / 256);
+      mpz_urandomb (bs, rands, mpz_get_ui (bs) % 12 + 1);
+      
+      gcd_size = 1 + mpz_get_ui (bs);
+      if (gcd_size & 1)
+	{
+	  gcd_size = 0;
+	  mpz_set_ui (op2, 1);
+	}
+      else
+	{
+	  mpz_rrandomb (op2, rands, gcd_size);
+	  mpz_add_ui (op2, op2, 2);
+	}
+
+      mpz_urandomb (bs, rands, 32);
+      chain_len = 1 + mpz_get_ui (bs) % (GMP_NUMB_BITS * MAX_THRESHOLD / 256);
 
       for (j = 0; j < chain_len; j++)
 	{
@@ -1006,21 +1025,26 @@ check_large_quotients (void)
 	}
       ASSERT_ALWAYS (mpz_cmp (op1, op2) < 0);
 
-      if (mpz_odd_p (op1) && mpz_probab_prime_p (op1, 5))
-	{
-	  answer = refmpz_legendre (op2, op1);
-	  try_all (op2, op1, answer);
-	}
-      else if (mpz_odd_p (op2) && mpz_probab_prime_p (op2, 5))
-	{
-	  answer = refmpz_legendre (op1, op2);
-	  try_all (op1, op2, answer);
-	}
+      if (gcd_size)
+	try_all (op2, op1, 0);
       else
 	{
-	  mpz_nextprime_step (op1, op2, op1);
-	  answer = refmpz_legendre (op2, op1);
-	  try_all (op2, op1, answer);
+	  if (mpz_odd_p (op1) && mpz_probab_prime_p (op1, 5))
+	    {
+	      answer = refmpz_legendre (op2, op1);
+	      try_all (op2, op1, answer);
+	    }
+	  else if (mpz_odd_p (op2) && mpz_probab_prime_p (op2, 5))
+	    {
+	      answer = refmpz_legendre (op1, op2);
+	      try_all (op1, op2, answer);
+	    }
+	  else
+	    {
+	      mpz_nextprime_step (op1, op2, op1);
+	      answer = refmpz_legendre (op2, op1);
+	      try_all (op2, op1, answer);
+	    }
 	}
     }
   mpz_clear (op1);

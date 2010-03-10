@@ -1,6 +1,6 @@
 /* Exercise mpz_bin_ui and mpz_bin_uiui.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,6 +23,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
+/* Default number of generated tests. */
+#define COUNT 400
 
 void
 try_mpz_bin_ui (mpz_srcptr want, mpz_srcptr n, unsigned long k)
@@ -180,7 +182,7 @@ samples (void)
 /* Test some bin(2k,k) cases.  This produces some biggish numbers to
    exercise the limb accumulating code.  */
 void
-twos (void)
+twos (int count)
 {
   mpz_t          n, want;
   unsigned long  k;
@@ -189,7 +191,7 @@ twos (void)
   mpz_init (want);
 
   mpz_set_ui (want, (unsigned long) 2);
-  for (k = 1; k < 200; k++)
+  for (k = 1; k < count; k++)
     {
       mpz_set_ui (n, 2*k);
       try_mpz_bin_ui (want, n, k);
@@ -204,14 +206,73 @@ twos (void)
   mpz_clear (want);
 }
 
+/* Test some random bin(n,k) cases.  This produces some biggish
+   numbers to exercise the limb accumulating code.  */
+void
+randomwalk (int count)
+{
+  mpz_t          n_z, want;
+  unsigned long  n, k, i, r;
+  int            tests;
+  gmp_randstate_ptr rands;
+
+  rands = RANDS;
+  mpz_init (n_z);
+  mpz_init (want);
+
+  k = 3;
+  n = 12;
+  mpz_set_ui (want, (unsigned long) 220); /* binomial(12,3) = 220 */
+
+  for (tests = 1; tests < count; tests++)
+    {
+      r = gmp_urandomm_ui (rands, 30) + 1;
+      for (i = r & 3; i > 0; i--)
+	{
+	  n++; k++;
+	  mpz_mul_ui (want, want, n);
+	  mpz_fdiv_q_ui (want, want, k);
+	}
+      for (i = r >> 2; i > 0; i--)
+	{
+	  n++;
+	  mpz_mul_ui (want, want, n);
+	  mpz_fdiv_q_ui (want, want, n - k);
+	}
+
+      mpz_set_ui (n_z, n);
+      try_mpz_bin_ui (want, n_z, k);
+
+      try_mpz_bin_uiui (want, n, k);
+    }
+
+  mpz_clear (n_z);
+  mpz_clear (want);
+}
 
 int
-main (void)
+main (int argc, char **argv)
 {
+  int count;
+
+  if (argc > 1)
+    {
+      char *end;
+      count = strtol (argv[1], &end, 0);
+      if (*end || count <= 0)
+	{
+	  fprintf (stderr, "Invalid test count: %s.\n", argv[1]);
+	  return 1;
+	}
+    }
+  else
+    count = COUNT;
+
   tests_start ();
 
   samples ();
-  twos ();
+  twos (count >> 1);
+  randomwalk (count - (count >> 1));
 
   tests_end ();
   exit (0);

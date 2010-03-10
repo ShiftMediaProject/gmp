@@ -1789,7 +1789,7 @@ make tuneup
 
 will generate better contents for the @file{gmp-mparam.h} parameter file.
 
-To use the results, put the output in the file file indicated in the
+To use the results, put the output in the file indicated in the
 @samp{Parameters for ...} header.  Then recompile from scratch.
 
 The @code{tuneup} program takes one useful parameter, @samp{-f NNN}, which

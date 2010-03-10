@@ -8,6 +8,15 @@
 
 	* mpn/ia64/mod_34lsub1.asm: New file.
 
+2010-03-09  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-jac.c (check_large_quotients): Also generate inputs
+	with large quotients and a large gcd.
+
+2010-03-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-bin.c (randomwalk): New test-generator function.
+
 2010-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Force r argument for several mod_1 calls.
