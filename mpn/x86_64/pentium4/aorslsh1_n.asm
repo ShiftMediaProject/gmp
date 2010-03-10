@@ -21,10 +21,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 3.8
-C K10:		 4.8
-C P4:		 5.8
-C P6-15:	 ?
+C AMD K8,K9	 3.8
+C AMD K10	 4.8
+C Intel P4	 5.8
+C Intel core2	 ?
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 ?
 
 
 C INPUT PARAMETERS

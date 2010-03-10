@@ -21,11 +21,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 2.75
-C K10:		 2.75
-C P4:		 ?
-C P6-15 (Core2): ?
-C P6-28 (Atom):	 ?
+C AMD K8,K9	 2.75
+C AMD K10	 2.75
+C Intel P4	 ?
+C Intel core2	 ?
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 3.75
 
 
 C INPUT PARAMETERS

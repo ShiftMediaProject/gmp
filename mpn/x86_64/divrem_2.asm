@@ -21,10 +21,13 @@ include(`../config.m4')
 
 
 C		norm	frac
-C K8		20	20
-C P4		73	73
-C P6 core2	37	37
-C P6 corei7	33	33
+C AMD K8,K9	20	20
+C AMD K10	20	20
+C Intel P4	73	73
+C Intel core2	37	37
+C Intel corei	33	33
+C Intel atom	 ?	 ?
+C VIA nano	 ?	 ?
 
 C TODO
 C  * Perhaps compute the inverse without relying on divq?  Could either use

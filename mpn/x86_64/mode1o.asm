@@ -22,12 +22,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	10
-C K10:		10
-C P4:		33
-C P6 core2:	13
-C P6 corei7:	14.5
-C P6 Atom:	35
+C AMD K8,K9	10
+C AMD K10	10
+C Intel P4	33
+C Intel core2	13
+C Intel corei	14.5
+C Intel atom	35
+C VIA nano	 ?
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,

@@ -20,9 +20,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8:		 2.167
-C P4:		12.0
-C P6-15:	 4.0
+C AMD K8,K9	 2.167
+C AMD K10	 2.167
+C Intel P4	12.0
+C Intel core2	 4.0
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 ?
 
 C TODO
 C  * Perhaps handle various n mod 3 sizes better.  The code now is too large.

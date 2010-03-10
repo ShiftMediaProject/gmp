@@ -21,10 +21,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 1.5
-C K10:		 1.75-2 (fluctuating)
-C P4:		 2.8/3.35/3.60 (variant1/variant2/variant3)
-C P6-15:	 2.0
+C AMD K8,K9	 1.5
+C AMD K10	 1.75-2 (fluctuating)
+C Intel P4	 2.8/3.35/3.60 (variant1/variant2/variant3)
+C Intel core2	 2
+C Intel corei	 2
+C Intel atom	 ?
+C VIA nano	 3.25
 
 ifdef(`OPERATION_and_n',`
   define(`func',`mpn_and_n')

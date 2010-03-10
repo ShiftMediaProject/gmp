@@ -22,11 +22,13 @@ include(`../config.m4')
 
 C	     cycles/limb
 C	     cycles/limb
-C K8,K9:	 2.5
-C K10:		 2.5
-C P4:		 ?
-C P6-15 (Core2): 5.3
-C P6-28 (Atom):	 ?
+C AMD K8,K9	 2.5
+C AMD K10	 2.5
+C Intel P4	 ?
+C Intel core2	 5.3
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 ?
 
 C TODO
 C  * Handle certain sizes, e.g., 1, 2, 3, 4, 8, with single-loop code.

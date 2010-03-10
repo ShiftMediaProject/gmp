@@ -22,12 +22,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 2
-C K10:		 2
-C P4:		 13
-C P6 core2: 	 3.45
-C P6 corei7:	 3.45
-C P6 atom:	 ?
+C AMD K8,K9	 2
+C AMD K10	 2
+C Intel P4	 13
+C Intel core2 	 3.45
+C Intel corei	 3.45
+C Intel atom	 ?
+C VIA nano	 ?
 
 
 C Sometimes speed degenerates, supposedly related to that some operand

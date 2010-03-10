@@ -21,11 +21,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 2.25
-C K10:		 2
-C P4:		10
-C P6 core2:	 2.05
-C P6 corei7:	 2.3
+C AMD K8,K9	 2.25
+C AMD K10	 2
+C Intel P4	10
+C Intel core2	 2.05
+C Intel corei	 2.3
+C Intel atom	 ?
+C VIA nano	 ?
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

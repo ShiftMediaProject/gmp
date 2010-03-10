@@ -22,12 +22,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 7
-C K10:		 7
-C P4:		27
-C P6 core2:	14
-C P6 corei:	12.5
-C P6 atom:	37
+C AMD K8,K9	 7
+C AMD K10	 7
+C Intel P4	27
+C Intel core2	14
+C Intel corei	12.5
+C Intel atom	37
 C VIA nano	15
 
 ASM_START()

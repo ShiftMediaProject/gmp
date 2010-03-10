@@ -21,11 +21,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 2.375
-C K10:		 2.375
-C P4:		 ?
-C P6 core2:	 4.45
-C P6 corei7:	 4.35
+C AMD K8,K9	 2.375
+C AMD K10	 2.375
+C Intel P4	 ?
+C Intel core2	 4.45
+C Intel corei	 4.35
+C Intel atom	 ?
+C VIA nano	 4.5
 
 C This code is the result of running a code generation and optimization tool
 C suite written by David Harvey and Torbjorn Granlund.

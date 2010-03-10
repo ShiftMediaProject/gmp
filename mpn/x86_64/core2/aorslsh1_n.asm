@@ -20,10 +20,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 4.25
-C K10:		 ?
-C P4:		 ?
-C P6-15:	 3
+C AMD K8,K9	 4.25
+C AMD K10	 ?
+C Intel P4	 ?
+C Intel core2	 3
+C Intel corei	 3
+C Intel atom	 ?
+C VIA nano	 ?
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')

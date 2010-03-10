@@ -23,12 +23,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb (approx)	div
-C K8,K9:	 48			 71
-C K10:		 48			 77
-C P4:	        135			161
-C P6 core2:	 69			116
-C P6 corei7:	 55			 89
-C P6 atom:	129			191
+C AMD K8,K9	 48			 71
+C AMD K10	 48			 77
+C Intel P4	135			161
+C Intel core2	 69			116
+C Intel corei	 55			 89
+C Intel atom	129			191
+C VIA nano	 79			  ?
 
 C rax rcx rdx rdi rsi r8
 

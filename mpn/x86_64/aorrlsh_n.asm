@@ -23,10 +23,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
-C K10:		 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
-C P4:		14
-C P6-15:	 4
+C AMD K8,K9	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
+C AMD K10	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
+C Intel P4	14
+C Intel core2	 4
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 ?
 
 C This was written quickly and not optimized at all.  Surely one could get
 C closer to 3 c/l or perhaps even under 3 c/l.  Ideas:

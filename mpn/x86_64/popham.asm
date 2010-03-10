@@ -23,10 +23,13 @@ include(`../config.m4')
 
 C		     popcount	      hamdist
 C		    cycles/limb	    cycles/limb
-C K8,K9:		 6		 7
-C K10:			 6		 7
-C P4:			12		14.3
-C P6-15:		 7		 8
+C AMD K8,K9		 6		 7
+C AMD K10		 6		 7
+C Intel P4		12		14.3
+C Intel core2		 7		 8
+C Intel corei		 ?		 7.3
+C Intel atom		 ?		 ?
+C VIA nano		 9.25		11
 
 C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for

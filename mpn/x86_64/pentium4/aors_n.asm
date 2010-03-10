@@ -21,10 +21,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 2.8
-C K10:		 2.8
-C P4:		 4
-C P6-15:	 3.6-5	(fluctuating)
+C AMD K8,K9	 2.8
+C AMD K10	 2.8
+C Intel P4	 4
+C Intel core2	 3.6-5	(fluctuating)
+C Intel corei	 ?
+C Intel atom	 ?
+C VIA nano	 ?
 
 
 C INPUT PARAMETERS
