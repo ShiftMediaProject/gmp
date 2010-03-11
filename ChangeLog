@@ -1,3 +1,8 @@
+2010-03-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/jacbase.c (mpn_jacobi_base): Reorganized the
+	JACOBI_BASE_METHOD 4 slightly. Now requires that b > 1.
+
 2010-03-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Language Bindings): Update Python site, add Ruby.

@@ -169,7 +169,7 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
 #endif
 
 #if JACOBI_BASE_METHOD == 4
-/* Computes (a/b) for odd b and any a. The initial bit is taken as a
+/* Computes (a/b) for odd b > 1 and any a. The initial bit is taken as a
  * parameter. We have no need for the convention that the sign is in
  * bit 1, internally we use bit 0. */
 
@@ -180,11 +180,12 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
   int c;
 
   ASSERT (b & 1);
+  ASSERT (b > 1);
 
   if (a == 0)
-    /* Ok, here we use that the sign is bit 1, after all. */
-    return b == 1 ? (1-(bit & 2)) : 0;
-  
+    /* This is the only line which depends on b > 1 */
+    return 0;
+
   bit >>= 1;
 
   /* Below, we represent a and b shifted right so that the least
@@ -199,10 +200,13 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
   a >>= c;
   a >>= 1;
 
-  while (a != b)
+  do 
     {
       mp_limb_t t = a - b;
       mp_limb_t bgta = LIMB_HIGHBIT_TO_MASK (t);
+
+      if (t == 0)
+	return 0;
 
       /* If b > a, invoke reciprocity */
       bit ^= (bgta & a & b);
@@ -220,7 +224,9 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
       /* (2/b) = -1 if b = 3 or 5 mod 8 */
       bit ^= c & (b ^ (b >> 1));
       a >>= c;
-    }
-  return a == 0 ? 1-2*(bit & 1) : 0;
+    }    
+  while (b > 0);
+
+  return 1-2*(bit & 1);
 }  
 #endif /* JACOBI_BASE_METHOD == 4 */
