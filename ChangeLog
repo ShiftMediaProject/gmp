@@ -1,3 +1,7 @@
+2010-03-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Language Bindings): Update Python site, add Ruby.
+
 2010-03-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_jacobi_base): Consider mpn_jacobi_base_4.
