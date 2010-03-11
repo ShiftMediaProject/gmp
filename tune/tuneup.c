@@ -2091,7 +2091,7 @@ void
 tune_jacobi_base (void)
 {
   static struct param_t  param;
-  double   t1, t2, t3;
+  double   t1, t2, t3, t4;
   int      method;
 
   s.size = GMP_LIMB_BITS * 3 / 4;
@@ -2108,19 +2108,25 @@ tune_jacobi_base (void)
   if (option_trace >= 1)
     printf ("size=%ld, mpn_jacobi_base_3 %.9f\n", (long) s.size, t3);
 
-  if (t1 == -1.0 || t2 == -1.0 || t3 == -1.0)
+  t4 = tuneup_measure (speed_mpn_jacobi_base_4, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_jacobi_base_4 %.9f\n", (long) s.size, t4);
+
+  if (t1 == -1.0 || t2 == -1.0 || t3 == -1.0 || t4 == -1.0)
     {
       printf ("Oops, can't measure all mpn_jacobi_base methods at %ld\n",
               (long) s.size);
       abort ();
     }
 
-  if (t1 < t2 && t1 < t3)
+  if (t1 < t2 && t1 < t3 && t1 < t4)
     method = 1;
-  else if (t2 < t3)
+  else if (t2 < t3 && t2 < t4)
     method = 2;
-  else
+  else if (t3 < t4)
     method = 3;
+  else
+    method = 4;
 
   print_define ("JACOBI_BASE_METHOD", method);
 }

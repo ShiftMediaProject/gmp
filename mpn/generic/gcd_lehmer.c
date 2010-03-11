@@ -25,6 +25,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if GMP_NAIL_BITS > 0
+/* Nail supports should be easy, replacing the sub_ddmmss with nails
+ * logic. */
+#error Nails not supported.
+#endif
+
 /* Use binary algorithm to compute G <-- GCD (U, V) for usize, vsize == 2.
    Both U and V must be odd. */
 static inline mp_size_t
@@ -48,16 +54,14 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
       unsigned long int r;
       if (u1 > v1)
 	{
-	  u1 -= v1 + (u0 < v0);
-	  u0 = (u0 - v0) & GMP_NUMB_MASK;
+	  sub_ddmmss (u1, u0, u1, u0, v1, v0);
 	  count_trailing_zeros (r, u0);
 	  u0 = ((u1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (u0 >> r);
 	  u1 >>= r;
 	}
       else  /* u1 < v1.  */
 	{
-	  v1 -= u1 + (v0 < u0);
-	  v0 = (v0 - u0) & GMP_NUMB_MASK;
+	  sub_ddmmss (v1, v0, v1, v0, u1, u0);
 	  count_trailing_zeros (r, v0);
 	  v0 = ((v1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (v0 >> r);
 	  v1 >>= r;

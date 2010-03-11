@@ -1,3 +1,10 @@
+2010-03-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd_lehmer.c (gcd_2): Use sub_ddmmss.
+
+	* mpn/generic/jacbase.c (mpn_jacobi_base): Reorganized the
+	JACOBI_BASE_METHOD 4 slightly. Now requires that b > 1.
+
 2010-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/divrem_1.asm: Make fraction code take documented # of
@@ -7,6 +14,20 @@
 	* mpn/alpha/ev6/mod_1_4.asm: New file.
 
 	* mpn/ia64/mod_34lsub1.asm: New file.
+
+	* doc/gmp.texi (Language Bindings): Update Python site, add Ruby.
+
+2010-03-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_jacobi_base): Consider mpn_jacobi_base_4.
+	* tune/speed.c (routine): Added mpn_jacobi_base_4.
+	* tune/common.c (speed_mpn_jacobi_base_4): New function.
+	* tune/speed.h (speed_mpn_jacobi_base_4): Declare it.
+	* tune/Makefile.am (libspeed_la_SOURCES): Added jacbase4.c.
+	* tune/jacbase4.c: New file.
+
+	* mpn/generic/jacbase.c (mpn_jacobi_base): New function, for
+	JACOBI_BASE_METHOD 4.
 
 2010-03-09  Niels Möller  <nisse@lysator.liu.se>
 

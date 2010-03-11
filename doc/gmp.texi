@@ -7319,9 +7319,13 @@ Arbitrary precision floats.
 @item Python
 @itemize @bullet
 @item
-mpz module in the standard distribution, @uref{http://www.python.org/}
+GMPY @uref{http://code.google.com/p/gmpy/}
+@end itemize
+
+@item Ruby
+@itemize @bullet
 @item
-GMPY @uref{http://gmpy.sourceforge.net/}
+http://rubygems.org/gems/gmp
 @end itemize
 
 @item Scheme
