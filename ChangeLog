@@ -1,5 +1,7 @@
 2010-03-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcd_lehmer.c (gcd_2): Use sub_ddmmss.
+
 	* mpn/generic/jacbase.c (mpn_jacobi_base): Reorganized the
 	JACOBI_BASE_METHOD 4 slightly. Now requires that b > 1.
 
