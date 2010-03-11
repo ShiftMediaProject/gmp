@@ -428,6 +428,7 @@ mp_limb_t mpn_divrem_2_inv __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, m
 int mpn_jacobi_base_1 __GMP_PROTO ((mp_limb_t, mp_limb_t, int));
 int mpn_jacobi_base_2 __GMP_PROTO ((mp_limb_t, mp_limb_t, int));
 int mpn_jacobi_base_3 __GMP_PROTO ((mp_limb_t, mp_limb_t, int));
+int mpn_jacobi_base_4 __GMP_PROTO ((mp_limb_t, mp_limb_t, int));
 
 mp_limb_t mpn_mod_1_div __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_mod_1_inv __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
