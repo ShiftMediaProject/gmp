@@ -1,5 +1,7 @@
 2010-03-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/pentium4/sse2/submul_1.asm: Rewrite.
+
 	* mpn/powerpc64/mode64/aorsmul_1.asm: New file, faster than old code
 	for both mpn_addmul_1 and mpn_submul_1.
 	* mpn/powerpc64/mode64/addmul_1.asm: Remove.
