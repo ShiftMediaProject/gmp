@@ -23,7 +23,7 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 2.375
 C AMD K10	 2.375
-C Intel P4	 ?
+C Intel P4	15-16
 C Intel core2	 4.45
 C Intel corei	 4.35
 C Intel atom	 ?
