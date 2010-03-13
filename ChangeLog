@@ -1,3 +1,10 @@
+2010-03-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorsmul_1.asm: New file, faster than old code
+	for both mpn_addmul_1 and mpn_submul_1.
+	* mpn/powerpc64/mode64/addmul_1.asm: Remove.
+	* mpn/powerpc64/mode64/submul_1.asm: Remove.
+
 2010-03-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_lehmer.c (gcd_2): Use sub_ddmmss.
