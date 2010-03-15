@@ -26,10 +26,9 @@ C  * Optimise.  2.75 c/l should be possible.
 C  * Write a proper mpn_mod_1s_4p_cps.  The code below was compiler generated.
 C  * Optimise feed-in code, starting the sw pipeline in switch code.
 C  * Shorten software pipeline.  The mul instructions are scheduled too far
-C    from their users.
-C  * Use fewer registers.  Use r28 and r27.
+C    from their users.  Fixing this will allow us to use fewer registers.
 C  * If we cannot reduce register usage, write perhaps small-n basecase.
-C  * Does it work for PIC?
+C  * Does this work for PIC?
 
 C      cycles/limb
 C EV4:     ?
