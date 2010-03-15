@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -511,6 +511,7 @@ C *** MAIN LOOP START ***
 	cmp.PRED	p6, p0 = w4, u4		C			M I
 	ld8		u4 = [up], 8		C			M01
 	ADDSUB		w5 = u5, v5		C			M I
+	nop.b		0
 	;;
 	ld8		v5 = [vp], 8		C			M01
 	cmp.PRED	p7, p0 = w5, u5		C			M I

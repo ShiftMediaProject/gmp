@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_addlsh1_n/mpn_sublsh1_n -- rp[] = up[] +- (vp[] << 1).
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -257,8 +257,10 @@ C *** MAIN LOOP START ***
 	;;
 	st8		[rp] = w2, 8		C			M23
 	cmp.PRED	p6, p0 = w0, u0		C			M I
+	nop.b		0
 	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w1 = u1, x1		C			M I
+	nop.b		0
 	;;
 .LL00:	st8		[rp] = w3, 8		C			M23
 	shrp		x2 = v2, v1, 63		C			I0
@@ -276,6 +278,7 @@ C *** MAIN LOOP START ***
 	;;
 	st8		[rp] = w0, 8		C			M23
 	cmp.PRED	p6, p0 = w2, u2		C			M I
+	nop.b		0
 	ld8		u2 = [up], 8		C			M01
 	ADDSUB		w3 = u3, x3		C			M I
 	br.cloop.dptk	.Loop			C			B

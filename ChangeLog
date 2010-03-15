@@ -1,3 +1,10 @@
+2010-03-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/aors_n.asm: Insert explicitly typed nops to trigger intended
+	bundling.
+	* mpn/ia64/aorslsh1_n.asm: Likewise.
+	* mpn/ia64/dive_1.asm: Likewise.
+
 2010-03-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/submul_1.asm: Rewrite.
