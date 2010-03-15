@@ -1,5 +1,7 @@
 2010-03-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/alpha/ev6/mod_1_4.asm (mpn_mod_1s_4p_cps): Rewrite.
+
 	* mpn/ia64/aors_n.asm: Insert explicitly typed nops to trigger intended
 	bundling.
 	* mpn/ia64/aorslsh1_n.asm: Likewise.

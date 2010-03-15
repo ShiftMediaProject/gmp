@@ -2,7 +2,7 @@ dnl Alpha mpn_mod_1s_4p
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,8 +24,9 @@ include(`../config.m4')
 C TODO:
 C  * Optimise.  2.75 c/l should be possible.
 C  * Write a proper mpn_mod_1s_4p_cps.  The code below was compiler generated.
-C  * Make mpn_mod_1s_4p_cps work for ev4-ev5.
 C  * Optimise feed-in code, starting the sw pipeline in switch code.
+C  * Shorten software pipeline.  The mul instructions are scheduled too far
+C    from their users.
 C  * Use fewer registers.  Use r28 and r27.
 C  * If we cannot reduce register usage, write perhaps small-n basecase.
 C  * Does it work for PIC?
@@ -48,24 +49,19 @@ define(`B4modb', `r4')
 define(`B5modb', `r5')
 
 ASM_START()
-	.arch	ev56
-
 PROLOGUE(mpn_mod_1s_4p)
-	lda	r30, -80(r30)
+	lda	r30, -64(r30)
 	stq	r9, 8(r30)
-	stq	r10, 16(r30)
-	stq	r11, 24(r30)
-	stq	r12, 32(r30)
-	stq	r13, 40(r30)
-	stq	r14, 48(r30)
-	stq	r15, 56(r30)
-	s8addq	n, ap, ap		C point ap at vector end
-
 	ldq	B1modb, 16(r19)
+	stq	r10, 16(r30)
 	ldq	B2modb, 24(r19)
+	stq	r11, 24(r30)
 	ldq	B3modb, 32(r19)
+	stq	r12, 32(r30)
 	ldq	B4modb, 40(r19)
+	stq	r13, 40(r30)
 	ldq	B5modb, 48(r19)
+	s8addq	n, ap, ap		C point ap at vector end
 
 	and	n, 3, r0
 	lda	n, -4(n)
@@ -100,7 +96,7 @@ L(b0):	ldq	r21, -24(ap)
 	mulq	r22, B2modb, r9
 	umulh	r22, B2modb, r13
 	mulq	r23, B3modb, r10
-	umulh	r23, B3modb, r14
+	umulh	r23, B3modb, r27
 	addq	r8, r20, pl
 	cmpult	pl, r8, r0
 	addq	r0, r12, ph
@@ -110,7 +106,7 @@ L(b0):	ldq	r21, -24(ap)
 	addq	r0, ph, ph
 	addq	r10, pl, rl
 	cmpult	rl, r10, r0
-	addq	r14, ph, ph
+	addq	r27, ph, ph
 	addq	r0, ph, rh
 	lda	ap, -64(ap)
 	br	L(com)
@@ -141,9 +137,9 @@ L(com):	ble	n, L(ed3)
 	mulq	r22, B2modb, r9
 	umulh	r22, B2modb, r13
 	mulq	r23, B3modb, r10
-	umulh	r23, B3modb, r14
+	umulh	r23, B3modb, r27
 	mulq	rl, B4modb, r11
-	umulh	rl, B4modb, r15
+	umulh	rl, B4modb, r28
 	ble	n, L(ed2)
 
 	ALIGN(16)
@@ -165,21 +161,21 @@ L(top):	ldq	r21, 8(ap)
 	addq	r10, pl, pl
 	mulq	r22, B2modb, r9
 	cmpult	pl, r10, r0
-	addq	r14, ph, ph
+	addq	r27, ph, ph
 	addq	r11, pl, pl
 	umulh	r22, B2modb, r13
 	addq	r0, ph, ph
 	cmpult	pl, r11, r0
-	addq	r15, ph, ph
+	addq	r28, ph, ph
 	mulq	r23, B3modb, r10
 	ldq	r20, 32(ap)
 	addq	pl, rl, rl
-	umulh	r23, B3modb, r14
+	umulh	r23, B3modb, r27
 	addq	r0, ph, ph
 	cmpult	rl, pl, r0
 	mulq	rl, B4modb, r11
 	addq	ph, rh, rh
-	umulh	rl, B4modb, r15
+	umulh	rl, B4modb, r28
 	addq	r0, rh, rh
 	lda	n, -4(n)
 	bgt	n, L(top)
@@ -195,11 +191,11 @@ L(ed2):	mulq	rh, B5modb, rl
 	addq	r0, ph, ph
 	addq	r10, pl, pl
 	cmpult	pl, r10, r0
-	addq	r14, ph, ph
+	addq	r27, ph, ph
 	addq	r11, pl, pl
 	addq	r0, ph, ph
 	cmpult	pl, r11, r0
-	addq	r15, ph, ph
+	addq	r28, ph, ph
 	addq	pl, rl, rl
 	addq	r0, ph, ph
 	cmpult	rl, pl, r0
@@ -245,92 +241,92 @@ L(ed3):	mulq	rh, B1modb, r8
 	ldq	r11, 24(r30)
 	ldq	r12, 32(r30)
 	ldq	r13, 40(r30)
-	ldq	r14, 48(r30)
-	ldq	r15, 56(r30)
-	lda	r30, 80(r30)
+	lda	r30, 64(r30)
 	ret	r31, (r26), 1
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1s_4p_cps,gp)
-	ldgp	r29,	0(r27)
-	LEA(	r28,	__clz_tab)
-	lda	r30,	-32(r30)
-	lda	r5,	65(r31)
-	cmpbge	r31,	r17,	r8
-	stq	r26,	0(r30)
-	stq	r10,	16(r30)
-	srl	r8,	1,	r7
-	xor	r7,	127,	r6
-	stq	r11,	24(r30)
-	stq	r9,	8(r30)
-	bis	r31,	r16,	r11
-	addq	r6,	r28,	r4
-	ldbu	r2,	0(r4)
-	s8subq	r2,	7,	r3
-	srl	r17,	r3,	r27
-	subq	r5,	r3,	r26
-	addq	r27,	r28,	r10
-	ldbu	r9,	0(r10)
-	subq	r26,	r9,	r10
-	sll	r17,	r10,	r9
-	bis	r31,	r9,	r16
-	jsr	r26,	mpn_invert_limb
-	ldgp	r29,	0(r26)
-	stq	r10,	8(r11)
-	subq	r31,	r10,	r25
-	lda	r24,	1(r31)
-	subq	r31,	r9,	r20
-	stq	r0,	0(r11)
-	srl	r0,	r25,	r22
-	sll	r24,	r10,	r23
-	bis	r22,	r23,	r21
-	mulq	r20,	r21,	r1
-	umulh	r1,	r0,	r18
-	srl	r1,	r10,	r19
-	mulq	r1,	r0,	r8
-	stq	r19,	16(r11)
-	addq	r18,	r1,	r17
-	ornot	r31,	r17,	r16
-	mulq	r16,	r9,	r2
-	cmpule	r2,	r8,	r7
-	addq	r2,	r9,	r6
-	cmoveq	r7,	r6,	r2
-	umulh	r2,	r0,	r4
-	srl	r2,	r10,	r5
-	mulq	r2,	r0,	r27
-	stq	r5,	24(r11)
-	addq	r4,	r2,	r3
-	ornot	r31,	r3,	r28
-	mulq	r28,	r9,	r23
-	cmpule	r23,	r27,	r26
-	addq	r23,	r9,	r25
-	cmoveq	r26,	r25,	r23
-	ldq	r26,	0(r30)
-	umulh	r23,	r0,	r22
-	srl	r23,	r10,	r24
-	mulq	r23,	r0,	r19
-	stq	r24,	32(r11)
-	addq	r22,	r23,	r21
-	ornot	r31,	r21,	r20
-	mulq	r20,	r9,	r1
-	addq	r1,	r9,	r17
-	cmpule	r1,	r19,	r18
-	cmoveq	r18,	r17,	r1
-	umulh	r1,	r0,	r8
-	srl	r1,	r10,	r16
-	mulq	r1,	r0,	r5
-	stq	r16,	40(r11)
-	addq	r8,	r1,	r7
-	ornot	r31,	r7,	r6
-	mulq	r6,	r9,	r2
-	addq	r2,	r9,	r3
-	cmpule	r2,	r5,	r4
-	ldq	r9,	8(r30)
-	cmoveq	r4,	r3,	r2
-	srl	r2,	r10,	r0
-	ldq	r10,	16(r30)
-	stq	r0,	48(r11)
-	ldq	r11,	24(r30)
-	lda	r30,	32(r30)
-	ret	r31,	(r26),	1
+	lda	r30, -32(r30)
+	stq	r26, 0(r30)
+	stq	r9, 8(r30)
+	stq	r10, 16(r30)
+	stq	r11, 24(r30)
+	mov	r16, r11
+	LEA(	r4, __clz_tab)
+	lda	r10, 65(r31)
+	cmpbge	r31, r17, r1
+	srl	r1, 1, r1
+	xor	r1, 127, r1
+	addq	r1, r4, r1
+	ldq_u	r2, 0(r1)
+	extbl	r2, r1, r2
+	s8subq	r2, 7, r2
+	srl	r17, r2, r3
+	subq	r10, r2, r10
+	addq	r3, r4, r3
+	ldq_u	r1, 0(r3)
+	extbl	r1, r3, r1
+	subq	r10, r1, r10
+	sll	r17, r10, r9
+	mov	r9, r16
+	jsr	r26, mpn_invert_limb
+	ldah	r29, 0(r26)
+	subq	r31, r10, r2
+	lda	r1, 1(r31)
+	sll	r1, r10, r1
+	subq	r31, r9, r3
+	srl	r0, r2, r2
+	ldq	r26, 0(r30)
+	bis	r2, r1, r2
+	lda	r29, 0(r29)
+	stq	r0, 0(r11)
+	stq	r10, 8(r11)
+	mulq	r2, r3, r2
+	srl	r2, r10, r3
+	umulh	r2, r0, r1
+	stq	r3, 16(r11)
+	mulq	r2, r0, r3
+	ornot	r31, r1, r1
+	subq	r1, r2, r1
+	mulq	r1, r9, r1
+	addq	r1, r9, r2
+	cmpule	r1, r3, r3
+	cmoveq	r3, r2, r1
+	srl	r1, r10, r3
+	umulh	r1, r0, r2
+	stq	r3, 24(r11)
+	mulq	r1, r0, r3
+	ornot	r31, r2, r2
+	subq	r2, r1, r2
+	mulq	r2, r9, r2
+	addq	r2, r9, r1
+	cmpule	r2, r3, r3
+	cmoveq	r3, r1, r2
+	srl	r2, r10, r1
+	umulh	r2, r0, r3
+	stq	r1, 32(r11)
+	mulq	r2, r0, r1
+	ornot	r31, r3, r3
+	subq	r3, r2, r3
+	mulq	r3, r9, r3
+	addq	r3, r9, r2
+	cmpule	r3, r1, r1
+	cmoveq	r1, r2, r3
+	srl	r3, r10, r2
+	umulh	r3, r0, r1
+	stq	r2, 40(r11)
+	mulq	r3, r0, r0
+	ornot	r31, r1, r1
+	subq	r1, r3, r1
+	mulq	r1, r9, r1
+	addq	r1, r9, r9
+	cmpule	r1, r0, r0
+	cmoveq	r0, r9, r1
+	ldq	r9, 8(r30)
+	srl	r1, r10, r1
+	ldq	r10, 16(r30)
+	stq	r1, 48(r11)
+	ldq	r11, 24(r30)
+	lda	r30, 32(r30)
+	ret	r31, (r26), 1
 EPILOGUE()
