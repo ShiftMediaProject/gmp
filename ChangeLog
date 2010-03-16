@@ -1,3 +1,7 @@
+2010-03-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.c (routine): Add FLAG_R_OPTIONAL for many binops.
+
 2010-03-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/ev6/mod_1_4.asm (mpn_mod_1s_4p_cps): Rewrite.

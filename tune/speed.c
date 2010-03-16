@@ -380,28 +380,28 @@ const struct routine_t {
   { "mpn_copyd",         speed_mpn_copyd            },
 #endif
 #if HAVE_NATIVE_mpn_addlsh1_n
-  { "mpn_addlsh1_n",     speed_mpn_addlsh1_n        },
+  { "mpn_addlsh1_n",     speed_mpn_addlsh1_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_sublsh1_n
-  { "mpn_sublsh1_n",     speed_mpn_sublsh1_n        },
+  { "mpn_sublsh1_n",     speed_mpn_sublsh1_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_rsblsh1_n
-  { "mpn_rsblsh1_n",     speed_mpn_rsblsh1_n        },
+  { "mpn_rsblsh1_n",     speed_mpn_rsblsh1_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_addlsh2_n
-  { "mpn_addlsh2_n",     speed_mpn_addlsh2_n        },
+  { "mpn_addlsh2_n",     speed_mpn_addlsh2_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_sublsh2_n
-  { "mpn_sublsh2_n",     speed_mpn_sublsh2_n        },
+  { "mpn_sublsh2_n",     speed_mpn_sublsh2_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_rsblsh2_n
-  { "mpn_rsblsh2_n",     speed_mpn_rsblsh2_n        },
+  { "mpn_rsblsh2_n",     speed_mpn_rsblsh2_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_rsh1add_n
-  { "mpn_rsh1add_n",     speed_mpn_rsh1add_n        },
+  { "mpn_rsh1add_n",     speed_mpn_rsh1add_n, FLAG_R_OPTIONAL },
 #endif
 #if HAVE_NATIVE_mpn_rsh1sub_n
-  { "mpn_rsh1sub_n",     speed_mpn_rsh1sub_n        },
+  { "mpn_rsh1sub_n",     speed_mpn_rsh1sub_n, FLAG_R_OPTIONAL },
 #endif
 
   { "MPN_ZERO",          speed_MPN_ZERO             },
