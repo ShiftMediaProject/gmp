@@ -20,24 +20,21 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		norm	unorm	frac
-C AMD K8,K9	14	14	12
-C AMD K10	14	14	12
-C Intel P4	 ?	 ?	 ?
-C Intel core2	23	23	19.5
-C Intel corei	19	19	18
-C Intel atom	 ?	 ?	 ?
-C VIA nano	 ?	 ?	 ?
 
-C TODO
-C  * Compute the inverse without relying on the slow div instruction, instead
-C    call invert_limb.
-C  * Tune prologue.
+C		norm	unorm	frac
+C AMD K8,K9	13	14	12	The norm number assumes special code
+C AMD K10	13	14	12	The norm number assumes special code
+C Intel P4	47	45	43
+C Intel core2	23	23	19.5
+C Intel corei	19	19	18	The norm number assumes !special code
+C Intel atom	43	51	36	The norm number assumes special code
+C VIA nano	25	43	24
 
 C The code for unnormalized divisors works also for normalized divisors, but
 C for some reason it runs really slowly (on K8) for that case.  Intel Atom runs
 C the code for unnormalized poorly due to shld slowness.
-define(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',0)
+ifdef(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',,
+`define(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',0)')
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -127,13 +124,18 @@ L(normalized):
 	mov	%rax, (qp)
 	lea	-8(qp), qp
 L(8):
-	mov	d, %rdx
-	mov	$-1, %rax
-	not	%rdx
-	div	d			C FREE rax rdx rcx r9 r10 r11
+	push	%rdi
+	push	%rsi
+	push	%r8
+	mov	d, %rdi
+	CALL(	mpn_invert_limb)
+	pop	%r8
+	pop	%rsi
+	pop	%rdi
+
 	mov	%rax, dinv
 	mov	%rbp, %rax
-	lea	(%rbp), %rax		C
+	inc	%rbp
 	jmp	L(nent)
 
 	ALIGN(16)
@@ -181,20 +183,28 @@ L(unnormalized):
 L(44):
 	bsr	d, %rcx
 	not	R32(%rcx)
-	sal	%cl, d
-	sal	%cl, %rbp
-	mov	d, %rdx
-	mov	$-1, %rax
-	not	%rdx
-	div	d			C FREE rax rdx r9 r10 r11
-	test	un, un
+	sal	R8(%rcx), d
+	sal	R8(%rcx), %rbp
+
+	push	%rcx
+	push	%rdi
+	push	%rsi
+	push	%r8
+	mov	d, %rdi
+	CALL(	mpn_invert_limb)
+	pop	%r8
+	pop	%rsi
+	pop	%rdi
+	pop	%rcx
+
 	mov	%rax, dinv
 	mov	%rbp, %rax
+	test	un, un
 	je	L(87)
 L(uent):
 	mov	-8(up,un,8), %rbp
-	shr	%cl, %rax
-	shld	%cl, %rbp, %rax
+	shr	R8(%rcx), %rax
+	shld	R8(%rcx), %rbp, %rax
 	sub	$2, un
 	js	L(ulast)
 
@@ -203,7 +213,7 @@ L(uloop):
 	lea	1(%rax), %r11
 	mul	dinv
 	mov	(up,un,8), %r10
-	shld	%cl, %r10, %rbp
+	shld	R8(%rcx), %r10, %rbp
 	add	%rbp, %rax
 	adc	%r11, %rdx
 	mov	%rax, %r11
@@ -225,7 +235,7 @@ L(uok):
 	jns	L(uloop)
 L(ulast):
 	lea	1(%rax), %r11
-	sal	%cl, %rbp
+	sal	R8(%rcx), %rbp
 	mul	dinv
 	add	%rbp, %rax
 	adc	%r11, %rdx
@@ -274,7 +284,7 @@ L(87b):	lea	1(%rax), %r11		C
 	dec	fn			C
 	jns	L(floop)		C
 
-	shr	%cl, %rax
+	shr	R8(%rcx), %rax
 L(ret):	pop	%rbx
 	pop	%rbp
 	pop	%r12

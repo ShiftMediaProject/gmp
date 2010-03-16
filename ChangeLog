@@ -1,5 +1,8 @@
 2010-03-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/divrem_1.asm: Use mpn_invert_limb instead of div insn.
+	* mpn/x86_64/core2/divrem_1.asm: Likewise.
+
 	* tune/speed.c (routine): Add FLAG_R_OPTIONAL for many binops.
 
 2010-03-15  Torbjorn Granlund  <tege@gmplib.org>
