@@ -24,10 +24,10 @@ C	    cycles/limb
 C AMD K8,K9	 1
 C AMD K10	 1
 C Intel P4	 2.8
-C Intel core2	 1.2
-C Intel corei	 ?
-C Intel atom	 ?
-C VIA nano	 2
+C Intel core2	 1
+C Intel corei	 1
+C Intel atom	 2
+C VIA nano	 2.14
 
 
 C INPUT PARAMETERS

@@ -25,7 +25,7 @@ C AMD K8,K9	 2.14	(mpn_add_n + mpn_rshift need 4.125)
 C AMD K10	 2.14	(mpn_add_n + mpn_rshift need 4.125)
 C AMD P4	12.75
 C Intel core2	 3.75
-C Intel corei	 ?
+C Intel corei	 4.4
 C Intel atom	 ?
 C VIA nano	 3.25
 

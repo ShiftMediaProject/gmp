@@ -1,3 +1,13 @@
+2010-03-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/copyi.asm: Update cycle table.
+	* mpn/x86_64/copyd.asm: Likewise.
+	* mpn/x86_64/rsh1aors_n.asm: Likewise.
+	* mpn/x86_64/dive_1.asm: Likewise.
+
+	* mpn/x86/pentium4/sse2/add_n.asm: Misc cleanups.  Add cycle table.
+	* mpn/x86/pentium4/sse2/sub_n.asm: Likewise.
+
 2010-03-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/divrem_1.asm: Use mpn_invert_limb instead of div insn.

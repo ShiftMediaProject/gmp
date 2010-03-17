@@ -27,7 +27,7 @@ C Intel P4	33
 C Intel core2	13.25
 C Intel corei	14
 C Intel atom	42
-C VIA nano	 ?
+C VIA nano	43
 
 C A quick adoption of the 32-bit K7 code.
 
