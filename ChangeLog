@@ -1,5 +1,8 @@
 2010-03-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/pentium4/sse2/addlsh1_n.asm: Tune for slightly better speed.
+	Misc cleanups.  Add cycle table.
+
 	* mpn/x86_64/copyi.asm: Update cycle table.
 	* mpn/x86_64/copyd.asm: Likewise.
 	* mpn/x86_64/rsh1aors_n.asm: Likewise.
