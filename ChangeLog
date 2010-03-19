@@ -1,4 +1,14 @@
+2010-03-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorslsh1_n.asm: New file, with faster
+	mpn_addlsh1_n and mpn_sublsh1_n.
+	* mpn/powerpc64/mode64/addlsh1_n.asm: Delete.
+	* mpn/powerpc64/mode64/sublsh1_n.asm: Delete.
+
 2010-03-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (*-*-aix): Define gcc_32_cflags_maybe, ar_32_flags and
+	nm_32_flags.
 
 	* mpn/x86/pentium4/sse2/addlsh1_n.asm: Tune for slightly better speed.
 	Misc cleanups.  Add cycle table.
