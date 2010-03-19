@@ -1,3 +1,10 @@
+2010-03-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorslshC_n.asm: New file, generlised from
+	last iteration of aorslsh1_n.asm.
+	* mpn/powerpc64/mode64/aorslsh1_n.asm: Use aorslshC_n.asm.
+	* mpn/powerpc64/mode64/aorslsh1_n.asm: New file, use aorslshC_n.asm.
+
 2010-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/nano/dive_1.asm: New file.
