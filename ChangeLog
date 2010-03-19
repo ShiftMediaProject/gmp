@@ -1,5 +1,7 @@
 2010-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/nano/dive_1.asm: New file.
+
 	* mpn/x86_64/divrem_1.asm: Avoid shld since it is slow on several CPU
 	types.  Unconditionally provide code for normalised and unnormalised
 	divisors.  Cleanup labels.
