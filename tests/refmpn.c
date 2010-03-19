@@ -650,6 +650,11 @@ refmpn_sublsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_sublsh_n (rp, up, vp, n, 1);
 }
+mp_limb_t
+refmpn_sublsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_sublsh_n (rp, up, vp, n, 2);
+}
 
 mp_limb_signed_t
 refmpn_rsblsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,

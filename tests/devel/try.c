@@ -554,116 +554,56 @@ validate_sqrtrem (void)
    as they're all distinct and within the size of param[].  Renumber
    whenever necessary or desired.  */
 
-#define TYPE_ADD               1
-#define TYPE_ADD_N             2
-#define TYPE_ADD_NC            3
-#define TYPE_SUB               4
-#define TYPE_SUB_N             5
-#define TYPE_SUB_NC            6
+enum {
+  TYPE_ADD = 1, TYPE_ADD_N, TYPE_ADD_NC, TYPE_SUB, TYPE_SUB_N, TYPE_SUB_NC,
 
-#define TYPE_MUL_1             7
-#define TYPE_MUL_1C            8
+  TYPE_MUL_1, TYPE_MUL_1C,
 
-#define TYPE_MUL_2             9
-#define TYPE_MUL_3             92
-#define TYPE_MUL_4             93
+  TYPE_MUL_2, TYPE_MUL_3, TYPE_MUL_4,
 
-#define TYPE_ADDMUL_1         10
-#define TYPE_ADDMUL_1C        11
-#define TYPE_SUBMUL_1         12
-#define TYPE_SUBMUL_1C        13
+  TYPE_ADDMUL_1, TYPE_ADDMUL_1C, TYPE_SUBMUL_1, TYPE_SUBMUL_1C,
 
-#define TYPE_ADDMUL_2         14
-#define TYPE_ADDMUL_3         15
-#define TYPE_ADDMUL_4         16
-#define TYPE_ADDMUL_5         17
-#define TYPE_ADDMUL_6         18
-#define TYPE_ADDMUL_7         19
-#define TYPE_ADDMUL_8         20
+  TYPE_ADDMUL_2, TYPE_ADDMUL_3, TYPE_ADDMUL_4, TYPE_ADDMUL_5, TYPE_ADDMUL_6,
+  TYPE_ADDMUL_7, TYPE_ADDMUL_8,
 
-#define TYPE_ADDSUB_N         21
-#define TYPE_ADDSUB_NC        22
+  TYPE_ADDSUB_N, TYPE_ADDSUB_NC,
 
-#define TYPE_RSHIFT           23
-#define TYPE_LSHIFT           24
-#define TYPE_LSHIFTC          25
+  TYPE_RSHIFT, TYPE_LSHIFT, TYPE_LSHIFTC,
 
-#define TYPE_COPY             26
-#define TYPE_COPYI            27
-#define TYPE_COPYD            28
-#define TYPE_COM              29
+  TYPE_COPY, TYPE_COPYI, TYPE_COPYD, TYPE_COM,
 
-#define TYPE_ADDLSH1_N        30
-#define TYPE_ADDLSH2_N        48
-#define TYPE_ADDLSH_N         49
-#define TYPE_SUBLSH1_N        31
-#define TYPE_SUBLSH_N        130
-#define TYPE_RSBLSH1_N        34
-#define TYPE_RSBLSH2_N        46
-#define TYPE_RSBLSH_N         47
-#define TYPE_RSH1ADD_N        32
-#define TYPE_RSH1SUB_N        33
+  TYPE_ADDLSH1_N, TYPE_ADDLSH2_N, TYPE_ADDLSH_N,
+  TYPE_SUBLSH1_N, TYPE_SUBLSH2_N, TYPE_SUBLSH_N,
+  TYPE_RSBLSH1_N, TYPE_RSBLSH2_N, TYPE_RSBLSH_N,
+  TYPE_RSH1ADD_N, TYPE_RSH1SUB_N,
 
-#define TYPE_MOD_1            35
-#define TYPE_MOD_1C           36
-#define TYPE_DIVMOD_1         37
-#define TYPE_DIVMOD_1C        38
-#define TYPE_DIVREM_1         39
-#define TYPE_DIVREM_1C        40
-#define TYPE_PREINV_DIVREM_1  41
-#define TYPE_PREINV_MOD_1     42
-#define TYPE_MOD_34LSUB1      43
-#define TYPE_UDIV_QRNND       44
-#define TYPE_UDIV_QRNND_R     45
+  TYPE_MOD_1, TYPE_MOD_1C, TYPE_DIVMOD_1, TYPE_DIVMOD_1C, TYPE_DIVREM_1,
+  TYPE_DIVREM_1C, TYPE_PREINV_DIVREM_1, TYPE_DIVREM_2, TYPE_PREINV_MOD_1,
+  TYPE_MOD_34LSUB1, TYPE_UDIV_QRNND, TYPE_UDIV_QRNND_R,
 
-#define TYPE_DIVEXACT_1       50
-#define TYPE_DIVEXACT_BY3     51
-#define TYPE_DIVEXACT_BY3C    52
-#define TYPE_MODEXACT_1_ODD   53
-#define TYPE_MODEXACT_1C_ODD  54
+  TYPE_DIVEXACT_1, TYPE_DIVEXACT_BY3, TYPE_DIVEXACT_BY3C, TYPE_MODEXACT_1_ODD,
+  TYPE_MODEXACT_1C_ODD,
 
-#define TYPE_INVERT           55
-#define TYPE_BINVERT          56
+  TYPE_INVERT, TYPE_BINVERT,
 
-#define TYPE_GCD              60
-#define TYPE_GCD_1            61
-#define TYPE_GCD_FINDA        62
-#define TYPE_MPZ_JACOBI       63
-#define TYPE_MPZ_KRONECKER    64
-#define TYPE_MPZ_KRONECKER_UI 65
-#define TYPE_MPZ_KRONECKER_SI 66
-#define TYPE_MPZ_UI_KRONECKER 67
-#define TYPE_MPZ_SI_KRONECKER 68
-#define TYPE_MPZ_LEGENDRE     69
+  TYPE_GCD, TYPE_GCD_1, TYPE_GCD_FINDA, TYPE_MPZ_JACOBI, TYPE_MPZ_KRONECKER,
+  TYPE_MPZ_KRONECKER_UI, TYPE_MPZ_KRONECKER_SI, TYPE_MPZ_UI_KRONECKER,
+  TYPE_MPZ_SI_KRONECKER, TYPE_MPZ_LEGENDRE,
 
-#define TYPE_AND_N            70
-#define TYPE_NAND_N           71
-#define TYPE_ANDN_N           72
-#define TYPE_IOR_N            73
-#define TYPE_IORN_N           74
-#define TYPE_NIOR_N           75
-#define TYPE_XOR_N            76
-#define TYPE_XNOR_N           77
+  TYPE_AND_N, TYPE_NAND_N, TYPE_ANDN_N, TYPE_IOR_N, TYPE_IORN_N, TYPE_NIOR_N,
+  TYPE_XOR_N, TYPE_XNOR_N,
 
-#define TYPE_MUL_MN           80
-#define TYPE_MUL_N            81
-#define TYPE_SQR              82
-#define TYPE_UMUL_PPMM        83
-#define TYPE_UMUL_PPMM_R      84
-#define TYPE_MULLO_N          85
+  TYPE_MUL_MN, TYPE_MUL_N, TYPE_SQR, TYPE_UMUL_PPMM, TYPE_UMUL_PPMM_R,
+  TYPE_MULLO_N,
 
-#define TYPE_SBPI1_DIV_QR     90
-#define TYPE_TDIV_QR          91
+  TYPE_SBPI1_DIV_QR, TYPE_TDIV_QR,
 
-#define TYPE_SQRTREM          100
-#define TYPE_ZERO             101
-#define TYPE_GET_STR          102
-#define TYPE_POPCOUNT         103
-#define TYPE_HAMDIST          104
+  TYPE_SQRTREM, TYPE_ZERO, TYPE_GET_STR, TYPE_POPCOUNT, TYPE_HAMDIST,
 
-#define TYPE_EXTRA            110
+  TYPE_EXTRA
+};
 
-struct try_t  param[150];
+struct try_t  param[TYPE_EXTRA];
 
 
 void
@@ -912,6 +852,10 @@ param_init (void)
   p = &param[TYPE_SUBLSH1_N];
   COPY (TYPE_ADD_N);
   REFERENCE (refmpn_sublsh1_n);
+
+  p = &param[TYPE_SUBLSH2_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_sublsh2_n);
 
   p = &param[TYPE_SUBLSH_N];
   COPY (TYPE_ADDLSH_N);
@@ -1496,6 +1440,9 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_sublsh1_n
   { TRY(mpn_sublsh1_n), TYPE_SUBLSH1_N },
 #endif
+#if HAVE_NATIVE_mpn_sublsh2_n
+  { TRY(mpn_sublsh2_n), TYPE_SUBLSH2_N },
+#endif
 #if HAVE_NATIVE_mpn_sublsh_n
   { TRY(mpn_sublsh_n), TYPE_SUBLSH_N },
 #endif
@@ -2075,6 +2022,7 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_ADDLSH1_N:
   case TYPE_ADDLSH2_N:
   case TYPE_SUBLSH1_N:
+  case TYPE_SUBLSH2_N:
   case TYPE_RSBLSH1_N:
   case TYPE_RSBLSH2_N:
   case TYPE_RSH1ADD_N:
@@ -2689,7 +2637,7 @@ try_one (void)
 		if (SIZ(p) < SRC_SIZE(i))
 		  MPN_ZERO (s[i].p + SIZ(p), SRC_SIZE(i) - SIZ(p));
 		mpz_clear (p);
-	      }		    
+	      }
 	  }
 	break;
 
@@ -2705,9 +2653,9 @@ try_one (void)
 
       case DATA_SRC0_HIGHBIT:
        if (i == 0)
-         {
-           s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
-         }
+	 {
+	   s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
+	 }
        break;
 
       case DATA_UDIV_QRNND:

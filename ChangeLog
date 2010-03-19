@@ -1,5 +1,11 @@
 2010-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/devel/try.c: Use enum for TYPE_*.
+
+	* tests/devel/try.c: Test mpn_sublsh2_n.
+	* tests/refmpn.c (refmpn_sublsh2_n): New function.
+	* tests/tests.h (refmpn_sublsh2_n): Declare.
+
 	* mpn/powerpc64/mode64/aorslsh1_n.asm: New file, with faster
 	mpn_addlsh1_n and mpn_sublsh1_n.
 	* mpn/powerpc64/mode64/addlsh1_n.asm: Delete.
