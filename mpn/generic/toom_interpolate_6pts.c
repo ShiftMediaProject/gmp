@@ -169,9 +169,9 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   /* W2 -= W0<<2 */
 #if HAVE_NATIVE_mpn_sublsh_n || HAVE_NATIVE_mpn_sublsh2_n
 #if HAVE_NATIVE_mpn_sublsh2_n
-  cy = mpn_sublsh2_n(w2, w0, w0n);
+  cy = mpn_sublsh2_n(w2, w2, w0, w0n);
 #else
-  cy = mpn_sublsh_n(w2, w0, w0n, 2);
+  cy = mpn_sublsh_n(w2, w2, w0, w0n, 2);
 #endif
 #else
   /* {W4,2*n+1} is now free and can be overwritten. */
