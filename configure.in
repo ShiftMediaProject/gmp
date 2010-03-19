@@ -422,7 +422,7 @@ case $host in
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_alpha)
     case $host_cpu in
       alphaev5* | alphapca5*)
-      	path="alpha/ev5 alpha" ;;
+	path="alpha/ev5 alpha" ;;
       alphaev67 | alphaev68 | alphaev7*)
         path="alpha/ev67 alpha/ev6 alpha" ;;
       alphaev6)
@@ -937,9 +937,13 @@ case $host in
 
     case $host in
       *-*-aix*)
-        cclist="gcc xlc cc"
-        xlc_cflags="-O2 -qmaxmem=20000"
-        xlc_cflags_optlist="arch"
+	cclist="gcc xlc cc"
+	gcc_32_cflags_maybe="-maix32"
+	xlc_cflags="-O2 -qmaxmem=20000"
+	xlc_cflags_optlist="arch"
+	xlc_32_cflags_maybe="-q32"
+	ar_32_flags="-X32"
+	nm_32_flags="-X32"
 
         # xlc (what version?) knows -qarch=ppc, ppcgr, 601, 602, 603, 604,
         # 403, rs64a
@@ -2519,7 +2523,7 @@ gmp_mpn_functions="$extra_functions					   \
   toom6h_mul toom6_sqr toom8h_mul toom8_sqr				   \
   toom_couple_handling							   \
   toom2_sqr toom3_sqr toom4_sqr						   \
-  toom_eval_dgr3_pm1 toom_eval_dgr3_pm2 				   \
+  toom_eval_dgr3_pm1 toom_eval_dgr3_pm2					   \
   toom_eval_pm1 toom_eval_pm2 toom_eval_pm2exp toom_eval_pm2rexp	   \
   toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
   toom_interpolate_8pts toom_interpolate_12pts toom_interpolate_16pts	   \
