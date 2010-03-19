@@ -43,21 +43,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 
-/* Divide num (NP/NSIZE) by den (DP/2) and write
-   the NSIZE-2 least significant quotient limbs at QP
-   and the 2 long remainder at NP.  If QEXTRA_LIMBS is
-   non-zero, generate that many fraction bits and append them after the
-   other quotient limbs.
-   Return the most significant limb of the quotient, this is always 0 or 1.
+/* Divide num (NP/NN) by den (DP/2) and write the NN-2 least significant
+   quotient limbs at QP and the 2 long remainder at NP.  If qxn is non-zero,
+   generate that many fraction bits and append them after the other quotient
+   limbs.  Return the most significant limb of the quotient, this is always 0
+   or 1.
 
    Preconditions:
-   0. NSIZE >= 2.
    1. The most significant bit of the divisor must be set.
    2. QP must either not overlap with the input operands at all, or
-      QP + 2 >= NP must hold true.  (This means that it's
-      possible to put the quotient in the high part of NUM, right after the
-      remainder in NUM.
-   3. NSIZE >= 2, even if QEXTRA_LIMBS is non-zero.  */
+      QP + 2 >= NP must hold true.  (This means that it's possible to put
+      the quotient in the high part of NUM, right after the remainder in NUM.
+   3. NN >= 2, even if qxn is non-zero.  */
 
 mp_limb_t
 mpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
