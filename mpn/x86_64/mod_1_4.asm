@@ -42,11 +42,11 @@ PROLOGUE(mpn_mod_1s_4p)
 
 	mov	%rdx, -16(%rsp)
 	mov	%rcx, %r14
-	mov	16(%rcx), %r11
-	mov	24(%rcx), %rbx
-	mov	32(%rcx), %rbp
-	mov	40(%rcx), %r13
-	mov	48(%rcx), %r12
+	mov	16(%rcx), %r11		C B1modb
+	mov	24(%rcx), %rbx		C B2modb
+	mov	32(%rcx), %rbp		C B3modb
+	mov	40(%rcx), %r13		C B4modb
+	mov	48(%rcx), %r12		C B5modb
 	xor	R32(%r8), R32(%r8)
 	mov	R32(%rsi), R32(%rdx)
 	and	$3, R32(%rdx)
@@ -95,25 +95,25 @@ L(b2):	lea	-16(%rdi,%rsi,8), %rdi
 	ALIGN(16)
 L(top):	mov	-24(%rdi), %rax
 	mov	-32(%rdi), %r10
-	mul	%r11
+	mul	%r11			C up[1] * B1modb
 	add	%rax, %r10
 	mov	-16(%rdi), %rax
 	mov	%rdx, %rcx
 	adc	$0, %rcx
-	mul	%rbx
+	mul	%rbx			C up[2] * B2modb
 	add	%rax, %r10
 	mov	-8(%rdi), %rax
 	adc	%rdx, %rcx
 	sub	$32, %rdi
-	mul	%rbp
+	mul	%rbp			C up[3] * B3modb
 	add	%rax, %r10
 	mov	%r9, %rax
 	adc	%rdx, %rcx
-	mul	%r13
+	mul	%r13			C rl * B4modb
 	add	%rax, %r10
 	mov	%r8, %rax
 	adc	%rdx, %rcx
-	mul	%r12
+	mul	%r12			C rh * B5modb
 	mov	%r10, %r9
 	mov	%rcx, %r8
 L(m0):	add	%rax, %r9
