@@ -1,5 +1,12 @@
 2010-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/divrem_1.asm: Avoid shld since it is slow on several CPU
+	types.  Unconditionally provide code for normalised and unnormalised
+	divisors.  Cleanup labels.
+
+	* mpn/x86_64/core2/divrem_1.asm: Remove special code for normalised
+	divisors.  Cleanup labels.
+
 	* mpn/generic/toom_interpolate_6pts.c: Call mpn_sublsh2_n and
 	mpn_sublsh_n with correct args.
 

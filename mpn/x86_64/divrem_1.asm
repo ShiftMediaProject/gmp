@@ -24,17 +24,11 @@ include(`../config.m4')
 C		norm	unorm	frac
 C AMD K8,K9	13	13	12
 C AMD K10	13	13	12
-C Intel P4	47	47	43
-C Intel core2	24.62	24.62	19.5
-C Intel corei	20	20	18
-C Intel atom	43	52	36	The norm number assumes special code
-C VIA nano	25	46	24	The norm number assumes special code
-
-C The code for unnormalized divisors works also for normalized divisors, but
-C for some reason it runs really slowly (on K8) for that case.  Intel Atom runs
-C the code for unnormalized poorly due to shld slowness.
-ifdef(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',,
-`define(`SPECIAL_CODE_FOR_NORMALIZED_DIVISOR',0)')
+C Intel P4	43	44	43
+C Intel core2	24.5	24.5	19.5
+C Intel corei	20.5	19.5	18
+C Intel atom	43	46	36
+C VIA nano	25.5	25.5	24	The norm number assumes special code
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -80,10 +74,9 @@ PROLOGUE(mpn_preinv_divrem_1)
 
 	lea	-8(qp,un_param,8), qp
 
-ifelse(SPECIAL_CODE_FOR_NORMALIZED_DIVISOR,1,`
 	test	d, d
 	js	L(nent)
-')
+
 	mov	40(%rsp), R8(cnt)
 	shl	R8(cnt), d
 	jmp	L(uent)
@@ -106,8 +99,6 @@ PROLOGUE(mpn_divrem_1)
 	lea	-8(qp,un_param,8), qp
 	xor	R32(%rbp), R32(%rbp)
 
-
-ifelse(SPECIAL_CODE_FOR_NORMALIZED_DIVISOR,1,`
 	test	d, d
 	jns	L(unnormalized)
 
@@ -135,11 +126,10 @@ L(8):
 
 	mov	%rax, dinv
 	mov	%rbp, %rax
-	inc	%rbp
 	jmp	L(nent)
 
 	ALIGN(16)
-L(nloop):				C	    K8-K10  P6-CNR P6-NHM  P4
+L(ntop):				C	    K8-K10  P6-CNR P6-NHM  P4
 	mov	(up,un,8), %r10		C
 	mul	dinv			C	      0,13   0,20   0,18   0,45
 	add	%r10, %rax		C	      4      8      3     12
@@ -156,10 +146,10 @@ L(nloop):				C	    K8-K10  P6-CNR P6-NHM  P4
 	cmp	d, %rax			C
 	jae	L(nfx)			C
 L(nok):	mov	%r13, (qp)		C
-	lea	1(%rax), %rbp		C
 	sub	$8, qp			C
-L(nent):dec	un			C
-	jns	L(nloop)		C
+L(nent):lea	1(%rax), %rbp		C
+	dec	un			C
+	jns	L(ntop)			C
 
 	xor	R32(%rcx), R32(%rcx)
 	jmp	L(87)
@@ -167,7 +157,6 @@ L(nent):dec	un			C
 L(nfx):	sub	d, %rax
 	inc	%r13
 	jmp	L(nok)
-')
 
 L(unnormalized):
 	test	un, un
@@ -183,8 +172,8 @@ L(unnormalized):
 L(44):
 	bsr	d, %rcx
 	not	R32(%rcx)
-	sal	R8(%rcx), d
-	sal	R8(%rcx), %rbp
+	shl	R8(%rcx), d
+	shl	R8(%rcx), %rbp
 
 	push	%rcx
 	push	%rdi
@@ -201,18 +190,22 @@ L(44):
 	mov	%rbp, %rax
 	test	un, un
 	je	L(87)
-L(uent):
-	mov	-8(up,un,8), %rbp
-	shr	R8(%rcx), %rax
-	shld	R8(%rcx), %rbp, %rax
-	sub	$2, un
-	lea	1(%rax), %r11
-	js	L(ulast)
+
+L(uent):dec	un
+	mov	(up,un,8), %rbp
+	neg	R32(%rcx)
+	shr	R8(%rcx), %rbp
+	neg	R32(%rcx)
+	or	%rbp, %rax
+	jmp	L(ent)
 
 	ALIGN(16)
-L(uloop):
-	mov	(up,un,8), %r10
-	shld	R8(%rcx), %r10, %rbp
+L(utop):mov	(up,un,8), %r10
+	shl	R8(%rcx), %rbp
+	neg	R32(%rcx)
+	shr	R8(%rcx), %r10
+	neg	R32(%rcx)
+	or	%r10, %rbp
 	mul	dinv
 	add	%rbp, %rax
 	adc	%r11, %rdx
@@ -227,15 +220,14 @@ L(uloop):
 	adc	$-1, %r13
 	cmp	d, %rax
 	jae	L(ufx)
-L(uok):
-	mov	%r13, (qp)
+L(uok):	mov	%r13, (qp)
 	sub	$8, qp
+L(ent):	mov	(up,un,8), %rbp
 	dec	un
-	mov	%r10, %rbp
 	lea	1(%rax), %r11
-	jns	L(uloop)
-L(ulast):
-	sal	R8(%rcx), %rbp
+	jns	L(utop)
+
+L(uend):shl	R8(%rcx), %rbp
 	mul	dinv
 	add	%rbp, %rax
 	adc	%r11, %rdx
@@ -249,26 +241,24 @@ L(ulast):
 	cmovb	%rbp, %rax
 	adc	$-1, %r13
 	cmp	d, %rax
-	jae	L(93)
-L(69):	mov	%r13, (qp)
+	jae	L(efx)
+L(eok):	mov	%r13, (qp)
 	sub	$8, qp
 	jmp	L(87)
 
 L(ufx):	sub	d, %rax
 	inc	%r13
 	jmp	L(uok)
-
-L(93):	sub	d, %rax
+L(efx):	sub	d, %rax
 	inc	%r13
-	jmp	L(69)
+	jmp	L(eok)
 
 L(87):	mov	d, %rbp
 	neg	%rbp
-	jmp	L(87b)
+	jmp	L(fent)
 
-	ALIGN(16)
-L(floop):				C	    K8-K10  P6-CNR P6-NHM  P4
-	mul	dinv			C	      0,12   0,17   0,17
+	ALIGN(16)			C	    K8-K10  P6-CNR P6-NHM  P4
+L(ftop):mul	dinv			C	      0,12   0,17   0,17
 	add	%r11, %rdx		C	      5      8     10
 	mov	%rax, %r11		C	      4      8      3
 	mov	%rdx, %r13		C	      6      9     11
@@ -280,9 +270,9 @@ L(floop):				C	    K8-K10  P6-CNR P6-NHM  P4
 	adc	$-1, %r13		C
 	mov	%r13, (qp)		C
 	sub	$8, qp			C
-L(87b):	lea	1(%rax), %r11		C
+L(fent):lea	1(%rax), %r11		C
 	dec	fn			C
-	jns	L(floop)		C
+	jns	L(ftop)			C
 
 	shr	R8(%rcx), %rax
 L(ret):	pop	%rbx
