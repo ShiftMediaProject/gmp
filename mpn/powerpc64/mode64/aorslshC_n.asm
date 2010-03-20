@@ -52,7 +52,7 @@ define(`v0',`r10') define(`v1',`r11')
 
 ASM_START()
 PROLOGUE(func)
-	cmpli	cr0, r6, 13
+	cmpldi	cr0, r6, 13
 	bgt	L(big)
 
 	mtctr	r6		C copy n in ctr
