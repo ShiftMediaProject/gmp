@@ -63,7 +63,7 @@ ifdef(`DARWIN',`
 	dec	R32(%rax)
 	sub	R32(%rcx), R32(%rax)	C	%rax = v1
 
-	C v2 = (v1 << 13) + (v1 * (2^60 - v1*d40) >> 47
+	C v2 = (v1 << 13) + (v1 * (2^60 - v1*d40) >> 47)
 	mov	$0x1000000000000000, %rcx
 	imul	%rax, %rsi		C			14	17	13
 	sub	%rsi, %rcx
@@ -72,7 +72,7 @@ ifdef(`DARWIN',`
 	shr	$47, %rcx
 	add	%rax, %rcx		C	%rcx = v2
 
-	C v3 = (v2 << 31) + (v2 * (2^96 - v2 * d63 + (v2>>1) & mask) >> 65
+	C v3 = (v2 << 31) + (v2 * (2^96 - v2 * d63 + ((v2 >> 1) & mask)) >> 65
 	mov	%rdi, %rsi		C			 0	 0	 0
 	shr	$1, %rsi		C d/2
 	sbb	%rax, %rax		C -d0 = -(d mod 2)
