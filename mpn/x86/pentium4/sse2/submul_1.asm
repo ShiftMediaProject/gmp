@@ -30,7 +30,7 @@ C P4 model 2   (Northwood):     5.87
 C P4 model 3-4 (Prescott):      6.5
 
 C This code represents a step forwards compared to the code available before
-C GMP 5.1, but it is not carefully tuned for either P6 or P4.  In fact, ot is
+C GMP 5.1, but it is not carefully tuned for either P6 or P4.  In fact, it is
 C not good for P6.  For P4 it saved a bit over 1 c/l for both Northwood and
 C Prescott compared to the old code.
 C
