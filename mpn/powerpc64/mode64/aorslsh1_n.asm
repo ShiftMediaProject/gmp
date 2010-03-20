@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     2		(1.5 c/l should be possible)
+C POWER3/PPC630:     1.83	(1.5 c/l should be possible)
 C POWER4/PPC970:     3		(2.0 c/l should be possible)
 C POWER5:	     3
 
