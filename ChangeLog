@@ -1,3 +1,8 @@
+2010-03-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/invert_limb.asm: Rewrite to exploit cancellation
+	in the Newton iteration.
+
 2010-03-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_8pts.c: Use mpn_sublsh2_n.
