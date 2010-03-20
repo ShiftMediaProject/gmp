@@ -54,18 +54,24 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 #endif
 
+#if HAVE_NATIVE_mpn_sublsh2_n
+#define DO_mpn_sublsh2_n(dst,src,n,ws) mpn_sublsh2_n(dst,dst,src,n)
+#else
+#define DO_mpn_sublsh2_n(dst,src,n,ws) DO_mpn_sublsh_n(dst,src,n,2,ws)
+#endif
+
 #if HAVE_NATIVE_mpn_sublsh_n
 #define DO_mpn_sublsh_n(dst,src,n,s,ws) mpn_sublsh_n (dst,src,n,s)
 #else
 static mp_limb_t
 DO_mpn_sublsh_n (mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr ws)
 {
-#if USE_MUL_1
+#if USE_MUL_1 && 0
   return mpn_submul_1(dst,src,n,CNST_LIMB(1) <<(s));
 #else
   mp_limb_t __cy;
   __cy = mpn_lshift (ws,src,n,s);
-  return    __cy + mpn_sub_n (dst,dst,ws,n);
+  return __cy + mpn_sub_n (dst,dst,ws,n);
 #endif
 }
 #endif
@@ -146,7 +152,7 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 
   ASSERT_NOCARRY(mpn_divexact_by3 (r5, r5, 3 * n + 1));
 
-  ASSERT_NOCARRY(DO_mpn_sublsh_n (r5, r3, 3 * n + 1, 2, ws));
+  ASSERT_NOCARRY(DO_mpn_sublsh2_n (r5, r3, 3 * n + 1, ws));
 
   /* last interpolation steps... */
   /* ... are mixed with recomposition */
