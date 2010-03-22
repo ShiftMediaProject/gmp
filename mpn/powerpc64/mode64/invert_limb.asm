@@ -28,7 +28,7 @@ ASM_START()
 PROLOGUE(mpn_invert_limb)
 	LEAL(	r12, approx_tab)
 	srdi	r9, r3, 32
-	rlwinm	r9, r9, 0, 23, 30	C (d >> 55) & 0x1fe
+	rlwinm	r9, r9, 10, 23, 30	C (d >> 55) & 0x1fe
 	srdi	r10, r3, 24		C d >> 24
 	lis	r11, 0x1000
 	rldicl	r8, r3, 0, 63		C d mod 2
