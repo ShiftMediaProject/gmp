@@ -20,23 +20,22 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		norm	frac
-C AMD K8,K9	20	20
-C AMD K10	20	20
-C Intel P4	73	73
-C Intel core2	37	37
-C Intel corei	33	33
-C Intel atom	 ?	 ?
-C VIA nano	 ?	 ?
+C				NEW
+C		norm	frac	norm
+C AMD K8,K9	21	21	19
+C AMD K10	21	21	19
+C Intel P4	73	73	70
+C Intel core2	37.5	37.5	36
+C Intel corei	33	33	32
+C Intel atom	 ?	 ?	 ?
+C VIA nano	37	 ?	37
 
 C TODO
-C  * Perhaps compute the inverse without relying on divq?  Could either use
-C    Newton's method and mulq, or perhaps the faster fdiv.
 C  * The loop has not been carefully tuned, nor analysed for critical path
-C    length.  It seems that 20 c/l is a bit long, compared to the 13 c/l for
+C    length.  It seems that 19 c/l is a bit long, compared to the 13 c/l for
 C    mpn_divrem_1.
 C  * Clean up.  This code is really crude.
-
+C  * Add testing to tests/devel/try.c before enabling NEW code.
 
 C INPUT PARAMETERS
 define(`qp',		`%rdi')
@@ -82,10 +81,16 @@ L(2):
 	lea	-3(%rcx,%r13), %rbx	C un + fn - 3
 	test	%rbx, %rbx
 	js	L(6)
-	mov	%r11, %rdx
-	mov	$-1, %rax
-	not	%rdx
-	div	%r11
+
+	push	%r8
+	push	%r10
+	push	%r11
+	mov	%r11, %rdi
+	CALL(	mpn_invert_limb)
+	pop	%r11
+	pop	%r10
+	pop	%r8
+
 	mov	%r11, %rdx
 	mov	%rax, %rdi
 	imul	%rax, %rdx
@@ -120,7 +125,7 @@ ifdef(`NEW',`
 	ALIGN(16)
 L(loop):
 	mov	%r9, %rax		C di		ncp
-	mul	%rbx			C		0, 18
+	mul	%rbx			C		0, 17
 	add	%r14, %rax		C		4
 	mov	%rax, %r10		C q0		5
 	adc	%rbx, %rdx		C		5
@@ -128,8 +133,8 @@ L(loop):
 	imul	%rsi, %rdx		C		6
 	mov	%r8, %rax		C		ncp
 	lea	(%rdx, %r14), %rbx	C n1 -= ...	7
-	mul	%rdi			C		7
 	xor	R32(%r14), R32(%r14)	C
+	mul	%rdi			C		7
 	cmp	%rcx, %r13		C
 	jg	L(19)			C
 	mov	(%r12), %r14		C

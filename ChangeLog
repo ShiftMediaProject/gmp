@@ -1,5 +1,7 @@
 2010-03-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/divrem_2.asm: Use mpn_invert_limb instead of div insn.
+
 	* mpn/ia64/aorslshC_n.asm: New file, generalised from last iteration of
 	aorslsh1_n.asm.
 	* mpn/ia64/aorslsh1_n.asm: Use aorslshC_n.asm.
