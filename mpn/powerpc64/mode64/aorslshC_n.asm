@@ -24,34 +24,30 @@ C POWER3/PPC630:     1.83	(1.5 c/l should be possible)
 C POWER4/PPC970:     3		(2.0 c/l should be possible)
 C POWER5:	     3
 
-C INPUT PARAMETERS
-C rp	r3
-C up	r4
-C vp	r5
-C n	r6
-
 C STATUS
 C  * Try combining upx+up, and vpx+vp.
 
-define(`rp',`r3')
-define(`up',`r4')
-define(`vp',`r5')
+C INPUT PARAMETERS
+define(`rp', `r3')
+define(`up', `r4')
+define(`vp', `r5')
+define(`n',  `r6')
 
 define(`rpx', `r6')
 define(`upx', `r7')
-define(`vpx',`r12')
+define(`vpx', `r12')
 
-define(`s0',`r0')  define(`s1',`r9')
-define(`u0',`r8')
-define(`v0',`r10') define(`v1',`r11')
+define(`s0', `r0')  define(`s1', `r9')
+define(`u0', `r8')
+define(`v0', `r10') define(`v1', `r11')
 
 
 ASM_START()
 PROLOGUE(func)
-	cmpldi	cr0, r6, 13
+	cmpldi	cr0, n, 13
 	bgt	L(big)
 
-	mtctr	r6		C copy n in ctr
+	mtctr	n		C copy n in ctr
 	INITCY(	r0)		C clear cy
 
 	ld	v0, 0(vp)	C load v limb
@@ -89,8 +85,8 @@ L(ex0):	ADDSUBE	r7, s0, u0
 	blr
 
 
-L(big):	rldicl.	r0, r6, 0,63	C r0 = n & 1, set cr0
-	addi	r6, r6, -1	C ...for ctr
+L(big):	rldicl.	r0, n, 0,63	C r0 = n & 1, set cr0
+	addi	r6, n, -1	C ...for ctr
 	srdi	r6, r6, 1	C ...for ctr
 	mtctr	r6		C copy count into ctr
 	beq	cr0, L(b0)
