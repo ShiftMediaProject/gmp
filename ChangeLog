@@ -1,3 +1,10 @@
+2010-03-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/aorslshC_n.asm: New file, generalised from last iteration of
+	aorslsh1_n.asm.
+	* mpn/ia64/aorslsh1_n.asm: Use aorslshC_n.asm.
+	* mpn/ia64/aorslsh1_n.asm: New file, use aorslshC_n.asm.
+
 2010-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/invert_limb.asm: Rewrite to exploit cancellation
@@ -6,10 +13,10 @@
 2010-03-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_8pts.c: Use mpn_sublsh2_n.
-	
+
 2010-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/powerpc64/mode64/aorslshC_n.asm: New file, generlised from
+	* mpn/powerpc64/mode64/aorslshC_n.asm: New file, generalised from
 	last iteration of aorslsh1_n.asm.
 	* mpn/powerpc64/mode64/aorslsh1_n.asm: Use aorslshC_n.asm.
 	* mpn/powerpc64/mode64/aorslsh1_n.asm: New file, use aorslshC_n.asm.

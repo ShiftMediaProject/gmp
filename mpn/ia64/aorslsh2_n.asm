@@ -24,25 +24,25 @@ C Itanium:      3.0
 C Itanium 2:    1.5
 
 
-define(LSH,		1)
-define(RSH,		63)
+define(LSH,		2)
+define(RSH,		62)
 
-ifdef(`OPERATION_addlsh1_n',`
+ifdef(`OPERATION_addlsh2_n',`
   define(ADDSUB,       add)
   define(PRED,	       ltu)
   define(INCR,	       1)
   define(LIM,	       -1)
-  define(func, mpn_addlsh1_n)
+  define(func, mpn_addlsh2_n)
 ')
-ifdef(`OPERATION_sublsh1_n',`
+ifdef(`OPERATION_sublsh2_n',`
   define(ADDSUB,       sub)
   define(PRED,	       gtu)
   define(INCR,	       -1)
   define(LIM,	       0)
-  define(func, mpn_sublsh1_n)
+  define(func, mpn_sublsh2_n)
 ')
 
 
-MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
+MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
 
 include_mpn(`ia64/aorslshC_n.asm')
