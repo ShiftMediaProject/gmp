@@ -22,12 +22,12 @@ include(`../config.m4')
 
 
 C		norm	unorm	frac
-C AMD K8,K9	13	14	12	The norm number assumes special code
-C AMD K10	13	14	12	The norm number assumes special code
+C AMD K8,K9	13	14	12
+C AMD K10	13	14	12
 C Intel P4	47	45	43
 C Intel core2	23	23	19.5
-C Intel corei	19	19	18	The norm number assumes !special code
-C Intel atom	43	51	36	The norm number assumes special code
+C Intel corei	19	19	18
+C Intel atom	43	51	36
 C VIA nano	25	43	24
 
 C mp_limb_t

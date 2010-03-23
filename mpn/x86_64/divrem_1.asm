@@ -28,7 +28,7 @@ C Intel P4	43	44	43
 C Intel core2	24.5	24.5	19.5
 C Intel corei	20.5	19.5	18
 C Intel atom	43	46	36
-C VIA nano	25.5	25.5	24	The norm number assumes special code
+C VIA nano	25.5	25.5	24
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
