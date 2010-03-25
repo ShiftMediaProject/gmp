@@ -1,5 +1,8 @@
 2010-03-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom_eval_pm2.c: Disable mpn_add_n_sub_n call.
+	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise.
+
 	* mpn/generic/toom33_mul.c: Fix mpn_add_n_sub_n usage.
 	* mpn/generic/toom3_sqr.c: Likewise.
 	* mpn/generic/toom63_mul.c: Likewise.
