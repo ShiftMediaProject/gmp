@@ -1,3 +1,7 @@
+2010-03-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/add_n_sub_n.c: Renamed from addsub_n.c.
+
 2010-03-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/divrem_2.asm: Use mpn_invert_limb instead of div insn.
