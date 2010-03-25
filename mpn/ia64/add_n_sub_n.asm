@@ -286,8 +286,8 @@ L(cj2):
 L(cj1):
    (p9)	mov	r8 = 2
 	;;
+	mov.i	ar.lc = r2		C			I0
   (p13)	add	r8 = 1, r8
-	nop	0
 	st8	[sp] = s3, 8
 	st8	[dp] = d3, 8
 	br.ret.sptk.many b0
