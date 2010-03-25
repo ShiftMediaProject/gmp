@@ -95,14 +95,15 @@ mpn_toom3_sqr (mp_ptr pp,
   if (cy == 0 && mpn_cmp (gp, a1, n) < 0)
     {
       cy = mpn_add_n_sub_n (as1, asm1, a1, gp, n);
-      as1[n] = 0;
+      as1[n] = cy >> 1;
       asm1[n] = 0;
     }
   else
     {
+      mp_limb_t cy2;
       cy2 = mpn_add_n_sub_n (as1, asm1, gp, a1, n);
       as1[n] = cy + (cy2 >> 1);
-      asm1[n] = cy - (cy & 1);
+      asm1[n] = cy - (cy2 & 1);
     }
 #else
   as1[n] = cy + mpn_add_n (as1, gp, a1, n);

@@ -149,7 +149,7 @@ mpn_toom63_mul (mp_ptr pp,
   if (cy == 0 && mpn_cmp (ws, b1, n) < 0)
     {
       cy = mpn_add_n_sub_n (v3, v1, b1, ws, n);
-      v3[n] = 0;
+      v3[n] = cy >> 1;
       v1[n] = 0;
       sign = ~sign;
     }
@@ -157,8 +157,8 @@ mpn_toom63_mul (mp_ptr pp,
     {
       mp_limb_t cy2;
       cy2 = mpn_add_n_sub_n (v3, v1, ws, b1, n);
-      w3[n] = cy + (cy2 >> 1);
-      w1[n] = cy - (cy & 1);
+      v3[n] = cy + (cy2 >> 1);
+      v1[n] = cy - (cy2 & 1);
     }
 #else
   v3[n] = cy + mpn_add_n (v3, ws, b1, n);

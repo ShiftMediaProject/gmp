@@ -121,15 +121,16 @@ mpn_toom33_mul (mp_ptr pp,
   if (cy == 0 && mpn_cmp (gp, a1, n) < 0)
     {
       cy = mpn_add_n_sub_n (as1, asm1, a1, gp, n);
-      as1[n] = 0;
+      as1[n] = cy >> 1;
       asm1[n] = 0;
       vm1_neg = 1;
     }
   else
     {
+      mp_limb_t cy2;
       cy2 = mpn_add_n_sub_n (as1, asm1, gp, a1, n);
       as1[n] = cy + (cy2 >> 1);
-      asm1[n] = cy - (cy & 1);
+      asm1[n] = cy - (cy2 & 1);
     }
 #else
   as1[n] = cy + mpn_add_n (as1, gp, a1, n);
@@ -176,15 +177,16 @@ mpn_toom33_mul (mp_ptr pp,
   if (cy == 0 && mpn_cmp (gp, b1, n) < 0)
     {
       cy = mpn_add_n_sub_n (bs1, bsm1, b1, gp, n);
-      bs1[n] = 0;
+      bs1[n] = cy >> 1;
       bsm1[n] = 0;
       vm1_neg ^= 1;
     }
   else
     {
+      mp_limb_t cy2;
       cy2 = mpn_add_n_sub_n (bs1, bsm1, gp, b1, n);
       bs1[n] = cy + (cy2 >> 1);
-      bsm1[n] = cy - (cy & 1);
+      bsm1[n] = cy - (cy2 & 1);
     }
 #else
   bs1[n] = cy + mpn_add_n (bs1, gp, b1, n);

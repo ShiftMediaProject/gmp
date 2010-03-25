@@ -1,5 +1,9 @@
 2010-03-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom33_mul.c: Fix mpn_add_n_sub_n usage.
+	* mpn/generic/toom3_sqr.c: Likewise.
+	* mpn/generic/toom63_mul.c: Likewise.
+
 	* mpn/generic/add_n_sub_n.c: Renamed from addsub_n.c.
 
 2010-03-23  Torbjorn Granlund  <tege@gmplib.org>
