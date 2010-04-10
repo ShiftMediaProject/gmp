@@ -1,5 +1,7 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/lorrshift.asm: Rewrite feed-in and wind-down code.
+
 	* mpn/ia64/aorslsh1_n.asm: Adapt to new aorslsh1_n.
 	* mpn/ia64/aorslsh1_n.asm: Likewise.
 
