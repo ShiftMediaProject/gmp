@@ -1,5 +1,7 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/add_n_sub_n.asm: Misc cleanups.  Add slotting comments.
+
 	* mpn/ia64/lshiftc.asm: New file.
 
 	* mpn/x86_64/pentium4/gmp-mparam.h: No longer disable rsh1add_n and
