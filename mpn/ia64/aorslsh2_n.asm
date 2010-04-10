@@ -29,14 +29,15 @@ define(RSH,		62)
 
 ifdef(`OPERATION_addlsh2_n',`
   define(ADDSUB,       add)
-  define(PRED,	       ltu)
+  define(ADDP,         1)
+  define(CND,	       ltu)
   define(INCR,	       1)
   define(LIM,	       -1)
   define(func, mpn_addlsh2_n)
 ')
 ifdef(`OPERATION_sublsh2_n',`
   define(ADDSUB,       sub)
-  define(PRED,	       gtu)
+  define(CND,	       gtu)
   define(INCR,	       -1)
   define(LIM,	       0)
   define(func, mpn_sublsh2_n)
