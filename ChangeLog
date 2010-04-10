@@ -1,5 +1,8 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/divrem_2.asm: Use "orb" instead of "or" to work around
+	Solaris assembler bug.
+
 	* mpn/x86/aors_n.asm: Use operand-less shift-by-1 insn form.
 	* mpn/x86/pentium/aors_n.asm: Likewise.
 
