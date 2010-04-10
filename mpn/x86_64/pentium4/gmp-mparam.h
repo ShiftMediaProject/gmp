@@ -1,7 +1,7 @@
 /* Pentium 4-64 gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright 1991, 1993, 1994, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-2008, 2009 Free Software Foundation, Inc.
+2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,10 +23,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* These routines exists for all x86_64 chips, but they are slower on Pentium4
    than separate add/sub and shift.  Make sure they are not really used.  */
-#undef HAVE_NATIVE_mpn_rsh1add_n
-#undef HAVE_NATIVE_mpn_rsh1sub_n
+#undef HAVE_NATIVE_mpn_rsblsh1_n
+#undef HAVE_NATIVE_mpn_addlsh2_n
+#undef HAVE_NATIVE_mpn_rsblsh2_n
 
-/* 3200 MHz Pentium / 2048 Kibyte cache / socket 775 */
+/* 3400 MHz Pentium / 1024 Kibyte cache */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */

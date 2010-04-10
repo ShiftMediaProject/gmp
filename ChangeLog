@@ -1,5 +1,8 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/pentium4/gmp-mparam.h: No longer disable rsh1add_n and
+	rsh1sub_n; instead disable rsblsh1_n, addlsh2_n, rsblsh2_n.
+
 	* mpn/x86/divrem_2.asm: Use "orb" instead of "or" to work around
 	Solaris assembler bug.
 	* mpn/x86_64/mpn/x86_64/divrem_2.asm: Likewise.
