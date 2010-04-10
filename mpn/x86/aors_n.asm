@@ -99,7 +99,7 @@ L(0a):	leal	(%eax,%eax,8),%eax
 	C possible to simplify.
 	pushl	%ebp		FRAME_pushl()
 	movl	PARAM_CARRY,%ebp
-	shrl	$1,%ebp			C shift bit 0 into carry
+	shrl	%ebp			C shift bit 0 into carry
 	popl	%ebp		FRAME_popl()
 
 	jmp	*%eax			C jump into loop
@@ -148,7 +148,7 @@ L(0b):	leal	(%eax,%eax,8),%eax
 L(oopgo):
 	pushl	%ebp		FRAME_pushl()
 	movl	PARAM_CARRY,%ebp
-	shrl	$1,%ebp			C shift bit 0 into carry
+	shrl	%ebp			C shift bit 0 into carry
 	popl	%ebp		FRAME_popl()
 
 	ALIGN(16)
