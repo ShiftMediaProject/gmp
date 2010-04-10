@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   This still needs work, as suggested by some FIXME comments.
   1. Don't depend on superfluous mantissa digits.
   2. Allocate temp space more cleverly.
-  3. Use mpn_tdiv_qr instead of mpn_lshift+mpn_divrem.
+  3. Use mpn_div_q instead of mpn_lshift+mpn_divrem.
 */
 
 #define _GNU_SOURCE    /* for DECIMAL_POINT in langinfo.h */
@@ -323,8 +323,10 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     if (divflag)
       {
 #if 0
-	/* FIXME: Should use mpn_tdiv here.  */
-	mpn_tdiv_qr (qp, mp, 0L, mp, mn, rp, rn);
+	/* FIXME: Should use mpn_div_q here.  */
+	...
+	mpn_div_q (tp, mp, mn, rp, rn, scratch);
+	...
 #else
 	mp_ptr qp;
 	mp_limb_t qlimb;
