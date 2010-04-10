@@ -6,6 +6,7 @@
 
 	* mpn/x86/aors_n.asm: Use operand-less shift-by-1 insn form.
 	* mpn/x86/pentium/aors_n.asm: Likewise.
+	* mpn/x86_64/invert_limb.asm: Likewise.
 
 	* mpn/x86_64/pentium4/aors_n.asm: Let non-nc code fall into nc code.
 

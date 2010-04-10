@@ -74,16 +74,16 @@ ifdef(`DARWIN',`
 
 	C v3 = (v2 << 31) + (v2 * (2^96 - v2 * d63 + ((v2 >> 1) & mask)) >> 65
 	mov	%rdi, %rsi		C			 0	 0	 0
-	shr	$1, %rsi		C d/2
+	shr	%rsi			C d/2
 	sbb	%rax, %rax		C -d0 = -(d mod 2)
 	sub	%rax, %rsi		C d63 = ceil(d/2)
 	imul	%rcx, %rsi		C v2 * d63
 	and	%rcx, %rax		C v2 * d0
-	shr	$1, %rax		C (v2>>1) * d0
+	shr	%rax			C (v2>>1) * d0
 	sub	%rsi, %rax		C (v2>>1) * d0 - v2 * d63
 	mul	%rcx
 	sal	$31, %rcx
-	shr	$1, %rdx
+	shr	%rdx
 	add	%rdx, %rcx		C	%rcx = v3
 
 	mov	%rdi, %rax
