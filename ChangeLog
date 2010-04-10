@@ -1,3 +1,7 @@
+2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/pentium4/rsh1aors_n.asm: New file.
+
 2010-03-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/add_n_sub_n.asm: New file.
