@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    to save one limb in the division.
 
    If r==u but the size is enough bigger than prec that there won't be an
-   overlap between quotient and dividend in mpn_tdiv_qr, then we can avoid
+   overlap between quotient and dividend in mpn_div_q, then we can avoid
    copying up,usize.  This would only arise from a prec reduced with
    mpf_set_prec_raw and will be pretty unusual, but might be worthwhile if
    it could be worked into the copy_u decision cleanly.  */
