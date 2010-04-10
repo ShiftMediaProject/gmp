@@ -1,6 +1,8 @@
 dnl  IA-64 mpn_mul_1, mpn_mul_1c -- Multiply a limb vector with a limb and
 dnl  store the result in a second limb vector.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2006, 2007 Free Software
 dnl  Foundation, Inc.
 

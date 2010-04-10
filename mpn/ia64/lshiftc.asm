@@ -1,5 +1,7 @@
 dnl  IA-64 mpn_lshiftc.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2010 Free Software
 dnl  Foundation, Inc.
 

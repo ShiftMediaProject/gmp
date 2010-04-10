@@ -1,5 +1,7 @@
 dnl  Itanium-2 mpn_gcd_1 -- mpn by 1 gcd.
 
+dnl  Contributed to the GNU project by Kevin Ryde.
+
 dnl  Copyright 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

@@ -1,4 +1,6 @@
-dnl  IA-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
+dnl  IA-64 mpn_mod_34lsub1
+
+dnl  Contributed to the GNU project by Torbjorn Granlund.
 
 dnl  Copyright 2003, 2004, 2005, 2010 Free Software Foundation, Inc.
 
@@ -34,10 +36,10 @@ define(`a0',`r17') define(`a1',`r18') define(`a2',`r19')
 define(`c0',`r20') define(`c1',`r21') define(`c2',`r22')
 
 C This is a fairly simple-minded implementation.  One could approach 0.67 c/l
-C with a more sophisticaled approach.  If we're really crazy, we could
-C super-unroll, storing carries just in most predicate registers, then copy
-C them to a general register, and population count them from there.  That'd
-C bring us close to 3 insn/limb, for close to 0.5 c/l.
+C with a more sophisticated implementation.  If we're really crazy, we could
+C super-unroll, storing carries just in predicate registers, then copy them to
+C a general register, and population count them from there.  That'd bring us
+C close to 3 insn/limb, for nearly 0.5 c/l.
 
 C Computing n/3 needs 16 cycles, which is a lot of startup overhead.
 C We therefore use a plain while-style loop:

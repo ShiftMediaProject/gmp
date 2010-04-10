@@ -1,6 +1,8 @@
 dnl  IA-64 mpn_mul_2 -- Multiply a n-limb number with a 2-limb number and store
 dnl  store the result to a (n+1)-limb number.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

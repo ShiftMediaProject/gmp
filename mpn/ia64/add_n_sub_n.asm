@@ -1,5 +1,7 @@
 dnl  IA-64 mpn_add_n_sub_n -- mpn parallel addition and subtraction.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
