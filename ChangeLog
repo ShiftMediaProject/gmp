@@ -1,5 +1,7 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/pentium4/aors_n.asm: Let non-nc code fall into nc code.
+
 	* mpn/x86_64/pentium4/rsh1aors_n.asm: New file.
 
 2010-03-25  Torbjorn Granlund  <tege@gmplib.org>

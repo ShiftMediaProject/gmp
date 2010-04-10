@@ -1,6 +1,8 @@
 dnl  x86-64 mpn_add_n/mpn_sub_n optimized for Pentium 4.
 
-dnl  Copyright 2007, 2008 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
+dnl  Copyright 2007, 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -51,15 +53,12 @@ MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 ASM_START()
 
 	TEXT
-	ALIGN(16)
-
-PROLOGUE(func_nc)
-	jmp	L(ent)
-EPILOGUE()
 
 PROLOGUE(func)
 	xor	%r8, %r8
-L(ent):	push	%rbx
+EPILOGUE()
+PROLOGUE(func_nc)
+	push	%rbx
 	push	%r12
 
 	mov	(vp), %r9
