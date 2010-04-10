@@ -75,7 +75,7 @@ PROLOGUE(mpn_divrem_2)
 	setb	%dl
 	cmp	%r10, %r8
 	setbe	%al
-	or	%al, %dl
+	orb	%al, %dl		C "orb" form to placate Sun tools
 	jne	L(23)
 L(2):
 	lea	-3(%rcx,%r13), %rbx	C un + fn - 3
@@ -230,7 +230,7 @@ ifdef(`NEW',`
 L(fix):	seta	%dl
 	cmp	%r8, %r14
 	setae	%al
-	orb	%dl, %al
+	orb	%dl, %al		C "orb" form to placate Sun tools
 	je	L(bck)
 	inc	%rdi
 	sub	%r8, %r14
