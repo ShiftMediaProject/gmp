@@ -1,7 +1,9 @@
 dnl  AMD64 mpn_addlsh1_n, mpn_sublsh1_n -- rp[] = up[] +- (vp[] << 1),
 dnl  optimized for Pentium 4.
 
-dnl  Copyright 2008 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
+dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,12 +24,12 @@ include(`../config.m4')
 
 C	     cycles/limb
 C AMD K8,K9	 3.8
-C AMD K10	 4.8
+C AMD K10	 3.8
 C Intel P4	 5.8
-C Intel core2	 ?
-C Intel corei	 ?
+C Intel core2	 4.75
+C Intel corei	 4.75
 C Intel atom	 ?
-C VIA nano	 ?
+C VIA nano	 4.75
 
 
 C INPUT PARAMETERS
