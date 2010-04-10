@@ -1,5 +1,8 @@
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/aors_n.asm: Complete rewrite.
+	* mpn/ia64/aorslsh1_n.asm: Likewise.
+
 	* mpn/ia64/add_n_sub_n.asm: Misc cleanups.  Add slotting comments.
 
 	* mpn/ia64/lshiftc.asm: New file.
