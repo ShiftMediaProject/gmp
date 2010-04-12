@@ -1,6 +1,8 @@
 #define mpn_toomMN_mul mpn_toom8h_mul
 #define mpn_toomMN_mul_itch mpn_toom8h_mul_itch
 
+#define SIZE_LOG 11
+
 /* Smaller sizes not supported; may lead to recursive calls to
    toom{22,33,44,6h}_mul with invalid input size. */
 #define MIN_AN MUL_TOOM8H_THRESHOLD

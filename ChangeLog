@@ -1,3 +1,8 @@
+2010-04-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-toom6h.c (SIZE_LOG): Define.
+	* tests/mpn/t-toom8h.c (SIZE_LOG): Likewise.
+
 2010-04-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/lorrshift.asm: Rewrite feed-in and wind-down code.
