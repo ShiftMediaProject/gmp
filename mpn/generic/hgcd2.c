@@ -439,31 +439,3 @@ mpn_hgcd_mul_matrix1_vector (const struct hgcd_matrix1 *M,
   n += (ah | bh) > 0;
   return n;
 }
-
-/* Sets (r;b) = M^{-1}(a;b), with M^{-1} = (u11, -u01; -u10, u00) from
-   the left. Uses three buffers, to avoid a copy. */
-mp_size_t
-mpn_hgcd_mul_matrix1_inverse_vector (const struct hgcd_matrix1 *M,
-				     mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n)
-{
-  mp_limb_t h0, h1;
-
-  /* Compute (r;b) <-- (u11 a - u01 b; -u10 a + u00 b) as
-
-     r  = u11 * a
-     r -= u01 * b
-     b *= u00
-     b -= u10 * a
-  */
-
-  h0 =    mpn_mul_1 (rp, ap, n, M->u[1][1]);
-  h1 = mpn_submul_1 (rp, bp, n, M->u[0][1]);
-  ASSERT (h0 == h1);
-
-  h0 =    mpn_mul_1 (bp, bp, n, M->u[0][0]);
-  h1 = mpn_submul_1 (bp, ap, n, M->u[1][0]);
-  ASSERT (h0 == h1);
-
-  n -= (rp[n-1] | bp[n-1]) == 0;
-  return n;
-}
