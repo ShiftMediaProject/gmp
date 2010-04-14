@@ -829,8 +829,8 @@ static const unsigned char primegap[] =
 #define NUMBER_OF_PRIMES 167
 
 /* Similar to mpz_nextprime, finds the first (odd) prime of the form n
-   + k * step, with k >= 1. If n and step has a cmmon factor, it never
-   temrinates... */
+   + k * step, with k >= 1. If n and step has a common factor, it never
+   terminates... */
 static void
 mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 {
