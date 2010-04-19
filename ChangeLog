@@ -1,5 +1,8 @@
 2010-04-19  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpz/jacobi.c (mpz_jacobi): New implementation using
+	mpn_jacobi_lehmer. Currently #if:ed out.
+
 	* mpn/generic/jacbase.c (mpn_jacobi_base)
 	[JACOBI_BASE_METHOD < 4]: Support inputs with a >= b.
 
