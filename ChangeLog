@@ -1,3 +1,19 @@
+2010-04-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/jacbase.c (mpn_jacobi_base)
+	[JACOBI_BASE_METHOD < 4]: Support inputs with a >= b.
+
+	* gmp-impl.h (mpn_jacobi_lehmer): Added prototype.
+	(jacobi_table): Declare.
+	(mpn_jacobi_init): New inline function.
+	(mpn_jacobi_finish): Likewise.
+	(mpn_jacobi_update): Likewise.
+
+	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_lehmer): New file, new
+	function.
+
+	* configure.in (gmp_mpn_functions): Added jacobi_lehmer.
+
 2010-04-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Added
