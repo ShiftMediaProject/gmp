@@ -39,8 +39,11 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 
 
-/* This code does triple duty as mpz_jacobi, mpz_legendre and mpz_kronecker.
-
+/* This code does triple duty as mpz_jacobi, mpz_legendre and
+   mpz_kronecker. For ABI compatibility, the link symbol is
+   __gmpz_jacobi, not __gmpz_kronecker, even though the latter would
+   be more logical.
+   
    mpz_jacobi could assume b is odd, but the improvements from that seem
    small compared to other operations, and anything significant should be
    checked at run-time since we'd like odd b to go fast in mpz_kronecker
@@ -51,30 +54,143 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    multiple of b), but the checking for that takes little time compared to
    other operations.
 
-   The main loop is just a simple binary GCD with the jacobi symbol result
-   tracked during the reduction.
-
-   The special cases for a or b fitting in one limb let mod_1 or modexact_1
-   get used, without any copying, and end up just as efficient as the mixed
-   precision mpz_kronecker_ui etc.
-
-   When tdiv_qr is called it's not necessary to make "a" odd or make a
-   working copy of it, but tdiv_qr is going to be pretty slow so it's not
-   worth bothering trying to save anything for that case.
+   FIXME: The old code had special cases for a or b fitting in one
+   limb, let mod_1 or modexact_1 get used, without any copying, and end
+   up just as efficient as the mixed precision mpz_kronecker_ui etc.
 
    Enhancements:
 
    mpn_bdiv_qr should be used instead of mpn_tdiv_qr.
 
-   Some sort of multi-step algorithm should be used.  The current subtract
-   and shift for every bit is very inefficient.  Lehmer (per current gcdext)
-   would need some low bits included in its calculation to apply the sign
-   change for reciprocity.  Binary Lehmer keeps low bits to strip twos
-   anyway, so might be better suited.  Maybe the accelerated GCD style k-ary
-   reduction would work, if sign changes due to the extra factors it
-   introduces can be accounted for (or maybe they can be ignored).  */
+   Current code uses the binary algorithm for the smallest sizes, then
+   Lehmer.  It could stright-forwardly be made subquadratic by using
+   hgcd in the same way as mpn_gcd.  */
 
+#if 0
+int
+mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
+{
+  mp_srcptr  asrcp, bsrcp;
+  mp_size_t  asize, bsize;
+  mp_limb_t  alow, blow;
+  mp_ptr     ap, bp;
+  int shift;
+  unsigned bits;
+  unsigned a3;
+  int res;
+  TMP_DECL;
 
+  asize = SIZ(a);
+  asrcp = PTR(a);
+  alow = asrcp[0];
+
+  bsize = SIZ(b);
+  bsrcp = PTR(b);
+  blow = bsrcp[0];
+
+  /* The MPN jacobi function needs positive a and b, and b odd. So we
+   * need to handle the cases of a or b zero, then signs, and then the
+   * case of even b. */
+  if (bsize == 0)
+    /* (a/0) = [ a = 1 or a = -1 ] */
+    return ABS (asize) == 1 && alow == 1;
+
+  if ( (((alow | blow) & 1) == 0))
+    /* Common factor of 2 ==> (a/b) = 0 */
+    return 0;
+  
+  if (asize == 0)
+    /* (0/b) = [ b = 1 or b = - 1 ] */
+    return ABS (bsize) == 1 && blow == 1;
+
+  /* (a/-1) = -1 if a < 0, +1 if a >= 0 */  
+  bits = (asize < 0) && (bsize < 0);
+
+  bsize = ABS (bsize);
+
+  /* (a/2) = -1 iff a = 3 or a = -3 mod 8 */
+  a3 = (alow >> 1) ^ (alow >> 2);
+  
+  while (blow == 0)
+    {
+      if (GMP_NUMB_BITS & 1)
+	bits ^= a3;
+      bsize--;
+      blow = *++bsrcp;
+    }
+  
+  TMP_MARK;
+  bp = TMP_ALLOC_LIMBS (bsize);
+  if (blow & 1)
+    MPN_COPY (bp, bsrcp, bsize);
+  else
+    {
+      count_trailing_zeros (shift, blow);
+
+      ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, shift));
+      bsize -= (bp[bsize-1] == 0);
+      blow = bp[0];
+
+      bits ^= shift & a3;
+    }
+
+  if (asize < 0)
+    /* (-1/b) = -1 iff b = 3 mod 4 */
+    bits ^= (blow >> 1) & 1;
+
+  asize = ABS(asize);
+
+  /* FIXME: Take out powers of two in a? */
+  
+  bits = mpn_jacobi_init (alow, blow, bits & 1);
+
+  if (asize > bsize)
+    {
+      mp_size_t itch = bsize;
+      mp_ptr scratch;
+
+      if (asize >= 2*bsize)
+	itch = asize - bsize + 1;
+
+      scratch = TMP_ALLOC_LIMBS (itch);
+      ap = TMP_ALLOC_LIMBS (bsize);
+      
+      mpn_tdiv_qr (scratch, ap, 0, asrcp, asize, bp, bsize);
+      bits = mpn_jacobi_update (bits, 1, scratch[0] & 3);
+      res = mpn_jacobi_lehmer (ap, bp, bsize, bits, scratch);
+    }
+  else if (asize < bsize)
+    {      
+      mp_size_t itch = 2*asize;
+      mp_ptr scratch;
+
+      if (bsize >= 3*asize)
+	itch = bsize - asize + 1;
+
+      scratch = TMP_ALLOC_LIMBS (itch);
+
+      mpn_tdiv_qr (scratch, bp, 0, bp, bsize, asrcp, asize);
+      bits = mpn_jacobi_update (bits, 0, scratch[0] & 3);
+
+      ap = scratch + asize;
+      MPN_COPY (ap, asrcp, asize);
+      res = mpn_jacobi_lehmer (ap, bp, asize, bits, scratch);
+    }
+  else
+    {
+      mp_size_t itch = 2*asize;
+      mp_ptr scratch;
+
+      scratch = TMP_ALLOC_LIMBS (itch);
+      ap = scratch + asize;
+
+      MPN_COPY (ap, asrcp, asize);
+      res = mpn_jacobi_lehmer (ap, bp, asize, bits, scratch);
+    }
+  TMP_FREE;
+  return res;
+}
+#else
 int
 mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
@@ -307,3 +423,4 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   TMP_FREE;
   return 0;
 }
+#endif

@@ -110,7 +110,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if JACOBI_BASE_METHOD < 4
 /* Calculate the value of the Jacobi symbol (a/b) of two mp_limb_t's, but
-   with a restricted range of inputs accepted, namely b>1, b odd, and a<=b.
+   with a restricted range of inputs accepted, namely b>1, b odd.
 
    The initial result_bit1 is taken as a parameter for the convenience of
    mpz_kronecker_ui() et al.  The sign changes both here and in those
@@ -122,17 +122,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    Duplicating the loop body to avoid the MP_LIMB_T_SWAP(a,b) would be
    possible, but a couple of tests suggest it's not a significant speedup,
-   and may even be a slowdown, so what's here is good enough for now.
-
-   Future: The code doesn't demand a<=b actually, so maybe this could be
-   relaxed.  All the places this is used currently call with a<=b though.  */
+   and may even be a slowdown, so what's here is good enough for now. */
 
 int
 mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
 {
   ASSERT (b & 1);  /* b odd */
   ASSERT (b != 1);
-  ASSERT (a <= b);
 
   if (a == 0)
     return 0;
@@ -141,11 +137,15 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
   if (a == 1)
     goto done;
 
+  if (a >= b)
+    goto a_gt_b;
+      
   for (;;)
     {
       result_bit1 ^= JACOBI_RECIP_UU_BIT1 (a, b);
       MP_LIMB_T_SWAP (a, b);
 
+    a_gt_b:
       do
 	{
 	  /* working on (a/b), a,b odd, a>=b */

@@ -2515,7 +2515,7 @@ gmp_mpn_functions="$extra_functions					   \
   perfsqr perfpow							   \
   gcd_1 gcd gcdext_1 gcdext gcd_lehmer gcd_subdiv_step			   \
   gcdext_lehmer gcdext_subdiv_step					   \
-  div_q tdiv_qr jacbase get_d						   \
+  div_q tdiv_qr jacbase jacobi_lehmer get_d				   \
   matrix22_mul matrix22_mul1_inverse_vector				   \
   hgcd2 hgcd mullo_n mullo_basecase					   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \

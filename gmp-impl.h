@@ -876,6 +876,9 @@ __GMP_DECLSPEC mp_size_t mpn_fib2_ui __GMP_PROTO ((mp_ptr, mp_ptr, unsigned long
 #define mpn_jacobi_base __MPN(jacobi_base)
 __GMP_DECLSPEC int mpn_jacobi_base __GMP_PROTO ((mp_limb_t, mp_limb_t, int)) ATTRIBUTE_CONST;
 
+#define mpn_jacobi_lehmer __MPN(jacobi_lehmer)
+__GMP_DECLSPEC int mpn_jacobi_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, unsigned, mp_ptr));
+
 #define mpn_mod_1c __MPN(mod_1c)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
 
@@ -3570,6 +3573,7 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
 #endif
 
 
+/* FIXME: Macros for old jacobi code, review what's still needed. */
 
 /* BIT1 means a result value in bit 1 (second least significant bit), with a
    zero bit representing +1 and a one bit representing -1.  Bits other than
@@ -3714,6 +3718,70 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
         (a_rem) = mpn_modexact_1_odd (__a_ptr, __a_size, __b);             \
       }                                                                    \
   } while (0)
+
+/* For new jacobi code. */
+#define jacobi_table __gmp_jacobi_table
+__GMP_DECLSPEC extern const unsigned char jacobi_table[208];
+
+/* Bit layout for the initial state. b must be odd.
+
+      3  2  1 0
+   +--+--+--+--+
+   |a1|a0|b1| s|
+   +--+--+--+--+
+
+ */
+static inline unsigned
+mpn_jacobi_init (unsigned a, unsigned b, unsigned s)
+{
+  ASSERT (b & 1);
+  ASSERT (s <= 1);
+  return ((a & 3) << 2) + (b & 2) + s;
+}
+
+static inline int
+mpn_jacobi_finish (unsigned bits)
+{
+  /* (a, b) = (1,0) or (0,1) */
+  ASSERT ( (bits & 14) == 0);
+
+  return 1-2*(bits & 1);
+}
+
+static inline unsigned
+mpn_jacobi_update (unsigned bits, unsigned denominator, unsigned q)
+{
+  /* FIXME: Could halve table size by not including the e bit in the
+   * index, and instead xor when updating. Then the lookup would be
+   * like
+   *
+   *   bits ^= table[((bits & 30) << 2) + (denominator << 2) + q];
+   */
+
+  ASSERT (bits < 26);
+  ASSERT (denominator < 2);
+  ASSERT (q < 4);
+
+  /* For almost all calls, denominator is constant and quite often q
+     is constant too. So use addition rather than or, so the compiler
+     can put the constant part can into the offset of an indexed
+     addressing instruction.
+
+     With constant denominator, the below table lookup is compiled to
+
+       C Constant q = 1, constant denominator = 1
+       movzbl table+5(%eax,8), %eax       
+
+     or
+
+       C q in %edx, constant denominator = 1
+       movzbl table+4(%edx,%eax,8), %eax
+
+     One could maintain the state preshifted 3 bits, to save a shift
+     here, but at least on x86, that's no real saving.
+  */
+  return bits = jacobi_table[(bits << 3) + (denominator << 2) + q];  
+}
 
 /* Matrix multiplication */
 #define   mpn_matrix22_mul __MPN(matrix22_mul)
