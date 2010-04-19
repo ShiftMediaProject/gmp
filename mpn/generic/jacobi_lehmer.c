@@ -26,7 +26,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* FIXME: Bad name for this symbol. */
 #ifndef JACOBI_2_METHOD
 #define JACOBI_2_METHOD 2
 #endif
