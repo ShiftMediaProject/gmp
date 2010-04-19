@@ -1,3 +1,22 @@
+2010-04-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.in (gmp_mpn_functions): Added
+	matrix22_mul1_inverse_vector.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Added
+	matrix22_mul1_inverse_vector.c.
+
+	* gmp-impl.h (mpn_matrix22_mul1_inverse_vector): Updated for
+	rename of mpn_matrix22_mul1_inverse_vector.
+	* mpn/generic/gcd_lehmer.c (mpn_gcd_lehmer_n): Likewise.
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Likewise.
+	* mpn/generic/hgcd.c (hgcd_step): Likewise.
+
+	* mpn/generic/matrix22_mul1_inverse_vector.c
+	(mpn_matrix22_mul1_inverse_vector): New file, function moved and
+	renamed...
+	* mpn/generic/hgcd2.c (mpn_hgcd_mul_matrix1_inverse_vector):
+	...from here.
+
 2010-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-toom6h.c (SIZE_LOG): Define.

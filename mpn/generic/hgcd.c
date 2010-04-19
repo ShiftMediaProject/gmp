@@ -214,7 +214,7 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
       /* Can't swap inputs, so we need to copy. */
       MPN_COPY (tp, ap, n);
       /* Multiply M1^{-1} (a;b) */
-      return mpn_hgcd_mul_matrix1_inverse_vector (&M1, ap, tp, bp, n);
+      return mpn_matrix22_mul1_inverse_vector (&M1, ap, tp, bp, n);
     }
 
  subtract:

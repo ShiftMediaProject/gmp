@@ -96,7 +96,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       /* Try an mpn_nhgcd2 step */
       if (mpn_hgcd2 (ah, al, bh, bl, &M))
 	{
-	  n = mpn_hgcd_mul_matrix1_inverse_vector (&M, tp, ap, bp, n);
+	  n = mpn_matrix22_mul1_inverse_vector (&M, tp, ap, bp, n);
 	  MP_PTR_SWAP (ap, tp);
 	  un = mpn_hgcd_mul_matrix1_vector(&M, u2, u0, u1, un);
 	  MP_PTR_SWAP (u0, u2);
