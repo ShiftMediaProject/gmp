@@ -2,6 +2,10 @@
 
 	* mpn/powerpc64/mode64/divrem_1.asm: Swap multiply insns to make them
 	consecutive, for the benefit of POWER6.
+	* mpn/powerpc64/mode64/dive_1.asm: Likewise.
+	* mpn/powerpc64/mode64/divrem_2.asm: Likewise.
+	* mpn/powerpc64/mode64/mul_1.asm: Likewise.
+	* mpn/powerpc64/mode64/aorsmul_1.asm: Likewise.
 
 	* mpn/powerpc64/mode64/aorslshC_n.asm: Swap ldx operands as a temporary
 	workaround for POWER6 pipeline glitch.
