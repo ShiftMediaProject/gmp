@@ -22,9 +22,10 @@ include(`../config.m4')
 
 C		mpn_addmul_1	mpn_submul_1
 C		cycles/limb	cycles/limb
-C POWER3/PPC630:    6-18	    6-18
-C POWER4/PPC970:    8		    8.3
-C POWER5:           8		    ?
+C POWER3/PPC630   6-18		   6-18
+C POWER4/PPC970	   8?		    8.3?  not updated for last file revision
+C POWER5	   8		    8.75
+C POWER6	  16		   16.5
 
 C TODO
 C  * Try to reduce the number of needed live registers
@@ -118,10 +119,10 @@ L(gt1):	ld	r9, 0(up)
 	ld	r27, 8(up)
 	mulld	r0, r9, r6
 	mulhdu	r5, r9, r6
-	ld	r9, 16(up)
-	ld	r28, 0(rp)
 	mulld	r7, r27, r6
 	mulhdu	r8, r27, r6
+	ld	r9, 16(up)
+	ld	r28, 0(rp)
 	ld	r29, 8(rp)
 	ld	r30, 16(rp)
 	mulld	r11, r9, r6
@@ -151,20 +152,20 @@ L(b10):	addic	r0, r0, 0
 	ALIGN(16)
 L(top):	mulld	r0, r9, r6
 	mulhdu	r5, r9, r6	C 9
-	ld	r9, 0(up)
-	ld	r28, 0(rp)
 	mulld	r7, r27, r6
 	mulhdu	r8, r27, r6	C 27
+	ld	r9, 0(up)
+	ld	r28, 0(rp)
 	ld	r27, 8(up)
 	ld	r29, 8(rp)
 	adde	r0, r0, r12	C 0 12
 	adde	r7, r7, r5	C 5 7
 	mulld	r5, r9, r6
 	mulhdu	r10, r9, r6	C 9
-	ld	r9, 16(up)
-	ld	r30, 16(rp)
 	mulld	r11, r27, r6
 	mulhdu	r12, r27, r6	C 27
+	ld	r9, 16(up)
+	ld	r30, 16(rp)
 	ld	r27, 24(up)
 	ld	r31, 24(rp)
 	adde	r5, r5, r8	C 8 5
@@ -185,12 +186,10 @@ L(bot):	INVCY(r11)
 
 L(end):	mulld	r0, r9, r6
 	mulhdu	r5, r9, r6
-	ld	r28, 0(rp)
-	nop
 	mulld	r7, r27, r6
 	mulhdu	r8, r27, r6
+	ld	r28, 0(rp)
 	ld	r29, 8(rp)
-	nop
 	adde	r0, r0, r12
 	adde	r7, r7, r5
 	addze	r8, r8
