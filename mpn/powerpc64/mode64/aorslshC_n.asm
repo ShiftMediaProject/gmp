@@ -23,9 +23,13 @@ C		cycles/limb
 C POWER3/PPC630:     1.83	(1.5 c/l should be possible)
 C POWER4/PPC970:     3		(2.0 c/l should be possible)
 C POWER5:	     3
+C POWER6:	     3.5-47
 
 C STATUS
 C  * Try combining upx+up, and vpx+vp.
+C  * The worst case 47 c/l for POWER6 happens if the 3rd operand for ldx is
+C    greater than the 2nd operand.  Yes, this addition is non-commutative wrt
+C    performance.
 
 C INPUT PARAMETERS
 define(`rp', `r3')
@@ -127,21 +131,21 @@ L(b0):	ld	v0, 0(vp)
 	addi	vpx, vpx, 24
 
 	ALIGN(16)
-L(top):	ldx	u0, up, rp
-	ldx	v0, vp, rp
+L(top):	ldx	u0, rp, up
+	ldx	v0, rp, vp
 	rldimi	s1, v1, LSH, 0
 	stdu	s0, 16(rp)
 	srdi	s0, v1, RSH
 	ADDSUBE	s1, s1, u0	C add limbs with cy, set cy
-L(mid):	ldx	u0, upx, rpx
-	ldx	v1, vpx, rpx
+L(mid):	ldx	u0, rpx, upx
+	ldx	v1, rpx, vpx
 	rldimi	s0, v0, LSH, 0
 	stdu	s1, 16(rpx)
 	srdi	s1, v0, RSH
 	ADDSUBE	s0, s0, u0	C add limbs with cy, set cy
 	bdnz	L(top)		C decrement CTR and loop back
 
-	ldx	u0, up, rp
+	ldx	u0, rp, up
 	rldimi	s1, v1, LSH, 0
 	std	s0, 16(rp)
 	srdi	s0, v1, RSH

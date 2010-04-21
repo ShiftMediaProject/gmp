@@ -1,3 +1,8 @@
+2010-04-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorslshC_n.asm: Swap ldx operands as a temporary
+	workaround for POWER6 pipeline glitch.
+
 2010-04-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): New implementation using
