@@ -1,6 +1,7 @@
 dnl  PowerPC-64 mpn_divrem_1 -- Divide an mpn number by an unnormalized limb.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,6 +25,7 @@ C			norm	unorm	frac
 C POWER3/PPC630		16-34	16-34	~11
 C POWER4/PPC970		 29		 19
 C POWER5		 29	 29	~20
+C POWER6		 50	 59	~42
 
 C INPUT PARAMETERS
 C qp  = r3
@@ -114,8 +116,8 @@ L(uloop):
 	ldx	r8, r26, r6
 	mulld	r0, r31, r3
 	mulhdu	r10, r31, r3
-	addi	r6, r6, -8
 	srd	r9, r8, r5
+	addi	r6, r6, -8
 	or	r9, r7, r9
 	addc	r0, r0, r9
 	adde	r10, r10, r11
@@ -229,8 +231,8 @@ L(nloop):
 	addi	r11, r31, 1
 	ldx	r8, r26, r6
 	mulld	r0, r31, r3
-	addi	r6, r6, -8
 	mulhdu	r10, r31, r3
+	addi	r6, r6, -8
 	addc	r7, r0, r8
 	adde	r10, r10, r11
 	mulld	r31, r10, r30

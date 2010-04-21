@@ -1,5 +1,8 @@
 2010-04-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/mode64/divrem_1.asm: Swap multiply insns to make them
+	consecutive, for the benefit of POWER6.
+
 	* mpn/powerpc64/mode64/aorslshC_n.asm: Swap ldx operands as a temporary
 	workaround for POWER6 pipeline glitch.
 
