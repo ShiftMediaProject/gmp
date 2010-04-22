@@ -1,5 +1,8 @@
 2010-04-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/mode64/bdiv_dbm1c.asm: Swap multiply insns to make them
+	consecutive, for the benefit of POWER6.
+
 	* mpn/powerpc64/mode64/p6/gmp-mparam.h: New file.
 
 2010-04-21  Torbjorn Granlund  <tege@gmplib.org>
