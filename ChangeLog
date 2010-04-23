@@ -1,3 +1,14 @@
+2010-04-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (MPN_GCD_LEHMER_N_ITCH): Deleted.
+	(mpn_gcd_lehmer_n): Deleted declaration.
+
+	* mpn/generic/gcd.c (gcd_2): Moved from gcd_lehmer.c.
+	(mpn_gcd): Inlined the code from mpn_gcd_lehmer_n. Also use
+	MPN_GCD_SUBDIV_STEP_ITCH rather than MPN_GCD_LEHMER_N_ITCH.
+
+	* mpn/generic/gcd_lehmer.c: Deleted file.
+
 2010-04-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): New implementation using

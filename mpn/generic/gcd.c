@@ -1,7 +1,7 @@
 /* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003,
-2004, 2005, 2008 Free Software Foundation, Inc.
+2004, 2005, 2008, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -51,6 +51,61 @@ mp_size_t p_table[P_TABLE_SIZE];
 #define CHOOSE_P(n) (2*(n) / 3)
 #endif
 
+#if GMP_NAIL_BITS > 0
+/* Nail supports should be easy, replacing the sub_ddmmss with nails
+ * logic. */
+#error Nails not supported.
+#endif
+
+/* Use binary algorithm to compute G <-- GCD (U, V) for usize, vsize == 2.
+   Both U and V must be odd. */
+static inline mp_size_t
+gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
+{
+  mp_limb_t u0, u1, v0, v1;
+  mp_size_t gn;
+
+  u0 = up[0];
+  u1 = up[1];
+  v0 = vp[0];
+  v1 = vp[1];
+
+  ASSERT (u0 & 1);
+  ASSERT (v0 & 1);
+
+  /* Check for u0 != v0 needed to ensure that argument to
+   * count_trailing_zeros is non-zero. */
+  while (u1 != v1 && u0 != v0)
+    {
+      unsigned long int r;
+      if (u1 > v1)
+	{
+	  sub_ddmmss (u1, u0, u1, u0, v1, v0);
+	  count_trailing_zeros (r, u0);
+	  u0 = ((u1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (u0 >> r);
+	  u1 >>= r;
+	}
+      else  /* u1 < v1.  */
+	{
+	  sub_ddmmss (v1, v0, v1, v0, u1, u0);
+	  count_trailing_zeros (r, v0);
+	  v0 = ((v1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (v0 >> r);
+	  v1 >>= r;
+	}
+    }
+
+  gp[0] = u0, gp[1] = u1, gn = 1 + (u1 != 0);
+
+  /* If U == V == GCD, done.  Otherwise, compute GCD (V, |U - V|).  */
+  if (u1 == v1 && u0 == v0)
+    return gn;
+
+  v0 = (u0 == v0) ? ((u1 > v1) ? u1-v1 : v1-u1) : ((u0 > v0) ? u0-v0 : v0-u0);
+  gp[0] = mpn_gcd_1 (gp, gn, v0);
+
+  return 1;
+}
+
 mp_size_t
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 {
@@ -64,7 +119,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 
   /* FIXME: Check for small sizes first, before setting up temporary
      storage etc. */
-  talloc = MPN_GCD_LEHMER_N_ITCH(n);
+  talloc = MPN_GCD_SUBDIV_STEP_ITCH(n);
 
   /* For initial division */
   scratch = usize - n + 1;
@@ -107,8 +162,8 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       if (mpn_zero_p (up, n))
 	{
 	  MPN_COPY (gp, vp, n);
-	  TMP_FREE;
-	  return n;
+	  gn = n;
+	  goto done;
 	}
     }
 
@@ -136,14 +191,86 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	  /* Temporary storage n */
 	  n = mpn_gcd_subdiv_step (gp, &gn, up, vp, n, tp);
 	  if (n == 0)
-	    {
-	      TMP_FREE;
-	      return gn;
-	    }
+	    goto done;
 	}
     }
 
-  gn = mpn_gcd_lehmer_n (gp, up, vp, n, tp);
+  while (n > 2)
+    {
+      struct hgcd_matrix1 M;
+      mp_limb_t uh, ul, vh, vl;
+      mp_limb_t mask;
+
+      mask = up[n-1] | vp[n-1];
+      ASSERT (mask > 0);
+
+      if (mask & GMP_NUMB_HIGHBIT)
+	{
+	  uh = up[n-1]; ul = up[n-2];
+	  vh = vp[n-1]; vl = vp[n-2];
+	}
+      else
+	{
+	  int shift;
+
+	  count_leading_zeros (shift, mask);
+	  uh = MPN_EXTRACT_NUMB (shift, up[n-1], up[n-2]);
+	  ul = MPN_EXTRACT_NUMB (shift, up[n-2], up[n-3]);
+	  vh = MPN_EXTRACT_NUMB (shift, vp[n-1], vp[n-2]);
+	  vl = MPN_EXTRACT_NUMB (shift, vp[n-2], vp[n-3]);
+	}
+
+      /* Try an mpn_nhgcd2 step */
+      if (mpn_hgcd2 (uh, ul, vh, vl, &M))
+	{
+	  n = mpn_matrix22_mul1_inverse_vector (&M, tp, up, vp, n);
+	  MP_PTR_SWAP (up, tp);
+	}
+      else
+	{
+	  /* mpn_hgcd2 has failed. Then either one of a or b is very
+	     small, or the difference is very small. Perform one
+	     subtraction followed by one division. */
+
+	  /* Temporary storage n */
+	  n = mpn_gcd_subdiv_step (gp, &gn, up, vp, n, tp);
+	  if (n == 0)
+	    goto done;
+	}
+    }
+
+  if (n == 1)
+    {
+      *gp = mpn_gcd_1(up, 1, vp[0]);
+      gn = 1;
+      goto done;
+    }
+
+  /* Due to the calling convention for mpn_gcd, at most one can be
+     even. */
+
+  if (! (up[0] & 1))
+    MP_PTR_SWAP (up, vp);
+
+  ASSERT (up[0] & 1);
+
+  if (vp[0] == 0)
+    {
+      *gp = mpn_gcd_1 (up, 2, vp[1]);
+      gn = 1;
+      goto done;
+    }
+  else if (! (vp[0] & 1))
+    {
+      int r;
+      count_trailing_zeros (r, vp[0]);
+      vp[0] = ((vp[1] << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (vp[0] >> r);
+      vp[1] >>= r;
+    }
+
+  gn = gcd_2(gp, up, vp);
+
+done:
   TMP_FREE;
   return gn;
 }
@@ -216,7 +343,7 @@ main(int argc, char *argv)
   up = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
   vp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
   gp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
-  tp = TMP_ALLOC_LIMBS (MPN_GCD_LEHMER_N_ITCH (P_TABLE_SIZE));
+  tp = TMP_ALLOC_LIMBS (MPN_GCD_SUBDIV_STEP_ITCH (P_TABLE_SIZE));
 
   mpn_random (ap, P_TABLE_SIZE);
   mpn_random (bp, P_TABLE_SIZE);

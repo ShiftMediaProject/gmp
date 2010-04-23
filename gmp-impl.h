@@ -3865,11 +3865,6 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struc
 #define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
 __GMP_DECLSPEC mp_size_t mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
-#define MPN_GCD_LEHMER_N_ITCH(n) (n)
-
-#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
-__GMP_DECLSPEC mp_size_t mpn_gcd_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
-
 #define mpn_gcdext_subdiv_step __MPN(gcdext_subdiv_step)
 __GMP_DECLSPEC mp_size_t mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_ptr));
 
