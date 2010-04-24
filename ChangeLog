@@ -1,3 +1,12 @@
+2010-04-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (MPN_GCD_LEHMER_N_ITCH): Deleted.
+	(mpn_gcd_lehmer_n): Deleted declaration.
+
+	* mpn/generic/gcd.c (gcd_2): Moved from gcd_lehmer.c.
+	(mpn_gcd): Inlined the code from mpn_gcd_lehmer_n. Also use
+	MPN_GCD_SUBDIV_STEP_ITCH rather than MPN_GCD_LEHMER_N_ITCH.
+
 2010-04-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/bdiv_dbm1c.asm: Swap multiply insns to make them
@@ -6,6 +15,8 @@
 	* mpn/powerpc64/mode64/p6/gmp-mparam.h: New file.
 
 2010-04-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/gcd_lehmer.c: Deleted file.
 
 	* mpn/powerpc64/mode64/divrem_1.asm: Swap multiply insns to make them
 	consecutive, for the benefit of POWER6.
