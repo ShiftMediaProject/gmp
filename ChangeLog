@@ -1,5 +1,9 @@
 2010-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/lshift.asm: Rewrite.
+	* mpn/powerpc64/rshift.asm: Likewise.
+	* mpn/powerpc64/mode64/lshiftc.asm: New file.
+
 	* mpn/powerpc64/aix.m4: Align functions to 32-byte boundary.
 	* mpn/powerpc64/darwin.m4: Likewise.
 	* mpn/powerpc64/elf.m4: Likewise.

@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_lshift -- rp[] = up[] << cnt
+dnl  PowerPC-64 mpn_lshiftc -- rp[] = ~up[] << cnt
 
 dnl  Copyright 2003, 2005, 2010 Free Software Foundation, Inc.
 
@@ -23,12 +23,12 @@ C		    cycles/limb
 C POWER3/PPC630		 ?
 C POWER4/PPC970		 ?
 C POWER5		 2.25
-C POWER6		 9.75
+C POWER6		 9.5
 
 C TODO
 C  * Try to reduce the number of needed live registers
 C  * Micro-optimise header code
-C  * Keep in synch with rshift.asm and lshiftc.asm
+C  * Keep in synch with lshift.asm and rshift.asm
 
 C INPUT PARAMETERS
 define(`rp',  `r3')
@@ -42,7 +42,7 @@ define(`u1',`r31')
 define(`retval',`r5')
 
 ASM_START()
-PROLOGUE(mpn_lshift)
+PROLOGUE(mpn_lshiftc)
 	std	r31, -8(r1)
 	std	r30, -16(r1)
 	subfic	tnc, cnt, 64
@@ -71,17 +71,18 @@ L(b11):	sld	r8, r10, cnt
 	addi	rp, rp, 16
 	bdnz	L(gt3)
 
-	or	r11, r8, r9
+	nor	r11, r8, r9
 	sld	r8, u1, cnt
+	nor	r8, r8, r8
 	b	L(cj3)
 
 	ALIGN(16)
 L(gt3):	ld	u0, -8(up)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 	sld	r8, u1, cnt
 	srd	r9, u0, tnc
 	ld	u1, -16(up)
-	or	r10, r12, r7
+	nor	r10, r12, r7
 	b	L(L11)
 
 	ALIGN(32)
@@ -91,18 +92,19 @@ L(b10):	sld	r12, r10, cnt
 	bdnz	L(gt2)
 
 	sld	r8, r11, cnt
-	or	r10, r12, r7
+	nor	r10, r12, r7
+	nor	r8, r8, r8
 	b	L(cj2)
 
 L(gt2):	ld	u0, -24(up)
 	sld	r8, r11, cnt
 	srd	r9, u0, tnc
 	ld	u1, -32(up)
-	or	r10, r12, r7
+	nor	r10, r12, r7
 	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	ld	u0, -40(up)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 	addi	up, up, -16
 	b	L(L10)
 
@@ -114,7 +116,7 @@ L(b00):	ld	u1, -16(up)
 	sld	r8, u1, cnt
 	srd	r9, u0, tnc
 	ld	u1, -32(up)
-	or	r10, r12, r7
+	nor	r10, r12, r7
 	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	addi	rp, rp, 8
@@ -122,12 +124,13 @@ L(b00):	ld	u1, -16(up)
 
 L(gt4):	addi	up, up, -32
 	ld	u0, -8(up)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 	b	L(L00)
 
 	ALIGN(16)
 L(b01):	bdnz	L(gt1)
 	sld	r8, r10, cnt
+	nor	r8, r8, r8
 	std	r8, -8(rp)
 	b	L(ret)
 
@@ -138,12 +141,12 @@ L(gt1):	ld	u0, -16(up)
 	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	ld	u0, -32(up)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 	sld	r8, u1, cnt
 	srd	r9, u0, tnc
 	ld	u1, -40(up)
 	addi	up, up, -40
-	or	r10, r12, r7
+	nor	r10, r12, r7
 	bdz	L(end)
 
 	ALIGN(32)
@@ -151,34 +154,35 @@ L(top):	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	ld	u0, -8(up)
 	std	r11, -8(rp)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 L(L00):	sld	r8, u1, cnt
 	srd	r9, u0, tnc
 	ld	u1, -16(up)
 	std	r10, -16(rp)
-	or	r10, r12, r7
+	nor	r10, r12, r7
 L(L11):	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	ld	u0, -24(up)
 	std	r11, -24(rp)
-	or	r11, r8, r9
+	nor	r11, r8, r9
 L(L10):	sld	r8, u1, cnt
 	srd	r9, u0, tnc
 	ld	u1, -32(up)
 	addi	up, up, -32
 	std	r10, -32(rp)
 	addi	rp, rp, -32
-	or	r10, r12, r7
+	nor	r10, r12, r7
 	bdnz	L(top)
 
 	ALIGN(32)
 L(end):	sld	r12, u0, cnt
 	srd	r7, u1, tnc
 	std	r11, -8(rp)
-L(cj4):	or	r11, r8, r9
+L(cj4):	nor	r11, r8, r9
 	sld	r8, u1, cnt
 	std	r10, -16(rp)
-L(cj3):	or	r10, r12, r7
+	nor	r8, r8, r8
+L(cj3):	nor	r10, r12, r7
 	std	r11, -24(rp)
 L(cj2):	std	r10, -32(rp)
 	std	r8, -40(rp)
