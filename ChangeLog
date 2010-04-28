@@ -1,3 +1,10 @@
+2010-04-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-jac.c (check_data): Added some more test cases.
+
+	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_2): Bugfix, count
+	trailing zeros, not leading.
+
 2010-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/p6/mul_basecase.asm: New file.

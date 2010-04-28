@@ -523,7 +523,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 	{
 	  if (ah == 0)
 	    return 0;
-	  count_leading_zeros (c, ah);
+	  count_trailing_zeros (c, ah);
 	  bit ^= ((GMP_NUMB_BITS + c) << 1) & (bl ^ (bl >> 1));
 	  al = ah >> c;
 	  goto ab_reduced;
