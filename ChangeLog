@@ -1,3 +1,9 @@
+2010-04-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/aix.m4: Align functions to 32-byte boundary.
+	* mpn/powerpc64/darwin.m4: Likewise.
+	* mpn/powerpc64/elf.m4: Likewise.
+
 2010-04-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_data): Added some more test cases.
