@@ -1,3 +1,31 @@
+2010-04-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.in (gmp_mpn_functions): Deleted gcdext_subdiv_step.
+
+	* mpn/generic/gcdext.c (mpn_gcdext): Use new generalized
+	mpn_gcd_subdiv_step.
+
+	* mpn/generic/gcdext_lehmer.c (gcdext_update): New function.
+	(gcdext_done): New function.
+	(gcdext_hook): New const hook struct.
+	(mpn_gcdext_lehmer_n): Use new generalized mpn_gcd_subdiv_step.
+
+	* mpn/generic/gcd.c (gcd_done): New function.
+	(gcd_hook): New const hook struct.
+	(mpn_gcd): Adapted to new mpn_gcd_subdiv_step interface.
+
+	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): Reorganized
+	function. Added hook function pointers to the argument list, so
+	the same function can be used for gcd, gcdext, and jacobi.
+
+	* gmp-impl.h (struct gcd_subdiv_step_hook): New struct.
+	(mpn_gcdext_subdiv_step): Deleted prototype.
+	(struct gcdext_ctx): New struct.
+	(gcdext_hook): Declare const struct.
+	(mpn_gcd_subdiv_step): Updated prototype.
+
+	* mpn/generic/gcdext_subdiv_step.c: Deleted file.
+
 2010-04-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_data): Added some more test cases.

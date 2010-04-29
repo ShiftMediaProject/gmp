@@ -2514,7 +2514,7 @@ gmp_mpn_functions="$extra_functions					   \
   rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp	   \
   perfsqr perfpow							   \
   gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step				   \
-  gcdext_lehmer gcdext_subdiv_step					   \
+  gcdext_lehmer								   \
   div_q tdiv_qr jacbase jacobi_lehmer get_d				   \
   matrix22_mul matrix22_mul1_inverse_vector				   \
   hgcd2 hgcd mullo_n mullo_basecase					   \
