@@ -3859,14 +3859,35 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 #define mpn_hgcd __MPN (hgcd)
 __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
+struct gcd_subdiv_step_hook
+{
+  /* Passes quotient. */
+  void (*update)(void *, mp_srcptr, mp_size_t, unsigned);
+  /* Passes final gcd (must be copied if it is to be retained). */
+  void (*done)(void *, mp_srcptr, mp_size_t, unsigned);
+};
 /* Needs storage for the quotient */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) (n)
 
 #define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
-__GMP_DECLSPEC mp_size_t mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_size_t mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, const struct gcd_subdiv_step_hook *, void *, mp_ptr));
 
-#define mpn_gcdext_subdiv_step __MPN(gcdext_subdiv_step)
-__GMP_DECLSPEC mp_size_t mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_ptr));
+struct gcdext_ctx
+{
+  /* Result parameters. */
+  mp_ptr gp;
+  mp_size_t gn;
+  mp_ptr up;
+  mp_size_t *usize;
+
+  /* Cofactors updated in each step. */
+  mp_size_t un;
+  mp_ptr u0, u1, tp;
+};
+
+#define gcdext_hook __gmp_gcdext_hook
+extern const struct gcd_subdiv_step_hook
+gcdext_hook;
 
 #define MPN_GCDEXT_LEHMER_N_ITCH(n) (4*(n) + 3)
 

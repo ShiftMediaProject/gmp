@@ -18,6 +18,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>		/* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -51,6 +53,26 @@ mp_size_t p_table[P_TABLE_SIZE];
 #define CHOOSE_P(n) (2*(n) / 3)
 #endif
 
+struct gcd_ctx
+{
+  mp_ptr gp;
+  mp_size_t gn;
+};
+
+static void
+gcd_done (void *p, mp_srcptr gp, mp_size_t gn, unsigned swapped)
+{
+  struct gcd_ctx *ctx = (struct gcd_ctx *) p;
+  MPN_COPY (ctx->gp, gp, gn);
+  ctx->gn = gn;
+}
+
+static const struct gcd_subdiv_step_hook
+gcd_hook = {
+  NULL,
+  gcd_done,
+};
+  
 #if GMP_NAIL_BITS > 0
 /* Nail supports should be easy, replacing the sub_ddmmss with nails
  * logic. */
@@ -113,7 +135,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   mp_size_t scratch;
   mp_size_t matrix_scratch;
 
-  mp_size_t gn;
+  struct gcd_ctx ctx;
   mp_ptr tp;
   TMP_DECL;
 
@@ -162,10 +184,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       if (mpn_zero_p (up, n))
 	{
 	  MPN_COPY (gp, vp, n);
-	  gn = n;
+	  ctx.gn = n;
 	  goto done;
 	}
     }
+
+  ctx.gp = gp;
 
 #if TUNE_GCD_P
   while (CHOOSE_P (n) > 0)
@@ -189,7 +213,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       else
 	{
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (gp, &gn, up, vp, n, tp);
+	  n = mpn_gcd_subdiv_step (up, vp, n, &gcd_hook, &ctx, tp);
 	  if (n == 0)
 	    goto done;
 	}
@@ -233,16 +257,18 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	     subtraction followed by one division. */
 
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (gp, &gn, up, vp, n, tp);
+	  n = mpn_gcd_subdiv_step (up, vp, n, &gcd_hook, &ctx, tp);
 	  if (n == 0)
 	    goto done;
 	}
     }
 
+  ASSERT(up[n-1] | vp[n-1]);
+
   if (n == 1)
     {
       *gp = mpn_gcd_1(up, 1, vp[0]);
-      gn = 1;
+      ctx.gn = 1;
       goto done;
     }
 
@@ -257,7 +283,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   if (vp[0] == 0)
     {
       *gp = mpn_gcd_1 (up, 2, vp[1]);
-      gn = 1;
+      ctx.gn = 1;
       goto done;
     }
   else if (! (vp[0] & 1))
@@ -268,11 +294,11 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       vp[1] >>= r;
     }
 
-  gn = gcd_2(gp, up, vp);
+  ctx.gn = gcd_2(gp, up, vp);
 
 done:
   TMP_FREE;
-  return gn;
+  return ctx.gn;
 }
 
 #ifdef TUNE_GCD_P

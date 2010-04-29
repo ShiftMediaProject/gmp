@@ -194,6 +194,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   mp_size_t matrix_scratch;
   mp_size_t ualloc = n + 1;
 
+  struct gcdext_ctx ctx;
   mp_size_t un;
   mp_ptr u0;
   mp_ptr u1;
@@ -272,6 +273,10 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
 
+  ctx.gp = gp;
+  ctx.up = up;
+  ctx.usize = usizep;
+  
   {
     /* For the first hgcd call, there are no u updates, and it makes
        some sense to use a different choice for p. */
@@ -305,21 +310,22 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	/* mpn_hgcd has failed. Then either one of a or b is very
 	   small, or the difference is very small. Perform one
 	   subtraction followed by one division. */
-	mp_size_t gn;
-	mp_size_t updated_un = 1;
-
 	u1[0] = 1;
 
-	/* Temporary storage 2n + 1 */
-	n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
-				    u0, u1, &updated_un, tp, tp + n);
+	ctx.u0 = u0;
+	ctx.u1 = u1;
+	ctx.tp = tp + n; /* ualloc */
+	ctx.un = 1;
+
+	/* Temporary storage n */
+	n = mpn_gcd_subdiv_step (ap, bp, n, &gcdext_hook, &ctx, tp);
 	if (n == 0)
 	  {
 	    TMP_FREE;
-	    return gn;
+	    return ctx.gn;
 	  }
 
-	un = updated_un;
+	un = ctx.un;
 	ASSERT (un < ualloc);
       }
   }
@@ -361,19 +367,20 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  /* mpn_hgcd has failed. Then either one of a or b is very
 	     small, or the difference is very small. Perform one
 	     subtraction followed by one division. */
-	  mp_size_t gn;
-	  mp_size_t updated_un = un;
+	  ctx.u0 = u0;
+	  ctx.u1 = u1;
+	  ctx.tp = tp + n; /* ualloc */
+ 	  ctx.un = un;
 
-	  /* Temporary storage 2n + 1 */
-	  n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
-				      u0, u1, &updated_un, tp, tp + n);
+	  /* Temporary storage n */
+	  n = mpn_gcd_subdiv_step (ap, bp, n, &gcdext_hook, &ctx, tp);
 	  if (n == 0)
 	    {
 	      TMP_FREE;
-	      return gn;
+	      return ctx.gn;
 	    }
 
-	  un = updated_un;
+	  un = ctx.un;
 	  ASSERT (un < ualloc);
 	}
     }
