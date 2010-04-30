@@ -1,5 +1,7 @@
 2010-04-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (powerpc64): Support CPU specific mode-less subdirs.
+
 	* mpn/powerpc64/aix.m4 (PROLOGUE_cpu): Use "named csect" making
 	requested aignment actually honoured.
 
