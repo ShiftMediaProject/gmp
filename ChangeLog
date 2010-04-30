@@ -5,6 +5,11 @@
 	* mpn/powerpc64/aix.m4 (PROLOGUE_cpu): Use "named csect" making
 	requested aignment actually honoured.
 
+2010-04-30  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_2): Fixed handling of
+	the case bl == 1. Fixed missing application of reciprocity.
+
 2010-04-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Deleted gcdext_subdiv_step.

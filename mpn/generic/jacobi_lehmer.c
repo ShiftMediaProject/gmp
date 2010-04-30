@@ -444,13 +444,14 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 	      al = bl;
 	      bl = ah >> c;
 	      ah = bh;
+
+	      bit ^= al & bl;
 	      goto b_reduced;
 	    }
 	  count_trailing_zeros (c, al);
 	  bit ^= (c << 1) & (bl ^ (bl >> 1));
 	  al = ((ah << (GMP_NUMB_BITS - c)) & GMP_NUMB_MASK) | (al >> c);
 	  ah >>= c;
-
 	}
       if (ah == bh)
 	goto cancel_hi;
@@ -513,7 +514,11 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 
  b_reduced:
   /* Compute (a|b), with b a single limb. */
-  ASSERT (bl > 1);
+  ASSERT (bl & 1);
+
+  if (bl == 1)
+    /* (a|1) = 1 */
+    return 1 - (bit & 2);
 
   while (ah > 0)
     {
@@ -535,7 +540,9 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
       bit ^= (c << 1) & (bl ^ (bl >> 1));      
     }
  ab_reduced:
-  ASSERT (bl > 0);
+  ASSERT (bl & 1);
+  ASSERT (bl > 1);
+
   return mpn_jacobi_base (al, bl, bit);
 }
 #else
