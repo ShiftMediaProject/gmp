@@ -1,3 +1,9 @@
+2010-05-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/p6/lshift.asm: New file.
+	* mpn/powerpc64/p6/lshiftc.asm: Likewise.
+	* mpn/powerpc64/p6/rshift.asm: Likewise.
+
 2010-04-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (powerpc64): Support CPU specific mode-less subdirs.
