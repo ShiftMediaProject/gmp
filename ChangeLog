@@ -1,5 +1,7 @@
 2010-05-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Recognise power7.
+
 	* configure.in: Major overhaul of powerpc support.
 
 	* mpn/powerpc64/p6/lshift.asm: New file.
