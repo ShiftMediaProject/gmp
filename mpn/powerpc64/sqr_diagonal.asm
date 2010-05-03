@@ -56,9 +56,9 @@ L(b11):	ld	r0, 0(up)
 	mulld	r11, r12, r12
 	mulhdu	r12, r12, r12
 	addi	up, up, 24
-	addi	up, up, 24
 	b	L(11)
 
+	ALIGN(16)
 L(b01):	ld	r0, 0(up)
 	addi	rp, rp, -48
 	addi	up, up, 8
@@ -66,6 +66,7 @@ L(b01):	ld	r0, 0(up)
 	mulhdu	r12, r0, r0
 	b	L(01)
 
+	ALIGN(16)
 L(b10):	ld	r0, 0(up)
 	ld	r12, 8(up)
 	addi	rp, rp, -32
