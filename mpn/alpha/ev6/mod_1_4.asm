@@ -115,13 +115,8 @@ L(b1):	bis	r31, r31, rh
 	lda	ap, -40(ap)
 	br	L(com)
 
-L(b2):	ldq	r21, -8(ap)
-	ldq	r20, -16(ap)
-	mulq	r21, B1modb, r8
-	umulh	r21, B1modb, r12
-	addq	r8, r20, rl
-	cmpult	rl, r8, r0
-	addq	r0, r12, rh
+L(b2):	ldq	rh, -8(ap)
+	ldq	rl, -16(ap)
 	lda	ap, -48(ap)
 
 L(com):	ble	n, L(ed3)

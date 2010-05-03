@@ -2,7 +2,7 @@ dnl  mpn_mod_1_4 for Pentium 4 and P6 models with SSE2 (i.e., 9,D,E,F).
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -102,10 +102,8 @@ L(b1):	movd	(ap), %mm7
 	jz	L(x)
 	jmp	L(top)
 
-L(b2):	movd	(ap), %mm7
-	pmuludq	B1modb, %mm7
-	movd	-4(ap), %mm6
-	paddq	%mm6, %mm7
+L(b2):	movd	-4(ap), %mm7		C rl
+	punpckldq (ap), %mm7		C rh
 	lea	-20(ap), ap
 	add	$-2, n
 	jz	L(end)
@@ -135,9 +133,8 @@ L(top):	movd	4(ap), %mm0
 	add	$-16, ap
 	add	$-4, n
 	jnz	L(top)
-L(end):
 
-	pcmpeqd	%mm4, %mm4
+L(end):	pcmpeqd	%mm4, %mm4
 	psrlq	$32, %mm4		C 0x00000000FFFFFFFF
 	pand	%mm7, %mm4		C rl
 	psrlq	$32, %mm7		C rh

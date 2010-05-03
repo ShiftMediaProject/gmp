@@ -3,12 +3,13 @@
    Requires that d < B / 4.
 
    Contributed to the GNU project by Torbjorn Granlund.
+   Based on a suggestion by Peter L. Montgomery.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -104,8 +105,8 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[7])
       n -= 1;
       break;
     case 2:
-      umul_ppmm (ph, pl, ap[n - 1], B1modb);
-      add_ssaaaa (rh, rl, ph, pl, 0, ap[n - 2]);
+      rh = ap[n - 1];
+      rl = ap[n - 2];
       n -= 2;
       break;
     case 3:

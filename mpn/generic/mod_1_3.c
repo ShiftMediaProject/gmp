@@ -3,6 +3,7 @@
    Requires that d < B / 3.
 
    Contributed to the GNU project by Torbjorn Granlund.
+   Based on a suggestion by Peter L. Montgomery.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -102,8 +103,8 @@ mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[6])
       n -= 1;
       break;
     case 1:	/* n mod 3 = 2 */
-      umul_ppmm (ph, pl, ap[n - 1], B1modb);
-      add_ssaaaa (rh, rl, ph, pl, 0, ap[n - 2]);
+      rh = ap[n - 1];
+      rl = ap[n - 2];
       n -= 2;
       break;
     }

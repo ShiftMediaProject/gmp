@@ -87,10 +87,9 @@ L(b1):	lea	-8(%rdi,%rsi,8), %rdi
 
 	ALIGN(8)
 L(b2):	lea	-16(%rdi,%rsi,8), %rdi
-	mov	8(%rdi), %rax
-	mul	%r11
+	mov	8(%rdi), %r8
 	mov	(%rdi), %r9
-	jmp	L(m0)
+	jmp	L(m1)
 
 	ALIGN(16)
 L(top):	mov	-24(%rdi), %rax

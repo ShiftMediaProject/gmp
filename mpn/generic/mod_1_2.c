@@ -3,6 +3,7 @@
    Requires that b < B / 2.
 
    Contributed to the GNU project by Torbjorn Granlund.
+   Based on a suggestion by Peter L. Montgomery.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -101,8 +102,8 @@ mpn_mod_1s_2p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[5])
     }
   else
     {
-      umul_ppmm (rh, rl, ap[n - 1], B1modb);
-      add_ssaaaa (rh, rl, rh, rl, 0, ap[n - 2]);
+      rh = ap[n - 1];
+      rl = ap[n - 2];
     }
 
   for (i = n - 4; i >= 0; i -= 2)

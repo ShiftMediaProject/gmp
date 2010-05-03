@@ -58,16 +58,12 @@ PROLOGUE(mpn_mod_1s_2p)
 	mul	%rbx
 	add	%rax, %r9
 	adc	%rdx, %r8
-	jmp	.L11
-L(b0):
-	mov	-8(%rdi,%rsi,8), %rax
-	mul	%r10
-	mov	%rdx, %r8
-	mov	%rax, %r9
-	add	-16(%rdi,%rsi,8), %r9
-	adc	$0, %r8
-.L11:
-	sub	$4, %rsi
+	jmp	L(11)
+
+L(b0):	mov	-8(%rdi,%rsi,8), %r8
+	mov	-16(%rdi,%rsi,8), %r9
+
+L(11):	sub	$4, %rsi
 	jb	L(ed2)
 	lea	40(%rdi,%rsi,8), %rdi
 	mov	-40(%rdi), %r11

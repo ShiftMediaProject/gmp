@@ -1,5 +1,16 @@
 2010-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mod_1_1.c: Avoid multiply for 2 limb feed-in.
+	* mpn/generic/mod_1_2.c: Likewise.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+	* mpn/x86_64/mod_1_1.asm: Likewise.
+	* mpn/x86_64/mod_1_2.asm: Likewise.
+	* mpn/x86_64/mod_1_4.asm: Likewise.
+	* mpn/x86/k7/mod_1_4.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mod_1_4.asm: Likewise.
+	* mpn/alpha/ev6/mod_1_4.asm: Likewise.
+
 	* tune/tuneup.c (tune_mod_1): Measure MOD_1_1_TO_MOD_1_2_THRESHOLD and
 	MOD_1_2_TO_MOD_1_4_THRESHOLD before MOD_1U_TO_MOD_1_1_THRESHOLD for
 	correctness.

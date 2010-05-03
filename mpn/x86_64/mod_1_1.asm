@@ -41,12 +41,8 @@ PROLOGUE(mpn_mod_1_1p)
 	mov	16(%rcx), %r10
 	mov	24(%rcx), %r11
 
-	mov	-8(%rdi,%rsi,8), %rax
-	mul	%r10
-	mov	-16(%rdi,%rsi,8), %r9
-	xor	R32(%r8), R32(%r8)
-	add	%r9, %rax
-	adc	%rdx, %r8
+	mov	-8(%rdi,%rsi,8), %r8
+	mov	-16(%rdi,%rsi,8), %rax
 
 	sub	$3, %rsi
 	js	L(2)

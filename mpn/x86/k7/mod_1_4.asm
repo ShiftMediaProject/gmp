@@ -101,11 +101,10 @@ L(b1):	mov	8(%esi), %ebp
 	lea	-4(%esi), %esi
 	jmp	L(m1)
 
-L(b2):	mov	8(%esi), %eax
-	mull	4(%esp)
+L(b2):	mov	8(%esi), %edi
 	mov	4(%esi), %ebp
 	lea	-8(%esi), %esi
-	jmp	L(m0)
+	jmp	L(m1)
 
 	ALIGN(16)
 L(top):	mov	(%esi), %eax
