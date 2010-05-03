@@ -5322,7 +5322,7 @@ be 0, 1 or 2 (these are both borrows really).  When @math{c=0} clearly
 @code{mp_bits_per_limb} is even, which is always so currently).
 @end deftypefn
 
-@deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
+@deftypefun mp_limb_t mpn_mod_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
 Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
 @var{s1n} can be zero.
 @end deftypefun
