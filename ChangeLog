@@ -1,5 +1,9 @@
 2010-05-03  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/jacobi_lehmer.c (jacobi_hook): New function.
+	(mpn_jacobi_subdiv_step): Deleted function.
+	(mpn_jacobi_lehmer): Use general mpn_gcd_subdiv_step.
+
 	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): Reorganized
 	to use a single hook function.
 	* mpn/generic/gcdext.c (mpn_gcdext): Adapted to new hook
