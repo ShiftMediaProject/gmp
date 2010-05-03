@@ -19,11 +19,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		cycles/limb
-C POWER3/PPC630:     1.83	(1.5 c/l should be possible)
-C POWER4/PPC970:     3		(2.0 c/l should be possible)
-C POWER5:	     3
-C POWER6:	     3.5-47
+C		   cycles/limb
+C POWER3/PPC630		 1.83	(1.5 c/l should be possible)
+C POWER4/PPC970		 3	(2.0 c/l should be possible)
+C POWER5		 3
+C POWER6	      3.5-47
 
 C STATUS
 C  * Try combining upx+up, and vpx+vp.
@@ -130,7 +130,7 @@ L(b0):	ld	v0, 0(vp)
 	addi	vp, vp, 16
 	addi	vpx, vpx, 24
 
-	ALIGN(16)
+	ALIGN(32)
 L(top):	ldx	u0, rp, up
 	ldx	v0, rp, vp
 	rldimi	s1, v1, LSH, 0

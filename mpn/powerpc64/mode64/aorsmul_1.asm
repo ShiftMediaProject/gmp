@@ -24,8 +24,8 @@ C		mpn_addmul_1	mpn_submul_1
 C		cycles/limb	cycles/limb
 C POWER3/PPC630   6-18		   6-18
 C POWER4/PPC970	   8?		    8.3?  not updated for last file revision
-C POWER5	   8		    8.75
-C POWER6	  16		   16.5
+C POWER5	   8		    8.63
+C POWER6	  16.25		   16.75
 
 C TODO
 C  * Try to reduce the number of needed live registers
