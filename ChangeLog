@@ -1,3 +1,17 @@
+2010-05-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): Reorganized
+	to use a single hook function.
+	* mpn/generic/gcdext.c (mpn_gcdext): Adapted to new hook
+	interface.
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_hook): New unified hook
+	function.
+	* mpn/generic/gcd.c (gcd_hook): Renamed from gcd_done, and adapted
+	to new hook interface.
+	* gmp-impl.h (gcd_subdiv_step_hook): New typedef, now a function
+	type, not a struct.
+	(mpn_gcdext_hook): Declare.
+
 2010-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/sqr_diagonal.asm: Complete rewrite.

@@ -21,6 +21,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>		/* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -30,29 +32,39 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    followed by one division. Returns zero if the gcd is found.
    Otherwise, compute the reduced a and b, and return the new size. */
 
-/* About the hook functions.
+/* The hook function is called as
 
-     hook->update (ctx, qp, qn, d)
+     hook(ctx, gp, gn, qp, qn, d)
 
-   is called when one of the numbers, or a multiple of it, is
-   subtracted from the other. d == 0 means q a is subtracted from b, d
-   == 1 means that q b is subtracted from a.
+   in the following cases:
 
-     hook->done (ctx, gp, gn, d)
+   + If A == B at the start, G is the gcd, Q is NULL, d = -1.
 
-   is called when the gcd is found. d == 0 if the last reduction
-   subtracted a from b, d == 1 if it subtracted b from a, and d == 2
-   if it is unknown which was the most recent reduction. */
+   + If one input is zero at the start, G is the gcd, Q is NULL,
+     d = 0 if A == G and d = 1 if B == G.
+
+   Otherwise, if d = 0 we have just subtracted a multiple of A from B,
+   and if d = 1 we have subtracted a multiple of B from A.
+   
+   + If A == B after subtraction, G is the gcd, Q is NULL.
+   
+   + If we get a zero remainder after division, G is the gcd, Q is the
+     quotient.
+
+   + Otherwise, G is NULL, Q is the quotient (often 1).
+
+ */
 
 mp_size_t
 mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
-		     const struct gcd_subdiv_step_hook *hook, void *ctx,
+		     gcd_subdiv_step_hook *hook, void *ctx,
 		     mp_ptr tp)
 {
-  mp_size_t an, bn;
+  static const mp_limb_t one = CNST_LIMB(1);
+  mp_size_t an, bn, qn;
 
   int swapped;
-  
+
   ASSERT (n > 0);
   ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
 
@@ -71,7 +83,7 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
       if (UNLIKELY (c == 0))
 	{
 	  /* For gcdext, return the smallest of the two cofactors. */
-	  hook->done (ctx, ap, an, 2);
+	  hook (ctx, ap, an, NULL, 0, -1);
 	  return 0;
 	}
       else if (c > 0)
@@ -89,7 +101,7 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	}
       if (an == 0)
 	{
-	  hook->done (ctx, bp, bn, swapped ^ 1);
+	  hook (ctx, bp, bn, NULL, 0, swapped ^ 1);
 	  return 0;
 	}
     }
@@ -97,47 +109,46 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
   MPN_NORMALIZE (bp, bn);
   ASSERT (bn > 0);
 
-  if (hook->update)
-    {
-      static const mp_limb_t one = CNST_LIMB(1);
-      hook->update(ctx, &one, 1, swapped);
-    }
-
-  /* Arrange so that a < b, and divide b = q a + r */
+  /* Arrange so that a < b */
   if (an == bn)
     {
       int c;
       MPN_CMP (c, ap, bp, an);
       if (UNLIKELY (c == 0))
 	{
-	  hook->done (ctx, bp, bn, swapped);
+	  hook (ctx, bp, bn, NULL, 0, swapped);
 	  return 0;	  
 	}
-      else if (c > 0)
+      
+      hook (ctx, NULL, 0, &one, 1, swapped);
+
+      if (c > 0)
 	{
 	  MP_PTR_SWAP (ap, bp);
 	  swapped ^= 1;
 	}
     }
-  else if (an > bn)
+  else
     {
-      MPN_PTR_SWAP (ap, an, bp, bn);
-      swapped ^= 1;
+      hook (ctx, NULL, 0, &one, 1, swapped);
+
+      if (an > bn)
+	{
+	  MPN_PTR_SWAP (ap, an, bp, bn);
+	  swapped ^= 1;
+	}
     }
 
   mpn_tdiv_qr (tp, bp, 0, bp, bn, ap, an);
-
-  /* FIXME: For jacobi, we need to call update before calling done.
-     While for gcdext, calling update in this case would do useless
-     work. */
+  qn = bn - an + 1;
   if (mpn_zero_p (bp, an))
     {
-      hook->done (ctx, ap, an, swapped);
+      hook (ctx, ap, an, tp, qn, swapped);
       return 0;
     }
-
-  if (hook->update)
-    hook->update(ctx, tp, bn - an + 1, swapped);
-  
-  return an;
+  else
+    {
+      hook (ctx, NULL, 0, tp, qn, swapped);
+      return an;
+    }
 }
