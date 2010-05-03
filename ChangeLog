@@ -1,5 +1,7 @@
 2010-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/sqr_diagonal.asm: Complete rewrite.
+
 	* mpn/powerpc64/mode64/mod_1_4.asm: New file.
 
 2010-05-02  Torbjorn Granlund  <tege@gmplib.org>
