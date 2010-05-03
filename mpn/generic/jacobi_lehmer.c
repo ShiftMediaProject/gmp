@@ -763,102 +763,28 @@ mpn_hgcd2_jacobi (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 
 #define BITS_FAIL 31
 
-/* If a common factor is found, returns zero and sets *BITSP to
- * BITS_FAIL. */
-static mp_size_t
-mpn_jacobi_subdiv_step (unsigned *bitsp,
-			mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
+static void
+jacobi_hook (void *p, mp_srcptr gp, mp_size_t gn,
+	     mp_srcptr qp, mp_size_t qn, int d)
 {
-  mp_size_t an, bn;
-  unsigned denominator;
+  unsigned *bitsp = (unsigned *) p;
 
-  ASSERT (n > 0);
-  ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
-
-  an = bn = n;
-  MPN_NORMALIZE (ap, an);
-  MPN_NORMALIZE (bp, bn);
-
-  if (UNLIKELY (an == 0))
+  if (gp)
     {
-      if (bn > 1 || bp[0] > 1)
-	*bitsp = BITS_FAIL;
-      return 0;
-    }
-
-  else if (UNLIKELY (bn == 0))
-    {
-      if (an > 1 || ap[0] > 1)
-	*bitsp = BITS_FAIL;
-      return 0;
-    }
-  /* Arrange so that a > b, subtract an -= bn, and maintain
-     normalization. */
-  denominator = 1;
-  if (an < bn)
-    {
-      MPN_PTR_SWAP (ap, an, bp, bn);
-      denominator = 0;
-    }
-  else if (an == bn)
-    {
-      int c;
-      MPN_CMP (c, ap, bp, an);
-      if (UNLIKELY (c == 0))
+      ASSERT (gn > 0);
+      if (gn != 1 || gp[0] != 1)
 	{
-	  if (an > 1 || ap[0] > 0)
-	    *bitsp = BITS_FAIL;
-	  return 0;
+	  *bitsp = BITS_FAIL;
+	  return;
 	}
-      else if (c < 0)
-	{
-	  MP_PTR_SWAP (ap, bp);
-	  denominator = 0;
-	}
-    }
-
-  ASSERT_NOCARRY (mpn_sub (ap, ap, an, bp, bn));
-  MPN_NORMALIZE (ap, an);
-  ASSERT (an > 0);
-
-  *bitsp = mpn_jacobi_update (*bitsp, denominator, 1);
-
-  /* Arrange so that a > b, and divide a = q b + r */
-  /* FIXME: an < bn happens when we have cancellation. If that is the
-     common case, then we could reverse the roles of a and b to avoid
-     the swap. */
-  if (an < bn)
+    }      
+  
+  if (qp)
     {
-      MPN_PTR_SWAP (ap, an, bp, bn);
-      denominator ^= 1;
+      ASSERT (qn > 0);
+      ASSERT (d >= 0);
+      *bitsp = mpn_jacobi_update (*bitsp, d, qp[0] & 3);
     }
-  else if (an == bn)
-    {
-      int c;
-      MPN_CMP (c, ap, bp, an);
-      if (UNLIKELY (c == 0))
-	{
-	  if (an > 1 || ap[0] > 1)
-	    *bitsp = BITS_FAIL;
-	  return 0;
-	}
-      else if (c < 0)
-	{
-	  MP_PTR_SWAP (ap, bp);
-	  denominator ^= 1;
-	}
-    }
-
-  mpn_tdiv_qr (tp, ap, 0, ap, an, bp, bn);
-  *bitsp = mpn_jacobi_update (*bitsp, denominator, tp[0] & 3);
-
-  if (mpn_zero_p (ap, bn))
-    {
-      if (bn > 1 || bp[0] > 1)
-	*bitsp = BITS_FAIL;
-      return 0;
-    }
-  return bn;
 }
 
 /* Computes (a | b), where b is odd and normalized. */
@@ -905,7 +831,7 @@ mpn_jacobi_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n, unsigned bits, mp_ptr tp)
 	  /* mpn_hgcd2 has failed. Then either one of a or b is very
 	     small, or the difference is very small. Perform one
 	     subtraction followed by one division. */
-	  n = mpn_jacobi_subdiv_step (&bits, ap, bp, n, tp);
+	  n = mpn_gcd_subdiv_step (ap, bp, n, &jacobi_hook, &bits, tp);
 	  if (!n)
 	    return bits == BITS_FAIL ? 0 : mpn_jacobi_finish (bits);
 	}

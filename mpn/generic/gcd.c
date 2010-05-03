@@ -18,8 +18,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#include <stdlib.h>		/* for NULL */
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -60,18 +58,13 @@ struct gcd_ctx
 };
 
 static void
-gcd_done (void *p, mp_srcptr gp, mp_size_t gn, unsigned swapped)
+gcd_hook (void *p, mp_srcptr gp, mp_size_t gn,
+	  mp_srcptr qp, mp_size_t qn, int d)
 {
   struct gcd_ctx *ctx = (struct gcd_ctx *) p;
   MPN_COPY (ctx->gp, gp, gn);
   ctx->gn = gn;
 }
-
-static const struct gcd_subdiv_step_hook
-gcd_hook = {
-  NULL,
-  gcd_done,
-};
   
 #if GMP_NAIL_BITS > 0
 /* Nail supports should be easy, replacing the sub_ddmmss with nails
@@ -213,7 +206,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       else
 	{
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (up, vp, n, &gcd_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (up, vp, n, gcd_hook, &ctx, tp);
 	  if (n == 0)
 	    goto done;
 	}

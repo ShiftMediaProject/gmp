@@ -24,101 +24,94 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Here, d is the index of the cofactor to update. FIXME: Could use qn
    = 0 for the common case q = 1. */
-static void
-gcdext_update (void *p, mp_srcptr qp, mp_size_t qn, unsigned d)
+void
+mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
+		 mp_srcptr qp, mp_size_t qn, int d)
 {
   struct gcdext_ctx *ctx = (struct gcdext_ctx *) p;
-  mp_ptr u0;
-  mp_ptr u1;
   mp_size_t un = ctx->un;
-  mp_limb_t cy;
 
-  u0 = ctx->u0;  
-  u1 = ctx->u1;
-  if (d)
-    MP_PTR_SWAP (u0, u1);
-
-  qn -= (qp[qn-1] == 0);
-
-  /* Update u0 += q  * u1 */
-  if (qn == 1)
+  if (gp)
     {
-      mp_limb_t q = qp[0];
+      mp_srcptr up;
 
-      if (q == 1)
-	/* A common case. */
-	cy = mpn_add_n (u0, u0, u1, un);
-      else
-	cy = mpn_addmul_1 (u0, u1, un, q);
+      MPN_COPY (ctx->gp, gp, gn);
+      ctx->gn = gn;
+      
+      if (d < 0)
+	{
+	  int c;
+      
+	  /* Must return the smallest cofactor, +u1 or -u0 */
+	  MPN_CMP (c, ctx->u0, ctx->u1, un);
+	  ASSERT (c != 0 || (un == 1 && ctx->u0[0] == 1 && ctx->u1[0] == 1));
+
+	  d = c < 0;
+	}
+
+      up = d ? ctx->u0 : ctx->u1;
+
+      MPN_NORMALIZE (up, un);
+      MPN_COPY (ctx->up, up, un);
+
+      *ctx->usize = d ? -un : un;
     }
   else
     {
-      mp_size_t u1n;
-      mp_ptr tp;
+      mp_limb_t cy;
+      mp_ptr u0 = ctx->u0;
+      mp_ptr u1 = ctx->u1;
 
-      u1n = un;
-      MPN_NORMALIZE (u1, u1n);
-
-      if (u1n == 0)
-	return;
-
-      tp = ctx->tp;
+      ASSERT (d >= 0);
+  
+      if (d)
+	MP_PTR_SWAP (u0, u1);
       
-      if (qn > u1n)
-	mpn_mul (tp, qp, qn, u1, u1n);
+      qn -= (qp[qn-1] == 0);
+
+      /* Update u0 += q  * u1 */
+      if (qn == 1)
+	{
+	  mp_limb_t q = qp[0];
+
+	  if (q == 1)
+	    /* A common case. */
+	    cy = mpn_add_n (u0, u0, u1, un);
+	  else
+	    cy = mpn_addmul_1 (u0, u1, un, q);
+	}
       else
-	mpn_mul (tp, u1, u1n, qp, qn);
+	{
+	  mp_size_t u1n;
+	  mp_ptr tp;
 
-      u1n += qn;
-      u1n -= tp[u1n-1] == 0;
+	  u1n = un;
+	  MPN_NORMALIZE (u1, u1n);
 
-      if (u1n > un)
-	cy = mpn_add (u0, tp, u1n, u0, un);
-      else
-	cy = mpn_add (u0, u0, un, tp, u1n);
+	  if (u1n == 0)
+	    return;
+
+	  tp = ctx->tp;
       
-      un = u1n;
-    }
-  u0[un] = cy;
-  ctx->un = un + (cy > 0);
-}
+	  if (qn > u1n)
+	    mpn_mul (tp, qp, qn, u1, u1n);
+	  else
+	    mpn_mul (tp, u1, u1n, qp, qn);
 
-static void
-gcdext_done (void *p, mp_srcptr gp, mp_size_t gn, unsigned d)
-{
-  struct gcdext_ctx *ctx = (struct gcdext_ctx *) p;
-  mp_size_t un;
-  mp_srcptr up;
+	  u1n += qn;
+	  u1n -= tp[u1n-1] == 0;
 
-  MPN_COPY (ctx->gp, gp, gn);
-  ctx->gn = gn;
-
-  un = ctx->un;
-
-  if (d == 2)
-    {
-      int c;
+	  if (u1n > un)
+	    cy = mpn_add (u0, tp, u1n, u0, un);
+	  else
+	    cy = mpn_add (u0, u0, un, tp, u1n);
       
-      /* Must return the smallest cofactor, +u1 or -u0 */
-      MPN_CMP (c, ctx->u0, ctx->u1, un);
-      ASSERT (c != 0 || (un == 1 && ctx->u0[0] == 1 && ctx->u1[0] == 1));
-
-      d = c < 0;
+	  un = u1n;
+	}
+      u0[un] = cy;
+      ctx->un = un + (cy > 0);
     }
-
-  up = d ? ctx->u0 : ctx->u1;
-
-  MPN_NORMALIZE (up, un);
-  MPN_COPY (ctx->up, up, un);
-
-  *ctx->usize = d ? -un : un;
 }
-
-const struct gcd_subdiv_step_hook
-gcdext_hook = {
-  gcdext_update,
-  gcdext_done
-};
 
 /* Temporary storage: 3*(n+1) for u. n+1 for the matrix-vector
    multiplications (if hgcd2 succeeds). If hgcd fails, n+1 limbs are
@@ -223,7 +216,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
 	  /* Temporary storage n for the quotient and ualloc for the
 	     new cofactor. */
-	  n = mpn_gcd_subdiv_step (ap, bp, n, &gcdext_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (ap, bp, n, mpn_gcdext_hook, &ctx, tp);
 	  if (n == 0)
 	    return ctx.gn;
 

@@ -318,7 +318,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	ctx.un = 1;
 
 	/* Temporary storage n */
-	n = mpn_gcd_subdiv_step (ap, bp, n, &gcdext_hook, &ctx, tp);
+	n = mpn_gcd_subdiv_step (ap, bp, n, mpn_gcdext_hook, &ctx, tp);
 	if (n == 0)
 	  {
 	    TMP_FREE;
@@ -373,7 +373,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
  	  ctx.un = un;
 
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (ap, bp, n, &gcdext_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (ap, bp, n, mpn_gcdext_hook, &ctx, tp);
 	  if (n == 0)
 	    {
 	      TMP_FREE;
