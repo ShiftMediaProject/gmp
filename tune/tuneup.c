@@ -1797,21 +1797,21 @@ tune_mod_1 (void)
     if (mod_1_1_to_mod_1_2_threshold >= mod_1_2_to_mod_1_4_threshold)
       {
 	/* Never use mod_1_2, measure mod_1_1 -> mod_1_4 */
-	mod_1_1_to_mod_1_2_threshold = 0;
+	mod_1_2_to_mod_1_4_threshold = 0;
 
 	param.function = speed_mpn_mod_1_1;
 	param.function2 = speed_mpn_mod_1_4;
 	param.min_is_always = 1;
 	param.name = "MOD_1_1_TO_MOD_1_4_THRESHOLD fake";
 	param.min_size = 2;
-	one (&mod_1_2_to_mod_1_4_threshold, &param);
+	one (&mod_1_1_to_mod_1_2_threshold, &param);
       }
 
     param.function = speed_mpn_mod_1_tune;
     param.function2 = NULL;
-
     param.name = "MOD_1U_TO_MOD_1_1_THRESHOLD";
     param.min_size = 2;
+    param.min_is_always = 0;
     one (&mod_1u_to_mod_1_1_threshold, &param);
 
     if (mod_1u_to_mod_1_1_threshold >= mod_1_1_to_mod_1_2_threshold)

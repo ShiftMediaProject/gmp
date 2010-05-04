@@ -1,5 +1,7 @@
 2010-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mod_1): Fix typo.
+
 	* mpn/generic/mod_1_1.c: Undo last change.
 	* mpn/x86_64/mod_1_1.asm: Likewise.
 
