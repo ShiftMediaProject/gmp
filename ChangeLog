@@ -1,3 +1,8 @@
+2010-05-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c: Undo last change.
+	* mpn/x86_64/mod_1_1.asm: Likewise.
+
 2010-05-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/jacobi_lehmer.c (jacobi_hook): New function.

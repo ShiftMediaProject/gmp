@@ -68,8 +68,15 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
   B1modb = bmodb[2];
   B2modb = bmodb[3];
 
+#if 1
+  umul_ppmm (ph, pl, ap[n - 1], B1modb);
+  add_ssaaaa (rh, rl, ph, pl, 0, ap[n - 2]);
+#else
+  /* FIXME: We could avoid the above multiply when n > 2, i.e., we're about to
+     enter the loop.  But the post loop code assumes rh is reduced.  */
   rh = ap[n - 1];
   rl = ap[n - 2];
+#endif
 
   for (i = n - 3; i >= 0; i -= 1)
     {
