@@ -1,5 +1,7 @@
 2010-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h: Undo 2009-03-01 change for powerpc64, it gives poor code.
+
 	* mpn/x86/pentium4/sse2/mod_1_1.asm: New file.
 
 	* mpn/powerpc64/mode64/mod_1_1.asm: New file.
