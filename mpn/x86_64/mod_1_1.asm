@@ -30,6 +30,11 @@ C Intel corei	12.5
 C Intel atom	37
 C VIA nano	15
 
+define(`B1modb', `%r10')
+define(`B2modb', `%r11')
+define(`ap',     `%rdi')
+define(`n',      `%rsi')
+
 ASM_START()
 	TEXT
 	ALIGN(16)
@@ -38,44 +43,44 @@ PROLOGUE(mpn_mod_1_1p)
 	push	%rbx
 	mov	%rdx, %rbp
 	mov	%rcx, %rbx
-	mov	16(%rcx), %r10
-	mov	24(%rcx), %r11
+	mov	16(%rcx), B1modb
+	mov	24(%rcx), B2modb
 
 C FIXME: See comment in generic/mod_1_1.c.
-	mov	-8(%rdi,%rsi,8), %rax
-	mul	%r10
-	mov	-16(%rdi,%rsi,8), %r9
+	mov	-8(ap,n,8), %rax
+	mul	B1modb
+	mov	-16(ap,n,8), %r9
 	xor	R32(%r8), R32(%r8)
 	add	%r9, %rax
 	adc	%rdx, %r8
 
-	sub	$3, %rsi
+	sub	$3, n
 	js	L(2)
 	ALIGN(16)
-L(top):	mul	%r10			C 1  15
+L(top):	mul	B1modb			C 1  15
 	xor	R32(%r9), R32(%r9)	C
-	mov	(%rdi,%rsi,8), %rcx	C
+	mov	(ap,n,8), %rcx	C
 	add	%rax, %rcx		C 5  19
 	mov	%r8, %rax		C 0  16
 	adc	%rdx, %r9		C 6  20
-	mul	%r11			C 3  17
+	mul	B2modb			C 3  17
 	add	%rcx, %rax		C 7  21
 	nop
 	adc	%rdx, %r9		C 8  22
-	sub	$1, %rsi		C
+	sub	$1, n			C
 	js	L(end)			C
 
-	mul	%r10			C 8  22
+	mul	B1modb			C 8  22
 	xor	R32(%r8), R32(%r8)	C
-	mov	(%rdi,%rsi,8), %rcx	C
+	mov	(ap,n,8), %rcx	C
 	add	%rax, %rcx		C 12 26
 	mov	%r9, %rax		C 9  23
 	adc	%rdx, %r8		C 13 27
-	mul	%r11			C 10 24
+	mul	B2modb			C 10 24
 	add	%rcx, %rax		C 14 28
 	nop
 	adc	%rdx, %r8		C 15 29
-	sub	$1, %rsi		C
+	sub	$1, n			C
 	jns	L(top)			C
 
 	jmp	L(2)
@@ -127,54 +132,49 @@ EPILOGUE()
 PROLOGUE(mpn_mod_1_1p_cps)
 	mov	%rbx, -24(%rsp)
 	mov	%rbp, -16(%rsp)
+	mov	%rsi, %rbp
+	bsr	%rsi,%rax
+	mov	%eax, %ebx
 	mov	%r12, -8(%rsp)
 	sub	$24, %rsp
+	xor	$63, %ebx
 	mov	%rdi, %r12
-	bsr	%rsi, %rax
-	mov	R32(%rax), R32(%rbx)
-	xor	$63, R32(%rbx)
-	mov	%rsi, %rbp
-	mov	R32(%rbx), R32(%rcx)
+	mov	%ebx, %ecx
 	sal	%cl, %rbp
 	mov	%rbp, %rdi
 	CALL(	mpn_invert_limb)
-	mov	%rax, %rdi
-	test	R32(%rbx), R32(%rbx)
-	jne	L(11)
-	mov	%rbp, %rsi
-	neg	%rsi
-	jmp	L(12)
-L(11):
-	xor	R32(%rcx), R32(%rcx)
-	sub	R32(%rbx), R32(%rcx)
-	mov	%rax, %rsi
-	shr	%cl, %rsi
-	mov	$1, R32(%rax)
-	mov	R32(%rbx), R32(%rcx)
+	mov	%rbp, %r8
+	mov	%rax, %r9
+	mov	%rax, (%r12)
+	neg	%r8
+	test	%ebx, %ebx
+	je	L(c0)
+	xor	%ecx, %ecx
+	mov	%rax, %rdx
+	mov	$1, %eax
+	sub	%ebx, %ecx
+	shr	%cl, %rdx
+	mov	%ebx, %ecx
 	sal	%cl, %rax
-	or	%rax, %rsi
-	mov	%rbp, %rax
-	neg	%rax
-	imul	%rax, %rsi
-L(12):
-	mov	%rsi, %rax
-	mul	%rdi
+	or	%rax, %rdx
+	imul	%rdx, %r8
+L(c0):	mov	%r8, %rax
+	mul	%r9
+	lea	1(%rdx,%r8), %rdx
 	mov	%rax, %rcx
-	add	%rsi, %rdx
-	not	%rdx
+	neg	%rdx
 	imul	%rbp, %rdx
 	lea	(%rdx,%rbp), %rax
 	cmp	%rdx, %rcx
+	mov	%ebx, %ecx
+	mov	8(%rsp), %rbp
 	cmovb	%rax, %rdx
-	mov	%rdi, (%r12)
-	mov	R32(%rbx), 8(%r12)
-	mov	R32(%rbx), R32(%rcx)
-	shr	%cl, %rsi
-	mov	%rsi, 16(%r12)
+	shr	%cl, %r8
 	shr	%cl, %rdx
+	mov	%rbx, 8(%r12)
+	mov	%r8, 16(%r12)
 	mov	%rdx, 24(%r12)
 	mov	(%rsp), %rbx
-	mov	8(%rsp), %rbp
 	mov	16(%rsp), %r12
 	add	$24, %rsp
 	ret

@@ -1,5 +1,8 @@
 2010-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Use macro register names.
+	(mpn_mod_1_1p_cps): Rewrite.
+
 	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Micro-optimise.
 
 	* longlong.h: Undo 2009-03-01 change for powerpc64, it gives poor code.
