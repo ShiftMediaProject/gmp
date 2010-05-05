@@ -29,13 +29,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
-#define MOD_1U_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD     MP_SIZE_T_MAX
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD     MP_SIZE_T_MAX
+#define MOD_1U_TO_MOD_1_1_THRESHOLD         11
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0  /* never mpn_mod_1_1p */
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        14
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
 #define USE_PREINV_DIVREM_1                  1  /* preinv always */
 #define DIVEXACT_1_THRESHOLD                 0  /* always */
-#define BMOD_1_TO_MOD_1_THRESHOLD        MP_SIZE_T_MAX  /* never */
+#define BMOD_1_TO_MOD_1_THRESHOLD           74
 
 #define MUL_TOOM22_THRESHOLD                16
 #define MUL_TOOM33_THRESHOLD                53
@@ -56,7 +56,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM8_THRESHOLD                260
 
 #define MULMOD_BNM1_THRESHOLD               11
-#define SQRMOD_BNM1_THRESHOLD               17
+#define SQRMOD_BNM1_THRESHOLD               13
 
 #define MUL_FFT_MODF_THRESHOLD             244  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
