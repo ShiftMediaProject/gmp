@@ -41,10 +41,9 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
   b <<= cnt;
   invert_limb (bi, b);
 
-  if (UNLIKELY (cnt == 0))
-    B1modb = -b;
-  else
-    B1modb = -b * ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
+  B1modb = -b;
+  if (LIKELY (cnt != 0))
+    B1modb *= ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
   ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   udiv_rnd_preinv (B2modb, B1modb, b, bi);
 
