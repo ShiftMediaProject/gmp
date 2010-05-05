@@ -1777,7 +1777,7 @@ tune_mod_1 (void)
     static struct param_t  param;
 
     param.check_size = 256;
-    s.r = randlimb_norm () / 5;
+    s.r = randlimb_half;
     param.noprint = 1;
 
     param.function = speed_mpn_mod_1_1;

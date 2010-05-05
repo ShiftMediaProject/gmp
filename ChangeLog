@@ -1,3 +1,8 @@
+2010-05-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mod_1): Use more typical divisor, for the benefit
+	of machines with early-out multipliers.
+
 2010-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mod_1): Fix typo.
