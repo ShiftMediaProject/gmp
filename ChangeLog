@@ -1,5 +1,7 @@
 2010-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (all): Don't call tune_divrem_2.
+
 	* mpn/generic/divrem_2.c: Complete rewrite.
 
 	* tune/tuneup.c (tune_mod_1): Fix typo.

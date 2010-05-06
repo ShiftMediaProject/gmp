@@ -2364,7 +2364,9 @@ all (void)
   tune_divrem_1 ();
   tune_mod_1 ();
   tune_preinv_divrem_1 ();
+#if 0
   tune_divrem_2 ();
+#endif
   tune_divexact_1 ();
   tune_modexact_1_odd ();
   printf("\n");
