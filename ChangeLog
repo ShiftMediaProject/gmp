@@ -1,5 +1,7 @@
 2010-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/divrem_2.c: Complete rewrite.
+
 	* tune/tuneup.c (tune_mod_1): Fix typo.
 
 2010-05-05  Torbjorn Granlund  <tege@gmplib.org>
