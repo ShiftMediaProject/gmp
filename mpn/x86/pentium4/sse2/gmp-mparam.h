@@ -24,14 +24,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD                 4
 #define MOD_1_UNNORM_THRESHOLD               6
-#define MOD_1N_TO_MOD_1_1_THRESHOLD          8
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          6
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0  /* never mpn_mod_1_1p */
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        10
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     12
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD      7
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define BMOD_1_TO_MOD_1_THRESHOLD           19
+#define BMOD_1_TO_MOD_1_THRESHOLD           20
 
 #define MUL_TOOM22_THRESHOLD                36
 #define MUL_TOOM33_THRESHOLD               126
@@ -111,7 +111,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_Q_THRESHOLD                 98
 
 #define INV_MULMOD_BNM1_THRESHOLD           70
-#define INV_NEWTON_THRESHOLD               172
+#define INV_NEWTON_THRESHOLD               126
 #define INV_APPR_THRESHOLD                  80
 
 #define BINV_NEWTON_THRESHOLD              454
@@ -119,7 +119,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MU_DIV_QR_THRESHOLD               2089
 #define MU_DIVAPPR_Q_THRESHOLD            2089
-#define MUPI_DIV_QR_THRESHOLD                0  /* always */
+#define MUPI_DIV_QR_THRESHOLD               66
 #define MU_BDIV_QR_THRESHOLD              1787
 #define MU_BDIV_Q_THRESHOLD               2304
 

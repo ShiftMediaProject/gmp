@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD          5
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          5
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD         9
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        23
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        27
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     10
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */

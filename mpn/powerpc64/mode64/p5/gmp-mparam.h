@@ -25,11 +25,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD         15
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          6
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD         0
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     39
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          7
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        16
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     14
 #define USE_PREINV_DIVREM_1                  0
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           42
@@ -165,8 +165,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_TABLE3_SIZE 190
 #define SQR_FFT_THRESHOLD                 2752
 
-#define MULLO_BASECASE_THRESHOLD             6
-#define MULLO_DC_THRESHOLD                  42
+#define MULLO_BASECASE_THRESHOLD             3
+#define MULLO_DC_THRESHOLD                  31
 #define MULLO_MUL_N_THRESHOLD             6633
 
 #define DC_DIV_QR_THRESHOLD                 37
