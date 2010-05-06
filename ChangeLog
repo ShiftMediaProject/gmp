@@ -1,3 +1,7 @@
+2010-05-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mod_1): Fix typo.
+
 2010-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Use macro register names.
