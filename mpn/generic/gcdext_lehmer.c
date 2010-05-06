@@ -37,11 +37,11 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 
       MPN_COPY (ctx->gp, gp, gn);
       ctx->gn = gn;
-      
+
       if (d < 0)
 	{
 	  int c;
-      
+
 	  /* Must return the smallest cofactor, +u1 or -u0 */
 	  MPN_CMP (c, ctx->u0, ctx->u1, un);
 	  ASSERT (c != 0 || (un == 1 && ctx->u0[0] == 1 && ctx->u1[0] == 1));
@@ -63,10 +63,10 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
       mp_ptr u1 = ctx->u1;
 
       ASSERT (d >= 0);
-  
+
       if (d)
 	MP_PTR_SWAP (u0, u1);
-      
+
       qn -= (qp[qn-1] == 0);
 
       /* Update u0 += q  * u1 */
@@ -92,7 +92,7 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	    return;
 
 	  tp = ctx->tp;
-      
+
 	  if (qn > u1n)
 	    mpn_mul (tp, qp, qn, u1, u1n);
 	  else
@@ -105,7 +105,7 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	    cy = mpn_add (u0, tp, u1n, u0, un);
 	  else
 	    cy = mpn_add (u0, u0, un, tp, u1n);
-      
+
 	  un = u1n;
 	}
       u0[un] = cy;
@@ -157,7 +157,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   ctx.gp = gp;
   ctx.up = up;
   ctx.usize = usize;
-  
+
   /* FIXME: Handle n == 2 differently, after the loop? */
   while (n >= 2)
     {

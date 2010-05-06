@@ -276,7 +276,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   ctx.gp = gp;
   ctx.up = up;
   ctx.usize = usizep;
-  
+
   {
     /* For the first hgcd call, there are no u updates, and it makes
        some sense to use a different choice for p. */
@@ -370,7 +370,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  ctx.u0 = u0;
 	  ctx.u1 = u1;
 	  ctx.tp = tp + n; /* ualloc */
- 	  ctx.un = un;
+	  ctx.un = un;
 
 	  /* Temporary storage n */
 	  n = mpn_gcd_subdiv_step (ap, bp, n, mpn_gcdext_hook, &ctx, tp);

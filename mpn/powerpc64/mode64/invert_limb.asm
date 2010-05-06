@@ -58,7 +58,7 @@ PROLOGUE(mpn_invert_limb)
 	subf	r8, r11, r8		C ((v2 >> 1) & mask) - v2 * d63
 	mulhdu	r0, r8, r0		C p1 = v2 * (((v2 >> 1) & mask) - v2 * d63)
 	srdi	r0, r0, 1		C p1 >> 1
-	add	r0, r0, r9		C v3 = (v2 << 31) + (p1 >> 1) 
+	add	r0, r0, r9		C v3 = (v2 << 31) + (p1 >> 1)
 	nop
 	mulhdu	r9, r0, r3
 	mulld	r11, r0, r3

@@ -91,7 +91,7 @@ Timing on GNU/Linux
       LIBS="$old_LIBS"
 
       AC_SUBST(TUNE_LIBS)
-    
+
     might work.
 
 Low resolution timebase

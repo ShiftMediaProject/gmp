@@ -44,7 +44,7 @@ static const struct
   /* 10 */ { 3, 0 },
   /* 11 */ { 3, 2 },
   /* 12 */ { 3, 3 }, /* d = 0 */
-  
+
 };
 #define JACOBI_A(bits) (decode_table[(bits)>>1].a)
 #define JACOBI_B(bits) (decode_table[(bits)>>1].b)
@@ -56,7 +56,7 @@ static unsigned
 encode (unsigned a, unsigned b, unsigned d)
 {
   unsigned i;
-  
+
   assert (d < 2);
   assert (a < 4);
   assert (b < 4);
@@ -87,7 +87,7 @@ main (int argc, char **argv)
 
       q = bits & 3;
       d = (bits >> 2) & 1;
-      
+
       e = JACOBI_E (bits >> 3);
       a = JACOBI_A (bits >> 3);
       b = JACOBI_B (bits >> 3);
@@ -108,10 +108,10 @@ main (int argc, char **argv)
 	    e ^= (q & (b >> 1)) ^ (q >> 1);
 	  b = (b - q * a) & 3;
 	}
-      
+
       printf("%2d,", (encode (a, b, d) << 1) | e);
     }
   printf("\n");
-  
+
   return 0;
 }

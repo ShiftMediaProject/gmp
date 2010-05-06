@@ -2835,7 +2835,7 @@ __GMP_DECLSPEC mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp
 
 /* This selection may seem backwards.  The reason mpn_mod_1 typically takes
    over for larger sizes is that it uses the mod_1_1 function.  */
-#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       	\
+#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)		\
   (BELOW_THRESHOLD (size, PREINV_MOD_1_TO_MOD_1_THRESHOLD)		\
    ? mpn_preinv_mod_1 (src, size, divisor, inverse)			\
    : mpn_mod_1 (src, size, divisor))
@@ -3770,7 +3770,7 @@ mpn_jacobi_update (unsigned bits, unsigned denominator, unsigned q)
      With constant denominator, the below table lookup is compiled to
 
        C Constant q = 1, constant denominator = 1
-       movzbl table+5(%eax,8), %eax       
+       movzbl table+5(%eax,8), %eax
 
      or
 
@@ -3780,7 +3780,7 @@ mpn_jacobi_update (unsigned bits, unsigned denominator, unsigned q)
      One could maintain the state preshifted 3 bits, to save a shift
      here, but at least on x86, that's no real saving.
   */
-  return bits = jacobi_table[(bits << 3) + (denominator << 2) + q];  
+  return bits = jacobi_table[(bits << 3) + (denominator << 2) + q];
 }
 
 /* Matrix multiplication */

@@ -925,7 +925,7 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 	  prime += primegap[i];
 	}
 
-      /* INCR_LIMIT * (max_prime - 1) must fit in an unsigned. */      
+      /* INCR_LIMIT * (max_prime - 1) must fit in an unsigned. */
 #define INCR_LIMIT 0x10000
 
       for (difference = incr = 0; incr < INCR_LIMIT; difference ++)
@@ -944,7 +944,7 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 	      if (r == 0)
 		goto next;
 	    }
-	  
+
 	  mpz_addmul_ui (p, step, difference);
 	  difference = 0;
 
@@ -956,7 +956,7 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 	next:;
 	  incr ++;
 	}
-      
+
       mpz_addmul_ui (p, step, difference);
       difference = 0;
     }
@@ -992,7 +992,7 @@ check_large_quotients (void)
       mpz_set_ui (op1, 0);
       mpz_urandomb (bs, rands, 32);
       mpz_urandomb (bs, rands, mpz_get_ui (bs) % 12 + 1);
-      
+
       gcd_size = 1 + mpz_get_ui (bs);
       if (gcd_size & 1)
 	{

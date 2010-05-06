@@ -72,15 +72,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define PROCESS_TWOS_EVEN               \
   {                                     \
     int  two, mask, shift;              \
-                                        \
+					\
     two = JACOBI_TWO_U_BIT1 (b);        \
     mask = (~a & 2);                    \
     a >>= 1;                            \
-                                        \
+					\
     shift = (~a & 1);                   \
     a >>= shift;                        \
     result_bit1 ^= two ^ (two & mask);  \
-                                        \
+					\
     while ((a & 1) == 0)                \
       {                                 \
 	a >>= 1;                        \
@@ -91,14 +91,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define PROCESS_TWOS_ANY                \
   {                                     \
     int  two, mask, shift;              \
-                                        \
+					\
     two = JACOBI_TWO_U_BIT1 (b);        \
     shift = (~a & 1);                   \
     a >>= shift;                        \
-                                        \
+					\
     mask = shift << 1;                  \
     result_bit1 ^= (two & mask);        \
-                                        \
+					\
     while ((a & 1) == 0)                \
       {                                 \
 	a >>= 1;                        \
@@ -139,7 +139,7 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
 
   if (a >= b)
     goto a_gt_b;
-      
+
   for (;;)
     {
       result_bit1 ^= JACOBI_RECIP_UU_BIT1 (a, b);
@@ -200,7 +200,7 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
   a >>= c;
   a >>= 1;
 
-  do 
+  do
     {
       mp_limb_t t = a - b;
       mp_limb_t bgta = LIMB_HIGHBIT_TO_MASK (t);
@@ -210,7 +210,7 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
 
       /* If b > a, invoke reciprocity */
       bit ^= (bgta & a & b);
-      
+
       /* b <-- min (a, b) */
       b += (bgta & t);
 
@@ -224,9 +224,9 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int bit)
       /* (2/b) = -1 if b = 3 or 5 mod 8 */
       bit ^= c & (b ^ (b >> 1));
       a >>= c;
-    }    
+    }
   while (b > 0);
 
   return 1-2*(bit & 1);
-}  
+}
 #endif /* JACOBI_BASE_METHOD == 4 */

@@ -45,9 +45,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    Otherwise, if d = 0 we have just subtracted a multiple of A from B,
    and if d = 1 we have subtracted a multiple of B from A.
-   
+
    + If A == B after subtraction, G is the gcd, Q is NULL.
-   
+
    + If we get a zero remainder after division, G is the gcd, Q is the
      quotient.
 
@@ -117,9 +117,9 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
       if (UNLIKELY (c == 0))
 	{
 	  hook (ctx, bp, bn, NULL, 0, swapped);
-	  return 0;	  
+	  return 0;
 	}
-      
+
       hook (ctx, NULL, 0, &one, 1, swapped);
 
       if (c > 0)

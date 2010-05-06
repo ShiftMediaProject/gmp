@@ -65,7 +65,7 @@ gcd_hook (void *p, mp_srcptr gp, mp_size_t gn,
   MPN_COPY (ctx->gp, gp, gn);
   ctx->gn = gn;
 }
-  
+
 #if GMP_NAIL_BITS > 0
 /* Nail supports should be easy, replacing the sub_ddmmss with nails
  * logic. */

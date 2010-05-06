@@ -259,7 +259,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 
   if ( (bh | bl) == 0)
     return 1 - 2*(bit & 1);
-  
+
   if ( (ah | al) == 0)
     return 0;
 
@@ -271,7 +271,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
     }
   count_trailing_zeros (c, al);
   bit ^= c & (bl ^ (bl >> 1));
-  
+
   c++;
   if (UNLIKELY (c == GMP_NUMB_BITS))
     {
@@ -332,7 +332,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
     }
 
   ASSERT (bl > 0);
-  
+
   while ( (al | bl) & GMP_LIMB_HIGHBIT)
     {
       /* Need an extra comparison to get the mask. */
@@ -344,7 +344,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 
       /* If b > a, invoke reciprocity */
       bit ^= (bgta & al & bl);
-      
+
       /* b <-- min (a, b) */
       bl += (bgta & t);
 
@@ -440,7 +440,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 	    {
 	      count_trailing_zeros (c, ah);
 	      bit ^= ((GMP_NUMB_BITS + c) << 1) & (bl ^ (bl >> 1));
-	  
+
 	      al = bl;
 	      bl = ah >> c;
 	      ah = bh;
@@ -455,7 +455,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 	}
       if (ah == bh)
 	goto cancel_hi;
-      
+
       if (ah == 0)
 	{
 	  bit ^= al & bl;
@@ -463,7 +463,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 	  ah = bh;
 	  break;
 	}
-      
+
       bit ^= al & bl;
 
       /* Compute (b|a) */
@@ -537,7 +537,7 @@ mpn_jacobi_2 (mp_srcptr ap, mp_srcptr bp, unsigned bit)
 
       al = ((ah << (GMP_NUMB_BITS - c)) & GMP_NUMB_MASK) | (al >> c);
       ah >>= c;
-      bit ^= (c << 1) & (bl ^ (bl >> 1));      
+      bit ^= (c << 1) & (bl ^ (bl >> 1));
     }
  ab_reduced:
   ASSERT (bl & 1);
@@ -777,8 +777,8 @@ jacobi_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	  *bitsp = BITS_FAIL;
 	  return;
 	}
-    }      
-  
+    }
+
   if (qp)
     {
       ASSERT (qn > 0);
@@ -841,13 +841,13 @@ mpn_jacobi_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n, unsigned bits, mp_ptr tp)
 
   if (bits >= 16)
     MP_PTR_SWAP (ap, bp);
-        
+
   if (n == 1)
     {
       mp_limb_t al, bl;
       al = ap[0];
       bl = bp[0];
-      
+
       if (bl == 1)
 	return 1 - 2*(bits & 1);
       else

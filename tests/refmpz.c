@@ -201,7 +201,7 @@ refmpz_legendre (mpz_srcptr a, mpz_srcptr p)
 
   ASSERT_ALWAYS (mpz_sgn (p) > 0);
   ASSERT_ALWAYS (mpz_odd_p (p));
-  
+
   mpz_init (r);
   mpz_init (e);
 
