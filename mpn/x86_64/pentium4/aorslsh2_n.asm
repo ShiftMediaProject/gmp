@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_addlsh1_n, mpn_sublsh1_n -- rp[] = up[] +- (vp[] << 1),
+dnl  AMD64 mpn_addlsh2_n, mpn_sublsh2_n -- rp[] = up[] +- (vp[] << 2),
 dnl  optimized for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
@@ -22,16 +22,16 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-define(LSH, 1)
-define(RSH, 31)			C 31, not 63, since we use 32-bit ops
+define(LSH, 2)
+define(RSH, 30)			C 30, not 62, since we use 32-bit ops
 
-ifdef(`OPERATION_addlsh1_n', `
+ifdef(`OPERATION_addlsh2_n', `
 	define(ADDSUB,	      add)
-	define(func,	      mpn_addlsh1_n)')
-ifdef(`OPERATION_sublsh1_n', `
+	define(func,	      mpn_addlsh2_n)')
+ifdef(`OPERATION_sublsh2_n', `
 	define(ADDSUB,	      sub)
-	define(func,	      mpn_sublsh1_n)')
+	define(func,	      mpn_sublsh2_n)')
 
-MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
+MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
 
 include_mpn(`x86_64/pentium4/aorslshC_n.asm')
