@@ -138,7 +138,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	fmuld	u32, v00, r32
 	fmuld	u00, v48, p48
 	addcc	%i2, 8, %i2
-	bnz,pt	%icc, .L_two_or_more
+	bnz,pt	%xcc, .L_two_or_more
 	fmuld	u32, v16, r48
 
 .L_one:
@@ -216,7 +216,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 	addcc	%i2, 8, %i2
-	bnz,pt	%icc, .L_three_or_more
+	bnz,pt	%xcc, .L_three_or_more
 	fmuld	u32, v16, r48
 
 .L_two:
@@ -298,7 +298,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 	addcc	%i2, 8, %i2
-	bnz,pt	%icc, .L_four_or_more
+	bnz,pt	%xcc, .L_four_or_more
 	fmuld	u32, v16, r48
 
 .L_three:
@@ -386,7 +386,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	fmuld	u00, v48, p48
 	add	cy, %g5, %o4		C x = prev(i00) + cy
 	addcc	%i2, 8, %i2
-	bnz,pt	%icc, .Loop
+	bnz,pt	%xcc, .Loop
 	fmuld	u32, v16, r48
 
 .L_four:
@@ -463,7 +463,7 @@ C 12
 C 13
 	add	cy, %g5, %o4		C x = prev(i00) + cy
 	addcc	%i2, 8, %i2
-	bnz,pt	%icc, .Loop
+	bnz,pt	%xcc, .Loop
 	fmuld	u32, v16, r48
 C END MAIN LOOP
 

@@ -1,6 +1,7 @@
 dnl  SPARC v9 mpn_lshift
 
-dnl  Copyright 1996, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001, 2002, 2003, 2010 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,23 +23,22 @@ include(`../config.m4')
 
 C		   cycles/limb
 C UltraSPARC 1&2:     2
-C UltraSPARC 3:	      3.25
+C UltraSPARC 3:	      2.5
 
 C INPUT PARAMETERS
-define(`rp',`%i0')
-define(`up',`%i1')
-define(`n',`%i2')
+define(`rp', `%i0')
+define(`up', `%i1')
+define(`n',  `%i2')
 define(`cnt',`%i3')
 
-define(`u0',`%l0')
-define(`u1',`%l2')
-define(`u2',`%l4')
-define(`u3',`%l6')
+define(`u0', `%l0')
+define(`u1', `%l2')
+define(`u2', `%l4')
+define(`u3', `%l6')
 
 define(`tnc',`%i4')
 
 define(`fanop',`fitod %f0,%f2')		dnl  A quasi nop running in the FA pipe
-define(`fmnop',`fmuld %f0,%f0,%f4')	dnl  A quasi nop running in the FM pipe
 
 ASM_START()
 	REGISTER(%g2,#scratch)
@@ -53,9 +53,8 @@ PROLOGUE(mpn_lshift)
 	ldx	[up-8],u3		C load first limb
 	subcc	n,5,n
 	srlx	u3,tnc,%i5		C compute function result
+	bl,pn	%xcc,.Lend1234
 	sllx	u3,cnt,%g3
-	bl,pn	%icc,.Lend1234
-	fanop
 
 	subcc	n,4,n
 	ldx	[up-16],u0
@@ -63,13 +62,12 @@ PROLOGUE(mpn_lshift)
 	add	up,-32,up
 	ldx	[up-0],u2
 	ldx	[up-8],u3
+
+	bl,pn	%xcc,.Lend5678
 	srlx	u0,tnc,%g2
 
-	bl,pn	%icc,.Lend5678
-	fanop
-
 	b,a	.Loop
-	.align	16
+	ALIGN(16)
 .Loop:
 	sllx	u0,cnt,%g1
 	or	%g3,%g2,%g3
@@ -108,7 +106,7 @@ C --
 C --
 	srlx	u0,tnc,%g2
 	stx	%g1,[rp-0]
-	bge,pt	%icc,.Loop
+	bge,pt	%xcc,.Loop
 	fanop
 C --
 .Lend5678:
@@ -131,7 +129,7 @@ C --
 
 .Lend1234:
 	addcc	n,4,n
-	bz,pn	%icc,.Lret
+	bz,pn	%xcc,.Lret
 	fanop
 .Loop0:
 	add	rp,-8,rp
@@ -142,7 +140,7 @@ C --
 	or	%g3,%g2,%g3
 	stx	%g3,[rp]
 	sllx	u3,cnt,%g3
-	bnz,pt	%icc,.Loop0
+	bnz,pt	%xcc,.Loop0
 	fanop
 .Lret:
 	stx	%g3,[rp-8]

@@ -59,7 +59,7 @@ PROLOGUE(mpn_add_n)
 
 	fitod	%f0,%f0		C make sure f0 contains small, quiet number
 	subcc	n,4,%g0
-	bl,pn	%icc,.Loop0
+	bl,pn	%xcc,.Loop0
 	mov	0,cy
 
 	ldx	[up+0],u0
@@ -76,7 +76,7 @@ PROLOGUE(mpn_add_n)
 	add	u0,v0,%g1	C main add
 	add	%g1,cy,%g4	C carry add
 	or	u0,v0,%g2
-	bl,pn	%icc,.Lend4567
+	bl,pn	%xcc,.Lend4567
 	fanop
 	b,a	.Loop
 
@@ -159,7 +159,7 @@ C --
 C --
 	add	%g1,cy,%g4
 	or	u0,v0,%g2
-	bge,pt	%icc,.Loop
+	bge,pt	%xcc,.Loop
 	fanop
 C END MAIN LOOP
 .Lend4567:
@@ -195,7 +195,7 @@ C END MAIN LOOP
 	stx	%g4,[rp-8]
 
 	addcc	n,4,n
-	bz,pn	%icc,.Lret
+	bz,pn	%xcc,.Lret
 	fanop
 
 .Loop0:	ldx	[up],u0
@@ -211,7 +211,7 @@ C END MAIN LOOP
 	andn	%g2,%g4,%g2
 	stx	%g4,[rp-8]
 	or	%g3,%g2,%g2
-	bnz,pt	%icc,.Loop0
+	bnz,pt	%xcc,.Loop0
 	srlx	%g2,63,cy
 
 .Lret:	mov	cy,%i0
