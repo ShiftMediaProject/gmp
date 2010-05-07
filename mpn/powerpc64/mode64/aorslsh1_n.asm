@@ -19,11 +19,6 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		cycles/limb
-C POWER3/PPC630:     1.83	(1.5 c/l should be possible)
-C POWER4/PPC970:     3		(2.0 c/l should be possible)
-C POWER5:	     3
-
 
 define(LSH,		1)
 define(RSH,		63)
@@ -43,7 +38,6 @@ ifdef(`OPERATION_sublsh1_n',`
 			neg	r3, r3')
   define(func, mpn_sublsh1_n)
 ')
-
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
 
