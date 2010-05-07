@@ -1,5 +1,7 @@
 2010-05-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/lshiftc.asm: New file.
+
 	* mpn/ia64/divrem_2.asm: Complete rewrite.
 
 2010-05-06  Torbjorn Granlund  <tege@gmplib.org>
