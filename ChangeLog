@@ -1,5 +1,7 @@
 2010-05-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/atom/gmp-mparam.h: Disable mpn_rsh1add_n, mpn_rsh1sub_n.
+
 	* mpn/x86_64/pentium4/aorslshC_n.asm: New file based on aorslsh1_n.asm.
 	* mpn/x86_64/pentium4/aorslsh1_n.asm: Just include aorslshC_n.asm.
 	* mpn/x86_64/pentium4/aorslsh2_n.asm: New file.

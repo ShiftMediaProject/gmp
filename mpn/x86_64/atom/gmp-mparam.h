@@ -21,6 +21,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
+/* These routines exists for all x86_64 chips, but they are slower on Atom
+   than separate add/sub and shift.  Make sure they are not really used.  */
+#undef HAVE_NATIVE_mpn_rsh1add_n
+#undef HAVE_NATIVE_mpn_rsh1sub_n
+
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD         11
