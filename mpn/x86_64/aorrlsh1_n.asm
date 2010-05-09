@@ -44,13 +44,13 @@ define(`vp',`%rdx')
 define(`n', `%rcx')
 
 ifdef(`OPERATION_addlsh1_n', `
-	define(ADDSUB,	      add)
-	define(ADCSBB,	      adc)
-	define(func,	      mpn_addlsh1_n)')
+  define(ADDSUB,	add)
+  define(ADCSBB,	adc)
+  define(func,		mpn_addlsh1_n)')
 ifdef(`OPERATION_rsblsh1_n', `
-	define(ADDSUB,	      sub)
-	define(ADCSBB,	      sbb)
-	define(func,	      mpn_rsblsh1_n)')
+  define(ADDSUB,	sub)
+  define(ADCSBB,	sbb)
+  define(func,		mpn_rsblsh1_n)')
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_rsblsh1_n)
 
