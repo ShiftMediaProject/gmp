@@ -3,7 +3,7 @@ dnl  AMD64 mpn_rsblsh2_n -- rp[] = (vp[] << 2) - up[]
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -25,15 +25,15 @@ include(`../config.m4')
 define(LSH, 2)
 define(RSH, 62)
 
-ifdef(`OPERATION_addlsh2_n',`
-  define(ADDSUB,	add)
-  define(ADCSBB,	adc)
-  define(func,		mpn_addlsh2_n)')
-ifdef(`OPERATION_rsblsh2_n',`
-  define(ADDSUB,	sub)
-  define(ADCSBB,	sbb)
-  define(func,		mpn_rsblsh2_n)')
+ifdef(`OPERATION_addlsh2_n', `
+	define(ADDSUB,	add)
+	define(ADCSBB,	adc)
+	define(func,	mpn_addlsh2_n)')
+ifdef(`OPERATION_rsblsh2_n', `
+	define(ADDSUB,	sub)
+	define(ADCSBB,	sbb)
+	define(func,	mpn_rsblsh2_n)')
 
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
 
-include_mpn(`x86_64/aorslshC_n.asm')
+include_mpn(`x86_64/aorrlshC_n.asm')

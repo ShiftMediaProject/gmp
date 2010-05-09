@@ -1,9 +1,21 @@
+2010-05-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/aorrlshC_n.asm: New file based on aorrlsh2_n.asm.
+	* mpn/x86_64/aorrlsh2_n.asm: Now just include aorrlshC_n.asm.
+	* mpn/x86_64/core2/aorrlsh1_n.asm: New file, include ../aorrlshC_n.asm.
+	* mpn/x86_64/core2/aorrlsh2_n.asm: Likewise.
+
+	* mpn/x86_64/core2/sublshC_n.asm: New file based on aorslsh1_n.asm.
+	* mpn/x86_64/core2/aorslsh1_n.asm: Remove.
+	* mpn/x86_64/core2/sublsh1_n.asm: Just include sublshC_n.asm.
+	* mpn/x86_64/core2/sublsh2_n.asm: Likewise.
+
 2010-05-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/gmp-mparam.h: Disable mpn_rsh1add_n, mpn_rsh1sub_n.
 
 	* mpn/x86_64/pentium4/aorslshC_n.asm: New file based on aorslsh1_n.asm.
-	* mpn/x86_64/pentium4/aorslsh1_n.asm: Just include aorslshC_n.asm.
+	* mpn/x86_64/pentium4/aorslsh1_n.asm: Now just include aorslshC_n.asm.
 	* mpn/x86_64/pentium4/aorslsh2_n.asm: New file.
 
 2010-05-07  Torbjorn Granlund  <tege@gmplib.org>

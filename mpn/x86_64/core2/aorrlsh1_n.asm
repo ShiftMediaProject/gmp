@@ -1,9 +1,9 @@
-dnl  AMD64 mpn_addlsh2_n -- rp[] = up[] + (vp[] << 2)
-dnl  AMD64 mpn_rsblsh2_n -- rp[] = (vp[] << 2) - up[]
+dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
+dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,18 +22,18 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-define(LSH, 2)
-define(RSH, 62)
+define(LSH, 1)
+define(RSH, 63)
 
-ifdef(`OPERATION_addlsh2_n',`
-  define(ADDSUB,	add)
-  define(ADCSBB,	adc)
-  define(func,		mpn_addlsh2_n)')
-ifdef(`OPERATION_rsblsh2_n',`
-  define(ADDSUB,	sub)
-  define(ADCSBB,	sbb)
-  define(func,		mpn_rsblsh2_n)')
+ifdef(`OPERATION_addlsh1_n', `
+	define(ADDSUB,	add)
+	define(ADCSBB,	adc)
+	define(func,	mpn_addlsh1_n)')
+ifdef(`OPERATION_rsblsh1_n', `
+	define(ADDSUB,	sub)
+	define(ADCSBB,	sbb)
+	define(func,	mpn_rsblsh1_n)')
 
-MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
+MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_rsblsh1_n)
 
-include_mpn(`x86_64/aorslshC_n.asm')
+include_mpn(`x86_64/aorrlshC_n.asm')

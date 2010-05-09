@@ -1,6 +1,9 @@
-dnl  x86-64 mpn_addlsh1_n and mpn_sublsh1_n, optimized for "Core" 2.
+dnl  AMD64 mpn_sublshC_n -- rp[] = up[] - (vp[] << 1), optimised for Core 2 and
+dnl  Core iN.
 
-dnl  Copyright 2008 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
+dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -17,8 +20,6 @@ dnl  License for more details.
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-include(`../config.m4')
-
 C	     cycles/limb
 C AMD K8,K9	 4.25
 C AMD K10	 ?
@@ -33,17 +34,6 @@ define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n', `%rcx')
-
-ifdef(`OPERATION_addlsh1_n', `
-	define(ADDSUB,	add)
-	define(ADCSBB,	adc)
-	define(func,	mpn_addlsh1_n)')
-ifdef(`OPERATION_sublsh1_n', `
-	define(ADDSUB,	sub)
-	define(ADCSBB,	sbb)
-	define(func,	mpn_sublsh1_n)')
-
-MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
 
 ASM_START()
 	TEXT
@@ -61,7 +51,7 @@ PROLOGUE(func)
 	xor	R32(%r11), R32(%r11)
 
 	mov	-24(vp,n,8), %r8	C do first limb early
-	shrd	$63, %r8, %r11
+	shrd	$RSH, %r8, %r11
 
 	and	$3, R32(%rax)
 	je	L(b0)
@@ -70,9 +60,9 @@ PROLOGUE(func)
 	je	L(b2)
 
 L(b3):	mov	-16(vp,n,8), %r9
-	shrd	$63, %r9, %r8
+	shrd	$RSH, %r9, %r8
 	mov	-8(vp,n,8), %r10
-	shrd	$63, %r10, %r9
+	shrd	$RSH, %r10, %r9
 	mov	-24(up,n,8), %r12
 	ADDSUB	%r11, %r12
 	mov	%r12, -24(rp,n,8)
@@ -98,7 +88,7 @@ L(b1):	mov	-24(up,n,8), %r12
 	jmp	L(end)
 
 L(b2):	mov	-16(vp,n,8), %r9
-	shrd	$63, %r9, %r8
+	shrd	$RSH, %r9, %r8
 	mov	-24(up,n,8), %r12
 	ADDSUB	%r11, %r12
 	mov	%r12, -24(rp,n,8)
@@ -113,13 +103,13 @@ L(b2):	mov	-16(vp,n,8), %r9
 
 	ALIGN(16)
 L(top):	mov	-24(vp,n,8), %r8
-	shrd	$63, %r8, %r11
+	shrd	$RSH, %r8, %r11
 L(b0):	mov	-16(vp,n,8), %r9
-	shrd	$63, %r9, %r8
+	shrd	$RSH, %r9, %r8
 	mov	-8(vp,n,8), %r10
-	shrd	$63, %r10, %r9
+	shrd	$RSH, %r10, %r9
 	mov	(vp,n,8), %rbx
-	shrd	$63, %rbx, %r10
+	shrd	$RSH, %rbx, %r10
 
 	add	R32(%rax), R32(%rax)	C restore cy
 
@@ -145,10 +135,10 @@ L(b0):	mov	-16(vp,n,8), %r9
 	add	$4, n
 	js	L(top)
 
-L(end):	add	%r11, %r11
+L(end):	shr	$RSH, %r11
 	pop	%r12
 	pop	%rbx
-	sbb	$0, R32(%rax)
+	sub	R32(%r11), R32(%rax)
 	neg	R32(%rax)
 	ret
 EPILOGUE()

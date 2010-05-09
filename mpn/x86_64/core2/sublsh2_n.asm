@@ -1,9 +1,8 @@
-dnl  AMD64 mpn_addlsh2_n -- rp[] = up[] + (vp[] << 2)
-dnl  AMD64 mpn_rsblsh2_n -- rp[] = (vp[] << 2) - up[]
+dnl  AMD64 mpn_sublsh2_n optimised for Core 2 and Core iN.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -25,15 +24,10 @@ include(`../config.m4')
 define(LSH, 2)
 define(RSH, 62)
 
-ifdef(`OPERATION_addlsh2_n',`
-  define(ADDSUB,	add)
-  define(ADCSBB,	adc)
-  define(func,		mpn_addlsh2_n)')
-ifdef(`OPERATION_rsblsh2_n',`
-  define(ADDSUB,	sub)
-  define(ADCSBB,	sbb)
-  define(func,		mpn_rsblsh2_n)')
+define(ADDSUB,	sub)
+define(ADCSBB,	sbb)
+define(func,	mpn_sublsh2_n)
 
-MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
+MULFUNC_PROLOGUE(mpn_sublsh2_n)
 
-include_mpn(`x86_64/aorslshC_n.asm')
+include_mpn(`x86_64/core2/sublshC_n.asm')
