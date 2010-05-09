@@ -1,5 +1,5 @@
 dnl  AMD64 mpn_addlsh2_n, mpn_sublsh2_n -- rp[] = up[] +- (vp[] << 2),
-dnl  optimized for Pentium 4.
+dnl  optimised for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
@@ -26,11 +26,11 @@ define(LSH, 2)
 define(RSH, 30)			C 30, not 62, since we use 32-bit ops
 
 ifdef(`OPERATION_addlsh2_n', `
-	define(ADDSUB,	      add)
-	define(func,	      mpn_addlsh2_n)')
+  define(ADDSUB,	add)
+  define(func,		mpn_addlsh2_n)')
 ifdef(`OPERATION_sublsh2_n', `
-	define(ADDSUB,	      sub)
-	define(func,	      mpn_sublsh2_n)')
+  define(ADDSUB,	sub)
+  define(func,		mpn_sublsh2_n)')
 
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
 
