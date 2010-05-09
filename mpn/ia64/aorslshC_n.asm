@@ -19,8 +19,6 @@ dnl  License for more details.
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-include(`../config.m4')
-
 C           cycles/limb
 C Itanium:      ?
 C Itanium 2:    1.5
