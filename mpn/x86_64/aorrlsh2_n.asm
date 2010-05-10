@@ -36,4 +36,4 @@ ifdef(`OPERATION_rsblsh2_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
 
-include_mpn(`x86_64/aorslshC_n.asm')
+include_mpn(`x86_64/aorrlshC_n.asm')

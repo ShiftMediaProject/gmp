@@ -1,3 +1,7 @@
+2010-05-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/aorrlsh2_n.asm: Fix typo.
+
 2010-05-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorrlshC_n.asm: New file based on aorrlsh2_n.asm.
