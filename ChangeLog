@@ -1,3 +1,12 @@
+2010-05-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/jacobi.c (mpz_jacobi): Deleted old implementation.
+	Reorganized new implementation, to handle small inputs effciently.
+
+	* tests/mpz/t-jac.c (check_large_quotients): Reduced test sizes.
+	(check_data): One more input pair related to a fixed bug.
+	(main): Enable check_large_quotients.
+
 2010-05-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorrlsh2_n.asm: Fix typo.

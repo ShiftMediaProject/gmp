@@ -201,6 +201,10 @@ try_pari (mpz_srcptr a, mpz_srcptr b, int answer)
 void
 try_each (mpz_srcptr a, mpz_srcptr b, int answer)
 {
+#if 0
+  fprintf(stderr, "asize = %d, bsize = %d\n",
+	  mpz_sizeinbase (a, 2), mpz_sizeinbase (b, 2));
+#endif
   if (option_pari)
     {
       try_pari (a, b, answer);
@@ -616,9 +620,11 @@ check_data (void)
     { "0x10000000000000000000000000000000000000000000000001",
       "0x10000000000000000000000000000000000000000000000003", 1 },
 
-    /* Test for old bug in jacobi_2, 32-bit and 64-bit limbs */
-    { "0x43900000000", "0x42400000439", -1 },
-    { "0x4390000000000000000", "0x4240000000000000439", -1 },
+    /* Test for previous bugs in jacobi_2. */
+    { "0x43900000000", "0x42400000439", -1 }, /* 32-bit limbs */
+    { "0x4390000000000000000", "0x4240000000000000439", -1 }, /* 64-bit limbs */
+
+    { "198158408161039063", "198158360916398807", -1 },
 
     /* Some tests involving large quotients in the continued fraction
        expansion. */
@@ -968,8 +974,8 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
 void
 check_large_quotients (void)
 {
-#define COUNT 4
-#define MAX_THRESHOLD 30
+#define COUNT 5
+#define MAX_THRESHOLD 15
 
   gmp_randstate_ptr rands = RANDS;
   unsigned i;
@@ -991,8 +997,8 @@ check_large_quotients (void)
       /* Code originally copied from t-gcd.c */
       mpz_set_ui (op1, 0);
       mpz_urandomb (bs, rands, 32);
-      mpz_urandomb (bs, rands, mpz_get_ui (bs) % 12 + 1);
-
+      mpz_urandomb (bs, rands, mpz_get_ui (bs) % 10 + 1);
+      
       gcd_size = 1 + mpz_get_ui (bs);
       if (gcd_size & 1)
 	{
@@ -1038,26 +1044,30 @@ check_large_quotients (void)
       ASSERT_ALWAYS (mpz_cmp (op1, op2) < 0);
 
       if (gcd_size)
-	try_all (op2, op1, 0);
+	answer = 0;
       else
 	{
 	  if (mpz_odd_p (op1) && mpz_probab_prime_p (op1, 5))
 	    {
 	      answer = refmpz_legendre (op2, op1);
-	      try_all (op2, op1, answer);
 	    }
 	  else if (mpz_odd_p (op2) && mpz_probab_prime_p (op2, 5))
 	    {
-	      answer = refmpz_legendre (op1, op2);
-	      try_all (op1, op2, answer);
+	      mpz_swap (op1, op2);
+	      answer = refmpz_legendre (op2, op1);
 	    }
 	  else
 	    {
 	      mpz_nextprime_step (op1, op2, op1);
 	      answer = refmpz_legendre (op2, op1);
-	      try_all (op2, op1, answer);
 	    }
 	}
+      try_all (op2, op1, answer);
+#if 0
+      gmp_printf("(a/b) = %d:\n"
+		 "a = %Zd\n"
+		 "b = %Zd\n", answer, op2, op1);
+#endif
     }
   mpz_clear (op1);
   mpz_clear (op2);
@@ -1091,9 +1101,7 @@ try(a,b,answer) =\n\
   check_squares_zi ();
   check_a_zero ();
   check_jacobi_factored ();
-#if 0
   check_large_quotients ();
-#endif
   tests_end ();
   exit (0);
 }
