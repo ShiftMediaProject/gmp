@@ -3572,9 +3572,6 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
 #define PP_FIRST_OMITTED 3
 #endif
 
-
-/* FIXME: Macros for old jacobi code, review what's still needed. */
-
 /* BIT1 means a result value in bit 1 (second least significant bit), with a
    zero bit representing +1 and a one bit representing -1.  Bits other than
    bit 1 are garbage.  These are meant to be kept in "int"s, and casts are
@@ -3591,6 +3588,9 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
 
 /* (a/0), with a unsigned; is 1 if a=+/-1, 0 otherwise */
 #define JACOBI_U0(a)   ((a) == 1)
+
+/* FIXME: JACOBI_LS0 and JACOBI_0LS are the same, so delete one and
+   come up with a better name. */
 
 /* (a/0), with a given by low and size;
    is 1 if a=+/-1, 0 otherwise */
@@ -3719,7 +3719,7 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
       }                                                                    \
   } while (0)
 
-/* For new jacobi code. */
+/* State for the Jacobi computation using Lehmer. */
 #define jacobi_table __gmp_jacobi_table
 __GMP_DECLSPEC extern const unsigned char jacobi_table[208];
 
