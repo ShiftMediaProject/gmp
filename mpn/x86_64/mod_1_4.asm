@@ -2,7 +2,7 @@ dnl  AMD64 mpn_mod_1s_4p
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -26,9 +26,9 @@ C AMD K8,K9	 3
 C AMD K10	 3
 C Intel P4	15.5
 C Intel core2	 5
-C Intel corei	 4.25
+C Intel corei	 4
 C Intel atom	23
-C VIA nano	 5
+C VIA nano	 4.75
 
 ASM_START()
 	TEXT
@@ -97,8 +97,8 @@ L(top):	mov	-24(%rdi), %rax
 	mul	%r11			C up[1] * B1modb
 	add	%rax, %r10
 	mov	-16(%rdi), %rax
-	mov	%rdx, %rcx
-	adc	$0, %rcx
+	mov	$0, R32(%rcx)
+	adc	%rdx, %rcx
 	mul	%rbx			C up[2] * B2modb
 	add	%rax, %r10
 	mov	-8(%rdi), %rax
@@ -106,13 +106,13 @@ L(top):	mov	-24(%rdi), %rax
 	sub	$32, %rdi
 	mul	%rbp			C up[3] * B3modb
 	add	%rax, %r10
-	mov	%r9, %rax
+	mov	%r13, %rax
 	adc	%rdx, %rcx
-	mul	%r13			C rl * B4modb
+	mul	%r9			C rl * B4modb
 	add	%rax, %r10
-	mov	%r8, %rax
+	mov	%r12, %rax
 	adc	%rdx, %rcx
-	mul	%r12			C rh * B5modb
+	mul	%r8			C rh * B5modb
 	mov	%r10, %r9
 	mov	%rcx, %r8
 L(m0):	add	%rax, %r9

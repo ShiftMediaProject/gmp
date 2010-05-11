@@ -1,5 +1,7 @@
 2010-05-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/mod_1_4.asm: Tune for more processors.
+
 	* mpn/x86_64/pentium4/lshiftc.asm: New file.
 
 2010-05-11  Niels Möller  <nisse@lysator.liu.se>
