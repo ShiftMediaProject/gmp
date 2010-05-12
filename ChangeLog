@@ -1,5 +1,8 @@
 2010-05-12  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpz/jacobi.c (mpz_jacobi): Fixed off-by-one error in use of
+	scratch space.
+
 	* tune/common.c (speed_mpz_powm_sec): New function.
 	* tune/speed.h: Declare speed_mpz_powm_sec.
 	* tune/speed.c (routine): Added speed_mpz_powm_sec.

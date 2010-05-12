@@ -188,13 +188,18 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       if (btwos > 0)
 	{
 	  /* Result size: 2*bsize, extra: asize - bsize + 1 for
-	     quotient, total: asize + bsize + 1 */
+	     quotient, total: asize + bsize + 1. */
 	  ASSERT (atwos == 0);
 
 	  ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, btwos));
 	  bsize -= bp[bsize-1] == 0;
 
-	  mpn_tdiv_qr (scratch, ap, 0, asrcp, asize, bp, bsize);
+	  /* Note that if the shift eliminated the most significant
+	     limb of b, the quotient gets one limb larger, but the
+	     total storage needed for b and the quotient is unchanged.
+	     To get sufficient space, we put the quotient at bp +
+	     bsize rather than at scratch. */
+	  mpn_tdiv_qr (bp + bsize, ap, 0, asrcp, asize, bp, bsize);
 	}
       else
 	{
@@ -202,7 +207,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 	    {
 	      /* Result size: bsize, extra: (asize - bsize) + (asize -
 		 bsize + 1) for shifted value, and quotient, total: 2
-		 asize - bsize + 1 */
+		 asize - bsize + 1. */
 	      ASSERT_NOCARRY (mpn_rshift (ap, asrcp, asize, atwos));
 	      mpn_tdiv_qr (ap + asize, ap, 0, ap, asize, bsrcp, bsize);
 	    }
