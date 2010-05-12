@@ -1,7 +1,14 @@
+2010-05-12  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/common.c (speed_mpz_powm_sec): New function.
+	* tune/speed.h: Declare speed_mpz_powm_sec.
+	* tune/speed.c (routine): Added speed_mpz_powm_sec.
+
 2010-05-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Deleted old implementation.
-	Reorganized new implementation, to handle small inputs effciently.
+	Reorganized new implementation, to handle small inputs
+	efficiently.
 
 	* tests/mpz/t-jac.c (check_large_quotients): Reduced test sizes.
 	(check_data): One more input pair related to a fixed bug.

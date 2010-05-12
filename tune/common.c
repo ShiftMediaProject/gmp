@@ -1561,6 +1561,11 @@ speed_mpz_powm_redc (struct speed_params *s)
   SPEED_ROUTINE_MPZ_POWM (mpz_powm_redc);
 }
 double
+speed_mpz_powm_sec (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_POWM (mpz_powm_sec);
+}
+double
 speed_mpz_powm_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_POWM_UI (mpz_powm_ui);

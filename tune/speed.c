@@ -362,6 +362,7 @@ const struct routine_t {
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
   { "mpz_powm_redc",     speed_mpz_powm_redc        },
+  { "mpz_powm_sec",      speed_mpz_powm_sec        },
   { "mpz_powm_ui",       speed_mpz_powm_ui,  FLAG_R_OPTIONAL },
 
   { "mpz_mod",           speed_mpz_mod              },

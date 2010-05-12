@@ -331,6 +331,7 @@ double speed_mpz_mod __GMP_PROTO ((struct speed_params *s));
 double speed_mpz_powm __GMP_PROTO ((struct speed_params *s));
 double speed_mpz_powm_mod __GMP_PROTO ((struct speed_params *s));
 double speed_mpz_powm_redc __GMP_PROTO ((struct speed_params *s));
+double speed_mpz_powm_sec __GMP_PROTO ((struct speed_params *s));
 double speed_mpz_powm_ui __GMP_PROTO ((struct speed_params *s));
 double speed_mpz_urandomb __GMP_PROTO ((struct speed_params *s));
 
