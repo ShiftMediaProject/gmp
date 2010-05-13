@@ -1,3 +1,10 @@
+2010-05-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/common.c (speed_mpn_addlsh_n, speed_mpn_sublsh_n)
+	(speed_mpn_rsblsh_n): New functions.
+	* tune/speed.h: Declare new functions.
+	* tune/speed.c (routine): Add new functions.
+
 2010-05-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mod_1_4.asm: Tune for more processors.
