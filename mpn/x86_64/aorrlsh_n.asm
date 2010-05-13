@@ -2,7 +2,7 @@ dnl  AMD64 mpn_addlsh_n and mpn_rsblsh_n.  R = V2^k +- U.
 dnl  ("rsb" means reversed subtract, name mandated by mpn_sublsh1_n which
 dnl  subtacts the shifted operand from the unshifted operand.)
 
-dnl  Copyright 2006 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,13 +23,13 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C AMD K8,K9	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
-C AMD K10	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
-C Intel P4	14
-C Intel core2	 4
-C Intel corei	 ?
+C AMD K8,K9	 3.25	(mpn_lshift + mpn_add_n costs 3.85 c/l)
+C AMD K10	 3.25	(mpn_lshift + mpn_add_n costs 3.85 c/l)
+C Intel P4	15	(mpn_lshift + mpn_add_n costs 7.33 c/l)
+C Intel core2	 4	(mpn_lshift + mpn_add_n costs 3.27 c/l)
+C Intel corei	 4	(mpn_lshift + mpn_add_n costs 3.75 c/l)
 C Intel atom	 ?
-C VIA nano	 ?
+C VIA nano	 4.7	(mpn_lshift + mpn_add_n costs 6.25 c/l)
 
 C This was written quickly and not optimized at all.  Surely one could get
 C closer to 3 c/l or perhaps even under 3 c/l.  Ideas:
@@ -38,6 +38,7 @@ C   2) Write reasonable feed-in code
 C   3) Be more clever about register usage
 C   4) Unroll more, handling CL negation, carry save/restore cost much now
 C   5) Reschedule
+C   6) Use shld/shrd on Intel core and probably even on AMD K8-K10
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
