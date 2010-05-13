@@ -1244,6 +1244,8 @@ case $host in
 	    path_64="sparc64/ultrasparc12 sparc64" ;;
 	  ultrasparc3)
 	    path_64="sparc64/ultrasparc34 sparc64/ultrasparc12 sparc64" ;;
+	  ultrasparct1 | ultrasparct2)
+	    path_64="sparc64/ultrasparct1 sparc64" ;;
 	  *)
 	    path_64="sparc64"
 	esac
