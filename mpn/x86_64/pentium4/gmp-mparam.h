@@ -25,6 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    than separate add/sub and shift.  Make sure they are not really used.  */
 #undef HAVE_NATIVE_mpn_rsblsh1_n
 #undef HAVE_NATIVE_mpn_rsblsh2_n
+#undef HAVE_NATIVE_mpn_addlsh_n
+#undef HAVE_NATIVE_mpn_rsblsh_n
 
 /* 3400 MHz Pentium / 1024 Kibyte cache */
 

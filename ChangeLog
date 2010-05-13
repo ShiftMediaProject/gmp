@@ -1,5 +1,7 @@
 2010-05-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/pentium4/gmp-mparam.h: Disable mpn_addlsh_n, mpn_rsblsh_n.
+
 	* tune/common.c (speed_mpn_addlsh_n, speed_mpn_sublsh_n)
 	(speed_mpn_rsblsh_n): New functions.
 	* tune/speed.h: Declare new functions.
