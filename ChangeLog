@@ -1,5 +1,7 @@
 2010-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (ia64-hpux): Do sizeof tests for 32-bit and 64-bit ABI.
+
 	* tune/tuneup.c (tune_mod_1): Completely finish MOD_1_N tuning before
 	tuning MOD_1U_TO_MOD_1_1_THRESHOLD.
 

@@ -683,6 +683,7 @@ case $host in
     abilist="64"
     GMP_INCLUDE_MPN(ia64/ia64-defs.m4)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo
+    any_testlist="sizeof-long-4"
 
     case $host_cpu in
       itanium)   path="ia64/itanium  ia64" ;;
@@ -716,6 +717,7 @@ case $host in
         # let us use whatever seems to work.
         #
         abilist="32 64"
+        any_64_testlist="sizeof-long-8"
 
         cclist_32="gcc cc"
         path_32="ia64"
