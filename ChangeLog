@@ -1,5 +1,9 @@
 2010-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/mod_1.c: Rewrite.
+	* mpn/sparc64/sparc64.h (umul_ppmm_s): New macro.
+	* mpn/sparc64/mod_1_4.c: New file.
+
 	* mpn/generic/divrem_1.c: Minor cleanup.
 	* mpn/generic/mod_1.c: Likewise.
 	* mpn/generic/mod_1_1.c: Likewise.
