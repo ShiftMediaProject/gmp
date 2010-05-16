@@ -9,7 +9,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -123,19 +123,13 @@ mpn_mod_1s_2p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[5])
       add_ssaaaa (rh, rl, rh, rl, ph, pl);
     }
 
-  bi = cps[0];
-  cnt = cps[1];
-
-#if 1
   umul_ppmm (rh, cl, rh, B1modb);
   add_ssaaaa (rh, rl, rh, rl, 0, cl);
-  r = (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt));
-#else
-  udiv_qrnnd_preinv (q, r, rh >> (GMP_LIMB_BITS - cnt),
-		     (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt)), b, bi);
-  ASSERT (q <= 2);	/* optimize for small quotient? */
-#endif
 
+  cnt = cps[1];
+  bi = cps[0];
+
+  r = (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt));
   udiv_qrnnd_preinv (q, r, r, rl << cnt, b, bi);
 
   return r >> cnt;

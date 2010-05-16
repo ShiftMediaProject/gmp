@@ -118,12 +118,12 @@ mpn_mod_1_unnorm (mp_srcptr up, mp_size_t un, mp_limb_t d)
   if (UDIV_NEEDS_NORMALIZATION
       && BELOW_THRESHOLD (un, MOD_1_UNNORM_THRESHOLD))
     {
+      mp_limb_t nshift;
       for (i = un - 2; i >= 0; i--)
 	{
 	  n0 = up[i] << GMP_NAIL_BITS;
-	  udiv_qrnnd (dummy, r, r,
-		      (n1 << cnt) | (n0 >> (GMP_NUMB_BITS - cnt)),
-		      d);
+	  nshift = (n1 << cnt) | (n0 >> (GMP_NUMB_BITS - cnt));
+	  udiv_qrnnd (dummy, r, r, nshift, d);
 	  r >>= GMP_NAIL_BITS;
 	  n1 = n0;
 	}
@@ -133,15 +133,14 @@ mpn_mod_1_unnorm (mp_srcptr up, mp_size_t un, mp_limb_t d)
     }
   else
     {
-      mp_limb_t inv;
+      mp_limb_t inv, nshift;
       invert_limb (inv, d);
 
       for (i = un - 2; i >= 0; i--)
 	{
 	  n0 = up[i] << GMP_NAIL_BITS;
-	  udiv_qrnnd_preinv (dummy, r, r,
-			     (n1 << cnt) | (n0 >> (GMP_NUMB_BITS - cnt)),
-			     d, inv);
+	  nshift = (n1 << cnt) | (n0 >> (GMP_NUMB_BITS - cnt));
+	  udiv_qrnnd_preinv (dummy, r, r, nshift, d, inv);
 	  r >>= GMP_NAIL_BITS;
 	  n1 = n0;
 	}

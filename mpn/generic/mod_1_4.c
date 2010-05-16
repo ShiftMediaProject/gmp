@@ -1,4 +1,4 @@
-/* mpn_mod_1s_3p (ap, n, b, cps)
+/* mpn_mod_1s_4p (ap, n, b, cps)
    Divide (ap,,n) by b.  Return the single-limb remainder.
    Requires that d < B / 4.
 
@@ -143,19 +143,13 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[7])
       add_ssaaaa (rh, rl, rh, rl, ph, pl);
     }
 
-  bi = cps[0];
-  cnt = cps[1];
-
-#if 1
   umul_ppmm (rh, cl, rh, B1modb);
   add_ssaaaa (rh, rl, rh, rl, 0, cl);
-  r = (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt));
-#else
-  udiv_qrnnd_preinv (q, r, rh >> (GMP_LIMB_BITS - cnt),
-		     (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt)), b, bi);
-  ASSERT (q <= 4);	/* optimize for small quotient? */
-#endif
 
+  cnt = cps[1];
+  bi = cps[0];
+
+  r = (rh << cnt) | (rl >> (GMP_LIMB_BITS - cnt));
   udiv_qrnnd_preinv (q, r, r, rl << cnt, b, bi);
 
   return r >> cnt;

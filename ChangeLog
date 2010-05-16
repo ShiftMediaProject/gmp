@@ -1,5 +1,12 @@
 2010-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/divrem_1.c: Minor cleanup.
+	* mpn/generic/mod_1.c: Likewise.
+	* mpn/generic/mod_1_1.c: Likewise.
+	* mpn/generic/mod_1_2.c: Likewise.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+
 	* configure.in (ia64-hpux): Do sizeof tests for 32-bit and 64-bit ABI.
 
 	* tune/tuneup.c (tune_mod_1): Completely finish MOD_1_N tuning before
