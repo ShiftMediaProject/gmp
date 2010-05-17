@@ -1832,7 +1832,7 @@ tune_mod_1 (void)
     param.check_size = 256;
 
     param.name = "PREINV_MOD_1_TO_MOD_1_THRESHOLD";
-    s.r = randlimb_half ();
+    s.r = randlimb_norm ();
     param.function = speed_mpn_preinv_mod_1;
     param.function2 = speed_mpn_mod_1_tune;
     param.min_size = 1;
