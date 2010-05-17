@@ -1,5 +1,7 @@
 2010-05-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (ia64): Get 32-bit sizeof test right.
+
 	* tune/tuneup.c (tune_mod_1): Undo unintensional change to tuning of
 	PREINV_MOD_1_TO_MOD_1_THRESHOLD.
 
