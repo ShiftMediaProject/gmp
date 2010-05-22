@@ -1807,17 +1807,17 @@ tune_mod_1 (void)
 	one (&mod_1_1_to_mod_1_2_threshold, &param);
       }
 
-    if (mod_1u_to_mod_1_1_threshold >= mod_1_1_to_mod_1_2_threshold)
-      mod_1_1_to_mod_1_2_threshold = 0;
-    if (mod_1u_to_mod_1_1_threshold >= mod_1_2_to_mod_1_4_threshold)
-      mod_1_2_to_mod_1_4_threshold = 0;
-
     param.function = speed_mpn_mod_1_tune;
     param.function2 = NULL;
     param.name = "MOD_1U_TO_MOD_1_1_THRESHOLD";
     param.min_size = 2;
     param.min_is_always = 0;
     one (&mod_1u_to_mod_1_1_threshold, &param);
+
+    if (mod_1u_to_mod_1_1_threshold >= mod_1_1_to_mod_1_2_threshold)
+      mod_1_1_to_mod_1_2_threshold = 0;
+    if (mod_1u_to_mod_1_1_threshold >= mod_1_2_to_mod_1_4_threshold)
+      mod_1_2_to_mod_1_4_threshold = 0;
 
     print_define_remark ("MOD_1U_TO_MOD_1_1_THRESHOLD", mod_1u_to_mod_1_1_threshold, NULL);
     print_define_remark ("MOD_1_1_TO_MOD_1_2_THRESHOLD", mod_1_1_to_mod_1_2_threshold,
