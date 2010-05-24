@@ -793,7 +793,7 @@ speed_mpn_mu_div_q (struct speed_params *s)
 double
 speed_mpn_mupi_div_qr (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MUPI_DIV_QR (mpn_preinv_mu_div_qr, mpn_mu_div_qr_itch);
+  SPEED_ROUTINE_MPN_MUPI_DIV_QR (mpn_preinv_mu_div_qr, mpn_preinv_mu_div_qr_itch);
 }
 
 double

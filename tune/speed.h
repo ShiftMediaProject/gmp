@@ -1627,7 +1627,7 @@ int speed_routine_count_zeros_setup
     SPEED_RESTRICT_COND (s->size >= 2);					\
     SPEED_RESTRICT_COND (size1 >= s->size);				\
 									\
-    itch = itchfn (size1, s->size, 0);					\
+    itch = itchfn (size1, s->size, s->size);				\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
     SPEED_TMP_ALLOC_LIMBS (qp, size1 - s->size, s->align_wp);		\

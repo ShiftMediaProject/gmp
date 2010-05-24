@@ -1,5 +1,11 @@
 2010-05-24  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mu_div_qr.c (mpn_preinv_mu_div_qr_itch): New function.
+	* gmp-impl.h: Declare it.
+	* tune/common.c (speed_mpn_mupi_div_qr): Use new itch function.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUPI_DIV_QR): Pass parameters right
+	for new itch function.
+
 	* mpn/powerpc32/lshiftc.asm: New file.
 
 2010-05-22  Torbjorn Granlund  <tege@gmplib.org>
