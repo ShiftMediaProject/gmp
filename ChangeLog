@@ -1,3 +1,7 @@
+2010-05-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc32/lshiftc.asm: New file.
+
 2010-05-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mod_1): Revert to version of 2010-05-06.
