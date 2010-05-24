@@ -36,7 +36,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_TOOM22_THRESHOLD                23
 #define MUL_TOOM33_THRESHOLD                65
-#define MUL_TOOM44_THRESHOLD               184
+#define MUL_TOOM44_THRESHOLD               106
 #define MUL_TOOM6H_THRESHOLD               254
 #define MUL_TOOM8H_THRESHOLD               381
 
@@ -180,9 +180,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD                     138
 #define GCD_DC_THRESHOLD                   330
 #define GCDEXT_DC_THRESHOLD                365
-#define JACOBI_BASE_METHOD                   1
+#define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                12
 #define GET_STR_PRECOMPUTE_THRESHOLD        20
-#define SET_STR_DC_THRESHOLD               172
-#define SET_STR_PRECOMPUTE_THRESHOLD      2058
+#define SET_STR_DC_THRESHOLD               552
+#define SET_STR_PRECOMPUTE_THRESHOLD      1655

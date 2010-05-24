@@ -199,7 +199,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD                     119
 #define GCD_DC_THRESHOLD                   588
 #define GCDEXT_DC_THRESHOLD                469
-#define JACOBI_BASE_METHOD                   1
+#define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                14
 #define GET_STR_PRECOMPUTE_THRESHOLD        22
