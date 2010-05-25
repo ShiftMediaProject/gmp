@@ -181,5 +181,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define GET_STR_DC_THRESHOLD                17
 #define GET_STR_PRECOMPUTE_THRESHOLD        34
-#define SET_STR_DC_THRESHOLD               834
+#define SET_STR_DC_THRESHOLD               542
 #define SET_STR_PRECOMPUTE_THRESHOLD      1615
