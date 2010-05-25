@@ -1,3 +1,8 @@
+2010-05-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mu_div_qr.c (mpn_preinv_mu_div_qr_itch): Trim out space
+	for inverse, since that is passed in already.
+
 2010-05-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_div_qr.c (mpn_preinv_mu_div_qr_itch): New function.
