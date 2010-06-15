@@ -2767,8 +2767,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
   do {									\
     mp_limb_t _qh, _ql, _r;						\
     umul_ppmm (_qh, _ql, (nh), (di));					\
-    _qh += (nh) + 1;							\
-    _r = - _qh * (d);							\
+    _r = ~(_qh + (nh)) * (d);						\
     if (_r > _ql)							\
       _r += (d);							\
     (r) = _r;								\

@@ -1,5 +1,7 @@
 2010-06-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (udiv_rnd_preinv): Simplify.
+
 	* mpn/x86/k7/mod_1_1.asm: New file.
 	* mpn/x86/pentium4/sse2/mod_1_1.asm (mpn_mod_1_1p_cps): Rewrite.
 	* mpn/x86/k7/mod_1_4.asm (mpn_mod_1s_4p_cps): Rewrite.
