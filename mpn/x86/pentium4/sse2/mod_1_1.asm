@@ -1,4 +1,4 @@
-dnl  mpn_mod_1_1 for Pentium 4 and P6 models with SSE2 (i.e., 9,D,E,F).
+dnl  x86-32 mpn_mod_1_1p for Pentium 4 and P6 models with SSE2 (i.e., 9,D,E,F).
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
@@ -24,6 +24,7 @@ include(`../config.m4')
 C TODO:
 C  * Optimize.  The present code was written quite straightforwardly.
 C  * Optimize post-loop reduction code; it is from mod_1s_4p, thus overkill.
+C  * Write a cps function that uses sse2 insns.
 
 C                           cycles/limb
 C P6 model 0-8,10-12)           -
@@ -116,57 +117,39 @@ L(fix):	sub	%ebx, %eax
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1_1p_cps)
+C CAUTION: This is the same code as in k7/mod_1_1.asm
 	push	%ebp
-	push	%edi
+	mov	12(%esp), %ebp
 	push	%esi
+	bsr	%ebp, %ecx
 	push	%ebx
-	sub	$4, %esp
-	mov	28(%esp), %eax
-	bsr	%eax, %edx
-	xor	$31, %edx
-	mov	%edx, (%esp)
-	mov	%eax, %esi
-	mov	%edx, %ecx
-	sal	%cl, %esi
-	mov	$-1, %eax
-	mov	%esi, %edx
+	xor	$31, %ecx
+	mov	16(%esp), %esi
+	sal	%cl, %ebp
+	mov	%ebp, %edx
 	not	%edx
-	div	%esi
-	mov	%eax, %edi
-	mov	%esi, %ebx
-	neg	%ebx
-	test	%ecx, %ecx
-	jz	L(c0)
-	mov	$1, %eax
-	sal	%cl, %eax
-	mov	%edi, %edx
-	neg	%ecx
-	shr	%cl, %edx
-	or	%eax, %edx
+	mov	$-1, %eax
+	div	%ebp
+	mov	%eax, (%esi)		C store bi
+	mov	%ecx, 4(%esi)		C store cnt
+	xor	%ebx, %ebx
+	sub	%ebp, %ebx
+	mov	$1, %edx
+	shld	%cl, %eax, %edx
 	imul	%edx, %ebx
-L(c0):	mov	%ebx, %eax
-	mul	%edi
-	mov	%eax, %ebp
-	lea	1(%edx,%ebx), %edx
-	neg	%edx
-	imul	%esi, %edx
-	lea	(%edx,%esi), %eax
-	cmp	%ebp, %edx
-	cmova(	%eax, %edx)
-	mov	24(%esp), %ecx
-	mov	%edi, (%ecx)
-	mov	(%esp), %eax
-	mov	%eax, 4(%ecx)
-	movb	(%esp), %cl
+	mul	%ebx
+	add	%ebx, %edx
+	not	%edx
+	imul	%ebp, %edx
+	add	%edx, %ebp
+	cmp	%edx, %eax
+	cmovb(	%ebp, %edx)
 	shr	%cl, %ebx
-	mov	24(%esp), %eax
-	mov	%ebx, 8(%eax)
+	mov	%ebx, 8(%esi)		C store B1modb
 	shr	%cl, %edx
-	mov	%edx, 12(%eax)
-	pop	%eax
+	mov	%edx, 12(%esi)		C store B2modb
 	pop	%ebx
 	pop	%esi
-	pop	%edi
 	pop	%ebp
 	ret
 EPILOGUE()
