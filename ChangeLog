@@ -1,5 +1,10 @@
 2010-06-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Store results as they are
+	computed.
+	* mpn/generic/mod_1_2.c (mpn_mod_1s_2p_cps): Likewise.
+	* mpn/generic/mod_1_4.c (mpn_mod_1s_4p_cps): Likewise.
+
 	* mpn/x86/k7/invert_limb.asm: Moved from mpn/x86/invert_limb.asm.
 
 2010-05-25  Torbjorn Granlund  <tege@gmplib.org>
