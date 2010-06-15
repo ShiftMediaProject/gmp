@@ -153,59 +153,65 @@ L(one):
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1s_2p_cps)
-	bsr	%rsi, %rax
-	mov	%rbp, -16(%rsp)
-	mov	R32(%rax), R32(%rbp)
-	mov	%r12, -8(%rsp)
-	xor	$63, R32(%rbp)
-	mov	%rsi, %r12
-	mov	%rbx, -24(%rsp)
-	mov	R32(%rbp), R32(%rcx)
+	push	%rbp
+	bsr	%rsi, %rcx
+	push	%rbx
 	mov	%rdi, %rbx
-	sub	$24, %rsp
-	sal	R8(%rcx), %r12
-	mov	%r12, %rdi
+	push	%r12
+	xor	$63, R32(%rcx)
+	mov	%rsi, %r12
+	mov	R32(%rcx), R32(%rbp)	C preserve cnt over call
+	sal	R8(%rcx), %r12		C b << cnt
+	mov	%r12, %rdi		C pass parameter
 	CALL(	mpn_invert_limb)
-	mov	$64, R32(%rcx)
-	mov	%rax, %r10
-	mov	$1, R32(%rdx)
-	sub	R32(%rbp), R32(%rcx)
+	mov	%r12, %r8
 	mov	%rax, %r11
-	shr	R8(%rcx), %r10
-	mov	R32(%rbp), R32(%rcx)
-	mov	%r11, (%rbx)
-	sal	R8(%rcx), %rdx
-	or	%rdx, %r10
-	mov	%r12, %rdx
-	neg	%rdx
-	imul	%rdx, %r10
-	mov	%r10, %rax
-	mul	%r11
-	lea	1(%rdx,%r10), %r9
-	neg	%r9
-	imul	%r12, %r9
-	lea	(%r9,%r12), %rsi
-	cmp	%r9, %rax
-	cmovb	%rsi, %r9
-	mov	%r9, %rax
-	mul	%r11
-	lea	1(%rdx,%r9), %r8
+	mov	%rax, (%rbx)		C store bi
+	mov	%rbp, 8(%rbx)		C store cnt
 	neg	%r8
-	imul	%r12, %r8
-	lea	(%r8,%r12), %rdi
-	cmp	%r8, %rax
-	movslq	R32(%rbp), %rax
-	mov	%rax, 8(%rbx)
-	mov	8(%rsp), %rbp
-	cmovb	%rdi, %r8
-	shr	R8(%rcx), %r10
-	shr	R8(%rcx), %r9
-	shr	R8(%rcx), %r8
-	mov	%r10, 16(%rbx)
-	mov	%r9, 24(%rbx)
-	mov	%r8, 32(%rbx)
-	mov	16(%rsp), %r12
-	mov	(%rsp), %rbx
-	add	$24, %rsp
+	mov	R32(%rbp), R32(%rcx)
+	mov	$1, R32(%rsi)
+ifdef(`SHLD_SLOW',`
+	shl	R8(%rcx), %rsi
+	neg	R32(%rcx)
+	mov	%rax, %rbp
+	shr	R8(%rcx), %rax
+	or	%rax, %rsi
+	mov	%rbp, %rax
+	neg	R32(%rcx)
+',`
+	shld	R8(%rcx), %rax, %rsi	C FIXME: Slow on Atom and Nano
+')
+	imul	%r8, %rsi
+	mul	%rsi
+
+	add	%rsi, %rdx
+	shr	R8(%rcx), %rsi
+	mov	%rsi, 16(%rbx)		C store B1modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	lea	(%rdx,%r12), %rsi
+	cmp	%rdx, %rax
+	cmovae	%rdx, %rsi
+	mov	%r11, %rax
+	mul	%rsi
+
+	add	%rsi, %rdx
+	shr	R8(%rcx), %rsi
+	mov	%rsi, 24(%rbx)		C store B2modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	add	%rdx, %r12
+	cmp	%rdx, %rax
+	cmovae	%rdx, %r12
+
+	shr	R8(%rcx), %r12
+	mov	%r12, 32(%rbx)		C store B3modb
+
+	pop	%r12
+	pop	%rbx
+	pop	%rbp
 	ret
 EPILOGUE()

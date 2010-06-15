@@ -160,76 +160,89 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p_cps)
-	push	%r12
-	bsr	%rsi, %rcx
 	push	%rbp
-	xor	$63, R32(%rcx)
-	mov	%rsi, %rbp
-	mov	R32(%rcx), R32(%r12)
-	sal	R8(%rcx), %rbp
+	bsr	%rsi, %rcx
 	push	%rbx
 	mov	%rdi, %rbx
-	mov	%rbp, %rdi
+	push	%r12
+	xor	$63, R32(%rcx)
+	mov	%rsi, %r12
+	mov	R32(%rcx), R32(%rbp)	C preserve cnt over call
+	sal	R8(%rcx), %r12		C b << cnt
+	mov	%r12, %rdi		C pass parameter
 	CALL(	mpn_invert_limb)
-	mov	R32(%r12), R32(%rcx)
-	mov	$1, R32(%r10)
-	sal	R8(%rcx), %r10
-	mov	$64, R32(%rcx)
-	mov	%rax, %r9
-	sub	R32(%r12), R32(%rcx)
-	mov	%r9, (%rbx)
-	shr	R8(%rcx), %rax
-	mov	R32(%r12), R32(%rcx)
-	or	%rax, %r10
-	mov	%rbp, %rax
-	neg	%rax
-	imul	%rax, %r10
-	mov	%r10, %rax
-	mul	%r9
-	lea	1(%r10,%rdx), %r8
+	mov	%r12, %r8
+	mov	%rax, %r11
+	mov	%rax, (%rbx)		C store bi
+	mov	%rbp, 8(%rbx)		C store cnt
 	neg	%r8
-	imul	%rbp, %r8
-	cmp	%r8, %rax
-	lea	(%r8,%rbp), %rdx
-	cmovb	%rdx, %r8
-	mov	%r8, %rax
-	mul	%r9
-	lea	1(%r8,%rdx), %rdi
-	neg	%rdi
-	imul	%rbp, %rdi
-	cmp	%rdi, %rax
-	lea	(%rdi,%rbp), %rdx
-	cmovb	%rdx, %rdi
-	mov	%rdi, %rax
-	mul	%r9
-	lea	1(%rdi,%rdx), %rsi
-	neg	%rsi
-	imul	%rbp, %rsi
-	cmp	%rsi, %rax
-	lea	(%rsi,%rbp), %rdx
-	cmovb	%rdx, %rsi
-	mov	%rsi, %rax
-	mul	%r9
-	lea	1(%rsi,%rdx), %rdx
-	neg	%rdx
-	imul	%rbp, %rdx
-	cmp	%rdx, %rax
-	lea	(%rdx,%rbp), %rbp
-	movslq	R32(%r12), %rax
-	cmovae	%rdx, %rbp
-	shr	R8(%rcx), %r10
-	shr	R8(%rcx), %r8
-	shr	R8(%rcx), %rbp
-	shr	R8(%rcx), %rdi
+	mov	R32(%rbp), R32(%rcx)
+	mov	$1, R32(%rsi)
+ifdef(`SHLD_SLOW',`
+	shl	R8(%rcx), %rsi
+	neg	R32(%rcx)
+	mov	%rax, %rbp
+	shr	R8(%rcx), %rax
+	or	%rax, %rsi
+	mov	%rbp, %rax
+	neg	R32(%rcx)
+',`
+	shld	R8(%rcx), %rax, %rsi	C FIXME: Slow on Atom and Nano
+')
+	imul	%r8, %rsi
+	mul	%rsi
+
+	add	%rsi, %rdx
 	shr	R8(%rcx), %rsi
-	mov	%rbp, 48(%rbx)
-	mov	%rax, 8(%rbx)
-	mov	%r10, 16(%rbx)
-	mov	%r8, 24(%rbx)
-	mov	%rdi, 32(%rbx)
-	mov	%rsi, 40(%rbx)
+	mov	%rsi, 16(%rbx)		C store B1modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	lea	(%rdx,%r12), %rsi
+	cmp	%rdx, %rax
+	cmovae	%rdx, %rsi
+	mov	%r11, %rax
+	mul	%rsi
+
+	add	%rsi, %rdx
+	shr	R8(%rcx), %rsi
+	mov	%rsi, 24(%rbx)		C store B2modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	lea	(%rdx,%r12), %rsi
+	cmp	%rdx, %rax
+	cmovae	%rdx, %rsi
+	mov	%r11, %rax
+	mul	%rsi
+
+	add	%rsi, %rdx
+	shr	R8(%rcx), %rsi
+	mov	%rsi, 32(%rbx)		C store B3modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	lea	(%rdx,%r12), %rsi
+	cmp	%rdx, %rax
+	cmovae	%rdx, %rsi
+	mov	%r11, %rax
+	mul	%rsi
+
+	add	%rsi, %rdx
+	shr	R8(%rcx), %rsi
+	mov	%rsi, 40(%rbx)		C store B4modb
+
+	not	%rdx
+	imul	%r12, %rdx
+	add	%rdx, %r12
+	cmp	%rdx, %rax
+	cmovae	%rdx, %r12
+
+	shr	R8(%rcx), %r12
+	mov	%r12, 48(%rbx)		C store B5modb
+
+	pop	%r12
 	pop	%rbx
 	pop	%rbp
-	pop	%r12
 	ret
 EPILOGUE()

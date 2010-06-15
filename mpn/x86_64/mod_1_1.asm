@@ -59,7 +59,7 @@ C FIXME: See comment in generic/mod_1_1.c.
 	ALIGN(16)
 L(top):	mul	B1modb			C 1  15
 	xor	R32(%r9), R32(%r9)	C
-	mov	(ap,n,8), %rcx	C
+	mov	(ap,n,8), %rcx		C
 	add	%rax, %rcx		C 5  19
 	mov	%r8, %rax		C 0  16
 	adc	%rdx, %r9		C 6  20
@@ -72,7 +72,7 @@ L(top):	mul	B1modb			C 1  15
 
 	mul	B1modb			C 8  22
 	xor	R32(%r8), R32(%r8)	C
-	mov	(ap,n,8), %rcx	C
+	mov	(ap,n,8), %rcx		C
 	add	%rax, %rcx		C 12 26
 	mov	%r9, %rax		C 9  23
 	adc	%rdx, %r8		C 13 27
@@ -93,11 +93,11 @@ L(2):
 	je	L(4)
 	mov	%r8, %rax
 	mov	R32(%rdi), R32(%rcx)
-	sal	%cl, %rax
+	sal	R8(%rcx), %rax
 	mov	%r9, %r8
-	sal	%cl, %r9
+	sal	R8(%rcx), %r9
 	neg	R32(%rcx)
-	shr	%cl, %r8
+	shr	R8(%rcx), %r8
 	or	%rax, %r8
 L(4):
 	mov	%r8, %rax
@@ -122,7 +122,7 @@ L(4):
 	cmp	%rbp, %rax
 	cmovae	%rdx, %rax
 	mov	R32(%rdi), R32(%rcx)
-	shr	%cl, %rax
+	shr	R8(%rcx), %rax
 	pop	%rbx
 	pop	%rbp
 	ret
@@ -130,53 +130,50 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1_1p_cps)
-	mov	%rbx, -24(%rsp)
-	mov	%rbp, -16(%rsp)
-	mov	%rsi, %rbp
-	bsr	%rsi,%rax
-	mov	%eax, %ebx
-	mov	%r12, -8(%rsp)
-	sub	$24, %rsp
-	xor	$63, %ebx
-	mov	%rdi, %r12
-	mov	%ebx, %ecx
-	sal	%cl, %rbp
-	mov	%rbp, %rdi
+	push	%rbp
+	bsr	%rsi, %rcx
+	push	%rbx
+	mov	%rdi, %rbx
+	push	%r12
+	xor	$63, R32(%rcx)
+	mov	%rsi, %r12
+	mov	R32(%rcx), R32(%rbp)
+	sal	R8(%rcx), %r12
+	mov	%r12, %rdi
 	CALL(	mpn_invert_limb)
-	mov	%rbp, %r8
-	mov	%rax, %r9
-	mov	%rax, (%r12)
+	mov	%r12, %r8
+	mov	%rax, (%rbx)		C store bi
+	mov	%rbp, 8(%rbx)		C store cnt
 	neg	%r8
-	test	%ebx, %ebx
-	je	L(c0)
-	xor	%ecx, %ecx
-	mov	%rax, %rdx
-	mov	$1, %eax
-	sub	%ebx, %ecx
-	shr	%cl, %rdx
-	mov	%ebx, %ecx
-	sal	%cl, %rax
+	mov	R32(%rbp), R32(%rcx)
+	mov	$1, R32(%rdx)
+ifdef(`SHLD_SLOW',`
+	shl	R8(%rcx), %rdx
+	neg	R32(%rcx)
+	je	L(z)
+	mov	%rax, %rbp
+	shr	R8(%rcx), %rax
 	or	%rax, %rdx
+	mov	%rbp, %rax
+	neg	R32(%rcx)
+',`
+	shld	R8(%rcx), %rax, %rdx
+')
 	imul	%rdx, %r8
-L(c0):	mov	%r8, %rax
-	mul	%r9
-	lea	1(%rdx,%r8), %rdx
-	mov	%rax, %rcx
-	neg	%rdx
-	imul	%rbp, %rdx
-	lea	(%rdx,%rbp), %rax
-	cmp	%rdx, %rcx
-	mov	%ebx, %ecx
-	mov	8(%rsp), %rbp
-	cmovb	%rax, %rdx
-	shr	%cl, %r8
-	shr	%cl, %rdx
-	mov	%rbx, 8(%r12)
-	mov	%r8, 16(%r12)
-	mov	%rdx, 24(%r12)
-	mov	(%rsp), %rbx
-	mov	16(%rsp), %r12
-	add	$24, %rsp
+L(z):	mul	%r8
+	add	%r8, %rdx
+	not	%rdx
+	imul	%r12, %rdx
+	add	%rdx, %r12
+	cmp	%rdx, %rax
+	cmovb	%r12, %rdx
+	shr	R8(%rcx), %r8
+	shr	R8(%rcx), %rdx
+	mov	%r8, 16(%rbx)		C store B1modb
+	pop	%r12
+	mov	%rdx, 24(%rbx)		C store B2modb
+	pop	%rbx
+	pop	%rbp
 	ret
 EPILOGUE()
 ASM_END()
