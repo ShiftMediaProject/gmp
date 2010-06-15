@@ -1,3 +1,7 @@
+2010-06-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/k7/invert_limb.asm: Moved from mpn/x86/invert_limb.asm.
+
 2010-05-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_div_qr.c (mpn_preinv_mu_div_qr_itch): Trim out space

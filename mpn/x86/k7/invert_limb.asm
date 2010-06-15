@@ -21,8 +21,19 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	     cycles (approx)	div
-C K7:		 46		53
+C			    cycles (approx)	div
+C P5:				 ?
+C P6 model 0-8,10-12)		 ?
+C P6 model 9  (Banias)		 ?
+C P6 model 13 (Dothan)		 ?
+C P4 model 0  (Willamette)	 ?
+C P4 model 1  (?)		 ?
+C P4 model 2  (Northwood)	 ?
+C P4 model 3  (Prescott)	 ?
+C P4 model 4  (Nocona)		 ?
+C K6:				 ?
+C K7:				46		53
+C K8:				 ?
 
 C Register usage:
 
