@@ -1372,7 +1372,7 @@ int speed_routine_count_zeros_setup
     i = s->reps;							\
     do {								\
       pfunc (inv, s->r);						\
-      function (s->xp, s->size, s->r, inv);				\
+      function (s->xp, s->size, s->r << inv[1], inv);				\
     } while (--i != 0);							\
 									\
     return speed_endtime ();						\

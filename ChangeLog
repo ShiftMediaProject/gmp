@@ -1,3 +1,8 @@
+2010-06-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_MOD_1_1): Pass normalized
+	divisor to the benchmarked function.
+
 2010-06-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p_cps): Rewrite.
