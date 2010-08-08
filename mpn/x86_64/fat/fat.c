@@ -88,6 +88,10 @@ void
 __gmpn_cpuvec_init (void)
 {
   struct cpuvec_t  decided_cpuvec;
+  char vendor_string[13];
+  char dummy_string[12];
+  long fms;
+  int family, model;
 
   TRACE (printf ("__gmpn_cpuvec_init:\n"));
 
@@ -96,54 +100,118 @@ __gmpn_cpuvec_init (void)
   CPUVEC_SETUP_x86_64;
   CPUVEC_SETUP_fat;
 
-  if (1)
+  __gmpn_cpuid (vendor_string, 0);
+  vendor_string[12] = 0;
+
+  fms = __gmpn_cpuid (dummy_string, 1);
+  family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
+  model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
+
+  if (strcmp (vendor_string, "GenuineIntel") == 0)
     {
-      char vendor_string[13];
-      char dummy_string[12];
-      long fms;
-      int family, model;
+      switch (family)
+	{
+	case 4:
+	case 5:
+	  abort ();		/* 32-bit processors */
 
-      __gmpn_cpuid (vendor_string, 0);
-      vendor_string[12] = 0;
+	case 6:
+	  switch (model)
+	    {
+	    case 0x00:
+	    case 0x01:
+	    case 0x02:
+	    case 0x03:
+	    case 0x04:
+	    case 0x05:
+	    case 0x06:
+	    case 0x07:
+	    case 0x08:
+	    case 0x09:		/* Banias */
+	    case 0x0a:
+	    case 0x0b:
+	    case 0x0c:
+	    case 0x0d:		/* Dothan */
+	    case 0x0e:		/* Yonah */
+	      abort ();		/* 32-bit processors */
 
-      fms = __gmpn_cpuid (dummy_string, 1);
-      family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
-      model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
+	    case 0x0f:
+	    case 0x10:
+	    case 0x11:
+	    case 0x12:
+	    case 0x13:
+	    case 0x14:
+	    case 0x15:
+	    case 0x16:
+	    case 0x17:
+	    case 0x18:
+	    case 0x19:
+	    case 0x1d:		/* PNR Dunnington */
+	      CPUVEC_SETUP_core2;
+	      break;
 
-      if (strcmp (vendor_string, "GenuineIntel") == 0)
-        {
-          switch (family)
-            {
-            case 4:
-            case 5:
-	      abort ();
-              break;
+	    case 0x1c:		/* Silverthorne */
+	    case 0x26:		/* Lincroft */
+	    case 0x27:		/* Saltwell */
+	      CPUVEC_SETUP_atom;
+	      break;
 
-            case 6:
-	      if (model == 28)
-		CPUVEC_SETUP_atom;
-	      else
-		CPUVEC_SETUP_core2;
-              break;
+	    case 0x1a:		/* NHM Gainestown */
+	    case 0x1b:
+	    case 0x1e:		/* NHM Lynnfield/Jasper */
+	    case 0x1f:
+	    case 0x20:
+	    case 0x21:
+	    case 0x22:
+	    case 0x23:
+	    case 0x24:
+	    case 0x25:		/* WSM Clarkdale/Arrandale */
+	    case 0x28:
+	    case 0x29:
+	    case 0x2a:
+	    case 0x2b:
+	    case 0x2c:		/* WSM Gulftown */
+	    case 0x2d:
+	    case 0x2e:		/* NHM Beckton */
+	    case 0x2f:
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_corei;
+	      break;
+	    }
 
-            case 15:
-              CPUVEC_SETUP_pentium4;
-              break;
-            }
-        }
-      else if (strcmp (vendor_string, "AuthenticAMD") == 0)
-        {
-          switch (family)
-            {
-            case 5:
-            case 6:
-	      abort ();
-              break;
-            case 15:
-	      /* CPUVEC_SETUP_athlon */
-              break;
-            }
-        }
+	case 15:
+	  CPUVEC_SETUP_pentium4;
+	  break;
+	}
+    }
+  else if (strcmp (vendor_string, "AuthenticAMD") == 0)
+    {
+      switch (family)
+	{
+	case 5:
+	case 6:
+	  abort ();
+
+	case 15:		/* k8 */
+	case 16:		/* k10 */
+	  /* CPUVEC_SETUP_athlon */
+	  break;
+	}
+    }
+  else if (strcmp (vendor_string, "CentaurHauls") == 0)
+    {
+      switch (family)
+	{
+	case 5:
+	  abort ();		/* 32-bit processors */
+
+	case 6:
+	  if (model < 15)
+	    abort ();		/* 32-bit processors */
+
+	  CPUVEC_SETUP_nano;
+	  break;
+	}
     }
 
   /* There's no x86 generic mpn_preinv_divrem_1 or mpn_preinv_mod_1.
