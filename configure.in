@@ -3077,7 +3077,10 @@ if test $found_asm = yes; then
   GMP_PROG_M4
   GMP_M4_M4WRAP_SPURIOUS
 else
-  M4=m4-not-needed
+  # In case the user has set M4 in the environment, don't touch it.
+  if test -z "$M4" ; then
+    M4=m4-not-needed
+  fi 
 fi
 
 # Only do the GMP_ASM checks if there's a .S or .asm wanting them.
