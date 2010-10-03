@@ -1,3 +1,7 @@
+2010-10-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/gcd_1.asm: Use m4_lshift to avoid << operator.
+
 2010-08-20  Niels Möller  <nisse@lysator.liu.se>
 
 	Suggested by Ozkan Sezer:

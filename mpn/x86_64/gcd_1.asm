@@ -40,7 +40,7 @@ C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
 
 deflit(MAXSHIFT, 6)
-deflit(MASK, eval((1<<MAXSHIFT)-1))
+deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
 DEF_OBJECT(ctz_table,64)
 	.byte	MAXSHIFT
