@@ -36,7 +36,7 @@ define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n', `%rcx')
 
-define(M, eval(1<<LSH))
+define(M, eval(m4_lshift(1,LSH)))
 
 ASM_START()
 	TEXT
