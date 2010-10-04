@@ -45,7 +45,7 @@ C it's own cache line or plonked in the middle of the code.  Presumably
 C since TEXT is read-only there's no worries about coherency.
 
 deflit(MAXSHIFT, 6)
-deflit(MASK, eval((1<<MAXSHIFT)-1))
+deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
 	TEXT
 	ALIGN(64)
