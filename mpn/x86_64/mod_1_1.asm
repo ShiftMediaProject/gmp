@@ -28,7 +28,7 @@ C Intel P4	27
 C Intel core2	14
 C Intel corei	12.5
 C Intel atom	37
-C VIA nano	15
+C VIA nano	14
 
 define(`B1modb', `%r10')
 define(`B2modb', `%r11')
