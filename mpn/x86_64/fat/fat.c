@@ -135,7 +135,7 @@ __gmpn_cpuvec_init (void)
 	    case 0x0e:		/* Yonah */
 	      abort ();		/* 32-bit processors */
 
-	    case 0x0f:
+	    case 0x0f:		/* Conroe Merom Kentsfield Allendale */
 	    case 0x10:
 	    case 0x11:
 	    case 0x12:
@@ -143,7 +143,7 @@ __gmpn_cpuvec_init (void)
 	    case 0x14:
 	    case 0x15:
 	    case 0x16:
-	    case 0x17:
+	    case 0x17:		/* PNR Wolfdale Yorkfield */
 	    case 0x18:
 	    case 0x19:
 	    case 0x1d:		/* PNR Dunnington */
