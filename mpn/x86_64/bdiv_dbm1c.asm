@@ -21,12 +21,12 @@ include(`../config.m4')
 
 C	     cycles/limb
 C AMD K8,K9	 2.25
-C AMD K10	 ?
+C AMD K10	 2.25
 C Intel P4	12.5
-C Intel core2 	 4.0
+C Intel core2 	 4
 C Intel corei 	 3.8
 C Intel atom	20
-C VIA nano	 4.2
+C VIA nano	 4
 
 C TODO
 C  * Do proper 4-way feed-in instead of the current epilogue
