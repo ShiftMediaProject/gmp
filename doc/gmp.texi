@@ -7215,6 +7215,12 @@ NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 @c gmp-d @spaceuref{http://home.comcast.net/~benhinkle/gmp-d/}
 @c @end itemize
 
+@item Eiffel
+@itemize @bullet
+@item
+Eiffelroom @spaceuref{http://www.eiffelroom.org/node/442}
+@end itemize
+
 @item Fortran
 @itemize @bullet
 @item
@@ -10475,7 +10481,8 @@ using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
 
 @item
 Niels M@"oller and Torbj@"orn Granlund, ``Improved division by invariant
-integers'', to appear.
+integers'', IEEE Transactions on Computers, 11 June 2010.
+@uref{http://gmplib.org/~tege/division-paper.pdf}
 
 @item
 Torbj@"orn Granlund and Niels M@"oller, ``Division of integers large and
