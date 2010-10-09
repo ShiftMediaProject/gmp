@@ -81,7 +81,7 @@ __GMP_PROTO ((mp_ptr, mp_ptr *, int, int, mp_srcptr, mp_size_t, int, int, mp_ptr
 
 #if TUNE_PROGRAM_BUILD || (defined (MUL_FFT_TABLE3) && defined (SQR_FFT_TABLE3))
 
-#ifndef FFT_TABLE3_SIZE		/* When tuning, this is define in gmp-impl.h */
+#ifndef FFT_TABLE3_SIZE		/* When tuning this is defined in gmp-impl.h */
 #if defined (MUL_FFT_TABLE3_SIZE) && defined (SQR_FFT_TABLE3_SIZE)
 #if MUL_FFT_TABLE3_SIZE > SQR_FFT_TABLE3_SIZE
 #define FFT_TABLE3_SIZE MUL_FFT_TABLE3_SIZE
