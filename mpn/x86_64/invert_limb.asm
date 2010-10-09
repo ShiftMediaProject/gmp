@@ -29,7 +29,7 @@ C Intel P4	135			161
 C Intel core2	 69			116
 C Intel corei	 55			 89
 C Intel atom	129			191
-C VIA nano	 79			  ?
+C VIA nano	 79			157
 
 C rax rcx rdx rdi rsi r8
 
