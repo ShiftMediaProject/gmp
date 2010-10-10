@@ -5493,6 +5493,8 @@ different bit values.
 
 @deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{n})
 Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
+The most significant limb of the input @{@var{s1p}, @var{n}@} must be
+non-zero.
 @end deftypefun
 
 @deftypefun void mpn_and_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
