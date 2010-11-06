@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_add_n, mpn_sub_n
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -54,23 +55,56 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(func_nc)
 	mov	R32(n), R32(%rax)
-	and	$3, R32(%rax)
 	shr	$2, n
+	and	$3, R32(%rax)
 	bt	$0, %r8			C cy flag <- carry parameter
-	jz	L(1)
-	jmp	L(ent)
+	jrcxz	L(lt4)
+
+	mov	(up), %r8
+	mov	8(up), %r9
+	dec	n
+	jmp	L(mid)
+
 EPILOGUE()
 	ALIGN(16)
 PROLOGUE(func)
 	mov	R32(n), R32(%rax)
 	shr	$2, n
-	jz	L(0)
 	and	$3, R32(%rax)
+	jrcxz	L(lt4)
 
-L(ent):	mov	(up), %r8
+	mov	(up), %r8
 	mov	8(up), %r9
 	dec	n
 	jmp	L(mid)
+
+L(lt4):	dec	R32(%rax)
+	mov	(up), %r8
+	jnz	L(2)
+	ADCSBB	(vp), %r8
+	mov	%r8, (rp)
+	adc	%eax, %eax
+	ret
+
+L(2):	dec	R32(%rax)
+	mov	8(up), %r9
+	jnz	L(3)
+	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	adc	%eax, %eax
+	ret
+
+L(3):	mov	16(up), %r10
+	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	ADCSBB	16(vp), %r10
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	mov	%r10, 16(rp)
+	setc	R8(%rax)
+	ret
 
 	ALIGN(16)
 L(top):	ADCSBB	(vp), %r8
@@ -105,36 +139,7 @@ L(end):	lea	32(up), up
 
 	inc	R32(%rax)
 	dec	R32(%rax)
-	jnz	L(1)
+	jnz	L(lt4)
 	adc	%eax, %eax
-	ret
-
-L(0):	test	R32(%rax), R32(%rax)
-L(1):	dec	R32(%rax)
-	mov	(up), %r8
-	jnz	L(2)
-	ADCSBB	(vp), %r8
-	mov	%r8, (rp)
-	adc	%eax, %eax
-	ret
-
-L(2):	dec	R32(%rax)
-	mov	8(up), %r9
-	jnz	L(3)
-	ADCSBB	(vp), %r8
-	ADCSBB	8(vp), %r9
-	mov	%r8, (rp)
-	mov	%r9, 8(rp)
-	adc	%eax, %eax
-	ret
-
-L(3):	mov	16(up), %r10
-	ADCSBB	(vp), %r8
-	ADCSBB	8(vp), %r9
-	ADCSBB	16(vp), %r10
-	mov	%r8, (rp)
-	mov	%r9, 8(rp)
-	mov	%r10, 16(rp)
-	setc	%al
 	ret
 EPILOGUE()
