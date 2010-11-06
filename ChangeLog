@@ -1,5 +1,8 @@
 2010-11-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: If cpuid says we have 32bit-only x86 but
+	configfsf.guess return x86_64, return the latter.
+
 	* mpn/x86_64/aors_n.asm: Rewrite not to rely on ZF after 'bt' insn.
 
 2010-10-09  Torbjorn Granlund  <tege@gmplib.org>
