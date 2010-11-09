@@ -1,3 +1,14 @@
+2010-11-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Get rid of K&R support.
+	* Makefile.am: Likewise.
+	* mpn/Makefile.am: Likewise.
+	* doc/configuration: Update docs wrt K&R support.
+	* doc/gmp.texi: Likewise.
+
+	* configure.in (AC_INIT): Amend bug reporting address with manual
+	reference.
+
 2010-11-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: If cpuid says we have 32bit-only x86 but

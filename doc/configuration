@@ -121,14 +121,9 @@ To add a completely new mpn function file, do the following,
   iii) If HAVE_NATIVE_func is going to be used, then add a #undef to
        the AH_VERBATIM([HAVE_NATIVE] block in configure.in.
 
-  iv) Add file.c to nodist_libdummy_la_SOURCES in mpn/Makefile.am (in
-      order to get an ansi2knr rule).  If the file is only in
-      assembler then this step is unnecessary, but do it anyway so as
-      not to forget if later a .c version is added.
-
-  v) If the function can be provided by a multi-function file, then
-     add to the "case" statement in configure.in which lists each
-     multi-function filename and what function files it can provide.
+  iv) If the function can be provided by a multi-function file, then
+      add to the "case" statement in configure.in which lists each
+      multi-function filename and what function files it can provide.
 
 
 ** Adding a test program
@@ -244,10 +239,6 @@ INSTALL.autoconf can be copied from INSTALL in autoconf.
 
 ltmain.sh comes from libtool.  Remove it and run "libtoolize --copy",
 or just copy the file by hand.
-
-ansi2knr.c, ansi2knr.1, install-sh and doc/mdate-sh come from automake
-and can be updated by copying or by removing and running "automake
---add-missing --copy".
 
 texinfo.tex can be updated from ftp.gnu.org.  Check it still works
 with "make gmp.dvi", "make gmp.ps" and "make gmp.pdf".
@@ -366,30 +357,6 @@ Conversions between int and long aren't warned about by gcc when
 they're the same size, which is unfortunate because casts should be
 used in such cases, for the benefit of K&R compilers with int!=long
 and where the difference matters in function calls.
-
-** K&R support
-
-Function definitions must be in the GNU stylized form to work.  See
-the ansi2knr.1 man page (included in the GMP sources).
-
-__GMP_PROTO is used for function prototypes, other ANSI / K&R
-differences are conditionalized in various places.
-
-Proper testing of the K&R support requires a compiler which gives an
-error for ANSI-isms.  Configuring with --host=none is a good idea, to
-test all the generic C code.
-
-When using an ANSI compiler, the ansi2knr setups can be partially
-tested with
-
-	./configure am_cv_prog_cc_stdc=no ac_cv_prog_cc_stdc=no
-
-This will test the use of $U and the like in the makefiles, but not
-much else.
-
-Forcing the cache variables can be used with a compiler like HP C
-which is K&R by default but to which configure normally adds ANSI mode
-flags.  This then should be a good full K&R test.
 
 * Other Notes
 

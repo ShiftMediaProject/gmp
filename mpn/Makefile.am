@@ -24,49 +24,6 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 
 OFILES = @mpn_objects@
 
-
-# All possible mpn normal and optional function files are listed here, to
-# get automake to generate ansi2knr rules for each.  Such rules will be
-# ignored for any that are instead implemented with a .asm (or whatever) for
-# a particular target.
-#
-nodist_EXTRA_libmpn_la_SOURCES =					    \
-  add.c add_1.c add_n.c							    \
-  addmul_1.c addmul_2.c addmul_3.c addmul_4.c addmul_5.c addmul_6.c	    \
-  addmul_7.c addmul_8.c							    \
-  and_n.c andn_n.c							    \
-  cmp.c com.c copyd.c copyi.c						    \
-  dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
-  sbpi1_bdiv_qr.c sbpi1_bdiv_q.c					    \
-  sbpi1_div_qr.c sbpi1_div_q.c sbpi1_divappr_q.c			    \
-  dcpi1_bdiv_qr.c dcpi1_bdiv_q.c					    \
-  dcpi1_div_qr.c dcpi1_div_q.c dcpi1_divappr_q.c			    \
-  dump.c fib2_ui.c gcd.c						    \
-  gcd_1.c gcdext.c get_d.c get_str.c					    \
-  hamdist.c hgcd2.c hgcd.c invert_limb.c				    \
-  ior_n.c iorn_n.c jacbase.c jacobi_lehmer.c lshift.c			    \
-  matrix22_mul.c matrix22_mul1_inverse_vector.c mod_1.c mod_34lsub1.c mode1o.c  \
-  mod_1_1.c mod_1_2.c mod_1_3.c mod_1_4.c				    \
-  mul.c mul_1.c mul_2.c mul_3.c mul_4.c mul_fft.c mul_n.c mul_basecase.c    \
-  nussbaumer_mul.c							    \
-  toom22_mul.c toom32_mul.c toom42_mul.c toom52_mul.c toom62_mul.c	    \
-  toom33_mul.c toom43_mul.c toom53_mul.c toom63_mul.c			    \
-  toom44_mul.c								    \
-  toom6h_mul.c toom6_sqr.c toom8h_mul.c toom8_sqr.c			    \
-  toom_couple_handling.c						    \
-  toom2_sqr.c toom3_sqr.c toom4_sqr.c					    \
-  toom_eval_dgr3_pm1.c toom_eval_dgr3_pm2.c				    \
-  toom_eval_pm1.c toom_eval_pm1.c toom_eval_pm2exp.c toom_eval_pm2rexp.c    \
-  toom_interpolate_5pts.c toom_interpolate_6pts.c toom_interpolate_7pts.c   \
-  toom_interpolate_8pts.c toom_interpolate_12pts.c toom_interpolate_16pts.c \
-  invertappr.c invert.c binvert.c mulmod_bnm1.c sqrmod_bnm1.c		    \
-  mullo_n.c mullo_basecase.c nand_n.c neg.c nior_n.c perfsqr.c	    \
-  popcount.c pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c \
-  rootrem.c scan0.c scan1.c set_str.c			    \
-  sqr_basecase.c sqr_diagonal.c						    \
-  sqrtrem.c sub.c sub_1.c sub_n.c submul_1.c				    \
-  tdiv_qr.c udiv_qrnnd.c udiv_w_sdiv.c xor_n.c xnor_n.c
-
 noinst_LTLIBRARIES = libmpn.la
 nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
 libmpn_la_LIBADD = $(OFILES)

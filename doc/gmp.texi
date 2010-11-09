@@ -923,8 +923,7 @@ preprocessor should be set in @samp{CPPFLAGS} rather than @samp{CFLAGS}.
 Compiling is done with both @samp{CPPFLAGS} and @samp{CFLAGS}, but
 preprocessing uses just @samp{CPPFLAGS}.  This distinction is because most
 preprocessors won't accept all the flags the compiler does.  Preprocessing is
-done separately in some configure tests, and in the @samp{ansi2knr} support
-for K&R compilers.
+done separately in some configure tests.
 
 @item @option{CC_FOR_BUILD}
 @cindex @code{CC_FOR_BUILD}

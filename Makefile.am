@@ -25,7 +25,7 @@
 # Makefiles in subdirectories, but here we must omit it so automake gives
 # the actual ansi2knr build rule, not "cd $(top_builddir) && make ansi2knr".
 #
-AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
+# AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies
 
 
 # Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
@@ -318,9 +318,6 @@ install-data-hook:
 	@echo ''
 
 
-# The ansi2knr setups for the build programs are the same as the normal
-# automake ansi2knr rules, but using $(CC_FOR_BUILD) instead of $(CC).
-#
 # The "test -f" support for srcdir!=builddir is similar to the automake .c.o
 # etc rules, but with each foo.c explicitly, since $< is not portable
 # outside an inference rule.
@@ -348,9 +345,6 @@ gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
 DISTCLEANFILES += gen-fac_ui$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fac_ui.c
 
-gen-fac_ui_.c: gen-fac_ui.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-fac_ui.c; then echo $(srcdir)/gen-fac_ui.c; else echo gen-fac_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-fac_ui_.c || rm -f gen-fac_ui_.c
-
 
 fib_table.h: gen-fib$(EXEEXT_FOR_BUILD)
 	./gen-fib header $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fib_table.h || (rm -f fib_table.h; exit 1)
@@ -364,9 +358,6 @@ gen-fib$(EXEEXT_FOR_BUILD): gen-fib$(U_FOR_BUILD).c dumbmp.c
 	$(CC_FOR_BUILD) `test -f 'gen-fib$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fib$(U_FOR_BUILD).c -o gen-fib$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fib$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fib.c
-
-gen-fib_.c: gen-fib.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-fib.c; then echo $(srcdir)/gen-fib.c; else echo gen-fib.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-fib_.c || rm -f gen-fib_.c
 
 
 mp_bases.h: gen-bases$(EXEEXT_FOR_BUILD)
@@ -382,10 +373,6 @@ gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c dumbmp.c
 DISTCLEANFILES += gen-bases$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-bases.c
 
-gen-bases_.c: gen-bases.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-bases.c; then echo $(srcdir)/gen-bases.c; else echo gen-bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-bases_.c || rm -f gen-bases_.c
-
-
 
 trialdivtab.h: gen-trialdivtab$(EXEEXT_FOR_BUILD)
 	./gen-trialdivtab $(GMP_LIMB_BITS) 8000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
@@ -395,9 +382,6 @@ gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c dumbmp.c
 	$(CC_FOR_BUILD) `test -f 'gen-trialdivtab$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-trialdivtab$(U_FOR_BUILD).c -o gen-trialdivtab$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
 DISTCLEANFILES += gen-trialdivtab$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-trialdivtab.c
-
-gen-trialdivtab_.c: gen-trialdivtab.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-trialdivtab.c; then echo $(srcdir)/gen-trialdivtab.c; else echo gen-trialdivtab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-trialdivtab_.c || rm -f gen-trialdivtab_.c
 
 
 mpn/jacobitab.h: gen-jacobitab$(EXEEXT_FOR_BUILD)
@@ -409,9 +393,6 @@ gen-jacobitab$(EXEEXT_FOR_BUILD): gen-jacobitab$(U_FOR_BUILD).c
 DISTCLEANFILES += gen-jacobitab$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-jacobitab.c
 
-gen-jacobitab_.c: gen-jacobitab.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-jacobitab.c; then echo $(srcdir)/gen-jacobitab.c; else echo gen-jacobitab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-jacobitab_.c || rm -f gen-jacobitab_.c
-
 
 mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
 	./gen-psqr $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
@@ -422,8 +403,6 @@ gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c dumbmp.c
 DISTCLEANFILES += gen-psqr$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-psqr.c
 
-gen-psqr_.c: gen-psqr.c $(ANSI2KNR)
-	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-psqr.c; then echo $(srcdir)/gen-psqr.c; else echo gen-psqr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-psqr_.c || rm -f gen-psqr_.c
 
 
 # Avoid: CVS - cvs directories

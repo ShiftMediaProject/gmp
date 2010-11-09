@@ -26,9 +26,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    gmp.h or gmp-impl.h.  To use this file in a program just #include
    "dumbmp.c".
 
-   ANSI function definitions can be used here, since ansi2knr is run if
-   necessary.  But other ANSI-isms like "const" should be avoided.
-
    mp_limb_t here is an unsigned long, since that's a sensible type
    everywhere we know of, with 8*sizeof(unsigned long) giving the number of
    bits in the type (that not being true for instance with int or short on
