@@ -26,7 +26,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 void debug_mp __GMP_PROTO ((mpz_t, int));
-void dump_abort __GMP_PROTO ((int, char *, mpz_t, mpz_t));
+void dump_abort __GMP_PROTO ((int, const char *, mpz_t, mpz_t));
 
 int
 main (int argc, char **argv)
@@ -107,7 +107,7 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (int i, char *s, mpz_t op1, mpz_t op2)
+dump_abort (int i, const char *s, mpz_t op1, mpz_t op2)
 {
   fprintf (stderr, "ERROR: %s in test %d\n", s, i);
   fprintf (stderr, "op1 = "); debug_mp (op1, -16);

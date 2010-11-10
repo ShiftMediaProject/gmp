@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 void debug_mp __GMP_PROTO ((mpz_t));
 static void refmpz_mul __GMP_PROTO ((mpz_t, const mpz_t, const mpz_t));
-void dump_abort __GMP_PROTO ((int, char *, mpz_t, mpz_t, mpz_t, mpz_t));
+void dump_abort __GMP_PROTO ((int, const char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
 #define FFT_MIN_BITSIZE 100000
 
@@ -178,7 +178,7 @@ refmpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
 }
 
 void
-dump_abort (int i, char *s,
+dump_abort (int i, const char *s,
             mpz_t op1, mpz_t op2, mpz_t product, mpz_t ref_product)
 {
   mp_size_t b, e;

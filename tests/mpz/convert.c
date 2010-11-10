@@ -35,7 +35,7 @@ string_urandomb (char *bp, size_t len, int base, gmp_randstate_ptr rands)
   mpz_t bs;
   unsigned long bsi;
   int d, l;
-  char *collseq = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const char *collseq = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
   mpz_init (bs);
 

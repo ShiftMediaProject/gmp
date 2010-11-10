@@ -42,7 +42,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 
-char *decimal_point;
+const char *decimal_point;
 
 /* Replace the libc localeconv with one we can manipulate. */
 #if HAVE_LOCALECONV
@@ -50,25 +50,25 @@ struct lconv *
 localeconv (void)
 {
   static struct lconv  l;
-  l.decimal_point = decimal_point;
+  l.decimal_point = (char *) decimal_point;
   return &l;
 }
 #endif
 
 /* Replace the libc nl_langinfo with one we can manipulate. */
 #if HAVE_NL_LANGINFO
-const char *
+char *
 nl_langinfo (nl_item n)
 {
 #if defined (DECIMAL_POINT)
   if (n == DECIMAL_POINT)
-    return decimal_point;
+    return (char *) decimal_point;
 #endif
 #if defined (RADIXCHAR)
   if (n == RADIXCHAR)
-    return decimal_point;
+    return (char *) decimal_point;
 #endif
-  return "";
+  return (char *) "";
 }
 #endif
 
@@ -106,7 +106,7 @@ check_input (void)
 
   for (i = 0; i < numberof (point); i++)
     {
-      decimal_point = point[i];
+      decimal_point = (const char *) point[i];
 
       for (neg = 0; neg <= 1; neg++)
         {

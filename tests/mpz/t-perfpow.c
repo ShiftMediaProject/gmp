@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 struct
 {
-  char *num_as_str;
+  const char *num_as_str;
   char want;
 } tests[] =
   {
