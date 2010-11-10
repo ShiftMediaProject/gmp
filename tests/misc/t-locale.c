@@ -57,7 +57,7 @@ localeconv (void)
 
 /* Replace the libc nl_langinfo with one we can manipulate. */
 #if HAVE_NL_LANGINFO
-char *
+const char *
 nl_langinfo (nl_item n)
 {
 #if defined (DECIMAL_POINT)
@@ -75,7 +75,7 @@ nl_langinfo (nl_item n)
 void
 check_input (void)
 {
-  static char *point[] = {
+  static const char *point[] = {
     ".", ",", "WU", "STR", "ZTV***"
   };
 

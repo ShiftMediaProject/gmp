@@ -25,7 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort __GMP_PROTO ((char *, mpz_t, unsigned long));
+void dump_abort __GMP_PROTO ((const char *, mpz_t, unsigned long));
 void debug_mp __GMP_PROTO ((mpz_t, int));
 
 int
@@ -144,7 +144,7 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (char *str, mpz_t dividend, unsigned long divisor)
+dump_abort (const char *str, mpz_t dividend, unsigned long divisor)
 {
   fprintf (stderr, "ERROR: %s\n", str);
   fprintf (stderr, "dividend = "); debug_mp (dividend, -16);

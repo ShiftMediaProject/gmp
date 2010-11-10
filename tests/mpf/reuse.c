@@ -50,7 +50,7 @@ main (void)
 #define EXPO 32
 #endif
 
-void dump_abort __GMP_PROTO ((char *, mpf_t, mpf_t));
+void dump_abort __GMP_PROTO ((const char *, mpf_t, mpf_t));
 
 typedef void (*dss_func) __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 
@@ -59,7 +59,7 @@ dss_func dss_funcs[] =
   mpf_div, mpf_add, mpf_mul, mpf_sub,
 };
 
-char *dss_func_names[] =
+const char *dss_func_names[] =
 {
   "mpf_div", "mpf_add", "mpf_mul", "mpf_sub",
 };
@@ -72,7 +72,7 @@ dsi_func dsi_funcs[] =
   mpf_mul_2exp, mpf_div_2exp
 };
 
-char *dsi_func_names[] =
+const char *dsi_func_names[] =
 {
   "mpf_div_ui", "mpf_add_ui", "mpf_mul_ui", "mpf_sub_ui",
   "mpf_mul_2exp", "mpf_div_2exp"
@@ -85,7 +85,7 @@ dis_func dis_funcs[] =
   mpf_ui_div, mpf_ui_sub,
 };
 
-char *dis_func_names[] =
+const char *dis_func_names[] =
 {
   "mpf_ui_div", "mpf_ui_sub",
 };
@@ -194,7 +194,7 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (char *name, mpf_t res1, mpf_t res2)
+dump_abort (const char *name, mpf_t res1, mpf_t res2)
 {
   printf ("failure in %s:\n", name);
   mpf_dump (res1);

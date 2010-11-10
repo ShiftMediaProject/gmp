@@ -34,7 +34,7 @@ refmpz_nextprime (mpz_ptr p, mpz_srcptr t)
 }
 
 void
-run (char *start, int reps, char *end, short diffs[])
+run (const char *start, int reps, const char *end, short diffs[])
 {
   mpz_t x, y;
   int i;

@@ -265,7 +265,7 @@ mpn_tracea_file (const char *filename,
 void
 byte_trace (const char *name, const void *ptr, mp_size_t size)
 {
-  char       *fmt;
+  const char *fmt;
   mp_size_t  i;
 
   mp_trace_start (name);

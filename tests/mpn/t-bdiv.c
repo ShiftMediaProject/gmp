@@ -55,7 +55,7 @@ static unsigned long test;
 
 void
 check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
-	   mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, char *fname)
+	   mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, const char *fname)
 {
   mp_size_t qn;
   int cmp;

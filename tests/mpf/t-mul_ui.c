@@ -118,7 +118,7 @@ void
 check_various (void)
 {
   mpf_t  u, got, want;
-  char   *s;
+  const char   *s;
 
   mpf_init2 (u,    2*8*sizeof(long));
   mpf_init2 (got,  2*8*sizeof(long));

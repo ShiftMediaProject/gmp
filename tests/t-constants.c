@@ -24,36 +24,36 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 #ifdef ULONG_MAX
-char *ulong_max_def = "defined";
+const char *ulong_max_def = "defined";
 #else
-char *ulong_max_def = "not defined";
+const char *ulong_max_def = "not defined";
 #endif
 #ifdef LONG_MAX
-char *long_max_def = "defined";
+const char *long_max_def = "defined";
 #else
-char *long_max_def = "not defined";
+const char *long_max_def = "not defined";
 #endif
 
 #ifdef UINT_MAX
-char *uint_max_def = "defined";
+const char *uint_max_def = "defined";
 #else
-char *uint_max_def = "not defined";
+const char *uint_max_def = "not defined";
 #endif
 #ifdef INT_MAX
-char *int_max_def = "defined";
+const char *int_max_def = "defined";
 #else
-char *int_max_def = "not defined";
+const char *int_max_def = "not defined";
 #endif
 
 #ifdef USHRT_MAX
-char *ushrt_max_def = "defined";
+const char *ushrt_max_def = "defined";
 #else
-char *ushrt_max_def = "not defined";
+const char *ushrt_max_def = "not defined";
 #endif
 #ifdef SHRT_MAX
-char *shrt_max_def = "defined";
+const char *shrt_max_def = "defined";
 #else
-char *shrt_max_def = "not defined";
+const char *shrt_max_def = "not defined";
 #endif
 
 #include "gmp-impl.h"

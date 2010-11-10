@@ -58,7 +58,7 @@ struct {
 } calling_conventions_fenv;
 
 
-char *regname[6] = {"rbx", "rbp", "r12", "r13", "r14", "r15"};
+const char *regname[6] = {"rbx", "rbp", "r12", "r13", "r14", "r15"};
 
 #define DIR_BIT(rflags)   (((rflags) & (1<<10)) != 0)
 

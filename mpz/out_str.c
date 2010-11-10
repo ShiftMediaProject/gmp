@@ -31,7 +31,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
   size_t str_size;
   size_t i;
   size_t written;
-  char *num_to_text;
+  const char *num_to_text;
   TMP_DECL;
 
   if (stream == 0)

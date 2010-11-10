@@ -36,7 +36,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   char *return_str;
   size_t str_size;
   size_t alloc_size = 0;
-  char *num_to_text;
+  const char *num_to_text;
   int i;
   TMP_DECL;
 

@@ -48,7 +48,7 @@ main (void)
 
 #else /* ! DLL_EXPORT */
 
-void dump __GMP_PROTO ((char *, mpz_t, mpz_t, mpz_t));
+void dump __GMP_PROTO ((const char *, mpz_t, mpz_t, mpz_t));
 
 typedef void (*dss_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 typedef void (*dsi_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
@@ -74,7 +74,7 @@ dss_func dss_funcs[] =
   mpz_xinvert,
   mpz_gcd, mpz_lcm, mpz_and, mpz_ior, mpz_xor
 };
-char *dss_func_names[] =
+const char *dss_func_names[] =
 {
   "mpz_add", "mpz_sub", "mpz_mul",
   "mpz_cdiv_q", "mpz_cdiv_r", "mpz_fdiv_q", "mpz_fdiv_r", "mpz_tdiv_q", "mpz_tdiv_r",
@@ -93,7 +93,7 @@ dsi_func dsi_funcs[] =
   mpz_mul_2exp,
   mpz_pow_ui
 };
-char *dsi_func_names[] =
+const char *dsi_func_names[] =
 {
   "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui",
   "mpz_fdiv_q_2exp", "mpz_fdiv_r_2exp",
@@ -109,7 +109,7 @@ dsi_div_func dsi_div_funcs[] =
   mpz_fdiv_q_ui, mpz_fdiv_r_ui,
   mpz_tdiv_q_ui, mpz_tdiv_r_ui
 };
-char *dsi_div_func_names[] =
+const char *dsi_div_func_names[] =
 {
   "mpz_cdiv_q_ui", "mpz_cdiv_r_ui",
   "mpz_fdiv_q_ui", "mpz_fdiv_r_ui",
@@ -122,7 +122,7 @@ ddsi_div_func ddsi_div_funcs[] =
   mpz_fdiv_qr_ui,
   mpz_tdiv_qr_ui
 };
-char *ddsi_div_func_names[] =
+const char *ddsi_div_func_names[] =
 {
   "mpz_cdiv_qr_ui",
   "mpz_fdiv_qr_ui",
@@ -135,7 +135,7 @@ ddss_div_func ddss_div_funcs[] =
   mpz_fdiv_qr,
   mpz_tdiv_qr
 };
-char *ddss_div_func_names[] =
+const char *ddss_div_func_names[] =
 {
   "mpz_cdiv_qr",
   "mpz_fdiv_qr",
@@ -146,7 +146,7 @@ ds_func ds_funcs[] =
 {
   mpz_abs, mpz_com, mpz_neg, mpz_sqrt
 };
-char *ds_func_names[] =
+const char *ds_func_names[] =
 {
   "mpz_abs", "mpz_com", "mpz_neg", "mpz_sqrt"
 };
@@ -671,7 +671,7 @@ main (int argc, char **argv)
 }
 
 void
-dump (char *name, mpz_t in1, mpz_t in2, mpz_t in3)
+dump (const char *name, mpz_t in1, mpz_t in2, mpz_t in3)
 {
   printf ("failure in %s (", name);
   mpz_out_str (stdout, -16, in1);
