@@ -163,7 +163,7 @@ __gmp_allocate_strdup (const char *s)
   size_t  len;
   char    *t;
   len = strlen (s);
-  t = (*__gmp_allocate_func) (len+1);
+  t = (char *) (*__gmp_allocate_func) (len+1);
   memcpy (t, s, len+1);
   return t;
 }

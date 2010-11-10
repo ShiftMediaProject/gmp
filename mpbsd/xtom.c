@@ -25,7 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-extern const unsigned char __gmp_digit_value_tab[];
 #define digit_value __gmp_digit_value_tab
 
 MINT *

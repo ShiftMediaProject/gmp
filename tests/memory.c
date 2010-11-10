@@ -22,6 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <string.h>		/* for memcpy, memcmp */
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #if GMP_LIMB_BITS == 64
 #define PATTERN1 CNST_LIMB(0xcafebabedeadbeef)

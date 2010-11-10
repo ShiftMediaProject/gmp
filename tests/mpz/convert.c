@@ -129,7 +129,7 @@ main (int argc, char **argv)
       size_range = mpz_get_ui (bs) % 16 + 1;	/* 1..16 */
       mpz_urandomb (bs, rands, size_range);	/* 1..65536 digits */
       len = mpz_get_ui (bs) + 1;
-      buf = (*__gmp_allocate_func) (len + 1);
+      buf = (char *) (*__gmp_allocate_func) (len + 1);
       if (base == 0)
 	base = 10;
       string_urandomb (buf, len, base, rands);

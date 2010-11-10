@@ -158,11 +158,11 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   cnt = 0;
   if (mp[0] % 2 == 0)
     {
-      mp_ptr new = TMP_ALLOC_LIMBS (nodd);
+      mp_ptr newmp = TMP_ALLOC_LIMBS (nodd);
       count_trailing_zeros (cnt, mp[0]);
-      mpn_rshift (new, mp, nodd, cnt);
-      nodd -= new[nodd - 1] == 0;
-      mp = new;
+      mpn_rshift (newmp, mp, nodd, cnt);
+      nodd -= newmp[nodd - 1] == 0;
+      mp = newmp;
       ncnt++;
     }
 
@@ -197,10 +197,10 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
       if (bn < ncnt)
 	{
-	  mp_ptr new = TMP_ALLOC_LIMBS (ncnt);
-	  MPN_COPY (new, bp, bn);
-	  MPN_ZERO (new + bn, ncnt - bn);
-	  bp = new;
+	  mp_ptr newbp = TMP_ALLOC_LIMBS (ncnt);
+	  MPN_COPY (newbp, bp, bn);
+	  MPN_ZERO (newbp + bn, ncnt - bn);
+	  bp = newbp;
 	}
 
       r2 = tp;
@@ -232,10 +232,10 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     zero:
       if (nodd < ncnt)
 	{
-	  mp_ptr new = TMP_ALLOC_LIMBS (ncnt);
-	  MPN_COPY (new, mp, nodd);
-	  MPN_ZERO (new + nodd, ncnt - nodd);
-	  mp = new;
+	  mp_ptr newmp = TMP_ALLOC_LIMBS (ncnt);
+	  MPN_COPY (newmp, mp, nodd);
+	  MPN_ZERO (newmp + nodd, ncnt - nodd);
+	  mp = newmp;
 	}
 
       odd_inv_2exp = tp + n;

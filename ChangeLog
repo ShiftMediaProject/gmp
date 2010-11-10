@@ -1,3 +1,72 @@
+2010-11-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	Make it possible to compile GMP with g++:
+
+	* gmp-impl.h: Declare __gmp_digit_value_tab here.
+	* mpbsd/min.c: ...not here.
+	* mpbsd/xtom.c: ...nor here.
+	* mpf/set_str.c: ...nor here.
+	* mpz/inp_str.c: ...nor here.
+	* mpz/set_str.c: ...nor here.
+
+	* mpn/generic/toom43_mul.c: Add casts for logical operations on enums.
+	* mpn/generic/toom44_mul.c: Likewise.
+	* mpn/generic/toom4_sqr.c: Likewise.
+	* mpn/generic/toom52_mul.c: Likewise.
+	* mpn/generic/toom53_mul.c: Likewise.
+	* mpn/generic/toom62_mul.c: Likewise.
+
+	* mpz/clrbit.c: Clean up typing using MPZ_REALLOC.
+	* mpz/setbit.c: Likewise.
+
+	* mpz/powm.c: Avoid variable name 'new'.
+
+	* randlc2x.c: Add explicit casts for type conversions.
+	* tests/misc/t-printf.c: Likewise.
+	* tests/misc/t-scanf.c: Likewise.
+	* tests/misc.c: Likewise.
+	* tests/mpz/convert.c: Likewise.
+	* tests/refmpn.c: Likewise.
+
+	* tests/tests.h: Unconditionally use <sstream> for now.
+
+	* tests/memory.c: Include "tests.h.
+
+	* mp_get_fns.c: Add a __GMP_NOTHROW for coherency with prototype.
+	* mp_set_fns.c: Likewise.
+	* mpf/cmp.c: Likewise.
+	* mpf/cmp_si.c: Likewise.
+	* mpf/cmp_ui.c: Likewise.
+	* mpf/fits_s.h: Likewise.
+	* mpf/fits_u.h: Likewise.
+	* mpf/get_dfl_prec.c: Likewise.
+	* mpf/get_prc.c: Likewise.
+	* mpf/get_si.c: Likewise.
+	* mpf/get_ui.c: Likewise.
+	* mpf/int_p.c: Likewise.
+	* mpf/set_dfl_prec.c: Likewise.
+	* mpf/set_prc_raw.c: Likewise.
+	* mpf/size.c: Likewise.
+	* mpf/swap.c: Likewise.
+	* mpq/equal.c: Likewise.
+	* mpq/swap.c: Likewise.
+	* mpz/cmp.c: Likewise.
+	* mpz/cmp_si.c: Likewise.
+	* mpz/cmp_ui.c: Likewise.
+	* mpz/cmpabs.c: Likewise.
+	* mpz/cmpabs_ui.c: Likewise.
+	* mpz/cong_2exp.c: Likewise.
+	* mpz/divis_2exp.c: Likewise.
+	* mpz/fits_s.h: Likewise.
+	* mpz/get_si.c: Likewise.
+	* mpz/hamdist.c: Likewise.
+	* mpz/scan0.c: Likewise.
+	* mpz/scan1.c: Likewise.
+	* mpz/sizeinbase.c: Likewise.
+	* mpz/swap.c: Likewise.
+	* mpz/tstbit.c: Likewise.
+	* tal-reent.c: Likewise.
+
 2010-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Get rid of K&R support.

@@ -434,7 +434,7 @@ void refmpz_pow_ui __GMP_PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
    full implementation, just enough for our purposes.  */
 
 #ifdef __cplusplus
-#if HAVE_SSTREAM
+#if 1 || HAVE_SSTREAM
 #include <sstream>
 #else /* ! HAVE_SSTREAM */
 #include <string>

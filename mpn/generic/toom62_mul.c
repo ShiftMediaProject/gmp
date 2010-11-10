@@ -97,10 +97,10 @@ mpn_toom62_mul (mp_ptr pp,
   gp = pp;
 
   /* Compute as1 and asm1.  */
-  aflags = toom7_w3_neg & mpn_toom_eval_pm1 (as1, asm1, 5, ap, n, s, gp);
+  aflags = (enum toom7_flags) (toom7_w3_neg & mpn_toom_eval_pm1 (as1, asm1, 5, ap, n, s, gp));
 
   /* Compute as2 and asm2. */
-  aflags |= toom7_w1_neg & mpn_toom_eval_pm2 (as2, asm2, 5, ap, n, s, gp);
+  aflags = (enum toom7_flags) (aflags | toom7_w1_neg & mpn_toom_eval_pm2 (as2, asm2, 5, ap, n, s, gp));
 
   /* Compute ash = 32 a0 + 16 a1 + 8 a2 + 4 a3 + 2 a4 + a5
      = 2*(2*(2*(2*(2*a0 + a1) + a2) + a3) + a4) + a5  */
@@ -157,7 +157,7 @@ mpn_toom62_mul (mp_ptr pp,
       else
 	{
 	  mpn_sub_n (bsm1, b0, b1, n);
-	  bflags = 0;
+	  bflags = (enum toom7_flags) 0;
 	}
 #endif
     }
@@ -173,7 +173,7 @@ mpn_toom62_mul (mp_ptr pp,
       else
 	{
 	  mpn_sub (bsm1, b0, n, b1, t);
-	  bflags = 0;
+	  bflags = (enum toom7_flags) 0;
 	}
     }
 
@@ -183,7 +183,7 @@ mpn_toom62_mul (mp_ptr pp,
   if (bflags & toom7_w3_neg)
     {
       bsm2[n] = mpn_add (bsm2, bsm1, n, b1, t);
-      bflags |= toom7_w1_neg;
+      bflags = (enum toom7_flags) (bflags | toom7_w1_neg);
     }
   else
     {
@@ -194,7 +194,7 @@ mpn_toom62_mul (mp_ptr pp,
 	    {
 	      ASSERT_NOCARRY (mpn_sub_n (bsm2, b1, bsm1, t));
 	      MPN_ZERO (bsm2 + t, n + 1 - t);
-	      bflags |= toom7_w1_neg;
+	      bflags = (enum toom7_flags) (bflags | toom7_w1_neg);
 	    }
 	  else
 	    {
@@ -207,7 +207,7 @@ mpn_toom62_mul (mp_ptr pp,
 	  if (mpn_cmp (bsm1, b1, n) < 0)
 	    {
 	      ASSERT_NOCARRY (mpn_sub_n (bsm2, b1, bsm1, n));
-	      bflags |= toom7_w1_neg;
+	      bflags = (enum toom7_flags) (bflags | toom7_w1_neg);
 	    }
 	  else
 	    {
@@ -293,7 +293,7 @@ mpn_toom62_mul (mp_ptr pp,
   if (s > t)  mpn_mul (vinf, a5, s, b1, t);
   else        mpn_mul (vinf, b1, t, a5, s);
 
-  mpn_toom_interpolate_7pts (pp, n, aflags ^ bflags,
+  mpn_toom_interpolate_7pts (pp, n, (enum toom7_flags) (aflags ^ bflags),
 			     vm2, vm1, v2, vh, s + t, scratch_out);
 
   TMP_FREE;

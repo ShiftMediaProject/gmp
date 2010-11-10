@@ -229,7 +229,7 @@ fun_sscanf (const char *input, const char *fmt, void *a1, void *a2)
   int     ret;
 
   size = strlen (input) + 1;
-  input_writable = (*__gmp_allocate_func) (size);
+  input_writable = (char *) (*__gmp_allocate_func) (size);
   memcpy (input_writable, input, size);
 
   if (a2 == NULL)

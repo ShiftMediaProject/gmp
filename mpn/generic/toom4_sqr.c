@@ -149,5 +149,5 @@ mpn_toom4_sqr (mp_ptr pp,
   TOOM4_SQR_REC (v0, a0, n, tp);
   TOOM4_SQR_REC (vinf, a3, s, tp);	/* vinf, 2s limbs */
 
-  mpn_toom_interpolate_7pts (pp, n, 0, vm2, vm1, v2, vh, 2*s, tp);
+  mpn_toom_interpolate_7pts (pp, n, (enum toom7_flags) 0, vm2, vm1, v2, vh, 2*s, tp);
 }

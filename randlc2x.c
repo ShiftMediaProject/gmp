@@ -257,9 +257,9 @@ randiset_lc (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
   gmp_rand_lc_struct *dstp, *srcp;
 
   srcp = (gmp_rand_lc_struct *) RNG_STATE (src);
-  dstp = (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
+  dstp = (gmp_rand_lc_struct *) (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
 
-  RNG_STATE (dst) = (void *) dstp;
+  RNG_STATE (dst) = (mp_limb_t *) (void *) dstp;
   RNG_FNPTR (dst) = (void *) &Linear_Congruential_Generator;
 
   /* _mp_seed and _mp_a might be unnormalized (high zero limbs), but
@@ -291,7 +291,7 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
   ASSERT_ALWAYS (m2exp != 0);
 
   p = __GMP_ALLOCATE_FUNC_TYPE (1, gmp_rand_lc_struct);
-  RNG_STATE (rstate) = (void *) p;
+  RNG_STATE (rstate) = (mp_limb_t *) (void *) p;
   RNG_FNPTR (rstate) = (void *) &Linear_Congruential_Generator;
 
   /* allocate m2exp bits of space for p->_mp_seed, and initial seed "1" */

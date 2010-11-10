@@ -100,7 +100,7 @@ check_plain (va_alist)
     return;
 
   fmtsize = strlen (fmt_orig) + 1;
-  fmt = (*__gmp_allocate_func) (fmtsize);
+  fmt = (char *) (*__gmp_allocate_func) (fmtsize);
 
   for (p = fmt_orig, q = fmt; *p != '\0'; p++)
     {

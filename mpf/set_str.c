@@ -47,7 +47,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-extern const unsigned char __gmp_digit_value_tab[];
 #define digit_value_tab __gmp_digit_value_tab
 
 /* Compute base^exp and return the most significant prec limbs in rp[].

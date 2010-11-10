@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 signed long int
-mpz_get_si (mpz_srcptr z)
+mpz_get_si (mpz_srcptr z) __GMP_NOTHROW
 {
   mp_ptr zp = z->_mp_d;
   mp_size_t size = z->_mp_size;

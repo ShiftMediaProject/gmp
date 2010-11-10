@@ -74,8 +74,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	    {
 	      /* Ugh.  The bit should be cleared outside of the end of the
 		 number.  We have to increase the size of the number.  */
-	      if (UNLIKELY (d->_mp_alloc < limb_index + 1))
-                dp = _mpz_realloc (d, limb_index + 1);
+	      dp = MPZ_REALLOC (d, limb_index + 1);
 
 	      MPN_ZERO (dp + dsize, limb_index - dsize);
 	      dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
@@ -99,8 +98,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	      /* We got carry all way out beyond the end of D.  Increase
 		 its size (and allocation if necessary).  */
 	      dsize++;
-	      if (UNLIKELY (d->_mp_alloc < dsize))
-                dp = _mpz_realloc (d, dsize);
+	      dp = MPZ_REALLOC (d, dsize);
 
 	      dp[i] = 1;
 	      d->_mp_size = -dsize;

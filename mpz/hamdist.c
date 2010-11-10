@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 mp_bitcnt_t
-mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
+mpz_hamdist (mpz_srcptr u, mpz_srcptr v) __GMP_NOTHROW
 {
   mp_srcptr      up, vp;
   mp_size_t      usize, vsize;

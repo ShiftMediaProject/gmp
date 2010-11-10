@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 int
-mpf_cmp_si (mpf_srcptr u, long int vval)
+mpf_cmp_si (mpf_srcptr u, long int vval) __GMP_NOTHROW
 {
   mp_srcptr up;
   mp_size_t usize;

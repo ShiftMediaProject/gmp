@@ -46,8 +46,8 @@ int
 byte_overlap_p (const void *v_xp, mp_size_t xsize,
 		const void *v_yp, mp_size_t ysize)
 {
-  const char *xp = v_xp;
-  const char *yp = v_yp;
+  const char *xp = (const char *) v_xp;
+  const char *yp = (const char *) v_yp;
 
   ASSERT (xsize >= 0);
   ASSERT (ysize >= 0);

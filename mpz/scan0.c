@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    reasonable to inline that code.  */
 
 mp_bitcnt_t
-mpz_scan0 (mpz_srcptr u, mp_bitcnt_t starting_bit)
+mpz_scan0 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
 {
   mp_srcptr      u_ptr = PTR(u);
   mp_size_t      size = SIZ(u);

@@ -3518,6 +3518,8 @@ __GMP_DECLSPEC double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, l
 #endif
 
 
+__GMP_DECLSPEC extern const unsigned char __gmp_digit_value_tab[];
+
 __GMP_DECLSPEC extern int __gmp_junk;
 __GMP_DECLSPEC extern const int __gmp_0;
 __GMP_DECLSPEC void __gmp_exception __GMP_PROTO ((int)) ATTRIBUTE_NORETURN;
