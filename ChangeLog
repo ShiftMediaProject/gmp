@@ -1,5 +1,13 @@
 2010-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* rand: New directory, move rand*.c and randmt.h here.
+	* rand/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): Add rand.
+	(RANDOM_OBJECTS): New variable.
+	(libgmp_la_SOURCES): Remove random objects.
+	(libgmp_la_DEPENDENCIES): Add RANDOM_OBJECTS.
+	* configure.in (AC_OUTPUT): Add rand/Makefile.
+
 	* ansi2knr.1: File removed.
 	* ansi2knr.c: File removed.
 

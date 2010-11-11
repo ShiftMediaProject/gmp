@@ -92,7 +92,7 @@ LIBMP_LT_REVISION = 21
 LIBMP_LT_AGE =      1
 
 
-SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd demos tune doc
+SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx mpbsd demos tune doc
 
 EXTRA_DIST = configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
 
@@ -221,6 +221,12 @@ SCANF_OBJECTS =							\
   scanf/scanf$U.lo scanf/sscanf$U.lo scanf/sscanffuns$U.lo	\
   scanf/vfscanf$U.lo scanf/vscanf$U.lo scanf/vsscanf$U.lo
 
+RANDOM_OBJECTS =							\
+  rand/rand$U.lo rand/randclr$U.lo rand/randdef$U.lo rand/randiset$U.lo	\
+  rand/randlc2s$U.lo rand/randlc2x$U.lo rand/randmt$U.lo		\
+  rand/randmts$U.lo rand/rands$U.lo rand/randsd$U.lo rand/randsdui$U.lo	\
+  rand/randbui$U.lo rand/randmui$U.lo
+
 # no $U for C++ files
 CXX_OBJECTS =								\
   cxx/isfuns.lo cxx/ismpf.lo cxx/ismpq.lo cxx/ismpz.lo cxx/ismpznw.lo	\
@@ -248,17 +254,15 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # -export-symbols, since the tune and speed programs, and perhaps some of
 # the test programs, want to access undocumented symbols.
 
-libgmp_la_SOURCES = gmp-impl.h longlong.h randmt.h			\
+libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c invalid.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
-  rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
-  randmts.c rands.c randsd.c randsdui.c randbui.c randmui.c version.c	\
-  nextprime.c
+  version.c nextprime.c
 EXTRA_libgmp_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
   $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
-  $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
+  $(PRINTF_OBJECTS)  $(SCANF_OBJECTS) $(RANDOM_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) $(LIBGMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
