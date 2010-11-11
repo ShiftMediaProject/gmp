@@ -1,3 +1,8 @@
+2010-11-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* ansi2knr.1: File removed.
+	* ansi2knr.c: File removed.
+
 2010-11-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	Make it possible to compile GMP with g++:
