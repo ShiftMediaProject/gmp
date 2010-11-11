@@ -1,6 +1,6 @@
 dnl  X86-64 mpn_add_n, mpn_sub_n, optimized for Intel Atom.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -65,15 +65,16 @@ L(ent):
 	jg	L(b3)
 
 L(b1):	mov	(%rsi), %r10
-	test	R32(%rcx), R32(%rcx)
-	bt	$0, R32(%r8)
+	test	%rcx, %rcx
 	jnz	L(gt1)
+	shr	R32(%r8)			C Set CF from argument
 	ADCSBB	(%rdx), %r10
 	mov	%r10, (%rdi)
 	mov	R32(%rcx), R32(%rax)		C zero rax
 	adc	R32(%rax), R32(%rax)
 	ret
-L(gt1):	ADCSBB	(%rdx), %r10
+L(gt1):	shr	R32(%r8)
+	ADCSBB	(%rdx), %r10
 	mov	8(%rsi), %r11
 	lea	16(%rsi), %rsi
 	lea	-16(%rdx), %rdx
@@ -83,12 +84,13 @@ L(gt1):	ADCSBB	(%rdx), %r10
 L(b2):	mov	(%rsi), %r9
 	mov	8(%rsi), %r10
 	lea	-8(%rdx), %rdx
-	test	R32(%rcx), R32(%rcx)
-	bt	$0, R32(%r8)
+	test	%rcx, %rcx
 	jnz	L(gt2)
+	shr	R32(%r8)
 	lea	-40(%rdi), %rdi
 	jmp	L(e2)
-L(gt2):	ADCSBB	8(%rdx), %r9
+L(gt2):	shr	R32(%r8)
+	ADCSBB	8(%rdx), %r9
 	mov	16(%rsi), %r11
 	lea	-8(%rsi), %rsi
 	lea	-8(%rdi), %rdi
@@ -97,12 +99,13 @@ L(gt2):	ADCSBB	8(%rdx), %r9
 L(b3):	mov	(%rsi), %rax
 	mov	8(%rsi), %r9
 	mov	16(%rsi), %r10
-	test	R32(%rcx), R32(%rcx)
-	bt	$0, %r8
+	test	%rcx, %rcx
 	jnz	L(gt3)
+	shr	R32(%r8)
 	lea	-32(%rdi), %rdi
 	jmp	L(e3)
-L(gt3):	ADCSBB	(%rdx), %rax
+L(gt3):	shr	R32(%r8)
+	ADCSBB	(%rdx), %rax
 	jmp	L(m3)
 
 L(b0):	mov	(%rsi), %r11

@@ -1,5 +1,8 @@
 2010-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/atom/aors_n.asm: Don't rely on ZF after 'bt' insn.
+	Use 64-bit 'test' to support operands of 2^32 limbs and more.
+
 	* rand: New directory, move rand*.c and randmt.h here.
 	* rand/Makefile.am: New file.
 	* Makefile.am (SUBDIRS): Add rand.
