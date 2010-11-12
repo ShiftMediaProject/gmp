@@ -18,7 +18,7 @@
 # along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
-SUBDIRS = . devel mpn mpz mpq mpf rand misc cxx mpbsd
+SUBDIRS = . devel mpn mpz mpq mpf rand misc cxx
 
 include ../mpn/Makeasm.am
 

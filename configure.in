@@ -150,17 +150,6 @@ if test "$enable_old_fft_full" = "yes"; then
 fi
 
 
-AC_ARG_ENABLE(mpbsd,
-AC_HELP_STRING([--enable-mpbsd],
-               [build Berkeley MP compatibility library [[default=no]]]),
-[case $enableval in
-yes|no) ;;
-*) AC_MSG_ERROR([bad value $enableval for --enable-mpbsd, need yes or no]) ;;
-esac],
-[enable_mpbsd=no])
-AM_CONDITIONAL(WANT_MPBSD, test "$enable_mpbsd" = "yes")
-
-
 AC_ARG_ENABLE(nails,
 AC_HELP_STRING([--enable-nails],[use nails on limbs [[default=no]]]),
 [case $enableval in
@@ -3270,20 +3259,6 @@ GMP_DEFINE_RAW(["define(<GMP_NAIL_BITS>,$GMP_NAIL_BITS)"])
 GMP_DEFINE_RAW(["define(<GMP_NUMB_BITS>,eval(GMP_LIMB_BITS-GMP_NAIL_BITS))"])
 
 
-# Exclude the mpn random functions from mpbsd since that would drag in the
-# top-level rand things, all of which are unnecessary for libmp.  There's
-# other unnecessary objects too actually, if we could be bothered figuring
-# out exactly which they are.
-#
-mpn_objs_in_libmp=
-for i in $mpn_objs_in_libgmp; do
-  case $i in
-  *random*) ;;
-  *) mpn_objs_in_libmp="$mpn_objs_in_libmp $i" ;;
-  esac
-done
-AC_SUBST(mpn_objs_in_libmp)
-
 AC_SUBST(mpn_objects)
 AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
@@ -3390,9 +3365,9 @@ GMP_FINISH
 #        Right now automake isn't accepting the new AC_CONFIG_FILES scheme.
 
 AC_OUTPUT(Makefile							\
-  mpbsd/Makefile mpf/Makefile mpn/Makefile mpq/Makefile			\
+  mpf/Makefile mpn/Makefile mpq/Makefile				\
   mpz/Makefile printf/Makefile scanf/Makefile rand/Makefile cxx/Makefile \
-  tests/Makefile tests/devel/Makefile tests/mpbsd/Makefile		\
+  tests/Makefile tests/devel/Makefile					\
   tests/mpf/Makefile tests/mpn/Makefile tests/mpq/Makefile		\
   tests/mpz/Makefile tests/rand/Makefile tests/misc/Makefile		\
   tests/cxx/Makefile							\

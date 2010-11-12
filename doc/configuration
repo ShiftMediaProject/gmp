@@ -323,10 +323,6 @@ errors rather than mysterious failures from a mismatch.
 --disable-shared will make builds go much faster, though of course
 shared or shared+static should be tested too.
 
---enable-mpbsd grabs various bits of mpz, which might need to be
-adjusted if things in those routines are changed.  Building mpbsd all
-the time doesn't cost much.
-
 --prefix to a dummy directory followed by "make install" will show
 what's installed.
 
@@ -369,12 +365,6 @@ struct __mpz_struct etc - this must be retained for C++ compatibility.
     C++ applications defining functions taking mpz_t etc parameters
     will get this in the mangled name because C++ "sees though" the
     typedef mpz_t to the underlying struct.
-
-    Incidentally, this probably means for C++ that our mp.h is not
-    compatible with an original BSD mp.h, since we use struct
-    __mpz_struct for MINT in ours.  Maybe we could change to whatever
-    the original did, but it seems unlikely anyone would be using C++
-    with mp.h.
 
 __gmpn - note that glibc defines some __mpn symbols, old versions of
     some mpn routines, which it uses for floating point printfs.

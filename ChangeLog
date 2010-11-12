@@ -1,3 +1,14 @@
+2010-11-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Makefile.am: Remove mpbsd.
+	* configure.in: Remove mpbsd.
+	* doc/configuration: Remove mpbsd mentions.
+	* doc/gmp.texi: Remove mpbsd docs.
+	* tests/Makefile.am: Remove mpbsd.
+	* libmp.sym: Remove.
+	* mpbsd: Remove directory and files.
+	* tests/mpbsd: Remove directory and files.
+
 2010-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aors_n.asm: Don't rely on ZF after 'bt' insn.
