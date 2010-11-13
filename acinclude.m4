@@ -1941,6 +1941,7 @@ X86_PATTERN | x86_64-*-*)
 esac
 
 cat >conftest.c <<EOF
+extern const int foo;		/* Suppresses C++'s suppression of foo */
 const int foo = 123;
 EOF
 echo "Test program:" >&AC_FD_CC
@@ -3092,14 +3093,17 @@ dnl  -------------------
 dnl  Determine the floating point format.
 dnl
 dnl  The object file is grepped, in order to work when cross compiling.  A
-dnl  start and end sequence is included to avoid false matches, and
-dnl  allowance is made for the desired data crossing an "od -b" line
-dnl  boundary.  The test number is a small integer so it should appear
-dnl  exactly, no rounding or truncation etc.
+dnl  start and end sequence is included to avoid false matches, and allowance
+dnl  is made for the desired data crossing an "od -b" line boundary.  The test
+dnl  number is a small integer so it should appear exactly, no rounding or
+dnl  truncation etc.
 dnl
 dnl  "od -b", incidentally, is supported even by Unix V7, and the awk script
 dnl  used doesn't have functions or anything, so even an "old" awk should
 dnl  suffice.
+dnl
+dnl  The C code here declares the variable foo as extern; without that, some
+dnl  C++ compilers will not put foo in the object file.
 
 AC_DEFUN([GMP_C_DOUBLE_FORMAT],
 [AC_REQUIRE([AC_PROG_CC])
@@ -3108,11 +3112,13 @@ AC_CACHE_CHECK([format of `double' floating point],
                 gmp_cv_c_double_format,
 [gmp_cv_c_double_format=unknown
 cat >conftest.c <<\EOF
-[struct {
+[struct foo {
   char    before[8];
   double  x;
   char    after[8];
-} foo = {
+};
+extern struct foo foo;
+struct foo foo = {
   { '\001', '\043', '\105', '\147', '\211', '\253', '\315', '\357' },
   -123456789.0,
   { '\376', '\334', '\272', '\230', '\166', '\124', '\062', '\020' },
@@ -3522,7 +3528,7 @@ else
   AC_CACHE_CHECK([whether vsnprintf works],
                  gmp_cv_func_vsnprintf,
   [gmp_cv_func_vsnprintf=yes
-   for i in 'check ("hello world");' 'int n; check ("%nhello world", &n);'; do
+   for i in 'return check ("hello world");' 'int n; return check ("%nhello world", &n);'; do
      AC_TRY_RUN([
 #include <string.h>  /* for strcmp */
 #include <stdio.h>   /* for vsnprintf */
@@ -3556,11 +3562,11 @@ check (va_alist)
   ret = vsnprintf (buf, 4, fmt, ap);
 
   if (strcmp (buf, "hel") != 0)
-    exit (1);
+    return 1;
 
   /* allowed return values */
   if (ret != -1 && ret != 3 && ret != 11)
-    exit (2);
+    return 2;
 
   return 0;
 }
@@ -3569,7 +3575,6 @@ int
 main ()
 {
 $i
-  exit (0);
 }
 ],
       [:],
