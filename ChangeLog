@@ -1,5 +1,8 @@
 2010-11-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/get_d.c: Misc cleanup.  Fail with a syntax error for
+	non-IEEE fp formats.
+
 	* tests/devel/try.c (malloc_region): Add explicit casts for type
 	conversions.
 
