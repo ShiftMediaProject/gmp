@@ -704,13 +704,20 @@ _cpuid:
 	ret
 EOF
   cat <<EOF >${dummy}2.c
+#include <string.h>
+#include <stdio.h>
+#if __cplusplus
+extern "C"
+#endif
+unsigned int cpuid (char dummy_string[12], int);
+int
 main ()
 {
   char vendor_string[13];
   char dummy_string[12];
   long fms;
   int family, model, stepping;
-  char *modelstr;
+  const char *modelstr;
   int cpu_64bit = 0;
 
   cpuid (vendor_string, 0);

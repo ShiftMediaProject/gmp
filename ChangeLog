@@ -1,3 +1,7 @@
+2010-11-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess (x86): Make test C snippet compatible with C++.
+
 2010-11-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am: Remove mpbsd.
