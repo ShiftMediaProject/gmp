@@ -296,7 +296,7 @@ check_obstack_vprintf (const char *want, const char *fmt, va_list ap)
 
   obstack_init (&ob);
   got_len = gmp_obstack_vprintf (&ob, fmt, ap);
-  got = obstack_base (&ob);
+  got = (char *) obstack_base (&ob);
   ob_len = obstack_object_size (&ob);
 
   if (got_len != want_len

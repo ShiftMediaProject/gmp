@@ -144,7 +144,7 @@ mpn_toom62_mul (mp_ptr pp,
       else
 	{
 	  cy = mpn_add_n_sub_n (bs1, bsm1, b0, b1, n);
-	  bflags = 0;
+	  bflags = (enum toom7_flags) 0;
 	}
       bs1[n] = cy >> 1;
 #else
