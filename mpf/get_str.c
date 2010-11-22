@@ -144,9 +144,9 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
     {
       base = -base;
       if (base <= 1)
-        base = 10;
+	base = 10;
       else if (base > 36)
-        return NULL;
+	return NULL;
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 

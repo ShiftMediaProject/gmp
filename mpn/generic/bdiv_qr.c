@@ -29,7 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* Computes Q = N / D mod B^n,
-	    R = N - QD.	 */
+	    R = N - QD.  */
 
 mp_limb_t
 mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,

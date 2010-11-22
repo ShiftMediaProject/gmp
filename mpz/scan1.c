@@ -52,60 +52,60 @@ mpz_scan1 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
       limb &= (MP_LIMB_T_MAX << (starting_bit % GMP_NUMB_BITS));
 
       if (limb == 0)
-        {
-          /* If it's the high limb which is zero after masking, then there's
-             no 1 bits after starting_bit.  */
-          p++;
-          if (p == u_end)
-            return ULONG_MAX;
+	{
+	  /* If it's the high limb which is zero after masking, then there's
+	     no 1 bits after starting_bit.  */
+	  p++;
+	  if (p == u_end)
+	    return ULONG_MAX;
 
-          /* Otherwise search further for a non-zero limb.  The high limb is
-             non-zero, if nothing else.  */
-          for (;;)
-            {
-              limb = *p;
-              if (limb != 0)
-                break;
-              p++;
-              ASSERT (p < u_end);
-            }
-        }
+	  /* Otherwise search further for a non-zero limb.  The high limb is
+	     non-zero, if nothing else.  */
+	  for (;;)
+	    {
+	      limb = *p;
+	      if (limb != 0)
+		break;
+	      p++;
+	      ASSERT (p < u_end);
+	    }
+	}
     }
   else
     {
       mp_srcptr  q;
 
       /* If there's a non-zero limb before ours then we're in the ones
-         complement region.  Search from *(p-1) downwards since that might
-         give better cache locality, and since a non-zero in the middle of a
-         number is perhaps a touch more likely than at the end.  */
+	 complement region.  Search from *(p-1) downwards since that might
+	 give better cache locality, and since a non-zero in the middle of a
+	 number is perhaps a touch more likely than at the end.  */
       q = p;
       while (q != u_ptr)
-        {
-          q--;
-          if (*q != 0)
-            goto inverted;
-        }
+	{
+	  q--;
+	  if (*q != 0)
+	    goto inverted;
+	}
 
       if (limb == 0)
-        {
-          /* Skip zero limbs, to find the start of twos complement.  The
-             high limb is non-zero, if nothing else.  This search is
-             necessary so the -limb is applied at the right spot. */
-          do
-            {
-              p++;
-              ASSERT (p < u_end);
-              limb = *p;
-            }
-          while (limb == 0);
+	{
+	  /* Skip zero limbs, to find the start of twos complement.  The
+	     high limb is non-zero, if nothing else.  This search is
+	     necessary so the -limb is applied at the right spot. */
+	  do
+	    {
+	      p++;
+	      ASSERT (p < u_end);
+	      limb = *p;
+	    }
+	  while (limb == 0);
 
-          /* Apply twos complement, and look for a 1 bit in that.  Since
-             limb!=0 here, also have (-limb)!=0 so there's certainly a 1
-             bit.  */
-          limb = -limb;
-          goto got_limb;
-        }
+	  /* Apply twos complement, and look for a 1 bit in that.  Since
+	     limb!=0 here, also have (-limb)!=0 so there's certainly a 1
+	     bit.  */
+	  limb = -limb;
+	  goto got_limb;
+	}
 
       /* Adjust so ~limb implied by searching for 0 bit becomes -limb.  */
       limb--;
@@ -117,14 +117,14 @@ mpz_scan1 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
       limb |= (CNST_LIMB(1) << (starting_bit % GMP_NUMB_BITS)) - 1;
 
       /* Search for a limb which is not all ones.  If the end is reached
-         then the zero immediately past the end is the result.  */
+	 then the zero immediately past the end is the result.  */
       while (limb == GMP_NUMB_MAX)
-        {
-          p++;
-          if (p == u_end)
-            return (mp_bitcnt_t) abs_size * GMP_NUMB_BITS;
-          limb = *p;
-        }
+	{
+	  p++;
+	  if (p == u_end)
+	    return (mp_bitcnt_t) abs_size * GMP_NUMB_BITS;
+	  limb = *p;
+	}
 
       /* Now seeking low 1 bit. */
       limb = ~limb;

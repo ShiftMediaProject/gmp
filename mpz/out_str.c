@@ -53,9 +53,9 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
     {
       base = -base;
       if (base <= 1)
-        base = 10;
+	base = 10;
       else if (base > 36)
-        return 0;
+	return 0;
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 

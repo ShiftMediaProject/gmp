@@ -44,7 +44,7 @@ msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
   if (op_size <= 0)
     {
       if (op_size < 0)
-        SQRT_OF_NEGATIVE;
+	SQRT_OF_NEGATIVE;
       SIZ(root) = 0;
       SIZ(rem) = 0;
       return;

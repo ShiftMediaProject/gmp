@@ -66,12 +66,12 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
       MPZ_REALLOC (w, usize+vsize);
       wp = PTR(w);
       if (vsize == 1)
-        cy_limb = mpn_mul_1 (wp, PTR(u), usize, PTR(v)[0]);
+	cy_limb = mpn_mul_1 (wp, PTR(u), usize, PTR(v)[0]);
       else
-        {
-          cy_limb = mpn_mul_2 (wp, PTR(u), usize, PTR(v));
-          usize++;
-        }
+	{
+	  cy_limb = mpn_mul_2 (wp, PTR(u), usize, PTR(v));
+	  usize++;
+	}
       wp[usize] = cy_limb;
       usize += (cy_limb != 0);
       SIZ(w) = (sign_product >= 0 ? usize : -usize);

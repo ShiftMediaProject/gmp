@@ -91,7 +91,7 @@ mpz_millerrabin (mpz_srcptr n, int reps)
 
 static int
 millerrabin (mpz_srcptr n, mpz_srcptr nm1, mpz_ptr x, mpz_ptr y,
-             mpz_srcptr q, unsigned long int k)
+	     mpz_srcptr q, unsigned long int k)
 {
   unsigned long int i;
 

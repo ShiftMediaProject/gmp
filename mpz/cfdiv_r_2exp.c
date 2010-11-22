@@ -58,26 +58,26 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
       /* Round towards zero, means just truncate */
 
       if (w == u)
-        {
-          /* if already smaller than limb_cnt then do nothing */
-          if (abs_usize <= limb_cnt)
-            return;
-          wp = PTR(w);
-        }
+	{
+	  /* if already smaller than limb_cnt then do nothing */
+	  if (abs_usize <= limb_cnt)
+	    return;
+	  wp = PTR(w);
+	}
       else
-        {
-          i = MIN (abs_usize, limb_cnt+1);
-          MPZ_REALLOC (w, i);
-          wp = PTR(w);
-          MPN_COPY (wp, up, i);
+	{
+	  i = MIN (abs_usize, limb_cnt+1);
+	  MPZ_REALLOC (w, i);
+	  wp = PTR(w);
+	  MPN_COPY (wp, up, i);
 
-          /* if smaller than limb_cnt then only the copy is needed */
-          if (abs_usize <= limb_cnt)
-            {
-              SIZ(w) = usize;
-              return;
-            }
-        }
+	  /* if smaller than limb_cnt then only the copy is needed */
+	  if (abs_usize <= limb_cnt)
+	    {
+	      SIZ(w) = usize;
+	      return;
+	    }
+	}
     }
   else
     {
@@ -85,16 +85,16 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
 
       /* if u!=0 and smaller than divisor, then must negate */
       if (abs_usize <= limb_cnt)
-        goto negate;
+	goto negate;
 
       /* if non-zero low limb, then must negate */
       for (i = 0; i < limb_cnt; i++)
-        if (up[i] != 0)
-          goto negate;
+	if (up[i] != 0)
+	  goto negate;
 
       /* if non-zero partial limb, then must negate */
       if ((up[limb_cnt] & LOW_MASK (cnt)) != 0)
-        goto negate;
+	goto negate;
 
       /* otherwise low bits of u are zero, so that's the result */
       SIZ(w) = 0;
@@ -111,10 +111,10 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
       i = MIN (abs_usize, limb_cnt+1);
       mpn_com (wp, up, i);
       for ( ; i <= limb_cnt; i++)
-        wp[i] = GMP_NUMB_MAX;
+	wp[i] = GMP_NUMB_MAX;
 
       /* Twos complement.  Since u!=0 in the relevant part, the twos
-         complement never gives 0 and a carry, so can use MPN_INCR_U. */
+	 complement never gives 0 and a carry, so can use MPN_INCR_U. */
       MPN_INCR_U (wp, limb_cnt+1, CNST_LIMB(1));
 
       usize = -usize;
@@ -130,10 +130,10 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
     {
       limb_cnt--;
       if (limb_cnt < 0)
-        {
-          SIZ(w) = 0;
-          return;
-        }
+	{
+	  SIZ(w) = 0;
+	  return;
+	}
       high = wp[limb_cnt];
     }
 

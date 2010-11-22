@@ -65,7 +65,7 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
   /* Check if n has small factors.  */
 #if defined (PP_INVERTED)
   r = MPN_MOD_OR_PREINV_MOD_1 (PTR(n), (mp_size_t) SIZ(n), (mp_limb_t) PP,
-                               (mp_limb_t) PP_INVERTED);
+			       (mp_limb_t) PP_INVERTED);
 #else
   r = mpn_mod_1 (PTR(n), (mp_size_t) SIZ(n), (mp_limb_t) PP);
 #endif

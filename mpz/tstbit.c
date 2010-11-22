@@ -56,14 +56,14 @@ mpz_tstbit (mpz_srcptr u, mp_bitcnt_t bit_index) __GMP_NOTHROW
       limb = -limb;     /* twos complement */
 
       while (p != u_ptr)
-        {
-          p--;
-          if (*p != 0)
-            {
-              limb--;   /* make it a ones complement instead */
-              break;
-            }
-        }
+	{
+	  p--;
+	  if (*p != 0)
+	    {
+	      limb--;	/* make it a ones complement instead */
+	      break;
+	    }
+	}
     }
 
   return (limb >> (bit_index % GMP_NUMB_BITS)) & 1;

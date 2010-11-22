@@ -36,7 +36,7 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
   if (op_size <= 0)
     {
       if (op_size < 0)
-        SQRT_OF_NEGATIVE;
+	SQRT_OF_NEGATIVE;
       SIZ(root) = 0;
       return;
     }

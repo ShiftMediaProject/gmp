@@ -34,7 +34,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
   if (SIZ (src) == 0)
     {
       if (src != dest)
-        mpz_set (dest, src);
+	mpz_set (dest, src);
       return 0;
     }
 

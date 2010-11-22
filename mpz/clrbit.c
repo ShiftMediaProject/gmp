@@ -32,19 +32,19 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
     {
       if (limb_index < dsize)
 	{
-          mp_limb_t  dlimb;
-          dlimb = dp[limb_index];
-          dlimb &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
-          dp[limb_index] = dlimb;
+	  mp_limb_t  dlimb;
+	  dlimb = dp[limb_index];
+	  dlimb &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+	  dp[limb_index] = dlimb;
 
-          if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
-            {
-              /* high limb became zero, must normalize */
-              do {
-                dsize--;
-              } while (dsize > 0 && dp[dsize-1] == 0);
-              d->_mp_size = dsize;
-            }
+	  if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
+	    {
+	      /* high limb became zero, must normalize */
+	      do {
+		dsize--;
+	      } while (dsize > 0 && dp[dsize-1] == 0);
+	      d->_mp_size = dsize;
+	    }
 	}
       else
 	;

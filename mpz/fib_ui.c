@@ -69,9 +69,9 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
   size = mpn_fib2_ui (xp, yp, n2);
 
   TRACE (printf ("mpz_fib_ui last step n=%lu size=%ld bit=%lu\n",
-                 n >> 1, size, n&1);
-         mpn_trace ("xp", xp, size);
-         mpn_trace ("yp", yp, size));
+		 n >> 1, size, n&1);
+	 mpn_trace ("xp", xp, size);
+	 mpn_trace ("yp", yp, size));
 
   if (n & 1)
     {
@@ -104,16 +104,16 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
       fp[0] += (n & 2 ? -CNST_LIMB(2) : CNST_LIMB(2));
 #else
       if (n & 2)
-        {
-          ASSERT (fp[0] >= 2);
-          fp[0] -= 2;
-        }
+	{
+	  ASSERT (fp[0] >= 2);
+	  fp[0] -= 2;
+	}
       else
-        {
-          ASSERT (c != GMP_NUMB_MAX); /* because it's the high of a mul */
-          c += mpn_add_1 (fp, fp, size-1, CNST_LIMB(2));
-          fp[size-1] = c;
-        }
+	{
+	  ASSERT (c != GMP_NUMB_MAX); /* because it's the high of a mul */
+	  c += mpn_add_1 (fp, fp, size-1, CNST_LIMB(2));
+	  fp[size-1] = c;
+	}
 #endif
     }
   else
@@ -136,7 +136,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
   SIZ(fn) = size;
 
   TRACE (printf ("done special, size=%ld\n", size);
-         mpn_trace ("fp ", fp, size));
+	 mpn_trace ("fp ", fp, size));
 
   TMP_FREE;
 }

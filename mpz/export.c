@@ -49,7 +49,7 @@ static const mp_limb_t  endian_test = (CNST_LIMB(1) << (GMP_LIMB_BITS-7)) - 1;
 
 void *
 mpz_export (void *data, size_t *countp, int order,
-            size_t size, int endian, size_t nail, mpz_srcptr z)
+	    size_t size, int endian, size_t nail, mpz_srcptr z)
 {
   mp_size_t      zsize;
   mp_srcptr      zp;
@@ -89,29 +89,29 @@ mpz_export (void *data, size_t *countp, int order,
   if (nail == GMP_NAIL_BITS)
     {
       if (size == sizeof (mp_limb_t) && align == 0)
-        {
-          if (order == -1 && endian == HOST_ENDIAN)
-            {
-              MPN_COPY ((mp_ptr) data, zp, (mp_size_t) count);
-              return data;
-            }
-          if (order == 1 && endian == HOST_ENDIAN)
-            {
-              MPN_REVERSE ((mp_ptr) data, zp, (mp_size_t) count);
-              return data;
-            }
+	{
+	  if (order == -1 && endian == HOST_ENDIAN)
+	    {
+	      MPN_COPY ((mp_ptr) data, zp, (mp_size_t) count);
+	      return data;
+	    }
+	  if (order == 1 && endian == HOST_ENDIAN)
+	    {
+	      MPN_REVERSE ((mp_ptr) data, zp, (mp_size_t) count);
+	      return data;
+	    }
 
-          if (order == -1 && endian == -HOST_ENDIAN)
-            {
-              MPN_BSWAP ((mp_ptr) data, zp, (mp_size_t) count);
-              return data;
-            }
-          if (order == 1 && endian == -HOST_ENDIAN)
-            {
-              MPN_BSWAP_REVERSE ((mp_ptr) data, zp, (mp_size_t) count);
-              return data;
-            }
-        }
+	  if (order == -1 && endian == -HOST_ENDIAN)
+	    {
+	      MPN_BSWAP ((mp_ptr) data, zp, (mp_size_t) count);
+	      return data;
+	    }
+	  if (order == 1 && endian == -HOST_ENDIAN)
+	    {
+	      MPN_BSWAP_REVERSE ((mp_ptr) data, zp, (mp_size_t) count);
+	      return data;
+	    }
+	}
     }
 
   {
@@ -162,31 +162,31 @@ mpz_export (void *data, size_t *countp, int order,
     limb = 0;
     for (i = 0; i < count; i++)
       {
-        for (j = 0; j < wbytes; j++)
-          {
-            EXTRACT (8, + 0);
-            dp -= endian;
-          }
-        if (wbits != 0)
-          {
-            EXTRACT (wbits, & wbitsmask);
-            dp -= endian;
-            j++;
-          }
-        for ( ; j < size; j++)
-          {
-            *dp = '\0';
-            dp -= endian;
-          }
-        dp += woffset;
+	for (j = 0; j < wbytes; j++)
+	  {
+	    EXTRACT (8, + 0);
+	    dp -= endian;
+	  }
+	if (wbits != 0)
+	  {
+	    EXTRACT (wbits, & wbitsmask);
+	    dp -= endian;
+	    j++;
+	  }
+	for ( ; j < size; j++)
+	  {
+	    *dp = '\0';
+	    dp -= endian;
+	  }
+	dp += woffset;
       }
 
     ASSERT (zp == PTR(z) + ABSIZ(z));
 
     /* low byte of word after most significant */
     ASSERT (dp == (unsigned char *) data
-            + (order < 0 ? count*size : - (mp_size_t) size)
-            + (endian >= 0 ? (mp_size_t) size - 1 : 0));
+	    + (order < 0 ? count*size : - (mp_size_t) size)
+	    + (endian >= 0 ? (mp_size_t) size - 1 : 0));
   }
   return data;
 }

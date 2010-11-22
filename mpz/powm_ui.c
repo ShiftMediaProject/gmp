@@ -120,7 +120,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   if (c == 0)
     {
       if (xn == mn && mpn_cmp (xp, mp, mn) >= 0)
-        mpn_sub_n (xp, xp, mp, mn);
+	mpn_sub_n (xp, xp, mp, mn);
       goto finishup;
     }
 

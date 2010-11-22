@@ -145,8 +145,8 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	{
 	  /* We should compute -OP1 ^ OP2.  Swap OP1 and OP2 and fall
 	     through to the code that handles OP1 ^ -OP2.  */
-          MPZ_SRCPTR_SWAP (op1, op2);
-          MPN_SRCPTR_SWAP (op1_ptr,op1_size, op2_ptr,op2_size);
+	  MPZ_SRCPTR_SWAP (op1, op2);
+	  MPN_SRCPTR_SWAP (op1_ptr,op1_size, op2_ptr,op2_size);
 	}
     }
 

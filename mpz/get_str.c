@@ -56,9 +56,9 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     {
       base = -base;
       if (base <= 1)
-        base = 10;
+	base = 10;
       else if (base > 36)
-        return NULL;
+	return NULL;
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
@@ -113,7 +113,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
       size_t  actual_size = str_size + 1 + (res_str - return_str);
       ASSERT (actual_size == strlen (return_str) + 1);
       __GMP_REALLOCATE_FUNC_MAYBE_TYPE (return_str, alloc_size, actual_size,
-                                        char);
+					char);
     }
   return return_str;
 }

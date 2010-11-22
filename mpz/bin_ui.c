@@ -57,12 +57,12 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
   else
     {
       /* bin(n,k) == 0 if k>n
-         (no test for this under the n<0 case, since -n+k-1 >= k there) */
+	 (no test for this under the n<0 case, since -n+k-1 >= k there) */
       if (mpz_cmp_ui (n, k) < 0)
-        {
-          mpz_set_ui (r, 0L);
-          return;
-        }
+	{
+	  mpz_set_ui (r, 0L);
+	  return;
+	}
 
       /* set ni = n-k */
       mpz_init (ni);
@@ -114,7 +114,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	  /* Accumulator overflow.  Perform bignum step.  */
 	  mpz_mul (r, r, nacc);
 	  mpz_set_ui (nacc, 1L);
-          DIVIDE ();
+	  DIVIDE ();
 	  kacc = i;
 	}
       else

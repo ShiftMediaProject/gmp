@@ -100,18 +100,18 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       umul_ppmm (n1, n0, nacc, (mp_limb_t) j << GMP_NAIL_BITS);
       n0 >>= GMP_NAIL_BITS;
       if (n1 == 0)
-        {
-          /* Save new products in accumulators to keep accumulating.  */
-          nacc = n0;
-          kacc = kacc * i;
-        }
+	{
+	  /* Save new products in accumulators to keep accumulating.  */
+	  nacc = n0;
+	  kacc = kacc * i;
+	}
       else
-        {
-          /* Accumulator overflow.  Perform bignum step.  */
-          MULDIV (32);
-          nacc = j;
-          kacc = i;
-        }
+	{
+	  /* Accumulator overflow.  Perform bignum step.  */
+	  MULDIV (32);
+	  nacc = j;
+	  kacc = i;
+	}
     }
 
   /* Take care of whatever is left in accumulators.  */

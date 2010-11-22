@@ -59,10 +59,10 @@ mpz_kronecker_si (mpz_srcptr a, long b)
       int        twos;
 
       if (b_limb == 0)
-        return JACOBI_LS0 (a_low, a_size);   /* (a/0) */
+	return JACOBI_LS0 (a_low, a_size);   /* (a/0) */
 
       if (! (a_low & 1))
-        return 0;  /* (even/even)=0 */
+	return 0;  /* (even/even)=0 */
 
       /* (a/2)=(2/a) for a odd */
       count_trailing_zeros (twos, b_limb);

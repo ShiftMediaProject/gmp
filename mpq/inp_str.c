@@ -49,11 +49,11 @@ mpq_inp_str (mpq_ptr q, FILE *fp, int base)
 
       nread = mpz_inp_str_nowhite (mpq_denref(q), fp, base, c, nread);
       if (nread == 0)
-        {
-          q->_mp_num._mp_size = 0;
-          q->_mp_den._mp_size = 1;
-          q->_mp_den._mp_d[0] = 1;
-        }
+	{
+	  q->_mp_num._mp_size = 0;
+	  q->_mp_den._mp_size = 1;
+	  q->_mp_den._mp_d[0] = 1;
+	}
     }
   else
     {

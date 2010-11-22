@@ -163,8 +163,8 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     {
       /* not a digit, must be a decimal point */
       for (i = 0; i < pointlen; i++)
-        if (str[i] != point[i])
-          return -1;
+	if (str[i] != point[i])
+	  return -1;
       if (digit_value[(unsigned char) str[pointlen]] >= (base == 0 ? 10 : base))
 	return -1;
     }
@@ -195,10 +195,10 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	{
 	  int dig;
 
-          for (j = 0; j < pointlen; j++)
-            if (str[j] != point[j])
-              goto not_point;
-          if (1)
+	  for (j = 0; j < pointlen; j++)
+	    if (str[j] != point[j])
+	      goto not_point;
+	  if (1)
 	    {
 	      if (dotpos != 0)
 		{
@@ -212,7 +212,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    }
 	  else
 	    {
-            not_point:
+	    not_point:
 	      dig = digit_value[c];
 	      if (dig >= base)
 		{

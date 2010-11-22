@@ -73,7 +73,7 @@ cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
     {
       if (wsize != 0)
 	{
-          mp_limb_t cy;
+	  mp_limb_t cy;
 	  cy = mpn_add_1 (wp, wp, wsize, CNST_LIMB(1));
 	  wp[wsize] = cy;
 	  wsize += cy;

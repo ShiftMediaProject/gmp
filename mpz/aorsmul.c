@@ -82,7 +82,7 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
   if (wsize_signed == 0)
     {
       /* Nothing to add to, just set w=x*y.  No w==x or w==y overlap here,
-         since we know x,y!=0 but w==0.  */
+	 since we know x,y!=0 but w==0.  */
       high = mpn_mul (wp, PTR(x),xsize, PTR(y),ysize);
       tsize -= (high == 0);
       SIZ(w) = (sub >= 0 ? tsize : -tsize);
@@ -101,14 +101,14 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
       mp_size_t usize = wsize;
 
       if (usize < tsize)
-        {
-          up    = tp;
-          usize = tsize;
-          tp    = wp;
-          tsize = wsize;
+	{
+	  up	= tp;
+	  usize = tsize;
+	  tp	= wp;
+	  tsize = wsize;
 
-          wsize = usize;
-        }
+	  wsize = usize;
+	}
 
       c = mpn_add (wp, up,usize, tp,tsize);
       wp[wsize] = c;
@@ -120,15 +120,15 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
       mp_size_t usize = wsize;
 
       if (mpn_cmp_twosizes_lt (up,usize, tp,tsize))
-        {
-          up    = tp;
-          usize = tsize;
-          tp    = wp;
-          tsize = wsize;
+	{
+	  up	= tp;
+	  usize = tsize;
+	  tp	= wp;
+	  tsize = wsize;
 
-          wsize = usize;
-          wsize_signed = -wsize_signed;
-        }
+	  wsize = usize;
+	  wsize_signed = -wsize_signed;
+	}
 
       ASSERT_NOCARRY (mpn_sub (wp, up,usize, tp,tsize));
       wsize = usize;

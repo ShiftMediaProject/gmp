@@ -79,31 +79,31 @@ mpz_divexact_gcd (mpz_ptr q, mpz_srcptr a, mpz_srcptr d)
       int        twos;
 
       if (dl == 1)
-        {
-          if (q != a)
-            mpz_set (q, a);
-          return;
-        }
+	{
+	  if (q != a)
+	    mpz_set (q, a);
+	  return;
+	}
       if (dl == 3)
-        {
-          mpz_divexact_by3 (q, a);
-          return;
-        }
+	{
+	  mpz_divexact_by3 (q, a);
+	  return;
+	}
 
       count_trailing_zeros (twos, dl);
       dl >>= twos;
 
       if (dl == 1)
-        {
-          mpz_tdiv_q_2exp (q, a, twos);
-          return;
-        }
+	{
+	  mpz_tdiv_q_2exp (q, a, twos);
+	  return;
+	}
       if (dl == 3)
-        {
-          mpz_tdiv_q_2exp (q, a, twos);
-          mpz_divexact_by3 (q, q);
-          return;
-        }
+	{
+	  mpz_tdiv_q_2exp (q, a, twos);
+	  mpz_divexact_by3 (q, q);
+	  return;
+	}
     }
 
   mpz_divexact (q, a, d);

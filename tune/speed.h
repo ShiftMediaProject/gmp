@@ -366,7 +366,7 @@ void mftb_function __GMP_PROTO ((unsigned p[2]));
    output or a clobber for the cpuid, hence an explicit save and restore.  A
    clobber as such doesn't provoke an error unfortunately (gcc 3.0), so use
    the dummy output style in non-PIC, so there's an error if somehow -fPIC
-   is used without a -DPIC to tell us about it.	 */
+   is used without a -DPIC to tell us about it.  */
 #if defined(__GNUC__) && ! defined (NO_ASM)	\
   && (defined (__i386__) || defined (__i486__))
 #ifdef PIC
@@ -615,7 +615,7 @@ int speed_routine_count_zeros_setup
   }
 
 /* s->size is still in limbs, and it's limbs which are copied, but
-   "function" takes a size in bytes not limbs.	*/
+   "function" takes a size in bytes not limbs.  */
 #define SPEED_ROUTINE_MPN_COPY_BYTES(function)				\
   {									\
     mp_ptr    wp;							\
@@ -2888,7 +2888,7 @@ int speed_routine_count_zeros_setup
   }
 
 
-/* Run an accel gcd find_a() function over various data values.	 A set of
+/* Run an accel gcd find_a() function over various data values.  A set of
    values is used in case some run particularly fast or slow.  The size
    parameter is ignored, the amount of data tested is fixed.  */
 
