@@ -43,7 +43,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   if (base >= 0)
     {
       num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
-      if (base == 0)
+      if (base <= 1)
 	base = 10;
       else if (base > 36)
 	{
@@ -55,6 +55,10 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   else
     {
       base = -base;
+      if (base <= 1)
+        base = 10;
+      else if (base > 36)
+        return NULL;
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 

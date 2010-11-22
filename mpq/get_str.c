@@ -27,8 +27,8 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
 {
   size_t  str_alloc, len;
 
-  ASSERT (ABS(base) >= 2);
-  ASSERT (ABS(base) <= 62);
+  if (base > 62 || base < -36)
+    return NULL;
 
   str_alloc = 0;
   if (str == NULL)
