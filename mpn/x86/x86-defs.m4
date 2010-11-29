@@ -928,7 +928,9 @@ m4_assert_numargs(1)
 
 dnl  Usage LEA(symbol,reg)
 
-define(`LEA',`
+define(`LEA',
+m4_assert_numargs(2)
+`ifdef(`PIC',`
 define(`EPILOGUE_cpu',
 `
 L(movl_eip_`'substr($2,1)):
@@ -936,11 +938,12 @@ L(movl_eip_`'substr($2,1)):
 	ret_internal
 	SIZE($'`1, .-$'`1)')
 
-        call    L(movl_eip_`'substr($2,1))
-        addl    $_GLOBAL_OFFSET_TABLE_, $2
-        movl    $1@GOT($2), $2
-')
-
+	call	L(movl_eip_`'substr($2,1))
+	addl	$_GLOBAL_OFFSET_TABLE_, $2
+	movl	$1@GOT($2), $2
+',`
+	movl	`$'$1, $2
+')')
 
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)

@@ -23,9 +23,12 @@ dnl
 dnl  FIXME: Only handles one symbol per assembly file because of the
 dnl  way EPILOGUE_cpu is handled.
 
-define(`LEA',`
+define(`LEA',
+m4_assert_numargs(2)
+`ifdef(`PIC',`
 define(`EPILOGUE_cpu',
-`	L(movl_eip_`'substr($2,1)):
+`
+L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
 	ret_internal
 	.section __IMPORT,__pointers,non_lazy_symbol_pointers
@@ -35,6 +38,8 @@ L($1`'$non_lazy_ptr):
 ')
 	call	L(movl_eip_`'substr($2,1))
 	movl	L($1`'$non_lazy_ptr)-.($2), $2
-')
+',`
+	movl	`$'$1, $2
+')')
 
 divert`'dnl
