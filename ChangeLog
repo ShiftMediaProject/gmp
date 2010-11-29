@@ -1,3 +1,8 @@
+2010-11-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/x86call.asm: Rewrite for code size and to support PIC.
+	* tests/x86check.c: Rewrite.
+
 2010-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/get_str.c: Make all bases either work or return an error.

@@ -1,6 +1,6 @@
 dnl  x86 calling conventions checking.
 
-dnl  Copyright 2000, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2003, 2010 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -17,6 +17,9 @@ dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
+
+dnl  The current version of the code attempts to keep the call/return
+dnl  prediction stack valid, but matching calls and returns.
 
 include(`../config.m4')
 
@@ -61,6 +64,29 @@ C
 C Perhaps the finit should be done only if the tags word isn't clear, but
 C nothing uses the rounding mode or anything at the moment.
 
+define(`WANT_EBX', eval(4*0)($1))
+define(`WANT_EBP', eval(4*1)($1))
+define(`WANT_ESI', eval(4*2)($1))
+define(`WANT_EDI', eval(4*3)($1))
+
+define(`JUNK_EAX', eval(4*4)($1))
+define(`JUNK_ECX', eval(4*5)($1))
+define(`JUNK_EDX', eval(4*6)($1))
+
+define(`SAVE_EBX', eval(4*7)($1))
+define(`SAVE_EBP', eval(4*8)($1))
+define(`SAVE_ESI', eval(4*9)($1))
+define(`SAVE_EDI', eval(4*10)($1))
+
+define(`RETADDR',  eval(4*11)($1))
+
+define(`EBX',	   eval(4*12)($1))
+define(`EBP',	   eval(4*13)($1))
+define(`ESI',	   eval(4*14)($1))
+define(`EDI',	   eval(4*15)($1))
+define(`EFLAGS',   eval(4*16)($1))
+
+
 define(G,
 m4_assert_numargs(1)
 `GSYM_PREFIX`'$1')
@@ -68,48 +94,58 @@ m4_assert_numargs(1)
 	.text
 	ALIGN(8)
 PROLOGUE(calling_conventions)
-	movl	(%esp), %eax
-	movl	%eax, G(calling_conventions_retaddr)
+	LEA(	G(calling_conventions_values), %ecx)
+	popl	RETADDR(%ecx)
 
-	movl	$L(return), (%esp)
+	movl	%ebx, SAVE_EBX(%ecx)
+	movl	%ebp, SAVE_EBP(%ecx)
+	movl	%esi, SAVE_ESI(%ecx)
+	movl	%edi, SAVE_EDI(%ecx)
 
-	movl	%ebx, G(calling_conventions_save_ebx)
-	movl	%esi, G(calling_conventions_save_esi)
-	movl	%edi, G(calling_conventions_save_edi)
-	movl	%ebp, G(calling_conventions_save_ebp)
+	movl	WANT_EBX(%ecx), %ebx
+	movl	WANT_EBP(%ecx), %ebp
+	movl	WANT_ESI(%ecx), %esi
+	movl	WANT_EDI(%ecx), %edi
 
-	movl	$0x01234567, %ebx
-	movl	$0x89ABCDEF, %esi
-	movl	$0xFEDCBA98, %edi
-	movl	$0x76543210, %ebp
+	C try to provoke a problem by starting with junk in the caller-saves
+	C registers, especially in %eax and %edx which will be return values
+	movl	JUNK_EAX(%ecx), %eax
+	movl	JUNK_EDX(%ecx), %edx
+C	movl	JUNK_ECX(%ecx), %ecx
 
-	C try to provoke a problem by starting with junk in the registers,
-	C especially in %eax and %edx which will be return values
-	movl	$0x70246135, %eax
-	movl	$0x8ACE9BDF, %ecx
-	movl	$0xFDB97531, %edx
+ifdef(`PIC',`
+	LEA(	G(calling_conventions_function), %ecx)
+	call	*(%ecx)
+',`
+	call	*G(calling_conventions_function)
+')
 
-	jmp	*G(calling_conventions_function)
+	LEA(	G(calling_conventions_values), %ecx)
 
-L(return):
-	movl	%ebx, G(calling_conventions_ebx)
-	movl	%esi, G(calling_conventions_esi)
-	movl	%edi, G(calling_conventions_edi)
-	movl	%ebp, G(calling_conventions_ebp)
+	movl	%ebx, EBX(%ecx)
+	movl	%ebp, EBP(%ecx)
+	movl	%esi, ESI(%ecx)
+	movl	%edi, EDI(%ecx)
 
 	pushf
 	popl	%ebx
-	movl	%ebx, G(calling_conventions_eflags)
+	movl	%ebx, EFLAGS(%ecx)
 
+	movl	SAVE_EBX(%ecx), %ebx
+	movl	SAVE_ESI(%ecx), %esi
+	movl	SAVE_EDI(%ecx), %edi
+	movl	SAVE_EBP(%ecx), %ebp
+
+	pushl	RETADDR(%ecx)
+
+ifdef(`PIC',`
+	LEA(	G(calling_conventions_fenv), %ecx)
+	fstenv	(%ecx)
+',`
 	fstenv	G(calling_conventions_fenv)
+')
 	finit
 
-	movl	G(calling_conventions_save_ebx), %ebx
-	movl	G(calling_conventions_save_esi), %esi
-	movl	G(calling_conventions_save_edi), %edi
-	movl	G(calling_conventions_save_ebp), %ebp
-
-	jmp	*G(calling_conventions_retaddr)
+	ret
 
 EPILOGUE()
-
