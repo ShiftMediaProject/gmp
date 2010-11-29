@@ -29,8 +29,8 @@ C
 C Execute an fldcw, setting the x87 control word to cw.
 
 PROLOGUE(x86_fldcw)
-        fldcw   4(%esp)
-        ret
+	fldcw	4(%esp)
+	ret
 EPILOGUE()
 
 
@@ -39,18 +39,18 @@ C
 C Execute an fstcw, returning the current x87 control word.
 
 PROLOGUE(x86_fstcw)
-        xorl    %eax, %eax
-        pushl   %eax
-        fstcw   (%esp)
-        popl    %eax
-        ret
+	xorl	%eax, %eax
+	pushl	%eax
+	fstcw	(%esp)
+	popl	%eax
+	ret
 EPILOGUE()
 
 
-dnl  Instrumented profiling doesn't come out quite right below, since we
-dnl  don't do an actual "ret".  There's only a few instructions here, so
-dnl  there's no great need to get them separately accounted, just let them
-dnl  get attributed to the caller.
+dnl  Instrumented profiling doesn't come out quite right below, since we don't
+dnl  do an actual "ret".  There's only a few instructions here, so there's no
+dnl  great need to get them separately accounted, just let them get attributed
+dnl  to the caller.  FIXME this comment might no longer be true.
 
 ifelse(WANT_PROFILING,instrument,
 `define(`WANT_PROFILING',no)')
@@ -91,7 +91,7 @@ define(G,
 m4_assert_numargs(1)
 `GSYM_PREFIX`'$1')
 
-	.text
+	TEXT
 	ALIGN(8)
 PROLOGUE(calling_conventions)
 	LEA(	G(calling_conventions_values), %ecx)
@@ -102,12 +102,13 @@ PROLOGUE(calling_conventions)
 	movl	%esi, SAVE_ESI(%ecx)
 	movl	%edi, SAVE_EDI(%ecx)
 
+	C Values we expect to see unchanged, as per amd64check.c
 	movl	WANT_EBX(%ecx), %ebx
 	movl	WANT_EBP(%ecx), %ebp
 	movl	WANT_ESI(%ecx), %esi
 	movl	WANT_EDI(%ecx), %edi
 
-	C try to provoke a problem by starting with junk in the caller-saves
+	C Try to provoke a problem by starting with junk in the caller-saves
 	C registers, especially in %eax and %edx which will be return values
 	movl	JUNK_EAX(%ecx), %eax
 	movl	JUNK_EDX(%ecx), %edx
