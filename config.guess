@@ -777,9 +777,29 @@ main ()
 	case 6:
 	  modelstr = "athlon";
 	  break;
-	case 15:
-	case 16:
-	  cpu_64bit = 1, modelstr = "athlon64";
+	case 15:		/* K8, K9 */
+	  cpu_64bit = 1, modelstr = "k8";
+	  break;
+	case 16:		/* K10 */
+	  cpu_64bit = 1, modelstr = "k10";
+	  break;
+	case 17:		/* AMD Internal, assume future K10 */
+	  cpu_64bit = 1, modelstr = "k10";
+	  break;
+	case 18:		/* Llano, uses K10 core */
+	  cpu_64bit = 1, modelstr = "k10";
+	  break;
+	case 19:		/* AMD Internal, assume future K10 */
+	  cpu_64bit = 1, modelstr = "k10";
+	  break;
+	case 20:		/* Bobcat */
+	  cpu_64bit = 1, modelstr = "bobcat";
+	  break;
+	case 21:		/* Bulldozer */
+	  cpu_64bit = 1, modelstr = "bulldozer";
+	  break;
+	case 22:		/* AMD Internal, assume future bulldozer */
+	  cpu_64bit = 1, modelstr = "bulldozer";
 	  break;
 	}
     }

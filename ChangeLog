@@ -1,5 +1,11 @@
 2010-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Match new AMD processors, allow finer distinctions
+	among old ones.
+	* acinclude.m4 (X86_64_PATTERN): Likewise.
+	* config.sub: Likewise.
+	* configure.in: Rudimentarily support new AMD processors.
+
 	* configure.in (--enable_assembly): New option.
 	(target none-*-*): Disable, give error.
 

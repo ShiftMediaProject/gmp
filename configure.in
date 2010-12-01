@@ -1444,7 +1444,7 @@ case $host in
         gcc_cflags_cpu="-mtune=c3 -mcpu=c3 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
         ;;
-      athlon64 | x86_64)
+      athlon64 | k8 | k10 | bobcat | bulldozer | x86_64)
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
         ;;
@@ -1500,7 +1500,7 @@ case $host in
 	case $host_cpu in
 	  x86_64)
 	    ;;
-	  athlon64)
+	  athlon64 | k8 | k10 | bobcat | bulldozer)
 	    path_64="x86_64/k8 $path_64"
 	    ;;
 	  pentium4)
