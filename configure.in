@@ -122,6 +122,15 @@ esac],
 [enable_cxx=no])
 
 
+AC_ARG_ENABLE(assembly,
+AC_HELP_STRING([--enable-assembly],[enable the use of asembly loops [[default=yes]]]),
+[case $enableval in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-assembly, need yes or no]) ;;
+esac],
+[enable_assembly=yes])
+
+
 AC_ARG_ENABLE(fft,
 AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [[default=yes]]]),
 [case $enableval in
@@ -232,6 +241,10 @@ yes|no) ;;
 esac],
 [enable_minithres=no])
 
+
+if test $enable_fat = yes && test $enable_assembly = no ; then
+  AC_MSG_ERROR([when doing a fat build, disabling assembly will not work])
+fi
 
 
 tmp_host=`echo $host_cpu | sed 's/\./_/'`
@@ -1542,16 +1555,7 @@ case $host in
   # symbols like __alpha rather than the configured $host_cpu).
   #
   none-*-*)
-    abilist="long longlong"
-    cclist_long=$cclist
-    gcc_long_cflags=$gcc_cflags
-    gcc_long_cppflags="-DNO_ASM"
-    cc_long_cflags=$cc_cflags
-    cclist_longlong=$cclist
-    gcc_longlong_cflags=$gcc_cflags
-    gcc_longlong_cppflags="-DNO_ASM"
-    cc_longlong_cflags=$cc_cflags
-    limb_longlong=longlong
+    AC_MSG_ERROR([the \"none\" host is obsolete, use --disable-assembly])
     ;;
 
 esac
@@ -2110,6 +2114,16 @@ case $host in
     fi
     ;;
 esac
+
+
+if test "$enable_assembly" = "no"; then
+  path="generic"
+  CFLAGS="$CFLAGS -DNO_ASM"
+#  for abi in $abilist; do
+#    eval unset "path_\$abi"
+#    eval gcc_${abi}_cflags=\"\$gcc_${abi}_cflags -DNO_ASM\"
+#  done
+fi
 
 
 cat >&AC_FD_CC <<EOF
