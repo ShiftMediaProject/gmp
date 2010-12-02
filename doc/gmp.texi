@@ -858,11 +858,7 @@ CPUs not listed will use generic C code.
 @item Generic C Build
 @cindex Generic C
 If some of the assembly code causes problems, or if otherwise desired, the
-generic C code can be selected with CPU @samp{none}.  For example,
-
-@example
-./configure --host=none-unknown-freebsd3.5
-@end example
+generic C code can be selected with the configure @option{--disable-assembly}.
 
 Note that this will run quite slowly, but it should be portable and should at
 least make it possible to get something running if all else fails.
@@ -1591,11 +1587,11 @@ In GMP, CPU types @samp{power*} and @samp{powerpc*} will each use instructions
 not available on the other, so it's important to choose the right one for the
 CPU that will be used.  Currently GMP has no assembly code support for using
 just the common instruction subset.  To get executables that run on both, the
-current suggestion is to use the generic C code (CPU @samp{none}), possibly
-with appropriate compiler options (like @samp{-mcpu=common} for
+current suggestion is to use the generic C code (@option{--disable-assembly}),
+possibly with appropriate compiler options (like @samp{-mcpu=common} for
 @command{gcc}).  CPU @samp{rs6000} (which is not a CPU but a family of
 workstations) is accepted by @file{config.sub}, but is currently equivalent to
-@samp{none}.
+@option{--disable-assembly}.
 
 @item Sparc CPU Types
 @cindex Sparc
@@ -1611,10 +1607,10 @@ that the GCC default @samp{-mapp-regs} does (@pxref{SPARC Options,, SPARC
 Options, gcc, Using the GNU Compiler Collection (GCC)}).
 
 This makes that code unsuitable for use with the special V9
-@samp{-mcmodel=embmedany} (which uses @code{g4} as a data segment pointer),
-and for applications wanting to use those registers for special purposes.  In
-these cases the only suggestion currently is to build GMP with CPU @samp{none}
-to avoid the assembly code.
+@samp{-mcmodel=embmedany} (which uses @code{g4} as a data segment pointer), and
+for applications wanting to use those registers for special purposes.  In these
+cases the only suggestion currently is to build GMP with
+@option{--disable-assembly} to avoid the assembly code.
 
 @item SunOS 4
 @cindex SunOS
@@ -2609,7 +2605,7 @@ Applications using the low-level @code{mpn} functions, however, will benefit
 from @option{--enable-assert} since it adds checks on the parameters of most
 such functions, many of which have subtle restrictions on their usage.  Note
 however that only the generic C code has checks, not the assembly code, so
-CPU @samp{none} should be used for maximum checking.
+@option{--disable-assembly} should be used for maximum checking.
 
 @item Temporary Memory Checking
 The build option @option{--enable-alloca=debug} arranges that each block of
@@ -2627,7 +2623,7 @@ To summarize the above, a GMP build for maximum debuggability would be
 
 @example
 ./configure --disable-shared --enable-assert \
-  --enable-alloca=debug --host=none CFLAGS=-g
+  --enable-alloca=debug --disable-assembly CFLAGS=-g
 @end example
 
 For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
@@ -2644,12 +2640,13 @@ very very slowly.  On GNU/Linux for example,
 
 @cindex @command{checkergcc}
 @example
-./configure --host=none-pc-linux-gnu CC=checkergcc
+./configure --disable-assembly CC=checkergcc
 @end example
 
-@samp{--host=none} must be used, since the GMP assembly code doesn't support
-the checking scheme.  The GMP C++ features cannot be used, since current
-versions of checker (0.9.9.1) don't yet support the standard C++ library.
+@option{--disable-assembly} must be used, since the GMP assembly code doesn't
+support the checking scheme.  The GMP C++ features cannot be used, since
+current versions of checker (0.9.9.1) don't yet support the standard C++
+library.
 
 @item Valgrind
 @cindex Valgrind
