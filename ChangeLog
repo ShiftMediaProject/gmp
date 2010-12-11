@@ -1,3 +1,12 @@
+2010-12-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Support Ultrasparc T2 and T3.
+	* config.sub: Likewise.
+	* configure.in: Likewise.
+
+	* config.guess: Generalise BSD Sparc recognition by allowing any
+	caps (needed for OpenBSD which spells things innovatively).
+
 2010-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Match new AMD processors, allow finer distinctions

@@ -1129,8 +1129,10 @@ case $host in
         path="sparc32/v8 sparc32" ;;
       supersparc)
         path="sparc32/v8/supersparc sparc32/v8 sparc32" ;;
-      sparc64 | sparcv9* | ultrasparc*)
+      [sparc64 | sparcv9* | ultrasparc | ultrasparc[234]*])
         path="sparc32/v9 sparc32/v8 sparc32" ;;
+      [ultrasparct[123]])
+        path="sparc32/ultrasparct1 sparc32/v8 sparc32" ;;
       *)
         path="sparc32" ;;
     esac
@@ -1246,9 +1248,9 @@ case $host in
 	case $host_cpu in
 	  ultrasparc | ultrasparc2 | ultrasparc2i)
 	    path_64="sparc64/ultrasparc1234 sparc64" ;;
-	  ultrasparc3)
+	  [ultrasparc[34]])
 	    path_64="sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64" ;;
-	  ultrasparct1 | ultrasparct2)
+	  [ultrasparct[123]])
 	    path_64="sparc64/ultrasparct1 sparc64" ;;
 	  *)
 	    path_64="sparc64"

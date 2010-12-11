@@ -542,8 +542,11 @@ sparc-*-* | sparc64-*-*)
     elif grep 'cpu.*MB86904' /proc/cpuinfo >/dev/null; then
       # actually MicroSPARC-II
       exact_cpu=microsparc
+    elif grep 'cpu.*UltraSparc T3' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparct3"
+    elif grep 'cpu.*UltraSparc T2' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparct2"
     elif grep 'cpu.*UltraSparc T1' /proc/cpuinfo >/dev/null; then
-      # this grep pattern has not been tested against any Linux
       exact_cpu="ultrasparct1"
     elif grep 'cpu.*UltraSparc III' /proc/cpuinfo >/dev/null; then
       exact_cpu="ultrasparc3"
@@ -598,7 +601,11 @@ sparc-*-* | sparc64-*-*)
   for prtconfopt in "" "-vp"; do
     if test -z "$exact_cpu"; then
       if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >conftest.dat; then
-	if grep 'SUNW,UltraSPARC-T1' conftest.dat >/dev/null; then
+	if grep 'SUNW,UltraSPARC-T3' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparct3
+	elif grep 'SUNW,UltraSPARC-T2' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparct2
+	elif grep 'SUNW,UltraSPARC-T1' conftest.dat >/dev/null; then
 	  exact_cpu=ultrasparct1
 	elif grep 'SUNW,UltraSPARC-III' conftest.dat >/dev/null; then
 	  exact_cpu=ultrasparc3
@@ -633,16 +640,19 @@ sparc-*-* | sparc64-*-*)
   #
   if test -z "$exact_cpu"; then
     if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >conftest.dat; then
-      if grep 'UltraSparc-T1' conftest.dat >/dev/null; then
-	# this grep pattern has not been tested against any BSD
+      if grep -i 'UltraSparc-T3' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparct3
+      elif grep -i 'UltraSparc-T2' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparct2
+      elif grep -i 'UltraSparc-T1' conftest.dat >/dev/null; then
         exact_cpu=ultrasparct1
-      elif grep 'UltraSparc-III' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-III' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc3
-      elif grep 'UltraSparc-IIi' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-IIi' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc2i
-      elif grep 'UltraSparc-II' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-II' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc2
-      elif grep 'UltraSparc' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc
       elif grep 'TMS390Z5.' conftest.dat >/dev/null; then
         # TMS390Z50 and TMS390Z55
