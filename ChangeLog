@@ -1,5 +1,7 @@
 2010-12-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Comment out M4=m4-not-needed.
+
 	* mpn/x86_64/k10/popcount.asm: New file.
 	* configure.in: Setup special path for k10 and later AMD CPUs.
 	Remove special x86_64'k8' path, since directory is non-existent.
