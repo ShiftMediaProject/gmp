@@ -1,5 +1,7 @@
 2010-12-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/k10/hamdist.asm: New file.
+
 	* configure.in: Amend last change for lame /bin/sh.
 
 2010-12-12  Torbjorn Granlund  <tege@gmplib.org>
