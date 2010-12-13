@@ -3080,11 +3080,11 @@ AH_VERBATIM([HAVE_NATIVE],
 if test $found_asm = yes; then
   GMP_PROG_M4
   GMP_M4_M4WRAP_SPURIOUS
-else
+# else
 # It's unclear why this m4-not-needed stuff was ever done.
 #  if test -z "$M4" ; then
 #    M4=m4-not-needed
-#  fi 
+#  fi
 fi
 
 # Only do the GMP_ASM checks if there's a .S or .asm wanting them.
