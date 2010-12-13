@@ -19,19 +19,19 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		     popcount
 C		    cycles/limb
 C AMD K8,K9		 n/a
-C AMD K10		 1.15
+C AMD K10		 1.125
 C Intel P4		 n/a
-C Intel core2	 	 n/a
+C Intel core2		 n/a
 C Intel corei		 1.25
 C Intel atom		 n/a
 C VIA nano		 n/a
 
 C * The zero-offset of popcount is misassembled to the offset-less form, which
-C   is one byte shorted and therefore will mess up the switching code.
-C * The outdated gas used in FreeBSD and NetbSD cannot handle the POPCNT insn
+C   is one byte shorter and therefore will mess up the switching code.
+C * The outdated gas used in FreeBSD and NetBSD cannot handle the POPCNT insn,
+C   which is the main reason for our usage of '.byte'.
 
 C TODO
 C  * Improve switching code, the current code sucks.
