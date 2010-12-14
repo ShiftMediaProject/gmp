@@ -3391,4 +3391,4 @@ AC_OUTPUT(Makefile							\
   tests/cxx/Makefile							\
   doc/Makefile tune/Makefile						\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
-  gmp.h:gmp-h.in mp.h:mp-h.in)
+  gmp.h:gmp-h.in)
