@@ -1,3 +1,7 @@
+2010-12-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/vmx/popcount.asm: Rewrite to use vperm count table.
+
 2010-12-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mp-h.in: Remove.
