@@ -1,3 +1,9 @@
+2010-12-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/mod_34lsub1.asm: Complete rewrite.
+	* mpn/x86_64/pentium4/mod_34lsub1.asm: New file, old
+	mpn/x86_64/mod_34lsub1.asm.
+
 2010-12-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/vmx/popcount.asm: Rewrite to use vperm count table.
