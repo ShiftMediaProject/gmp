@@ -1,3 +1,11 @@
+2010-12-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/addmul_2.asm: Remove constant index.
+	* mpn/x86_64/lshiftc.asm: Likewise.
+	* mpn/x86_64/pentium4/lshift.asm: Likewise.
+	* mpn/x86_64/pentium4/lshiftc.asm: Likewise.
+	* mpn/x86_64/pentium4/rshift.asm: Likewise.
+
 2010-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mod_34lsub1.asm: Complete rewrite.
