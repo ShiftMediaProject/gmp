@@ -168,12 +168,12 @@ __gmpn_cpuvec_init (void)
 	    case 0x25:		/* WSM Clarkdale/Arrandale */
 	    case 0x28:
 	    case 0x29:
-	    case 0x2a:
+	    case 0x2a:		/* SB */
 	    case 0x2b:
 	    case 0x2c:		/* WSM Gulftown */
-	    case 0x2d:
+	    case 0x2d:		/* SBC-EP */
 	    case 0x2e:		/* NHM Beckton */
-	    case 0x2f:
+	    case 0x2f:		/* WSM Eagleton */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_corei;
 	      break;
