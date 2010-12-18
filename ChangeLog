@@ -1,5 +1,8 @@
 2010-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Generalise code for putting THRESHOLDs in config.m4.
+	Add BMOD_1_TO_MOD_1_THRESHOLD to list.
+
 	* mpn/x86_64/core2/divrem_1.asm: Tweak slightly, correct cycle counts.
 
 	* mpn/x86_64/addmul_2.asm: Remove constant index.

@@ -3222,15 +3222,17 @@ AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
 [The gmp-mparam.h file (a string) the tune program should suggest updating.])
 
 
-# Copy any SQR_TOOM2_THRESHOLD from gmp-mparam.h to config.m4.
-# Some versions of sqr_basecase.asm use this.
+# Copy relevant THRESHOLD parameters from gmp-mparam.h to config.m4.
+# We only do this for THRESHOLDs that are used by some assembly files.
 # Fat binaries do this on a per-file basis, so skip in that case.
 #
 if test -z "$fat_path"; then
-  tmp_gmp_karatsuba_sqr_threshold=`sed -n 's/^#define SQR_TOOM2_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
-  if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
-    GMP_DEFINE_RAW(["define(<SQR_TOOM2_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
-  fi
+  for i in SQR_TOOM2_THRESHOLD BMOD_1_TO_MOD_1_THRESHOLD; do
+    threshold=`sed -n 's/^#define '$i'[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
+    if test -n "threshold"; then
+      GMP_DEFINE_RAW(["define(<$i>,<$threshold>)"])
+    fi
+  done
 fi
 
 
