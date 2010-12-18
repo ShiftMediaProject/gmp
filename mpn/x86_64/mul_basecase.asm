@@ -294,7 +294,7 @@ L(mul_2_entry_1):
 	mov	w3, -32(rp,n,8)
 	js	L(mul_2_top)
 
-	mov	-32(up,n,8), %rax
+	mov	-32(up,n,8), %rax	C FIXME: n is constant
 	mul	v1
 	add	%rax, w0
 	mov	w0, (rp)

@@ -143,15 +143,15 @@ L(top):
 	jae	L(top)
 
 L(end):	pxor	%mm6, %mm2
-	movq	16(up,n,8), %mm0
+	movq	8(up), %mm0
 	psrlq	%mm5, %mm0
 	pandn	%mm2, %mm0
 	pxor	%mm6, %mm3
-	movq	8(up,n,8), %mm1
+	movq	(up), %mm1
 	psrlq	%mm5, %mm1
 	pandn	%mm3, %mm1
-	movq	%mm0, 24(rp,n,8)
-	movq	%mm1, 16(rp,n,8)
+	movq	%mm0, 16(rp)
+	movq	%mm1, 8(rp)
 
 L(ast):	movq	(up), %mm2
 	psllq	%mm4, %mm2

@@ -146,16 +146,16 @@ L(top):
 	jae	L(top)			C				      2
 L(end):
 	neg	R32(%rcx)		C put rsh count in cl
-	mov	16(up,n,8), %r8
+	mov	8(up), %r8
 	shr	R8(%rcx), %r8
 	or	%r8, %r10
-	mov	8(up,n,8), %r9
+	mov	(up), %r9
 	shr	R8(%rcx), %r9
 	or	%r9, %r11
 	not	%r10
 	not	%r11
-	mov	%r10, 24(rp,n,8)
-	mov	%r11, 16(rp,n,8)
+	mov	%r10, 16(rp)
+	mov	%r11, 8(rp)
 
 	neg	R32(%rcx)		C put lsh count in cl
 L(ast):	mov	(up), %r10

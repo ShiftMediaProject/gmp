@@ -136,14 +136,14 @@ L(top):
 
 	jae	L(top)			C				      2
 L(end):
-	movq	-16(up,n,8), %mm0
+	movq	-8(up), %mm0
 	psllq	%mm5, %mm0
 	por	%mm0, %mm2
-	movq	-8(up,n,8), %mm1
+	movq	(up), %mm1
 	psllq	%mm5, %mm1
 	por	%mm1, %mm3
-	movq	%mm2, -24(rp,n,8)
-	movq	%mm3, -16(rp,n,8)
+	movq	%mm2, -16(rp)
+	movq	%mm3, -8(rp)
 
 L(ast):	movq	(up), %mm2
 	psrlq	%mm4, %mm2

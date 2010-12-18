@@ -158,10 +158,10 @@ L(am1):	mul	v1
 	add	$4, n
 	js	L(top)
 
-	add	w3, (rp,n,8)
+	add	w3, 24(rp)
 	adc	%rax, w0
 	adc	%rdx, w1
-	mov	w0, 8(rp,n,8)
+	mov	w0, 32(rp)
 	mov	w1, %rax
 
 	pop	%rbp
