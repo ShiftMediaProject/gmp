@@ -22,13 +22,13 @@ include(`../config.m4')
 
 
 C		norm	unorm	frac
-C AMD K8,K9	14	14	12
-C AMD K10	14	14	12
-C Intel P4	45	45	43
-C Intel core2	24.5	24.5	19.5
+C AMD K8,K9	15	15	12
+C AMD K10	15	15	12
+C Intel P4	44	44	43
+C Intel core2	24	24	19.5
 C Intel corei	19	19	18
 C Intel atom	51	51	36
-C VIA nano	44	40	22.5
+C VIA nano	46	44	22.5
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
