@@ -82,7 +82,13 @@ L(divide_strip_y):
 	push	%rdx
 	sub	$8, %rsp		C maintain ABI required rsp alignment
 
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %rsi
+	jl	L(bmod)
+	CALL(	mpn_mod_1)
+	jmp	L(reduced)
+L(bmod):
 	CALL(	mpn_modexact_1_odd)
+L(reduced):
 
 	add	$8, %rsp
 	pop	%rdx
@@ -91,14 +97,11 @@ L(divide_strip_y):
 	test	%rax, %rax
 
 	mov	%rax, %rcx
-	jnz	L(strip_x)
+	LEA(	ctz_table, %r9)
+	jnz	L(strip_x_top)
 
 	mov	%rdx, %rax
 	jmp	L(done)
-
-L(strip_x):
-	LEA(	ctz_table, %r9)
-	jmp	L(strip_x_top)
 
 	ALIGN(16)
 L(top):
@@ -109,7 +112,7 @@ L(strip_x_top):
 	mov	%rcx, %rax		C				1
 	and	$MASK, R32(%rcx)	C				1
 
-	mov	(%r9,%rcx), R8(%rcx)	C				1
+	movzb	(%r9,%rcx), R32(%rcx)	C				2
 
 	shr	R8(%rcx), %rax		C				4
 	cmp	$MAXSHIFT, R8(%rcx)	C				4

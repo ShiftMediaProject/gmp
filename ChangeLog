@@ -1,5 +1,8 @@
 2010-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/gcd_1.asm: Call mpn_mod_1 for operands with mode than
+	BMOD_1_TO_MOD_1_THRESHOLD limbs.
+
 	* configure.in: Generalise code for putting THRESHOLDs in config.m4.
 	Add BMOD_1_TO_MOD_1_THRESHOLD to list.
 
