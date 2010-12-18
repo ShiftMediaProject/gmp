@@ -1,5 +1,7 @@
 2010-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/core2/divrem_1.asm: Tweak slightly, correct cycle counts.
+
 	* mpn/x86_64/addmul_2.asm: Remove constant index.
 	* mpn/x86_64/lshiftc.asm: Likewise.
 	* mpn/x86_64/pentium4/lshift.asm: Likewise.

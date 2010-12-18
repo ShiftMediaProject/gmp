@@ -22,13 +22,13 @@ include(`../config.m4')
 
 
 C		norm	unorm	frac
-C AMD K8,K9	13	14	12
-C AMD K10	13	14	12
-C Intel P4	47	45	43
-C Intel core2	23	23	19.5
+C AMD K8,K9	14	14	12
+C AMD K10	14	14	12
+C Intel P4	45	45	43
+C Intel core2	24.5	24.5	19.5
 C Intel corei	19	19	18
-C Intel atom	43	51	36
-C VIA nano	25	43	24
+C Intel atom	51	51	36
+C VIA nano	44	40	22.5
 
 C mp_limb_t
 C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -76,7 +76,7 @@ PROLOGUE(mpn_preinv_divrem_1)
 
 	mov	40(%rsp), R8(cnt)
 	shl	R8(cnt), d
-	jmp	L(uent)
+	jmp	L(ent)
 EPILOGUE()
 
 	ALIGN(16)
@@ -127,38 +127,37 @@ L(44):
 	mov	%rax, dinv
 	mov	%rbp, %rax
 	test	un, un
-	je	L(87)
-L(uent):mov	-8(up,un,8), %rbp
+	je	L(frac)
+L(ent):	mov	-8(up,un,8), %rbp
 	shr	R8(%rcx), %rax
 	shld	R8(%rcx), %rbp, %rax
 	sub	$2, un
-	js	L(uend)
+	js	L(end)
 
 	ALIGN(16)
-L(utop):lea	1(%rax), %r11
+L(top):	lea	1(%rax), %r11
 	mul	dinv
 	mov	(up,un,8), %r10
 	shld	R8(%rcx), %r10, %rbp
-	add	%rbp, %rax
+	mov	%rbp, %r13
+	add	%rax, %r13
 	adc	%r11, %rdx
-	mov	%rax, %r11
-	mov	%rdx, %r13
+	mov	%rdx, %r11
 	imul	d, %rdx
 	sub	%rdx, %rbp
-	mov	d, %rax
-	add	%rbp, %rax
+	lea	(d,%rbp), %rax
 	sub	$8, qp
-	cmp	%r11, %rbp
-	cmovb	%rbp, %rax
-	adc	$-1, %r13
+	cmp	%r13, %rbp
+	cmovc	%rbp, %rax
+	adc	$-1, %r11
 	cmp	d, %rax
 	jae	L(ufx)
 L(uok):	dec	un
-	mov	%r13, 8(qp)
+	mov	%r11, 8(qp)
 	mov	%r10, %rbp
-	jns	L(utop)
+	jns	L(top)
 
-L(uend):lea	1(%rax), %r11
+L(end):	lea	1(%rax), %r11
 	sal	R8(%rcx), %rbp
 	mul	dinv
 	add	%rbp, %rax
@@ -176,16 +175,16 @@ L(uend):lea	1(%rax), %r11
 	jae	L(efx)
 L(eok):	mov	%r13, (qp)
 	sub	$8, qp
-	jmp	L(87)
+	jmp	L(frac)
 
 L(ufx):	sub	d, %rax
-	inc	%r13
+	inc	%r11
 	jmp	L(uok)
 L(efx):	sub	d, %rax
 	inc	%r13
 	jmp	L(eok)
 
-L(87):	mov	d, %rbp
+L(frac):mov	d, %rbp
 	neg	%rbp
 	jmp	L(fent)
 
