@@ -153,10 +153,10 @@ L(end):	mov	4(%esp), %eax
 	sub	%edx, %eax
 	lea	(%eax,%ebp), %edx
 	cmp	%eax, %ebx
-	cmovb(	%edx, %eax)
+	cmovc(	%edx, %eax)
 	mov	%eax, %edx
 	sub	%ebp, %eax
-	cmovb(	%edx, %eax)
+	cmovc(	%edx, %eax)
 	add	$28, %esp
 	pop	%ebx
 	pop	%esi
@@ -200,7 +200,7 @@ C CAUTION: This is the same code as in pentium4/sse2/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -212,7 +212,7 @@ C CAUTION: This is the same code as in pentium4/sse2/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -224,7 +224,7 @@ C CAUTION: This is the same code as in pentium4/sse2/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -236,7 +236,7 @@ C CAUTION: This is the same code as in pentium4/sse2/mod_1_4.asm
 	imul	%ebx, %edx
 	add	%edx, %ebx
 	cmp	%edx, %eax
-	cmovae(	%edx, %ebx)
+	cmovnc(	%edx, %ebx)
 
 	shr	%cl, %ebx
 	mov	%ebx, 24(%ebp)		C store B5modb

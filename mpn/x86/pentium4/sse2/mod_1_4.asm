@@ -209,7 +209,7 @@ C CAUTION: This is the same code as in k7/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -221,7 +221,7 @@ C CAUTION: This is the same code as in k7/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -233,7 +233,7 @@ C CAUTION: This is the same code as in k7/mod_1_4.asm
 	imul	%ebx, %edx
 	lea	(%edx,%ebx), %esi
 	cmp	%edx, %eax
-	cmovae(	%edx, %esi)
+	cmovnc(	%edx, %esi)
 	mov	%edi, %eax
 	mul	%esi
 
@@ -245,7 +245,7 @@ C CAUTION: This is the same code as in k7/mod_1_4.asm
 	imul	%ebx, %edx
 	add	%edx, %ebx
 	cmp	%edx, %eax
-	cmovae(	%edx, %ebx)
+	cmovnc(	%edx, %ebx)
 
 	shr	%cl, %ebx
 	mov	%ebx, 24(%ebp)		C store B5modb

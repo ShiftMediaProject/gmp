@@ -109,7 +109,7 @@ L(normalized):
 	dec	un
 	mov	%rbp, %rax
 	sub	d, %rbp
-	cmovb	%rax, %rbp
+	cmovc	%rax, %rbp
 	sbb	R32(%rax), R32(%rax)
 	inc	R32(%rax)
 	mov	%rax, (qp)
@@ -141,7 +141,7 @@ L(ntop):				C	    K8-K10  P6-CNR P6-NHM  P4
 	mov	d, %rax			C
 	add	%r10, %rax		C	     11     17     15     34
 	cmp	%rbp, %r10		C	     11     17     15     34
-	cmovb	%r10, %rax		C	     12     18     16     35
+	cmovc	%r10, %rax		C	     12     18     16     35
 	adc	$-1, %r13		C
 	cmp	d, %rax			C
 	jae	L(nfx)			C
@@ -216,7 +216,7 @@ L(utop):mov	(up,un,8), %r10
 	mov	d, %rax
 	add	%rbp, %rax
 	cmp	%r11, %rbp
-	cmovb	%rbp, %rax
+	cmovc	%rbp, %rax
 	adc	$-1, %r13
 	cmp	d, %rax
 	jae	L(ufx)
@@ -238,7 +238,7 @@ L(uend):shl	R8(%rcx), %rbp
 	mov	d, %rax
 	add	%rbp, %rax
 	cmp	%r11, %rbp
-	cmovb	%rbp, %rax
+	cmovc	%rbp, %rax
 	adc	$-1, %r13
 	cmp	d, %rax
 	jae	L(efx)
@@ -266,7 +266,7 @@ L(ftop):mul	dinv			C	      0,12   0,17   0,17
 	mov	d, %rax			C
 	add	%rdx, %rax		C	     10     14     14
 	cmp	%r11, %rdx		C	     10     14     14
-	cmovb	%rdx, %rax		C	     11     15     15
+	cmovc	%rdx, %rax		C	     11     15     15
 	adc	$-1, %r13		C
 	mov	%r13, (qp)		C
 	sub	$8, qp			C

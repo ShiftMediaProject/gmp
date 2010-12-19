@@ -145,10 +145,10 @@ L(end):	mov	8(%r14), R32(%rsi)
 	sub	%rdx, %r8
 	lea	(%r8,%rbx), %rax
 	cmp	%r8, %r9
-	cmovb	%rax, %r8
+	cmovc	%rax, %r8
 	mov	%r8, %rax
 	sub	%rbx, %rax
-	cmovb	%r8, %rax
+	cmovc	%r8, %rax
 	shr	R8(%rcx), %rax
 	pop	%rbx
 	pop	%rbp
@@ -200,7 +200,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	lea	(%rdx,%r12), %rsi
 	cmp	%rdx, %rax
-	cmovae	%rdx, %rsi
+	cmovnc	%rdx, %rsi
 	mov	%r11, %rax
 	mul	%rsi
 
@@ -212,7 +212,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	lea	(%rdx,%r12), %rsi
 	cmp	%rdx, %rax
-	cmovae	%rdx, %rsi
+	cmovnc	%rdx, %rsi
 	mov	%r11, %rax
 	mul	%rsi
 
@@ -224,7 +224,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	lea	(%rdx,%r12), %rsi
 	cmp	%rdx, %rax
-	cmovae	%rdx, %rsi
+	cmovnc	%rdx, %rsi
 	mov	%r11, %rax
 	mul	%rsi
 
@@ -236,7 +236,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	add	%rdx, %r12
 	cmp	%rdx, %rax
-	cmovae	%rdx, %r12
+	cmovnc	%rdx, %r12
 
 	shr	R8(%rcx), %r12
 	mov	%r12, 48(%rbx)		C store B5modb

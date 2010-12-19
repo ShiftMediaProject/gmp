@@ -101,10 +101,10 @@ L(nrm):	lea	1(%eax), %esi
 	sub	%edx, %eax
 	lea	(%eax,%ebp), %edx
 	cmp	%eax, %ebx
-	cmovb(	%edx, %eax)
+	cmovc(	%edx, %eax)
 	mov	%eax, %edx
 	sub	%ebp, %eax
-	cmovb(	%edx, %eax)
+	cmovc(	%edx, %eax)
 	pop	%ebx
 	pop	%esi
 	pop	%edi
@@ -140,7 +140,7 @@ C CAUTION: This is the same code as in pentium4/sse2//mod_1_1.asm
 	imul	%ebp, %edx
 	add	%edx, %ebp
 	cmp	%edx, %eax
-	cmovb(	%ebp, %edx)
+	cmovc(	%ebp, %edx)
 	shr	%cl, %ebx
 	mov	%ebx, 8(%esi)		C store B1modb
 	shr	%cl, %edx

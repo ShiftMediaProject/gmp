@@ -169,7 +169,7 @@ L(end):	lea	1(%rax), %r11
 	mov	d, %rax
 	add	%rbp, %rax
 	cmp	%r11, %rbp
-	cmovb	%rbp, %rax
+	cmovc	%rbp, %rax
 	adc	$-1, %r13
 	cmp	d, %rax
 	jae	L(efx)
@@ -197,7 +197,7 @@ L(ftop):mul	dinv			C	      0,12   0,17   0,17
 	mov	d, %rax			C
 	add	%rdx, %rax		C	     10     14     14
 	cmp	%r11, %rdx		C	     10     14     14
-	cmovb	%rdx, %rax		C	     11     15     15
+	cmovc	%rdx, %rax		C	     11     15     15
 	adc	$-1, %r13		C
 	mov	%r13, (qp)		C
 	sub	$8, qp			C

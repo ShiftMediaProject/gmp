@@ -143,7 +143,7 @@ C CAUTION: This is the same code as in k7/mod_1_1.asm
 	imul	%ebp, %edx
 	add	%edx, %ebp
 	cmp	%edx, %eax
-	cmovb(	%ebp, %edx)
+	cmovc(	%ebp, %edx)
 	shr	%cl, %ebx
 	mov	%ebx, 8(%esi)		C store B1modb
 	shr	%cl, %edx

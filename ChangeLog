@@ -1,5 +1,15 @@
 2010-12-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/k7/mod_1_1.asm: Canonicalise cmov forms.
+	* mpn/x86/k7/mod_1_4.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mod_1_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mod_1_4.asm: Likewise.
+	* mpn/x86_64/core2/divrem_1.asm: Likewise.
+	* mpn/x86_64/divrem_1.asm: Likewise.
+	* mpn/x86_64/mod_1_1.asm: Likewise.
+	* mpn/x86_64/mod_1_2.asm: Likewise.
+	* mpn/x86_64/mod_1_4.asm: Likewise.
+
 	* mpn/x86/k7/gcd_1.asm: Rewrite.  Remove slow 'div' loop.  Call
 	mpn_mod_1 for operands with mode than BMOD_1_TO_MOD_1_THRESHOLD limbs.
 	Misc cleanups.

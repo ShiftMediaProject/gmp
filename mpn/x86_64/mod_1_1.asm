@@ -116,11 +116,11 @@ L(4):
 	mov	%rsi, %rax
 	lea	(%rsi,%rbp), %rdx
 	cmp	%rsi, %rbx
-	cmovb	%rdx, %rax
+	cmovc	%rdx, %rax
 	mov	%rax, %rdx
 	sub	%rbp, %rdx
 	cmp	%rbp, %rax
-	cmovae	%rdx, %rax
+	cmovnc	%rdx, %rax
 	mov	R32(%rdi), R32(%rcx)
 	shr	R8(%rcx), %rax
 	pop	%rbx
@@ -166,7 +166,7 @@ L(z):	mul	%r8
 	imul	%r12, %rdx
 	add	%rdx, %r12
 	cmp	%rdx, %rax
-	cmovb	%r12, %rdx
+	cmovc	%r12, %rdx
 	shr	R8(%rcx), %r8
 	shr	R8(%rcx), %rdx
 	mov	%r8, 16(%rbx)		C store B1modb

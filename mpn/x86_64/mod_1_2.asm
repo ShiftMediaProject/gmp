@@ -133,10 +133,10 @@ L(1):	xor	R32(%rcx), R32(%rcx)
 	sub	%rdx, %r8
 	lea	(%r8,%r14), %rax
 	cmp	%r8, %rsi
-	cmovb	%rax, %r8
+	cmovc	%rax, %r8
 	mov	%r8, %rax
 	sub	%r14, %rax
-	cmovb	%r8, %rax
+	cmovc	%r8, %rax
 	mov	R32(%rdi), R32(%rcx)
 	shr	R8(%rcx), %rax
 	pop	%rbx
@@ -193,7 +193,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	lea	(%rdx,%r12), %rsi
 	cmp	%rdx, %rax
-	cmovae	%rdx, %rsi
+	cmovnc	%rdx, %rsi
 	mov	%r11, %rax
 	mul	%rsi
 
@@ -205,7 +205,7 @@ ifdef(`SHLD_SLOW',`
 	imul	%r12, %rdx
 	add	%rdx, %r12
 	cmp	%rdx, %rax
-	cmovae	%rdx, %r12
+	cmovnc	%rdx, %r12
 
 	shr	R8(%rcx), %r12
 	mov	%r12, 32(%rbx)		C store B3modb
