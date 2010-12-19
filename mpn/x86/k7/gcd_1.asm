@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_gcd_1 -- mpn by 1 gcd.
 
-dnl  Copyright 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2009, 2010 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,12 +23,15 @@ include(`../config.m4')
 C K7: 6.75 cycles/bit (approx)  1x1 gcd
 C     11.0 cycles/limb          Nx1 reduction (modexact_1_odd)
 
+C This code was modernised in 2010 to avoid most use of 'div', but not
+C completely cleaned up.  Presumably, we should remove last 'div' too,
+C and simplify the structure to save many 'mov' insns.
 
-dnl  Reduce using x%y if x is more than DIV_THRESHOLD bits bigger than y,
-dnl  where x is the larger of the two.  See tune/README for more.
-dnl
-dnl  divl at 40 cycles compared to the gcd at about 7 cycles/bitpair
-dnl  suggests 40/7*2=11.4 but 7 seems to be about right.
+C Reduce using x%y if x is more than DIV_THRESHOLD bits bigger than y,
+C where x is the larger of the two.  See tune/README for more.
+C
+C divl at 40 cycles compared to the gcd at about 7 cycles/bitpair
+C suggests 40/7*2=11.4 but 7 seems to be about right.
 
 deflit(DIV_THRESHOLD, 7)
 
@@ -127,8 +130,8 @@ L(twos):
 	mov	%edx, %eax
 	cmp	%ebx, %edx
 
-	cmovb(	%ebx, %eax)	C swap to make x bigger than y
-	cmovb(	%edx, %ebx)
+	cmovc(	%ebx, %eax)	C swap to make x bigger than y
+	cmovc(	%edx, %ebx)
 
 
 L(strip_y):
@@ -167,12 +170,14 @@ L(strip_y):
 
 	div	%ebx
 
-	or	%edx, %edx
+	test	%edx, %edx
 	mov	%edx, %ecx		C remainder -> x
 	mov	%ebx, %edx		C y
 
-	jz	L(done_ebx)
-	jmp	L(strip_x)
+	jnz	L(strip_x)
+	mov	%ebx, %eax
+	jmp	L(done)
+
 
 
 	C Offset 0x9D here for non-PIC.  About 0.4 cycles/bit is saved by
@@ -239,10 +244,6 @@ ifdef(`PIC',`
 C -----------------------------------------------------------------------------
 C two or more limbs
 
-dnl  MODEXACT_THRESHOLD is the size at which it's better to call
-dnl  mpn_modexact_1_odd than do an inline loop.
-
-deflit(MODEXACT_THRESHOLD, ifdef(`PIC',6,5))
 
 L(divide):
 	C eax	src
@@ -260,60 +261,7 @@ L(divide_strip_y):
 	lea	1(%edx,%edx), %ebx		C y now odd
 
 	mov	%ebp, SAVE_EBP
-	mov	%eax, %ebp
-	mov	-4(%eax,%ecx,4), %eax		C src high limb
 
-	cmp	$MODEXACT_THRESHOLD, %ecx
-	jae	L(modexact)
-
-	cmp	%ebx, %eax			C high cmp divisor
-	mov	$0, %edx
-
-	cmovc(	%eax, %edx)			C skip a div if high<divisor
-	sbb	$0, %ecx
-
-
-L(divide_top):
-	C eax	scratch (quotient)
-	C ebx	y
-	C ecx	counter (size to 1, inclusive)
-	C edx	carry (remainder)
-	C esi	common twos
-	C edi	[PIC] L(table)
-	C ebp	src
-
-	mov	-4(%ebp,%ecx,4), %eax
-
-	div	%ebx
-
-	dec	%ecx
-	jnz	L(divide_top)
-
-
-	C eax
-	C ebx	y (odd)
-	C ecx
-	C edx	x
-	C esi	common twos
-	C edi	[PIC] L(table)
-	C ebp
-
-	or	%edx, %edx
-	mov	SAVE_EBP, %ebp
-	mov	%edx, %eax
-
-	mov	%edx, %ecx
-	mov	%ebx, %edx
-	jnz	L(strip_x_entry)
-
-
-L(done_ebx):
-	mov	%ebx, %eax
-	jmp	L(done)
-
-
-
-L(modexact):
 	C eax
 	C ebx	y
 	C ecx	size
@@ -323,7 +271,7 @@ L(modexact):
 	C ebp	src
 
 ifdef(`PIC',`
-	mov	%ebp, CALL_SRC
+	mov	%eax, CALL_SRC
 	mov	%ebx, %ebp		C y
 	mov	%edi, %ebx		C L(table)
 
@@ -331,15 +279,26 @@ ifdef(`PIC',`
 	mov	%ebp, CALL_DIVISOR
 	mov	%ecx, CALL_SIZE
 
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %ecx
+	jl	L(bmod)
+	call	GSYM_PREFIX`'mpn_mod_1@PLT
+	jmp	L(reduced)
+L(bmod):
 	call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
 ',`
 dnl non-PIC
 	mov	%ebx, CALL_DIVISOR
-	mov	%ebp, CALL_SRC
+	mov	%eax, CALL_SRC
 	mov	%ecx, CALL_SIZE
 
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %ecx
+	jl	L(bmod)
+	call	GSYM_PREFIX`'mpn_mod_1
+	jmp	L(reduced)
+L(bmod):
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
 ')
+L(reduced):
 
 	C eax	x
 	C ebx	[non-PIC] y
@@ -349,7 +308,7 @@ dnl non-PIC
 	C edi	[PIC] L(table)
 	C ebp	[PIC] y
 
-	or	%eax, %eax
+	test	%eax, %eax
 	mov	ifdef(`PIC',`%ebp',`%ebx'), %edx
 	mov	SAVE_EBP, %ebp
 

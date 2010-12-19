@@ -1,3 +1,9 @@
+2010-12-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/k7/gcd_1.asm: Rewrite.  Remove slow 'div' loop.  Call
+	mpn_mod_1 for operands with mode than BMOD_1_TO_MOD_1_THRESHOLD limbs.
+	Misc cleanups.
+
 2010-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/gcd_1.asm: Call mpn_mod_1 for operands with mode than
