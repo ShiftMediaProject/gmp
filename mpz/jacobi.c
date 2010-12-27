@@ -88,7 +88,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   /* The MPN jacobi functions requies positive a and b, and b odd. So
      we must to handle the cases of a or b zero, then signs, and then
      the case of even b.
-   
+
      In addition, to reduce the number of cases, we arrange so that a
      is odd, and asize >= bsize. */
 
@@ -121,7 +121,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       result_bit1 ^= JACOBI_N1B_BIT1(blow);
       asize = -asize;
     }
-  
+
   STRIP_TWOS(result_bit1, atwos, blow, asrcp, asize, alow);
 
   /* Both numbers odd, so arrange so that asize >= bsize */
