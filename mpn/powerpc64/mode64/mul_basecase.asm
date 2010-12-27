@@ -24,7 +24,7 @@ C		   cycles/limb
 C POWER3/PPC630		6-18
 C POWER4/PPC970		 8
 C POWER5		 8
-C POWER6	        24
+C POWER6		24
 
 C INPUT PARAMETERS
 define(`rp', `r3')

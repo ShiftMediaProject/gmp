@@ -25,7 +25,7 @@ C	     cycles/limb
 C AMD K8,K9	 2
 C AMD K10	 2
 C Intel P4	 13
-C Intel core2 	 3.45
+C Intel core2	 3.45
 C Intel corei	 3.45
 C Intel atom	 ?
 C VIA nano	 ?

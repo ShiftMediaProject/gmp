@@ -61,7 +61,7 @@ PROLOGUE(mpn_mod_1_1p)
 	ALIGN(16)
 L(top):	mul	%edi			C 0
 	mov	-12(%esi), %ebx		C
-	add	%eax, %ebx		C 4	
+	add	%eax, %ebx		C 4
 	mov	%ecx, %eax		C 2
 	mov	$0, %ecx		C
 	adc	%edx, %ecx		C 6

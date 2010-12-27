@@ -25,16 +25,16 @@ define(RSH,		62)
 
 ifdef(`OPERATION_addlsh2_n',`
   define(ADDSUBC,	addc)
-  define(ADDSUBE,      	adde)
-  define(INITCY,      	`addic $1, r1, 0')
-  define(RETVAL,      	`addze  r3, $1')
+  define(ADDSUBE,	adde)
+  define(INITCY,	`addic	$1, r1, 0')
+  define(RETVAL,	`addze	r3, $1')
   define(func, mpn_addlsh2_n)
 ')
 ifdef(`OPERATION_sublsh2_n',`
   define(ADDSUBC,	subfc)
-  define(ADDSUBE,      	subfe)
-  define(INITCY,      	`addic $1, r1, -1')
-  define(RETVAL,      	`subfze  r3, $1
+  define(ADDSUBE,	subfe)
+  define(INITCY,	`addic	$1, r1, -1')
+  define(RETVAL,	`subfze	r3, $1
 			neg	r3, r3')
   define(func, mpn_sublsh2_n)
 ')
