@@ -23,14 +23,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1_1_THRESHOLD                    2
-#define MOD_1_2_THRESHOLD                    3
-#define MOD_1_4_THRESHOLD                    4
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          2
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          2
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD         3
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD         4
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD      1
 #define USE_PREINV_DIVREM_1                  1  /* native */
-#define USE_PREINV_MOD_1                     1
-#define DIVREM_2_THRESHOLD                   0  /* always */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define MODEXACT_1_ODD_THRESHOLD             0  /* always (native) */
+#define BMOD_1_TO_MOD_1_THRESHOLD            3
 
 #define MUL_TOOM22_THRESHOLD                 8
 #define MUL_TOOM33_THRESHOLD                20

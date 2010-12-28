@@ -1,3 +1,7 @@
+2010-12-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/minithres/gmp-mparam.h: Update with several recent thresholds.
+
 2010-12-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/mod_1_1.asm: Canonicalise cmov forms.
