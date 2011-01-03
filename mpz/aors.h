@@ -1,6 +1,7 @@
 /* mpz_add, mpz_sub -- add or subtract integers.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2011 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,21 +22,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-#ifdef BERKELEY_MP
-
-#include "mp.h"
-#ifdef OPERATION_add
-#define FUNCTION     madd
-#define VARIATION
-#endif
-#ifdef OPERATION_sub
-#define FUNCTION     msub
-#define VARIATION    -
-#endif
-#define ARGUMENTS    mpz_srcptr u, mpz_srcptr v, mpz_ptr w
-
-#else /* normal GMP */
-
 #ifdef OPERATION_add
 #define FUNCTION     mpz_add
 #define VARIATION
@@ -45,8 +31,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define VARIATION    -
 #endif
 #define ARGUMENTS    mpz_ptr w, mpz_srcptr u, mpz_srcptr v
-
-#endif
 
 #ifndef FUNCTION
 Error, need OPERATION_add or OPERATION_sub
@@ -62,8 +46,8 @@ FUNCTION (ARGUMENTS)
   mp_size_t abs_usize;
   mp_size_t abs_vsize;
 
-  usize = u->_mp_size;
-  vsize = VARIATION v->_mp_size;
+  usize = SIZ(u);
+  vsize = VARIATION SIZ(v);
   abs_usize = ABS (usize);
   abs_vsize = ABS (vsize);
 
@@ -79,13 +63,12 @@ FUNCTION (ARGUMENTS)
 
   /* If not space for w (and possible carry), increase space.  */
   wsize = abs_usize + 1;
-  if (w->_mp_alloc < wsize)
-    _mpz_realloc (w, wsize);
+  MPZ_REALLOC (w, wsize);
 
   /* These must be after realloc (u or v may be the same as w).  */
-  up = u->_mp_d;
-  vp = v->_mp_d;
-  wp = w->_mp_d;
+  up = PTR(u);
+  vp = PTR(v);
+  wp = PTR(w);
 
   if ((usize ^ vsize) < 0)
     {
@@ -128,5 +111,5 @@ FUNCTION (ARGUMENTS)
 	wsize = -wsize;
     }
 
-  w->_mp_size = wsize;
+  SIZ(w) = wsize;
 }

@@ -1,3 +1,7 @@
+2011-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/aors.h: Remove #ifdef BERKELEY_MP, and cleanup.
+
 2010-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/minithres/gmp-mparam.h: Update with several recent thresholds.
