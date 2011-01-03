@@ -2,8 +2,8 @@
 
    Contributed to the GNU project by Torbjorn Granlund.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2005, 2008, 2009
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2005, 2008,
+2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,9 +24,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-#ifdef BERKELEY_MP
-#include "mp.h"
-#endif
 
 
 /* TODO
@@ -52,11 +49,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HANDLE_NEGATIVE_EXPONENT 1
 
 void
-#ifndef BERKELEY_MP
 mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
-#else /* BERKELEY_MP */
-pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
-#endif /* BERKELEY_MP */
 {
   mp_size_t n, nodd, ncnt;
   int cnt;

@@ -1,7 +1,7 @@
 /* mpz_mul -- Multiply two integers.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2009 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2009, 2011 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,20 +21,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
-#ifdef BERKELEY_MP
-#include "mp.h"
-#endif
 
 
 void
-#ifndef BERKELEY_MP
 mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
-#else /* BERKELEY_MP */
-mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
-#endif /* BERKELEY_MP */
 {
-  mp_size_t usize = SIZ(u);
-  mp_size_t vsize = SIZ(v);
+  mp_size_t usize;
+  mp_size_t vsize;
   mp_size_t wsize;
   mp_size_t sign_product;
   mp_ptr up, vp;
@@ -44,6 +37,8 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
   mp_limb_t cy_limb;
   TMP_DECL;
 
+  usize = SIZ(u);
+  vsize = SIZ(v);
   sign_product = usize ^ vsize;
   usize = ABS (usize);
   vsize = ABS (vsize);

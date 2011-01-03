@@ -30,7 +30,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define FUNCTION     mpz_sub
 #define VARIATION    -
 #endif
-#define ARGUMENTS    mpz_ptr w, mpz_srcptr u, mpz_srcptr v
 
 #ifndef FUNCTION
 Error, need OPERATION_add or OPERATION_sub
@@ -38,7 +37,7 @@ Error, need OPERATION_add or OPERATION_sub
 
 
 void
-FUNCTION (ARGUMENTS)
+FUNCTION (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
 {
   mp_srcptr up, vp;
   mp_ptr wp;

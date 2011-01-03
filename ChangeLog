@@ -1,6 +1,13 @@
 2011-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/aors.h: Remove #ifdef BERKELEY_MP, and cleanup.
+	* mpz/cmp.c: Likewise.
+	* mpz/gcd.c: Likewise.
+	* mpz/mul.c: Likewise.
+	* mpz/powm.c: Likewise.
+	* mpz/set.c: Likewise.
+	* mpz/sqrtrem.c: Likewise.
+	* mpz/tdiv_qr.c: Likewise.
 
 2010-12-28  Torbjorn Granlund  <tege@gmplib.org>
 

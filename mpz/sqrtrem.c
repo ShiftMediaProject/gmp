@@ -1,8 +1,8 @@
 /* mpz_sqrtrem(root,rem,x) -- Set ROOT to floor(sqrt(X)) and REM
    to the remainder, i.e. X - ROOT**2.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2011 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,25 +22,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
-#ifdef BERKELEY_MP
-#include "mp.h"
-#endif
 
 void
-#ifndef BERKELEY_MP
 mpz_sqrtrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr op)
-#else /* BERKELEY_MP */
-msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
-#endif /* BERKELEY_MP */
 {
   mp_size_t op_size, root_size, rem_size;
   mp_ptr root_ptr, op_ptr;
-  mp_ptr free_me = NULL;
+  mp_ptr free_me;
   mp_size_t free_me_size;
   TMP_DECL;
 
   TMP_MARK;
-  op_size = op->_mp_size;
+  free_me = NULL;
+  op_size = SIZ (op);
   if (op_size <= 0)
     {
       if (op_size < 0)
@@ -50,28 +44,27 @@ msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
       return;
     }
 
-  if (rem->_mp_alloc < op_size)
-    _mpz_realloc (rem, op_size);
+  MPZ_REALLOC (rem, op_size);
 
   /* The size of the root is accurate after this simple calculation.  */
   root_size = (op_size + 1) / 2;
 
-  root_ptr = root->_mp_d;
-  op_ptr = op->_mp_d;
+  root_ptr = PTR (root);
+  op_ptr = PTR (op);
 
-  if (root->_mp_alloc < root_size)
+  if (ALLOC (root) < root_size)
     {
       if (root_ptr == op_ptr)
 	{
 	  free_me = root_ptr;
-	  free_me_size = root->_mp_alloc;
+	  free_me_size = ALLOC (root);
 	}
       else
-	(*__gmp_free_func) (root_ptr, root->_mp_alloc * BYTES_PER_MP_LIMB);
+	(*__gmp_free_func) (root_ptr, ALLOC (root) * BYTES_PER_MP_LIMB);
 
-      root->_mp_alloc = root_size;
+      ALLOC (root) = root_size;
       root_ptr = (mp_ptr) (*__gmp_allocate_func) (root_size * BYTES_PER_MP_LIMB);
-      root->_mp_d = root_ptr;
+      PTR (root) = root_ptr;
     }
   else
     {
@@ -86,14 +79,14 @@ msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
 	}
     }
 
-  rem_size = mpn_sqrtrem (root_ptr, rem->_mp_d, op_ptr, op_size);
+  rem_size = mpn_sqrtrem (root_ptr, PTR (rem), op_ptr, op_size);
 
-  root->_mp_size = root_size;
+  SIZ (root) = root_size;
 
   /* Write remainder size last, to enable us to define this function to
      give only the square root remainder, if the user calls if with
      ROOT == REM.  */
-  rem->_mp_size = rem_size;
+  SIZ (rem) = rem_size;
 
   if (free_me != NULL)
     (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);

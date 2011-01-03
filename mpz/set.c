@@ -21,33 +21,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-#ifdef BERKELEY_MP
-#include "mp.h"
-#define FUNCTION   move
-#define ARGUMENTS  mpz_srcptr u, mpz_ptr w
-
-#else
-#define FUNCTION   mpz_set
-#define ARGUMENTS  mpz_ptr w, mpz_srcptr u
-
-#endif
-
-
 void
-FUNCTION (ARGUMENTS)
+mpz_set (mpz_ptr w, mpz_srcptr u)
 {
   mp_ptr wp, up;
   mp_size_t usize, size;
 
-  usize = u->_mp_size;
+  usize = SIZ(u);
   size = ABS (usize);
 
-  if (w->_mp_alloc < size)
-    _mpz_realloc (w, size);
+  MPZ_REALLOC (w, size);
 
-  wp = w->_mp_d;
-  up = u->_mp_d;
+  wp = PTR(w);
+  up = PTR(u);
 
   MPN_COPY (wp, up, size);
-  w->_mp_size = usize;
+  SIZ(w) = usize;
 }
