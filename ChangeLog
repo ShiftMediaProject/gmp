@@ -1,5 +1,7 @@
 2011-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (gmp_mpn_functions_optional): Add mul_5 and mul_6.
+
 	* tune/speed.c (routine): Add measuring of mpn_mul_5 and mpn_mul_6.
 	* tune/common.c (speed_mpn_mul_5, speed_mpn_mul_6): New functions.
 	* tune/speed.h: Declare new functions.
