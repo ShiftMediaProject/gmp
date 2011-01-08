@@ -24,9 +24,6 @@ C 7400,7410 (G4):       ?
 C 744x,745x (G4+):      1.125
 C 970 (G5):             2.25
 
-C STATUS
-C  * Works for all sizes and alignments.
-
 C TODO
 C  * Rewrite the awkward huge n outer loop code.
 C  * Two lvx, two vperm, and two vxor could make us a similar hamdist.
