@@ -559,7 +559,7 @@ enum {
 
   TYPE_MUL_1, TYPE_MUL_1C,
 
-  TYPE_MUL_2, TYPE_MUL_3, TYPE_MUL_4,
+  TYPE_MUL_2, TYPE_MUL_3, TYPE_MUL_4, TYPE_MUL_5, TYPE_MUL_6,
 
   TYPE_ADDMUL_1, TYPE_ADDMUL_1C, TYPE_SUBMUL_1, TYPE_SUBMUL_1C,
 
@@ -694,6 +694,16 @@ param_init (void)
   COPY (TYPE_MUL_2);
   p->msize = 4;
   REFERENCE (refmpn_mul_4);
+
+  p = &param[TYPE_MUL_5];
+  COPY (TYPE_MUL_2);
+  p->msize = 5;
+  REFERENCE (refmpn_mul_5);
+
+  p = &param[TYPE_MUL_6];
+  COPY (TYPE_MUL_2);
+  p->msize = 6;
+  REFERENCE (refmpn_mul_6);
 
 
   p = &param[TYPE_ADDMUL_1];
@@ -1521,6 +1531,12 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mul_4
   { TRY(mpn_mul_4),      TYPE_MUL_4, 4 },
 #endif
+#if HAVE_NATIVE_mpn_mul_5
+  { TRY(mpn_mul_5),      TYPE_MUL_5, 5 },
+#endif
+#if HAVE_NATIVE_mpn_mul_6
+  { TRY(mpn_mul_6),      TYPE_MUL_6, 6 },
+#endif
 
   { TRY(mpn_rshift),     TYPE_RSHIFT },
   { TRY(mpn_lshift),     TYPE_LSHIFT },
@@ -2058,6 +2074,8 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_MUL_2:
   case TYPE_MUL_3:
   case TYPE_MUL_4:
+  case TYPE_MUL_5:
+  case TYPE_MUL_6:
     if (size == 1)
       abort ();
     e->retval = CALLING_CONVENTIONS (function)

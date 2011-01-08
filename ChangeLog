@@ -1,5 +1,10 @@
 2011-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/devel/try.c (types enum): Add TYPE_MUL_5 and TYPE_MUL_6.
+	(param_init): Support new types.
+	(choice_array): Support testing of mpn_mul_5 and mpn_mul_6.
+	(call): Support new routines.
+
 	* tests/refmpn.c (refmpn_mul_5, refmpn_mul_6): New functions.
 	* tests/tests.h (refmpn_mul_5, refmpn_mul_6): Declare.
 	Remove parameter names from some other functions.
