@@ -220,6 +220,8 @@ double speed_mpn_mul_1_inplace __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_3 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_4 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mul_5 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mul_6 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft __GMP_PROTO ((struct speed_params *s));

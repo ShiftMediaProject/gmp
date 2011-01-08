@@ -1,3 +1,9 @@
+2011-01-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.c (routine): Add measuring of mpn_mul_5 and mpn_mul_6.
+	* tune/common.c (speed_mpn_mul_5, speed_mpn_mul_6): New functions.
+	* tune/speed.h: Declare new functions.
+
 2011-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/aors.h: Remove #ifdef BERKELEY_MP, and cleanup.
