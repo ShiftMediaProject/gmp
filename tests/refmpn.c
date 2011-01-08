@@ -873,6 +873,16 @@ refmpn_mul_4 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
 {
   return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 4);
 }
+mp_limb_t
+refmpn_mul_5 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 5);
+}
+mp_limb_t
+refmpn_mul_6 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 6);
+}
 
 #define AORSMUL_1C(operation_n)                                 \
   {                                                             \

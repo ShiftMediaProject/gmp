@@ -185,26 +185,16 @@ mp_limb_t refmpn_addlsh1_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
 mp_limb_t refmpn_addlsh2_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
-mp_limb_t refmpn_addlsh_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
-                                mp_size_t size, unsigned int));
-mp_limb_t refmpn_addmul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
-                                   mp_limb_t multiplier));
-mp_limb_t refmpn_addmul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
-                                    mp_limb_t multiplier, mp_limb_t carry));
-mp_limb_t refmpn_addmul_2 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_3 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_4 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_5 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_6 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_7 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
-mp_limb_t refmpn_addmul_8 __GMP_PROTO ((mp_ptr dst, mp_srcptr src,
-                                        mp_size_t size, mp_srcptr mult));
+mp_limb_t refmpn_addlsh_n __GMP_PROTO ((mp_ptr wp, mp_srcptr, mp_srcptr, mp_size_t, unsigned));
+mp_limb_t refmpn_addmul_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+mp_limb_t refmpn_addmul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+mp_limb_t refmpn_addmul_2 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_3 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_4 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_5 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_6 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_7 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_addmul_8 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 mp_limb_t refmpn_add_n_sub_n __GMP_PROTO ((mp_ptr r1p, mp_ptr r2p,
                                    mp_srcptr s1p, mp_srcptr s2p,
@@ -292,16 +282,13 @@ mp_limb_t refmpn_mod_1c __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                  mp_limb_t divisor, mp_limb_t carry));
 mp_limb_t refmpn_mod_34lsub1 __GMP_PROTO ((mp_srcptr p, mp_size_t n));
 
-mp_limb_t refmpn_mul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
-                                mp_limb_t multiplier));
-mp_limb_t refmpn_mul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
-                                 mp_limb_t multiplier, mp_limb_t carry));
-mp_limb_t refmpn_mul_2 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
-				     mp_srcptr mult));
-mp_limb_t refmpn_mul_3 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
-				     mp_srcptr mult));
-mp_limb_t refmpn_mul_4 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
-				     mp_srcptr mult));
+mp_limb_t refmpn_mul_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+mp_limb_t refmpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+mp_limb_t refmpn_mul_2 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_mul_3 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_mul_4 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_mul_5 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t refmpn_mul_6 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 void refmpn_mul_basecase __GMP_PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,

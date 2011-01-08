@@ -1,5 +1,9 @@
 2011-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/refmpn.c (refmpn_mul_5, refmpn_mul_6): New functions.
+	* tests/tests.h (refmpn_mul_5, refmpn_mul_6): Declare.
+	Remove parameter names from some other functions.
+
 	* gmp-impl.h (mpn_mul_5, mpn_mul_6): Declare.
 	* mpn/asm-defs.m4: Likewise, also declare mpn_addmul_5, mpn_addmul_6,
 	mpn_addmul_7, and mpn_addmul_8.
