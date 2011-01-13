@@ -4235,6 +4235,7 @@ struct cpuvec_t {
   mp_size_t            mul_toom33_threshold;
   mp_size_t            sqr_toom2_threshold;
   mp_size_t            sqr_toom3_threshold;
+  mp_size_t            bmod_1_to_mod_1_threshold;
 };
 __GMP_DECLSPEC extern struct cpuvec_t __gmpn_cpuvec;
 #endif /* x86 fat binary */

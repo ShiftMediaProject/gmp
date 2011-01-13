@@ -1835,7 +1835,8 @@ case $host in
 		     pre_divrem_1 pre_mod_1 rshift
 		     sqr_basecase sub_n submul_1"
       fat_thresholds="MUL_TOOM22_THRESHOLD MUL_TOOM33_THRESHOLD
-		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD"
+		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD
+		      BMOD_1_TO_MOD_1_THRESHOLD"
     fi
     ;;
 esac

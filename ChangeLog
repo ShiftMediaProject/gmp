@@ -1,3 +1,8 @@
+2011-01-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (struct cpuvec_t): Add field bmod_1_to_mod_1_threshold.
+	* configure.in (fat_thresholds): Add BMOD_1_TO_MOD_1_THRESHOLD.
+
 2011-01-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/mul.c: Remove redundant size computation.
