@@ -37,8 +37,8 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
   mp_limb_t cy_limb;
   TMP_DECL;
 
-  usize = SIZ(u);
-  vsize = SIZ(v);
+  usize = SIZ (u);
+  vsize = SIZ (v);
   sign_product = usize ^ vsize;
   usize = ABS (usize);
   vsize = ABS (vsize);
@@ -51,7 +51,7 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
 
   if (vsize == 0)
     {
-      SIZ(w) = 0;
+      SIZ (w) = 0;
       return;
     }
 
@@ -59,37 +59,37 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
   if (vsize <= 2)
     {
       MPZ_REALLOC (w, usize+vsize);
-      wp = PTR(w);
+      wp = PTR (w);
       if (vsize == 1)
-	cy_limb = mpn_mul_1 (wp, PTR(u), usize, PTR(v)[0]);
+	cy_limb = mpn_mul_1 (wp, PTR (u), usize, PTR (v)[0]);
       else
 	{
-	  cy_limb = mpn_mul_2 (wp, PTR(u), usize, PTR(v));
+	  cy_limb = mpn_mul_2 (wp, PTR (u), usize, PTR (v));
 	  usize++;
 	}
       wp[usize] = cy_limb;
       usize += (cy_limb != 0);
-      SIZ(w) = (sign_product >= 0 ? usize : -usize);
+      SIZ (w) = (sign_product >= 0 ? usize : -usize);
       return;
     }
 #else
   if (vsize == 1)
     {
       MPZ_REALLOC (w, usize+1);
-      wp = PTR(w);
-      cy_limb = mpn_mul_1 (wp, PTR(u), usize, PTR(v)[0]);
+      wp = PTR (w);
+      cy_limb = mpn_mul_1 (wp, PTR (u), usize, PTR (v)[0]);
       wp[usize] = cy_limb;
       usize += (cy_limb != 0);
-      SIZ(w) = (sign_product >= 0 ? usize : -usize);
+      SIZ (w) = (sign_product >= 0 ? usize : -usize);
       return;
     }
 #endif
 
   TMP_MARK;
   free_me = NULL;
-  up = PTR(u);
-  vp = PTR(v);
-  wp = PTR(w);
+  up = PTR (u);
+  vp = PTR (v);
+  wp = PTR (w);
 
   /* Ensure W has space enough to store the result.  */
   wsize = usize + vsize;
@@ -98,14 +98,14 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
       if (wp == up || wp == vp)
 	{
 	  free_me = wp;
-	  free_me_size = ALLOC(w);
+	  free_me_size = ALLOC (w);
 	}
       else
-	(*__gmp_free_func) (wp, ALLOC(w) * BYTES_PER_MP_LIMB);
+	(*__gmp_free_func) (wp, ALLOC (w) * BYTES_PER_MP_LIMB);
 
-      ALLOC(w) = wsize;
+      ALLOC (w) = wsize;
       wp = (mp_ptr) (*__gmp_allocate_func) (wsize * BYTES_PER_MP_LIMB);
-      PTR(w) = wp;
+      PTR (w) = wp;
     }
   else
     {
@@ -141,7 +141,7 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
 
   wsize -= cy_limb == 0;
 
-  SIZ(w) = sign_product < 0 ? -wsize : wsize;
+  SIZ (w) = sign_product < 0 ? -wsize : wsize;
   if (free_me != NULL)
     (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
   TMP_FREE;
