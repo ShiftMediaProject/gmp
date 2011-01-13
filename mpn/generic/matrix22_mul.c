@@ -95,8 +95,8 @@ mpn_matrix22_mul_itch (mp_size_t rn, mp_size_t mn)
 
   Note: the two matrices above are the same, but s_i and t_i are used
   in the same product, only for i<4, see "A Strassen-like Matrix
-  Multiplication suited for squaring and highest power computation" by
-  M. Bodrato (2008).
+  Multiplication suited for squaring and higher power computation" by
+  M. Bodrato, in Proceedings of ISSAC 2010.
 
     / r0 \   / 1 0  0  0  0  1  0 \ / s0*t0 \
     | r1 | = | 0 0 -1  1 -1  1  0 | | s1*t1 |
