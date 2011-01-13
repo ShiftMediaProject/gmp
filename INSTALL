@@ -27,11 +27,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 These instructions are only for the impatient.  Others should read the install
 instructions in gmp.info.  Use
 
-	info -f ./gmp.info
+	info -f doc/gmp.info
 
 or in emacs
 
-	C-u C-h i gmp.info
+	C-u C-h i doc/gmp.info
 
 
 Here are some brief instructions on how to install GMP.  First you need to
