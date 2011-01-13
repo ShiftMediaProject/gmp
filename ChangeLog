@@ -1,3 +1,7 @@
+2011-01-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/mul.c: Remove redundant size computation.
+
 2011-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/devel/try.c (types enum): Add TYPE_MUL_5 and TYPE_MUL_6.

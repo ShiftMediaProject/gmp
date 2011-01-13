@@ -93,7 +93,7 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
 
   /* Ensure W has space enough to store the result.  */
   wsize = usize + vsize;
-  if (ALLOC(w) < wsize)
+  if (ALLOC (w) < wsize)
     {
       if (wp == up || wp == vp)
 	{
@@ -132,13 +132,11 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
   if (up == vp)
     {
       mpn_sqr (wp, up, usize);
-      wsize = usize + vsize;
       cy_limb = wp[wsize - 1];
     }
   else
     {
       cy_limb = mpn_mul (wp, up, usize, vp, vsize);
-      wsize = usize + vsize;
     }
 
   wsize -= cy_limb == 0;
