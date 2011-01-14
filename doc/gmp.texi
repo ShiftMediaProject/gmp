@@ -4097,7 +4097,7 @@ room for the larger of the two operands, plus an extra
 @code{mp_bits_per_limb}.
 
 @item
-@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_ui} need room for the sum
+@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_si} need room for the sum
 of the number of bits in their operands, but each rounded up to a multiple of
 @code{mp_bits_per_limb}.
 
