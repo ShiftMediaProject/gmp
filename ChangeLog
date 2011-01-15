@@ -1,3 +1,7 @@
+2011-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/divexact.c: Avoid COPY if not needed.
+
 2011-01-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (struct cpuvec_t): Add field bmod_1_to_mod_1_threshold.
