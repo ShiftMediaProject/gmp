@@ -1,3 +1,7 @@
+2011-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/bdiv_q_1.asm: New file (same core alg. as dive_1).
+
 2011-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/divexact.c: Avoid COPY if not needed.
