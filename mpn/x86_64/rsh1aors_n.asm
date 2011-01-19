@@ -23,7 +23,7 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 2.14	(mpn_add_n + mpn_rshift need 4.125)
 C AMD K10	 2.14	(mpn_add_n + mpn_rshift need 4.125)
-C AMD P4	12.75
+C Intel P4	12.75
 C Intel core2	 3.75
 C Intel corei	 4.4
 C Intel atom	 ?
@@ -38,7 +38,6 @@ define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n',`%rcx')
-define(`n32',`%ecx')
 
 ifdef(`OPERATION_rsh1add_n', `
 	define(ADDSUB,	      add)
@@ -60,7 +59,7 @@ ASM_START()
 PROLOGUE(func_nc)
 	push	%rbx
 
-	xor	%eax, %eax
+	xor	R32(%rax), R32(%rax)
 	neg	%r8			C set C flag from parameter
 	mov	(up), %rbx
 	ADCSBB	(vp), %rbx
@@ -71,14 +70,14 @@ EPILOGUE()
 PROLOGUE(func_n)
 	push	%rbx
 
-	xor	%eax, %eax
+	xor	R32(%rax), R32(%rax)
 	mov	(up), %rbx
 	ADDSUB	(vp), %rbx
 L(ent):
 	rcr	%rbx			C rotate, save acy
-	adc	%eax, %eax		C return value
+	adc	R32(%rax), R32(%rax)	C return value
 
-	mov	n32, R32(%r11)
+	mov	R32(n), R32(%r11)
 	and	$3, R32(%r11)
 
 	cmp	$1, R32(%r11)
