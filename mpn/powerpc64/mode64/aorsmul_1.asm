@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2010 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2010, 2011 Free
+dnl  Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,8 +23,8 @@ include(`../config.m4')
 C		mpn_addmul_1	mpn_submul_1
 C		cycles/limb	cycles/limb
 C POWER3/PPC630   6-18		   6-18
-C POWER4/PPC970	   8?		    8.3?  not updated for last file revision
-C POWER5	   8		    8.63
+C POWER4/PPC970	   8		    8.3
+C POWER5	   8		    8.25
 C POWER6	  16.25		   16.75
 
 C TODO
@@ -41,15 +41,14 @@ ifdef(`OPERATION_addmul_1',`
   define(ADDSUB,	addc)
   define(func,		mpn_addmul_1)
   define(func_nc,	mpn_addmul_1c)
-  define(INVCY,		`')
+  define(SM,		`')
 ')
 ifdef(`OPERATION_submul_1',`
   define(ADDSUBC,	subfe)
   define(ADDSUB,	subfc)
   define(func,		mpn_submul_1)
   define(func_nc,	mpn_submul_1c)
-  define(INVCY,		`subfe	$1, $1, $1
-			addic	$1, $1,1')
+  define(SM,		`$1')
 ')
 
 ASM_START()
@@ -112,7 +111,8 @@ L(b01):	bdnz	L(gt1)
 	mulhdu	r8, r9, r6
 	ADDSUB	r0, r0, r11
 	std	r0, 0(rp)
-	INVCY(r11)
+SM(`	subfe	r11, r11, r11 ')
+SM(`	addic	r11, r11, 1 ')
 	addze	r3, r8
 	blr
 L(gt1):	ld	r9, 0(up)
@@ -180,8 +180,10 @@ L(top):	mulld	r0, r9, r6
 	ADDSUBC	r11, r11, r31	C 11 31
 	std	r11, 24(rp)	C 11
 	addi	up, up, 32
+SM(`	subfe	r11, r11, r11 ')
 	addi	rp, rp, 32
-L(bot):	INVCY(r11)
+L(bot):
+SM(`	addic	r11, r11, 1 ')
 	bdnz	L(top)
 
 L(end):	mulld	r0, r9, r6
@@ -197,7 +199,8 @@ L(end):	mulld	r0, r9, r6
 	std	r0, 0(rp)
 	ADDSUBC	r7, r7, r29
 	std	r7, 8(rp)
-	INVCY(r11)
+SM(`	subfe	r11, r11, r11 ')
+SM(`	addic	r11, r11, 1 ')
 	addze	r3, r8
 	ld	r31, -8(r1)
 	ld	r30, -16(r1)

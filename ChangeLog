@@ -1,3 +1,8 @@
+2011-01-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorsmul_1.asm: Trim away 0.5 c/l for submul_1
+	for POWER5.
+
 2011-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/rsh1aors_n.asm: New file.
