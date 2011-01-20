@@ -54,6 +54,7 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(func_nc)
 	push	%rbx
+	push	%rbp
 
 	neg	%r8			C set C flag from parameter
 	mov	(up), %rbp
