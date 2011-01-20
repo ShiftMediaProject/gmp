@@ -80,6 +80,7 @@ L(b11):	ld	r9, 0(up)
 	ld	r9, 8(up)
 	ld	r27, 16(up)
 	addi	up, up, 24
+SM(`	subfe	r11, r11, r11 ')
 	b	L(bot)
 
 	ALIGN(16)
@@ -101,6 +102,7 @@ L(b00):	ld	r9, 0(up)
 	ld	r9, 16(up)
 	ld	r27, 24(up)
 	addi	up, up, 32
+SM(`	subfe	r11, r11, r11 ')
 	b	L(bot)
 
 	ALIGN(16)
@@ -140,6 +142,7 @@ L(gt1):	ld	r9, 0(up)
 	ld	r9, 24(up)
 	ld	r27, 32(up)
 	addi	up, up, 40
+SM(`	subfe	r11, r11, r11 ')
 	b	L(bot)
 
 L(b10):	addic	r0, r0, 0
