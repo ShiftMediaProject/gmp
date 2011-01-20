@@ -814,7 +814,7 @@ run_gnuplot (int argc, char *argv[])
   fprintf (fp, "set key left\n");
 
   /* designed to make it possible to see crossovers easily */
-  fprintf (fp, "set data style lines\n");
+  fprintf (fp, "set style data lines\n");
 
   fprintf (fp, "plot ");
   for (i = 0; i < num_choices; i++)

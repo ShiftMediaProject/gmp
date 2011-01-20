@@ -1,5 +1,7 @@
 2011-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (run_gnuplot): Update to current gnuplot syntax.
+
 	* mpn/powerpc64/mode64/aorsmul_1.asm: Trim away 0.5 c/l for submul_1
 	for POWER5.
 
