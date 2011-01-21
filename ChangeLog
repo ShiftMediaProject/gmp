@@ -1,3 +1,7 @@
+2011-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/devel/try.c: Initial support for mpn_bdiv_q_1.
+
 2011-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/aorsmul_1.asm: Trim away 0.5 c/l for submul_1

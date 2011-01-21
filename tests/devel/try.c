@@ -3,8 +3,8 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009 Free Software
-Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2011
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -439,6 +439,36 @@ validate_divexact_1 (void)
     validate_fail ();
 }
 
+void
+validate_bdiv_q_1
+ (void)
+{
+  mp_srcptr  src = s[0].p;
+  mp_srcptr  dst = fun.d[0].p;
+  int  error = 0;
+
+  ASSERT (size >= 1);
+
+  {
+    mp_ptr     tp = refmpn_malloc_limbs (size + 1);
+
+    refmpn_mul_1 (tp, dst, size, divisor);
+    /* Set ignored low bits */
+    tp[0] |= (src[0] & LOW_ZEROS_MASK (divisor)); 
+    if (! refmpn_equal_anynail (tp, src, size))
+      {
+	printf ("Bdiv wrong: res * divisor != src (mod B^size)\n");
+	mpn_trace ("res ", dst, size);
+	mpn_trace ("src ", src, size);
+	error = 1;
+      }
+    free (tp);
+  }
+
+  if (error)
+    validate_fail ();
+}
+
 
 void
 validate_modexact_1c_odd (void)
@@ -581,8 +611,8 @@ enum {
   TYPE_DIVREM_1C, TYPE_PREINV_DIVREM_1, TYPE_DIVREM_2, TYPE_PREINV_MOD_1,
   TYPE_MOD_34LSUB1, TYPE_UDIV_QRNND, TYPE_UDIV_QRNND_R,
 
-  TYPE_DIVEXACT_1, TYPE_DIVEXACT_BY3, TYPE_DIVEXACT_BY3C, TYPE_MODEXACT_1_ODD,
-  TYPE_MODEXACT_1C_ODD,
+  TYPE_DIVEXACT_1, TYPE_BDIV_Q_1, TYPE_DIVEXACT_BY3, TYPE_DIVEXACT_BY3C,
+  TYPE_MODEXACT_1_ODD, TYPE_MODEXACT_1C_ODD,
 
   TYPE_INVERT, TYPE_BINVERT,
 
@@ -964,6 +994,11 @@ param_init (void)
   VALIDATE (validate_divexact_1);
   REFERENCE (refmpn_divmod_1);
 
+  p = &param[TYPE_BDIV_Q_1];
+  p->dst[0] = 1;
+  p->src[0] = 1;
+  p->divisor = DIVISOR_LIMB;
+  VALIDATE (validate_bdiv_q_1);
 
   p = &param[TYPE_DIVEXACT_BY3];
   p->retval = 1;
@@ -1508,6 +1543,7 @@ const struct choice_t choice_array[] = {
 #endif
 
   { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
+  { TRY(mpn_bdiv_q_1),            TYPE_BDIV_Q_1 },
   { TRY_FUNFUN(mpn_divexact_by3), TYPE_DIVEXACT_BY3 },
   { TRY(mpn_divexact_by3c),       TYPE_DIVEXACT_BY3C },
 
@@ -2134,6 +2170,7 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_DIVMOD_1:
   case TYPE_DIVEXACT_1:
+  case TYPE_BDIV_Q_1:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, divisor);
     break;
