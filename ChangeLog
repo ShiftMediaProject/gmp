@@ -2,6 +2,7 @@
 
 	* tests/devel/try.c: Initial support for mpn_bdiv_q_1.
 	* mpn/x86/pentium/bdiv_q_1.asm: New file.
+	* mpn/x86/p6/bdiv_q_1.asm: New file.
 
 2011-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
