@@ -1,5 +1,7 @@
 2011-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/ia64-defs.m4: Define some shorter convenience mnemonics.
+
 	* mpn/generic/sqr_basecase.c (MPN_SQR_DIAG_ADDLSH1): New macro, using
 	new function mpn_sqr_diag_addlsh1 or defining its equivalent.
 
