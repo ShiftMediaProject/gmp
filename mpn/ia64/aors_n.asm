@@ -2,7 +2,7 @@ dnl  IA-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2003, 2004, 2005, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -560,7 +560,7 @@ L(gt2):
 .mmb;	ld8	v0 = [vp], 8		C			M01
 	ld8	u0 = [up], 8		C			M01
   (p15)	br	1f			C			B
-.mmi;	cmp.CND	p8, p0 = w2, r10	C			M I
+.mmb;	cmp.CND	p8, p0 = w2, r10	C			M I
 	ADDSUB	w3 = u3, v3		C			M I
 	br	L(cj3)			C			B
 1:
@@ -826,8 +826,7 @@ L(cj3):
 .mmi;	st8	[rp] = w2, 8		C			M23
    (p8)	cmpeqor	p9, p0 = LIM, w3	C			M I
    (p8)	add	w3 = INCR, w3		C			M I
-.mmi;
-	cmp.CND	p6, p0 = w0, u0		C			M I
+.mmi;	cmp.CND	p6, p0 = w0, u0		C			M I
 	nop	0
 	mov	r8 = 0			C			M I
 	;;
@@ -837,7 +836,7 @@ L(cj2):
    (p9)	add	w0 = INCR, w0		C			M I
 	;;
 L(cj1):
-.mmi;	st8	[rp] = w0, 8		C			M23
+.mmb;	st8	[rp] = w0, 8		C			M23
    (p6)	mov	r8 = 1			C			M I
 	br.ret.sptk.many b0		C			B
 EPILOGUE()

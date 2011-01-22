@@ -1,5 +1,7 @@
 2011-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/aors_n.asm: Fix some incorrect bundle types.
+
 	* mpn/ia64/sqr_diagonal.asm: Remove.
 
 	* mpn/ia64/sqr_diag_addlsh1.asm: New file.
