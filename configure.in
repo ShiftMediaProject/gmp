@@ -2500,7 +2500,7 @@ fi
 #       divrem_1 and pre_divrem_1.
 
 gmp_mpn_functions_optional="umul udiv					\
-  invert_limb sqr_diagonal						\
+  invert_limb sqr_diagonal sqr_diag_addlsh1				\
   mul_2 mul_3 mul_4 mul_5 mul_6						\
   addmul_2 addmul_3 addmul_4 addmul_5 addmul_6 addmul_7 addmul_8	\
   addlsh1_n sublsh1_n rsblsh1_n rsh1add_n rsh1sub_n			\
@@ -3011,6 +3011,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_addmul_6
 #undef HAVE_NATIVE_mpn_addmul_7
 #undef HAVE_NATIVE_mpn_addmul_8
+#undef HAVE_NATIVE_mpn_addmul_2s
 #undef HAVE_NATIVE_mpn_and_n
 #undef HAVE_NATIVE_mpn_andn_n
 #undef HAVE_NATIVE_mpn_bdiv_dbm1c
@@ -3065,6 +3066,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_rshift
 #undef HAVE_NATIVE_mpn_sqr_basecase
 #undef HAVE_NATIVE_mpn_sqr_diagonal
+#undef HAVE_NATIVE_mpn_sqr_diag_addlsh1
 #undef HAVE_NATIVE_mpn_sub_n
 #undef HAVE_NATIVE_mpn_sub_nc
 #undef HAVE_NATIVE_mpn_sublsh1_n

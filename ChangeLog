@@ -1,3 +1,13 @@
+2011-01-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (mpn_addmul_2s): Declare.
+	(mpn_sqr_diag_addlsh1): Declare.
+	* mpn/asm-defs.m4 (define_mpn): Add addmul_2s and sqr_diag_addlsh1.
+	
+	* configure.in: Add HAVE_NATIVEs for mpn_sqr_diag_addlsh1 and
+	mpn_addmul_2s.
+	(gmp_mpn_functions_optional): Add sqr_diag_addlsh1.
+
 2011-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/try.c: Initial support for mpn_bdiv_q_1.

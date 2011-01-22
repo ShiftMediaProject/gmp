@@ -792,6 +792,10 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_7 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
 #define mpn_addmul_8 __MPN(addmul_8)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_8 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
+/* Alternative entry point in mpn_addmul_2 for the benefit of mpn_sqr_basecase.  */
+#define mpn_addmul_2s __MPN(addmul_2s)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_2s __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
 /* mpn_addlsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+2*{b,n}, and
    returns the carry out (0, 1 or 2).  */
 #define mpn_addlsh1_n __MPN(addlsh1_n)
@@ -1075,6 +1079,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 __GMP_DECLSPEC void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
+#define mpn_sqr_diag_addlsh1 __MPN(sqr_diag_addlsh1)
+__GMP_DECLSPEC void      mpn_sqr_diag_addlsh1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #define   mpn_toom_interpolate_5pts __MPN(toom_interpolate_5pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t));
