@@ -1,9 +1,12 @@
 2011-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/sqr_basecase.c (MPN_SQR_DIAG_ADDLSH1): New macro, using
+	new function mpn_sqr_diag_addlsh1 or defining its equivalent.
+
 	* gmp-impl.h (mpn_addmul_2s): Declare.
 	(mpn_sqr_diag_addlsh1): Declare.
 	* mpn/asm-defs.m4 (define_mpn): Add addmul_2s and sqr_diag_addlsh1.
-	
+
 	* configure.in: Add HAVE_NATIVEs for mpn_sqr_diag_addlsh1 and
 	mpn_addmul_2s.
 	(gmp_mpn_functions_optional): Add sqr_diag_addlsh1.
