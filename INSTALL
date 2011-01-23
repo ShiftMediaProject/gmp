@@ -29,10 +29,7 @@ instructions in gmp.info.  Use
 
 	info -f doc/gmp.info
 
-or in emacs
-
-	C-u C-h i doc/gmp.info
-
+from the gmp source directory.
 
 Here are some brief instructions on how to install GMP.  First you need to
 compile.  Since you're impatient, try this
