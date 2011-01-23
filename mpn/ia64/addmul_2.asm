@@ -147,11 +147,11 @@ PROLOGUE(mpn_addmul_2)
 	.save	ar.lc, r2
 	.body
 
-ifdef(`HAVE_ABI_32',
-`		addp4	rp = 0, rp		C			M I
+ifdef(`HAVE_ABI_32',`
+.mmi;		addp4	rp = 0, rp		C			M I
 		addp4	up = 0, up		C			M I
 		addp4	vp = 0, vp		C			M I
-		nop	1
+.mmi;		nop	1
 		nop	1
 		zxt4	n = n			C			I
 	;;')
