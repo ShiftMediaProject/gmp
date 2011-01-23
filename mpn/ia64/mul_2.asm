@@ -91,30 +91,30 @@ PROLOGUE(mpn_mul_2)
 	.save	ar.lc, r2
 	.body
 
-ifdef(`HAVE_ABI_32',
-	`	addp4	rp = 0, rp		C			M I
+ifdef(`HAVE_ABI_32',`
+.mmi;		addp4	rp = 0, rp		C			M I
 		addp4	up = 0, up		C			M I
 		addp4	vp = 0, vp		C			M I
-		nop	0
-		nop	0
+.mmi;		nop	1
+		nop	1
 		zxt4	n = n			C			I
 	;;')
 
 .mmi;		ldf8	ux = [up], 8		C			M
 		ldf8	v0 = [vp], 8		C			M
 		mov	r2 = ar.lc		C			I0
-.mmi;		nop	0			C			M
+.mmi;		nop	1			C			M
 		and	r14 = 3, n		C			M I
 		add	n = -2, n		C			M I
 	;;
 .mmi;		ldf8	uy = [up], 8		C			M
 		ldf8	v1 = [vp]		C			M
 		shr.u	n = n, 2		C			I
-.mmi;		nop	0			C			M
+.mmi;		nop	1			C			M
 		cmp.eq	p10, p0 = 1, r14	C			M I
 		cmp.eq	p11, p0 = 2, r14	C			M I
 	;;
-.mmi;		nop	0			C			M
+.mmi;		nop	1			C			M
 		cmp.eq	p12, p0 = 3, r14	C			M I
 		mov	ar.lc = n		C			I0
 .bbb;	(p10)	br.dptk	L(b01)			C			B
@@ -388,7 +388,7 @@ L(01):
 	(p10)	add	s0 = pr1_1, acc0, 1
 	(p11)	add	s0 = pr1_1, acc0
 		xma.hu	fp2a_0 = u_0, v1, fp1a_0
-		nop	0
+		nop	1
 	;;					C 03
 		.pred.rel "mutex", p6, p7
 		.pred.rel "mutex", p10, p11
@@ -414,7 +414,7 @@ L(00):
 	(p12)	add	s0 = pr1_2, acc0, 1
 	(p13)	add	s0 = pr1_2, acc0
 		xma.hu	fp2a_1 = u_1, v1, fp1a_1
-		nop	0
+		nop	1
 	;;					C 06
 		.pred.rel "mutex", p8, p9
 		.pred.rel "mutex", p12, p13
@@ -440,7 +440,7 @@ L(11):
 	(p10)	add	s0 = pr1_3, acc0, 1
 	(p11)	add	s0 = pr1_3, acc0
 		xma.hu	fp2a_2 = u_2, v1, fp1a_2
-		nop	0
+		nop	1
 	;;					C 09
 		.pred.rel "mutex", p6, p7
 		.pred.rel "mutex", p10, p11
