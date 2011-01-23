@@ -58,6 +58,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     rp[2 * n - 1] += cy;						\
   } while (0)
 #else
+#define MPN_SQR_DIAG_ADDLSH1(rp, tp, up, n)				\
   do {									\
     mp_limb_t cy;							\
     MPN_SQR_DIAGONAL (rp, up, n);					\
