@@ -1,3 +1,7 @@
+2011-01-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/addmul_2.asm: Rewrite, adding mpn_addmul_2s entry point.
+
 2011-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/aors_n.asm: Fix some incorrect bundle types.
