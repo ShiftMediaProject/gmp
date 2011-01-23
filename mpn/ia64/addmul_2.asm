@@ -26,9 +26,6 @@ C         cycles/limb
 C Itanium:    3.65
 C Itanium 2:  1.625
 
-C Note that this is very similar to mul_2.asm.  If you change this file,
-C please change that file too.
-
 C TODO
 C  * Clean up variable names, and try to decrease the number of distinct
 C    registers used.
