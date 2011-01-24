@@ -1,3 +1,8 @@
+2011-01-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mul_n, tune_sqr): Loop, re-measuring thresholds
+	until no tiny ranges remain.
+
 2011-01-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/mul_2.asm: Tweak to 1.5 c/l, less overhead.

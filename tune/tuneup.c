@@ -1,7 +1,7 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010 Free
-Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010, 2011
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1159,6 +1159,8 @@ void
 tune_mul_n (void)
 {
   static struct param_t  param;
+  mp_size_t next_toom_start;
+  int something_changed;
 
   param.function = speed_mpn_mul_n;
 
@@ -1167,25 +1169,84 @@ tune_mul_n (void)
   param.max_size = MUL_TOOM22_THRESHOLD_LIMIT-1;
   one (&mul_toom22_threshold, &param);
 
-  param.name = "MUL_TOOM33_THRESHOLD";
-  param.min_size = MAX (mul_toom22_threshold, MPN_TOOM33_MUL_MINSIZE);
-  param.max_size = MUL_TOOM33_THRESHOLD_LIMIT-1;
-  one (&mul_toom33_threshold, &param);
+  param.noprint = 1;
 
-  param.name = "MUL_TOOM44_THRESHOLD";
-  param.min_size = MAX (mul_toom33_threshold, MPN_TOOM44_MUL_MINSIZE);
-  param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
-  one (&mul_toom44_threshold, &param);
+  /* Threshold sequence loop.  Disable functions that would be used in a very
+     narrow range, re-measuring things when that happens.  */
+  something_changed = 1;
+  while (something_changed)
+    {
+      something_changed = 0;
 
-  param.name = "MUL_TOOM6H_THRESHOLD";
-  param.min_size = MAX (mul_toom44_threshold, MPN_TOOM6H_MUL_MINSIZE);
-  param.max_size = MUL_TOOM6H_THRESHOLD_LIMIT-1;
-  one (&mul_toom6h_threshold, &param);
+	next_toom_start = mul_toom22_threshold;
 
-  param.name = "MUL_TOOM8H_THRESHOLD";
-  param.min_size = MAX (mul_toom6h_threshold, MPN_TOOM8H_MUL_MINSIZE);
-  param.max_size = MUL_TOOM8H_THRESHOLD_LIMIT-1;
-  one (&mul_toom8h_threshold, &param);
+	if (mul_toom33_threshold != 0)
+	  {
+	    param.name = "MUL_TOOM33_THRESHOLD";
+	    param.min_size = MAX (next_toom_start, MPN_TOOM33_MUL_MINSIZE);
+	    param.max_size = MUL_TOOM33_THRESHOLD_LIMIT-1;
+	    one (&mul_toom33_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= mul_toom33_threshold)
+	      {
+		mul_toom33_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+
+	next_toom_start = MAX (next_toom_start, mul_toom33_threshold);
+
+	if (mul_toom44_threshold != 0)
+	  {
+	    param.name = "MUL_TOOM44_THRESHOLD";
+	    param.min_size = MAX (next_toom_start, MPN_TOOM44_MUL_MINSIZE);
+	    param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
+	    one (&mul_toom44_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= mul_toom44_threshold)
+	      {
+		mul_toom44_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+
+	next_toom_start = MAX (next_toom_start, mul_toom44_threshold);
+
+	if (mul_toom6h_threshold != 0)
+	  {
+	    param.name = "MUL_TOOM6H_THRESHOLD";
+	    param.min_size = MAX (next_toom_start, MPN_TOOM6H_MUL_MINSIZE);
+	    param.max_size = MUL_TOOM6H_THRESHOLD_LIMIT-1;
+	    one (&mul_toom6h_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= mul_toom6h_threshold)
+	      {
+		mul_toom6h_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+
+	next_toom_start = MAX (next_toom_start, mul_toom6h_threshold);
+
+	if (mul_toom8h_threshold != 0)
+	  {
+	    param.name = "MUL_TOOM8H_THRESHOLD";
+	    param.min_size = MAX (next_toom_start, MPN_TOOM8H_MUL_MINSIZE);
+	    param.max_size = MUL_TOOM8H_THRESHOLD_LIMIT-1;
+	    one (&mul_toom8h_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= mul_toom8h_threshold)
+	      {
+		mul_toom8h_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+    }
+
+    print_define ("MUL_TOOM33_THRESHOLD", MUL_TOOM33_THRESHOLD);
+    print_define ("MUL_TOOM44_THRESHOLD", MUL_TOOM44_THRESHOLD);
+    print_define ("MUL_TOOM6H_THRESHOLD", MUL_TOOM6H_THRESHOLD);
+    print_define ("MUL_TOOM8H_THRESHOLD", MUL_TOOM8H_THRESHOLD);
 
   /* disabled until tuned */
   MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
@@ -1367,29 +1428,83 @@ tune_sqr (void)
 
   {
     static struct param_t  param;
-    mp_size_t toom3_start = MAX (sqr_toom2_threshold, sqr_basecase_threshold);
+    mp_size_t next_toom_start;
+    int something_changed;
 
     param.function = speed_mpn_sqr;
+    param.noprint = 1;
 
-    param.name = "SQR_TOOM3_THRESHOLD";
-    param.min_size = MAX (toom3_start, MPN_TOOM3_SQR_MINSIZE);
-    param.max_size = SQR_TOOM3_THRESHOLD_LIMIT-1;
-    one (&sqr_toom3_threshold, &param);
+  /* Threshold sequence loop.  Disable functions that would be used in a very
+     narrow range, re-measuring things when that happens.  */
+    something_changed = 1;
+    while (something_changed)
+      {
+	something_changed = 0;
 
-    param.name = "SQR_TOOM4_THRESHOLD";
-    param.min_size = MAX (sqr_toom3_threshold, MPN_TOOM4_SQR_MINSIZE);
-    param.max_size = SQR_TOOM4_THRESHOLD_LIMIT-1;
-    one (&sqr_toom4_threshold, &param);
+	next_toom_start = MAX (sqr_toom2_threshold, sqr_basecase_threshold);
 
-    param.name = "SQR_TOOM6_THRESHOLD";
-    param.min_size = MAX (sqr_toom4_threshold, MPN_TOOM6_SQR_MINSIZE);
-    param.max_size = SQR_TOOM6_THRESHOLD_LIMIT-1;
-    one (&sqr_toom6_threshold, &param);
+	sqr_toom3_threshold = SQR_TOOM3_THRESHOLD_LIMIT;
+	param.name = "SQR_TOOM3_THRESHOLD";
+	param.min_size = MAX (next_toom_start, MPN_TOOM3_SQR_MINSIZE);
+	param.max_size = SQR_TOOM3_THRESHOLD_LIMIT-1;
+	one (&sqr_toom3_threshold, &param);
 
-    param.name = "SQR_TOOM8_THRESHOLD";
-    param.min_size = MAX (sqr_toom6_threshold, MPN_TOOM8_SQR_MINSIZE);
-    param.max_size = SQR_TOOM8_THRESHOLD_LIMIT-1;
-    one (&sqr_toom8_threshold, &param);
+	next_toom_start = MAX (next_toom_start, sqr_toom3_threshold);
+
+	if (sqr_toom4_threshold != 0)
+	  {
+	    param.name = "SQR_TOOM4_THRESHOLD";
+	    sqr_toom4_threshold = SQR_TOOM4_THRESHOLD_LIMIT;
+	    param.min_size = MAX (next_toom_start, MPN_TOOM4_SQR_MINSIZE);
+	    param.max_size = SQR_TOOM4_THRESHOLD_LIMIT-1;
+	    one (&sqr_toom4_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= sqr_toom4_threshold)
+	      {
+		sqr_toom4_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+
+	next_toom_start = MAX (next_toom_start, sqr_toom4_threshold);
+
+	if (sqr_toom6_threshold != 0)
+	  {
+	    param.name = "SQR_TOOM6_THRESHOLD";
+	    sqr_toom6_threshold = SQR_TOOM6_THRESHOLD_LIMIT;
+	    param.min_size = MAX (next_toom_start, MPN_TOOM6_SQR_MINSIZE);
+	    param.max_size = SQR_TOOM6_THRESHOLD_LIMIT-1;
+	    one (&sqr_toom6_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= sqr_toom6_threshold)
+	      {
+		sqr_toom6_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+
+	next_toom_start = MAX (next_toom_start, sqr_toom6_threshold);
+
+	if (sqr_toom8_threshold != 0)
+	  {
+	    param.name = "SQR_TOOM8_THRESHOLD";
+	    sqr_toom8_threshold = SQR_TOOM8_THRESHOLD_LIMIT;
+	    param.min_size = MAX (next_toom_start, MPN_TOOM8_SQR_MINSIZE);
+	    param.max_size = SQR_TOOM8_THRESHOLD_LIMIT-1;
+	    one (&sqr_toom8_threshold, &param);
+
+	    if (next_toom_start * 1.05 >= sqr_toom8_threshold)
+	      {
+		sqr_toom8_threshold = 0;
+		something_changed = 1;
+	      }
+	  }
+      }
+
+    print_define ("SQR_TOOM3_THRESHOLD", SQR_TOOM3_THRESHOLD);
+    print_define ("SQR_TOOM4_THRESHOLD", SQR_TOOM4_THRESHOLD);
+    print_define ("SQR_TOOM6_THRESHOLD", SQR_TOOM6_THRESHOLD);
+    print_define ("SQR_TOOM8_THRESHOLD", SQR_TOOM8_THRESHOLD);
   }
 }
 
