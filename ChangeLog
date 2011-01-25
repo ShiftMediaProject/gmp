@@ -1,3 +1,7 @@
+2011-01-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/k7/bdiv_q_1.asm: New file.
+
 2011-01-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mul_n, tune_sqr): Loop, re-measuring thresholds
