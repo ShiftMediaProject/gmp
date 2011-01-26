@@ -1,3 +1,7 @@
+2011-01-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/alpha/invert_limb.asm: Complete rewrite.
+
 2011-01-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc32/invert_limb.asm: New file.
