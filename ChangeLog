@@ -3,6 +3,7 @@
 	* mpn/x86_64/atom/rsh1aors_n.asm: New file, grabbing another asm file.
 	* mpn/x86_64/atom/popcount.asm: Likewise.
 	* mpn/x86_64/atom/dive_1.asm: Likewise.
+	* mpn/x86_64/nano/popcount.asm: Likewise.
 
 2011-01-26  Torbjorn Granlund  <tege@gmplib.org>
 
