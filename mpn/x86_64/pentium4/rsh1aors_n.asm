@@ -2,7 +2,7 @@ dnl  x86-64 mpn_rsh1add_n/mpn_rsh1sub_n optimized for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2007, 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -28,7 +28,7 @@ C AMD K10	 4.13
 C Intel P4	 5.70
 C Intel core2	 4.75
 C Intel corei	 5
-C Intel atom	 ?
+C Intel atom	 8.75
 C VIA nano	 5.25
 
 C TODO
