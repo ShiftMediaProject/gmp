@@ -1,3 +1,8 @@
+2011-01-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/addlsh1_n.asm: Removed.
+	* mpn/x86/atom/rsh1add_n.asm: Likewise.
+
 2011-01-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/ev6/slot.pl: Add some missing insns.
