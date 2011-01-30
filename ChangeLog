@@ -1,3 +1,8 @@
+2011-01-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Support x86/geode.
+	* mpn/x86/geode/gmp-mparam.h: New file.
+
 2011-01-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/addlsh1_n.asm: Removed.
