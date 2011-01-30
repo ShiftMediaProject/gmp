@@ -45,12 +45,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD      73
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD      66
 
-#define SQR_BASECASE_THRESHOLD               9
+#define SQR_BASECASE_THRESHOLD              12
 #define SQR_TOOM2_THRESHOLD                 30
 #define SQR_TOOM3_THRESHOLD                 53
 #define SQR_TOOM4_THRESHOLD                148
-#define SQR_TOOM6_THRESHOLD                194
-#define SQR_TOOM8_THRESHOLD                430
+#define SQR_TOOM6_THRESHOLD                206
+#define SQR_TOOM8_THRESHOLD                296
 
 #define MULMOD_BNM1_THRESHOLD               14
 #define SQRMOD_BNM1_THRESHOLD               14
@@ -105,16 +105,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_TABLE3_SIZE 80
 #define SQR_FFT_THRESHOLD                 2368
 
-#define MULLO_BASECASE_THRESHOLD            13
-#define MULLO_DC_THRESHOLD                  21
+#define MULLO_BASECASE_THRESHOLD             7
+#define MULLO_DC_THRESHOLD                  28
 #define MULLO_MUL_N_THRESHOLD             6633
 
-#define DC_DIV_QR_THRESHOLD                 27
+#define DC_DIV_QR_THRESHOLD                 32
 #define DC_DIVAPPR_Q_THRESHOLD             112
 #define DC_BDIV_QR_THRESHOLD                29
 #define DC_BDIV_Q_THRESHOLD                 78
 
-#define INV_MULMOD_BNM1_THRESHOLD           66
+#define INV_MULMOD_BNM1_THRESHOLD           58
 #define INV_NEWTON_THRESHOLD                93
 #define INV_APPR_THRESHOLD                  91
 
@@ -129,8 +129,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                      69
-#define GCD_DC_THRESHOLD                   229
-#define GCDEXT_DC_THRESHOLD                195
+#define GCD_DC_THRESHOLD                   400
+#define GCDEXT_DC_THRESHOLD                201
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                17
