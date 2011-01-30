@@ -1,7 +1,7 @@
 /* Speed measuring program.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010 Free
-Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010,
+2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -231,7 +231,7 @@ const struct routine_t {
   { "mpn_divexact_1",    speed_mpn_divexact_1,    FLAG_R },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3          },
 
-  { "mpn_bdiv_q_1",      speed_mpn_bdiv_q_1,      FLAG_R_OPTIONAL },
+  { "mpn_bdiv_q_1",      speed_mpn_bdiv_q_1,      FLAG_R },
   { "mpn_pi1_bdiv_q_1",  speed_mpn_pi1_bdiv_q_1,  FLAG_R_OPTIONAL },
   { "mpn_bdiv_dbm1c",    speed_mpn_bdiv_dbm1c,    FLAG_R_OPTIONAL },
 
