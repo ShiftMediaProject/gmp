@@ -85,6 +85,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_FFT_THRESHOLD                 3712
 
 #define SQR_FFT_MODF_THRESHOLD             308  /* k = 5 */
+#define SQR_FFT_TABLE3                                      \
   { {    308, 5}, {     21, 6}, {     11, 5}, {     23, 6}, \
     {     21, 7}, {     11, 6}, {     24, 7}, {     13, 6}, \
     {     27, 7}, {     15, 6}, {     31, 7}, {     21, 8}, \
