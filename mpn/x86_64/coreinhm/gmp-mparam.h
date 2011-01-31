@@ -1,7 +1,7 @@
-/* Core i gmp-mparam.h -- Compiler/machine parameter header file.
+/* Nehalem gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright 1991, 1993, 1994, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-2008, 2009, 2010 Free Software Foundation, Inc.
+2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,7 +21,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
-/* 2667 MHz Core i7 */
+/* 2667 MHz Core i7 Nehalem */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */

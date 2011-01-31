@@ -1450,7 +1450,7 @@ case $host in
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
         ;;
-      core2 | corei)
+      core2 | corei*)
         gcc_cflags_cpu="-mtune=core2 -mtune=k8"
         gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
         ;;
@@ -1513,8 +1513,11 @@ case $host in
 	  core2)
 	    path_64="x86_64/core2 $path_64"
 	    ;;
-	  corei)
-	    path_64="x86_64/corei x86_64/core2 $path_64"
+	  corei | coreinhm | coreiwsm)
+	    path_64="x86_64/coreinhm x86_64/core2 $path_64"
+	    ;;
+	  coreisbr)
+	    path_64="x86_64/coreisbr x86_64/coreinhm x86_64/core2 $path_64"
 	    ;;
 	  atom)
 	    path_64="x86_64/atom $path_64"
@@ -1826,7 +1829,7 @@ case $host in
 	gcc_64_cflags=""
 	extra_functions_64="$extra_functions_64 fat fat_entry"
 	path_64="x86_64/fat x86_64"
-	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/corei x86_64/atom x86_64/nano"
+	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/atom x86_64/nano"
       fi
 
       fat_functions="add_n addmul_1 copyd copyi
