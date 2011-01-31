@@ -763,8 +763,11 @@ main ()
 	  else if (model == 0x25)	cpu_64bit = 1, modelstr = "corei"; /* WSM Clarkdale/Arrandale */
 	  else if (model == 0x26)	cpu_64bit = 1, modelstr = "atom";  /* Lincroft */
 	  else if (model == 0x27)	cpu_64bit = 1, modelstr = "atom";  /* Saltwell */
+	  else if (model == 0x2a)	cpu_64bit = 1, modelstr = "corei"; /* SB */
 	  else if (model == 0x2c)	cpu_64bit = 1, modelstr = "corei"; /* WSM Gulftown */
+	  else if (model == 0x2d)	cpu_64bit = 1, modelstr = "corei"; /* SBC-EP */
 	  else if (model == 0x2e)	cpu_64bit = 1, modelstr = "corei"; /* NHM Beckton */
+	  else if (model == 0x2f)	cpu_64bit = 1, modelstr = "corei"; /* WSM Eagleton */
 	  else cpu_64bit = 1, modelstr = "corei"; /* default */
 	  break;
 	case 15:
