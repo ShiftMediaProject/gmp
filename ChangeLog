@@ -1,3 +1,9 @@
+2011-01-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Support 'coreinhm' and 'coreisbr'.
+	* config.sub: Likewise.
+	* configure.in: Likewise.
+
 2011-01-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Support x86/geode.
@@ -32,7 +38,7 @@
 	* mpn/x86/atom/rsh1add_n.asm: Likewise.
 	* mpn/x86/atom/rshift.asm: Likewise.
 	* mpn/x86/atom/sqr_basecase.asm: Likewise.
-	
+
 2011-01-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/rsh1aors_n.asm: New file, grabbing another asm file.
