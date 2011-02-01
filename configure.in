@@ -1450,7 +1450,7 @@ case $host in
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
         ;;
-      core2 | corei*)
+      core2 | corei | coreinhm | coreiwsm | coreisbr)
         gcc_cflags_cpu="-mtune=core2 -mtune=k8"
         gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
         ;;
@@ -1472,7 +1472,7 @@ case $host in
       i686 | pentiumpro)    path="x86/p6 x86" ;;
       pentium2)             path="x86/p6/mmx x86/p6 x86" ;;
       pentium3)             path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
-      pentiumm | core2 | corei)
+      pentiumm | core2 | corei | coreinhm | coreiwsm | coreisbr)
                             path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
