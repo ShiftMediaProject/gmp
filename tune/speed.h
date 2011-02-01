@@ -117,7 +117,7 @@ struct speed_params {
   struct {
     mp_ptr    ptr;
     mp_size_t size;
-  } src[3], dst[3];
+  } src[3], dst[4];
 };
 
 typedef double (*speed_function_t) __GMP_PROTO ((struct speed_params *s));
@@ -2433,6 +2433,56 @@ int speed_routine_count_zeros_setup
      },									\
      function (px[j-1], py[j-1], 0))
 
+
+#define SPEED_ROUTINE_MPN_HGCD_CALL(func, itchfunc)			\
+  {									\
+    mp_size_t hgcd_init_itch, hgcd_itch;				\
+    mp_ptr ap, bp, wp, tmp1;						\
+    struct hgcd_matrix hgcd;						\
+    int res;								\
+    unsigned i;								\
+    double t;								\
+    TMP_DECL;								\
+    									\
+    if (s->size < 2)							\
+      return -1;							\
+    									\
+    TMP_MARK;								\
+    									\
+    SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);		\
+    									\
+    s->xp[s->size - 1] |= 1;						\
+    s->yp[s->size - 1] |= 1;						\
+    									\
+    hgcd_init_itch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);		\
+    hgcd_itch = itchfunc (s->size);					\
+    									\
+    SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_itch, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, hgcd_itch, s->align_wp);			\
+    									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, s->yp, s->size);				\
+    speed_operand_dst (s, ap, s->size + 1);				\
+    speed_operand_dst (s, bp, s->size + 1);				\
+    speed_operand_dst (s, wp, hgcd_itch);				\
+    speed_operand_dst (s, tmp1, hgcd_itch);				\
+    speed_cache_fill (s);						\
+    									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      {									\
+	MPN_COPY (ap, s->xp, s->size);					\
+	MPN_COPY (bp, s->yp, s->size);					\
+	mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);			\
+	res = func (ap, bp, s->size, &hgcd, wp);			\
+      }									\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+    TMP_FREE;								\
+    return t;								\
+  }
 
 /* Run some GCDs of s->size limbs each.  The number of different data values
    is decreased as s->size**2, since GCD is a quadratic algorithm.

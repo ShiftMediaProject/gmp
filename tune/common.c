@@ -125,7 +125,7 @@ double
 speed_measure (double (*fun) __GMP_PROTO ((struct speed_params *s)),
 	       struct speed_params *s)
 {
-#define TOLERANCE    1.005  /* 0.5% */
+#define TOLERANCE    1.01  /* 1% */
   const int max_zeros = 10;
 
   struct speed_params  s_dummy;
@@ -1364,91 +1364,13 @@ speed_mpn_matrix22_mul (struct speed_params *s)
 double
 speed_mpn_hgcd (struct speed_params *s)
 {
-  mp_ptr wp;
-  mp_size_t hgcd_init_scratch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);
-  mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
-  mp_ptr ap;
-  mp_ptr bp;
-  mp_ptr tmp1;
-
-  struct hgcd_matrix hgcd;
-  int res;
-  unsigned i;
-  double t;
-  TMP_DECL;
-
-  if (s->size < 2)
-    return -1;
-
-  TMP_MARK;
-
-  SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
-
-  s->xp[s->size - 1] |= 1;
-  s->yp[s->size - 1] |= 1;
-
-  SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
-
-  speed_starttime ();
-  i = s->reps;
-  do
-    {
-      MPN_COPY (ap, s->xp, s->size);
-      MPN_COPY (bp, s->yp, s->size);
-      mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
-      res = mpn_hgcd (ap, bp, s->size, &hgcd, wp);
-    }
-  while (--i != 0);
-  t = speed_endtime ();
-  TMP_FREE;
-  return t;
+  SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd, mpn_hgcd_itch);
 }
 
 double
 speed_mpn_hgcd_lehmer (struct speed_params *s)
 {
-  mp_ptr wp;
-  mp_size_t hgcd_init_scratch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);
-  mp_size_t hgcd_scratch = MPN_HGCD_LEHMER_ITCH (s->size);
-  mp_ptr ap;
-  mp_ptr bp;
-  mp_ptr tmp1;
-
-  struct hgcd_matrix hgcd;
-  int res;
-  unsigned i;
-  double t;
-  TMP_DECL;
-
-  if (s->size < 2)
-    return -1;
-
-  TMP_MARK;
-
-  SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
-
-  s->xp[s->size - 1] |= 1;
-  s->yp[s->size - 1] |= 1;
-
-  SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
-
-  speed_starttime ();
-  i = s->reps;
-  do
-    {
-      MPN_COPY (ap, s->xp, s->size);
-      MPN_COPY (bp, s->yp, s->size);
-      mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
-      res = mpn_hgcd_lehmer (ap, bp, s->size, &hgcd, wp);
-    }
-  while (--i != 0);
-  t = speed_endtime ();
-  TMP_FREE;
-  return t;
+  SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd_lehmer, MPN_HGCD_LEHMER_ITCH);
 }
 
 double

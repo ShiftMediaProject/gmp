@@ -1,5 +1,14 @@
 2011-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h (struct speed_params): Allow for 4 dst operands.
+	* tune/common.c (TOLERANCE): Increase from 0.5% to 1%.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_CALL): New macro, mainly based
+	on old speed_mpn_hgcd, but with speed_operand_src calls (as suggested
+	by Niels).
+	* tune/common.c	(speed_mpn_hgcd): Invoke SPEED_ROUTINE_MPN_HGCD_CALL.
+	(speed_mpn_hgcd_lehmer): Likewise.
+
 	* configure.in: Set up 32-bit x86 paths for new corei* CPU strings.
 
 2011-01-31  Torbjorn Granlund  <tege@gmplib.org>
