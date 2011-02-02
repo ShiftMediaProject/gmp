@@ -1,3 +1,8 @@
+2011-02-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_CALL): Fixed one
+	speed_operand_dst call.
+
 2011-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.h (struct speed_params): Allow for 4 dst operands.

@@ -2466,7 +2466,7 @@ int speed_routine_count_zeros_setup
     speed_operand_dst (s, ap, s->size + 1);				\
     speed_operand_dst (s, bp, s->size + 1);				\
     speed_operand_dst (s, wp, hgcd_itch);				\
-    speed_operand_dst (s, tmp1, hgcd_itch);				\
+    speed_operand_dst (s, tmp1, hgcd_init_itch);			\
     speed_cache_fill (s);						\
     									\
     speed_starttime ();							\
