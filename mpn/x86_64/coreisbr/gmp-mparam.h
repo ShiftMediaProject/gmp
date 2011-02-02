@@ -129,12 +129,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_Q_THRESHOLD               1442
 
 #define MATRIX22_STRASSEN_THRESHOLD         15
-#define HGCD_THRESHOLD                     125 /* hardwired, tuneup crashes */
-#define GCD_DC_THRESHOLD                   396
-#define GCDEXT_DC_THRESHOLD                368
+#define HGCD_THRESHOLD                      69
+#define GCD_DC_THRESHOLD                   416
+#define GCDEXT_DC_THRESHOLD                393
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                12
 #define GET_STR_PRECOMPUTE_THRESHOLD        21
-#define SET_STR_DC_THRESHOLD               650
-#define SET_STR_PRECOMPUTE_THRESHOLD      1585
+#define SET_STR_DC_THRESHOLD               698
+#define SET_STR_PRECOMPUTE_THRESHOLD      1664
