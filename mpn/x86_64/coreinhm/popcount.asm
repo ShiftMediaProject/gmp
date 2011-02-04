@@ -20,5 +20,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-MULFUNC_PROLOGUE (mpn_popcount)
+MULFUNC_PROLOGUE(mpn_popcount)
 include_mpn(`x86_64/k10/popcount.asm')
