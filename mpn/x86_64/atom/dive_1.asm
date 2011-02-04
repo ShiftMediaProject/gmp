@@ -19,4 +19,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+MULFUNC_PROLOGUE (mpn_divexact_1)
 include_mpn(`x86_64/nano/dive_1.asm')
