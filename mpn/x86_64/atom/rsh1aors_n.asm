@@ -21,4 +21,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1sub_n)
 include_mpn(`x86_64/pentium4/rsh1aors_n.asm')
