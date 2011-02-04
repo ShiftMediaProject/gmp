@@ -1,3 +1,14 @@
+2011-02-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/rsh1aors_n.asm: Add a MULFUNC_PROLOGUE.
+	* mpn/x86_64/atom/dive_1.asm: Likewise.
+	* mpn/x86_64/atom/popcount.asm: Likewise.
+	* mpn/x86_64/core2/popcount.asm: Likewise.
+	* mpn/x86_64/coreinhm/hamdist.asm: Likewise.
+	* mpn/x86_64/coreinhm/popcount.asm: Likewise.
+	* mpn/x86_64/nano/popcount.asm: Likewise.
+	* mpn/x86_64/pentium4/popcount.asm: Likewise.
+
 2011-02-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/mode1o.asm: New file, grabbing another asm file.
@@ -16,7 +27,7 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_CALL): New macro, mainly based
 	on old speed_mpn_hgcd, but with speed_operand_src calls (as suggested
 	by Niels).
-	* tune/common.c	(speed_mpn_hgcd): Invoke SPEED_ROUTINE_MPN_HGCD_CALL.
+	* tune/common.c (speed_mpn_hgcd): Invoke SPEED_ROUTINE_MPN_HGCD_CALL.
 	(speed_mpn_hgcd_lehmer): Likewise.
 
 	* configure.in: Set up 32-bit x86 paths for new corei* CPU strings.
