@@ -1,4 +1,4 @@
-dnl  Intel Atom mpn_mul_1.
+dnl  Intel Atom mpn_modexact_1_odd -- exact division style remainder.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 dnl
@@ -19,5 +19,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-MULFUNC_PROLOGUE(mpn_mul_1 mpn_mul_1c)
-include_mpn(`x86/pentium4/sse2/mul_1.asm')
+MULFUNC_PROLOGUE(mpn_modexact_1_odd mpn_modexact_1c_odd)
+include_mpn(`x86/pentium/mode1o.asm')

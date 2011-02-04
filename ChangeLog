@@ -1,3 +1,8 @@
+2011-02-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/mode1o.asm: New file, grabbing another asm file.
+	* mpn/x86/atom/mul_1.asm: Claim mul_1c.
+
 2011-02-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_CALL): Fixed one
