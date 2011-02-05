@@ -800,11 +800,15 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_
    returns the carry out (0, 1 or 2).  */
 #define mpn_addlsh1_n __MPN(addlsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_addlsh1_nc __MPN(addlsh1_nc)
+__GMP_DECLSPEC mp_limb_t mpn_addlsh1_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_addlsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+4*{b,n}, and
    returns the carry out (0, ..., 4).  */
 #define mpn_addlsh2_n __MPN(addlsh2_n)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_addlsh2_nc __MPN(addlsh2_nc)
+__GMP_DECLSPEC mp_limb_t mpn_addlsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_addlsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}+2^k*{b,n}, and
    returns the carry out (0, ..., 2^k).  */
@@ -815,21 +819,29 @@ __GMP_DECLSPEC mp_limb_t mpn_addlsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
    returns the borrow out (0, 1 or 2).  */
 #define mpn_sublsh1_n __MPN(sublsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_sublsh1_nc __MPN(sublsh1_nc)
+__GMP_DECLSPEC mp_limb_t mpn_sublsh1_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_rsblsh1_n(c,a,b,n), when it exists, sets {c,n} to 2*{b,n}-{a,n}, and
    returns the carry out (-1, 0, 1).  */
 #define mpn_rsblsh1_n __MPN(rsblsh1_n)
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_rsblsh1_nc __MPN(rsblsh1_nc)
+__GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_sublsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-4*{b,n}, and
    returns the borrow out (FIXME 0, 1, 2 or 3).  */
 #define mpn_sublsh2_n __MPN(sublsh2_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_sublsh2_nc __MPN(sublsh2_nc)
+__GMP_DECLSPEC mp_limb_t mpn_sublsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_rsblsh2_n(c,a,b,n), when it exists, sets {c,n} to 4*{b,n}-{a,n}, and
    returns the carry out (-1, ..., 3).  */
 #define mpn_rsblsh2_n __MPN(rsblsh2_n)
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_rsblsh2_nc __MPN(rsblsh2_nc)
+__GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_rsblsh_n(c,a,b,n,k), when it exists, sets {c,n} to 2^k*{b,n}-{a,n}, and
    returns the carry out (-1, 0, ..., 2^k-1).  */
