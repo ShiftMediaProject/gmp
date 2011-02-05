@@ -117,9 +117,10 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
 	  lsize -= (c == 0);
 
 	  /* lp = 5*lp */
-#if HAVE_NATIVE_mpn_addlshift
-	  c = mpn_addlshift (lp, lp, lsize, 2);
+#if HAVE_NATIVE_mpn_addlsh2_n
+	  c = mpn_addlsh2_n (lp, lp, lp, lsize);
 #else
+	  /* FIXME: Is this faster than mpn_mul_1 ? */
 	  c = mpn_lshift (xp, lp, lsize, 2);
 	  c += mpn_add_n (lp, lp, xp, lsize);
 #endif
