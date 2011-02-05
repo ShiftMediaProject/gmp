@@ -1,5 +1,9 @@
 2011-02-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreisbr/aorrlshC_n.asm: New file.
+	* mpn/x86_64/coreisbr/aorrlsh1_n.asm: New file.
+	* mpn/x86_64/coreisbr/aorrlsh2_n.asm: New file.
+
 	* mpn/x86_64/coreisbr/aors_n.asm: New file, based on old
 	atom/aors_n.asm.
 	* mpn/x86_64/atom/aors_n.asm: Grab coreisbr/aors_n.asm.
