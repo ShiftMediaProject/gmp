@@ -1,3 +1,8 @@
+2011-02-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (mpn_toom6_mul_n_itch): Handle threshold == zero.
+	 (mpn_toom8_mul_n_itch): Likewise.
+
 2011-02-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/rsh1aors_n.asm: Add a MULFUNC_PROLOGUE.

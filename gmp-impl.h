@@ -4620,13 +4620,16 @@ extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 
 #define mpn_toom6_sqr_itch(n)						\
 ( ((n) - SQR_TOOM6_THRESHOLD)*2 +					\
-   MAX(SQR_TOOM6_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
+   MAX(SQR_TOOM6_THRESHOLD*2 + GMP_NUMB_BITS*6,				\
        mpn_toom4_sqr_itch(SQR_TOOM6_THRESHOLD)) )
 
+#define MUL_TOOM6H_MIN							\
+  ((MUL_TOOM6H_THRESHOLD > MUL_TOOM44_THRESHOLD) ?			\
+    MUL_TOOM6H_THRESHOLD : MUL_TOOM44_THRESHOLD)
 #define mpn_toom6_mul_n_itch(n)						\
-( ((n) - MUL_TOOM6H_THRESHOLD)*2 +					\
-   MAX(MUL_TOOM6H_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
-       mpn_toom44_mul_itch(MUL_TOOM6H_THRESHOLD,MUL_TOOM6H_THRESHOLD)) )
+( ((n) - MUL_TOOM6H_MIN)*2 +					\
+   MAX(MUL_TOOM6H_MIN*2 + GMP_NUMB_BITS*6,			\
+       mpn_toom44_mul_itch(MUL_TOOM6H_MIN,MUL_TOOM6H_MIN)) )
 
 static inline mp_size_t
 mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
@@ -4640,10 +4643,13 @@ mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
    MAX(((SQR_TOOM8_THRESHOLD*15)>>3) + GMP_NUMB_BITS*6,		\
        mpn_toom6_sqr_itch(SQR_TOOM8_THRESHOLD)) )
 
+#define MUL_TOOM8H_MIN							\
+  ((MUL_TOOM8H_THRESHOLD > MUL_TOOM6H_MIN) ?				\
+    MUL_TOOM8H_THRESHOLD : MUL_TOOM6H_MIN)
 #define mpn_toom8_mul_n_itch(n)						\
-( (((n)*15)>>3) - ((MUL_TOOM8H_THRESHOLD*15)>>3) +			\
-   MAX(((MUL_TOOM8H_THRESHOLD*15)>>3) + GMP_NUMB_BITS*6,		\
-       mpn_toom6_mul_n_itch(MUL_TOOM8H_THRESHOLD)) )
+( (((n)*15)>>3) - ((MUL_TOOM8H_MIN*15)>>3) +			\
+   MAX(((MUL_TOOM8H_MIN*15)>>3) + GMP_NUMB_BITS*6,		\
+       mpn_toom6_mul_n_itch(MUL_TOOM8H_MIN)) )
 
 static inline mp_size_t
 mpn_toom8h_mul_itch (mp_size_t an, mp_size_t bn) {
