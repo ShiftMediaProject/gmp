@@ -2,6 +2,9 @@
 
 	* gmp-impl.h (mpn_toom6_mul_n_itch): Handle threshold == zero.
 	 (mpn_toom8_mul_n_itch): Likewise.
+	 (MPN_TOOM6H_MIN, MPN_TOOM8H_MIN): Define.
+	* tests/mpn/t-toom6h.c: No tests below MPN_TOOM6H_MIN.
+	* tests/mpn/t-toom8h.c: No tests below MPN_TOOM8H_MIN.
 
 2011-02-04  Torbjorn Granlund  <tege@gmplib.org>
 
