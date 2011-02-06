@@ -1,3 +1,10 @@
+2011-02-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/k7/addlsh1_n.asm: New file.
+	* mpn/x86/k7/sublsh1_n.asm: New file.
+	* mpn/x86/atom/addlsh1_n.asm: Grab k7/addlsh1_n.asm.
+	* mpn/x86/atom/sublsh1_n.asm: Grab k7/sublsh1_n.asm.
+
 2011-02-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_addlsh1_nc, mpn_addlsh2_nc, mpn_sublsh1_nc,
