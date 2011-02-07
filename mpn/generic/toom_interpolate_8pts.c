@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,7 +61,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_n
-#define DO_mpn_sublsh_n(dst,src,n,s,ws) mpn_sublsh_n (dst,src,n,s)
+#define DO_mpn_sublsh_n(dst,src,n,s,ws) mpn_sublsh_n (dst,dst,src,n,s)
 #else
 static mp_limb_t
 DO_mpn_sublsh_n (mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr ws)
