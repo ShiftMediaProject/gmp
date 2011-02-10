@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_mod_1s_4p
 
-dnl  Copyright 2010 Free Software Foundation, Inc.
+dnl  Copyright 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,7 +21,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C POWER3/PPC630		 ?
-C POWER4/PPC970		 ?
+C POWER4/PPC970		 9
 C POWER5		 9
 C POWER6		13
 
@@ -115,7 +115,7 @@ L(6):	addi	r10, n, 3
 	mtctr	r7
 	bdz	L(end)
 
-	ALIGN(32)
+	ALIGN(16)
 L(top):	ld	r31, -16(ap)
 	ld	r10, -8(ap)
 	ld	r11, 8(ap)
@@ -130,9 +130,9 @@ L(top):	ld	r31, -16(ap)
 	mulld	r11, r11, r24
 	mulhdu	r4, r12, r25
 	mulld	r12, r12, r25
-	addi	ap, ap, -32
 	addc	r8, r10, r31
 	addze	r10, r27
+	addi	ap, ap, -32
 	addc	r27, r8, r12
 	adde	r12, r10, r4
 	addc	r11, r27, r11
@@ -142,8 +142,8 @@ L(top):	ld	r31, -16(ap)
 	addc	r0, r9, r12
 	adde	r9, r7, r4
 	bdnz	L(top)
-L(end):
-	lwz	r3, 12(cps)
+
+L(end):	lwz	r3, 12(cps)
 	mulld	r10, r9, r26
 	mulhdu	r9, r9, r26
 	addc	r11, r0, r10
