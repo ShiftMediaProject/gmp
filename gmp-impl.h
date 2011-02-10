@@ -830,7 +830,7 @@ __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, m
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_sublsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-4*{b,n}, and
-   returns the borrow out (FIXME 0, 1, 2 or 3).  */
+   returns the borrow out (0, ..., 4).  */
 #define mpn_sublsh2_n __MPN(sublsh2_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_sublsh2_nc __MPN(sublsh2_nc)
