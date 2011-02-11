@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_mod_1_1p
 
-dnl  Copyright 2010 Free Software Foundation, Inc.
+dnl  Copyright 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,7 +21,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C POWER3/PPC630		 ?
-C POWER4/PPC970		 ?
+C POWER4/PPC970		17
 C POWER5		16
 C POWER6		30
 
@@ -68,10 +68,10 @@ L(top):	ld	r4, -24(r3)
 	adde	r9, r9, r10
 	bdnz	L(top)
 
-L(end):	lwz	r0, r12(r6)
+L(end):	lwz	r0, 12(r6)
 	ld	r3, 0(r6)
-	cmpdi	r7, r0, 0
-	beq-	r7, L(4)
+	cmpdi	cr7, r0, 0
+	beq-	cr7, L(4)
 	subfic	r10, r0, 64
 	sld	r9, r9, r0
 	srd	r10, r11, r10
@@ -89,11 +89,11 @@ L(4):	subfc	r10, r5, r9
 	adde	r3, r10, r9
 	mulld	r3, r3, r5
 	subf	r3, r3, r11
-	cmpld	r7, r8, r3
-	bge	r7, L(5)		C FIXME: Make branch-less
+	cmpld	cr7, r8, r3
+	bge	cr7, L(5)		C FIXME: Make branch-less
 	add	r3, r3, r5
-L(5):	cmpld	r7, r3, r5
-	bge-	r7, L(10)
+L(5):	cmpld	cr7, r3, r5
+	bge-	cr7, L(10)
 	srd	r3, r3, r0
 	blr
 
@@ -116,9 +116,9 @@ PROLOGUE(mpn_mod_1_1p_cps)
 	mr	r3, r30
 	CALL(	mpn_invert_limb)
 	nop
-	cmpdi	r7, r31, 0
+	cmpdi	cr7, r31, 0
 	neg	r0, r30
-	beq-	r7, L(13)
+	beq-	cr7, L(13)
 	subfic	r11, r31, 64
 	li	r0, 1
 	neg	r9, r30
@@ -131,8 +131,8 @@ L(13):	mulhdu	r9, r0, r3
 	add	r9, r0, r9
 	nor	r9, r9, r9
 	mulld	r9, r9, r30
-	cmpld	r7, r11, r9
-	bge	r7, L(14)
+	cmpld	cr7, r11, r9
+	bge	cr7, L(14)
 	add	r9, r9, r30
 L(14):	addi	r1, r1, 144
 	srd	r0, r0, r31

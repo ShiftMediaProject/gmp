@@ -1,3 +1,7 @@
+2011-02-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/mod_1_1.asm: Fix Darwin syntax issues.
+
 2011-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/mod_1_4.asm: Tune away a cycle for 970.
