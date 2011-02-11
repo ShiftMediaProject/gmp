@@ -2,10 +2,14 @@
 
 	* mpn/x86/k7/addlsh1_n.asm: Faster core loop (Torbjorn's).
 
-	* configure.in: Add HAVE_NATIVE_{add,sub,rsb}lsh{,1,2}.
-	* tests/tests.h: refmpn_{add,sub,rsb}lsh{,1,2} prototypes.
-	* tests/refmpn.c: New refmpn_{add,sub,rsb}lsh{,1,2}.
-	* tests/devel/try.c: Tests for mpn_{add,sub,rsb}lsh{,1,2}.
+	* configure.in: Add HAVE_NATIVE_{add,sub,rsb}lsh{,1,2}_nc.
+	* tests/tests.h: refmpn_{add,sub,rsb}lsh{,1,2}_nc prototypes.
+	* tests/refmpn.c: New refmpn_{add,sub,rsb}lsh{,1,2}_nc.
+	* tests/devel/try.c: Tests for mpn_{add,sub,rsb}lsh{,1,2}_nc.
+
+	* mpn/x86/k7/aorrlshC_n.asm: New file.
+	* mpn/x86/atom/aorrlsh2_n.asm: Grab k7/aorrlshC_n.asm.
+	* mpn/x86/atom/rsblsh1_n.asm: Grab k7/aorrlshC_n.asm.
 
 2011-02-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
