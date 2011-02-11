@@ -75,7 +75,7 @@ define(`rp',  `%edi')
 define(`up',  `%esi')
 define(`vp',  `%ebp')
 
-	mov	$0x20000000, %eax
+	mov	$0x2aaaaaab, %eax
 
 	push	%ebx			FRAME_pushl()
 	movl	PARAM_SIZE, %ebx	C size
@@ -94,9 +94,9 @@ define(`vp',  `%ebp')
 	push	vp			FRAME_pushl()
 	movl	PARAM_DBLD, vp
 
-	leal	4(,%edx,4), %ecx	C count*4+4 = -(size\8)*4
+	leal	3(%edx,%edx,2), %ecx	C count*3+3 = -(size\6)*3
 	xorl	%edx, %edx
-	leal	(%ebx,%ecx,2), %ebx	C size + (count*4+4)*2 = size % 8
+	leal	(%ebx,%ecx,2), %ebx	C size + (count*3+3)*2 = size % 6
 	orl	%ebx, %ebx
 	jz	L(exact)
 
@@ -106,15 +106,15 @@ ifdef(`CPU_P6',`
 	mov	(vp), %eax
 	adc	%eax, %eax
 	rcr	%edx			C restore 1st saved carry bit
-	adc	(up), %eax
-	mov	%eax, (rp)
-	adc	%edx, %edx		C save a carry bit in edx
-	lea	4(rp), rp
-	lea	4(up), up
 	lea	4(vp), vp
+	adc	(up), %eax
+	lea	4(up), up
+	adc	%edx, %edx		C save a carry bit in edx
 ifdef(`CPU_P6',`
 	adc	%edx, %edx ')		C save another carry bit in edx
 	decl	%ebx
+	mov	%eax, (rp)
+	lea	4(rp), rp
 	jnz	L(oop)
 	movl	vp, VAR_TMP
 L(exact):
@@ -131,8 +131,6 @@ ifdef(`CPU_P6',`
 	adc	%ebx, %ebx
 	mov	8(vp), %ecx
 	adc	%ecx, %ecx
-	mov	12(vp), vp
-	adc	vp, vp
 
 	rcr	%edx			C restore 1st saved carry bit
 
@@ -142,40 +140,30 @@ ifdef(`CPU_P6',`
 	mov	%ebx, 4(rp)
 	adc	8(up), %ecx
 	mov	%ecx, 8(rp)
-	adc	12(up), vp
-	mov	vp, 12(rp)
 
-	movl	VAR_TMP, vp
-
-	mov	16(vp), %eax
+	mov	12(vp), %eax
 	adc	%eax, %eax
-	mov	20(vp), %ebx
+	mov	16(vp), %ebx
 	adc	%ebx, %ebx
-	mov	24(vp), %ecx
+	mov	20(vp), %ecx
 	adc	%ecx, %ecx
-	mov	28(vp), vp
-	adc	vp, vp
 
+	lea	24(vp), vp
 	adc	%edx, %edx		C save a carry bit in edx
 
-	adc	16(up), %eax
-	mov	%eax, 16(rp)
-	adc	20(up), %ebx
-	mov	%ebx, 20(rp)
-	adc	24(up), %ecx
-	mov	%ecx, 24(rp)
-	adc	28(up), vp
-	mov	vp, 28(rp)
+	adc	12(up), %eax
+	mov	%eax, 12(rp)
+	adc	16(up), %ebx
+	mov	%ebx, 16(rp)
+	adc	20(up), %ecx
 
-	movl	VAR_TMP, vp
-	lea	32(rp), rp
-	lea	32(up), up
-	lea	32(vp), vp
+	lea	24(up), up
 
 ifdef(`CPU_P6',`
 	adc	%edx, %edx ')		C save another carry bit in edx
+	mov	%ecx, 20(rp)
 	incl	VAR_COUNT
-	movl	vp, VAR_TMP
+	lea	24(rp), rp
 	jne	L(top)
 
 L(end):

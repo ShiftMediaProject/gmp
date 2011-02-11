@@ -1,3 +1,7 @@
+2011-02-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/k7/addlsh1_n.asm: Faster core loop (Torbjorn's).
+
 2011-02-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/k7/addlsh1_n.asm: New file.
