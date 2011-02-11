@@ -3006,6 +3006,9 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_addlsh1_n
 #undef HAVE_NATIVE_mpn_addlsh2_n
 #undef HAVE_NATIVE_mpn_addlsh_n
+#undef HAVE_NATIVE_mpn_addlsh1_nc
+#undef HAVE_NATIVE_mpn_addlsh2_nc
+#undef HAVE_NATIVE_mpn_addlsh_nc
 #undef HAVE_NATIVE_mpn_addmul_1c
 #undef HAVE_NATIVE_mpn_addmul_2
 #undef HAVE_NATIVE_mpn_addmul_3
@@ -3062,6 +3065,9 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_rsblsh1_n
 #undef HAVE_NATIVE_mpn_rsblsh2_n
 #undef HAVE_NATIVE_mpn_rsblsh_n
+#undef HAVE_NATIVE_mpn_rsblsh1_nc
+#undef HAVE_NATIVE_mpn_rsblsh2_nc
+#undef HAVE_NATIVE_mpn_rsblsh_nc
 #undef HAVE_NATIVE_mpn_rsh1add_n
 #undef HAVE_NATIVE_mpn_rsh1add_nc
 #undef HAVE_NATIVE_mpn_rsh1sub_n
@@ -3075,6 +3081,9 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sublsh1_n
 #undef HAVE_NATIVE_mpn_sublsh2_n
 #undef HAVE_NATIVE_mpn_sublsh_n
+#undef HAVE_NATIVE_mpn_sublsh1_nc
+#undef HAVE_NATIVE_mpn_sublsh2_nc
+#undef HAVE_NATIVE_mpn_sublsh_nc
 #undef HAVE_NATIVE_mpn_submul_1c
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
 #undef HAVE_NATIVE_mpn_udiv_qrnnd_r

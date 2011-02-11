@@ -625,6 +625,28 @@ refmpn_addlsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_addlsh_n (rp, up, vp, n, 2);
 }
+mp_limb_t
+refmpn_addlsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+		 mp_size_t n, unsigned int s, mp_limb_t carry)
+{
+  mp_limb_t cy;
+
+  ASSERT (carry >= 0 && carry <= (CNST_LIMB(1) << s));
+
+  cy = refmpn_addlsh_n (rp, up, vp, n, s);
+  cy += refmpn_add_1 (rp, rp, n, carry);
+  return cy;
+}
+mp_limb_t
+refmpn_addlsh1_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t carry)
+{
+  return refmpn_addlsh_nc (rp, up, vp, n, 1, carry);
+}
+mp_limb_t
+refmpn_addlsh2_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t carry)
+{
+  return refmpn_addlsh_nc (rp, up, vp, n, 2, carry);
+}
 
 mp_limb_t
 refmpn_sublsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
@@ -655,6 +677,28 @@ refmpn_sublsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_sublsh_n (rp, up, vp, n, 2);
 }
+mp_limb_t
+refmpn_sublsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+		 mp_size_t n, unsigned int s, mp_limb_t carry)
+{
+  mp_limb_t cy;
+
+  ASSERT (carry >= 0 && carry <= (CNST_LIMB(1) << s));
+
+  cy = refmpn_sublsh_n (rp, up, vp, n, s);
+  cy += refmpn_sub_1 (rp, rp, n, carry);
+  return cy;
+}
+mp_limb_t
+refmpn_sublsh1_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t carry)
+{
+  return refmpn_sublsh_nc (rp, up, vp, n, 1, carry);
+}
+mp_limb_t
+refmpn_sublsh2_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t carry)
+{
+  return refmpn_sublsh_nc (rp, up, vp, n, 2, carry);
+}
 
 mp_limb_signed_t
 refmpn_rsblsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
@@ -684,6 +728,31 @@ mp_limb_signed_t
 refmpn_rsblsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_rsblsh_n (rp, up, vp, n, 2);
+}
+mp_limb_signed_t
+refmpn_rsblsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+		 mp_size_t n, unsigned int s, mp_limb_signed_t carry)
+{
+  mp_limb_signed_t cy;
+
+  ASSERT (carry == -1 || (carry >> s) == 0);
+
+  cy = refmpn_rsblsh_n (rp, up, vp, n, s);
+  if (carry > 0)
+    cy += refmpn_add_1 (rp, rp, n, carry);
+  else
+    cy -= refmpn_sub_1 (rp, rp, n, -carry);
+  return cy;
+}
+mp_limb_signed_t
+refmpn_rsblsh1_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_signed_t carry)
+{
+  return refmpn_rsblsh_nc (rp, up, vp, n, 1, carry);
+}
+mp_limb_signed_t
+refmpn_rsblsh2_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_signed_t carry)
+{
+  return refmpn_rsblsh_nc (rp, up, vp, n, 2, carry);
 }
 
 mp_limb_t

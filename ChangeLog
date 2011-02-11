@@ -2,6 +2,11 @@
 
 	* mpn/x86/k7/addlsh1_n.asm: Faster core loop (Torbjorn's).
 
+	* configure.in: Add HAVE_NATIVE_{add,sub,rsb}lsh{,1,2}.
+	* tests/tests.h: refmpn_{add,sub,rsb}lsh{,1,2} prototypes.
+	* tests/refmpn.c: New refmpn_{add,sub,rsb}lsh{,1,2}.
+	* tests/devel/try.c: Tests for mpn_{add,sub,rsb}lsh{,1,2}.
+
 2011-02-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/k7/addlsh1_n.asm: New file.

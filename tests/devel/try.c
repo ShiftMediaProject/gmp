@@ -607,6 +607,10 @@ enum {
   TYPE_RSBLSH1_N, TYPE_RSBLSH2_N, TYPE_RSBLSH_N,
   TYPE_RSH1ADD_N, TYPE_RSH1SUB_N,
 
+  TYPE_ADDLSH1_NC, TYPE_ADDLSH2_NC, TYPE_ADDLSH_NC,
+  TYPE_SUBLSH1_NC, TYPE_SUBLSH2_NC, TYPE_SUBLSH_NC,
+  TYPE_RSBLSH1_NC, TYPE_RSBLSH2_NC, TYPE_RSBLSH_NC,
+
   TYPE_MOD_1, TYPE_MOD_1C, TYPE_DIVMOD_1, TYPE_DIVMOD_1C, TYPE_DIVREM_1,
   TYPE_DIVREM_1C, TYPE_PREINV_DIVREM_1, TYPE_DIVREM_2, TYPE_PREINV_MOD_1,
   TYPE_MOD_34LSUB1, TYPE_UDIV_QRNND, TYPE_UDIV_QRNND_R,
@@ -920,6 +924,49 @@ param_init (void)
   p = &param[TYPE_RSH1SUB_N];
   COPY (TYPE_ADD_N);
   REFERENCE (refmpn_rsh1sub_n);
+
+
+  p = &param[TYPE_ADDLSH1_NC];
+  COPY (TYPE_ADDLSH1_N);
+  p->carry = CARRY_3;
+  REFERENCE (refmpn_addlsh1_nc);
+
+  p = &param[TYPE_ADDLSH2_NC];
+  COPY (TYPE_ADDLSH2_N);
+  p->carry = CARRY_4; /* FIXME */
+  REFERENCE (refmpn_addlsh2_nc);
+
+  p = &param[TYPE_ADDLSH_NC];
+  COPY (TYPE_ADDLSH_N);
+  p->carry = CARRY_BIT; /* FIXME */
+  REFERENCE (refmpn_addlsh_nc);
+
+  p = &param[TYPE_SUBLSH1_NC];
+  COPY (TYPE_ADDLSH1_NC);
+  REFERENCE (refmpn_sublsh1_nc);
+
+  p = &param[TYPE_SUBLSH2_NC];
+  COPY (TYPE_ADDLSH2_NC);
+  REFERENCE (refmpn_sublsh2_nc);
+
+  p = &param[TYPE_SUBLSH_NC];
+  COPY (TYPE_ADDLSH_NC);
+  REFERENCE (refmpn_sublsh_nc);
+
+  p = &param[TYPE_RSBLSH1_NC];
+  COPY (TYPE_RSBLSH1_N);
+  p->carry = CARRY_BIT; /* FIXME */
+  REFERENCE (refmpn_rsblsh1_nc);
+
+  p = &param[TYPE_RSBLSH2_NC];
+  COPY (TYPE_RSBLSH2_N);
+  p->carry = CARRY_4; /* FIXME */
+  REFERENCE (refmpn_rsblsh2_nc);
+
+  p = &param[TYPE_RSBLSH_NC];
+  COPY (TYPE_RSBLSH_N);
+  p->carry = CARRY_BIT; /* FIXME */
+  REFERENCE (refmpn_rsblsh_nc);
 
 
   p = &param[TYPE_MOD_1];
@@ -1507,6 +1554,34 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_rsh1sub_n), TYPE_RSH1SUB_N },
 #endif
 
+#if HAVE_NATIVE_mpn_addlsh1_nc
+  { TRY(mpn_addlsh1_nc), TYPE_ADDLSH1_NC },
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_nc
+  { TRY(mpn_addlsh2_nc), TYPE_ADDLSH2_NC },
+#endif
+#if HAVE_NATIVE_mpn_addlsh_nc
+  { TRY(mpn_addlsh_nc), TYPE_ADDLSH_NC },
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_nc
+  { TRY(mpn_sublsh1_nc), TYPE_SUBLSH1_NC },
+#endif
+#if HAVE_NATIVE_mpn_sublsh2_nc
+  { TRY(mpn_sublsh2_nc), TYPE_SUBLSH2_NC },
+#endif
+#if HAVE_NATIVE_mpn_sublsh_nc
+  { TRY(mpn_sublsh_nc), TYPE_SUBLSH_NC },
+#endif
+#if HAVE_NATIVE_mpn_rsblsh1_nc
+  { TRY(mpn_rsblsh1_nc), TYPE_RSBLSH1_NC },
+#endif
+#if HAVE_NATIVE_mpn_rsblsh2_nc
+  { TRY(mpn_rsblsh2_nc), TYPE_RSBLSH2_NC },
+#endif
+#if HAVE_NATIVE_mpn_rsblsh_nc
+  { TRY(mpn_rsblsh_nc), TYPE_RSBLSH_NC },
+#endif
+
   { TRY_FUNFUN(mpn_and_n),  TYPE_AND_N  },
   { TRY_FUNFUN(mpn_andn_n), TYPE_ANDN_N },
   { TRY_FUNFUN(mpn_nand_n), TYPE_NAND_N },
@@ -2088,6 +2163,18 @@ call (struct each_t *e, tryfun_t function)
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, e->s[1].p, size, shift);
     break;
+  case TYPE_ADDLSH_NC:
+  case TYPE_SUBLSH_NC:
+  case TYPE_RSBLSH_NC:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, size, shift, carry);
+    break;
+  case TYPE_ADDLSH1_NC:
+  case TYPE_ADDLSH2_NC:
+  case TYPE_SUBLSH1_NC:
+  case TYPE_SUBLSH2_NC:
+  case TYPE_RSBLSH1_NC:
+  case TYPE_RSBLSH2_NC:
   case TYPE_ADD_NC:
   case TYPE_SUB_NC:
     e->retval = CALLING_CONVENTIONS (function)
