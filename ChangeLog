@@ -1,4 +1,10 @@
+2011-02-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/aorrlsh2_n.asm: New file.
+
 2011-02-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/aorrlsh_n.asm: Minor tweaks, update c/l numbers.
 
 	* mpn/x86_64/atom/sublsh1_n.asm: New file.
 
@@ -55,7 +61,7 @@
 	* tests/mpn/t-toom8h.c: No tests below MPN_TOOM8H_MIN.
 
 	* mpz/lucnum_ui.c: Use mpn_addlsh2_n.
-	
+
 2011-02-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/rsh1aors_n.asm: Add a MULFUNC_PROLOGUE.
