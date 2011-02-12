@@ -26,7 +26,7 @@ C AMD K10	18
 C Intel P4	68
 C Intel core2	34
 C Intel corei	30.5
-C Intel atom	 ?
+C Intel atom	73
 C VIA nano	33
 
 

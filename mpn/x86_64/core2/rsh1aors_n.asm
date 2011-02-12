@@ -25,7 +25,8 @@ C AMD K8,K9	 ?
 C AMD K10	 4.25
 C Intel P4	 21.5
 C Intel core2	 3.2
-C Intel corei	 3.87
+C Intel NHM	 3.87
+C Intel SBR	 2.05
 C Intel atom	 ?
 C VIA nano	 44.9
 
