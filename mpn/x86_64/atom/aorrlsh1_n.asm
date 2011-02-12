@@ -1,5 +1,6 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
+dnl  Optimised for Intel Atom.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -21,7 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C TODO
-C  * This code is slightly large at 441 bytes.
+C  * This code is slightly large at 433 bytes.
+C  * sublsh1_n.asm and this file use the same basic pattern.
 
 C	     cycles/limb
 C AMD K8,K9	 ?
@@ -30,7 +32,7 @@ C Intel P4	 ?
 C Intel core2	 ?
 C Intel NHM	 ?
 C Intel SBR	 ?
-C Intel atom	 4.875
+C Intel atom	 4.875	(4.75 is probably possible)
 C VIA nano	 ?
 
 C INPUT PARAMETERS
@@ -192,8 +194,7 @@ L(o1):	ADCSBB	56(up), %rbx
 L(x):	sub	$8, n
 	jge	L(top)
 
-L(end):
-	pop	%rbx
+L(end):	pop	%rbx
 	pop	%r14
 	pop	%r13
 	pop	%r12
