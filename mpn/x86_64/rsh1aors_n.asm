@@ -1,4 +1,5 @@
 dnl  AMD64 mpn_rsh1add_n -- rp[] = (up[] + vp[]) >> 1
+dnl  AMD64 mpn_rsh1sub_n -- rp[] = (up[] - vp[]) >> 1
 
 dnl  Copyright 2003, 2005, 2009 Free Software Foundation, Inc.
 
