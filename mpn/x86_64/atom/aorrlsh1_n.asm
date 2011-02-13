@@ -175,19 +175,19 @@ L(top):	add	R32(%rax), R32(%rax)	C restore scy
 	add	R32(%rbp), R32(%rbp)	C restore acy
 	ADCSBB	(up), %r8
 	mov	%r8, (rp)
-L(o7):	ADCSBB	8(up), %r9
+	ADCSBB	8(up), %r9
 	mov	%r9, 8(rp)
-L(o6):	ADCSBB	16(up), %r10
+	ADCSBB	16(up), %r10
 	mov	%r10, 16(rp)
-L(o5):	ADCSBB	24(up), %r11
+	ADCSBB	24(up), %r11
 	mov	%r11, 24(rp)
-L(o4):	ADCSBB	32(up), %r12
+	ADCSBB	32(up), %r12
 	mov	%r12, 32(rp)
-L(o3):	ADCSBB	40(up), %r13
+	ADCSBB	40(up), %r13
 	mov	%r13, 40(rp)
-L(o2):	ADCSBB	48(up), %r14
+	ADCSBB	48(up), %r14
 	mov	%r14, 48(rp)
-L(o1):	ADCSBB	56(up), %rbx
+	ADCSBB	56(up), %rbx
 	mov	%rbx, 56(rp)
 	sbb	R32(%rbp), R32(%rbp)	C save acy
 	lea	64(up), up
