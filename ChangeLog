@@ -3,6 +3,11 @@
 	* gmp-impl.h (mpn_sublsh_n): Declare.
 	* mpn/asm-defs.m4: Likewise.
 
+	* mpn/x86/atom/aorrlshC_n.asm: New file (was k7).
+	* mpn/x86/k7/aorrlshC_n.asm: ReMoved.
+	* mpn/x86/atom/aorrlsh2_n.asm: Grab atom/aorrlshC_n.asm.
+	* mpn/x86/atom/rsblsh1_n.asm: Grab atom/aorrlshC_n.asm.
+
 2011-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aorrlsh2_n.asm: New file.

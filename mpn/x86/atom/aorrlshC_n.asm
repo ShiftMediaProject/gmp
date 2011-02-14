@@ -1,4 +1,4 @@
-dnl  AMD K7 mpn_addlshC_n/mpn_rsblshC_n -- rp[] = (vp[] << C) +- up[]
+dnl  Intel Atom mpn_addlshC_n/mpn_rsblshC_n -- rp[] = (vp[] << C) +- up[]
 
 dnl  Contributed to the GNU project by Marco Bodrato.
 
