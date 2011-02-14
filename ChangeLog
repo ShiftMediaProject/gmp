@@ -1,3 +1,8 @@
+2011-02-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (mpn_sublsh_n): Declare.
+	* mpn/asm-defs.m4: Likewise.
+
 2011-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aorrlsh2_n.asm: New file.

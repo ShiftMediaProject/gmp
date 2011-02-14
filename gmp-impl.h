@@ -836,6 +836,11 @@ __GMP_DECLSPEC mp_limb_t mpn_sublsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 #define mpn_sublsh2_nc __MPN(sublsh2_nc)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
+/* mpn_sublsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}-2^k*{b,n}, and
+   returns the carry out (0, ..., 2^k).  */
+#define mpn_sublsh_n __MPN(sublsh_n)
+  __GMP_DECLSPEC mp_limb_t mpn_sublsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+
 /* mpn_rsblsh2_n(c,a,b,n), when it exists, sets {c,n} to 4*{b,n}-{a,n}, and
    returns the carry out (-1, ..., 3).  */
 #define mpn_rsblsh2_n __MPN(rsblsh2_n)
