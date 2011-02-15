@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C                           cycles/limb
 C P6 model 0-8,10-12)           -
-C P6 model 9   (Banias)         ?
+C P6 model 9   (Banias)         6.8
 C P6 model 13  (Dothan)         6.9
 C P4 model 0-1 (Willamette):    ?
 C P4 model 2   (Northwood):     5.87

@@ -26,7 +26,7 @@ C  * Perhaps software pipeline small-case code
 
 C                           cycles/limb
 C P6 model 0-8,10-12)           -
-C P6 model 9   (Banias)		?
+C P6 model 9   (Banias)		4.17
 C P6 model 13  (Dothan)         4.17
 C P4 model 0-1 (Willamette):	4
 C P4 model 2   (Northwood):     4
