@@ -1,3 +1,7 @@
+2011-02-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Fix k8/k10 32-bit path setup problem.
+
 2011-02-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/aorsmul_1.asm: Revive an old k7/aorsmul.
