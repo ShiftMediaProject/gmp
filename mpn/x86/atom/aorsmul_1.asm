@@ -1,6 +1,6 @@
-dnl  AMD K7 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
+dnl  Intel Atom mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2005, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -91,14 +91,15 @@ defframe(SAVE_EDI, -12)
 defframe(SAVE_EBP, -16)
 deflit(SAVE_SIZE, 16)
 
+ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(M4_function_1)
 	movl	PARAM_SIZE, %edx
-	movl	PARAM_SRC, %eax
 	xorl	%ecx, %ecx
 
 	decl	%edx
+	movl	PARAM_SRC, %eax
 	jnz	L(start_1)
 
 	movl	(%eax), %eax
@@ -107,8 +108,8 @@ PROLOGUE(M4_function_1)
 	mull	PARAM_MULTIPLIER
 
 	M4_inst	%eax, (%ecx)
-	adcl	$0, %edx
 	movl	%edx, %eax
+	adcl	$0, %eax
 
 	ret
 EPILOGUE()
@@ -116,9 +117,9 @@ EPILOGUE()
 	ALIGN(16)
 PROLOGUE(M4_function_1c)
 	movl	PARAM_SIZE, %edx
-	movl	PARAM_SRC, %eax
 
 	decl	%edx
+	movl	PARAM_SRC, %eax
 	jnz	L(more_than_one_limb)
 
 	movl	(%eax), %eax
@@ -131,8 +132,8 @@ PROLOGUE(M4_function_1c)
 	adcl	$0, %edx
 	M4_inst	%eax, (%ecx)
 
-	adcl	$0, %edx
 	movl	%edx, %eax
+	adcl	$0, %eax
 
 	ret
 
@@ -148,10 +149,10 @@ L(start_1):
 deflit(`FRAME',16)
 
 	movl	%ebx, SAVE_EBX
-	movl	%esi, SAVE_ESI
 	movl	%edx, %ebx	C size-1
+	movl	%esi, SAVE_ESI
 
-	movl	PARAM_SRC, %esi
+	movl	%eax, %esi
 	movl	%ebp, SAVE_EBP
 	cmpl	$UNROLL_THRESHOLD, %edx
 
@@ -164,10 +165,6 @@ deflit(`FRAME',16)
 
 
 	C simple loop
-
-	leal	4(%esi,%ebx,4), %esi	C point one limb past last
-	leal	(%edi,%ebx,4), %edi	C point at last limb
-	negl	%ebx
 
 	C The movl to load the next source limb is done well ahead of the
 	C mul.  This is necessary for full speed, and leads to one limb
@@ -183,15 +180,17 @@ L(simple):
 	C ebp	multiplier
 
 	mull	%ebp
+	leal	4(%esi), %esi
 
 	addl	%eax, %ecx
 	adcl	$0, %edx
+	movl	(%esi), %eax
 
-	M4_inst	%ecx, (%edi,%ebx,4)
-	movl	(%esi,%ebx,4), %eax
+	M4_inst	%ecx, (%edi)
+	leal	4(%edi), %edi
 	adcl	$0, %edx
 
-	incl	%ebx
+	decl	%ebx
 	movl	%edx, %ecx
 	jnz	L(simple)
 
@@ -368,3 +367,4 @@ deflit(`disp1', eval(disp0-0 + 4))
 	ret
 
 EPILOGUE()
+ASM_END()

@@ -38,14 +38,14 @@ defframe(PARAM_DST,	 4)
 
 dnl  re-use parameter space
 define(VAR_COUNT,`PARAM_SIZE')
-define(SAVE_EBX,`PARAM_DBLD')
+define(SAVE_EBP,`PARAM_DBLD')
 define(SAVE_VP,`PARAM_SRC')
 define(SAVE_UP,`PARAM_DST')
 
 define(M, eval(m4_lshift(1,LSH)))
 define(`rp',  `%edi')
 define(`up',  `%esi')
-define(`vp',  `%ebp')
+define(`vp',  `%ebx')
 
 ASM_START()
 	TEXT
@@ -75,13 +75,13 @@ L(start_nc):
 	incl	%ecx			C size + 1
 	mov	PARAM_SRC, up
 	mov	vp, SAVE_VP
-	shr	$1, %ecx		C (size+1)\2
+	shr	%ecx			C (size+1)\2
 	mov	PARAM_DBLD, vp
-	mov	%ebx, SAVE_EBX
+	mov	%ebp, SAVE_EBP
 	mov	%ecx, VAR_COUNT
 	jnc	L(entry)		C size odd
 
-	shr	$1, %edx		C size even
+	shr	%edx			C size even
 	mov	(vp), %ecx
 	lea	4(vp), vp
 	lea	(%eax,%ecx,M), %edx
@@ -92,14 +92,14 @@ L(start_nc):
 
 	ALIGN(16)
 L(oop):
-	lea	(%eax,%ecx,M), %ebx
+	lea	(%eax,%ecx,M), %ebp
 	shr	$RSH, %ecx
 	mov	4(vp), %eax
+	shr	%edx
 	lea 	8(vp), vp
-	shr	$1, %edx
-	M4_inst	(up), %ebx
+	M4_inst	(up), %ebp
 	lea	(%ecx,%eax,M), %edx
-	mov	%ebx, (rp)
+	mov	%ebp, (rp)
 L(enteven):
 	M4_inst	4(up), %edx
 	lea	8(up), up
@@ -112,16 +112,16 @@ L(entry):
 	decl	VAR_COUNT
 	jnz	L(oop)
 
-	lea	(%eax,%ecx,M), %ebx
+	lea	(%eax,%ecx,M), %ebp
 	shr	$RSH, %ecx
-	shr	$1, %edx
+	shr	%edx
 	mov	SAVE_VP, vp
-	M4_inst	(up), %ebx
+	M4_inst	(up), %ebp
 	mov	%ecx, %eax
 	mov	SAVE_UP, up
 	M4_inst	$0, %eax
-	mov	%ebx, (rp)
-	mov	SAVE_EBX, %ebx
+	mov	%ebp, (rp)
+	mov	SAVE_EBP, %ebp
 	pop	rp			FRAME_popl()
 	ret
 EPILOGUE()

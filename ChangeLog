@@ -1,3 +1,8 @@
+2011-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/aorsmul_1.asm: Small improvements for small sizes.
+	* mpn/x86/atom/aorrlshC_n.asm: Tiny size improvements.
+
 2011-02-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Fix k8/k10 32-bit path setup problem.
