@@ -1,3 +1,9 @@
+2011-02-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/lshift.asm: New file.
+	* mpn/x86_64/atom/rshift.asm: New file.
+	* mpn/x86_64/atom/lshiftc.asm: New file.
+
 2011-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/aorsmul_1.asm: Small improvements for small sizes.
