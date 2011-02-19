@@ -1,5 +1,7 @@
 2011-02-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/atom/rsh1aors_n.asm: New file.
+
 	* mpn/x86_64/atom/lshift.asm: New file.
 	* mpn/x86_64/atom/rshift.asm: New file.
 	* mpn/x86_64/atom/lshiftc.asm: New file.
