@@ -1,5 +1,20 @@
 2011-02-20  Torbjorn Granlund  <tege@gmplib.org>
 
+2011-02-20  Marc Glisse  <marc.glisse@inria.fr>
+
+	* mpq/aors.c: Rewrite to remove redundant division.
+
+2011-02-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/atom/lshift.asm: New file.
+	* mpn/x86/atom/rshift.asm: Normalise mnemonic usage.
+
+	* gmp-impl.h (mpn_divexact_by7): Relax inclusion condition.
+
+	* mpz/divegcd.c (mpz_divexact_by5): New conditionally enabled function.
+	(mpz_divexact_by3): Wrap inside appropriate conditions.
+	(mpz_divexact_gcd): Rewrite.
+
 	* mpn/x86/bdiv_dbm1c.asm: Save a jump.
 
 2011-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
