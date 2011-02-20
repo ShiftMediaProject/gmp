@@ -52,16 +52,16 @@ mpq_aors (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2,
     {
       mpz_t t;
 
-      mpz_divexact_gcd (tmp1, &(op2->_mp_den), gcd);
-      mpz_mul (tmp1, &(op1->_mp_num), tmp1);
+      MPZ_TMP_INIT (t, MAX (op1_num_size + op2_den_size,
+	     op2_num_size + op1_den_size) + 2 - gcd->_mp_size);
 
+      mpz_divexact_gcd (t, &(op2->_mp_den), gcd);
       mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd);
-      mpz_mul (tmp2, &(op2->_mp_num), tmp2);
 
-      MPZ_TMP_INIT (t, MAX (ABS (tmp1->_mp_size), ABS (tmp2->_mp_size)) + 1);
+      mpz_mul (tmp1, &(op1->_mp_num), t);
+      mpz_mul (t, &(op2->_mp_num), tmp2);
 
-      (*fun) (t, tmp1, tmp2);
-      mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd);
+      (*fun) (t, tmp1, t);
 
       mpz_gcd (gcd, t, gcd);
       if (MPZ_EQUAL_1_P (gcd))
