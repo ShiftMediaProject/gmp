@@ -1,5 +1,8 @@
 2011-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/x86/atom/aorslshC_n.asm: New file.
+	* mpn/x86/atom/sublsh2_n.asm: New file.
+
 	* mpn/x86/atom/aors_n.asm: New code.
 	* mpn/x86/atom/rshift.asm: Atom64 code adapted to 32-bit.
 
