@@ -1371,7 +1371,7 @@ __GMP_DECLSPEC void mpn_redc_1_sec __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_s
   (7 & 3 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 5)))
 #endif
 
-#if GMP_NUMB_BITS % 6 == 0
+#if GMP_NUMB_BITS % 3 == 0
 #define mpn_divexact_by7(dst,src,size) \
   (7 & 1 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 7)))
 #endif
