@@ -5,6 +5,7 @@
 
 	* mpn/x86/atom/aors_n.asm: New code.
 	* mpn/x86/atom/rshift.asm: Atom64 code adapted to 32-bit.
+	* mpn/x86/atom/lshift.asm: Likewise.
 
 2011-02-19  Torbjorn Granlund  <tege@gmplib.org>
 
