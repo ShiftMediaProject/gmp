@@ -1,3 +1,7 @@
+2011-02-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/bdiv_dbm1c.asm: Save a jump.
+
 2011-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/aors_n.asm: New code.

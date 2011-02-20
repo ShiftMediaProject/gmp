@@ -22,12 +22,12 @@ include(`../config.m4')
 
 C					cycles/limb
 C			     dst!=src1,2  dst==src1  dst==src2
-C P6 model 0-8,10-12)		-
+C P6 model 0-8,10-12		-
 C P6 model 9   (Banias)		?
 C P6 model 13  (Dothan)		?
-C P4 model 0-1 (Willamette):	?
-C P4 model 2   (Northwood):	4	     6		6
-C P4 model 3-4 (Prescott):	4.25	     7.5	7.5
+C P4 model 0-1 (Willamette)	?
+C P4 model 2   (Northwood)	4	     6		6
+C P4 model 3-4 (Prescott)	4.25	     7.5	7.5
 
 defframe(PARAM_CARRY,20)
 defframe(PARAM_SIZE, 16)

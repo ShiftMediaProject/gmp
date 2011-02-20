@@ -26,13 +26,13 @@ C  * Optimize.  The present code was written quite straightforwardly.
 C  * Optimize post-loop reduction code.
 C  * Write a cps function that uses sse2 insns.
 
-C                           cycles/limb
-C P6 model 0-8,10-12)           -
-C P6 model 9   (Banias)         ?
-C P6 model 13  (Dothan)         3.4
-C P4 model 0-1 (Willamette):    ?
-C P4 model 2   (Northwood):     4
-C P4 model 3-4 (Prescott):      4.5
+C			    cycles/limb
+C P6 model 0-8,10-12		-
+C P6 model 9   (Banias)		?
+C P6 model 13  (Dothan)		3.4
+C P4 model 0-1 (Willamette)	?
+C P4 model 2   (Northwood)	4
+C P4 model 3-4 (Prescott)	4.5
 
 C INPUT PARAMETERS
 C ap		sp + 4

@@ -21,13 +21,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C                           cycles/limb
-C P6 model 0-8,10-12)           -
-C P6 model 9   (Banias)         6.8
-C P6 model 13  (Dothan)         6.9
-C P4 model 0-1 (Willamette):    ?
-C P4 model 2   (Northwood):     5.87
-C P4 model 3-4 (Prescott):      6.5
+C			    cycles/limb
+C P6 model 0-8,10-12		-
+C P6 model 9   (Banias)		6.8
+C P6 model 13  (Dothan)		6.9
+C P4 model 0-1 (Willamette)	?
+C P4 model 2   (Northwood)	5.87
+C P4 model 3-4 (Prescott)	6.5
 
 C This code represents a step forwards compared to the code available before
 C GMP 5.1, but it is not carefully tuned for either P6 or P4.  In fact, it is

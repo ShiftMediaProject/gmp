@@ -20,14 +20,14 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C                                       cycles/limb
+C					cycles/limb
 C			     dst!=src1,2  dst==src1  dst==src2
-C P6 model 0-8,10-12)		-
+C P6 model 0-8,10-12		-
 C P6 model 9   (Banias)		?
 C P6 model 13  (Dothan)		?
-C P4 model 0-1 (Willamette):	?
-C P4 model 2   (Northwood):	4.25	     6		6
-C P4 model 3-4 (Prescott):	5	     8.5	8.5
+C P4 model 0-1 (Willamette)	?
+C P4 model 2   (Northwood)	4.25	     6		6
+C P4 model 3-4 (Prescott)	5	     8.5	8.5
 
 C The slightly strange combination of indexing and pointer incrementing
 C that's used seems to work best.  Not sure why, but %ecx,4 with src1 and/or

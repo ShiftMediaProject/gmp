@@ -26,19 +26,19 @@ C innerloop is 2*3-way unrolled, which is best we can do with the available
 C registers.  It seems tricky to use the same structure for rsblsh1_n, since we
 C cannot feed carry between operations there.
 
-C                           cycles/limb
+C			    cycles/limb
 C P5
-C P6 model 0-8,10-12)
+C P6 model 0-8,10-12
 C P6 model 9  (Banias)
-C P6 model 13 (Dothan)           
+C P6 model 13 (Dothan)		 
 C P4 model 0  (Willamette)
 C P4 model 1  (?)
 C P4 model 2  (Northwood)
 C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
 C Intel Atom			 6.75
-C AMD K6                         ?
-C AMD K7                         
+C AMD K6
+C AMD K7			 
 C AMD K8
 
 C This is a basic sublsh1_n for k7, atom, and perhaps some other x86-32

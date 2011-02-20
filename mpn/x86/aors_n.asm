@@ -22,11 +22,11 @@ include(`../config.m4')
 
 
 C     cycles/limb
-C P5:   3.375
-C P6:   3.125
-C K6:   3.5
-C K7:   2.25
-C P4:   8.75
+C P5	3.375
+C P6	3.125
+C K6	3.5
+C K7	2.25
+C P4	8.75
 
 
 ifdef(`OPERATION_add_n',`

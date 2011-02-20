@@ -21,24 +21,24 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C 32-bit                     popcount        hamdist
-C                           cycles/limb     cycles/limb
-C P5:                           -
-C P6 model 0-8,10-12)           -
-C P6 model 9  (Banias)          ?
-C P6 model 13 (Dothan)          4
-C P4 model 0  (Willamette)      ?
-C P4 model 1  (?)               ?
-C P4 model 2  (Northwood)       3.9
-C P4 model 3  (Prescott)        ?
-C P4 model 4  (Nocona)          ?
-C K6:                           -
-C K7:                           -
-C K8:                           ?
+C 32-bit		     popcount	     hamdist
+C			    cycles/limb	    cycles/limb
+C P5				-
+C P6 model 0-8,10-12		-
+C P6 model 9  (Banias)		?
+C P6 model 13 (Dothan)		4
+C P4 model 0  (Willamette)	?
+C P4 model 1  (?)		?
+C P4 model 2  (Northwood)	3.9
+C P4 model 3  (Prescott)	?
+C P4 model 4  (Nocona)		?
+C AMD K6			-
+C AMD K7			-
+C AMD K8			?
 
-C 64-bit                     popcount        hamdist
-C                           cycles/limb     cycles/limb
-C P4 model 4 (Nocona):          8
+C 64-bit		     popcount	     hamdist
+C			    cycles/limb	    cycles/limb
+C P4 model 4 (Nocona):		8
 C AMD K8,K9			7.5
 C AMD K10			3.5
 C Intel core2			3.68

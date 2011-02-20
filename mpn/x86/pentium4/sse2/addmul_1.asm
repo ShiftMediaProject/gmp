@@ -20,17 +20,17 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+C			    cycles/limb
+C P6 model 0-8,10-12		-
+C P6 model 9   (Banias)		5.24
+C P6 model 13  (Dothan)		5.24
+C P4 model 0-1 (Willamette)	5
+C P4 model 2   (Northwood)	5
+C P4 model 3-4 (Prescott)	5
+
 C TODO:
 C  * Tweak eax/edx offsets in loop as to save some lea's
 C  * Perhaps software pipeline small-case code
-
-C                           cycles/limb
-C P6 model 0-8,10-12)           -
-C P6 model 9   (Banias)         5.24
-C P6 model 13  (Dothan)         5.24
-C P4 model 0-1 (Willamette):    5
-C P4 model 2   (Northwood):     5
-C P4 model 3-4 (Prescott):      5
 
 C INPUT PARAMETERS
 C rp		sp + 4
