@@ -41,17 +41,17 @@ ASM_START()
 	ALIGN(8)
 deflit(`FRAME',0)
 PROLOGUE(mpn_rshift)
-	movl	PARAM_CNT, cnt
-	movl	PARAM_SIZE, %edx
-	movl	up, SAVE_UP
-	movl	PARAM_SRC, up
+	mov	PARAM_CNT, cnt
+	mov	PARAM_SIZE, %edx
+	mov	up, SAVE_UP
+	mov	PARAM_SRC, up
 	push	rp			FRAME_pushl()
-	movl	PARAM_DST, rp
-	movl	%ebx, SAVE_EBX
+	mov	PARAM_DST, rp
+	mov	%ebx, SAVE_EBX
 
 	shr	%edx
 	mov	(up), %eax
-	movl	%edx, VAR_COUNT
+	mov	%edx, VAR_COUNT
 	jnc	L(evn)
 
 	mov	%eax, %ebx
@@ -63,14 +63,14 @@ PROLOGUE(mpn_rshift)
 	mov	%ebx, (rp)
 	jmp	L(quit)
 
-L(gt1):	movl	%ebp, SAVE_EBP
+L(gt1):	mov	%ebp, SAVE_EBP
 	push	%eax
 	mov	4(up), %eax
 	mov	%eax, %ebp
 	shl	%cl, %eax
 	jmp	L(lo1)
 
-L(evn):	movl	%ebp, SAVE_EBP
+L(evn):	mov	%ebp, SAVE_EBP
 	neg	cnt
 	mov	%eax, %ebp
 	mov	4(up), %edx
@@ -84,7 +84,7 @@ L(evn):	movl	%ebp, SAVE_EBP
 	jz	L(end)
 	push	%eax			FRAME_pushl()
 
-	ALIGN(16)
+	ALIGN(8)
 L(top):	shr	%cl, %ebp
 	or	%ebp, %edx
 	shr	%cl, %ebx
@@ -109,13 +109,13 @@ L(end):
 	shr	%cl, %ebp
 	shr	%cl, %ebx
 	or	%ebp, %edx
-	movl	SAVE_EBP, %ebp
+	mov	SAVE_EBP, %ebp
 	mov	%edx, 4(rp)
 	mov	%ebx, 8(rp)
 
 L(quit):
-	movl	SAVE_UP, up
-	movl	SAVE_EBX, %ebx
+	mov	SAVE_UP, up
+	mov	SAVE_EBX, %ebx
 	pop	rp			FRAME_popl()
 	ret
 EPILOGUE()
