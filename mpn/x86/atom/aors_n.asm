@@ -1,23 +1,132 @@
-dnl  Intel Atom mpn_add_n/mpn_sub_n -- mpn add or subtract.
+dnl  Intel Atom mpn_add_n/mpn_sub_n -- rp[] = up[] +- vp[].
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
-dnl
+
+dnl  Contributed to the GNU project by Marco Bodrato.
+
 dnl  This file is part of the GNU MP Library.
-dnl
-dnl  The GNU MP Library is free software; you can redistribute it and/or
-dnl  modify it under the terms of the GNU Lesser General Public License as
-dnl  published by the Free Software Foundation; either version 3 of the
-dnl  License, or (at your option) any later version.
-dnl
-dnl  The GNU MP Library is distributed in the hope that it will be useful,
-dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl  Lesser General Public License for more details.
-dnl
+
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 3 of the License, or (at
+dnl  your option) any later version.
+
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
+
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+ifdef(`OPERATION_add_n', `
+	define(M4_inst,        adcl)
+	define(M4_function_n,  mpn_add_n)
+	define(M4_function_nc, mpn_add_nc)
+	define(M4_description, add)
+',`ifdef(`OPERATION_sub_n', `
+	define(M4_inst,        sbbl)
+	define(M4_function_n,  mpn_sub_n)
+	define(M4_function_nc, mpn_sub_nc)
+	define(M4_description, subtract)
+',`m4_error(`Need OPERATION_add_n or OPERATION_sub_n
+')')')
+
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
-include_mpn(`x86/k7/aors_n.asm')
+
+C mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C                         mp_size_t size);
+C mp_limb_t M4_function_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C	                   mp_size_t size, mp_limb_t carry);
+C
+C Calculate src1,size M4_description src2,size, and store the result in
+C dst,size.  The return value is the carry bit from the top of the result (1
+C or 0).
+C
+C The _nc version accepts 1 or 0 for an initial carry into the low limb of
+C the calculation.  Note values other than 1 or 0 here will lead to garbage
+C results.
+
+defframe(PARAM_CARRY,20)
+defframe(PARAM_SIZE, 16)
+defframe(PARAM_SRC2, 12)
+defframe(PARAM_SRC1, 8)
+defframe(PARAM_DST,  4)
+
+dnl  re-use parameter space
+define(SAVE_RP,`PARAM_SIZE')
+define(SAVE_VP,`PARAM_SRC1')
+define(SAVE_UP,`PARAM_DST')
+
+define(`rp',  `%edi')
+define(`up',  `%esi')
+define(`vp',  `%ebp')
+define(`cy',  `%ecx')
+define(`r1',  `%ecx')
+define(`r2',  `%edx')
+
+ASM_START()
+	TEXT
+	ALIGN(8)
+deflit(`FRAME',0)
+
+PROLOGUE(M4_function_nc)
+	movl	PARAM_CARRY, cy		C carry
+	jmp	L(start)
+EPILOGUE()
+
+PROLOGUE(M4_function_n)
+	xorl	cy, cy			C carry
+L(start):
+	movl	PARAM_SIZE, %eax	C size
+	movl	rp, SAVE_RP
+	movl	PARAM_DST, rp
+	movl	up, SAVE_UP
+	shr	%eax			C size >> 1
+	movl	PARAM_SRC1, up
+	movl	vp, SAVE_VP
+	movl	PARAM_SRC2, vp
+	jz	L(one)			C size == 1
+	jc	L(three)		C size % 2 == 1
+
+	shr	cy
+	mov	(up), r2
+	lea	4(up), up
+	lea	4(vp), vp
+	lea	-4(rp), rp
+	jmp	L(entry)
+L(one):
+	shr	cy
+	mov	(up), r1
+	jmp	L(end)
+L(three):
+	shr	cy
+	mov	(up), r1
+
+	ALIGN(8)
+L(oop):
+	M4_inst	(vp), r1
+	lea	8(up), up
+	mov	-4(up), r2
+	lea	8(vp), vp
+	mov	r1, (rp)
+L(entry):
+	M4_inst	-4(vp), r2
+	decl	%eax
+	lea	8(rp), rp
+	mov	(up), r1
+	mov	r2, -4(rp)
+	jnz	L(oop)
+
+L(end):				C %eax is zero here
+	movl	SAVE_UP, up
+	M4_inst	(vp), r1
+	movl	SAVE_VP, vp
+	mov	r1, (rp)
+	adc	%eax, %eax
+	movl	SAVE_RP, rp
+	ret
+EPILOGUE()
+ASM_END()

@@ -1,3 +1,8 @@
+2011-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/aors_n.asm: New code.
+	* mpn/x86/atom/rshift.asm: Atom64 code adapted to 32-bit.
+
 2011-02-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/rsh1aors_n.asm: New file.
