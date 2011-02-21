@@ -21,6 +21,22 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+C			    cycles/limb
+C P5
+C P6 model 0-8,10-12
+C P6 model 9  (Banias)
+C P6 model 13 (Dothan)
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
+C Intel Atom			 3
+C AMD K6
+C AMD K7
+C AMD K8
+C AMD K10
+
 ifdef(`OPERATION_add_n', `
 	define(M4_inst,        adcl)
 	define(M4_function_n,  mpn_add_n)
@@ -69,25 +85,20 @@ define(`r2',  `%edx')
 
 ASM_START()
 	TEXT
-	ALIGN(8)
+	ALIGN(16)
 deflit(`FRAME',0)
 
-PROLOGUE(M4_function_nc)
-	movl	PARAM_CARRY, cy		C carry
-	jmp	L(start)
-EPILOGUE()
-
 PROLOGUE(M4_function_n)
-	xorl	cy, cy			C carry
+	xor	cy, cy			C carry
 L(start):
-	movl	PARAM_SIZE, %eax	C size
-	movl	rp, SAVE_RP
-	movl	PARAM_DST, rp
-	movl	up, SAVE_UP
+	mov	PARAM_SIZE, %eax	C size
+	mov	rp, SAVE_RP
+	mov	PARAM_DST, rp
+	mov	up, SAVE_UP
 	shr	%eax			C size >> 1
-	movl	PARAM_SRC1, up
-	movl	vp, SAVE_VP
-	movl	PARAM_SRC2, vp
+	mov	PARAM_SRC1, up
+	mov	vp, SAVE_VP
+	mov	PARAM_SRC2, vp
 	jz	L(one)			C size == 1
 	jc	L(three)		C size % 2 == 1
 
@@ -105,7 +116,7 @@ L(three):
 	shr	cy
 	mov	(up), r1
 
-	ALIGN(8)
+	ALIGN(16)
 L(oop):
 	M4_inst	(vp), r1
 	lea	8(up), up
@@ -114,19 +125,24 @@ L(oop):
 	mov	r1, (rp)
 L(entry):
 	M4_inst	-4(vp), r2
-	decl	%eax
+	dec	%eax
 	lea	8(rp), rp
 	mov	(up), r1
 	mov	r2, -4(rp)
 	jnz	L(oop)
 
-L(end):				C %eax is zero here
-	movl	SAVE_UP, up
+L(end):					C %eax is zero here
+	mov	SAVE_UP, up
 	M4_inst	(vp), r1
-	movl	SAVE_VP, vp
+	mov	SAVE_VP, vp
 	mov	r1, (rp)
 	adc	%eax, %eax
-	movl	SAVE_RP, rp
+	mov	SAVE_RP, rp
 	ret
+EPILOGUE()
+
+PROLOGUE(M4_function_nc)
+	mov	PARAM_CARRY, cy		C carry
+	jmp	L(start)
 EPILOGUE()
 ASM_END()
