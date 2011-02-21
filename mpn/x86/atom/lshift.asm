@@ -2,7 +2,7 @@ dnl  Intel Atom mpn_lshift -- mpn left shift.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
-dnl  Converted from AMD64 by Marco Bodrato.
+dnl  Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -47,8 +47,19 @@ PROLOGUE(mpn_lshift)
 	mov	PARAM_SRC, up
 	push	rp			FRAME_pushl()
 	mov	PARAM_DST, rp
-	mov	%ebx, SAVE_EBX
+
+C We can use faster code for shift-by-1 under certain conditions.
+	cmp	$1,cnt
+	jne	L(normal)
+	cmpl	rp, up
+	jnc	L(special)		C jump if s_ptr + 1 >= res_ptr
+	leal	(up,%edx,4),%eax
+	cmpl	%eax,rp
+	jnc	L(special)		C jump if res_ptr >= s_ptr + size
+
+L(normal):
 	lea	-4(up,%edx,4), up
+	mov	%ebx, SAVE_EBX
 	lea	-4(rp,%edx,4), rp
 
 	shr	%edx
@@ -118,6 +129,58 @@ L(end):
 L(quit):
 	mov	SAVE_UP, up
 	mov	SAVE_EBX, %ebx
+	pop	rp			FRAME_popl()
+	ret
+
+L(special):
+deflit(`FRAME',4)
+	lea	3(%edx), %eax		C size + 3
+	dec	%edx			C size - 1
+	mov	(up), %ecx
+	shr	$2, %eax		C (size + 3) / 4
+	and	$3, %edx		C (size - 1) % 4
+	jz	L(goloop)		C jmp if  size == 1 (mod 4)
+	shr	%edx			
+	jnc	L(odd)			C jum if  size == 3 (mod 4)
+
+	add	%ecx, %ecx
+	lea	4(up), up
+	mov	%ecx, (rp)
+	mov	(up), %ecx
+	lea	4(rp), rp
+
+	dec	%edx
+	jnz	L(goloop)		C jump if  size == 0 (mod 4)
+L(odd):	lea	-8(up), up
+	lea	-8(rp), rp
+	jmp	L(sentry)		C reached if size == 2 or 3 (mod 4) 
+
+L(sloop):
+	adc	%ecx, %ecx
+	mov	4(up), %edx
+	mov	%ecx, (rp)
+	adc	%edx, %edx
+	mov	8(up), %ecx
+	mov	%edx, 4(rp)
+L(sentry):
+	adc	%ecx, %ecx
+	mov	12(up), %edx
+	mov	%ecx, 8(rp)
+	adc	%edx, %edx
+	lea	16(up), up
+	mov	%edx, 12(rp)
+	lea	16(rp), rp
+	mov	(up), %ecx
+L(goloop):
+	decl	%eax
+	jnz	L(sloop)
+
+L(squit):
+	adc	%ecx, %ecx
+	mov	%ecx, (rp)
+	adc	%eax, %eax
+
+	mov	SAVE_UP, up
 	pop	rp			FRAME_popl()
 	ret
 EPILOGUE()
