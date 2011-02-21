@@ -1,4 +1,6 @@
-dnl  Intel Atom mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
+dnl  Intel Atom mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
+
+dnl  Contributed to the GNU project by Marco Bodrato.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 dnl
@@ -19,5 +21,22 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-MULFUNC_PROLOGUE(mpn_addlsh1_n)
-include_mpn(`x86/k7/addlsh1_n.asm')
+define(LSH, 1)
+define(RSH, 31)
+
+ifdef(`OPERATION_addlsh1_n', `
+	define(M4_inst,        adc)
+	define(M4_opp,         sub)
+	define(M4_function,    mpn_addlsh1_n)
+	define(M4_function_c,  mpn_addlsh1_nc)
+',`ifdef(`OPERATION_rsblsh1_n', `
+	define(M4_inst,        sbb)
+	define(M4_opp,         add)
+	define(M4_function,    mpn_rsblsh1_n)
+	define(M4_function_c,  mpn_rsblsh1_nc)
+',`m4_error(`Need OPERATION_addlsh1_n or OPERATION_rsblsh1_n
+')')')
+
+MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_addlsh1_nc mpn_rsblsh1_n mpn_rsblsh1_nc)
+
+include_mpn(`x86/atom/aorrlshC_n.asm')

@@ -1,4 +1,9 @@
-2011-02-20  Torbjorn Granlund  <tege@gmplib.org>
+2011-02-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/atom/aorrlsh1_n.asm: New file (code from rsblsh_1, slightly
+	slower for addlsh_1 for large operands, but much faster for small).
+	* mpn/x86/atom/addlsh1_n.asm: Remove.
+	* mpn/x86/atom/rsblsh1_n.asm: Remove.
 
 2011-02-20  Marc Glisse  <marc.glisse@inria.fr>
 
