@@ -1,8 +1,8 @@
-dnl  Intel Atom mpn_lshift -- mpn left shift
+dnl  Intel Atom mpn_lshift -- mpn left shift.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
-dnl  Converted from AMD64 by Marco Bodrato.
+dnl  Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -41,19 +41,30 @@ ASM_START()
 	ALIGN(8)
 deflit(`FRAME',0)
 PROLOGUE(mpn_lshift)
-	movl	PARAM_CNT, cnt
-	movl	PARAM_SIZE, %edx
-	movl	up, SAVE_UP
-	movl	PARAM_SRC, up
+	mov	PARAM_CNT, cnt
+	mov	PARAM_SIZE, %edx
+	mov	up, SAVE_UP
+	mov	PARAM_SRC, up
 	push	rp			FRAME_pushl()
-	movl	PARAM_DST, rp
+	mov	PARAM_DST, rp
+
+C We can use faster code for shift-by-1 under certain conditions.
+	cmp	$1,cnt
+	jne	L(normal)
+	cmpl	rp, up
+	jnc	L(special)		C jump if s_ptr + 1 >= res_ptr
+	leal	(up,%edx,4),%eax
+	cmpl	%eax,rp
+	jnc	L(special)		C jump if res_ptr >= s_ptr + size
+
+L(normal):
 	lea	-4(up,%edx,4), up
-	movl	%ebx, SAVE_EBX
+	mov	%ebx, SAVE_EBX
 	lea	-4(rp,%edx,4), rp
 
 	shr	%edx
 	mov	(up), %eax
-	movl	%edx, VAR_COUNT
+	mov	%edx, VAR_COUNT
 	jnc	L(evn)
 
 	mov	%eax, %ebx
@@ -65,14 +76,14 @@ PROLOGUE(mpn_lshift)
 	mov	%ebx, (rp)
 	jmp	L(quit)
 
-L(gt1):	movl	%ebp, SAVE_EBP
+L(gt1):	mov	%ebp, SAVE_EBP
 	push	%eax
 	mov	-4(up), %eax
 	mov	%eax, %ebp
 	shr	%cl, %eax
 	jmp	L(lo1)
 
-L(evn):	movl	%ebp, SAVE_EBP
+L(evn):	mov	%ebp, SAVE_EBP
 	neg	cnt
 	mov	%eax, %ebp
 	mov	-4(up), %edx
@@ -86,7 +97,7 @@ L(evn):	movl	%ebp, SAVE_EBP
 	jz	L(end)
 	push	%eax			FRAME_pushl()
 
-	ALIGN(16)
+	ALIGN(8)
 L(top):	shl	%cl, %ebp
 	or	%ebp, %edx
 	shl	%cl, %ebx
@@ -111,13 +122,65 @@ L(end):
 	shl	%cl, %ebp
 	shl	%cl, %ebx
 	or	%ebp, %edx
-	movl	SAVE_EBP, %ebp
+	mov	SAVE_EBP, %ebp
 	mov	%edx, -4(rp)
 	mov	%ebx, -8(rp)
 
 L(quit):
-	movl	SAVE_UP, up
-	movl	SAVE_EBX, %ebx
+	mov	SAVE_UP, up
+	mov	SAVE_EBX, %ebx
+	pop	rp			FRAME_popl()
+	ret
+
+L(special):
+deflit(`FRAME',4)
+	lea	3(%edx), %eax		C size + 3
+	dec	%edx			C size - 1
+	mov	(up), %ecx
+	shr	$2, %eax		C (size + 3) / 4
+	and	$3, %edx		C (size - 1) % 4
+	jz	L(goloop)		C jmp if  size == 1 (mod 4)
+	shr	%edx			
+	jnc	L(odd)			C jum if  size == 3 (mod 4)
+
+	add	%ecx, %ecx
+	lea	4(up), up
+	mov	%ecx, (rp)
+	mov	(up), %ecx
+	lea	4(rp), rp
+
+	dec	%edx
+	jnz	L(goloop)		C jump if  size == 0 (mod 4)
+L(odd):	lea	-8(up), up
+	lea	-8(rp), rp
+	jmp	L(sentry)		C reached if size == 2 or 3 (mod 4) 
+
+L(sloop):
+	adc	%ecx, %ecx
+	mov	4(up), %edx
+	mov	%ecx, (rp)
+	adc	%edx, %edx
+	mov	8(up), %ecx
+	mov	%edx, 4(rp)
+L(sentry):
+	adc	%ecx, %ecx
+	mov	12(up), %edx
+	mov	%ecx, 8(rp)
+	adc	%edx, %edx
+	lea	16(up), up
+	mov	%edx, 12(rp)
+	lea	16(rp), rp
+	mov	(up), %ecx
+L(goloop):
+	decl	%eax
+	jnz	L(sloop)
+
+L(squit):
+	adc	%ecx, %ecx
+	mov	%ecx, (rp)
+	adc	%eax, %eax
+
+	mov	SAVE_UP, up
 	pop	rp			FRAME_popl()
 	ret
 EPILOGUE()
