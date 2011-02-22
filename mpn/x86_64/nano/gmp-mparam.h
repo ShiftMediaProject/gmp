@@ -21,6 +21,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
+#define SHLD_SLOW 1
+#define SHRD_SLOW 1
+
 /* 1600 MHz Nano 2xxx */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
