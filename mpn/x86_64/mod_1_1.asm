@@ -1,8 +1,8 @@
 dnl  AMD64 mpn_mod_1_1p
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund and Niels Möller.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,18 +22,36 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 7
-C AMD K10	 7
-C Intel P4	27
-C Intel core2	14
-C Intel corei	12.5
-C Intel atom	37
-C VIA nano	14
+C AMD K8,K9	 6
+C AMD K10	 6
+C Intel P4	26
+C Intel core2	12.5
+C Intel NHM	11.3
+C Intel SBR	 8.4	(slowdown, old code took 8.0)
+C Intel atom	26
+C VIA nano	13
 
-define(`B1modb', `%r10')
+define(`B2mb',   `%r10')
 define(`B2modb', `%r11')
 define(`ap',     `%rdi')
 define(`n',      `%rsi')
+define(`pre',    `%r12')
+define(`b',      `%rbx')
+
+define(`r0',     `%rbp') C r1 kept in %rax
+define(`r2',	 `%r8')  C kept negated
+define(`t0',     `%r9')
+define(`t1',     `%rcx') C Also used as shift count
+
+C mp_limb_t
+C mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
+C                       %rdi         %rsi         %rdx                %rcx
+C The pre array contains bi, cnt, B1modb, B2modb
+C Note: This implementaion needs B1modb only when cnt > 0
+
+C Currently needs b to not be preshifted, we actually have to undo shift done
+C by caller.  Perhaps b shouldn't be passed at all, it should be in the pre
+C block where the cps function is free to store whatever is needed.
 
 ASM_START()
 	TEXT
@@ -41,91 +59,106 @@ ASM_START()
 PROLOGUE(mpn_mod_1_1p)
 	push	%rbp
 	push	%rbx
-	mov	%rdx, %rbp
-	mov	%rcx, %rbx
-	mov	16(%rcx), B1modb
-	mov	24(%rcx), B2modb
+	push	%r12
+	mov	%rdx, b
+	mov	%rcx, pre
 
-C FIXME: See comment in generic/mod_1_1.c.
-	mov	-8(ap,n,8), %rax
-	mul	B1modb
-	mov	-16(ap,n,8), %r9
-	xor	R32(%r8), R32(%r8)
-	add	%r9, %rax
-	adc	%rdx, %r8
+	mov	8(pre), R32(%rcx)
+	shr	R8(%rcx), b
 
-	sub	$3, n
-	js	L(2)
+	mov	-8(ap, n, 8), %rax
+	cmp	$3, n
+	jnc	L(first)
+	mov	-16(ap, n, 8), r0
+	jmp	L(reduce_two)
+
+L(first):
+	C First iteration, no r2
+	mov	24(pre), B2modb
+	mul	B2modb
+	mov	-24(ap, n, 8), r0
+	add	%rax, r0
+	mov	-16(ap, n, 8), %rax
+	adc	%rdx, %rax
+	sbb	r2, r2
+	sub	$4, n
+	jc	L(reduce_three)
+
+	mov	B2modb, B2mb
+	sub	b, B2mb
+
 	ALIGN(16)
-L(top):	mul	B1modb			C 1  15
-	xor	R32(%r9), R32(%r9)	C
-	mov	(ap,n,8), %rcx		C
-	add	%rax, %rcx		C 5  19
-	mov	%r8, %rax		C 0  16
-	adc	%rdx, %r9		C 6  20
-	mul	B2modb			C 3  17
-	add	%rcx, %rax		C 7  21
-	nop
-	adc	%rdx, %r9		C 8  22
-	sub	$1, n			C
-	js	L(end)			C
+L(top):	and	B2modb, r2
+	lea	(B2mb, r0), t1
+	mul	B2modb
+	add	r2, r0
+	mov	(ap, n, 8), t0
+	cmovc	t1, r0
+	add	%rax, t0
+	mov	r0, %rax
+	adc	%rdx, %rax
+	sbb 	r2, r2
+	sub 	$1, n
+	mov	t0, r0
+	jnc	L(top)
 
-	mul	B1modb			C 8  22
-	xor	R32(%r8), R32(%r8)	C
-	mov	(ap,n,8), %rcx		C
-	add	%rax, %rcx		C 12 26
-	mov	%r9, %rax		C 9  23
-	adc	%rdx, %r8		C 13 27
-	mul	B2modb			C 10 24
-	add	%rcx, %rax		C 14 28
-	nop
-	adc	%rdx, %r8		C 15 29
-	sub	$1, n			C
-	jns	L(top)			C
+L(reduce_three):
+	C Eliminate r2
+	and	b, r2
+	sub	r2, %rax
 
-	jmp	L(2)
-L(end):	mov	%r9, %r8
-L(2):
-	mov	%rax, %r9
-	mov	(%rbx), %rsi
-	mov	8(%rbx), R32(%rdi)
-	test	R32(%rdi), R32(%rdi)
-	je	L(4)
-	mov	%r8, %rax
-	mov	R32(%rdi), R32(%rcx)
-	sal	R8(%rcx), %rax
-	mov	%r9, %r8
-	sal	R8(%rcx), %r9
+L(reduce_two):
+	mov	8(pre), R32(%rcx)
+	test	R32(%rcx), R32(%rcx)
+	jz	L(normalized)
+
+	C Unnormalized, use B1modb to reduce to size < B b
+	mulq	16(pre)
+	xor	t0, t0
+	add	%rax, r0
+	adc	%rdx, t0
+	mov	t0, %rax
+
+	C Left-shift to normalize
+	shl	R8(%rcx), b
+ifdef(`SHLD_SLOW',`
+	shl	R8(%rcx), %rax
+	mov	r0, t0
 	neg	R32(%rcx)
-	shr	R8(%rcx), %r8
-	or	%rax, %r8
-L(4):
-	mov	%r8, %rax
-	sub	%rbp, %r8
-	cmovc	%rax, %r8
-	mov	%r8, %rax
-	mul	%rsi
-	mov	%rax, %rbx
-	mov	%r9, %rsi
-	lea	1(%r8), %rax
-	add	%rsi, %rbx
-	adc	%rax, %rdx
-	mov	%rbp, %rax
-	imul	%rdx, %rax
-	sub	%rax, %rsi
-	mov	%rsi, %rax
-	lea	(%rsi,%rbp), %rdx
-	cmp	%rsi, %rbx
-	cmovc	%rdx, %rax
-	mov	%rax, %rdx
-	sub	%rbp, %rdx
-	cmp	%rbp, %rax
-	cmovnc	%rdx, %rax
-	mov	R32(%rdi), R32(%rcx)
-	shr	R8(%rcx), %rax
+	shr	R8(%rcx), t0
+	or	t0, %rax
+	neg	R32(%rcx)
+',`
+	shld	R8(%rcx), r0, %rax
+')
+	shl	R8(%rcx), r0
+	jmp	L(udiv)
+
+L(normalized):
+	mov	%rax, t0
+	sub	b, t0
+	cmovnc	t0, %rax
+
+L(udiv):
+	lea	1(%rax), t0
+	mulq	(pre)
+	add	r0, %rax
+	adc	t0, %rdx
+	imul	b, %rdx
+	sub	%rdx, r0
+	cmp	r0, %rax
+	lea	(b, r0), %rax
+	cmovnc	r0, %rax
+	cmp	b, %rax
+	jnc	L(fix)
+L(ok):	shr	R8(%rcx), %rax
+
+	pop	%r12
 	pop	%rbx
 	pop	%rbp
 	ret
+L(fix):	sub	b, %rax
+	jmp	L(ok)
 EPILOGUE()
 
 	ALIGN(16)

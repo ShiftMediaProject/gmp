@@ -1,3 +1,7 @@
+2011-02-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Rewrite.
+
 2011-02-22 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/lshiftc.asm: New file (a copy of lshift.asm with a handful of neg added).
