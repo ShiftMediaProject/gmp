@@ -3240,15 +3240,15 @@ AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
 [The gmp-mparam.h file (a string) the tune program should suggest updating.])
 
 
-# Copy relevant THRESHOLD parameters from gmp-mparam.h to config.m4.
-# We only do this for THRESHOLDs that are used by some assembly files.
+# Copy relevant parameters from gmp-mparam.h to config.m4.
+# We only do this for parameters that are used by some assembly files.
 # Fat binaries do this on a per-file basis, so skip in that case.
 #
 if test -z "$fat_path"; then
-  for i in SQR_TOOM2_THRESHOLD BMOD_1_TO_MOD_1_THRESHOLD; do
-    threshold=`sed -n 's/^#define '$i'[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
-    if test -n "threshold"; then
-      GMP_DEFINE_RAW(["define(<$i>,<$threshold>)"])
+  for i in SQR_TOOM2_THRESHOLD BMOD_1_TO_MOD_1_THRESHOLD SHLD_SLOW SHRD_SLOW; do
+    value=`sed -n 's/^#define '$i'[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
+    if test -n "$value"; then
+      GMP_DEFINE_RAW(["define(<$i>,<$value>)"])
     fi
   done
 fi
