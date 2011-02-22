@@ -1,3 +1,7 @@
+2011-02-22 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/lshiftc.asm: New file (a copy of lshift.asm with a handful of neg added).
+
 2011-02-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/atom/aorrlsh1_n.asm: New file (code from rsblsh_1, slightly
