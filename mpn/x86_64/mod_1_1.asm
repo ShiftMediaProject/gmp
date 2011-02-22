@@ -53,6 +53,25 @@ C Currently needs b to not be preshifted, we actually have to undo shift done
 C by caller.  Perhaps b shouldn't be passed at all, it should be in the pre
 C block where the cps function is free to store whatever is needed.
 
+C The iteration is almost as follows,
+C
+C   r_2 B^3 + r_1 B^2 + r_0 B + u = r_1 B2modb + (r_0 + r_2 B2mod) B + u
+C                                                
+C where r2 is a single bit represented as a mask. But to make sure that the
+C result fits in two limbs and a bit, carry from the addition
+C
+C   r_0 + r_2 B2mod
+C
+C is handled specially. On carry, we subtract b to cancel the carry,
+C and we use instead the value
+C
+C   r_0 + B2mb (mod B)
+C
+C This addition can be issued early since it doesn't depend on r2, and it is
+C the source of the cmov in the loop.
+C
+C We have the invariant that r_2 B^2 + r_1 B + r_0 < B^2 + B b
+
 ASM_START()
 	TEXT
 	ALIGN(16)
