@@ -40,22 +40,22 @@ ASM_START()
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
 	mov	(up), %rax
-	movd	%ecx, %mm4
-	neg	%ecx			C put lsh count in cl
-	and	$63, %ecx
-	movd	%ecx, %mm5
+	movd	R32(%rcx), %mm4
+	neg	R32(%rcx)			C put lsh count in cl
+	and	$63, R32(%rcx)
+	movd	R32(%rcx), %mm5
 
 	lea	-8(up,n,8), up
 	lea	-8(rp,n,8), rp
-	lea	1(n), %r8d
+	lea	1(n), R32(%r8)
 	neg	n
 
-	shl	%cl, %rax		C function return value
+	shl	R8(%rcx), %rax		C function return value
 
-	and	$3, %r8d
+	and	$3, R32(%r8)
 	je	L(rol)			C jump for n = 3, 7, 11, ...
 
-	dec	%r8d
+	dec	R32(%r8)
 	jne	L(1)
 C	n = 4, 8, 12, ...
 	movq	8(up,n,8), %mm2
@@ -67,7 +67,7 @@ C	n = 4, 8, 12, ...
 	inc	n
 	jmp	L(rol)
 
-L(1):	dec	%r8d
+L(1):	dec	R32(%r8)
 	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
 	movq	8(up,n,8), %mm2

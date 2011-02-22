@@ -61,13 +61,13 @@ L(oop):	movq	(up), %r8
 	movq	%r11, (rp)
 	jnc	L(oop)
 
-L(end):	shrl	%edx			C edx = lowpart(n)
+L(end):	shrl	R32(%rdx)		C edx = lowpart(n)
 	jnc	1f
 	movq	(up), %r8
 	movq	%r8, -8(rp)
 	leaq	-8(rp), rp
 	leaq	-8(up), up
-1:	shrl	%edx			C edx = lowpart(n)
+1:	shrl	R32(%rdx)		C edx = lowpart(n)
 	jnc	1f
 	movq	(up), %r8
 	movq	-8(up), %r9

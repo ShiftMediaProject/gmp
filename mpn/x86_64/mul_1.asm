@@ -114,7 +114,7 @@ L(top):	mov	%r10, (rp,n,8)
 	add	%rax, %r9
 	mov	(up,n,8), %rax
 	adc	%rdx, %r8
-	mov	$0, %r10d
+	mov	$0, R32(%r10)
 L(L1):	mul	vl
 	mov	%r9, 8(rp,n,8)
 	add	%rax, %r8
@@ -127,11 +127,11 @@ L(L0):	mov	8(up,n,8), %rax
 L(L3):	mov	16(up,n,8), %rax
 	mul	vl
 	mov	%rbx, 24(rp,n,8)
-	mov	$0, %r8d		# zero
-	mov	%r8, %rbx		# zero
+	mov	$0, R32(%r8)		C zero
+	mov	%r8, %rbx		C zero
 	add	%rax, %r10
 	mov	24(up,n,8), %rax
-	mov	%r8, %r9		# zero
+	mov	%r8, %r9		C zero
 	adc	%rdx, %r9
 L(L2):	mul	vl
 	add	$4, n

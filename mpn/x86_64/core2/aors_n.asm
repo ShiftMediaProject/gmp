@@ -66,12 +66,12 @@ L(start):
 	lea	-8(up,n,8), up
 	lea	-8(vp,n,8), vp
 	lea	-16(rp,n,8), rp
-	mov	%ecx, %eax
+	mov	R32(%rcx), R32(%rax)
 	neg	n
-	and	$3, %eax
+	and	$3, R32(%rax)
 	je	L(b00)
-	add	%rax, n		C clear low rcx bits for jrcxz
-	cmp	$2, %eax
+	add	%rax, n			C clear low rcx bits for jrcxz
+	cmp	$2, R32(%rax)
 	jl	L(b01)
 	je	L(b10)
 
@@ -94,8 +94,8 @@ L(b10):	shr	%r8			C set cy
 
 L(end):	ADCSBB	%r11, %r10
 	mov	%r10, 8(rp)
-	mov	%ecx, %eax		C clear eax, ecx contains 0
-	adc	%eax, %eax
+	mov	R32(%rcx), R32(%rax)	C clear eax, ecx contains 0
+	adc	R32(%rax), R32(%rax)
 	ret
 
 	ALIGN(16)

@@ -84,7 +84,7 @@ L(lt4):	dec	R32(%rax)
 	jnz	L(2)
 	ADCSBB	(vp), %r8
 	mov	%r8, (rp)
-	adc	%eax, %eax
+	adc	R32(%rax), R32(%rax)
 	ret
 
 L(2):	dec	R32(%rax)
@@ -94,7 +94,7 @@ L(2):	dec	R32(%rax)
 	ADCSBB	8(vp), %r9
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
-	adc	%eax, %eax
+	adc	R32(%rax), R32(%rax)
 	ret
 
 L(3):	mov	16(up), %r10
@@ -141,6 +141,6 @@ L(end):	lea	32(up), up
 	inc	R32(%rax)
 	dec	R32(%rax)
 	jnz	L(lt4)
-	adc	%eax, %eax
+	adc	R32(%rax), R32(%rax)
 	ret
 EPILOGUE()

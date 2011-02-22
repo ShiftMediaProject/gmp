@@ -85,7 +85,7 @@ L(o1):	mov	nneg, i
 	imul	invm, %rbp
 
 	mov	(mp,i,8), %rax
-	xor	%ebx, %ebx
+	xor	R32(%rbx), R32(%rbx)
 	mul	%rbp
 	add	$1, i
 	jnz	1f
@@ -104,7 +104,7 @@ L(lo1):	add	%r10, (up,i,8)
 	adc	%rax, %r9
 	mov	(mp,i,8), %rax
 	adc	%rdx, %r14
-L(mi1):	xor	%r10d, %r10d
+L(mi1):	xor	R32(%r10), R32(%r10)
 	mul	%rbp
 	add	%r9, 8(up,i,8)
 	adc	%rax, %r14
@@ -116,20 +116,20 @@ L(mi1):	xor	%r10d, %r10d
 	adc	%rdx, %r10
 	mov	16(mp,i,8), %rax
 	mul	%rbp
-	xor	%r9d, %r9d
-	xor	%r14d, %r14d
+	xor	R32(%r9), R32(%r9)
+	xor	R32(%r14), R32(%r14)
 	add	%rbx, 24(up,i,8)
 	adc	%rax, %r10
 	mov	24(mp,i,8), %rax
 	adc	%rdx, %r9
-	xor	%ebx, %ebx
+	xor	R32(%rbx), R32(%rbx)
 	mul	%rbp
 	add	$4, i
 	js	L(lo1)
 L(ed1):	add	%r10, (up)
 	adc	%rax, %r9
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	add	%r9, 8(up)
 	adc	$0, %r14
 L(n1):	mov	%r14, 16(up,nneg,8)	C up[0]
@@ -147,7 +147,7 @@ L(o0):	mov	nneg, i
 	imul	invm, %rbp
 
 	mov	(mp,i,8), %rax
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	mul	%rbp
 	mov	%rax, %r14
 	mov	%rdx, %rbx
@@ -158,7 +158,7 @@ L(lo0):	add	%r10, (up,i,8)
 	adc	%rax, %r9
 	mov	(mp,i,8), %rax
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	mul	%rbp
 	add	%r9, 8(up,i,8)
 	adc	%rax, %r14
@@ -170,20 +170,20 @@ L(mi0):	mov	8(mp,i,8), %rax
 	adc	%rdx, %r10
 	mov	16(mp,i,8), %rax
 	mul	%rbp
-	xor	%r9d, %r9d
-	xor	%r14d, %r14d
+	xor	R32(%r9), R32(%r9)
+	xor	R32(%r14), R32(%r14)
 	add	%rbx, 24(up,i,8)
 	adc	%rax, %r10
 	mov	24(mp,i,8), %rax
 	adc	%rdx, %r9
-	xor	%ebx, %ebx
+	xor	R32(%rbx), R32(%rbx)
 	mul	%rbp
 	add	$4, i
 	js	L(lo0)
 L(ed0):	add	%r10, (up)
 	adc	%rax, %r9
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	add	%r9, 8(up)
 	adc	$0, %r14
 	mov	%r14, 16(up,nneg,8)	C up[0]
@@ -212,7 +212,7 @@ L(lo3):	add	%r10, (up,i,8)
 	adc	%rax, %r9
 	mov	(mp,i,8), %rax
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	mul	%rbp
 	add	%r9, 8(up,i,8)
 	adc	%rax, %r14
@@ -224,20 +224,20 @@ L(lo3):	add	%r10, (up,i,8)
 	adc	%rdx, %r10
 L(mi3):	mov	16(mp,i,8), %rax
 	mul	%rbp
-	xor	%r9d, %r9d
-	xor	%r14d, %r14d
+	xor	R32(%r9), R32(%r9)
+	xor	R32(%r14), R32(%r14)
 	add	%rbx, 24(up,i,8)
 	adc	%rax, %r10
 	mov	24(mp,i,8), %rax
 	adc	%rdx, %r9
-	xor	%ebx, %ebx
+	xor	R32(%rbx), R32(%rbx)
 	mul	%rbp
 	add	$4, i
 	js	L(lo3)
 L(ed3):	add	%r10, 8(up)
 	adc	%rax, %r9
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	add	%r9, 16(up)
 	adc	$0, %r14
 	mov	%r14, 24(up,nneg,8)	C up[0]
@@ -256,7 +256,7 @@ L(o2):	mov	nneg, i
 
 	mov	16(mp,i,8), %rax
 	mul	%rbp
-	xor	%r14d, %r14d
+	xor	R32(%r14), R32(%r14)
 	mov	%rax, %r10
 	mov	24(mp,i,8), %rax
 	mov	%rdx, %r9
@@ -267,7 +267,7 @@ L(lo2):	add	%r10, (up,i,8)
 	adc	%rax, %r9
 	mov	(mp,i,8), %rax
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	mul	%rbp
 	add	%r9, 8(up,i,8)
 	adc	%rax, %r14
@@ -279,20 +279,20 @@ L(lo2):	add	%r10, (up,i,8)
 	adc	%rdx, %r10
 	mov	16(mp,i,8), %rax
 	mul	%rbp
-	xor	%r9d, %r9d
-	xor	%r14d, %r14d
+	xor	R32(%r9), R32(%r9)
+	xor	R32(%r14), R32(%r14)
 	add	%rbx, 24(up,i,8)
 	adc	%rax, %r10
 	mov	24(mp,i,8), %rax
 	adc	%rdx, %r9
-L(mi2):	xor	%ebx, %ebx
+L(mi2):	xor	R32(%rbx), R32(%rbx)
 	mul	%rbp
 	add	$4, i
 	js	L(lo2)
 L(ed2):	add	%r10, 16(up)
 	adc	%rax, %r9
 	adc	%rdx, %r14
-	xor	%r10d, %r10d
+	xor	R32(%r10), R32(%r10)
 	add	%r9, 24(up)
 	adc	$0, %r14
 	mov	%r14, 32(up,nneg,8)	C up[0]

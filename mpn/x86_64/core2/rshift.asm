@@ -40,14 +40,14 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_rshift)
-	mov	%edx, %eax
-	and	$3, %eax
+	mov	R32(%rdx), R32(%rax)
+	and	$3, R32(%rax)
 	jne	L(nb00)
 L(b00):	C n = 4, 8, 12, ...
 	mov	(up), %r10
 	mov	8(up), %r11
-	xor	%eax, %eax
-	shrd	%cl, %r10, %rax
+	xor	R32(%rax), R32(%rax)
+	shrd	R8(%rcx), %r10, %rax
 	mov	16(up), %r8
 	lea	8(up), up
 	lea	-24(rp), rp
@@ -55,11 +55,11 @@ L(b00):	C n = 4, 8, 12, ...
 	jmp	L(00)
 
 L(nb00):C n = 1, 5, 9, ...
-	cmp	$2, %eax
+	cmp	$2, R32(%rax)
 	jae	L(nb01)
 L(b01):	mov	(up), %r9
-	xor	%eax, %eax
-	shrd	%cl, %r9, %rax
+	xor	R32(%rax), R32(%rax)
+	shrd	R8(%rcx), %r9, %rax
 	sub	$2, n
 	jb	L(le1)
 	mov	8(up), %r10
@@ -67,7 +67,7 @@ L(b01):	mov	(up), %r9
 	lea	16(up), up
 	lea	-16(rp), rp
 	jmp	L(01)
-L(le1):	shr	%cl, %r9
+L(le1):	shr	R8(%rcx), %r9
 	mov	%r9, (rp)
 	ret
 
@@ -75,17 +75,17 @@ L(nb01):C n = 2, 6, 10, ...
 	jne	L(b11)
 L(b10):	mov	(up), %r8
 	mov	8(up), %r9
-	xor	%eax, %eax
-	shrd	%cl, %r8, %rax
+	xor	R32(%rax), R32(%rax)
+	shrd	R8(%rcx), %r8, %rax
 	sub	$3, n
 	jb	L(le2)
 	mov	16(up), %r10
 	lea	24(up), up
 	lea	-8(rp), rp
 	jmp	L(10)
-L(le2):	shrd	%cl, %r9, %r8
+L(le2):	shrd	R8(%rcx), %r9, %r8
 	mov	%r8, (rp)
-	shr	%cl, %r9
+	shr	R8(%rcx), %r9
 	mov	%r9, 8(rp)
 	ret
 
@@ -93,24 +93,24 @@ L(le2):	shrd	%cl, %r9, %r8
 L(b11):	C n = 3, 7, 11, ...
 	mov	(up), %r11
 	mov	8(up), %r8
-	xor	%eax, %eax
-	shrd	%cl, %r11, %rax
+	xor	R32(%rax), R32(%rax)
+	shrd	R8(%rcx), %r11, %rax
 	mov	16(up), %r9
 	lea	32(up), up
 	sub	$4, n
 	jb	L(end)
 
 	ALIGN(16)
-L(top):	shrd	%cl, %r8, %r11
+L(top):	shrd	R8(%rcx), %r8, %r11
 	mov	-8(up), %r10
 	mov	%r11, (rp)
-L(10):	shrd	%cl, %r9, %r8
+L(10):	shrd	R8(%rcx), %r9, %r8
 	mov	(up), %r11
 	mov	%r8, 8(rp)
-L(01):	shrd	%cl, %r10, %r9
+L(01):	shrd	R8(%rcx), %r10, %r9
 	mov	8(up), %r8
 	mov	%r9, 16(rp)
-L(00):	shrd	%cl, %r11, %r10
+L(00):	shrd	R8(%rcx), %r11, %r10
 	mov	16(up), %r9
 	mov	%r10, 24(rp)
 	add	$32, up
@@ -118,11 +118,11 @@ L(00):	shrd	%cl, %r11, %r10
 	sub	$4, n
 	jnc	L(top)
 
-L(end):	shrd	%cl, %r8, %r11
+L(end):	shrd	R8(%rcx), %r8, %r11
 	mov	%r11, (rp)
-	shrd	%cl, %r9, %r8
+	shrd	R8(%rcx), %r9, %r8
 	mov	%r8, 8(rp)
-	shr	%cl, %r9
+	shr	R8(%rcx), %r9
 	mov	%r9, 16(rp)
 	ret
 EPILOGUE()

@@ -149,7 +149,7 @@ L(skp):	cmp	$8, n
 
 	ALIGN(16)
 L(top):	mov	(vp), %r8
-	add	%eax, %eax
+	add	R32(%rax), R32(%rax)
 	lea	64(vp), vp
 	adc	%r8, %r8
 	mov	-56(vp), %r9
@@ -166,8 +166,8 @@ L(top):	mov	(vp), %r8
 	adc	%r14, %r14
 	mov	-8(vp), %r15
 	adc	%r15, %r15
-	sbb	%eax, %eax
-	add	%ebp, %ebp
+	sbb	R32(%rax), R32(%rax)
+	add	R32(%rbp), R32(%rbp)
 	mov	(up), %rbp
 	lea	64(rp), rp
 	mov	8(up), %rbx
@@ -194,7 +194,7 @@ L(top):	mov	(vp), %r8
 	sbb	%r15, %rbx
 	lea	64(up), up
 	mov	%rbx, 56(rp)
-	sbb	%ebp, %ebp
+	sbb	R32(%rbp), R32(%rbp)
 L(x):	sub	$8, n
 	jge	L(top)
 

@@ -20,13 +20,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
 C	     cycles/limb
 C AMD K8,K9	 2.14	(mpn_add_n + mpn_rshift need 4.125)
 C AMD K10	 2.14	(mpn_add_n + mpn_rshift need 4.125)
 C Intel P4	12.75
 C Intel core2	 3.75
-C Intel corei	 4.4
+C Intel NMH	 4.4
+C Intel SBR	 ?
 C Intel atom	 ?
 C VIA nano	 3.25
 

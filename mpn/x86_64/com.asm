@@ -40,13 +40,13 @@ ASM_START()
 	ALIGN(32)
 PROLOGUE(mpn_com)
 	movq	(up), %r8
-	movl	%edx, %eax
+	movl	R32(%rdx), R32(%rax)
 	leaq	(up,n,8), up
 	leaq	(rp,n,8), rp
 	negq	n
-	andl	$3, %eax
+	andl	$3, R32(%rax)
 	je	L(b00)
-	cmpl	$2, %eax
+	cmpl	$2, R32(%rax)
 	jc	L(b01)
 	je	L(b10)
 

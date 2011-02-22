@@ -26,7 +26,8 @@ C AMD K8,K9	 4
 C AMD K10	 4
 C Intel P4	19
 C Intel core2	 8
-C Intel corei	 6.5
+C Intel NHM	 6.5
+C Intel SBR	 4.5
 C Intel atom	28
 C VIA nano	 8
 
@@ -35,7 +36,7 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_2p)
 	push	%r14
-	test	$1, %sil
+	test	$1, R8(%rsi)
 	mov	%rdx, %r14
 	push	%r13
 	mov	%rcx, %r13

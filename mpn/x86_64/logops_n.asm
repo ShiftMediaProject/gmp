@@ -25,8 +25,9 @@ C AMD K8,K9	 1.5
 C AMD K10	 1.75-2 (fluctuating)
 C Intel P4	 2.8/3.35/3.60 (variant1/variant2/variant3)
 C Intel core2	 2
-C Intel corei	 2
-C Intel atom	 ?
+C Intel NHM	 2
+C Intel SBR	 1.5/1.75/1.75
+C Intel atom	 3.75
 C VIA nano	 3.25
 
 ifdef(`OPERATION_and_n',`
@@ -79,14 +80,14 @@ ifdef(`VARIANT_1',`
 	ALIGN(32)
 PROLOGUE(func)
 	movq	(vp), %r8
-	movl	%ecx, %eax
+	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
 	leaq	(up,n,8), up
 	leaq	(rp,n,8), rp
 	negq	n
-	andl	$3, %eax
+	andl	$3, R32(%rax)
 	je	L(b00)
-	cmpl	$2, %eax
+	cmpl	$2, R32(%rax)
 	jc	L(b01)
 	je	L(b10)
 
@@ -126,14 +127,14 @@ ifdef(`VARIANT_2',`
 PROLOGUE(func)
 	movq	(vp), %r8
 	notq	%r8
-	movl	%ecx, %eax
+	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
 	leaq	(up,n,8), up
 	leaq	(rp,n,8), rp
 	negq	n
-	andl	$3, %eax
+	andl	$3, R32(%rax)
 	je	L(b00)
-	cmpl	$2, %eax
+	cmpl	$2, R32(%rax)
 	jc	L(b01)
 	je	L(b10)
 
@@ -176,14 +177,14 @@ ifdef(`VARIANT_3',`
 	ALIGN(32)
 PROLOGUE(func)
 	movq	(vp), %r8
-	movl	%ecx, %eax
+	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
 	leaq	(up,n,8), up
 	leaq	(rp,n,8), rp
 	negq	n
-	andl	$3, %eax
+	andl	$3, R32(%rax)
 	je	L(b00)
-	cmpl	$2, %eax
+	cmpl	$2, R32(%rax)
 	jc	L(b01)
 	je	L(b10)
 

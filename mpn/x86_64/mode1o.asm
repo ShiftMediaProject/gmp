@@ -79,7 +79,7 @@ ASM_START()
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
 
-	movl	$0, %ecx
+	movl	$0, R32(%rcx)
 
 PROLOGUE(mpn_modexact_1c_odd)
 
@@ -89,38 +89,38 @@ PROLOGUE(mpn_modexact_1c_odd)
 	C rcx	carry
 
 	movq	%rdx, %r8		C d
-	shrl	%edx			C d/2
+	shrl	R32(%rdx)		C d/2
 ifdef(`PIC',`
 	movq	binvert_limb_table@GOTPCREL(%rip), %r9
 ',`
 	movabsq	$binvert_limb_table, %r9
 ')
 
-	andl	$127, %edx
+	andl	$127, R32(%rdx)
 	movq	%rcx, %r10		C initial carry
 
-	movzbl	(%r9,%rdx), %edx	C inv 8 bits
+	movzbl	(%r9,%rdx), R32(%rdx)	C inv 8 bits
 
 	movq	(%rdi), %rax		C src[0]
 	leaq	(%rdi,%rsi,8), %r11	C src end
 	movq	%r8, %rdi		C d, made available to imull
 
-	leal	(%rdx,%rdx), %ecx	C 2*inv
-	imull	%edx, %edx		C inv*inv
+	leal	(%rdx,%rdx), R32(%rcx)	C 2*inv
+	imull	R32(%rdx), R32(%rdx)	C inv*inv
 
 	negq	%rsi			C -size
 
-	imull	%edi, %edx		C inv*inv*d
+	imull	R32(%rdi), R32(%rdx)	C inv*inv*d
 
-	subl	%edx, %ecx		C inv = 2*inv - inv*inv*d, 16 bits
+	subl	R32(%rdx), R32(%rcx)	C inv = 2*inv - inv*inv*d, 16 bits
 
-	leal	(%rcx,%rcx), %edx	C 2*inv
-	imull	%ecx, %ecx		C inv*inv
+	leal	(%rcx,%rcx), R32(%rdx)	C 2*inv
+	imull	R32(%rcx), R32(%rcx)	C inv*inv
 
-	imull	%edi, %ecx		C inv*inv*d
+	imull	R32(%rdi), R32(%rcx)	C inv*inv*d
 
-	subl	%ecx, %edx		C inv = 2*inv - inv*inv*d, 32 bits
-	xorl	%ecx, %ecx		C initial cbit
+	subl	R32(%rcx), R32(%rdx)	C inv = 2*inv - inv*inv*d, 32 bits
+	xorl	R32(%rcx), R32(%rcx)	C initial cbit
 
 	leaq	(%rdx,%rdx), %r9	C 2*inv
 	imulq	%rdx, %rdx		C inv*inv
@@ -159,7 +159,7 @@ L(top):
 
 	movq	(%r11,%rsi,8), %rax	C src[i+1]
 	subq	%rcx, %rax		C next l = src[i+1] - cbit
-	setc	%cl			C new cbit
+	setc	R8(%rcx)		C new cbit
 
 	incq	%rsi
 	jnz	L(top)

@@ -110,10 +110,10 @@ L(end):	add	%r9, %rax
 	adc	%r8, %rdx
 
 	inc	%rsi
-	mov	$0x1, %r10d
+	mov	$0x1, R32(%r10)
 	js	L(combine)
 
-	mov	$0x10000, %r10d
+	mov	$0x10000, R32(%r10)
 	adc	24(ap), %rax
 	dec	%rsi
 	js	L(combine)
