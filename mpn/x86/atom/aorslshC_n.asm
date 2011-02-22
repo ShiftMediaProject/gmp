@@ -44,6 +44,23 @@ C                           mp_size_t size, mp_limb_t borrow);
 
 C if src1 == dst, _ip1 is used
 
+C					cycles/limb
+C				dst!=src1,src2	dst==src1
+C P5
+C P6 model 0-8,10-12
+C P6 model 9  (Banias)
+C P6 model 13 (Dothan)
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
+C Intel Atom			 7		 6
+C AMD K6
+C AMD K7
+C AMD K8
+C AMD K10
+
 defframe(GPARAM_CORB,	20)
 defframe(GPARAM_SIZE,	16)
 defframe(GPARAM_SRC2,	12)

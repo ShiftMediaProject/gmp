@@ -22,13 +22,29 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C mp_limb_t mpn_addlshC_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-C                          mp_size_t size,);
+C                          mp_size_t size);
 C mp_limb_t mpn_addlshC_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
 C                           mp_size_t size, mp_limb_t carry);
 C mp_limb_t mpn_rsblshC_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-C                          mp_size_t size,);
+C                          mp_size_t size);
 C mp_limb_t mpn_rsblshC_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
 C                           mp_size_t size, mp_signed_limb_t carry);
+
+C				cycles/limb
+C P5
+C P6 model 0-8,10-12
+C P6 model 9  (Banias)
+C P6 model 13 (Dothan)
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
+C Intel Atom			 6
+C AMD K6
+C AMD K7
+C AMD K8
+C AMD K10
 
 defframe(PARAM_CORB,	20)
 defframe(PARAM_SIZE,	16)

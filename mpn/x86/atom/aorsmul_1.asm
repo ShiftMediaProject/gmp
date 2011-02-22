@@ -30,10 +30,11 @@ C P4 model 1  (?)
 C P4 model 2  (Northwood)
 C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
+C Intel Atom			11
 C AMD K6
 C AMD K7			 3.9
 C AMD K8
-
+C AMD K10
 
 dnl  K7: UNROLL_COUNT  cycles/limb
 dnl           4            4.42
