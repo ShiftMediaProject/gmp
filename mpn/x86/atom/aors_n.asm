@@ -78,7 +78,7 @@ define(SAVE_UP,`PARAM_DST')
 
 define(`rp',  `%edi')
 define(`up',  `%esi')
-define(`vp',  `%ebp')
+define(`vp',  `%ebx')
 define(`cy',  `%ecx')
 define(`r1',  `%ecx')
 define(`r2',  `%edx')
@@ -95,8 +95,8 @@ L(start):
 	mov	rp, SAVE_RP
 	mov	PARAM_DST, rp
 	mov	up, SAVE_UP
-	shr	%eax			C size >> 1
 	mov	PARAM_SRC1, up
+	shr	%eax			C size >> 1
 	mov	vp, SAVE_VP
 	mov	PARAM_SRC2, vp
 	jz	L(one)			C size == 1
@@ -125,8 +125,8 @@ L(oop):
 	mov	r1, (rp)
 L(entry):
 	M4_inst	-4(vp), r2
-	dec	%eax
 	lea	8(rp), rp
+	dec	%eax
 	mov	(up), r1
 	mov	r2, -4(rp)
 	jnz	L(oop)

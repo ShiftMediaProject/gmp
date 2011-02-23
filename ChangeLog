@@ -1,3 +1,7 @@
+2011-02-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/logops_n.asm: New file (same loop as aors_n).
+
 2011-02-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Shaved off one
