@@ -41,7 +41,7 @@ define(`b',      `%rbx')
 define(`r0',     `%rbp') C r1 kept in %rax
 define(`r2',	 `%r8')  C kept negated
 define(`t0',     `%r9')
-define(`t1',     `%rcx') C Also used as shift count
+C define(`t1',     `%rcx') C Also used as shift count
 
 C mp_limb_t
 C mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
@@ -108,17 +108,16 @@ L(first):
 
 	ALIGN(16)
 L(top):	and	B2modb, r2
-	lea	(B2mb, r0), t1
+	lea	(B2mb, r0), t0
 	mul	B2modb
-	add	r2, r0
-	mov	(ap, n, 8), t0
-	cmovc	t1, r0
-	add	%rax, t0
-	mov	r0, %rax
+	add	r0, r2
+	mov	(ap, n, 8), r0
+	cmovc	t0, r2
+	add	%rax, r0
+	mov	r2, %rax
 	adc	%rdx, %rax
 	sbb 	r2, r2
 	sub 	$1, n
-	mov	t0, r0
 	jnc	L(top)
 
 L(reduce_three):
