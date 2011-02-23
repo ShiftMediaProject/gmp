@@ -1,7 +1,9 @@
 2011-02-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Shaved off one
-	instruction and one register in the inner loop.
+	instruction and one register in the inner loop. Rearranged
+	registers slightly, and no longer needs the callee-save register
+	%r12.
 
 2011-02-22  Torbjorn Granlund  <tege@gmplib.org>
 

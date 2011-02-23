@@ -35,13 +35,12 @@ define(`B2mb',   `%r10')
 define(`B2modb', `%r11')
 define(`ap',     `%rdi')
 define(`n',      `%rsi')
-define(`pre',    `%r12')
+define(`pre',    `%r8')
 define(`b',      `%rbx')
 
 define(`r0',     `%rbp') C r1 kept in %rax
-define(`r2',	 `%r8')  C kept negated
+define(`r2',	 `%rcx')  C kept negated. Also used as shift count
 define(`t0',     `%r9')
-C define(`t1',     `%rcx') C Also used as shift count
 
 C mp_limb_t
 C mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
@@ -78,7 +77,6 @@ ASM_START()
 PROLOGUE(mpn_mod_1_1p)
 	push	%rbp
 	push	%rbx
-	push	%r12
 	mov	%rdx, b
 	mov	%rcx, pre
 
@@ -171,7 +169,6 @@ L(udiv):
 	jnc	L(fix)
 L(ok):	shr	R8(%rcx), %rax
 
-	pop	%r12
 	pop	%rbx
 	pop	%rbp
 	ret
