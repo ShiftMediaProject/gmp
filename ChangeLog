@@ -1,3 +1,8 @@
+2011-02-24  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/k7/mod_1_1.asm (mpn_mod_1_1p): Rewrite using the same
+	algorithm as the x86_64 version.
+
 2011-02-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/logops_n.asm: New file (same loop as aors_n).
