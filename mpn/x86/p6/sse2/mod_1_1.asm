@@ -1,4 +1,4 @@
-dnl  Intel P6/SSE2 mpn_mod_1_4.
+dnl  Intel P6/SSE2 mpn_mod_1_1.
 
 dnl  Copyright 2009, 2011 Free Software Foundation, Inc.
 dnl
@@ -19,5 +19,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-MULFUNC_PROLOGUE(mpn_mod_1s_4p)
-include_mpn(`x86/pentium4/sse2/mod_1_4.asm')
+MULFUNC_PROLOGUE(mpn_mod_1_1p)
+include_mpn(`x86/pentium4/sse2/mod_1_1.asm')
