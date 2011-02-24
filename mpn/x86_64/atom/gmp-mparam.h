@@ -31,16 +31,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD         12
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          6
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         8
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        18
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     31
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          4
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD     MP_SIZE_T_MAX
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD         0
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     12
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define BMOD_1_TO_MOD_1_THRESHOLD           30
+#define BMOD_1_TO_MOD_1_THRESHOLD           19
 
-#define MUL_TOOM22_THRESHOLD                12
+#define MUL_TOOM22_THRESHOLD                10
 #define MUL_TOOM33_THRESHOLD                65
 #define MUL_TOOM44_THRESHOLD               105
 #define MUL_TOOM6H_THRESHOLD               157
@@ -53,9 +53,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 16
-#define SQR_TOOM3_THRESHOLD                 65
-#define SQR_TOOM4_THRESHOLD                178
-#define SQR_TOOM6_THRESHOLD                226
+#define SQR_TOOM3_THRESHOLD                 74
+#define SQR_TOOM4_THRESHOLD                166
+#define SQR_TOOM6_THRESHOLD                222
 #define SQR_TOOM8_THRESHOLD                333
 
 #define MULMOD_BNM1_THRESHOLD                7
@@ -130,11 +130,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD                27
 #define DC_BDIV_Q_THRESHOLD                 62
 
-#define INV_MULMOD_BNM1_THRESHOLD           22
+#define INV_MULMOD_BNM1_THRESHOLD           18
 #define INV_NEWTON_THRESHOLD               131
 #define INV_APPR_THRESHOLD                 103
 
-#define BINV_NEWTON_THRESHOLD              150
+#define BINV_NEWTON_THRESHOLD              163
 #define REDC_1_TO_REDC_2_THRESHOLD          12
 #define REDC_2_TO_REDC_N_THRESHOLD          36
 
@@ -153,4 +153,4 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GET_STR_DC_THRESHOLD                15
 #define GET_STR_PRECOMPUTE_THRESHOLD        26
 #define SET_STR_DC_THRESHOLD               266
-#define SET_STR_PRECOMPUTE_THRESHOLD      1045
+#define SET_STR_PRECOMPUTE_THRESHOLD      1120
