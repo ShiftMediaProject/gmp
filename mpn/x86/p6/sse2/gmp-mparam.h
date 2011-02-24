@@ -33,13 +33,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_NORM_THRESHOLD                 3
 #define MOD_1_UNNORM_THRESHOLD               3
 #define MOD_1N_TO_MOD_1_1_THRESHOLD          6
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          7
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0  /* never mpn_mod_1_1p */
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          4
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        11
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     15
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     11
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define BMOD_1_TO_MOD_1_THRESHOLD           21
+#define BMOD_1_TO_MOD_1_THRESHOLD           22
 
 #define MUL_TOOM22_THRESHOLD                20
 #define MUL_TOOM33_THRESHOLD                77
@@ -159,18 +159,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_N_THRESHOLD          62
 
 #define MU_DIV_QR_THRESHOLD               1142
-#define MU_DIVAPPR_Q_THRESHOLD             998
-#define MUPI_DIV_QR_THRESHOLD                0
+#define MU_DIVAPPR_Q_THRESHOLD             889
+#define MUPI_DIV_QR_THRESHOLD               39
 #define MU_BDIV_QR_THRESHOLD              1308
 #define MU_BDIV_Q_THRESHOLD               1442
 
 #define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                      60
+#define HGCD_THRESHOLD                      70
 #define GCD_DC_THRESHOLD                   379
 #define GCDEXT_DC_THRESHOLD                298
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                13
 #define GET_STR_PRECOMPUTE_THRESHOLD        20
-#define SET_STR_DC_THRESHOLD               662
-#define SET_STR_PRECOMPUTE_THRESHOLD      1104
+#define SET_STR_DC_THRESHOLD               582
+#define SET_STR_PRECOMPUTE_THRESHOLD      1055
