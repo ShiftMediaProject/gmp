@@ -1485,7 +1485,7 @@ case $host in
       # VIA/Centaur processors, sold as CyrixIII and C3.
       viac32)               path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       viac3*)               path="x86/pentium/mmx x86/pentium x86";;
-      atom)                 path="x86/atom/sse2 x86/atom x86" ;;
+      atom)                 path="x86/atom/sse2 x86/atom/mmx x86/atom x86" ;;
       *)                    path="x86" ;;
     esac
 
