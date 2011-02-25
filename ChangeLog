@@ -1,3 +1,12 @@
+2011-02-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/sse2/divrem_1.asm: New file (was in x86/atom).
+	* mpn/x86/atom/sse2/mul_1.asm: Likewise.
+	* mpn/x86/atom/sse2/popcount.asm: Likewise.
+	* mpn/x86/atom/divrem_1.asm: ReMoved (in sse2/ now).
+	* mpn/x86/atom/mul_1.asm: Likewise.
+	* mpn/x86/atom/popcount.asm: Likewise.
+
 2011-02-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/atom/sse2/mod_1_1.asm: New file.
