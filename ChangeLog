@@ -8,6 +8,13 @@
 	* mpn/x86/atom/popcount.asm: Likewise.
 
 	* configure.in: Set up mmx path for atom.
+	* mpn/x86/atom/mmx/copyd.asm: New file (was in x86/atom).
+	* mpn/x86/atom/mmx/copyi.asm: Likewise.
+	* mpn/x86/atom/mmx/hamdist.asm: Likewise.
+	* mpn/x86/atom/copyd.asm: ReMoved (in mmx/ now).
+	* mpn/x86/atom/copyi.asm: Likewise.
+	* mpn/x86/atom/hamdist.asm: Likewise.
+	
 
 2011-02-24  Torbjorn Granlund  <tege@gmplib.org>
 
