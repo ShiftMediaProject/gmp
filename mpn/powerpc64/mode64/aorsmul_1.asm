@@ -29,6 +29,7 @@ C POWER6	  16.25		   16.75
 
 C TODO
 C  * Try to reduce the number of needed live registers
+C  * Add support for _1c entry points
 
 C INPUT PARAMETERS
 define(`rp', `r3')
@@ -40,17 +41,19 @@ ifdef(`OPERATION_addmul_1',`
   define(ADDSUBC,	adde)
   define(ADDSUB,	addc)
   define(func,		mpn_addmul_1)
-  define(func_nc,	mpn_addmul_1c)
+  define(func_nc,	mpn_addmul_1c)	C FIXME: not really supported
   define(SM,		`')
 ')
 ifdef(`OPERATION_submul_1',`
   define(ADDSUBC,	subfe)
   define(ADDSUB,	subfc)
   define(func,		mpn_submul_1)
-  define(func_nc,	mpn_submul_1c)
+  define(func_nc,	mpn_submul_1c)	C FIXME: not really supported
   define(SM,		`$1')
 ')
 
+MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
+	
 ASM_START()
 PROLOGUE(func_nc)
 EPILOGUE()
