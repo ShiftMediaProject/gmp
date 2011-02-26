@@ -1,3 +1,12 @@
+2011-02-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/sse2/aorsmul_1.asm: Optimise non-loop code.
+
+2011-02-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/aorsmul_1.asm: Add missing MULFUNC_PROLOGUE.
+	* mpn/m68k/mc68020/aorsmul_1.asm: Likewise.
+
 2011-02-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/atom/sse2/aorsmul_1.asm: New file.

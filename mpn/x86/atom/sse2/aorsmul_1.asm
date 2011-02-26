@@ -1,6 +1,6 @@
 dnl x86-32 mpn_addmul_1 and mpn_submul_1 optimised for Intel Atom.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 dnl
 dnl  Copyright 2011 Free Software Foundation, Inc.
 dnl
@@ -62,51 +62,46 @@ L(ent):	push	%edi
 	push	%ebx
 	mov	16(%esp), rp
 	mov	20(%esp), up
-	mov	24(%esp), n
+	mov	24(%esp), %eax
 	movd	28(%esp), %mm7
-	mov	n, %eax
-	shr	$2, n
-	and	$3, %eax
-	jz	L(fi0)
-	cmp	$2, %eax
-	jc	L(fi1)
-	jz	L(fi2)
-
-L(fi3):	lea	-12(rp), rp
+	mov	%eax, n
+	and	$1, %eax
+	jz	L(fi0or2)
 	movd	(up), %mm1
-	lea	4(up), up
 	pmuludq	%mm7, %mm1
+	shr	$2, n
+	jnc	L(fi1)
+
+L(fi3):	lea	4(up), up
+	lea	-12(rp), rp
 	movd	%mm1, %ebx
+	add	$1, n			C increment and clear carry
 	movd	(up), %mm0
-	inc	n
 	jmp	L(lo3)
 
-L(fi0):	lea	-8(rp), rp
-	movd	(up), %mm0
-	lea	-8(up), up
-	pmuludq	%mm7, %mm0
-	movd	%mm0, %eax
-	movd	12(up), %mm1
-	pmuludq	%mm7, %mm1
-	jmp	L(lo0)
-
 L(fi1):	lea	-4(rp), rp
-	movd	(up), %mm1
-	lea	-4(up), up
-	pmuludq	%mm7, %mm1
 	movd	%mm1, %ebx
-	test	n, n
 	jz	L(wd1)
-	movd	8(up), %mm0
+	movd	4(up), %mm0
+	lea	-4(up), up
 	pmuludq	%mm7, %mm0
 	jmp	L(lo1)
 
-L(fi2):	movd	(up), %mm0
+L(fi0or2):
+	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
+	shr	$2, n
 	movd	4(up), %mm1
+	jc	L(fi2)
+	lea	-8(up), up
+	lea	-8(rp), rp
 	movd	%mm0, %eax
 	pmuludq	%mm7, %mm1
-	test	n, n
+	jmp	L(lo0)
+
+L(fi2):	test	n, n			C clear carry
+	movd	%mm0, %eax
+	pmuludq	%mm7, %mm1
 	jnz	L(lo2)
 	jmp	L(wd2)
 
@@ -148,7 +143,7 @@ L(lo3):	psrlq	$32, %mm1
 	movd	4(up), %mm1
 	jnz	L(top)
 
-L(end):	adc	$0, %edx
+L(end):	adc	n, %edx			C n is zero here
 	ADDSUB	%ebx, 12(rp)
 	movd	%mm0, %eax
 	pmuludq	%mm7, %mm1
@@ -157,15 +152,14 @@ L(wd2):	psrlq	$32, %mm0
 	adc	%edx, %eax
 	movd	%mm0, %edx
 	movd	%mm1, %ebx
-	adc	$0, %edx
+	adc	n, %edx
 	ADDSUB	%eax, (rp)
 L(wd1):	psrlq	$32, %mm1
 	adc	%edx, %ebx
-	movd	%mm1, %edx
-	adc	$0, %edx
+	movd	%mm1, %eax
+	adc	n, %eax
 	ADDSUB	%ebx, 4(rp)
-	mov	%edx, %eax
-	adc	$0, %eax
+	adc	n, %eax
 	emms
 	pop	%ebx
 	pop	%esi
