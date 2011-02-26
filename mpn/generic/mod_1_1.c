@@ -50,6 +50,11 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
   ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   cps[2] = B1modb >> cnt;
 
+  /* In the normalized case, this can be simplified to
+   *
+   *   B2modb = - b * bi;
+   *   ASSERT (B2modb <= b);    // NB: equality iff b = B/2
+   */
   udiv_rnd_preinv (B2modb, B1modb, b, bi);
   cps[3] = B2modb >> cnt;
 }
