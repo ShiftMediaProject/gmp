@@ -33,7 +33,7 @@ C P4 model 2  (Northwood)
 C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
 C Intel Atom			 7.5
-C AMD K6
+C AMD K6			 -
 C AMD K7			 -
 C AMD K8
 C AMD K10
@@ -48,8 +48,6 @@ define(`rp', `%edx')
 define(`up', `%esi')
 define(`n',  `%ecx')
 
-MULFUNC_PROLOGUE(mpn_mul_1 mpn_mul_1c)
-
 ASM_START()
 	TEXT
 	ALIGN(16)
@@ -60,7 +58,7 @@ PROLOGUE(mpn_mul_1c)
 	jmp	L(ent)
 EPILOGUE()
 
-	ALIGN(8)			C for a compact code
+	ALIGN(8)			C for compact code
 PROLOGUE(mpn_mul_1)
 	pxor	%mm6, %mm6
 L(ent):	push	%esi			FRAME_pushl()
@@ -112,5 +110,4 @@ L(lo1):	paddq	%mm0, %mm6
 	pop	%esi			FRAME_popl()
 	ret
 EPILOGUE()
-
 ASM_END()
