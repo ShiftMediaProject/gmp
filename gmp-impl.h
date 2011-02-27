@@ -2792,6 +2792,30 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     (q) = _qh;								\
   } while (0)
 
+/* Unlike udiv_qrnnd_preinv, works also for nh == d.
+
+   FIXME: The special case for nl = constant 0 could be simplified
+   further, like in udiv_rnd_preinv below. Note that with nl = 0, the
+   case _r >= d can't happen. Also applies to udiv_qrnnd_preinv
+   above.
+
+   FIXME: Use mask for adjustment? */
+#define udiv_rnnd_preinv(r, nh, nl, d, di)				\
+  do {									\
+    mp_limb_t _qh, _ql, _r;						\
+    umul_ppmm (_qh, _ql, (nh), (di));					\
+    if (__builtin_constant_p (nl) && (nl) == 0)				\
+      _qh += (nh) + 1;							\
+    else								\
+      add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
+    _r = (nl) - _qh * (d);						\
+    if (_r > _ql)	/* both > and >= should be OK */		\
+      _r += (d);							\
+    if (UNLIKELY (_r >= (d)))						\
+      _r -= (d);							\
+    (r) = _r;								\
+  } while (0)
+
 /* Compute r = nh*B mod d, where di is the inverse of d.  */
 #define udiv_rnd_preinv(r, nh, d, di)					\
   do {									\

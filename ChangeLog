@@ -1,3 +1,7 @@
+2011-02-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (udiv_rnnd_preinv): New macro.
+
 2011-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/atom/sse2/mul_basecase.asm: New file.
@@ -35,7 +39,6 @@
 	* mpn/x86/atom/copyd.asm: ReMoved (in mmx/ now).
 	* mpn/x86/atom/copyi.asm: Likewise.
 	* mpn/x86/atom/hamdist.asm: Likewise.
-	
 
 2011-02-24  Torbjorn Granlund  <tege@gmplib.org>
 
