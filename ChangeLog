@@ -1,3 +1,7 @@
+2011-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86/atom/sse2/mul_1.asm: New code.
+
 2011-02-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_rnnd_preinv): New macro.
