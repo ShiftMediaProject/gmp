@@ -48,10 +48,6 @@ C                       %rdi         %rsi         %rdx                %rcx
 C The pre array contains bi, cnt, B1modb, B2modb
 C Note: This implementaion needs B1modb only when cnt > 0
 
-C Currently needs b to not be preshifted, we actually have to undo shift done
-C by caller.  Perhaps b shouldn't be passed at all, it should be in the pre
-C block where the cps function is free to store whatever is needed.
-
 C The iteration is almost as follows,
 C
 C   r_2 B^3 + r_1 B^2 + r_0 B + u = r_1 B2modb + (r_0 + r_2 B2mod) B + u
@@ -79,9 +75,6 @@ PROLOGUE(mpn_mod_1_1p)
 	push	%rbx
 	mov	%rdx, b
 	mov	%rcx, pre
-
-	mov	8(pre), R32(%rcx)
-	shr	R8(%rcx), b
 
 	mov	-8(ap, n, 8), %rax
 	cmp	$3, n
@@ -128,7 +121,7 @@ L(reduce_two):
 	test	R32(%rcx), R32(%rcx)
 	jz	L(normalized)
 
-	C Unnormalized, use B1modb to reduce to size < B b
+	C Unnormalized, use B1modb to reduce to size < B (b+1)
 	mulq	16(pre)
 	xor	t0, t0
 	add	%rax, r0
@@ -136,7 +129,6 @@ L(reduce_two):
 	mov	t0, %rax
 
 	C Left-shift to normalize
-	shl	R8(%rcx), b
 ifdef(`SHLD_SLOW',`
 	shl	R8(%rcx), %rax
 	mov	r0, t0
@@ -192,13 +184,18 @@ PROLOGUE(mpn_mod_1_1p_cps)
 	mov	%r12, %r8
 	mov	%rax, (%rbx)		C store bi
 	mov	%rbp, 8(%rbx)		C store cnt
-	neg	%r8
+	imul	%rax, %r12
+	neg	%r12
+	mov	%r12, 24(%rbx)		C store B2modb
 	mov	R32(%rbp), R32(%rcx)
+	test	R32(%rcx), R32(%rcx)
+	jz	L(z)
+	neg	%r8
+
 	mov	$1, R32(%rdx)
 ifdef(`SHLD_SLOW',`
 	shl	R8(%rcx), %rdx
 	neg	R32(%rcx)
-	je	L(z)
 	mov	%rax, %rbp
 	shr	R8(%rcx), %rax
 	or	%rax, %rdx
@@ -208,18 +205,10 @@ ifdef(`SHLD_SLOW',`
 	shld	R8(%rcx), %rax, %rdx
 ')
 	imul	%rdx, %r8
-L(z):	mul	%r8
-	add	%r8, %rdx
-	not	%rdx
-	imul	%r12, %rdx
-	add	%rdx, %r12
-	cmp	%rdx, %rax
-	cmovc	%r12, %rdx
 	shr	R8(%rcx), %r8
-	shr	R8(%rcx), %rdx
-	mov	%r8, 16(%rbx)		C store B1modb
+	mov	%r8, 16(%rbx)		C store B1modb	
+L(z):
 	pop	%r12
-	mov	%rdx, 24(%rbx)		C store B2modb
 	pop	%rbx
 	pop	%rbp
 	ret
