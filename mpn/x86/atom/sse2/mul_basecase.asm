@@ -25,14 +25,16 @@ include(`../config.m4')
 C TODO
 C  * Check if 'jmp N(%esp)' is well-predicted enough to allow us to combine the
 C    4 large loops into one; we could use it for the outer loop branch.
-C  * Optimise code outside if inner loops.
+C  * Optimise code outside of inner loops.
 C  * Play with rp and up offsets to save a bunch of lea insns.
 C  * Write combined addmul_1 feed-in a wind-down code, and use when iterating
 C    outer each loop.  ("Overlapping software pipelining")
-C  * Postpone push of ebx until we know vn > 1.
+C  * Postpone push of ebx until we know vn > 1.  Perhaps use caller-saves regs
+C    for inlined mul_1, allowing us to postpone all pushes.
 C  * Perhaps write special code for un < M, for some small M.
 C  * Replace addmul_1 loop by less pipelined loop.  This could save perhaps 25%
 C    of the code size.
+C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm.
 
 C void mpn_mul_basecase (mp_ptr wp,
 C                        mp_srcptr xp, mp_size_t xn,
