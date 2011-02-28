@@ -1,3 +1,8 @@
+2011-02-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-divrem_1.c (check_data): Added testcase to exercise
+	the nl == constant 0 special case in udiv_qrnnd_preinv3.
+
 2011-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/sse2/mul_1.asm: New code.

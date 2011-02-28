@@ -42,6 +42,11 @@ check_data (void)
     { { 5 }, 1, 2, 0,
       { 2 }, 1},
 
+    /* Exercises the q update in the nl == constant 0 case of
+       udiv_qrnnd_preinv3. Test case copied from t-fat.c. */
+    { { 287 }, 1, 7, 1,
+      { 0, 41 }, 0 },
+
 #if GMP_NUMB_BITS == 32
     { { 0x3C }, 1, 0xF2, 1,
       { 0x3F789854, 0 }, 0x98 },
