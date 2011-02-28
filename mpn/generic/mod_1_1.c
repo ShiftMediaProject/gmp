@@ -55,14 +55,14 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
    *   B2modb = - b * bi;
    *   ASSERT (B2modb <= b);    // NB: equality iff b = B/2
    */
-  udiv_rnd_preinv (B2modb, B1modb, b, bi);
+  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
   cps[3] = B2modb >> cnt;
 }
 
 mp_limb_t
 mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
 {
-  mp_limb_t rh, rl, bi, q, ph, pl, r;
+  mp_limb_t rh, rl, bi, ph, pl, r;
   mp_limb_t B1modb, B2modb;
   mp_size_t i;
   int cnt;
@@ -99,7 +99,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
   mask = -(mp_limb_t) (rh >= b);
   rh -= mask & b;
 
-  udiv_qrnnd_preinv (q, r, rh, rl << cnt, b, bi);
+  udiv_rnnd_preinv (r, rh, rl << cnt, b, bi);
 
   return r >> cnt;
 }
