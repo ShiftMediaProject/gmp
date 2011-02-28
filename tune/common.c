@@ -704,6 +704,16 @@ speed_mpn_mod_1_1 (struct speed_params *s)
   SPEED_ROUTINE_MPN_MOD_1_1 (mpn_mod_1_1p,mpn_mod_1_1p_cps);
 }
 double
+speed_mpn_mod_1_1_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_1 (mpn_mod_1_1p_1,mpn_mod_1_1p_cps_1);
+}
+double
+speed_mpn_mod_1_1_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_1 (mpn_mod_1_1p_2,mpn_mod_1_1p_cps_2);
+}
+double
 speed_mpn_mod_1_2 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MOD_1_N (mpn_mod_1s_2p,mpn_mod_1s_2p_cps,2);

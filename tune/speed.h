@@ -209,6 +209,8 @@ double speed_mpn_mod_1c __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_div __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_inv __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_1_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_1_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_3 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_4 __GMP_PROTO ((struct speed_params *s));
@@ -438,6 +440,12 @@ int mpn_jacobi_base_4 __GMP_PROTO ((mp_limb_t, mp_limb_t, int));
 
 mp_limb_t mpn_mod_1_div __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_mod_1_inv __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
+
+mp_limb_t mpn_mod_1_1p_1 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+mp_limb_t mpn_mod_1_1p_2 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+
+void mpn_mod_1_1p_cps_1 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+void mpn_mod_1_1p_cps_2 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
 
 mp_size_t mpn_gcd_binary
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t));

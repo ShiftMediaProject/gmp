@@ -213,6 +213,8 @@ const struct routine_t {
   { "mpn_preinv_mod_1",  speed_mpn_preinv_mod_1, FLAG_R },
 
   { "mpn_mod_1_1",       speed_mpn_mod_1_1,       FLAG_R },
+  { "mpn_mod_1_1_1",     speed_mpn_mod_1_1_1,     FLAG_R },
+  { "mpn_mod_1_1_2",     speed_mpn_mod_1_1_2,     FLAG_R },
   { "mpn_mod_1s_2",      speed_mpn_mod_1_2,       FLAG_R },
   { "mpn_mod_1s_3",      speed_mpn_mod_1_3,       FLAG_R },
   { "mpn_mod_1s_4",      speed_mpn_mod_1_4,       FLAG_R },

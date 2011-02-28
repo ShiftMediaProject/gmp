@@ -44,7 +44,7 @@ libspeed_la_SOURCES =							\
   freq.c								\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   hgcd_lehmer.c jacbase1.c jacbase2.c jacbase3.c jacbase4.c		\
-  mod_1_div.c mod_1_inv.c modlinv.c					\
+  mod_1_div.c mod_1_inv.c mod_1_1-1.c mod_1_1-2.c modlinv.c		\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
   set_strb.c set_strs.c set_strp.c time.c
 

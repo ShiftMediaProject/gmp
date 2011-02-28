@@ -1851,6 +1851,27 @@ tune_mod_1 (void)
       return;
     }
 
+  {
+    static struct param_t  param;
+    double   t1, t2;
+    int      method;
+
+    s.size = 10;
+    s.r = randlimb_half ();
+
+    t1 = tuneup_measure (speed_mpn_mod_1_1_1, &param, &s);
+    t2 = tuneup_measure (speed_mpn_mod_1_1_2, &param, &s);
+
+    if (t1 == -1.0 || t2 == -1.0)
+      {
+	printf ("Oops, can't measure all mpn_mod_1_1 methods at %ld\n",
+		(long) s.size);
+	abort ();
+      }
+    method = (t1 < t2) ? 1 : 2;
+    print_define ("MOD_1_1P_METHOD", method);
+  }
+
   if (UDIV_PREINV_ALWAYS)
     {
       print_define ("MOD_1_NORM_THRESHOLD", 0L);

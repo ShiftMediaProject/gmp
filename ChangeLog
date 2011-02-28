@@ -1,5 +1,23 @@
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/tuneup.c (tune_mod_1): Measure mpn_mod_1_1_1 and
+	mpn_mod_1_1_2, to set MOD_1_1P_METHOD.
+
+	* tune/speed.c (routine): Added mpn_mod_1_1_1 and mpn_mod_1_1_2.
+
+	* tune/speed.h: Declare speed_mpn_mod_1_1_1, speed_mpn_mod_1_1_2,
+	mpn_mod_1_1p_1, mpn_mod_1_1p_2, mpn_mod_1_1p_cps_1, and
+	mpn_mod_1_1p_cps_2.
+
+	* tune/common.c (speed_mpn_mod_1_1_1): New function.
+	(speed_mpn_mod_1_1_2): New function.
+
+	* tune/Makefile.am (libspeed_la_SOURCES): Added mod_1_1-1.c
+	mod_1_1-2.c.
+
+	* tune/mod_1_1-1.c: New file.
+	* tune/mod_1_1-2.c: New file.
+
 	* mpn/generic/mod_1_1.c: Implemented an algorithm with fewer
 	multiplications, configured via MOD_1_1P_METHOD.
 
