@@ -1,5 +1,9 @@
 2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/atom/sse2/aorsmul_1.asm: Shorten software pipeline.
+
+	* mpn/x86/atom/mul_basecase.asm: Remove file no longer used.
+
 	* mpn/generic/rootrem.c (mpn_rootrem_internal): Delay O(log(U))
 	allocations until they are known to be needed.
 
