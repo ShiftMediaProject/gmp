@@ -1,5 +1,9 @@
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/mod_1.c (mpn_mod_1_unnorm): Use udiv_rnnd_preinv
+	rather than udiv_qrnnd_preinv.
+	(mpn_mod_1_norm): Likewise.
+
 	* gmp-impl.h (udiv_qrnnd_preinv3): Eliminated unpredictable branch
 	using masking logic. Further optimization of the nl == constant 0
 	case, similar to udiv_rnd_preinv.

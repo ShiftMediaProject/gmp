@@ -140,11 +140,11 @@ mpn_mod_1_unnorm (mp_srcptr up, mp_size_t un, mp_limb_t d)
 	{
 	  n0 = up[i] << GMP_NAIL_BITS;
 	  nshift = (n1 << cnt) | (n0 >> (GMP_NUMB_BITS - cnt));
-	  udiv_qrnnd_preinv (dummy, r, r, nshift, d, inv);
+	  udiv_rnnd_preinv (r, r, nshift, d, inv);
 	  r >>= GMP_NAIL_BITS;
 	  n1 = n0;
 	}
-      udiv_qrnnd_preinv (dummy, r, r, n1 << cnt, d, inv);
+      udiv_rnnd_preinv (r, r, n1 << cnt, d, inv);
       r >>= GMP_NAIL_BITS;
       return r >> cnt;
     }
@@ -190,7 +190,7 @@ mpn_mod_1_norm (mp_srcptr up, mp_size_t un, mp_limb_t d)
       for (i = un - 1; i >= 0; i--)
 	{
 	  n0 = up[i] << GMP_NAIL_BITS;
-	  udiv_qrnnd_preinv (dummy, r, r, n0, d, inv);
+	  udiv_rnnd_preinv (r, r, n0, d, inv);
 	  r >>= GMP_NAIL_BITS;
 	}
       return r;
