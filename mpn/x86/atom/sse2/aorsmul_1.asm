@@ -67,100 +67,92 @@ L(ent):	push	%edi
 	mov	%eax, n
 	and	$1, %eax
 	jz	L(fi0or2)
-	movd	(up), %mm1
-	pmuludq	%mm7, %mm1
+	movd	(up), %mm0
+	pmuludq	%mm7, %mm0
 	shr	$2, n
 	jnc	L(fi1)
 
-L(fi3):	lea	4(up), up
-	lea	-12(rp), rp
-	movd	%mm1, %ebx
+L(fi3):	lea	-8(up), up
+	lea	-8(rp), rp
+	movd	12(up), %mm1
+	movd	%mm0, %ebx
+	pmuludq	%mm7, %mm1
 	add	$1, n			C increment and clear carry
-	movd	(up), %mm0
 	jmp	L(lo3)
 
-L(fi1):	lea	-4(rp), rp
-	movd	%mm1, %ebx
+L(fi1):	movd	%mm0, %ebx
 	jz	L(wd1)
-	movd	4(up), %mm0
-	lea	-4(up), up
-	pmuludq	%mm7, %mm0
+	movd	4(up), %mm1
+	pmuludq	%mm7, %mm1
 	jmp	L(lo1)
 
 L(fi0or2):
-	movd	(up), %mm0
-	pmuludq	%mm7, %mm0
-	shr	$2, n
-	movd	4(up), %mm1
-	jc	L(fi2)
-	lea	-8(up), up
-	lea	-8(rp), rp
-	movd	%mm0, %eax
+	movd	(up), %mm1
 	pmuludq	%mm7, %mm1
+	shr	$2, n
+	movd	4(up), %mm0
+	jc	L(fi2)
+	lea	-4(up), up
+	lea	-4(rp), rp
+	movd	%mm1, %eax
+	pmuludq	%mm7, %mm0
 	jmp	L(lo0)
 
-L(fi2):	test	n, n			C clear carry
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
-	jnz	L(lo2)
-	jmp	L(wd2)
+L(fi2):	lea	4(up), up
+	add	$1, n			C increment and clear carry
+	movd	%mm1, %eax
+	lea	-12(rp), rp
+	jmp	L(lo2)
 
 C	ALIGN(16)			C alignment seems irrelevant
-L(top):	adc	$0, %edx
-	ADDSUB	%ebx, 12(rp)
-	movd	%mm0, %eax
+L(top):	movd	4(up), %mm1
+	adc	$0, %edx
+	ADDSUB	%eax, 12(rp)
+	movd	%mm0, %ebx
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
-L(lo2):	psrlq	$32, %mm0
-	adc	%edx, %eax
+L(lo1):	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	adc	$0, %edx
-	ADDSUB	%eax, (rp)
-L(lo1):	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	ADDSUB	%ebx, (rp)
+L(lo0):	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
-	movd	%mm0, %eax
+	movd	%mm0, %ebx
 	movd	12(up), %mm1
 	pmuludq	%mm7, %mm1
 	adc	$0, %edx
-	ADDSUB	%ebx, 4(rp)
-L(lo0):	psrlq	$32, %mm0
-	adc	%edx, %eax
+	ADDSUB	%eax, 4(rp)
+L(lo3):	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	lea	16(up), up
 	movd	(up), %mm0
 	adc	$0, %edx
-	ADDSUB	%eax, 8(rp)
-L(lo3):	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	ADDSUB	%ebx, 8(rp)
+L(lo2):	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
 	pmuludq	%mm7, %mm0
 	dec	n
-	movd	4(up), %mm1
 	jnz	L(top)
 
 L(end):	adc	n, %edx			C n is zero here
-	ADDSUB	%ebx, 12(rp)
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
+	ADDSUB	%eax, 12(rp)
+	movd	%mm0, %ebx
 	lea	16(rp), rp
-L(wd2):	psrlq	$32, %mm0
-	adc	%edx, %eax
-	movd	%mm0, %edx
-	movd	%mm1, %ebx
-	adc	n, %edx
-	ADDSUB	%eax, (rp)
-L(wd1):	psrlq	$32, %mm1
+L(wd1):	psrlq	$32, %mm0
 	adc	%edx, %ebx
-	movd	%mm1, %eax
+	movd	%mm0, %eax
 	adc	n, %eax
-	ADDSUB	%ebx, 4(rp)
-	adc	n, %eax
+	ADDSUB	%ebx, (rp)
 	emms
+	adc	n, %eax
 	pop	%ebx
 	pop	%esi
 	pop	%edi
