@@ -1,3 +1,8 @@
+2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/rootrem.c (mpn_rootrem_internal): Delay O(log(U))
+	allocations until they are known to be needed.
+
 2011-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/sse2/mul_1.asm: New code.
@@ -251,6 +256,8 @@
 	* configure.in: Set up 32-bit x86 paths for new corei* CPU strings.
 
 2011-01-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Recognise new Intel processors.
 
 	* config.guess: Support 'coreinhm' and 'coreisbr'.
 	* config.sub: Likewise.
