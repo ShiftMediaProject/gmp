@@ -79,14 +79,15 @@ mp_size_t
 mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 	     mp_srcptr up, mp_size_t un, mp_limb_t k)
 {
+  mp_size_t m;
   ASSERT (un > 0);
   ASSERT (up[un - 1] != 0);
   ASSERT (k > 1);
 
-  if ((remp == NULL) && (un / k > 2))
-    /* call mpn_rootrem recursively, padding {up,un} with k zero limbs,
-       which will produce an approximate root with one more limb,
-       so that in most cases we can conclude. */
+  m = (un - 1) / k;		/* ceil(un/k) - 1 */
+  if (remp == NULL && m > 2)
+    /* Pad {up,un} with k zero limbs.  This will produce an approximate root
+       with one more limb, allowing us to compute the exact integral result. */
     {
       mp_ptr sp, wp;
       mp_size_t rn, sn, wn;
@@ -94,21 +95,21 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       TMP_MARK;
       wn = un + k;
       wp = TMP_ALLOC_LIMBS (wn); /* will contain the padded input */
-      sn = (un - 1) / k + 2; /* ceil(un/k) + 1 */
+      sn = m + 2; /* ceil(un/k) + 1 */
       sp = TMP_ALLOC_LIMBS (sn); /* approximate root of padded input */
       MPN_COPY (wp + k, up, un);
       MPN_ZERO (wp, k);
       rn = mpn_rootrem_internal (sp, NULL, wp, wn, k, 1);
-      /* the approximate root S = {sp,sn} is either the correct root of
-	 {sp,sn}, or one too large. Thus unless the least significant limb
-	 of S is 0 or 1, we can deduce the root of {up,un} is S truncated by
-	 one limb. (In case sp[0]=1, we can deduce the root, but not decide
+      /* The approximate root S = {sp,sn} is either the correct root of
+	 {sp,sn}, or 1 too large.  Thus unless the least significant limb of
+	 S is 0 or 1, we can deduce the root of {up,un} is S truncated by one
+	 limb.  (In case sp[0]=1, we can deduce the root, but not decide
 	 whether it is exact or not.) */
       MPN_COPY (rootp, sp + 1, sn - 1);
       TMP_FREE;
       return rn;
     }
-  else /* remp <> NULL */
+  else
     {
       return mpn_rootrem_internal (rootp, remp, up, un, k, 0);
     }
@@ -395,7 +396,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       ASSERT_ALWAYS (rn >= qn);
 
       /* R = R - Q = floor(U/2^kk) - S^k */
-      if ((i > 1) || (approx == 0))
+      if (i > 1 || approx == 0)
 	{
 	  mpn_sub (rp, rp, rn, qp, qn);
 	  MPN_NORMALIZE (rp, rn);

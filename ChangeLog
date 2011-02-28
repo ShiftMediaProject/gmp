@@ -1,3 +1,8 @@
+2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/rootrem.c (mpn_rootrem): Combine two similar scalar
+	divisions.  Misc minor cleanup.
+
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_mod_1): Measure mpn_mod_1_1_1 and
