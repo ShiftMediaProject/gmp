@@ -2771,51 +2771,59 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 */
 #define udiv_qrnnd_preinv3(q, r, nh, nl, d, di)				\
   do {									\
-    mp_limb_t _qh, _ql, _r;						\
+    mp_limb_t _qh, _ql, _r, _mask;					\
     umul_ppmm (_qh, _ql, (nh), (di));					\
     if (__builtin_constant_p (nl) && (nl) == 0)				\
-      _qh += (nh) + 1;							\
-    else								\
-      add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
-    _r = (nl) - _qh * (d);						\
-    if (_r > _ql)	/* both > and >= should be OK */		\
       {									\
-	_r += (d);							\
-	_qh--;								\
+	_qh += (nh) + 1;						\
+	_r = - _qh * (d);						\
+	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_qh += _mask;							\
+	_r += _mask & (d);						\
       }									\
-    if (UNLIKELY (_r >= (d)))						\
+    else								\
       {									\
-	_r -= (d);							\
-	_qh++;								\
+	add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));		\
+	_r = (nl) - _qh * (d);						\
+	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_qh += _mask;							\
+	_r += _mask & (d);						\
+	if (UNLIKELY (_r >= (d)))					\
+	  {								\
+	    _r -= (d);							\
+	    _qh++;							\
+	  }								\
       }									\
     (r) = _r;								\
     (q) = _qh;								\
   } while (0)
 
-/* Unlike udiv_qrnnd_preinv, works also for nh == d.
-
-   FIXME: The special case for nl = constant 0 could be simplified
-   further, like in udiv_rnd_preinv below. Note that with nl = 0, the
-   case _r >= d can't happen. Also applies to udiv_qrnnd_preinv
-   above.
-
-   FIXME: Use mask for adjustment? */
+/* Dividing (NH, NL) by D, returning the remainder only. Unlike
+   udiv_qrnnd_preinv, works also for the case NH == D, where the
+   quotient doesn't quite fit in a single limb. */
 #define udiv_rnnd_preinv(r, nh, nl, d, di)				\
   do {									\
-    mp_limb_t _qh, _ql, _r;						\
+    mp_limb_t _qh, _ql, _r, _mask;					\
     umul_ppmm (_qh, _ql, (nh), (di));					\
     if (__builtin_constant_p (nl) && (nl) == 0)				\
-      _qh += (nh) + 1;							\
+      {									\
+	_r = ~(_qh + (nh)) * (d);					\
+	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_r += _mask & (d);						\
+      }									\
     else								\
-      add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
-    _r = (nl) - _qh * (d);						\
-    if (_r > _ql)	/* both > and >= should be OK */		\
-      _r += (d);							\
-    if (UNLIKELY (_r >= (d)))						\
-      _r -= (d);							\
+      {									\
+	add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));		\
+	_r = (nl) - _qh * (d);						\
+	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_r += _mask & (d);						\
+	if (UNLIKELY (_r >= (d)))					\
+	  _r -= (d);							\
+      }									\
     (r) = _r;								\
   } while (0)
 
+/* FIXME: Obsolete? Use udiv_rnnd_preinv(r, nh, 0, d, di) instead. */
 /* Compute r = nh*B mod d, where di is the inverse of d.  */
 #define udiv_rnd_preinv(r, nh, d, di)					\
   do {									\

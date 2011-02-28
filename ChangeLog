@@ -1,3 +1,13 @@
+2011-02-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (udiv_qrnnd_preinv3): Eliminated unpredictable branch
+	using masking logic. Further optimization of the nl == constant 0
+	case, similar to udiv_rnd_preinv.
+	(udiv_rnnd_preinv): Likewise.
+
+	* tests/mpn/t-divrem_1.c (check_data): Added testcase to exercise
+	the nl == constant 0 special case in udiv_qrnnd_preinv3.
+
 2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/rootrem.c (mpn_rootrem_internal): Delay O(log(U))
