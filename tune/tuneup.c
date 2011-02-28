@@ -1870,6 +1870,9 @@ tune_mod_1 (void)
       }
     method = (t1 < t2) ? 1 : 2;
     print_define ("MOD_1_1P_METHOD", method);
+
+    /* FIXME: Use this choice when tuning the thresholds below, except
+       if we have a native mod_1_1. */
   }
 
   if (UDIV_PREINV_ALWAYS)
