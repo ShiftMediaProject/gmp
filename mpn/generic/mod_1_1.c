@@ -29,6 +29,61 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#ifndef MOD_1_1P_METHOD
+# define MOD_1_1P_METHOD 1
+#endif
+
+/* Define some longlong.h-style macros, but for wider operations.
+ * add_mssaaaa is like longlong.h's add_ssaaaa, but also generates
+ * carry out, in the form of a mask. */
+
+#if defined (__GNUC__)
+
+#if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
+#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+  __asm__ ("add\t%7, %k2\n\tadc\t%5, %k1\n\tsbb\t%k0, %k0"               \
+	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
+	   : "0"  ((USItype)(s2)),                                      \
+	     "1"  ((USItype)(a1)), "g" ((USItype)(b1)),                 \
+	     "%2" ((USItype)(a0)), "g" ((USItype)(b0)))
+#endif
+
+#if defined (__amd64__) && W_TYPE_SIZE == 64
+#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+  __asm__ ("add\t%7, %q2\n\tadc\t%5, %q1\n\tsbb\t%q0, %q0"               \
+	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
+	   : "0"  ((UDItype)(s2)),                                      \
+	     "1"  ((UDItype)(a1)), "rme" ((UDItype)(b1)),               \
+	     "%2" ((UDItype)(a0)), "rme" ((UDItype)(b0)))
+#endif
+
+/* FIXME: How to do carry -> mask on powerpc? */
+#if 0 && HAVE_HOST_CPU_FAMILY_powerpc && W_TYPE_SIZE == 64
+#define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"        \
+	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
+	   : "0"  ((UDItype)(s2)),                                      \
+	     "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),                 \
+	     "%2" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
+#endif
+#endif /* defined (__GNUC__) */
+
+#ifndef add_sssaaaa
+#define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+  do {                                                                  \
+    UWtype __s0, __s1, __c0, __c1;                                      \
+    __s0 = (a0) + (b0);                                                 \
+    __s1 = (a1) + (b1);                                                 \
+    __c0 = __s0 < (a0);                                                 \
+    __c1 = __s1 < (a1);                                                 \
+    (s0) = __s0;                                                        \
+    __s1 = __s1 + __c0;                                                 \
+    (s1) = __s1;                                                        \
+    (s2) = - (__c1 + (__s1 < __c0));					\
+  } while (0)
+#endif
+
+#if MOD_1_1P_METHOD == 1
 void
 mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
 {
@@ -103,3 +158,104 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
 
   return r >> cnt;
 }
+#endif /* MOD_1_1P_METHOD == 1 */
+
+#if MOD_1_1P_METHOD == 2
+void
+mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
+{
+  mp_limb_t bi;
+  mp_limb_t B2modb;
+  int cnt;
+
+  count_leading_zeros (cnt, b);
+
+  b <<= cnt;
+  invert_limb (bi, b);
+
+  cps[0] = bi;
+  cps[1] = cnt;
+
+  if (LIKELY (cnt != 0))
+    {
+      mp_limb_t B1modb = -b;
+      B1modb *= ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
+      ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
+      cps[2] = B1modb >> cnt;
+    }
+  B2modb = - b * bi;
+  ASSERT (B2modb <= b);    // NB: equality iff b = B/2
+  cps[3] = B2modb;
+}
+
+mp_limb_t
+mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
+{
+  int cnt;
+  mp_limb_t bi, B1modb;
+  mp_limb_t r0, r1;
+  mp_limb_t r;
+
+  ASSERT (n >= 2);		/* fix tuneup.c if this is changed */
+
+  r0 = ap[n-2];
+  r1 = ap[n-1];
+
+  if (n > 2)
+    {
+      mp_limb_t B2modb, B2mb;
+      mp_limb_t p0, p1;
+      mp_limb_t r2;
+      mp_size_t j;
+
+      B2modb = bmodb[3];
+      B2mb = B2modb - b;
+
+      umul_ppmm (p1, p0, r1, B2modb);
+      add_mssaaaa (r2, r1, r0, r0, ap[n-3], p1, p0);
+
+      for (j = n-4; j >= 0; j--)
+	{
+	  mp_limb_t cy;
+	  /* mp_limb_t t = r0 + B2mb; */
+	  umul_ppmm (p1, p0, r1, B2modb);
+
+	  ADDC_LIMB (cy, r0, r0, r2 & B2modb);
+	  /* Alternative, for cmov: if (cy) r0 = t; */
+	  r0 -= (-cy) & b;
+	  add_mssaaaa (r2, r1, r0, r0, ap[j], p1, p0);
+	}
+
+      r1 -= (r2 & b);
+    }
+
+  cnt = bmodb[1];
+
+  if (LIKELY (cnt != 0))
+    {
+      mp_limb_t t;
+      mp_limb_t B1modb = bmodb[2];
+
+      umul_ppmm (r1, t, r1, B1modb);
+      r0 += t;
+      r1 += (r0 < t);
+
+      /* Normalize */
+      r1 = (r1 << cnt) | (r0 >> (GMP_LIMB_BITS - cnt));
+      r0 <<= cnt;
+
+      /* NOTE: Might get r1 == b here, but udiv_rnnd_preinv allows
+	 that. */
+    }
+  else
+    {
+      mp_limb_t mask = - (r1 >= b);
+      r1 -= mask & b;
+    }
+
+  bi = bmodb[0];
+
+  udiv_rnnd_preinv (r, r1, r0, b, bi);
+  return r >> cnt;
+}
+#endif /* MOD_1_1P_METHOD == 2 */

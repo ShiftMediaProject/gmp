@@ -1,5 +1,8 @@
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/mod_1_1.c: Implemented the same algorithm as used
+	for x86_64, as an alternative configured via MOD_1_1P_METHOD.
+
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p_cps): Simplified
 	computation of B2modb, use B^2 mod (normalized b).
 	(mpn_mod_1_1p): Corresponding changes. Don't shift b.
