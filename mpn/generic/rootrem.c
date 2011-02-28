@@ -8,7 +8,7 @@
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
    GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2002, 2005, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2002, 2005, 2009, 2010, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -134,16 +134,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   TMP_MARK;
 
-  /* qp and wp need enough space to store S'^k where S' is an approximate
-     root. Since S' can be as large as S+2, the worst case is when S=2 and
-     S'=4. But then since we know the number of bits of S in advance, S'
-     can only be 3 at most. Similarly for S=4, then S' can be 6 at most.
-     So the worst case is S'/S=3/2, thus S'^k <= (3/2)^k * S^k. Since S^k
-     fits in un limbs, the number of extra limbs needed is bounded by
-     ceil(k*log2(3/2)/GMP_NUMB_BITS). */
-#define EXTRA 2 + (mp_size_t) (0.585 * (double) k / (double) GMP_NUMB_BITS)
-  qp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain quotient and remainder
-					of R/(k*S^(k-1)), and S^k */
   if (remp == NULL)
     {
       rp = TMP_ALLOC_LIMBS (un + 1);     /* will contain the remainder */
@@ -155,8 +145,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       rp = remp;
     }
   sp = rootp;
-  wp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
-					and temporary for mpn_pow_1 */
+
   count_leading_zeros (cnt, up[un - 1]);
   unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
   /* unb is the number of bits of the input U */
@@ -216,6 +205,19 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      sizes[i] <= 2 * sizes[i+1].
      Newton iteration will first compute sizes[ni-1] extra bits,
      then sizes[ni-2], ..., then sizes[0] = b. */
+
+  /* qp and wp need enough space to store S'^k where S' is an approximate
+     root. Since S' can be as large as S+2, the worst case is when S=2 and
+     S'=4. But then since we know the number of bits of S in advance, S'
+     can only be 3 at most. Similarly for S=4, then S' can be 6 at most.
+     So the worst case is S'/S=3/2, thus S'^k <= (3/2)^k * S^k. Since S^k
+     fits in un limbs, the number of extra limbs needed is bounded by
+     ceil(k*log2(3/2)/GMP_NUMB_BITS). */
+#define EXTRA 2 + (mp_size_t) (0.585 * (double) k / (double) GMP_NUMB_BITS)
+  qp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain quotient and remainder
+					of R/(k*S^(k-1)), and S^k */
+  wp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
+					and temporary for mpn_pow_1 */
 
   wp[0] = 1; /* {sp,sn}^(k-1) = 1 */
   wn = 1;
