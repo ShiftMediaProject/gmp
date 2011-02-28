@@ -2823,18 +2823,6 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     (r) = _r;								\
   } while (0)
 
-/* FIXME: Obsolete? Use udiv_rnnd_preinv(r, nh, 0, d, di) instead. */
-/* Compute r = nh*B mod d, where di is the inverse of d.  */
-#define udiv_rnd_preinv(r, nh, d, di)					\
-  do {									\
-    mp_limb_t _qh, _ql, _r;						\
-    umul_ppmm (_qh, _ql, (nh), (di));					\
-    _r = ~(_qh + (nh)) * (d);						\
-    if (_r > _ql)							\
-      _r += (d);							\
-    (r) = _r;								\
-  } while (0)
-
 /* Compute quotient the quotient and remainder for n / d. Requires d
    >= B^2 / 2 and n < d B. di is the inverse
 

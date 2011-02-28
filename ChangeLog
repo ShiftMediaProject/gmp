@@ -1,5 +1,8 @@
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/pre_mod_1.c (mpn_preinv_mod_1): Use udiv_rnnd_preinv
+	rather than udiv_qrnnd_preinv.
+
 	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Converted to use
 	udiv_rnnd_preinv rather than udiv_rnd_preinv.
 	(mpn_mod_1_1p): Use udiv_rnnd_preinv rather than
@@ -28,6 +31,8 @@
 	using masking logic. Further optimization of the nl == constant 0
 	case, similar to udiv_rnd_preinv.
 	(udiv_rnnd_preinv): Likewise.
+	(udiv_rnd_preinv): Deleted, use udiv_rnnd_preinv with nl == 0
+	instead.
 
 	* tests/mpn/t-divrem_1.c (check_data): Added testcase to exercise
 	the nl == constant 0 special case in udiv_qrnnd_preinv3.
