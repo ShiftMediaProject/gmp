@@ -1,3 +1,8 @@
+2011-02-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/mod_1_1.c (add_mssaaaa): Typo fix, define
+	add_mssaaaa, not add_sssaaaa.
+
 2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/rootrem.c (mpn_rootrem): Combine two similar scalar

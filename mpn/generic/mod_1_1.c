@@ -68,8 +68,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 #endif /* defined (__GNUC__) */
 
-#ifndef add_sssaaaa
-#define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+#ifndef add_mssaaaa
+#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
   do {                                                                  \
     UWtype __s0, __s1, __c0, __c1;                                      \
     __s0 = (a0) + (b0);                                                 \
