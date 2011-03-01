@@ -181,25 +181,25 @@ PROLOGUE(mpn_mod_1_1p_cps)
 	sal	R8(%rcx), %r12
 	mov	%r12, %rdi
 	CALL(	mpn_invert_limb)
+	neg	%r12
 	mov	%r12, %r8
 	mov	%rax, (%rbx)		C store bi
 	mov	%rbp, 8(%rbx)		C store cnt
 	imul	%rax, %r12
-	neg	%r12
 	mov	%r12, 24(%rbx)		C store B2modb
 	mov	R32(%rbp), R32(%rcx)
 	test	R32(%rcx), R32(%rcx)
 	jz	L(z)
-	neg	%r8
 
 	mov	$1, R32(%rdx)
 ifdef(`SHLD_SLOW',`
+	C Destroys %rax, unlike shld. Otherwise, we could do B1modb
+	C before B2modb, and get rid of the move %r12, %r8 above.
+
 	shl	R8(%rcx), %rdx
 	neg	R32(%rcx)
-	mov	%rax, %rbp
 	shr	R8(%rcx), %rax
 	or	%rax, %rdx
-	mov	%rbp, %rax
 	neg	R32(%rcx)
 ',`
 	shld	R8(%rcx), %rax, %rdx
