@@ -2648,7 +2648,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     if (p < d0)							\
       {								\
 	v--;							\
-	mask = -(p >= d1);					\
+	mask = -(mp_limb_t) (p >= d1);				\
 	p -= d1;						\
 	v += mask;						\
 	p -= mask & d1;						\
@@ -2777,7 +2777,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
       {									\
 	_qh += (nh) + 1;						\
 	_r = - _qh * (d);						\
-	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_mask = -(mp_limb_t) (_r > _ql); /* both > and >= are OK */	\
 	_qh += _mask;							\
 	_r += _mask & (d);						\
       }									\
@@ -2785,7 +2785,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
       {									\
 	add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));		\
 	_r = (nl) - _qh * (d);						\
-	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_mask = -(mp_limb_t) (_r > _ql); /* both > and >= are OK */	\
 	_qh += _mask;							\
 	_r += _mask & (d);						\
 	if (UNLIKELY (_r >= (d)))					\
@@ -2808,14 +2808,14 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     if (__builtin_constant_p (nl) && (nl) == 0)				\
       {									\
 	_r = ~(_qh + (nh)) * (d);					\
-	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_mask = -(mp_limb_t) (_r > _ql); /* both > and >= are OK */	\
 	_r += _mask & (d);						\
       }									\
     else								\
       {									\
 	add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));		\
 	_r = (nl) - _qh * (d);						\
-	_mask = -(_r > _ql);	/* both > and >= should be OK */	\
+	_mask = -(mp_limb_t) (_r > _ql); /* both > and >= are OK */	\
 	_r += _mask & (d);						\
 	if (UNLIKELY (_r >= (d)))					\
 	  _r -= (d);							\

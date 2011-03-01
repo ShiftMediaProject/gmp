@@ -249,7 +249,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
     }
   else
     {
-      mp_limb_t mask = - (r1 >= b);
+      mp_limb_t mask = -(mp_limb_t) (r1 >= b);
       r1 -= mask & b;
     }
 
