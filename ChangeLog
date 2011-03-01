@@ -1,9 +1,8 @@
 2011-03-01  Niels Möller  <nisse@lysator.liu.se>
 
-	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Converted to use
-	udiv_rnnd_preinv rather than udiv_rnd_preinv.
-	(mpn_mod_1s_4p): Use udiv_rnnd_preinv rather than
-	udiv_qrnnd_preinv.
+	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Use udiv_rnnd_preinv
+	rather than udiv_rnd_preinv.
+	(mpn_mod_1s_4p): Likewise.
 
 2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -43,32 +42,14 @@
 	computation of B2modb, use B^2 mod (normalized b).
 	(mpn_mod_1_1p): Corresponding changes. Don't shift b.
 
-	* mpn/generic/pre_mod_1.c (mpn_preinv_mod_1): Use udiv_rnnd_preinv
-	rather than udiv_qrnnd_preinv.
-
-	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Converted to use
-	udiv_rnnd_preinv rather than udiv_rnd_preinv.
-	(mpn_mod_1_1p): Use udiv_rnnd_preinv rather than
-	udiv_qrnnd_preinv.
-
-	* mpn/generic/mod_1_4.c (mpn_mod_1s_4p_cps): Converted to use
-	udiv_rnnd_preinv rather than udiv_rnd_preinv.
-	(mpn_mod_1s_4p): Use udiv_rnnd_preinv rather than
-	udiv_qrnnd_preinv.
-
-	* mpn/generic/mod_1_3.c (mpn_mod_1s_3p_cps): Converted to use
-	udiv_rnnd_preinv rather than udiv_rnd_preinv.
-	(mpn_mod_1s_3p): Use udiv_rnnd_preinv rather than
-	udiv_qrnnd_preinv.
-
-	* mpn/generic/mod_1_2.c (mpn_mod_1s_2p_cps): Converted to use
-	udiv_rnnd_preinv rather than udiv_rnd_preinv.
-	(mpn_mod_1s_2p): Use udiv_rnnd_preinv rather than
-	udiv_qrnnd_preinv.
-
-	* mpn/generic/mod_1.c (mpn_mod_1_unnorm): Use udiv_rnnd_preinv
-	rather than udiv_qrnnd_preinv.
-	(mpn_mod_1_norm): Likewise.
+	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Use udiv_rnnd_preinv rather
+	than udiv_rnd_preinv.
+	(mpn_mod_1_1p): Likewise.
+	* mpn/generic/mod_1_4.c: Analogous changes.
+	* mpn/generic/mod_1_3.c: Analogous changes.
+	* mpn/generic/mod_1_2.c: Analogous changes.
+	* mpn/generic/mod_1.c: Analogous changes.
+	* mpn/generic/pre_mod_1.c: Analogous changes.
 
 	* gmp-impl.h (udiv_qrnnd_preinv3): Eliminated unpredictable branch
 	using masking logic. Further optimization of the nl == constant 0
