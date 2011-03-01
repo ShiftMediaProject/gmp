@@ -62,10 +62,9 @@ L(ent):	push	%edi
 	push	%ebx
 	mov	16(%esp), rp
 	mov	20(%esp), up
-	mov	24(%esp), %eax
+	mov	24(%esp), n
 	movd	28(%esp), %mm7
-	mov	%eax, n
-	and	$1, %eax
+	test	$1, n
 	jz	L(fi0or2)
 	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
