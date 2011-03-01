@@ -46,7 +46,7 @@ C mp_limb_t
 C mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
 C                       %rdi         %rsi         %rdx                %rcx
 C The pre array contains bi, cnt, B1modb, B2modb
-C Note: This implementaion needs B1modb only when cnt > 0
+C Note: This implementation needs B1modb only when cnt > 0
 
 C The iteration is almost as follows,
 C
