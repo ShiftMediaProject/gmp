@@ -1,3 +1,8 @@
+2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/divegcd.c: Rewrite, as per Marc Glisse's suggestion.  Also fix
+	problem with passing a longlong limb to a _ui function.
+
 2011-03-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Use udiv_rnnd_preinv
