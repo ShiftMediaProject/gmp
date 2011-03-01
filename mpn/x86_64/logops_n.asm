@@ -21,8 +21,8 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C AMD K8,K9	 1.5
-C AMD K10	 1.75-2 (fluctuating)
+C AMD K8,K9	 1.5	with fluctuations for variant 2 and 3
+C AMD K10	 1.5	with fluctuations for all variants
 C Intel P4	 2.8/3.35/3.60 (variant1/variant2/variant3)
 C Intel core2	 2
 C Intel NHM	 2
