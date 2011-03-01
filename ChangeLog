@@ -1,12 +1,13 @@
+2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (udiv_qrnnd_preinv3): Cast truth value to mask's type.
+	(udiv_rnnd_preinv): Likewise.
+	* mpn/generic/mod_1_1.c (mpn_mod_1_1p): Likewise.
+
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): Typo fix, define
 	add_mssaaaa, not add_sssaaaa.
-
-2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
-
-	* mpn/generic/rootrem.c (mpn_rootrem): Combine two similar scalar
-	divisions.  Misc minor cleanup.
 
 2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
@@ -73,6 +74,9 @@
 	the nl == constant 0 special case in udiv_qrnnd_preinv3.
 
 2011-02-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/rootrem.c (mpn_rootrem): Combine two similar scalar
+	divisions.  Misc minor cleanup.
 
 	* mpn/x86/atom/sse2/aorsmul_1.asm: Shorten software pipeline.
 
