@@ -77,9 +77,6 @@ PROLOGUE(mpn_mod_1_1p)
 	mov	12(%ebp), %eax		C B2modb
 	push	%eax			C Put it on stack
 
-	mov	4(%ebp), %cl
-	shrl	%cl, b
-
 	mov	n, %edx
 	mov	24(%esp), ap
 
@@ -147,7 +144,6 @@ L(reduce_two):
 	mov	t0, %eax
 
 	C Left-shift to normalize
-	shll	%cl, b
 	shld	%cl, r0, %eax C Always use shld?
 
 	shl	%cl, r0
@@ -185,7 +181,6 @@ L(fix):	sub	%ebx, %eax
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1_1p_cps)
-C CAUTION: This is the same code as in pentium4/sse2//mod_1_1.asm
 	push	%ebp
 	mov	12(%esp), %ebp
 	push	%esi
@@ -197,25 +192,17 @@ C CAUTION: This is the same code as in pentium4/sse2//mod_1_1.asm
 	mov	%ebp, %edx
 	not	%edx
 	mov	$-1, %eax
-	div	%ebp
+	div	%ebp			C On K7, invert_limb would be a few cycles faster.
 	mov	%eax, (%esi)		C store bi
 	mov	%ecx, 4(%esi)		C store cnt
-	xor	%ebx, %ebx
-	sub	%ebp, %ebx
+	neg	%ebp
 	mov	$1, %edx
 	shld	%cl, %eax, %edx
-	imul	%edx, %ebx
-	mul	%ebx
-	add	%ebx, %edx
-	not	%edx
 	imul	%ebp, %edx
-	add	%edx, %ebp
-	cmp	%edx, %eax
-	cmovc(	%ebp, %edx)
-	shr	%cl, %ebx
-	mov	%ebx, 8(%esi)		C store B1modb
 	shr	%cl, %edx
-	mov	%edx, 12(%esi)		C store B2modb
+	imul	%ebp, %eax
+	mov	%edx, 8(%esi)		C store B1modb
+	mov	%eax, 12(%esi)		C store B2modb
 	pop	%ebx
 	pop	%esi
 	pop	%ebp

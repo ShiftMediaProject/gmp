@@ -1,3 +1,9 @@
+2011-03-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/k7/mod_1_1.asm (mpn_mod_1_1p_cps): Simplified
+	computation, analogous to x86_64//mod_1_1.asm.
+	(mpn_mod_1_1p): Corresponding changes. Don't shift b.
+
 2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/mul_1.asm: Swap entry insns to share more code
