@@ -2,6 +2,8 @@ dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 dnl  Optimised for Intel Atom.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

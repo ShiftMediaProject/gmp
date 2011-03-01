@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_lshiftc -- mpn left shift with complement, optimised for Atom.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
