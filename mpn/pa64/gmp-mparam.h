@@ -51,7 +51,7 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM2_THRESHOLD                 56
 #define SQR_TOOM3_THRESHOLD                169
 #define SQR_TOOM4_THRESHOLD                280
-#define SQR_TOOM6_THRESHOLD                282
+#define SQR_TOOM6_THRESHOLD                  0
 #define SQR_TOOM8_THRESHOLD                309
 
 #define MULMOD_BNM1_THRESHOLD               16
@@ -219,7 +219,7 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MATRIX22_STRASSEN_THRESHOLD          9
 #define HGCD_THRESHOLD                     242
-#define GCD_DC_THRESHOLD                  1341
+#define GCD_DC_THRESHOLD                   752
 #define GCDEXT_DC_THRESHOLD                545
 #define JACOBI_BASE_METHOD                   2
 
