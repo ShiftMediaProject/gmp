@@ -25,14 +25,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD          9
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          8
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD        16
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          6
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        15
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     16
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     11
 #define USE_PREINV_DIVREM_1                  0
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define BMOD_1_TO_MOD_1_THRESHOLD           42
+#define BMOD_1_TO_MOD_1_THRESHOLD           40
 
 #define MUL_TOOM22_THRESHOLD                14
 #define MUL_TOOM33_THRESHOLD                50
@@ -48,9 +48,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_BASECASE_THRESHOLD               9
 #define SQR_TOOM2_THRESHOLD                 36
 #define SQR_TOOM3_THRESHOLD                 59
-#define SQR_TOOM4_THRESHOLD                160
+#define SQR_TOOM4_THRESHOLD                147
 #define SQR_TOOM6_THRESHOLD                204
-#define SQR_TOOM8_THRESHOLD                321
+#define SQR_TOOM8_THRESHOLD                288
 
 #define MULMOD_BNM1_THRESHOLD               14
 #define SQRMOD_BNM1_THRESHOLD               16
@@ -188,12 +188,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_Q_THRESHOLD                942
 
 #define MATRIX22_STRASSEN_THRESHOLD         15
-#define HGCD_THRESHOLD                     100
-#define GCD_DC_THRESHOLD                   273
-#define GCDEXT_DC_THRESHOLD                233
+#define HGCD_THRESHOLD                     108
+#define GCD_DC_THRESHOLD                   303
+#define GCDEXT_DC_THRESHOLD                237
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                13
 #define GET_STR_PRECOMPUTE_THRESHOLD        23
-#define SET_STR_DC_THRESHOLD               517
+#define SET_STR_DC_THRESHOLD               532
 #define SET_STR_PRECOMPUTE_THRESHOLD      1639
