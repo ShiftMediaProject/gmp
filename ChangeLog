@@ -1,3 +1,10 @@
+2011-03-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Converted to use
+	udiv_rnnd_preinv rather than udiv_rnd_preinv.
+	(mpn_mod_1s_4p): Use udiv_rnnd_preinv rather than
+	udiv_qrnnd_preinv.
+
 2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (udiv_qrnnd_preinv3): Cast truth value to mask's type.
