@@ -1,3 +1,7 @@
+2011-03-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/aorrlsh_n.asm: New file.
+
 2011-03-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p_cps): Eliminated a neg and
