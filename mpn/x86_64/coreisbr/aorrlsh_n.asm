@@ -1,5 +1,6 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
+dnl  Optimised for Sandy Bridge.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
@@ -32,9 +33,9 @@ C Intel SBR	 2.75
 C Intel atom	 ?
 C VIA nano	 ?
 
-C This code probably runs close to optimally on Sandy Bridge, and reasonably
-C well on Core 2, but it runs poorly on all other processors, including
-C Nehalem.
+C The inner-loop probably runs close to optimally on Sandy Bridge using 4-way
+C unrolling.  The rest of the code is quite crude, and could perhaps be made
+C both smaller and faster.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
