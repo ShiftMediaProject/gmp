@@ -33,8 +33,9 @@ C Intel SBR	 3.55
 C Intel atom	 ?
 C VIA nano	 ?
 
-C The inner-loop probably runs close to optimally on Nehalem.  The rest of the
-C code is quite crude, and could perhaps be made both smaller and faster.
+C The inner-loop probably runs close to optimally on Nehalem using 4-way
+C unrolling.  The rest of the code is quite crude, and could perhaps be made
+C both smaller and faster.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
