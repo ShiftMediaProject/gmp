@@ -30,13 +30,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* 1867 MHz P6 model 13 */
 
-#define MOD_1_NORM_THRESHOLD                 3
+#define MOD_1_NORM_THRESHOLD                 4
 #define MOD_1_UNNORM_THRESHOLD               3
-#define MOD_1N_TO_MOD_1_1_THRESHOLD          6
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          5
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          4
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD        11
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     11
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     10
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           22
@@ -165,7 +165,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_Q_THRESHOLD               1442
 
 #define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                      70
+#define HGCD_THRESHOLD                      61
 #define GCD_DC_THRESHOLD                   379
 #define GCDEXT_DC_THRESHOLD                298
 #define JACOBI_BASE_METHOD                   4
