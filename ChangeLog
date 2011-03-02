@@ -1,3 +1,7 @@
+2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreinhm/aorrlsh_n.asm: New file.
+
 2011-03-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/aorrlsh_n.asm: New file.
