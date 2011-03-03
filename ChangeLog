@@ -1,3 +1,19 @@
+2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c (add_mssaaaa): Canonicalise layout.  Add arm
+	variant.  Enable sparc64 code and powerpc code (the latter for 32-bit
+	and 64-bit).
+
+	* mpn/generic/sqrtrem.c (mpn_dc_sqrtrem): Use mpn_addlsh1_n.
+
+	* gmp-impl.h (mpn_addlsh_nc, mpn_rsblsh_nc): Declare.
+	* mpn/asm-defs.m4: Likewise.
+
+	* mpn/x86_64/coreisbr/aorrlsh_n.asm: Disable mpn_rsblsh_n due to
+	carry-in issues.
+	* mpn/x86_64/coreinhm/aorrlsh_n.asm: Likewise.
+	* mpn/x86_64/coreisbr/aorrlsh2_n.asm: Likewise.
+
 2011-03-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): For x86 and x86_64, treat m
@@ -14,22 +30,6 @@
 
 	* gmp-impl.h (MOD_1_1P_METHOD) [TUNE_PROGRAM_BUILD]: Define macro.
 	(mod_1_1p_method) [TUNE_PROGRAM_BUILD]: Declare variable.
-
-2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
-
-	* mpn/generic/mod_1_1.c (add_mssaaaa): Canonicalise layout.  Add arm
-	variant.  Enable sparc64 code and powerpc code (the latter for 32-bit
-	and 64-bit).
-
-	* mpn/generic/sqrtrem.c (mpn_dc_sqrtrem): Use mpn_addlsh1_n.
-
-	* gmp-impl.h (mpn_addlsh_nc, mpn_rsblsh_nc): Declare.
-	* mpn/asm-defs.m4: Likewise.
-
-	* mpn/x86_64/coreisbr/aorrlsh_n.asm: Disable mpn_rsblsh_n due to
-	carry-in issues.
-	* mpn/x86_64/coreinhm/aorrlsh_n.asm: Likewise.
-	* mpn/x86_64/coreisbr/aorrlsh2_n.asm: Likewise.
 
 2011-03-02  Torbjorn Granlund  <tege@gmplib.org>
 
