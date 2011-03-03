@@ -36,5 +36,7 @@ ifdef(`OPERATION_rsblsh2_n', `
 	define(func_n,	mpn_rsblsh2_n)
 	define(func_nc,	mpn_rsblsh2_nc)')
 
-MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_addlsh2_nc mpn_rsblsh2_n mpn_rsblsh2_nc)
+C mpn_rsblsh2_nc removed below, its idea of carry-in is inconsistent with
+C refmpn_rsblsh2_nc
+MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_addlsh2_nc mpn_rsblsh2_n)
 include_mpn(`x86_64/coreisbr/aorrlshC_n.asm')

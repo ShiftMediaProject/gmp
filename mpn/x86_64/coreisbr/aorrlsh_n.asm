@@ -33,8 +33,8 @@ C Intel SBR	 2.75
 C Intel atom	 ?
 C VIA nano	 ?
 
-C The inner-loop probably runs close to optimally on Sandy Bridge using 4-way
-C unrolling.  The rest of the code is quite crude, and could perhaps be made
+C The inner-loop probably runs close to optimally on Sandy Bridge (using 4-way
+C unrolling).  The rest of the code is quite crude, and could perhaps be made
 C both smaller and faster.
 
 C INPUT PARAMETERS
@@ -58,7 +58,9 @@ ifdef(`OPERATION_rsblsh_n', `
 	define(func_n,	mpn_rsblsh_n)
 	define(func_nc,	mpn_rsblsh_nc)')
 
-MULFUNC_PROLOGUE(mpn_addlsh_n mpn_addlsh_nc mpn_rsblsh_n mpn_rsblsh_nc)
+C mpn_rsblsh_nc removed below, its idea of carry-in is inconsistent with
+C refmpn_rsblsh_nc
+MULFUNC_PROLOGUE(mpn_addlsh_n mpn_addlsh_nc mpn_rsblsh_n)
 
 ASM_START()
 	TEXT
