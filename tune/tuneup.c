@@ -200,6 +200,7 @@ mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
 mp_size_t  mod_1_unnorm_threshold       = MP_SIZE_T_MAX;
+int	   mod_1_1p_method		= 0; 
 mp_size_t  mod_1n_to_mod_1_1_threshold  = MP_SIZE_T_MAX;
 mp_size_t  mod_1u_to_mod_1_1_threshold  = MP_SIZE_T_MAX;
 mp_size_t  mod_1_1_to_mod_1_2_threshold = MP_SIZE_T_MAX;
@@ -253,6 +254,9 @@ struct param_t {
 #endif
 #ifndef HAVE_NATIVE_mpn_mod_1
 #define HAVE_NATIVE_mpn_mod_1 0
+#endif
+#ifndef HAVE_NATIVE_mpn_mod_1_1p
+#define HAVE_NATIVE_mpn_mod_1_1p 0
 #endif
 #ifndef HAVE_NATIVE_mpn_modexact_1_odd
 #define HAVE_NATIVE_mpn_modexact_1_odd 0
@@ -1851,29 +1855,27 @@ tune_mod_1 (void)
       return;
     }
 
-  {
-    static struct param_t  param;
-    double   t1, t2;
-    int      method;
+  if (!HAVE_NATIVE_mpn_mod_1_1p)
+    {
+      static struct param_t  param;
+      double   t1, t2;
+      int      method;
 
-    s.size = 10;
-    s.r = randlimb_half ();
+      s.size = 10;
+      s.r = randlimb_half ();
 
-    t1 = tuneup_measure (speed_mpn_mod_1_1_1, &param, &s);
-    t2 = tuneup_measure (speed_mpn_mod_1_1_2, &param, &s);
+      t1 = tuneup_measure (speed_mpn_mod_1_1_1, &param, &s);
+      t2 = tuneup_measure (speed_mpn_mod_1_1_2, &param, &s);
 
-    if (t1 == -1.0 || t2 == -1.0)
-      {
-	printf ("Oops, can't measure all mpn_mod_1_1 methods at %ld\n",
-		(long) s.size);
-	abort ();
-      }
-    method = (t1 < t2) ? 1 : 2;
-    print_define ("MOD_1_1P_METHOD", method);
-
-    /* FIXME: Use this choice when tuning the thresholds below, except
-       if we have a native mod_1_1. */
-  }
+      if (t1 == -1.0 || t2 == -1.0)
+	{
+	  printf ("Oops, can't measure all mpn_mod_1_1 methods at %ld\n",
+		  (long) s.size);
+	  abort ();
+	}
+      mod_1_1p_method = (t1 < t2) ? 1 : 2;
+      print_define ("MOD_1_1P_METHOD", mod_1_1p_method);
+    }
 
   if (UDIV_PREINV_ALWAYS)
     {

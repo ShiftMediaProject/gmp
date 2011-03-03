@@ -58,6 +58,27 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD  20
 #endif
 
+#if TUNE_PROGRAM_BUILD && !HAVE_NATIVE_mpn_mod_1_1p
+/* Duplicates declaratinos in tune/speed.h */
+mp_limb_t mpn_mod_1_1p_1 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+mp_limb_t mpn_mod_1_1p_2 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+
+void mpn_mod_1_1p_cps_1 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+void mpn_mod_1_1p_cps_2 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+
+#undef mpn_mod_1_1p
+#define mpn_mod_1_1p(ap, n, b, pre)			     \
+  (mod_1_1p_method == 1 ? mpn_mod_1_1p_1 (ap, n, b, pre)     \
+   : (mod_1_1p_method == 2 ? mpn_mod_1_1p_2 (ap, n, b, pre)  \
+      : __gmpn_mod_1_1p (ap, n, b, pre)))
+
+#undef mpn_mod_1_1p_cps
+#define mpn_mod_1_1p_cps(pre, b)				\
+  (mod_1_1p_method == 1 ? mpn_mod_1_1p_cps_1 (pre, b)		\
+   : (mod_1_1p_method == 2 ? mpn_mod_1_1p_cps_2 (pre, b)	\
+      : __gmpn_mod_1_1p_cps (pre, b)))
+#endif /* TUNE_PROGRAM_BUILD && !HAVE_NATIVE_mpn_mod_1_1p */
+
 
 /* The comments in mpn/generic/divrem_1.c apply here too.
 

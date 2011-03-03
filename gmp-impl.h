@@ -4552,6 +4552,10 @@ extern mp_size_t			mod_1_norm_threshold;
 #define MOD_1_UNNORM_THRESHOLD		mod_1_unnorm_threshold
 extern mp_size_t			mod_1_unnorm_threshold;
 
+#undef  MOD_1_1P_METHOD
+#define MOD_1_1P_METHOD			mod_1_1p_method
+extern int				mod_1_1p_method;
+
 #undef	MOD_1N_TO_MOD_1_1_THRESHOLD
 #define MOD_1N_TO_MOD_1_1_THRESHOLD	mod_1n_to_mod_1_1_threshold
 extern mp_size_t			mod_1n_to_mod_1_1_threshold;

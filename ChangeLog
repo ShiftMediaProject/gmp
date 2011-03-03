@@ -1,3 +1,16 @@
+2011-03-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_mod_1): Record result of MOD_1_1P_METHOD
+	measurement for use by mpn_mod_1_tune. And omit measurement if
+	mpn_mod_1_1p is native assebly code.
+
+	* mpn/generic/mod_1.c (mpn_mod_1_1p) [TUNE_PROGRAM_BUILD]: Macro
+	to check mod_1_1p_method and call the right function.
+	(mpn_mod_1_1p_cps) [TUNE_PROGRAM_BUILD]: Likewise.
+
+	* gmp-impl.h (MOD_1_1P_METHOD) [TUNE_PROGRAM_BUILD]: Define macro.
+	(mod_1_1p_method) [TUNE_PROGRAM_BUILD]: Declare variable.
+
 2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_addlsh_nc, mpn_rsblsh_nc): Declare.
