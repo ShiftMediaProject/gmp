@@ -1,5 +1,8 @@
 2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (mpn_addlsh_nc, mpn_rsblsh_nc): Declare.
+	* mpn/asm-defs.m4: Likewise.
+
 	* mpn/x86_64/coreisbr/aorrlsh_n.asm: Disable mpn_rsblsh_n due to
 	carry-in issues.
 	* mpn/x86_64/coreinhm/aorrlsh_n.asm: Likewise.

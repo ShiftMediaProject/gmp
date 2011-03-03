@@ -813,7 +813,9 @@ __GMP_DECLSPEC mp_limb_t mpn_addlsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcp
 /* mpn_addlsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}+2^k*{b,n}, and
    returns the carry out (0, ..., 2^k).  */
 #define mpn_addlsh_n __MPN(addlsh_n)
-  __GMP_DECLSPEC mp_limb_t mpn_addlsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+__GMP_DECLSPEC mp_limb_t mpn_addlsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+#define mpn_addlsh_nc __MPN(addlsh_nc)
+__GMP_DECLSPEC mp_limb_t mpn_addlsh_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int, mp_limb_t));
 
 /* mpn_sublsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-2*{b,n}, and
    returns the borrow out (0, 1 or 2).  */
@@ -839,7 +841,7 @@ __GMP_DECLSPEC mp_limb_t mpn_sublsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcp
 /* mpn_sublsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}-2^k*{b,n}, and
    returns the carry out (0, ..., 2^k).  */
 #define mpn_sublsh_n __MPN(sublsh_n)
-  __GMP_DECLSPEC mp_limb_t mpn_sublsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+__GMP_DECLSPEC mp_limb_t mpn_sublsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
 
 /* mpn_rsblsh2_n(c,a,b,n), when it exists, sets {c,n} to 4*{b,n}-{a,n}, and
    returns the carry out (-1, ..., 3).  */
@@ -852,6 +854,8 @@ __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, 
    returns the carry out (-1, 0, ..., 2^k-1).  */
 #define mpn_rsblsh_n __MPN(rsblsh_n)
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+#define mpn_rsblsh_nc __MPN(rsblsh_nc)
+__GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int, mp_limb_t));
 
 /* mpn_rsh1add_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} + {b,n}) >> 1,
    and returns the bit rshifted out (0 or 1).  */
