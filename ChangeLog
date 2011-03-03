@@ -1,5 +1,9 @@
 2011-03-03  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/mod_1_1.c (add_mssaaaa): For x86 and x86_64, treat m
+	as in output operand only. Added sparc32 implementation. Also
+	added #if:ed out attempts at sparc64 and powerpc64.
+
 	* tune/tuneup.c (tune_mod_1): Record result of MOD_1_1P_METHOD
 	measurement for use by mpn_mod_1_tune. And omit measurement if
 	mpn_mod_1_1p is native assebly code.

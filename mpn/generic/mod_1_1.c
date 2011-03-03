@@ -40,36 +40,61 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #if defined (__GNUC__)
 
 #if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
-#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
-  __asm__ ("add\t%7, %k2\n\tadc\t%5, %k1\n\tsbb\t%k0, %k0"               \
-	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
-	   : "0"  ((USItype)(s2)),                                      \
-	     "1"  ((USItype)(a1)), "g" ((USItype)(b1)),                 \
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
+  __asm__ ("add\t%6, %k2\n\tadc\t%4, %k1\n\tsbb\t%k0, %k0"		\
+	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
+	   : "1"  ((USItype)(a1)), "g" ((USItype)(b1)),                 \
 	     "%2" ((USItype)(a0)), "g" ((USItype)(b0)))
 #endif
 
 #if defined (__amd64__) && W_TYPE_SIZE == 64
-#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
-  __asm__ ("add\t%7, %q2\n\tadc\t%5, %q1\n\tsbb\t%q0, %q0"               \
-	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
-	   : "0"  ((UDItype)(s2)),                                      \
-	     "1"  ((UDItype)(a1)), "rme" ((UDItype)(b1)),               \
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
+  __asm__ ("add\t%6, %q2\n\tadc\t%4, %q1\n\tsbb\t%q0, %q0"		\
+	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
+	   : "1"  ((UDItype)(a1)), "rme" ((UDItype)(b1)),               \
 	     "%2" ((UDItype)(a0)), "rme" ((UDItype)(b0)))
 #endif
 
-/* FIXME: How to do carry -> mask on powerpc? */
+#if defined (__sparc__) && W_TYPE_SIZE == 32
+#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)			      \
+  __asm__ ("addcc %r5,%6,%2\n\taddxcc %r3,%4,%1\n\tsubx %%g0,%%g0,%0" \
+         : "=r" (m), "=r" (sh), "=&r" (sl)                            \
+         : "rJ" (ah), "rI" (bh),"%rJ" (al), "rI" (bl)                 \
+         __CLOBBER_CC)
+#endif
+
+/* FIXME: Needs review and/or testing. */
+#if 0 && defined (__sparc__) && W_TYPE_SIZE == 64
+#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
+  __asm__ (								\
+      "addcc	%r5,%6,%2\n"						\
+      "	addccc	%r7,%8,%%g0\n"						\
+      "	addccc	%r3,%4,%1\n"						\
+      "	clr	%0\n"							\
+      "	movcs	%%xcc, -1, %0\n"					\
+       : "=r" (m),"=r" (sh), "=&r" (sl)					\
+       : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),			\
+	 "rJ" ((al) >> 32), "rI" ((bl) >> 32),				\
+	 __CLOBBER_CC)
+#endif
+
+/* FIXME: Needs review and/or testing. I don't understand why
+   constraints says s0 (%2) and a0 (%6) must share a register. */
 #if 0 && HAVE_HOST_CPU_FAMILY_powerpc && W_TYPE_SIZE == 64
-#define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
-  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"        \
-	   : "=r" (s2), "=&r" (s1), "=&r" (s0)                          \
-	   : "0"  ((UDItype)(s2)),                                      \
-	     "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),                 \
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)                         \
+  __asm__ (								\
+       "add%I6c	%2,%5,%6\n"						\
+      "	adde	%1,%3,%4\n"						\
+      "	subfe	%0,%0,%0\n"						\
+      "	subfic	%0, %0, -1"							\
+	   : "=r" (m), "=r" (s1), "=&r" (s0)                          \
+	   : "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),                 \
 	     "%2" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
 #endif
 #endif /* defined (__GNUC__) */
 
 #ifndef add_mssaaaa
-#define add_mssaaaa(s2, s1, s0, a1, a0, b1, b0)                         \
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)                         \
   do {                                                                  \
     UWtype __s0, __s1, __c0, __c1;                                      \
     __s0 = (a0) + (b0);                                                 \
@@ -79,7 +104,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     (s0) = __s0;                                                        \
     __s1 = __s1 + __c0;                                                 \
     (s1) = __s1;                                                        \
-    (s2) = - (__c1 + (__s1 < __c0));					\
+    (m) = - (__c1 + (__s1 < __c0));					\
   } while (0)
 #endif
 
