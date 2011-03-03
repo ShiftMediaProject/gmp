@@ -78,8 +78,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	 __CLOBBER_CC)
 #endif
 
-/* FIXME: Needs review and/or testing. I don't understand why
-   constraints says s0 (%2) and a0 (%6) must share a register. */
+/* FIXME: Needs review and/or testing.  */
 #if 0 && HAVE_HOST_CPU_FAMILY_powerpc && W_TYPE_SIZE == 64
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)                         \
   __asm__ (								\
@@ -89,7 +88,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       "	subfic	%0, %0, -1"							\
 	   : "=r" (m), "=r" (s1), "=&r" (s0)                          \
 	   : "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),                 \
-	     "%2" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
+	     "%r" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
 #endif
 #endif /* defined (__GNUC__) */
 
