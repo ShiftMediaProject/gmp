@@ -29,11 +29,9 @@ C Intel SBR	 2  C (or 1.95 when L(top)'s alignment = 16 (mod 32))
 C Intel atom	 ?
 C VIA nano	 ?
 
-C This code probably runs close to optimally on Sandy Bridge, and reasonably
-C well on Core 2, but it runs poorly on all other processors, including Nehalem
-C (NHM).
-C
-C The carry handling is prepared for _nc variants.  If we choose to 
+C This code probably runs close to optimally on Sandy Bridge (using 4-way
+C unrolling).  It also runs reasonably well on Core 2, but it runs poorly on
+C all other processors, including Nehalem.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
