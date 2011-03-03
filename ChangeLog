@@ -1,3 +1,7 @@
+2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sqrtrem.c (mpn_dc_sqrtrem): Use mpn_addlsh1_n.
+
 2011-03-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): For x86 and x86_64, treat m

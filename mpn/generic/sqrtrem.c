@@ -246,7 +246,11 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
 
       if (c < 0)
 	{
+#if HAVE_NATIVE_mpn_addlsh1_n
+	  c += mpn_addlsh1_n (np, np, sp, n) + 2 * q;
+#else
 	  c += mpn_addmul_1 (np, sp, n, CNST_LIMB(2)) + 2 * q;
+#endif
 	  c -= mpn_sub_1 (np, np, n, CNST_LIMB(1));
 	  q -= mpn_sub_1 (sp, sp, n, CNST_LIMB(1));
 	}
