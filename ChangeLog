@@ -1,7 +1,3 @@
-2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
-
-	* mpn/generic/sqrtrem.c (mpn_dc_sqrtrem): Use mpn_addlsh1_n.
-
 2011-03-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): For x86 and x86_64, treat m
@@ -20,6 +16,12 @@
 	(mod_1_1p_method) [TUNE_PROGRAM_BUILD]: Declare variable.
 
 2011-03-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c (add_mssaaaa): Canonicalise layout.  Add arm
+	variant.  Enable sparc64 code and powerpc code (the latter for 32-bit
+	and 64-bit).
+
+	* mpn/generic/sqrtrem.c (mpn_dc_sqrtrem): Use mpn_addlsh1_n.
 
 	* gmp-impl.h (mpn_addlsh_nc, mpn_rsblsh_nc): Declare.
 	* mpn/asm-defs.m4: Likewise.
@@ -43,6 +45,10 @@
 	computation, analogous to recent x86_64/mod_1_1.asm changes.
 	(mpn_mod_1_1p): Corresponding changes. Don't shift b.
 
+	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Use udiv_rnnd_preinv
+	rather than udiv_rnd_preinv.
+	(mpn_mod_1s_4p): Likewise.
+
 2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/mul_1.asm: Swap entry insns to share more code
@@ -52,14 +58,6 @@
 	* mpz/divegcd.c: Rewrite, as per Marc Glisse's suggestion.  Also fix
 	problem with passing a longlong limb to a _ui function.
 
-2011-03-01  Niels Möller  <nisse@lysator.liu.se>
-
-	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p_cps): Use udiv_rnnd_preinv
-	rather than udiv_rnd_preinv.
-	(mpn_mod_1s_4p): Likewise.
-
-2011-03-01  Torbjorn Granlund  <tege@gmplib.org>
-
 	* gmp-impl.h (udiv_qrnnd_preinv3): Cast truth value to mask's type.
 	(udiv_rnnd_preinv): Likewise.
 	* mpn/generic/mod_1_1.c (mpn_mod_1_1p): Likewise.
@@ -68,8 +66,6 @@
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): Typo fix, define
 	add_mssaaaa, not add_sssaaaa.
-
-2011-02-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_mod_1): Measure mpn_mod_1_1_1 and
 	mpn_mod_1_1_2, to set MOD_1_1P_METHOD.
