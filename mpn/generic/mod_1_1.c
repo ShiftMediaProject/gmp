@@ -1,14 +1,14 @@
 /* mpn_mod_1_1p (ap, n, b, cps)
    Divide (ap,,n) by b.  Return the single-limb remainder.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund and Niels Möller.
    Based on a suggestion by Peter L. Montgomery.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,7 +30,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #ifndef MOD_1_1P_METHOD
-# define MOD_1_1P_METHOD 1
+# define MOD_1_1P_METHOD 1    /* need to make sure this is 2 for asm testing */
 #endif
 
 /* Define some longlong.h-style macros, but for wider operations.
@@ -39,70 +39,81 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if defined (__GNUC__)
 
-#if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
+#if HAVE_HOST_CPU_FAMILY_x86_64 && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
-  __asm__ ("add\t%6, %k2\n\tadc\t%4, %k1\n\tsbb\t%k0, %k0"		\
+  __asm__ (  "add	%6, %k2\n\t"					\
+	     "adc	%4, %k1\n\t"					\
+	     "sbb	%k0, %k0"					\
 	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
-	   : "1"  ((USItype)(a1)), "g" ((USItype)(b1)),                 \
+	   : "1"  ((USItype)(a1)), "g" ((USItype)(b1)),			\
 	     "%2" ((USItype)(a0)), "g" ((USItype)(b0)))
 #endif
 
-#if defined (__amd64__) && W_TYPE_SIZE == 64
+#if HAVE_HOST_CPU_FAMILY_x86_64 && W_TYPE_SIZE == 64
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
-  __asm__ ("add\t%6, %q2\n\tadc\t%4, %q1\n\tsbb\t%q0, %q0"		\
+  __asm__ (  "add	%6, %q2\n\t"					\
+	     "adc	%4, %q1\n\t"					\
+	     "sbb	%q0, %q0"					\
 	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
-	   : "1"  ((UDItype)(a1)), "rme" ((UDItype)(b1)),               \
+	   : "1"  ((UDItype)(a1)), "rme" ((UDItype)(b1)),		\
 	     "%2" ((UDItype)(a0)), "rme" ((UDItype)(b0)))
 #endif
 
 #if defined (__sparc__) && W_TYPE_SIZE == 32
-#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)			      \
-  __asm__ ("addcc %r5,%6,%2\n\taddxcc %r3,%4,%1\n\tsubx %%g0,%%g0,%0" \
-         : "=r" (m), "=r" (sh), "=&r" (sl)                            \
-         : "rJ" (ah), "rI" (bh),"%rJ" (al), "rI" (bl)                 \
-         __CLOBBER_CC)
-#endif
-
-/* FIXME: Needs review and/or testing. */
-#if 0 && defined (__sparc__) && W_TYPE_SIZE == 64
 #define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
-  __asm__ (								\
-      "addcc	%r5,%6,%2\n"						\
-      "	addccc	%r7,%8,%%g0\n"						\
-      "	addccc	%r3,%4,%1\n"						\
-      "	clr	%0\n"							\
-      "	movcs	%%xcc, -1, %0\n"					\
-       : "=r" (m),"=r" (sh), "=&r" (sl)					\
-       : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),			\
-	 "rJ" ((al) >> 32), "rI" ((bl) >> 32),				\
+  __asm__ (  "addcc	%r5, %6, %2\n\t"				\
+	     "addxcc	%r3, %4, %1\n\t"				\
+	     "subx	%%g0, %%g0, %0"					\
+	   : "=r" (m), "=r" (sh), "=&r" (sl)				\
+	   : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl)		\
 	 __CLOBBER_CC)
 #endif
 
-/* FIXME: Needs review and/or testing.  */
-#if 0 && HAVE_HOST_CPU_FAMILY_powerpc && W_TYPE_SIZE == 64
-#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)                         \
-  __asm__ (								\
-       "add%I6c	%2,%5,%6\n"						\
-      "	adde	%1,%3,%4\n"						\
-      "	subfe	%0,%0,%0\n"						\
-      "	subfic	%0, %0, -1"							\
-	   : "=r" (m), "=r" (s1), "=&r" (s0)                          \
-	   : "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),                 \
-	     "%r" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
+#if defined (__sparc__) && W_TYPE_SIZE == 64
+#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
+  __asm__ (  "addcc	%r5, %6, %2\n\t"				\
+	     "addccc	%r7, %8, %%g0\n\t"				\
+	     "addccc	%r3, %4, %1\n\t"				\
+	     "clr	%0\n\t"						\
+	     "movcs	%%xcc, -1, %0"					\
+	   : "=r" (m), "=r" (sh), "=&r" (sl)				\
+	   : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),		\
+	     "rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
+	 __CLOBBER_CC)
+#endif
+
+#if HAVE_HOST_CPU_FAMILY_powerpc  /* should work fine for 32-bit and 64-bit */
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
+  __asm__ (  "add%I6c	%2, %5, %6\n\t"					\
+	     "adde	%1, %3, %4\n\t"					\
+	     "subfe	%0, %0, %0\n\t"					\
+	     "nor	%0, %0, %0"					\
+	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
+	   : "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
 #endif /* defined (__GNUC__) */
 
+#if defined (__arm__) && W_TYPE_SIZE == 32
+#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
+  __asm__ (  "adds	%2, %5, %6\n\t"					\
+	     "adcs	%1, %3, %4\n\t"					\
+	     "movcc	%0, #0\n\t"					\
+	     "movcs	%0, #-1"					\
+	   : "=r" (m), "=r" (sh), "=&r" (sl)				\
+	   : "r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
+#endif
+
 #ifndef add_mssaaaa
-#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)                         \
-  do {                                                                  \
-    UWtype __s0, __s1, __c0, __c1;                                      \
-    __s0 = (a0) + (b0);                                                 \
-    __s1 = (a1) + (b1);                                                 \
-    __c0 = __s0 < (a0);                                                 \
-    __c1 = __s1 < (a1);                                                 \
-    (s0) = __s0;                                                        \
-    __s1 = __s1 + __c0;                                                 \
-    (s1) = __s1;                                                        \
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
+  do {									\
+    UWtype __s0, __s1, __c0, __c1;					\
+    __s0 = (a0) + (b0);							\
+    __s1 = (a1) + (b1);							\
+    __c0 = __s0 < (a0);							\
+    __c1 = __s1 < (a1);							\
+    (s0) = __s0;							\
+    __s1 = __s1 + __c0;							\
+    (s1) = __s1;							\
     (m) = - (__c1 + (__s1 < __c0));					\
   } while (0)
 #endif
