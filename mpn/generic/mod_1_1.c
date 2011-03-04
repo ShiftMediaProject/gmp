@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if defined (__GNUC__)
 
-#if HAVE_HOST_CPU_FAMILY_x86_64 && W_TYPE_SIZE == 32
+#if HAVE_HOST_CPU_FAMILY_x86 && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
   __asm__ (  "add	%6, %k2\n\t"					\
 	     "adc	%4, %k1\n\t"					\
