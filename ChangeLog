@@ -1,3 +1,7 @@
+2011-03-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bdiv_dbm1c.asm: Write proper feed-in code.
+
 2011-03-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/addmul_2.asm: Rewrite for linear performance.
