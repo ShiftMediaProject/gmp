@@ -32,9 +32,8 @@ C    outer each loop.  ("Overlapping software pipelining")
 C  * Postpone push of ebx until we know vn > 1.  Perhaps use caller-saves regs
 C    for inlined mul_1, allowing us to postpone all pushes.
 C  * Perhaps write special code for un < M, for some small M.
-C  * Replace addmul_1 loop by less pipelined loop.  This could save perhaps 25%
-C    of the code size.
-C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm.
+C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm, or perhaps
+C    with even less pipelined code.
 
 C void mpn_mul_basecase (mp_ptr wp,
 C                        mp_srcptr xp, mp_size_t xn,
