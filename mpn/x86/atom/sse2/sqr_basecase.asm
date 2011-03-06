@@ -63,6 +63,10 @@ PROLOGUE(mpn_sqr_basecase)
 	lea	-1(n), %eax
 	neg	n
 	movd	(up), %mm7
+
+	test	%eax, %eax
+	jz	L(one)
+
 	movd	4(up), %mm0
 	lea	4(up), up
 	pmuludq	%mm7, %mm0
@@ -114,15 +118,12 @@ C	jz	L(done)
 	jmp	L(ol2)
 
 C ================================================================
-L(of0):	test	n, n
-	jz	L(one)
-	jmp	L(xx0)
 	ALIGN(16)
 L(lm0):	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
 	psrlq	$32, %mm6
 	lea	16(rp), rp
-L(xx0):	paddq	%mm0, %mm6
+L(of0):	paddq	%mm0, %mm6
 	movd	4(up), %mm0
 	pmuludq	%mm7, %mm0
 	movd	%mm6, (rp)
@@ -603,8 +604,7 @@ L(rtn):	emms
 	pop	%edi
 	ret
 
-L(one):	movd	-4(up), %mm0
-	pmuludq	%mm0, %mm0
-	movq	%mm0, -4(rp)
+L(one):	pmuludq	%mm7, %mm7
+	movq	%mm7, -4(rp)
 	jmp	L(rtn)
 EPILOGUE()
