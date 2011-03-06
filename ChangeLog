@@ -1,3 +1,7 @@
+2011-03-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/atom/sse2/sqr_basecase.asm: New file.
+
 2011-03-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bdiv_dbm1c.asm: Write proper feed-in code.
