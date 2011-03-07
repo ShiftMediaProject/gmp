@@ -4,6 +4,8 @@
 
 2011-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/gcd_1.asm: Workaround Oracle assembler bug.
+
 	* mpn/x86/atom/sse2/mul_basecase.asm: Replace addmul_1 loops.
 	Tweak outer loop rp updates.
 
