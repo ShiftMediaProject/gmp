@@ -60,19 +60,18 @@ PROLOGUE(mpn_sqr_basecase)
 	mov	28(%esp), n
 
 	lea	4(rp), rp	C write triangular product starting at rp[1]
-	lea	-1(n), %eax
-	neg	n
+	dec	n
 	movd	(up), %mm7
 
-	test	%eax, %eax
 	jz	L(one)
-
-	movd	4(up), %mm0
 	lea	4(up), up
+	mov	n, %eax
+
+	movd	(up), %mm0
+	neg	n
 	pmuludq	%mm7, %mm0
 	pxor	%mm6, %mm6
-	lea	1(n), un	C decr ABSOLUTE value
-	lea	1(n), n		C decr ABSOLUTE value
+	mov	n, un
 
 	and	$3, %eax
 	jz	L(of0)
@@ -246,9 +245,6 @@ L(ol1):	lea	4(up,n,4), up
 L(eq1):
 	psrlq	$32, %mm1
 	movd	%mm1, %eax
-	add	%ebx, 4(rp)
-	adc	un, %eax
-	mov	%eax, 8(rp)
 	jmp	L(cj1)
 
 L(la1):	adc	$0, %edx
@@ -303,10 +299,11 @@ L(a1):	psrlq	$32, %mm1
 	adc	%edx, %ebx
 	movd	%mm1, %eax
 	adc	un, %eax
+L(cj1):
 	add	%ebx, 4(rp)
 	adc	un, %eax
 	mov	%eax, 8(rp)
-L(cj1):
+
 	inc	n
 	jz	L(done)
 
@@ -537,38 +534,36 @@ L(wd2):	psrlq	$32, %mm0
 
 C ================================================================
 
-L(done):
+L(done):			C n is zero here
 	mov	24(%esp), up
 	mov	28(%esp), %eax
 
 	movd	(up), %mm0
-	xor	%ebp, %ebp
+	inc	%eax
 	pmuludq	%mm0, %mm0
+	lea	4(up), up
 	mov	20(%esp), rp
 	shr	%eax
 	movd	%mm0, (rp)
 	psrlq	$32, %mm0
+	lea	-12(rp), rp
 	mov	%eax, 28(%esp)
-	jc	L(odd)
+	jnc	L(odd)
 
-	movd	%mm0, %ecx
-	movd	4(up), %mm0
-	lea	-4(rp), rp
+	movd	%mm0, %ebp
+	movd	(up), %mm0
+	lea	8(rp), rp
 	pmuludq	%mm0, %mm0
-	add	8(rp), %ecx
+	lea	-4(up), up
+	add	8(rp), %ebp
 	movd	%mm0, %edx
 	adc	12(rp), %edx
-	rcr	%ebp
+	rcr	n
 	jmp	L(ent)
-
-L(odd):	clc			C clear carry  FIXME: use test/and
-	lea	4(rp), rp
-C	jz	L(end)
-	lea	4(up), up
 
 C	ALIGN(16)		C alignment seems irrelevant
 L(top):	movd	(up), %mm1
-	adc	%ebp, %ebp
+	adc	n, n
 	movd	%mm0, %eax
 	pmuludq	%mm1, %mm1
 	movd	4(up), %mm0
@@ -577,24 +572,24 @@ L(top):	movd	(up), %mm1
 	pmuludq	%mm0, %mm0
 	psrlq	$32, %mm1
 	adc	4(rp), %ebx
-	movd	%mm1, %ecx
+	movd	%mm1, %ebp
 	movd	%mm0, %edx
-	adc	8(rp), %ecx
+	adc	8(rp), %ebp
 	adc	12(rp), %edx
-	rcr	%ebp		C FIXME: isn't this awfully slow on atom???
+	rcr	n		C FIXME: isn't this awfully slow on atom???
 	adc	%eax, (rp)
 	adc	%ebx, 4(rp)
 L(ent):	lea	8(up), up
-	adc	%ecx, 8(rp)
+	adc	%ebp, 8(rp)
 	psrlq	$32, %mm0
 	adc	%edx, 12(rp)
-	decl	28(%esp)
+L(odd):	decl	28(%esp)
 	lea	16(rp), rp
 	jnz	L(top)
 
-L(end):	adc	%ebp, %ebp
+L(end):	adc	n, n
 	movd	%mm0, %eax
-	adc	%ebp, %eax
+	adc	n, %eax
 	mov	%eax, (rp)
 
 L(rtn):	emms
