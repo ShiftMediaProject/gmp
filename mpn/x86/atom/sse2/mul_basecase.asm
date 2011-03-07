@@ -26,14 +26,11 @@ C TODO
 C  * Check if 'jmp N(%esp)' is well-predicted enough to allow us to combine the
 C    4 large loops into one; we could use it for the outer loop branch.
 C  * Optimise code outside of inner loops.
-C  * Play with rp and up offsets to save a bunch of lea insns.
 C  * Write combined addmul_1 feed-in a wind-down code, and use when iterating
 C    outer each loop.  ("Overlapping software pipelining")
 C  * Postpone push of ebx until we know vn > 1.  Perhaps use caller-saves regs
 C    for inlined mul_1, allowing us to postpone all pushes.
-C  * Perhaps write special code for un < M, for some small M.
-C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm, or perhaps
-C    with even less pipelined code.
+C  * Perhaps write special code for vn <= un < M, for some small M.
 
 C void mpn_mul_basecase (mp_ptr wp,
 C                        mp_srcptr xp, mp_size_t xn,
@@ -103,81 +100,73 @@ L(m3):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
+	lea	8(rp), rp
 
-L(ol3):	lea	4(vp), vp
+L(ol3):	mov	28(%esp), un
+	neg	un
+	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
-	mov	20(%esp), rp
 	mov	24(%esp), up
-	lea	4(rp), rp
-	mov	rp, 20(%esp)
-	mov	28(%esp), un
+	lea	(rp,un,4), rp
 
-	movd	(up), %mm1
-	pmuludq	%mm7, %mm1
-	shr	$2, un		C FIXME: move out
-	lea	4(up), up
-	lea	-12(rp), rp
-	movd	%mm1, %ebx
-	inc	un
 	movd	(up), %mm0
+	pmuludq	%mm7, %mm0
+	sar	$2, un
+	movd	4(up), %mm1
+	movd	%mm0, %ebx
+	pmuludq	%mm7, %mm1
+	lea	-8(up), up
 	xor	%edx, %edx	C zero edx and CF
 	jmp	L(a3)
 
-L(la3):	adc	$0, %edx
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
+L(la3):	movd	4(up), %mm1
+	adc	$0, %edx
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
 	psrlq	$32, %mm0
-	adc	%edx, %eax
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	adc	$0, %edx
-	add	%eax, (rp)
+	add	%ebx, (rp)
 	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	adc	%edx, %eax
 	movd	%mm1, %edx
-	movd	%mm0, %eax
+	movd	%mm0, %ebx
 	movd	12(up), %mm1
 	pmuludq	%mm7, %mm1
 	adc	$0, %edx
-	add	%ebx, 4(rp)
-	psrlq	$32, %mm0
-	adc	%edx, %eax
+	add	%eax, 4(rp)
+L(a3):	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	lea	16(up), up
 	movd	(up), %mm0
 	adc	$0, %edx
-	add	%eax, 8(rp)
-L(a3):	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	add	%ebx, 8(rp)
+	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
 	pmuludq	%mm7, %mm0
-	dec	un
-	movd	4(up), %mm1
+	inc	un
 	jnz	L(la3)
 
 	adc	un, %edx	C un is zero here
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	lea	16(rp), rp
 	psrlq	$32, %mm0
-	adc	%edx, %eax
-	movd	%mm0, %edx
-	movd	%mm1, %ebx
-	adc	un, %edx
-	add	%eax, (rp)
-	psrlq	$32, %mm1
 	adc	%edx, %ebx
-	movd	%mm1, %eax
+	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, 4(rp)
+	add	%ebx, (rp)
 	adc	un, %eax
-	mov	%eax, 8(rp)
+	mov	%eax, 4(rp)
 
 	decl	vn
 	jnz	L(ol3)
@@ -215,81 +204,74 @@ L(of0):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
+	lea	12(rp), rp
 
-L(ol0):	lea	4(vp), vp
+L(ol0):	mov	28(%esp), un
+	neg	un
+	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
-	mov	20(%esp), rp
 	mov	24(%esp), up
-	lea	4(rp), rp
-	mov	rp, 20(%esp)
-	mov	28(%esp), un
+	lea	4(rp,un,4), rp
 
-	movd	(up), %mm0
-	pmuludq	%mm7, %mm0
-	shr	$2, un		C FIXME: move out
-	movd	4(up), %mm1
-	lea	-8(up), up
-	lea	-8(rp), rp
-	movd	%mm0, %eax
+	movd	(up), %mm1
 	pmuludq	%mm7, %mm1
-	xor	%edx, %edx	C zero edx and CF
+	sar	$2, un
+	xor	%edx, %edx
+	movd	4(up), %mm0
+	lea	-4(up), up
+	movd	%mm1, %eax
+	pmuludq	%mm7, %mm0
+
 	jmp	L(a0)
 
-L(la0):	adc	$0, %edx
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
+L(la0):	movd	4(up), %mm1
+	adc	$0, %edx
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
 	psrlq	$32, %mm0
-	adc	%edx, %eax
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	adc	$0, %edx
-	add	%eax, (rp)
-	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	add	%ebx, (rp)
+L(a0):	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
-	movd	%mm0, %eax
+	movd	%mm0, %ebx
 	movd	12(up), %mm1
 	pmuludq	%mm7, %mm1
 	adc	$0, %edx
-	add	%ebx, 4(rp)
-L(a0):	psrlq	$32, %mm0
-	adc	%edx, %eax
+	add	%eax, 4(rp)
+	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	lea	16(up), up
 	movd	(up), %mm0
 	adc	$0, %edx
-	add	%eax, 8(rp)
+	add	%ebx, 8(rp)
 	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	adc	%edx, %eax
 	movd	%mm1, %edx
 	pmuludq	%mm7, %mm0
-	dec	un
-	movd	4(up), %mm1
+	inc	un
 	jnz	L(la0)
 
 	adc	un, %edx	C un is zero here
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	lea	16(rp), rp
 	psrlq	$32, %mm0
-	adc	%edx, %eax
-	movd	%mm0, %edx
-	movd	%mm1, %ebx
-	adc	un, %edx
-	add	%eax, (rp)
-	psrlq	$32, %mm1
 	adc	%edx, %ebx
-	movd	%mm1, %eax
+	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, 4(rp)
+	add	%ebx, (rp)
 	adc	un, %eax
-	mov	%eax, 8(rp)
+	mov	%eax, 4(rp)
 
 	decl	vn
 	jnz	L(ol0)
@@ -328,81 +310,71 @@ L(of1):	paddq	%mm0, %mm6
 	decl	vn
 	jz	L(done)
 
-L(ol1):	lea	4(vp), vp
+L(ol1):	mov	28(%esp), un
+	neg	un
+	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
-	mov	20(%esp), rp
 	mov	24(%esp), up
-	lea	4(rp), rp
-	mov	rp, 20(%esp)
-	mov	28(%esp), un
+	lea	8(rp,un,4), rp
 
-	movd	(up), %mm1
-	pmuludq	%mm7, %mm1
-	shr	$2, un		C FIXME: move out
-
-	lea	-4(rp), rp
-	movd	%mm1, %ebx
-	movd	4(up), %mm0
-	lea	-4(up), up
+	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
+	sar	$2, un
+	movd	%mm0, %ebx
+	movd	4(up), %mm1
+	pmuludq	%mm7, %mm1
 	xor	%edx, %edx	C zero edx and CF
+	inc	un
 	jmp	L(a1)
 
-L(la1):	adc	$0, %edx
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
+L(la1):	movd	4(up), %mm1
+	adc	$0, %edx
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
-	psrlq	$32, %mm0
-	adc	%edx, %eax
+L(a1):	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	adc	$0, %edx
-	add	%eax, (rp)
-L(a1):	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	add	%ebx, (rp)
+	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
-	movd	%mm0, %eax
+	movd	%mm0, %ebx
 	movd	12(up), %mm1
 	pmuludq	%mm7, %mm1
 	adc	$0, %edx
-	add	%ebx, 4(rp)
+	add	%eax, 4(rp)
 	psrlq	$32, %mm0
-	adc	%edx, %eax
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	lea	16(up), up
 	movd	(up), %mm0
 	adc	$0, %edx
-	add	%eax, 8(rp)
+	add	%ebx, 8(rp)
 	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	adc	%edx, %eax
 	movd	%mm1, %edx
 	pmuludq	%mm7, %mm0
-	dec	un
-	movd	4(up), %mm1
+	inc	un
 	jnz	L(la1)
 
-	adc	un, %edx	C un is zero here
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
+	adc	un, %edx		C un is zero here
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	lea	16(rp), rp
 	psrlq	$32, %mm0
-	adc	%edx, %eax
-	movd	%mm0, %edx
-	movd	%mm1, %ebx
-	adc	un, %edx
-	add	%eax, (rp)
-	psrlq	$32, %mm1
 	adc	%edx, %ebx
-	movd	%mm1, %eax
+	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, 4(rp)
+	add	%ebx, (rp)
 	adc	un, %eax
-	mov	%eax, 8(rp)
+	mov	%eax, 4(rp)
 
 	decl	vn
 	jnz	L(ol1)
@@ -440,81 +412,72 @@ L(of2):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
-
-L(ol2):	lea	4(vp), vp
-	movd	(vp), %mm7	C read next V limb
-	mov	20(%esp), rp
-	mov	24(%esp), up
 	lea	4(rp), rp
-	mov	rp, 20(%esp)
-	mov	28(%esp), un
 
-	movd	(up), %mm0
-	pmuludq	%mm7, %mm0
-	xor	%edx, %edx
-	shr	$2, un		C FIXME: move out
-	movd	4(up), %mm1
-	test	un, un		C clear carry
-	movd	%mm0, %eax
+L(ol2):	mov	28(%esp), un
+	neg	un
+	lea	4(vp), vp
+	movd	(vp), %mm7	C read next V limb
+	mov	24(%esp), up
+	lea	-4(rp,un,4), rp
+
+	movd	(up), %mm1
 	pmuludq	%mm7, %mm1
-	jnz	L(a2)
-	jmp	L(wd2)
+	sar	$2, un
+	movd	4(up), %mm0
+	lea	4(up), up
+	movd	%mm1, %eax
+	xor	%edx, %edx	C zero edx and CF
+	jmp	L(lo2)
 
-L(la2):	adc	$0, %edx
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
+L(la2):	movd	4(up), %mm1
+	adc	$0, %edx
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
-L(a2):	psrlq	$32, %mm0
-	adc	%edx, %eax
+	psrlq	$32, %mm0
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	adc	$0, %edx
-	add	%eax, (rp)
+	add	%ebx, (rp)
 	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	adc	%edx, %eax
 	movd	%mm1, %edx
-	movd	%mm0, %eax
+	movd	%mm0, %ebx
 	movd	12(up), %mm1
 	pmuludq	%mm7, %mm1
 	adc	$0, %edx
-	add	%ebx, 4(rp)
+	add	%eax, 4(rp)
 	psrlq	$32, %mm0
-	adc	%edx, %eax
+	adc	%edx, %ebx
 	movd	%mm0, %edx
-	movd	%mm1, %ebx
+	movd	%mm1, %eax
 	lea	16(up), up
 	movd	(up), %mm0
 	adc	$0, %edx
-	add	%eax, 8(rp)
-	psrlq	$32, %mm1
-	adc	%edx, %ebx
+	add	%ebx, 8(rp)
+L(lo2):	psrlq	$32, %mm1
+	adc	%edx, %eax
 	movd	%mm1, %edx
 	pmuludq	%mm7, %mm0
-	dec	un
-	movd	4(up), %mm1
+	inc	un
 	jnz	L(la2)
 
-	adc	un, %edx	C un is zero here
-	add	%ebx, 12(rp)
-	movd	%mm0, %eax
-	pmuludq	%mm7, %mm1
+	adc	un, %edx		C un is zero here
+	add	%eax, 12(rp)
+	movd	%mm0, %ebx
 	lea	16(rp), rp
-L(wd2):	psrlq	$32, %mm0
-	adc	%edx, %eax
-	movd	%mm0, %edx
-	movd	%mm1, %ebx
-	adc	un, %edx
-	add	%eax, (rp)
-	psrlq	$32, %mm1
+	psrlq	$32, %mm0
 	adc	%edx, %ebx
-	movd	%mm1, %eax
+	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, 4(rp)
+	add	%ebx, (rp)
 	adc	un, %eax
-	mov	%eax, 8(rp)
+	mov	%eax, 4(rp)
 
 	decl	vn
 	jnz	L(ol2)
