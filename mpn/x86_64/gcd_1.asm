@@ -112,7 +112,7 @@ L(strip_x_top):
 	mov	%rcx, %rax		C				1
 	and	$MASK, R32(%rcx)	C				1
 
-	movzb	(%r9,%rcx), R32(%rcx)	C				2
+	movzbl	(%r9,%rcx), R32(%rcx)	C use this insn form to placate Oracle
 
 	shr	R8(%rcx), %rax		C				4
 	cmp	$MAXSHIFT, R8(%rcx)	C				4
