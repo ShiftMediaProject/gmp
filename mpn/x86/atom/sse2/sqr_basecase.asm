@@ -28,8 +28,8 @@ C  * Optimise code outside of inner loops.
 C  * Combine rp and up updates in outer loop to save a bunch of lea insns.
 C  * Write combined addmul_1 feed-in a wind-down code, and use when iterating
 C    outer each loop.  ("Overlapping software pipelining")
-C  * Postpone push of ebx until we know n > 1.  Perhaps use caller-saves regs
-C    for inlined mul_1, allowing us to postpone all pushes.
+C  * Perhaps use caller-saves regs for inlined mul_1, allowing us to postpone
+C    all pushes.
 C  * Perhaps write special code for n < M, for some small M.
 C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm, or perhaps
 C    with even less pipelined code.
@@ -53,11 +53,9 @@ define(`un',  `%ebp')
 PROLOGUE(mpn_sqr_basecase)
 	push	%edi
 	push	%esi
-	push	%ebx
-	push	%ebp
-	mov	20(%esp), rp
-	mov	24(%esp), up
-	mov	28(%esp), n
+	mov	12(%esp), rp
+	mov	16(%esp), up
+	mov	20(%esp), n
 
 	lea	4(rp), rp	C write triangular product starting at rp[1]
 	dec	n
@@ -65,6 +63,8 @@ PROLOGUE(mpn_sqr_basecase)
 
 	jz	L(one)
 	lea	4(up), up
+	push	%ebx
+	push	%ebp
 	mov	n, %eax
 
 	movd	(up), %mm0
@@ -183,7 +183,7 @@ L(of1):	paddq	%mm0, %mm6
 	movd	%mm6, 4(rp)
 
 	inc	n
-	jz	L(done)
+	jz	L(done)		C goes away when we add special n=2 code
   lea	-20(up), up
   lea	-4(rp), rp
 	jmp	L(ol0)
@@ -236,16 +236,12 @@ L(ol1):	lea	4(up,n,4), up
 	sar	$2, un
 	movd	%mm1, %ebx
 	inc	un
-	jz	L(eq1)
+	jz	L(re1)
 
 	movd	8(up), %mm0
 	pmuludq	%mm7, %mm0
 	xor	%edx, %edx	C zero edx and CF
 	jmp	L(a1)
-L(eq1):
-	psrlq	$32, %mm1
-	movd	%mm1, %eax
-	jmp	L(cj1)
 
 L(la1):	adc	$0, %edx
 	add	%ebx, 12(rp)
@@ -299,13 +295,11 @@ L(a1):	psrlq	$32, %mm1
 	adc	%edx, %ebx
 	movd	%mm1, %eax
 	adc	un, %eax
-L(cj1):
 	add	%ebx, 4(rp)
 	adc	un, %eax
 	mov	%eax, 8(rp)
 
 	inc	n
-	jz	L(done)
 
 C ================================================================
 
@@ -471,7 +465,7 @@ L(ol2):	lea	8(up,n,4), up
 	pmuludq	%mm7, %mm1
 	inc	un
 	jnz	L(a2)
-	jmp	L(wd2)
+	jmp	L(re2)
 
 L(la2):	adc	$0, %edx
 	add	%ebx, 12(rp)
@@ -515,7 +509,7 @@ L(a2):	psrlq	$32, %mm0
 	movd	%mm0, %eax
 	pmuludq	%mm7, %mm1
 	lea	16(rp), rp
-L(wd2):	psrlq	$32, %mm0
+	psrlq	$32, %mm0
 	adc	%edx, %eax
 	movd	%mm0, %edx
 	movd	%mm1, %ebx
@@ -533,6 +527,31 @@ L(wd2):	psrlq	$32, %mm0
 	jmp	L(ol1)
 
 C ================================================================
+L(re2):	psrlq	$32, %mm0
+	movd	(up), %mm7	C read next U invariant limb
+	adc	%edx, %eax
+	movd	%mm0, %edx
+	movd	%mm1, %ebx
+	adc	un, %edx
+	add	%eax, (rp)
+	lea	4(rp), rp
+	psrlq	$32, %mm1
+	adc	%edx, %ebx
+	movd	%mm1, %eax
+	movd	4(up), %mm1
+	adc	un, %eax
+	add	%ebx, (rp)
+	pmuludq	%mm7, %mm1
+	adc	un, %eax
+	mov	%eax, 4(rp)
+	movd	%mm1, %ebx
+
+L(re1):	psrlq	$32, %mm1
+	add	%ebx, 4(rp)
+	movd	%mm1, %eax
+	adc	un, %eax
+	xor	n, n		C make n zeroness assumption below true
+	mov	%eax, 8(rp)
 
 L(done):			C n is zero here
 	mov	24(%esp), up
@@ -601,5 +620,8 @@ L(rtn):	emms
 
 L(one):	pmuludq	%mm7, %mm7
 	movq	%mm7, -4(rp)
-	jmp	L(rtn)
+	emms
+	pop	%esi
+	pop	%edi
+	ret
 EPILOGUE()
