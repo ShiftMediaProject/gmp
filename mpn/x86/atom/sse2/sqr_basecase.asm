@@ -25,7 +25,6 @@ C TODO
 C  * Check if 'jmp N(%esp)' is well-predicted enough to allow us to combine the
 C    4 large loops into one; we could use it for the outer loop branch.
 C  * Optimise code outside of inner loops.
-C  * Combine rp and up updates in outer loop to save a bunch of lea insns.
 C  * Write combined addmul_1 feed-in a wind-down code, and use when iterating
 C    outer each loop.  ("Overlapping software pipelining")
 C  * Perhaps use caller-saves regs for inlined mul_1, allowing us to postpone
@@ -33,11 +32,8 @@ C    all pushes.
 C  * Perhaps write special code for n < M, for some small M.
 C  * Replace inlined addmul_1 with smaller code from aorsmul_1.asm, or perhaps
 C    with even less pipelined code.
-C  * Fix function header code.
-C  * We run the outer loop too long, until we perform a 1-limb by 1-limb
-C    multiply.  The main problem with this is that the decreasing inner loop
-C    trip counts will cause poor exit branch prediction; this hurts short loops
-C    VERY much.
+C  * We run the outer loop until we have a 2-limb by 1-limb addmul_1 left.
+C    Consider breaking out earlier, saving high the cost of short loops.
 
 C void mpn_sqr_basecase (mp_ptr wp,
 C                        mp_srcptr xp, mp_size_t xn);
