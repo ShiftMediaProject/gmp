@@ -1,3 +1,9 @@
+2011-03-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/aorrlsh_n.asm: Complete rewrite.
+
+	* mpn/x86_64/core2/aorrlsh_n.asm: New file, grabbing another asm file.
+
 2011-03-09  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-ostream.cc: Use bool instead of int.
