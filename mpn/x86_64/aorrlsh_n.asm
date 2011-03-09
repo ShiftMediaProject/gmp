@@ -1,6 +1,4 @@
 dnl  AMD64 mpn_addlsh_n and mpn_rsblsh_n.  R = V2^k +- U.
-dnl  ("rsb" means reversed subtract, name mandated by mpn_sublsh1_n which
-dnl  subtacts the shifted operand from the unshifted operand.)
 
 dnl  Copyright 2006, 2010, 2011 Free Software Foundation, Inc.
 
@@ -21,38 +19,33 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
 C	     cycles/limb
-C AMD K8,K9	 3.1	< 3.85 for lshift + add_n, using mul might reach 2.83
-C AMD K10	 3.1	< 3.85 for lshift + add_n, using mul might reach 2.83
+C AMD K8,K9	 2.87	< 3.85 for lshift + add_n
+C AMD K10	 2.75	< 3.85 for lshift + add_n
 C Intel P4	14.6	> 7.33 for lshift + add_n
-C Intel core2	 3.87	> 3.27 for lshift + add_n
-C Intel NHM	 4	> 3.75 for lshift + add_n
-C Intel SBR	(5.8)	> 3.46 for lshift + add_n
-C Intel atom	(7.75)	< 8.75 for lshift + add_n
+C Intel core2	 4	> 3.27 for lshift + add_n
+C Intel NHM	 2.83	< 3.75 for lshift + add_n
+C Intel SBR	 3.25	< 3.46 for lshift + add_n
+C Intel atom	 ?	< 8.75 for lshift + add_n
 C VIA nano	 4.7	< 6.25 for lshift + add_n
 
-C This was written quickly and not optimized at all.  Surely one could get
-C closer to 3 c/l or perhaps even under 3 c/l.  Ideas:
-C   1) Use indexing to save the 3 LEA
-C   2) Write reasonable feed-in code
-C   3) Be more clever about register usage
-C   4) Unroll more, handling CL negation, carry save/restore cost much now
-C   5) Reschedule
-C   6) Use shld/shrd on Intel core and probably even on AMD K8-K10
 
-C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`vp',	`%rdx')
-define(`n',	`%rcx')
-define(`cnt',	`%r8')
+define(`rp',       `%rdi')
+define(`up',       `%rsi')
+define(`vp_param', `%rdx')
+define(`n_param',  `%rcx')
+define(`cnt',      `%r8')
+
+define(`vp',    `%r12')
+define(`n',     `%rbp')
 
 ifdef(`OPERATION_addlsh_n',`
+  define(ADDSUB,       `add')
   define(ADCSBB,       `adc')
   define(func, mpn_addlsh_n)
 ')
 ifdef(`OPERATION_rsblsh_n',`
+  define(ADDSUB,       `sub')
   define(ADCSBB,       `sbb')
   define(func, mpn_rsblsh_n)
 ')
@@ -60,103 +53,145 @@ ifdef(`OPERATION_rsblsh_n',`
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
 ASM_START()
-	TEXT
-	ALIGN(16)
+        TEXT
+        ALIGN(16)
 PROLOGUE(func)
 	push	%r12
-	push	%r13
-	push	%r14
 	push	%rbp
 	push	%rbx
 
-	mov	n, %rax
-	xor	R32(%rbx), R32(%rbx)	C clear carry save register
-	mov	R32(%r8), R32(%rcx)	C shift count
-	xor	R32(%rbp), R32(%rbp)	C limb carry
+	mov	(vp_param), %rax	C load first V limb early
 
-	mov	R32(%rax), R32(%r11)
-	and	$3, R32(%r11)
-	je	L(4)
-	sub	$1, R32(%r11)
+	mov	$0, R32(n)
+	sub	n_param, n
 
-L(012):	mov	(vp), %r8
-	mov	%r8, %r12
+	lea	-16(up,n_param,8), up
+	lea	-16(rp,n_param,8), rp
+	lea	16(vp_param,n_param,8), vp
+
+	mov	n_param, %r9
+
+	mov	%r8, %rcx
+	mov	$1, R32(%r8)
 	shl	R8(%rcx), %r8
-	or	%rbp, %r8
-	neg	R8(%rcx)
-	mov	%r12, %rbp
-	shr	R8(%rcx), %rbp
-	neg	R8(%rcx)
-	add	R32(%rbx), R32(%rbx)
-	ADCSBB	(up), %r8
-	mov	%r8, (rp)
-	sbb	R32(%rbx), R32(%rbx)
-	lea	8(up), up
-	lea	8(vp), vp
-	lea	8(rp), rp
-	sub	$1, R32(%r11)
-	jnc	L(012)
 
-L(4):	sub	$4, %rax
-	jc	L(end)
+	mul	%r8	   		C initial multiply
 
-	ALIGN(16)
-L(top):	mov	(vp), %r8
-	mov	%r8, %r12
-	mov	8(vp), %r9
-	mov	%r9, %r13
-	mov	16(vp), %r10
-	mov	%r10, %r14
-	mov	24(vp), %r11
+	and	$3, R32(%r9)
+	jz	L(b0)
+	cmp	$2, R32(%r9)
+	jc	L(b1)
+	jz	L(b2)
 
-	shl	R8(%rcx), %r8
-	shl	R8(%rcx), %r9
-	shl	R8(%rcx), %r10
-	or	%rbp, %r8
-	mov	%r11, %rbp
-	shl	R8(%rcx), %r11
+L(b3):	mov	%rax, %r11
+	ADDSUB	16(up,n,8), %r11
+	mov	-8(vp,n,8), %rax
+	sbb	R32(%rcx), R32(%rcx)
+	mov	%rdx, %rbx
+	mul	%r8
+	or	%rax, %rbx
+	mov	(vp,n,8), %rax
+	mov	%rdx, %r9
+	mul	%r8
+	or	%rax, %r9
+	add	$3, n
+	jnz	L(lo3)
+	jmp	L(cj3)
 
-	neg	R8(%rcx)
+L(b2):	mov	%rax, %rbx
+	mov	-8(vp,n,8), %rax
+	mov	%rdx, %r9
+	mul	%r8
+	or	%rax, %r9
+	add	$2, n
+	jz	L(cj2)
+	mov	%rdx, %r10
+	mov	-16(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r10
+	xor	R32(%rcx), R32(%rcx)	C clear carry register
+	jmp	L(lo2)
 
-	shr	R8(%rcx), %r12
-	shr	R8(%rcx), %r13
-	shr	R8(%rcx), %r14
-	shr	R8(%rcx), %rbp		C used next iteration
+L(b1):	mov	%rax, %r9
+	mov	%rdx, %r10
+	add	$1, n
+	jnz	L(gt1)
+	ADDSUB	8(up,n,8), %r9
+	jmp	L(cj1)
+L(gt1):	mov	-16(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r10
+	mov	%rdx, %r11
+	mov	-8(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r11
+	ADDSUB	8(up,n,8), %r9
+	ADCSBB	16(up,n,8), %r10
+	ADCSBB	24(up,n,8), %r11
+	mov	(vp,n,8), %rax
+	sbb	R32(%rcx), R32(%rcx)
+	jmp	L(lo1)
 
-	or	%r12, %r9
-	or	%r13, %r10
-	or	%r14, %r11
+L(b0):	mov	%rax, %r10
+	mov	%rdx, %r11
+	mov	-8(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r11
+	ADDSUB	16(up,n,8), %r10
+	ADCSBB	24(up,n,8), %r11
+	mov	(vp,n,8), %rax
+	sbb	R32(%rcx), R32(%rcx)
+	mov	%rdx, %rbx
+	mul	%r8
+	or	%rax, %rbx
+	mov	8(vp,n,8), %rax
+	add	$4, n
+	jz	L(end)
 
-	neg	R8(%rcx)
+	ALIGN(8)
+L(top):	mov	%rdx, %r9
+	mul	%r8
+	or	%rax, %r9
+	mov	%r10, -16(rp,n,8)
+L(lo3):	mov	%rdx, %r10
+	mov	-16(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r10
+	mov	%r11, -8(rp,n,8)
+L(lo2):	mov	%rdx, %r11
+	mov	-8(vp,n,8), %rax
+	mul	%r8
+	or	%rax, %r11
+	add	R32(%rcx), R32(%rcx)
+	ADCSBB	(up,n,8), %rbx
+	ADCSBB	8(up,n,8), %r9
+	ADCSBB	16(up,n,8), %r10
+	ADCSBB	24(up,n,8), %r11
+	mov	(vp,n,8), %rax
+	sbb	R32(%rcx), R32(%rcx)
+	mov	%rbx, (rp,n,8)
+L(lo1):	mov	%rdx, %rbx
+	mul	%r8
+	or	%rax, %rbx
+	mov	%r9, 8(rp,n,8)
+L(lo0):	mov	8(vp,n,8), %rax
+	add	$4, n
+	jnz	L(top)
 
-	add	R32(%rbx), R32(%rbx)	C restore carry flag
-
-	ADCSBB	(up), %r8
-	ADCSBB	8(up), %r9
-	ADCSBB	16(up), %r10
-	ADCSBB	24(up), %r11
-
-	mov	%r8, (rp)
-	mov	%r9, 8(rp)
-	mov	%r10, 16(rp)
-	mov	%r11, 24(rp)
-
-	sbb	R32(%rbx), R32(%rbx)	C save carry flag
-
-	lea	32(up), up
-	lea	32(vp), vp
-	lea	32(rp), rp
-
-	sub	$4, %rax
-	jnc	L(top)
-
-L(end):	add	R32(%rbx), R32(%rbx)
-	ADCSBB	$0, %rbp
-	mov	%rbp, %rax
+L(end):	mov	%rdx, %r9
+	mul	%r8
+	or	%rax, %r9
+	mov	%r10, -16(rp,n,8)
+L(cj3):	mov	%r11, -8(rp,n,8)
+L(cj2):	add	R32(%rcx), R32(%rcx)
+	ADCSBB	(up,n,8), %rbx
+	ADCSBB	8(up,n,8), %r9
+	mov	%rbx, (rp,n,8)
+L(cj1):	mov	%r9, 8(rp,n,8)
+	mov	%rdx, %rax
+	ADCSBB	$0, %rax
 	pop	%rbx
 	pop	%rbp
-	pop	%r14
-	pop	%r13
 	pop	%r12
 	ret
 EPILOGUE()
