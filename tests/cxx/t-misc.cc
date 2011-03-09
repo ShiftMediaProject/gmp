@@ -41,7 +41,7 @@ check_mpz (void)
 {
   // mpz_class::fits_sint_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = INT_MIN; fits = z.fits_sint_p(); ASSERT_ALWAYS (fits);
     z--;         fits = z.fits_sint_p(); ASSERT_ALWAYS (! fits);
@@ -51,7 +51,7 @@ check_mpz (void)
 
   // mpz_class::fits_uint_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = 0;        fits = z.fits_uint_p(); ASSERT_ALWAYS (fits);
     z--;          fits = z.fits_uint_p(); ASSERT_ALWAYS (! fits);
@@ -61,7 +61,7 @@ check_mpz (void)
 
   // mpz_class::fits_slong_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = LONG_MIN; fits = z.fits_slong_p(); ASSERT_ALWAYS (fits);
     z--;          fits = z.fits_slong_p(); ASSERT_ALWAYS (! fits);
@@ -71,7 +71,7 @@ check_mpz (void)
 
   // mpz_class::fits_ulong_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = 0;         fits = z.fits_ulong_p(); ASSERT_ALWAYS (fits);
     z--;           fits = z.fits_ulong_p(); ASSERT_ALWAYS (! fits);
@@ -81,7 +81,7 @@ check_mpz (void)
 
   // mpz_class::fits_sshort_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = SHRT_MIN; fits = z.fits_sshort_p(); ASSERT_ALWAYS (fits);
     z--;          fits = z.fits_sshort_p(); ASSERT_ALWAYS (! fits);
@@ -91,7 +91,7 @@ check_mpz (void)
 
   // mpz_class::fits_ushort_p
   {
-    int        fits;
+    bool       fits;
     mpz_class  z;
     z = 0;         fits = z.fits_ushort_p(); ASSERT_ALWAYS (fits);
     z--;           fits = z.fits_ushort_p(); ASSERT_ALWAYS (! fits);
@@ -241,7 +241,7 @@ check_mpf (void)
 {
   // mpf_class::fits_sint_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(int));
     f = INT_MIN; fits = f.fits_sint_p(); ASSERT_ALWAYS (fits);
     f--;         fits = f.fits_sint_p(); ASSERT_ALWAYS (! fits);
@@ -251,7 +251,7 @@ check_mpf (void)
 
   // mpf_class::fits_uint_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(int));
     f = 0;        fits = f.fits_uint_p(); ASSERT_ALWAYS (fits);
     f--;          fits = f.fits_uint_p(); ASSERT_ALWAYS (! fits);
@@ -261,7 +261,7 @@ check_mpf (void)
 
   // mpf_class::fits_slong_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(long));
     f = LONG_MIN; fits = f.fits_slong_p(); ASSERT_ALWAYS (fits);
     f--;          fits = f.fits_slong_p(); ASSERT_ALWAYS (! fits);
@@ -271,7 +271,7 @@ check_mpf (void)
 
   // mpf_class::fits_ulong_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(long));
     f = 0;         fits = f.fits_ulong_p(); ASSERT_ALWAYS (fits);
     f--;           fits = f.fits_ulong_p(); ASSERT_ALWAYS (! fits);
@@ -281,7 +281,7 @@ check_mpf (void)
 
   // mpf_class::fits_sshort_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(short));
     f = SHRT_MIN; fits = f.fits_sshort_p(); ASSERT_ALWAYS (fits);
     f--;          fits = f.fits_sshort_p(); ASSERT_ALWAYS (! fits);
@@ -291,7 +291,7 @@ check_mpf (void)
 
   // mpf_class::fits_ushort_p
   {
-    int        fits;
+    bool       fits;
     mpf_class  f (0, 2*8*sizeof(short));
     f = 0;         fits = f.fits_ushort_p(); ASSERT_ALWAYS (fits);
     f--;           fits = f.fits_ushort_p(); ASSERT_ALWAYS (! fits);

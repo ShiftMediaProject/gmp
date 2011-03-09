@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 using namespace std;
 
 
-int   option_check_standard = 0;
+bool option_check_standard = false;
 
 
 #define CALL(expr)							\
@@ -437,7 +437,7 @@ int
 main (int argc, char *argv[])
 {
   if (argc > 1 && strcmp (argv[1], "-s") == 0)
-    option_check_standard = 1;
+    option_check_standard = true;
 
   tests_start ();
 

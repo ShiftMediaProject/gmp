@@ -1,3 +1,14 @@
+2011-03-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-ostream.cc: Use bool instead of int.
+	* tests/cxx/t-istream.cc: Likewise.
+	* tests/cxx/t-misc.cc: Likewise.
+
+	* cxx/ismpznw.cc: Don't clear eofbit.
+	* cxx/ismpq.cc: Likewise.
+	* cxx/ismpf.cc: Likewise.
+	* tests/cxx/t-istream.cc: Test accordingly.
+
 2011-03-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/sse2/bdiv_dbm1c.asm: New file.
