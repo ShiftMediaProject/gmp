@@ -25,20 +25,21 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define DIVREM_1_NORM_THRESHOLD              0  /* always */
 #define DIVREM_1_UNNORM_THRESHOLD            0  /* always */
+#define MOD_1_1P_METHOD                      2
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          7
 #define MOD_1U_TO_MOD_1_1_THRESHOLD         38
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD         0  /* never mpn_mod_1_1p */
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD     MP_SIZE_T_MAX
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     33
 #define USE_PREINV_DIVREM_1                  1
 #define DIVEXACT_1_THRESHOLD                 0  /* always */
 #define BMOD_1_TO_MOD_1_THRESHOLD        MP_SIZE_T_MAX  /* never */
 
 #define MUL_TOOM22_THRESHOLD                30
 #define MUL_TOOM33_THRESHOLD                93
-#define MUL_TOOM44_THRESHOLD               143
+#define MUL_TOOM44_THRESHOLD               127
 #define MUL_TOOM6H_THRESHOLD               165
 #define MUL_TOOM8H_THRESHOLD               303
 
@@ -156,7 +157,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_TABLE3_SIZE 182
 #define SQR_FFT_THRESHOLD                 1984
 
-#define MULLO_BASECASE_THRESHOLD            26
+#define MULLO_BASECASE_THRESHOLD             8
 #define MULLO_DC_THRESHOLD                   0  /* never mpn_mullo_basecase */
 #define MULLO_MUL_N_THRESHOLD             3791
 

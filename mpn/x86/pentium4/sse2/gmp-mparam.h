@@ -34,7 +34,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BMOD_1_TO_MOD_1_THRESHOLD           20
 
 #define MUL_TOOM22_THRESHOLD                31
-#define MUL_TOOM33_THRESHOLD               216
+#define MUL_TOOM33_THRESHOLD               120
 #define MUL_TOOM44_THRESHOLD               286
 #define MUL_TOOM6H_THRESHOLD               426
 #define MUL_TOOM8H_THRESHOLD               592
@@ -112,8 +112,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_Q_THRESHOLD                 80
 
 #define INV_MULMOD_BNM1_THRESHOLD           60
-#define INV_NEWTON_THRESHOLD               133
-#define INV_APPR_THRESHOLD                 114
+#define INV_NEWTON_THRESHOLD               244
+#define INV_APPR_THRESHOLD                  98
 
 #define BINV_NEWTON_THRESHOLD              276
 #define REDC_1_TO_REDC_N_THRESHOLD          63
