@@ -1,3 +1,8 @@
+2011-03-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* doc/gmp.texi: Remove void return type from constructors. Document
+	explicit constructors. Document mpf_class::mpf_class(mpf_t).
+
 2011-03-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/atom/sse2/sqr_basecase.asm: Postponed pushes. Cleaned

@@ -6486,23 +6486,21 @@ anything.
 @node C++ Interface Integers, C++ Interface Rationals, C++ Interface General, C++ Class Interface
 @section C++ Interface Integers
 
-@deftypefun void mpz_class::mpz_class (type @var{n})
+@deftypefun {} mpz_class::mpz_class (type @var{n})
 Construct an @code{mpz_class}.  All the standard C++ types may be used, except
 @code{long long} and @code{long double}, and all the GMP C++ classes can be
 used.  Any necessary conversion follows the corresponding C function, for
 example @code{double} follows @code{mpz_set_d} (@pxref{Assigning Integers}).
 @end deftypefun
 
-@deftypefun void mpz_class::mpz_class (mpz_t @var{z})
+@deftypefun explicit mpz_class::mpz_class (mpz_t @var{z})
 Construct an @code{mpz_class} from an @code{mpz_t}.  The value in @var{z} is
 copied into the new @code{mpz_class}, there won't be any permanent association
 between it and @var{z}.
 @end deftypefun
 
-@deftypefun void mpz_class::mpz_class (const char *@var{s})
-@deftypefunx void mpz_class::mpz_class (const char *@var{s}, int @var{base} = 0)
-@deftypefunx void mpz_class::mpz_class (const string& @var{s})
-@deftypefunx void mpz_class::mpz_class (const string& @var{s}, int @var{base} = 0)
+@deftypefun explicit mpz_class::mpz_class (const char *@var{s}, int @var{base} = 0)
+@deftypefunx explicit mpz_class::mpz_class (const string& @var{s}, int @var{base} = 0)
 Construct an @code{mpz_class} converted from a string using @code{mpz_set_str}
 (@pxref{Assigning Integers}).
 
@@ -6572,8 +6570,8 @@ And comparisons are always made exactly, as per @code{mpz_cmp_d}.
 In all the following constructors, if a fraction is given then it should be in
 canonical form, or if not then @code{mpq_class::canonicalize} called.
 
-@deftypefun void mpq_class::mpq_class (type @var{op})
-@deftypefunx void mpq_class::mpq_class (integer @var{num}, integer @var{den})
+@deftypefun {} mpq_class::mpq_class (type @var{op})
+@deftypefunx {} mpq_class::mpq_class (integer @var{num}, integer @var{den})
 Construct an @code{mpq_class}.  The initial value can be a single value of any
 type, or a pair of integers (@code{mpz_class} or standard C++ integer types)
 representing a fraction, except that @code{long long} and @code{long double}
@@ -6586,16 +6584,14 @@ mpq_class q (1, 3);
 @end example
 @end deftypefun
 
-@deftypefun void mpq_class::mpq_class (mpq_t @var{q})
+@deftypefun explicit mpq_class::mpq_class (mpq_t @var{q})
 Construct an @code{mpq_class} from an @code{mpq_t}.  The value in @var{q} is
 copied into the new @code{mpq_class}, there won't be any permanent association
 between it and @var{q}.
 @end deftypefun
 
-@deftypefun void mpq_class::mpq_class (const char *@var{s})
-@deftypefunx void mpq_class::mpq_class (const char *@var{s}, int @var{base} = 0)
-@deftypefunx void mpq_class::mpq_class (const string& @var{s})
-@deftypefunx void mpq_class::mpq_class (const string& @var{s}, int @var{base} = 0)
+@deftypefun explicit mpq_class::mpq_class (const char *@var{s}, int @var{base} = 0)
+@deftypefunx explicit mpq_class::mpq_class (const string& @var{s}, int @var{base} = 0)
 Construct an @code{mpq_class} converted from a string using @code{mpq_set_str}
 (@pxref{Initializing Rationals}).
 
@@ -6688,10 +6684,20 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @end example
 @end deftypefun
 
-@deftypefun void mpf_class::mpf_class (const char *@var{s})
-@deftypefunx void mpf_class::mpf_class (const char *@var{s}, unsigned long @var{prec}, int @var{base} = 0)
-@deftypefunx void mpf_class::mpf_class (const string& @var{s})
-@deftypefunx void mpf_class::mpf_class (const string& @var{s}, unsigned long @var{prec}, int @var{base} = 0)
+@deftypefun explicit mpf_class::mpf_class (mpf_t @var{f})
+@deftypefunx {} mpf_class::mpf_class (mpf_t @var{f}, unsigned long @var{prec})
+Construct an @code{mpf_class} from an @code{mpf_t}.  The value in @var{f} is
+copied into the new @code{mpf_class}, there won't be any permanent association
+between it and @var{f}.
+
+If @var{prec} is given, the initial precision is that value, in bits.  If
+@var{prec} is not given, then the initial precision is that of @var{f}.
+@end deftypefun
+
+@deftypefun explicit mpf_class::mpf_class (const char *@var{s})
+@deftypefunx {} mpf_class::mpf_class (const char *@var{s}, unsigned long @var{prec}, int @var{base} = 0)
+@deftypefunx explicit mpf_class::mpf_class (const string& @var{s})
+@deftypefunx {} mpf_class::mpf_class (const string& @var{s}, unsigned long @var{prec}, int @var{base} = 0)
 Construct an @code{mpf_class} converted from a string using @code{mpf_set_str}
 (@pxref{Assigning Floats}).  If @var{prec} is given, the initial precision is
 that value, in bits.  If not, the default @code{mpf} precision
