@@ -100,14 +100,14 @@ L(m3):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
-	lea	8(rp), rp
+	lea	-8(rp), rp
 
 L(ol3):	mov	28(%esp), un
 	neg	un
 	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
 	mov	24(%esp), up
-	lea	(rp,un,4), rp
+	lea	16(rp,un,4), rp
 
 	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
@@ -159,14 +159,13 @@ L(a3):	psrlq	$32, %mm0
 	adc	un, %edx	C un is zero here
 	add	%eax, 12(rp)
 	movd	%mm0, %ebx
-	lea	16(rp), rp
 	psrlq	$32, %mm0
 	adc	%edx, %ebx
 	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, (rp)
+	add	%ebx, 16(rp)
 	adc	un, %eax
-	mov	%eax, 4(rp)
+	mov	%eax, 20(rp)
 
 	decl	vn
 	jnz	L(ol3)
@@ -204,24 +203,23 @@ L(of0):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
-	lea	12(rp), rp
+	lea	-4(rp), rp
 
 L(ol0):	mov	28(%esp), un
 	neg	un
 	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
 	mov	24(%esp), up
-	lea	4(rp,un,4), rp
+	lea	20(rp,un,4), rp
 
 	movd	(up), %mm1
 	pmuludq	%mm7, %mm1
 	sar	$2, un
-	xor	%edx, %edx
 	movd	4(up), %mm0
 	lea	-4(up), up
 	movd	%mm1, %eax
 	pmuludq	%mm7, %mm0
-
+	xor	%edx, %edx	C zero edx and CF
 	jmp	L(a0)
 
 L(la0):	movd	4(up), %mm1
@@ -264,14 +262,13 @@ L(a0):	psrlq	$32, %mm1
 	adc	un, %edx	C un is zero here
 	add	%eax, 12(rp)
 	movd	%mm0, %ebx
-	lea	16(rp), rp
 	psrlq	$32, %mm0
 	adc	%edx, %ebx
 	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, (rp)
+	add	%ebx, 16(rp)
 	adc	un, %eax
-	mov	%eax, 4(rp)
+	mov	%eax, 20(rp)
 
 	decl	vn
 	jnz	L(ol0)
@@ -309,13 +306,14 @@ L(of1):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
+	lea	-16(rp), rp
 
 L(ol1):	mov	28(%esp), un
 	neg	un
 	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
 	mov	24(%esp), up
-	lea	8(rp,un,4), rp
+	lea	24(rp,un,4), rp
 
 	movd	(up), %mm0
 	pmuludq	%mm7, %mm0
@@ -364,17 +362,16 @@ L(a1):	psrlq	$32, %mm0
 	inc	un
 	jnz	L(la1)
 
-	adc	un, %edx		C un is zero here
+	adc	un, %edx	C un is zero here
 	add	%eax, 12(rp)
 	movd	%mm0, %ebx
-	lea	16(rp), rp
 	psrlq	$32, %mm0
 	adc	%edx, %ebx
 	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, (rp)
+	add	%ebx, 16(rp)
 	adc	un, %eax
-	mov	%eax, 4(rp)
+	mov	%eax, 20(rp)
 
 	decl	vn
 	jnz	L(ol1)
@@ -412,14 +409,14 @@ L(of2):	paddq	%mm0, %mm6
 
 	decl	vn
 	jz	L(done)
-	lea	4(rp), rp
+	lea	-12(rp), rp
 
 L(ol2):	mov	28(%esp), un
 	neg	un
 	lea	4(vp), vp
 	movd	(vp), %mm7	C read next V limb
 	mov	24(%esp), up
-	lea	-4(rp,un,4), rp
+	lea	12(rp,un,4), rp
 
 	movd	(up), %mm1
 	pmuludq	%mm7, %mm1
@@ -467,17 +464,16 @@ L(lo2):	psrlq	$32, %mm1
 	inc	un
 	jnz	L(la2)
 
-	adc	un, %edx		C un is zero here
+	adc	un, %edx	C un is zero here
 	add	%eax, 12(rp)
 	movd	%mm0, %ebx
-	lea	16(rp), rp
 	psrlq	$32, %mm0
 	adc	%edx, %ebx
 	movd	%mm0, %eax
 	adc	un, %eax
-	add	%ebx, (rp)
+	add	%ebx, 16(rp)
 	adc	un, %eax
-	mov	%eax, 4(rp)
+	mov	%eax, 20(rp)
 
 	decl	vn
 	jnz	L(ol2)
