@@ -21,7 +21,6 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
 C			    cycles/limb
 C P5				14.75
 C P6 model 0-8,10-12		 7.5
@@ -32,9 +31,11 @@ C P4 model 1  (?)		24.0
 C P4 model 2  (Northwood)	24.0
 C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
+C Intel Atom
 C AMD K6			12.5
 C AMD K7			 5.25
 C AMD K8
+C AMD K10
 
 
 ifdef(`OPERATION_addmul_1',`
