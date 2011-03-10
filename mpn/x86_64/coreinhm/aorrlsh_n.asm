@@ -1,5 +1,5 @@
-dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
-dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
+dnl  AMD64 mpn_addlsh_n -- rp[] = up[] + (vp[] << k)
+dnl  AMD64 mpn_rsblsh_n -- rp[] = (vp[] << k) - up[]
 dnl  Optimised for Nehalem.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.

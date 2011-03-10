@@ -24,9 +24,9 @@ C AMD K8,K9	 2.87	< 3.85 for lshift + add_n
 C AMD K10	 2.75	< 3.85 for lshift + add_n
 C Intel P4	22	> 7.33 for lshift + add_n
 C Intel core2	 4.1	> 3.27 for lshift + add_n
-C Intel NHM	 4.4	< 3.75 for lshift + add_n
+C Intel NHM	 4.4	> 3.75 for lshift + add_n
 C Intel SBR	 3.17	< 3.46 for lshift + add_n
-C Intel atom	 ?	< 8.75 for lshift + add_n
+C Intel atom	 ?	? 8.75 for lshift + add_n
 C VIA nano	 4.7	< 6.25 for lshift + add_n
 
 C TODO
