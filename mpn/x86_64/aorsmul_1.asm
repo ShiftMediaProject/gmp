@@ -62,7 +62,7 @@ PROLOGUE(func)
 	push	%rbx
 	mov	n_param, %rbx		C move away n from rdx, mul uses it
 	mul	vl
-	mov	%rbx, %r11
+	mov	%rbx, n
 
 	and	$3, R32(%rbx)
 	jz	L(b0)
