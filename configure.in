@@ -1504,9 +1504,10 @@ case $host in
 	  x86_64)
 	    ;;
 	  k10 | bobcat | bulldozer)
-	    path_64="x86_64/k10 $path_64"
+	    path_64="x86_64/k10 x86_64/k8 $path_64"
 	    ;;
 	  athlon64 | k8)
+	    path_64="x86_64/k8 $path_64"
 	    ;;
 	  pentium4)
 	    path_64="x86_64/pentium4 $path_64"
