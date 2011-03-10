@@ -145,7 +145,7 @@ check_mpz (void)
       size_t input_length = strlen (data[i].input);
       want_pos = (data[i].want_pos == -1
                   ? input_length : data[i].want_pos);
-      want_eof = (want_pos == input_length);
+      want_eof = (want_pos == streampos(input_length));
 
       want_ok = (data[i].want != NULL);
 
@@ -311,7 +311,7 @@ check_mpq (void)
       size_t input_length = strlen (data[i].input);
       want_pos = (data[i].want_pos == -1
                   ? input_length : data[i].want_pos);
-      want_eof = (want_pos == input_length);
+      want_eof = (want_pos == streampos(input_length));
 
       want_ok = (data[i].want != NULL);
 
@@ -483,7 +483,7 @@ check_mpf (void)
       size_t input_length = strlen (data[i].input);
       want_pos = (data[i].want_pos == -1
                   ? input_length : data[i].want_pos);
-      want_eof = (want_pos == input_length);
+      want_eof = (want_pos == streampos(input_length));
 
       want_ok = (data[i].want != NULL);
 

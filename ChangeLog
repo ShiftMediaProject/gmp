@@ -1,3 +1,7 @@
+2011-03-10  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-istream.cc: Explicit conversion to streampos.
+
 2011-03-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86/pentium4/sse2/bdiv_dbm1c.asm: New file, was in atom.
