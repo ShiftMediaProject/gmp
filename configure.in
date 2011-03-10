@@ -1504,29 +1504,21 @@ case $host in
 	  x86_64)
 	    ;;
 	  k10 | bobcat | bulldozer)
-	    path_64="x86_64/k10 x86_64/k8 $path_64"
-	    ;;
+	    path_64="x86_64/k10 x86_64/k8 $path_64" ;;
 	  athlon64 | k8)
-	    path_64="x86_64/k8 $path_64"
-	    ;;
+	    path_64="x86_64/k8 $path_64" ;;
 	  pentium4)
-	    path_64="x86_64/pentium4 $path_64"
-	    ;;
+	    path_64="x86_64/pentium4 $path_64" ;;
 	  core2)
-	    path_64="x86_64/core2 $path_64"
-	    ;;
+	    path_64="x86_64/core2 $path_64" ;;
 	  corei | coreinhm | coreiwsm)
-	    path_64="x86_64/coreinhm x86_64/core2 $path_64"
-	    ;;
+	    path_64="x86_64/coreinhm x86_64/core2 $path_64" ;;
 	  coreisbr)
-	    path_64="x86_64/coreisbr x86_64/coreinhm x86_64/core2 $path_64"
-	    ;;
+	    path_64="x86_64/coreisbr x86_64/coreinhm x86_64/core2 $path_64" ;;
 	  atom)
-	    path_64="x86_64/atom $path_64"
-	    ;;
+	    path_64="x86_64/atom $path_64" ;;
 	  nano)
-	    path_64="x86_64/nano $path_64"
-	    ;;
+	    path_64="x86_64/nano $path_64" ;;
 	esac
 
 	case $host in
