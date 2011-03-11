@@ -11,6 +11,9 @@
 	* tune/speed.h: Prototypes for functions above.
 	* tune/speed.c: Support for mpn_{add,sub}lsh*_n_ip[12].
 
+	* mpn/x86/k7/sublsh1_n.asm: Replaced generic sublsh1 code with faster _ip1.
+	* mpn/x86/atom/sublsh1_n.asm: Changed PROLOGUE accordingly.
+
 2011-03-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-istream.cc: Explicit conversion to streampos.

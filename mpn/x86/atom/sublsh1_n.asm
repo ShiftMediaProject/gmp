@@ -19,5 +19,5 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-MULFUNC_PROLOGUE(mpn_sublsh1_n)
+MULFUNC_PROLOGUE(mpn_sublsh1_n_ip1)
 include_mpn(`x86/k7/sublsh1_n.asm')
