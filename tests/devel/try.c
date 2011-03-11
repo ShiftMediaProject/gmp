@@ -908,7 +908,7 @@ param_init (void)
   REFERENCE (refmpn_addlsh2_n_ip1);
 
   p = &param[TYPE_ADDLSH_N_IP1];
-  COPY (TYPE_ADDLSH_N_IP1);
+  COPY (TYPE_ADDLSH1_N_IP1);
   p->shift = 1;
   REFERENCE (refmpn_addlsh_n_ip1);
 
@@ -1398,6 +1398,70 @@ mpn_divexact_by3_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
   return mpn_divexact_by3 (rp, sp, size);
 }
 
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1
+mp_limb_t
+mpn_addlsh1_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_addlsh1_n_ip1 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip1
+mp_limb_t
+mpn_addlsh2_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_addlsh2_n_ip1 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh_n_ip1
+mp_limb_t
+mpn_addlsh_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned int sh)
+{
+  return mpn_addlsh_n_ip1 (rp, sp, size, sh);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh1_n_ip2
+mp_limb_t
+mpn_addlsh1_n_ip2_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_addlsh1_n_ip2 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip2
+mp_limb_t
+mpn_addlsh2_n_ip2_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_addlsh2_n_ip2 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh_n_ip2
+mp_limb_t
+mpn_addlsh_n_ip2_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned int sh)
+{
+  return mpn_addlsh_n_ip2 (rp, sp, size, sh);
+}
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n_ip1
+mp_limb_t
+mpn_sublsh1_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_sublsh1_n_ip1 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_sublsh2_n_ip1
+mp_limb_t
+mpn_sublsh2_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  return mpn_sublsh2_n_ip1 (rp, sp, size);
+}
+#endif
+#if HAVE_NATIVE_mpn_sublsh_n_ip1
+mp_limb_t
+mpn_sublsh_n_ip1_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned int sh)
+{
+  return mpn_sublsh_n_ip1 (rp, sp, size, sh);
+}
+#endif
+
 mp_limb_t
 mpn_modexact_1_odd_fun (mp_srcptr ptr, mp_size_t size, mp_limb_t divisor)
 {
@@ -1573,22 +1637,22 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_addlsh_n), TYPE_ADDLSH_N },
 #endif
 #if HAVE_NATIVE_mpn_addlsh1_n_ip1
-  { TRY(mpn_addlsh1_n_ip1), TYPE_ADDLSH1_N_IP1 },
+  { TRY_FUNFUN(mpn_addlsh1_n_ip1), TYPE_ADDLSH1_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_addlsh2_n_ip1
-  { TRY(mpn_addlsh2_n_ip1), TYPE_ADDLSH2_N_IP1 },
+  { TRY_FUNFUN(mpn_addlsh2_n_ip1), TYPE_ADDLSH2_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_addlsh_n_ip1
-  { TRY(mpn_addlsh_n_ip1), TYPE_ADDLSH_N_IP1 },
+  { TRY_FUNFUN(mpn_addlsh_n_ip1), TYPE_ADDLSH_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_addlsh1_n_ip2
-  { TRY(mpn_addlsh1_n_ip2), TYPE_ADDLSH1_N_IP2 },
+  { TRY_FUNFUN(mpn_addlsh1_n_ip2), TYPE_ADDLSH1_N_IP2 },
 #endif
 #if HAVE_NATIVE_mpn_addlsh2_n_ip2
-  { TRY(mpn_addlsh2_n_ip2), TYPE_ADDLSH2_N_IP2 },
+  { TRY_FUNFUN(mpn_addlsh2_n_ip2), TYPE_ADDLSH2_N_IP2 },
 #endif
 #if HAVE_NATIVE_mpn_addlsh_n_ip2
-  { TRY(mpn_addlsh_n_ip2), TYPE_ADDLSH_N_IP2 },
+  { TRY_FUNFUN(mpn_addlsh_n_ip2), TYPE_ADDLSH_N_IP2 },
 #endif
 #if HAVE_NATIVE_mpn_sublsh1_n
   { TRY(mpn_sublsh1_n), TYPE_SUBLSH1_N },
@@ -1600,13 +1664,13 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_sublsh_n), TYPE_SUBLSH_N },
 #endif
 #if HAVE_NATIVE_mpn_sublsh1_n_ip1
-  { TRY(mpn_sublsh1_n_ip1), TYPE_SUBLSH1_N_IP1 },
+  { TRY_FUNFUN(mpn_sublsh1_n_ip1), TYPE_SUBLSH1_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_sublsh2_n_ip1
-  { TRY(mpn_sublsh2_n_ip1), TYPE_SUBLSH2_N_IP1 },
+  { TRY_FUNFUN(mpn_sublsh2_n_ip1), TYPE_SUBLSH2_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_sublsh_n_ip1
-  { TRY(mpn_sublsh_n_ip1), TYPE_SUBLSH_N_IP1 },
+  { TRY_FUNFUN(mpn_sublsh_n_ip1), TYPE_SUBLSH_N_IP1 },
 #endif
 #if HAVE_NATIVE_mpn_rsblsh1_n
   { TRY(mpn_rsblsh1_n), TYPE_RSBLSH1_N },

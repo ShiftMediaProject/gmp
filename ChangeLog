@@ -1,6 +1,6 @@
 2011-03-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* gmp-impl.h (mpn_sublsh1_n_ip1): Declare.
+	* gmp-impl.h: Declare many mpn_{sub,add}lsh*_n_ip[12] functions/macros.
 	* mpn/generic/toom_interpolate_5pts.c: Use mpn_sublsh1_n_ip1.
 
 	* tests/devel/try.c: Tests for {add,sub}lsh*_n_ip[12].

@@ -430,6 +430,15 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_sublsh_n
   { "mpn_sublsh_n",     speed_mpn_sublsh_n, FLAG_R_OPTIONAL },
 #endif
+#if HAVE_NATIVE_mpn_addlsh_n_ip1
+  { "mpn_addlsh_n_ip1", speed_mpn_addlsh_n_ip1    },
+#endif
+#if HAVE_NATIVE_mpn_addlsh_n_ip2
+  { "mpn_addlsh_n_ip2", speed_mpn_addlsh_n_ip2    },
+#endif
+#if HAVE_NATIVE_mpn_sublsh_n_ip1
+  { "mpn_sublsh_n_ip1", speed_mpn_sublsh_n_ip1    },
+#endif
 #if HAVE_NATIVE_mpn_rsblsh_n
   { "mpn_rsblsh_n",     speed_mpn_rsblsh_n, FLAG_R_OPTIONAL },
 #endif
