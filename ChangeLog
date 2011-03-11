@@ -14,6 +14,9 @@
 	* mpn/x86/k7/sublsh1_n.asm: Replaced generic sublsh1 code with faster _ip1.
 	* mpn/x86/atom/sublsh1_n.asm: Changed PROLOGUE accordingly.
 
+	* configure.in: Define HAVE_NATIVE_mpn_addlsh*_n*_ip[12].
+	* mpn/asm-defs.m4: Declare mpn_addlsh*_n*_ip[12].
+
 2011-03-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-istream.cc: Explicit conversion to streampos.
