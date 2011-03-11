@@ -1,3 +1,8 @@
+2011-03-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (mpn_sublsh1_n_ip1): Declare.
+	* mpn/generic/toom_interpolate_5pts.c: Use mpn_sublsh1_n_ip1.
+
 2011-03-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-istream.cc: Explicit conversion to streampos.
