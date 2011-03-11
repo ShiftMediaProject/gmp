@@ -626,6 +626,36 @@ refmpn_addlsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
   return refmpn_addlsh_n (rp, up, vp, n, 2);
 }
 mp_limb_t
+refmpn_addlsh_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n, unsigned int s)
+{
+  return refmpn_addlsh_n (rp, rp, vp, n, s);
+}
+mp_limb_t
+refmpn_addlsh1_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, rp, vp, n, 1);
+}
+mp_limb_t
+refmpn_addlsh2_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, rp, vp, n, 2);
+}
+mp_limb_t
+refmpn_addlsh_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n, unsigned int s)
+{
+  return refmpn_addlsh_n (rp, vp, rp, n, s);
+}
+mp_limb_t
+refmpn_addlsh1_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, vp, rp, n, 1);
+}
+mp_limb_t
+refmpn_addlsh2_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, vp, rp, n, 2);
+}
+mp_limb_t
 refmpn_addlsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
 		 mp_size_t n, unsigned int s, mp_limb_t carry)
 {
@@ -676,6 +706,36 @@ mp_limb_t
 refmpn_sublsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_sublsh_n (rp, up, vp, n, 2);
+}
+mp_limb_t
+refmpn_sublsh_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n, unsigned int s)
+{
+  return refmpn_sublsh_n (rp, rp, vp, n, s);
+}
+mp_limb_t
+refmpn_sublsh1_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_sublsh_n (rp, rp, vp, n, 1);
+}
+mp_limb_t
+refmpn_sublsh2_n_ip1 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_sublsh_n (rp, rp, vp, n, 2);
+}
+mp_limb_t
+refmpn_sublsh_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n, unsigned int s)
+{
+  return refmpn_sublsh_n (rp, vp, rp, n, s);
+}
+mp_limb_t
+refmpn_sublsh1_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_sublsh_n (rp, vp, rp, n, 1);
+}
+mp_limb_t
+refmpn_sublsh2_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_sublsh_n (rp, vp, rp, n, 2);
 }
 mp_limb_t
 refmpn_sublsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
