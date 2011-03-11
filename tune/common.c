@@ -937,6 +937,27 @@ speed_mpn_sublsh1_n (struct speed_params *s)
   SPEED_ROUTINE_MPN_BINARY_N (mpn_sublsh1_n);
 }
 #endif
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1
+double
+speed_mpn_addlsh1_n_ip1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_addlsh1_n_ip1);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh1_n_ip2
+double
+speed_mpn_addlsh1_n_ip2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_addlsh1_n_ip2);
+}
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n_ip1
+double
+speed_mpn_sublsh1_n_ip1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_sublsh1_n_ip1);
+}
+#endif
 #if HAVE_NATIVE_mpn_rsblsh1_n
 double
 speed_mpn_rsblsh1_n (struct speed_params *s)
@@ -956,6 +977,27 @@ double
 speed_mpn_sublsh2_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_sublsh2_n);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip1
+double
+speed_mpn_addlsh2_n_ip1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_addlsh2_n_ip1);
+}
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip2
+double
+speed_mpn_addlsh2_n_ip2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_addlsh2_n_ip2);
+}
+#endif
+#if HAVE_NATIVE_mpn_sublsh2_n_ip1
+double
+speed_mpn_sublsh2_n_ip1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_sublsh2_n_ip1);
 }
 #endif
 #if HAVE_NATIVE_mpn_rsblsh2_n

@@ -394,6 +394,15 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_sublsh1_n
   { "mpn_sublsh1_n",     speed_mpn_sublsh1_n, FLAG_R_OPTIONAL },
 #endif
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1
+  { "mpn_addlsh1_n_ip1", speed_mpn_addlsh1_n_ip1    },
+#endif
+#if HAVE_NATIVE_mpn_addlsh1_n_ip2
+  { "mpn_addlsh1_n_ip2", speed_mpn_addlsh1_n_ip2    },
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n_ip1
+  { "mpn_sublsh1_n_ip1", speed_mpn_sublsh1_n_ip1    },
+#endif
 #if HAVE_NATIVE_mpn_rsblsh1_n
   { "mpn_rsblsh1_n",     speed_mpn_rsblsh1_n, FLAG_R_OPTIONAL },
 #endif
@@ -402,6 +411,15 @@ const struct routine_t {
 #endif
 #if HAVE_NATIVE_mpn_sublsh2_n
   { "mpn_sublsh2_n",     speed_mpn_sublsh2_n, FLAG_R_OPTIONAL },
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip1
+  { "mpn_addlsh2_n_ip1", speed_mpn_addlsh2_n_ip1    },
+#endif
+#if HAVE_NATIVE_mpn_addlsh2_n_ip2
+  { "mpn_addlsh2_n_ip2", speed_mpn_addlsh2_n_ip2    },
+#endif
+#if HAVE_NATIVE_mpn_sublsh2_n_ip1
+  { "mpn_sublsh2_n_ip1", speed_mpn_sublsh2_n_ip1    },
 #endif
 #if HAVE_NATIVE_mpn_rsblsh2_n
   { "mpn_rsblsh2_n",     speed_mpn_rsblsh2_n, FLAG_R_OPTIONAL },

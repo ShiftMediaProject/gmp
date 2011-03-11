@@ -7,6 +7,10 @@
 	* tests/refmpn.c: New reference for mpn_{add,sub}lsh*_n_ip[12].
 	* tests/tests.h: Declarations for reference functions above.
 
+	* tune/common.c: New speed_mpn_{add,sub}lsh*_n_ip[12] functions.
+	* tune/speed.h: Prototypes for functions above.
+	* tune/speed.c: Support for mpn_{add,sub}lsh*_n_ip[12].
+
 2011-03-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-istream.cc: Explicit conversion to streampos.
