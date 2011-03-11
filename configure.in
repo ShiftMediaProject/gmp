@@ -3078,6 +3078,12 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sublsh1_nc
 #undef HAVE_NATIVE_mpn_sublsh2_nc
 #undef HAVE_NATIVE_mpn_sublsh_nc
+#undef HAVE_NATIVE_mpn_sublsh1_n_ip1
+#undef HAVE_NATIVE_mpn_sublsh2_n_ip1
+#undef HAVE_NATIVE_mpn_sublsh_n_ip1
+#undef HAVE_NATIVE_mpn_sublsh1_nc_ip1
+#undef HAVE_NATIVE_mpn_sublsh2_nc_ip1
+#undef HAVE_NATIVE_mpn_sublsh_nc_ip1
 #undef HAVE_NATIVE_mpn_submul_1c
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
 #undef HAVE_NATIVE_mpn_udiv_qrnnd_r

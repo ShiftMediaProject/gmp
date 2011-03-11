@@ -54,8 +54,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 #endif
 
-#if HAVE_NATIVE_mpn_sublsh2_n
-#define DO_mpn_sublsh2_n(dst,src,n,ws) mpn_sublsh2_n(dst,dst,src,n)
+#if HAVE_NATIVE_mpn_sublsh2_n_ip1
+#define DO_mpn_sublsh2_n(dst,src,n,ws) mpn_sublsh2_n_ip1(dst,src,n)
 #else
 #define DO_mpn_sublsh2_n(dst,src,n,ws) DO_mpn_sublsh_n(dst,src,n,2,ws)
 #endif

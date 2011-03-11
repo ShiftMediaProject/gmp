@@ -832,11 +832,25 @@ __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, m
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_sublsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-4*{b,n}, and
-   returns the borrow out (0, ..., 4).  */
+   returns the borrow out (0, ..., 4). Use _ip1 when a=c. */
 #define mpn_sublsh2_n __MPN(sublsh2_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_sublsh2_nc __MPN(sublsh2_nc)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+#if HAVE_NATIVE_mpn_sublsh2_n && ! HAVE_NATIVE_mpn_sublsh2_n_ip1
+#define mpn_sublsh2_n_ip1(dst,src,n) mpn_sublsh2_n(dst,dst,src,n)
+#define HAVE_NATIVE_mpn_sublsh2_n_ip1 1
+#else
+#define mpn_sublsh2_n_ip1 __MPN(sublsh2_n_ip1)
+__GMP_DECLSPEC mp_limb_t mpn_sublsh2_n_ip1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
+#if HAVE_NATIVE_mpn_sublsh2_nc && ! HAVE_NATIVE_mpn_sublsh2_nc_ip1
+#define mpn_sublsh2_nc_ip1(dst,src,n,c) mpn_sublsh2_nc(dst,dst,src,n,c)
+#define HAVE_NATIVE_mpn_sublsh2_nc_ip1 1
+#else
+#define mpn_sublsh2_nc_ip1 __MPN(sublsh2_nc_ip1)
+__GMP_DECLSPEC mp_limb_t mpn_sublsh2_nc_ip1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+#endif
 
 /* mpn_sublsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}-2^k*{b,n}, and
    returns the carry out (0, ..., 2^k).  */

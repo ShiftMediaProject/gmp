@@ -21,11 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C mp_limb_t mpn_ip1_addlshC_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
-C mp_limb_t mpn_ip1_addlshC_nc (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C mp_limb_t mpn_addlshC_n_ip1 (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C mp_limb_t mpn_addlshC_nc_ip1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C				mp_limb_t carry);
-C mp_limb_t mpn_ip1_sublshC_n (mp_ptr dst, mp_srcptr src, mp_size_t size,);
-C mp_limb_t mpn_ip1_sublshC_nc (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C mp_limb_t mpn_sublshC_n_ip1 (mp_ptr dst, mp_srcptr src, mp_size_t size,);
+C mp_limb_t mpn_sublshC_nc_ip1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C				mp_signed_limb_t borrow);
 
 defframe(PARAM_CORB,	16)

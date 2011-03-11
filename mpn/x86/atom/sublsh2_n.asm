@@ -29,18 +29,18 @@ ifdef(`OPERATION_addlsh2_n', `
 	define(M4_opp,		subl)
 	define(M4_function,	mpn_addlsh2_n)
 	define(M4_function_c,	mpn_addlsh2_nc)
-	define(M4_ip_function_c, mpn_ip1_addlsh2_nc)
-	define(M4_ip_function,	mpn_ip1_addlsh2_n)
+	define(M4_ip_function_c, mpn_addlsh2_nc_ip1)
+	define(M4_ip_function,	mpn_addlsh2_n_ip1)
 ',`ifdef(`OPERATION_sublsh2_n', `
 	define(M4_inst,		sbbl)
 	define(M4_opp,		addl)
 	define(M4_function,	mpn_sublsh2_n)
 	define(M4_function_c,	mpn_sublsh2_nc)
-	define(M4_ip_function_c, mpn_ip1_sublsh2_nc)
-	define(M4_ip_function,	mpn_ip1_sublsh2_n)
+	define(M4_ip_function_c, mpn_sublsh2_nc_ip1)
+	define(M4_ip_function,	mpn_sublsh2_n_ip1)
 ',`m4_error(`Need OPERATION_addlsh2_n or OPERATION_sublsh2_n
 ')')')
 
-MULFUNC_PROLOGUE(mpn_sublsh2_n mpn_sublsh2_nc mpn_ip1_sublsh2_n mpn_ip1_sublsh2_nc)
+MULFUNC_PROLOGUE(mpn_sublsh2_n mpn_sublsh2_nc mpn_sublsh2_n_ip1 mpn_sublsh2_nc_ip1)
 
 include_mpn(`x86/atom/aorslshC_n.asm')
