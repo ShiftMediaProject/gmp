@@ -1,10 +1,22 @@
+2011-03-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/powerpc.asm: Use powerpc syntax, not power syntax.
+
+	* tune/common.c (speed_udiv_qrnnd_preinv1, etc): Remove.
+	* tune/speed.c (routine): Remove udiv_qrnnd_preinv1, etc.
+
 2011-03-12  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-istream.cc: Restrict mpq test in t-istream -s.
 
-2011-03-12  Marc Glisse  <marc.glisse@inria.fr>
-
 	* gmpxx.h: Remove leftover #undefs.
+
+2011-03-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (udiv_qrnnd_preinv1, udiv_qrnnd_preinv2,
+	udiv_qrnnd_preinv2gen): Remove obsolete macros.
+	(udiv_qrnnd_preinv): New name for udiv_qrnnd_preinv3.
+
 
 2011-03-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
