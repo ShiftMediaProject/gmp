@@ -32,7 +32,7 @@ L(again):
 	mftbu	r4
 	mftb	r5
 	mftbu	r6
-	cmp	cr0, r4, r6
+	cmpw	cr0, r4, r6
 	bne	L(again)
 
 	stw	r5, 0(r3)
