@@ -1,5 +1,9 @@
 2011-03-12  Marc Glisse  <marc.glisse@inria.fr>
 
+	* tests/cxx/t-istream.cc: Restrict mpq test in t-istream -s.
+
+2011-03-12  Marc Glisse  <marc.glisse@inria.fr>
+
 	* gmpxx.h: Remove leftover #undefs.
 
 2011-03-11 Marco Bodrato <bodrato@mail.dm.unipi.it>

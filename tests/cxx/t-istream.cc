@@ -322,7 +322,8 @@ check_mpq (void)
 
       if (option_check_standard
           && mpz_fits_slong_p (mpq_numref(want))
-          && mpz_cmp_ui (mpq_denref(want), 1L) == 0)
+          && mpz_cmp_ui (mpq_denref(want), 1L) == 0
+          && strchr (data[i].input, '/') == NULL)
         {
           istringstream  input (data[i].input);
           input.flags (data[i].flags);
