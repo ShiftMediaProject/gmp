@@ -4,6 +4,10 @@
 
 2011-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/rshift.asm: Accept/return values correctly also for
+	32-bit ABI.
+	* mpn/powerpc64/lshift.asm: Likewise.
+
 	* tune/powerpc.asm: Use powerpc syntax, not power syntax.
 
 	* tune/common.c (speed_udiv_qrnnd_preinv1, etc): Remove.
