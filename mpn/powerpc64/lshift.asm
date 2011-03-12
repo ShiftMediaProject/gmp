@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_lshift -- rp[] = up[] << cnt
 
-dnl  Copyright 2003, 2005, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -54,7 +54,9 @@ PROLOGUE(mpn_lshift)
 	addi	r31, n, 3	C compute count...
 	ld	r10, -8(up)	C load 1st limb for b00...b11
 	srd	retval, r10, tnc
-	srdi	r31, r31, 2	C ...for ctr
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r31, r31, 62,34',	C ...branch count
+`	srdi	r31, r31, 2')	C ...for ctr
 	mtctr	r31		C copy count into ctr
 	beq	cr0, L(b00)
 	blt	cr6, L(b01)
@@ -185,6 +187,9 @@ L(cj2):	std	r10, -32(rp)
 
 L(ret):	ld	r31, -8(r1)
 	ld	r30, -16(r1)
-	mr	r3, retval
+ifdef(`HAVE_ABI_mode32',
+`	srdi	r3, retval, 32
+	mr	r4, retval
+',`	mr	r3, retval')
 	blr
 EPILOGUE()
