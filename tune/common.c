@@ -1025,21 +1025,21 @@ speed_mpn_sublsh_n (struct speed_params *s)
 double
 speed_mpn_addlsh_n_ip1 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_UNARY_1 (mpn_addlsh_n_ip1);
+  SPEED_ROUTINE_MPN_UNARY_1_CALL (mpn_addlsh_n_ip1 (wp, s->xp, s->size, 7));
 }
 #endif
 #if HAVE_NATIVE_mpn_addlsh_n_ip2
 double
 speed_mpn_addlsh_n_ip2 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_UNARY_1 (mpn_addlsh_n_ip2);
+  SPEED_ROUTINE_MPN_UNARY_1_CALL (mpn_addlsh_n_ip2 (wp, s->xp, s->size, 7));
 }
 #endif
 #if HAVE_NATIVE_mpn_sublsh_n_ip1
 double
 speed_mpn_sublsh_n_ip1 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_UNARY_1 (mpn_sublsh_n_ip1);
+  SPEED_ROUTINE_MPN_UNARY_1_CALL (mpn_sublsh_n_ip1 (wp, s->xp, s->size, 7));
 }
 #endif
 #if HAVE_NATIVE_mpn_rsblsh_n
