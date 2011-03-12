@@ -2079,63 +2079,6 @@ speed_udiv_qrnnd (struct speed_params *s)
 }
 
 double
-speed_udiv_qrnnd_preinv1 (struct speed_params *s)
-{
-  SPEED_ROUTINE_UDIV_QRNND_A (1);
-  {
-    udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
-  }
-  SPEED_ROUTINE_UDIV_QRNND_B;
-}
-
-double
-speed_udiv_qrnnd_preinv2 (struct speed_params *s)
-{
-  SPEED_ROUTINE_UDIV_QRNND_A (1);
-  {
-    udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv2 (q, r, r, q, d, dinv);
-  }
-  SPEED_ROUTINE_UDIV_QRNND_B;
-}
-
-double
-speed_udiv_qrnnd_preinv3 (struct speed_params *s)
-{
-  SPEED_ROUTINE_UDIV_QRNND_A (1);
-  {
-    udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-     udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-    udiv_qrnnd_preinv3 (q, r, r, q, d, dinv);
-  }
-  SPEED_ROUTINE_UDIV_QRNND_B;
-}
-
-double
 speed_udiv_qrnnd_c (struct speed_params *s)
 {
   SPEED_ROUTINE_UDIV_QRNND_A (1);
