@@ -40,6 +40,29 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <cfloat>
 #include <gmp.h>
 
+// Max allocations for plain types when converted to mpz_t
+#define __GMPZ_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
+#define __GMPZ_ULI_LIMBS (1 + (8 * sizeof (long) - 1) / GMP_NUMB_BITS)
+
+#define __GMPXX_TMPZ_UI							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMPZ_ULI_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMPZ_ULI_LIMBS;					\
+  mpz_set_ui (temp, l)
+#define __GMPXX_TMPZ_SI							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMPZ_ULI_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMPZ_ULI_LIMBS;					\
+  mpz_set_si (temp, l)
+#define __GMPXX_TMPZ_D							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMPZ_DBL_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMPZ_DBL_LIMBS;					\
+  mpz_set_d (temp, d)
+
 
 /**************** Function objects ****************/
 /* Any evaluation of a __gmp_expr ends up calling one of these functions
@@ -90,19 +113,9 @@ struct __gmp_binary_plus
       mpz_sub_ui(z, w, -l);
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_add(z, w, temp);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_add (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_add(z, temp, w);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_add (z, temp, w); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, mpq_srcptr s)
   { mpq_add(q, r, s); }
@@ -215,19 +228,9 @@ struct __gmp_binary_minus
       }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_sub(z, w, temp);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_sub (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_sub(z, temp, w);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_sub (z, temp, w); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, mpq_srcptr s)
   { mpq_sub(q, r, s); }
@@ -328,19 +331,9 @@ struct __gmp_binary_multiplies
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   { mpz_mul_si (z, w, l); }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_mul(z, w, temp);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_mul (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_mul(z, temp, w);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_mul (z, temp, w); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, mpq_srcptr s)
   { mpq_mul(q, r, s); }
@@ -489,19 +482,9 @@ struct __gmp_binary_divides
       }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_tdiv_q(z, w, temp);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_tdiv_q (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_tdiv_q(z, temp, w);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_tdiv_q (z, temp, w); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, mpq_srcptr s)
   { mpq_div(q, r, s); }
@@ -641,43 +624,10 @@ struct __gmp_binary_modulus
       }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_tdiv_r(z, w, temp);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_tdiv_r (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mpz_init_set_d(temp, d);
-    mpz_tdiv_r(z, temp, w);
-    mpz_clear(temp);
-  }
+  {  __GMPXX_TMPZ_D;    mpz_tdiv_r (z, temp, w); }
 };
-
-// Max allocations for plain types when converted to mpz_t
-#define __GMP_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
-#define __GMP_ULI_LIMBS (1 + (8 * sizeof (long) - 1) / GMP_NUMB_BITS)
-
-#define __GMPXX_TMP_UI							\
-  mpz_t temp;								\
-  mp_limb_t limbs[__GMP_ULI_LIMBS];					\
-  temp->_mp_d = limbs;							\
-  temp->_mp_alloc = __GMP_ULI_LIMBS;					\
-  mpz_set_ui (temp, l)
-#define __GMPXX_TMP_SI							\
-  mpz_t temp;								\
-  mp_limb_t limbs[__GMP_ULI_LIMBS];					\
-  temp->_mp_d = limbs;							\
-  temp->_mp_alloc = __GMP_ULI_LIMBS;					\
-  mpz_set_si (temp, l)
-#define __GMPXX_TMP_D							\
-  mpz_t temp;								\
-  mp_limb_t limbs[__GMP_DBL_LIMBS];					\
-  temp->_mp_d = limbs;							\
-  temp->_mp_alloc = __GMP_DBL_LIMBS;					\
-  mpz_set_d (temp, d)
 
 struct __gmp_binary_and
 {
@@ -685,17 +635,17 @@ struct __gmp_binary_and
   { mpz_and(z, w, v); }
 
   static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
-  {  __GMPXX_TMP_UI;   mpz_and (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_and (z, w, temp);  }
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_UI;   mpz_and (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_and (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
-  {  __GMPXX_TMP_SI;   mpz_and (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_and (z, w, temp);  }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_SI;   mpz_and (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_and (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {  __GMPXX_TMP_D;    mpz_and (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_and (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {  __GMPXX_TMP_D;    mpz_and (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_and (z, w, temp); }
 };
 
 struct __gmp_binary_ior
@@ -703,17 +653,17 @@ struct __gmp_binary_ior
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_ior(z, w, v); }
   static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
-  {  __GMPXX_TMP_UI;   mpz_ior (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_ior (z, w, temp);  }
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_UI;   mpz_ior (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_ior (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
-  {  __GMPXX_TMP_SI;   mpz_ior (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_ior (z, w, temp);  }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_SI;   mpz_ior (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_ior (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {  __GMPXX_TMP_D;    mpz_ior (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_ior (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {  __GMPXX_TMP_D;    mpz_ior (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_ior (z, w, temp); }
 };
 
 struct __gmp_binary_xor
@@ -721,17 +671,17 @@ struct __gmp_binary_xor
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_xor(z, w, v); }
   static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
-  {  __GMPXX_TMP_UI;   mpz_xor (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_xor (z, w, temp);  }
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_UI;   mpz_xor (z, w, temp);  }
+  {  __GMPXX_TMPZ_UI;   mpz_xor (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
-  {  __GMPXX_TMP_SI;   mpz_xor (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_xor (z, w, temp);  }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
-  {  __GMPXX_TMP_SI;   mpz_xor (z, w, temp);  }
+  {  __GMPXX_TMPZ_SI;   mpz_xor (z, w, temp);  }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
-  {  __GMPXX_TMP_D;    mpz_xor (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_xor (z, w, temp); }
   static void eval(mpz_ptr z, double d, mpz_srcptr w)
-  {  __GMPXX_TMP_D;    mpz_xor (z, w, temp); }
+  {  __GMPXX_TMPZ_D;    mpz_xor (z, w, temp); }
 };
 
 struct __gmp_binary_lshift
