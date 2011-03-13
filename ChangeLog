@@ -1,3 +1,8 @@
+2011-03-13  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-ops2.cc: New file.
+	* tests/cxx/Makefile.am: Added t-ops2.
+
 2011-03-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (MPN_IORD_U): Handle x86_64 as well as x86_32.  Generate
