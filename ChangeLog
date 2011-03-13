@@ -1,3 +1,8 @@
+2011-03-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (MPN_IORD_U): Handle x86_64 as well as x86_32.  Generate
+	no code for incrementing by constant 0.
+
 2011-03-12  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Rename __GMPXX_TMP_* to __GMPXX_TMPZ_*. Use in more places.
