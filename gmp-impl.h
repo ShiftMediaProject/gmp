@@ -2389,44 +2389,54 @@ __GMP_DECLSPEC mp_bitcnt_t mpn_remove __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr,
    declaring their operand sizes, then remove the former.  This is purely
    for the benefit of assertion checking.  */
 
-#if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86 && GMP_NAIL_BITS == 0      \
-  && GMP_LIMB_BITS == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
+#if defined (__GNUC__) && GMP_NAIL_BITS == 0 && ! defined (NO_ASM)	\
+  && (defined(HAVE_HOST_CPU_FAMILY_x86) || defined(HAVE_HOST_CPU_FAMILY_x86_64)) \
+  && ! WANT_ASSERT
 /* Better flags handling than the generic C gives on i386, saving a few
    bytes of code and maybe a cycle or two.  */
 
 #define MPN_IORD_U(ptr, incr, aors)					\
   do {									\
     mp_ptr  __ptr_dummy;						\
-    if (__builtin_constant_p (incr) && (incr) == 1)			\
+    if (__builtin_constant_p (incr) && (incr) == 0)			\
+      {									\
+      }									\
+    else if (__builtin_constant_p (incr) && (incr) == 1)		\
       {									\
         __asm__ __volatile__						\
           ("\n" ASM_L(top) ":\n"					\
-           "\t" aors " $1, (%0)\n"					\
-           "\tleal 4(%0),%0\n"						\
-           "\tjc " ASM_L(top)						\
+           "\t" aors "\t$1, (%0)\n"					\
+           "\tlea\t%c2(%0), %0\n"					\
+           "\tjc\t" ASM_L(top)						\
            : "=r" (__ptr_dummy)						\
-           : "0"  (ptr)							\
+           : "0"  (ptr), "n" (sizeof(mp_limb_t))			\
            : "memory");							\
       }									\
     else								\
       {									\
         __asm__ __volatile__						\
-          (   aors  " %2,(%0)\n"					\
-           "\tjnc " ASM_L(done) "\n"					\
+          (   aors  "\t%2, (%0)\n"					\
+           "\tjnc\t" ASM_L(done) "\n"					\
            ASM_L(top) ":\n"						\
-           "\t" aors " $1,4(%0)\n"					\
-           "\tleal 4(%0),%0\n"						\
-           "\tjc " ASM_L(top) "\n"					\
+           "\t" aors "\t$1, %c3(%0)\n"					\
+           "\tlea\t%c3(%0), %0\n"					\
+           "\tjc\t" ASM_L(top) "\n"					\
            ASM_L(done) ":\n"						\
            : "=r" (__ptr_dummy)						\
            : "0"  (ptr),						\
-             "ri" (incr)						\
+             "ri" ((mp_limb_t) (incr)), "n" (sizeof(mp_limb_t))		\
            : "memory");							\
       }									\
   } while (0)
 
+#if GMP_LIMB_BITS == 32
 #define MPN_INCR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "addl")
 #define MPN_DECR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "subl")
+#endif
+#if GMP_LIMB_BITS == 64
+#define MPN_INCR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "addq")
+#define MPN_DECR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "subq")
+#endif
 #define mpn_incr_u(ptr, incr)  MPN_INCR_U (ptr, 0, incr)
 #define mpn_decr_u(ptr, incr)  MPN_DECR_U (ptr, 0, incr)
 #endif
