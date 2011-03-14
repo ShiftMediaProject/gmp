@@ -1,7 +1,7 @@
 dnl  SPARC v9 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -54,6 +54,16 @@ define(`fmnop',`fmuld %f0,%f0,%f4')	dnl  A quasi nop running in the FM pipe
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
+PROLOGUE(mpn_add_nc)
+	save	%sp,-160,%sp
+
+	fitod	%f0,%f0		C make sure f0 contains small, quiet number
+	subcc	n,4,%g0
+	bl,pn	%xcc,.Loop0
+	nop
+	b,a	L(com)
+EPILOGUE()
+
 PROLOGUE(mpn_add_n)
 	save	%sp,-160,%sp
 
@@ -61,7 +71,7 @@ PROLOGUE(mpn_add_n)
 	subcc	n,4,%g0
 	bl,pn	%xcc,.Loop0
 	mov	0,cy
-
+L(com):
 	ldx	[up+0],u0
 	ldx	[vp+0],v0
 	add	up,32,up
@@ -217,4 +227,4 @@ C END MAIN LOOP
 .Lret:	mov	cy,%i0
 	ret
 	restore
-EPILOGUE(mpn_add_n)
+EPILOGUE()
