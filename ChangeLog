@@ -1,5 +1,7 @@
 2011-03-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mul): Set tuning min size considering print skew.
+
 	* doc/gmp.texi: Make reference to "Formatted I/O" chapters from type
 	specific I/O sections.
 
