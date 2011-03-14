@@ -3793,13 +3793,15 @@ Test bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @cindex I/O functions
 
 Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to any of
-these functions will make them read from @code{stdin} and write to
-@code{stdout}, respectively.
+a stdio stream, of @code{mpz} numbers.  Passing a @code{NULL} pointer for a
+@var{stream} argument to any of these functions will make them read from
+@code{stdin} and write to @code{stdout}, respectively.
 
 When using any of these functions, it is a good idea to include @file{stdio.h}
 before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
+
+See also @ref{Formatted Output} and @ref{Formatted Input}.
 
 @deftypefun size_t mpz_out_str (FILE *@var{stream}, int @var{base}, mpz_t @var{op})
 Output @var{op} on stdio stream @var{stream}, as a string of digits in base
@@ -4416,13 +4418,16 @@ recommended instead of these functions.
 @cindex Output functions
 @cindex I/O functions
 
-When using any of these functions, it's a good idea to include @file{stdio.h}
+Functions that perform input from a stdio stream, and functions that output to
+a stdio stream, of @code{mpq} numbers.  Passing a @code{NULL} pointer for a
+@var{stream} argument to any of these functions will make them read from
+@code{stdin} and write to @code{stdout}, respectively.
+
+When using any of these functions, it is a good idea to include @file{stdio.h}
 before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
 
-Passing a @code{NULL} pointer for a @var{stream} argument to any of these
-functions will make them read from @code{stdin} and write to @code{stdout},
-respectively.
+See also @ref{Formatted Output} and @ref{Formatted Input}.
 
 @deftypefun size_t mpq_out_str (FILE *@var{stream}, int @var{base}, mpq_t @var{op})
 Output @var{op} on stdio stream @var{stream}, as a string of digits in base
@@ -4917,13 +4922,15 @@ multiple times.
 @cindex I/O functions
 
 Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to
-any of these functions will make them read from @code{stdin} and write to
-@code{stdout}, respectively.
+a stdio stream, of @code{mpf} numbers.  Passing a @code{NULL} pointer for a
+@var{stream} argument to any of these functions will make them read from
+@code{stdin} and write to @code{stdout}, respectively.
 
 When using any of these functions, it is a good idea to include @file{stdio.h}
 before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
+
+See also @ref{Formatted Output} and @ref{Formatted Input}.
 
 @deftypefun size_t mpf_out_str (FILE *@var{stream}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
 Print @var{op} to @var{stream}, as a string of digits.  Return the number of
