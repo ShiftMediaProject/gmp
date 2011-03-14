@@ -1267,33 +1267,33 @@ tune_mul (void)
   param.function = speed_mpn_toom32_for_toom43_mul;
   param.function2 = speed_mpn_toom43_for_toom32_mul;
   param.name = "MUL_TOOM32_TO_TOOM43_THRESHOLD";
-  param.min_size = MPN_TOOM43_MUL_MINSIZE;
+  param.min_size = MPN_TOOM43_MUL_MINSIZE * 24 / 17;
   one (&thres, &param);
-  mul_toom32_to_toom43_threshold = 17*thres/24;
+  mul_toom32_to_toom43_threshold = thres * 17 / 24;
   print_define ("MUL_TOOM32_TO_TOOM43_THRESHOLD", mul_toom32_to_toom43_threshold);
 
   param.function = speed_mpn_toom32_for_toom53_mul;
   param.function2 = speed_mpn_toom53_for_toom32_mul;
   param.name = "MUL_TOOM32_TO_TOOM53_THRESHOLD";
-  param.min_size = MPN_TOOM53_MUL_MINSIZE;
+  param.min_size = MPN_TOOM53_MUL_MINSIZE * 30 / 19;
   one (&thres, &param);
-  mul_toom32_to_toom53_threshold = 19*thres/30;
+  mul_toom32_to_toom53_threshold = thres * 19 / 30;
   print_define ("MUL_TOOM32_TO_TOOM53_THRESHOLD", mul_toom32_to_toom53_threshold);
 
   param.function = speed_mpn_toom42_for_toom53_mul;
   param.function2 = speed_mpn_toom53_for_toom42_mul;
   param.name = "MUL_TOOM42_TO_TOOM53_THRESHOLD";
-  param.min_size = MPN_TOOM53_MUL_MINSIZE;
+  param.min_size = MPN_TOOM53_MUL_MINSIZE * 20 / 11;
   one (&thres, &param);
-  mul_toom42_to_toom53_threshold = 11*thres/20;
+  mul_toom42_to_toom53_threshold = thres * 11 / 20;
   print_define ("MUL_TOOM42_TO_TOOM53_THRESHOLD", mul_toom42_to_toom53_threshold);
 
   param.function = speed_mpn_toom42_mul;
   param.function2 = speed_mpn_toom63_mul;
   param.name = "MUL_TOOM42_TO_TOOM63_THRESHOLD";
-  param.min_size = MPN_TOOM63_MUL_MINSIZE;
+  param.min_size = MPN_TOOM63_MUL_MINSIZE * 2;
   one (&thres, &param);
-  mul_toom42_to_toom63_threshold = thres/2;
+  mul_toom42_to_toom63_threshold = thres / 2;
   print_define ("MUL_TOOM42_TO_TOOM63_THRESHOLD", mul_toom42_to_toom63_threshold);
 }
 
