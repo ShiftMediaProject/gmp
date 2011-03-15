@@ -42,8 +42,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 // Max allocations for plain types when converted to mpz_t
 #define __GMPZ_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
-#define __GMPZ_ULI_LIMBS (1 + (8 * sizeof (long) - 1) / GMP_NUMB_BITS)
 
+#if GMP_NAIL_BITS != 0 && ! defined _LONG_LONG_LIMB
+#define __GMPZ_ULI_LIMBS 2
+#else
+#define __GMPZ_ULI_LIMBS 1
+#endif
+
+// Fake temporary variables
 #define __GMPXX_TMPZ_UI							\
   mpz_t temp;								\
   mp_limb_t limbs[__GMPZ_ULI_LIMBS];					\

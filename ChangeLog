@@ -5,6 +5,9 @@
 	(struct __gmp_binary_multiplies): Rewrite, using the new macros.
 	(struct __gmp_binary_divides): Likewise.
 
+	* gmpxx.h (__GMPZ_ULI_LIMBS): Rewrite.
+	* tests/cxx/t-ops2.cc: test converting ULONG_MIN to stack mpq_t.
+
 2011-03-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_16pts.c: Remove ambiguity.
