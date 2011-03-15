@@ -335,14 +335,14 @@ mpn_toom_interpolate_16pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5, mp_ptr r
   MP_PTR_SWAP(r3, wsi);
 #endif
 
-  r7[n3] -= DO_mpn_sublsh_n (r7 + n + BIT_CORRECTION, pp, 2 * n, 42 - CORRECTION_BITS, wsi)
-	    * (1-BIT_CORRECTION); /* if BIT_CORRECTION != 0, discard the carry. */
+  cy = DO_mpn_sublsh_n (r7 + n + BIT_CORRECTION, pp, 2 * n, 42 - CORRECTION_BITS, wsi);
 #if BIT_CORRECTION
   MPN_DECR_U (r1 + n, 2 * n + 1, pp[0] >> 6);
   cy = DO_mpn_sublsh_n (r1 + n, pp + 1, 2 * n - 1, GMP_NUMB_BITS - 6, wsi);
   cy = mpn_sub_1(r1 + 3 * n - 1, r1 + 3 * n - 1, 2, cy);
   ASSERT ( BIT_CORRECTION > 0 || cy != 0 );
 #else
+  r7[n3] -= cy;
   DO_mpn_subrsh(r1 + n, 2 * n + 1, pp, 2 * n, 6, wsi);
 #endif
 
