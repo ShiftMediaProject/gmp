@@ -1,3 +1,10 @@
+2011-03-15  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__GMPXX_TMPQ_UI): New macro.
+	(__GMPXX_TMPQ_SI): New macro.
+	(struct __gmp_binary_multiplies): Rewrite, using the new macros.
+	(struct __gmp_binary_divides): Likewise.
+
 2011-03-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_16pts.c: Remove ambiguity.

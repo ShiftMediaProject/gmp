@@ -63,6 +63,25 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   temp->_mp_alloc = __GMPZ_DBL_LIMBS;					\
   mpz_set_d (temp, d)
 
+#define __GMPXX_TMPQ_UI							\
+  mpq_t temp;								\
+  mp_limb_t limbs[__GMPZ_ULI_LIMBS+1];					\
+  mpq_numref(temp)->_mp_d = limbs;					\
+  mpq_numref(temp)->_mp_alloc = __GMPZ_ULI_LIMBS;			\
+  mpz_set_ui (mpq_numref(temp), l);					\
+  mpq_denref(temp)->_mp_d = limbs + __GMPZ_ULI_LIMBS;			\
+  mpq_denref(temp)->_mp_size = 1;					\
+  mpq_denref(temp)->_mp_d[0] = 1
+#define __GMPXX_TMPQ_SI							\
+  mpq_t temp;								\
+  mp_limb_t limbs[__GMPZ_ULI_LIMBS+1];					\
+  mpq_numref(temp)->_mp_d = limbs;					\
+  mpq_numref(temp)->_mp_alloc = __GMPZ_ULI_LIMBS;			\
+  mpz_set_si (mpq_numref(temp), l);					\
+  mpq_denref(temp)->_mp_d = limbs + __GMPZ_ULI_LIMBS;			\
+  mpq_denref(temp)->_mp_size = 1;					\
+  mpq_denref(temp)->_mp_d[0] = 1
+
 
 /**************** Function objects ****************/
 /* Any evaluation of a __gmp_expr ends up calling one of these functions
@@ -339,37 +358,13 @@ struct __gmp_binary_multiplies
   { mpq_mul(q, r, s); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, unsigned long int l)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_ui(temp, l, 1);
-    mpq_mul(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_UI;   mpq_mul (q, r, temp); }
   static void eval(mpq_ptr q, unsigned long int l, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_ui(temp, l, 1);
-    mpq_mul(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_UI;   mpq_mul (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, signed long int l)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_si(temp, l, 1);
-    mpq_mul(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_SI;   mpq_mul (q, r, temp); }
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_si(temp, l, 1);
-    mpq_mul(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_SI;   mpq_mul (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
   {
     mpq_t temp;
@@ -490,37 +485,13 @@ struct __gmp_binary_divides
   { mpq_div(q, r, s); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, unsigned long int l)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_ui(temp, l, 1);
-    mpq_div(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_UI;   mpq_div (q, r, temp); }
   static void eval(mpq_ptr q, unsigned long int l, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_ui(temp, l, 1);
-    mpq_div(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_UI;   mpq_div (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, signed long int l)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_si(temp, l, 1);
-    mpq_div(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_SI;   mpq_div (q, r, temp); }
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_si(temp, l, 1);
-    mpq_div(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_SI;   mpq_div (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
   {
     mpq_t temp;
