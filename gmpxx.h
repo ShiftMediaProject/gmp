@@ -49,19 +49,40 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define __GMPZ_ULI_LIMBS 1
 #endif
 
+inline void __mpz_set_ui_safe(mpz_ptr p, unsigned long l)
+{
+  p->_mp_size = (l != 0);
+  p->_mp_d[0] = l & GMP_NUMB_MASK;
+#if __GMPZ_ULI_LIMBS > 1
+  l >>= GMP_NUMB_BITS;
+  p->_mp_d[1] = l;
+  p->_mp_size += (l != 0);
+#endif
+}
+
+inline void __mpz_set_si_safe(mpz_ptr p, long l)
+{
+  if(l < 0)
+  {
+    __mpz_set_ui_safe(p, -l);
+    mpz_neg(p, p);
+  }
+  else
+    __mpz_set_ui_safe(p, l);
+    // Note: we know the high bit of l is 0 so we could do slightly better
+}
+
 // Fake temporary variables
 #define __GMPXX_TMPZ_UI							\
   mpz_t temp;								\
   mp_limb_t limbs[__GMPZ_ULI_LIMBS];					\
   temp->_mp_d = limbs;							\
-  temp->_mp_alloc = __GMPZ_ULI_LIMBS;					\
-  mpz_set_ui (temp, l)
+  __mpz_set_ui_safe (temp, l)
 #define __GMPXX_TMPZ_SI							\
   mpz_t temp;								\
   mp_limb_t limbs[__GMPZ_ULI_LIMBS];					\
   temp->_mp_d = limbs;							\
-  temp->_mp_alloc = __GMPZ_ULI_LIMBS;					\
-  mpz_set_si (temp, l)
+  __mpz_set_si_safe (temp, l)
 #define __GMPXX_TMPZ_D							\
   mpz_t temp;								\
   mp_limb_t limbs[__GMPZ_DBL_LIMBS];					\
@@ -73,8 +94,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   mpq_t temp;								\
   mp_limb_t limbs[__GMPZ_ULI_LIMBS+1];					\
   mpq_numref(temp)->_mp_d = limbs;					\
-  mpq_numref(temp)->_mp_alloc = __GMPZ_ULI_LIMBS;			\
-  mpz_set_ui (mpq_numref(temp), l);					\
+  __mpz_set_ui_safe (mpq_numref(temp), l);				\
   mpq_denref(temp)->_mp_d = limbs + __GMPZ_ULI_LIMBS;			\
   mpq_denref(temp)->_mp_size = 1;					\
   mpq_denref(temp)->_mp_d[0] = 1
@@ -82,8 +102,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   mpq_t temp;								\
   mp_limb_t limbs[__GMPZ_ULI_LIMBS+1];					\
   mpq_numref(temp)->_mp_d = limbs;					\
-  mpq_numref(temp)->_mp_alloc = __GMPZ_ULI_LIMBS;			\
-  mpz_set_si (mpq_numref(temp), l);					\
+  __mpz_set_si_safe (mpq_numref(temp), l);				\
   mpq_denref(temp)->_mp_d = limbs + __GMPZ_ULI_LIMBS;			\
   mpq_denref(temp)->_mp_size = 1;					\
   mpq_denref(temp)->_mp_d[0] = 1

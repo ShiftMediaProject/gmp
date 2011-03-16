@@ -1,3 +1,13 @@
+2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__mpz_set_ui_safe): New inline function.
+	(__mpz_set_si_safe): Likewise.
+	(__GMPXX_TMPZ_UI): Use the new function.
+	(__GMPXX_TMPZ_SI): Likewise.
+	(__GMPXX_TMPQ_UI): Likewise.
+	(__GMPXX_TMPQ_SI): Likewise.
+	* tests/cxx/t-ops2.cc: test converting 0 to stack mpq_t.
+
 2011-03-15  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__GMPXX_TMPQ_UI): New macro.
