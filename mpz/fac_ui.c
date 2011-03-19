@@ -145,14 +145,18 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
 
   if (n <= ((unsigned long) 1) << (APCONST))
     {
-      MPZ_REALLOC (x, 4 * z);
+      /* This strange allocation was deduced from an earlier, poorly documented
+	 expression that used mpz_realloc2.  FIXME.  */
+      MPZ_REALLOC (x, z / (GMP_NUMB_BITS / 4) + 1);
       ap_product_small (x, CNST_LIMB(2), CNST_LIMB(1), n - 1, 4L);
       return;
     }
   if (n <= ((unsigned long) 1) << (APCONST + 1))
     {				/*  use n!=odd(1,n)*(n/2)!*2^(n/2)         */
       mpz_init2 (t1, 2 * z);
-      MPZ_REALLOC (x, 4 * z);
+      /* This strange allocation was deduced from an earlier, poorly documented
+	 expression that used mpz_realloc2.  FIXME.  */
+      MPZ_REALLOC (x, z / (GMP_NUMB_BITS / 4) + 1);
       ap_product_small (x, CNST_LIMB(2), CNST_LIMB(1), n / 2 - 1, 4L);
       ap_product_small (t1, CNST_LIMB(3), CNST_LIMB(2), (n - 1) / 2, 4L);
       mpz_mul (x, x, t1);
@@ -165,7 +169,9 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
       /* use n!=C_2(1,n/2)^2*C_2(n/2,n)*(n/4)!*2^(n/2+n/4) all int divs
 	 so need (BITS_IN_N-APCONST+1)=(APCONST+3-APCONST+1)=4 stack entries */
       mpz_init2 (t1, 2 * z);
-      MPZ_REALLOC (x, 4 * z);
+      /* This strange allocation was deduced from an earlier, poorly documented
+	 expression that used mpz_realloc2.  FIXME.  */
+      MPZ_REALLOC (x, z / (GMP_NUMB_BITS / 4) + 1);
       for (i = 0; i < 4; i++)
 	{
 	  mpz_init2 (st[i], z);
