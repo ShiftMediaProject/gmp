@@ -1,3 +1,8 @@
+2011-03-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/divrem_2.c (mpn_divrem_2): Fixed comment and assert
+	regarding q and n overlap.
+
 2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__mpz_set_ui_safe): New inline function.

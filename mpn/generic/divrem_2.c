@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    Preconditions:
    1. The most significant bit of the divisor must be set.
    2. qp must either not overlap with the input operands at all, or
-      qp + 2 >= np must hold true.  (This means that it's possible to put
+      qp >= np + 2 must hold true.  (This means that it's possible to put
       the quotient in the high part of {np,nn}, right above the remainder.
    3. nn >= 2, even if qxn is non-zero.  */
 
@@ -56,7 +56,7 @@ mpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
   ASSERT (nn >= 2);
   ASSERT (qxn >= 0);
   ASSERT (dp[1] & GMP_NUMB_HIGHBIT);
-  ASSERT (! MPN_OVERLAP_P (qp, nn-2+qxn, np, nn) || qp+2 >= np);
+  ASSERT (! MPN_OVERLAP_P (qp, nn-2+qxn, np, nn) || qp >= np+2);
   ASSERT_MPN (np, nn);
   ASSERT_MPN (dp, 2);
 
