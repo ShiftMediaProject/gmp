@@ -142,13 +142,13 @@ void checkqf (){
   CHECK_MPZ(T,5,-2,<); 
   CHECK_MPZ(T,5,-2,>); 
   CHECK_MPZ(T,5,-2,<=);
-  CHECK_MPZ(T,5,-2,<=);
+  CHECK_MPZ(T,5,-2,>=);
   CHECK_MPZ(T,5,-2,==);
   CHECK_MPZ(T,5,-2,!=);
   CHECK_MPZ(T,0,0,<);  
   CHECK_MPZ(T,0,0,>);  
   CHECK_MPZ(T,0,0,<=); 
-  CHECK_MPZ(T,0,0,<=); 
+  CHECK_MPZ(T,0,0,>=); 
   CHECK_MPZ(T,0,0,==); 
   CHECK_MPZ(T,0,0,!=); 
   ASSERT_ALWAYS(T(6)<<2==6.*4);
@@ -211,13 +211,13 @@ void checkf (){
   CHECK_MPQ(mpf_class,5,-2,<);  
   CHECK_MPQ(mpf_class,5,-2,>);  
   CHECK_MPQ(mpf_class,5,-2,<=); 
-  CHECK_MPQ(mpf_class,5,-2,<=); 
+  CHECK_MPQ(mpf_class,5,-2,>=); 
   CHECK_MPQ(mpf_class,5,-2,==); 
   CHECK_MPQ(mpf_class,5,-2,!=); 
   CHECK_MPQ(mpf_class,0,0,<);  
   CHECK_MPQ(mpf_class,0,0,>);  
   CHECK_MPQ(mpf_class,0,0,<=); 
-  CHECK_MPQ(mpf_class,0,0,<=); 
+  CHECK_MPQ(mpf_class,0,0,>=); 
   CHECK_MPQ(mpf_class,0,0,==); 
   CHECK_MPQ(mpf_class,0,0,!=); 
 }

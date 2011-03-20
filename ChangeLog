@@ -1,3 +1,10 @@
+2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_binary_not_equal): Remove, use !__gmp_binary_equal.
+	(__gmp_binary_less_equal): Remove, use !__gmp_binary_greater.
+	(__gmp_binary_greater_equal): Remove, use !__gmp_binary_less.
+	* tests/cxx/t-ops2.cc: Typo.
+
 2011-03-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_div_qr_2_norm): New function.
