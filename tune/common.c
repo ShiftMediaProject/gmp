@@ -682,6 +682,17 @@ speed_mpn_divrem_2_inv (struct speed_params *s)
 }
 
 double
+speed_mpn_div_qr_2_norm (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIV_QR_2 (mpn_div_qr_2, 1);
+}
+double
+speed_mpn_div_qr_2_unnorm (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIV_QR_2 (mpn_div_qr_2, 0);
+}
+
+double
 speed_mpn_mod_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1);

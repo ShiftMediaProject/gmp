@@ -1,5 +1,11 @@
 2011-03-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c (speed_mpn_div_qr_2_norm): New function.
+	(speed_mpn_div_qr_2_unnorm): New function.
+	* tune/speed.c (routine): Recognize above functions.
+	* tune/speed.h: Declarations for above functions.
+	(SPEED_ROUTINE_MPN_DIV_QR_2): New macro.
+
 	* tests/mpn/t-div.c (main): Added tests for mpn_divrem_2 and
 	mpn_div_qr_2.
 
