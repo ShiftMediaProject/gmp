@@ -1432,14 +1432,6 @@ private:
 };
 
 
-// functions for evaluating expressions
-template <class T, class U>
-void __gmp_set_expr(mpz_ptr, const __gmp_expr<T, U> &);
-template <class T, class U>
-void __gmp_set_expr(mpq_ptr, const __gmp_expr<T, U> &);
-template <class T, class U>
-void __gmp_set_expr(mpf_ptr, const __gmp_expr<T, U> &);
-
 
 /**************** Macros for in-class declarations ****************/
 /* This is just repetitive code that is easier to maintain if it's written
@@ -2056,7 +2048,6 @@ inline std::istream & operator>>(std::istream &i, mpq_class &q)
 
 /**************** Functions for type conversion ****************/
 
-template <>
 inline void __gmp_set_expr(mpz_ptr z, const mpz_class &w)
 {
   mpz_set(z, w.get_mpz_t());
@@ -2068,7 +2059,6 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpz_t, T> &expr)
   expr.eval(z);
 }
 
-template <>
 inline void __gmp_set_expr(mpz_ptr z, const mpq_class &q)
 {
   mpz_set_q(z, q.get_mpq_t());
@@ -2081,7 +2071,6 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpq_t, T> &expr)
   mpz_set_q(z, temp.get_mpq_t());
 }
 
-template <class T>
 inline void __gmp_set_expr(mpz_ptr z, const mpf_class &f)
 {
   mpz_set_f(z, f.get_mpf_t());
@@ -2094,7 +2083,6 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpf_t, T> &expr)
   mpz_set_f(z, temp.get_mpf_t());
 }
 
-template <>
 inline void __gmp_set_expr(mpq_ptr q, const mpz_class &z)
 {
   mpq_set_z(q, z.get_mpz_t());
@@ -2107,7 +2095,6 @@ inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpz_t, T> &expr)
   mpq_set_z(q, temp.get_mpz_t());
 }
 
-template <>
 inline void __gmp_set_expr(mpq_ptr q, const mpq_class &r)
 {
   mpq_set(q, r.get_mpq_t());
@@ -2119,7 +2106,6 @@ inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpq_t, T> &expr)
   expr.eval(q);
 }
 
-template <class T>
 inline void __gmp_set_expr(mpq_ptr q, const mpf_class &f)
 {
   mpq_set_f(q, f.get_mpf_t());
@@ -2132,7 +2118,6 @@ inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpf_t, T> &expr)
   mpq_set_f(q, temp.get_mpf_t());
 }
 
-template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const mpz_class &z)
 {
   mpf_set_z(f, z.get_mpz_t());
@@ -2145,7 +2130,6 @@ inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<mpz_t, T> &expr)
   mpf_set_z(f, temp.get_mpz_t());
 }
 
-template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const mpq_class &q)
 {
   mpf_set_q(f, q.get_mpq_t());
@@ -2158,7 +2142,6 @@ inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<mpq_t, T> &expr)
   mpf_set_q(f, temp.get_mpq_t());
 }
 
-template <>
 inline void __gmp_set_expr(mpf_ptr f, const mpf_class &g)
 {
   mpf_set(f, g.get_mpf_t());

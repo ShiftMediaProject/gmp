@@ -1,3 +1,7 @@
+2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_set_expr): Remove broken declarations.
+
 2011-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/fac_ui.c (mpz_fac_ui): Use MPZ_REALLOC for standard, conditional
