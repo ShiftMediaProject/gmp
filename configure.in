@@ -958,26 +958,26 @@ case $host in
           *-*-aix*)
             # On AIX a true 64-bit ABI is available.
             # Need -Wc to pass object type flags through to the linker.
-            abilist="aix64 $abilist"
-            cclist_aix64="gcc xlc"
-            gcc_aix64_cflags="-O2 -maix64 -mpowerpc64"
-            gcc_aix64_cflags_optlist="cpu"
-	    gcc_aix64_ldflags="-Wc,-maix64"
-            xlc_aix64_cflags="-O2 -q64 -qmaxmem=20000"
-            xlc_aix64_cflags_optlist="arch"
-	    xlc_aix64_ldflags="-Wc,-q64"
+            abilist="mode64 $abilist"
+            cclist_mode64="gcc xlc"
+            gcc_mode64_cflags="-O2 -maix64 -mpowerpc64"
+            gcc_mode64_cflags_optlist="cpu"
+	    gcc_mode64_ldflags="-Wc,-maix64"
+            xlc_mode64_cflags="-O2 -q64 -qmaxmem=20000"
+            xlc_mode64_cflags_optlist="arch"
+	    xlc_mode64_ldflags="-Wc,-q64"
             # Must indicate object type to ar and nm
-	    ar_aix64_flags="-X64"
-	    nm_aix64_flags="-X64"
-	    path_aix64=""
+	    ar_mode64_flags="-X64"
+	    nm_mode64_flags="-X64"
+	    path_mode64=""
 	    for i in $cpu_path
-	      do path_aix64="${path_aix64}powerpc64/mode64/$i "
-	      	 path_aix64="${path_aix64}powerpc64/$i "
+	      do path_mode64="${path_mode64}powerpc64/mode64/$i "
+	      	 path_mode64="${path_mode64}powerpc64/$i "
 	      done
-            path_aix64="${path_aix64}powerpc64/mode64 $vmx_path powerpc64"
+            path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
             # grab this object, though it's not a true cycle counter routine
-            SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
-            cyclecounter_size_aix64=0
+            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+            cyclecounter_size_mode64=0
             ;;
           *-*-darwin*)
             # On Darwin we can use 64-bit instructions with a longlong limb,
@@ -1006,18 +1006,24 @@ case $host in
 	    gcc_mode32_cflags_optlist="subtype cpu opt"
 	    gcc_mode32_cflags_subtype="-force_cpusubtype_ALL"
 	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
-	    path_mode32="powerpc64/mode32 $vmx_path powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc"
 	    gcc_mode64_cflags="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
 	    path_mode64=""
+	    path_mode32=""
+	    p=""
 	    for i in $cpu_path
 	      do path_mode64="${path_mode64}powerpc64/mode64/$i "
 	      	 path_mode64="${path_mode64}powerpc64/$i "
+	         path_mode32="${path_mode32}powerpc64/mode32/$i "
+	      	 path_mode32="${path_mode32}powerpc64/$i "
+	         p="${p} powerpc32/$i "
 	      done
 	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
+	    path_mode32="${path_mode32}powerpc64/mode32 $vmx_path powerpc64"
+	    path="$p $path"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
@@ -2530,7 +2536,6 @@ gmp_mpn_functions="$extra_functions					   \
   toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
   toom_interpolate_8pts toom_interpolate_12pts toom_interpolate_16pts	   \
   invertappr invert binvert mulmod_bnm1 sqrmod_bnm1			   \
-  div_qr_2								   \
   sbpi1_div_q sbpi1_div_qr sbpi1_divappr_q				   \
   dcpi1_div_q dcpi1_div_qr dcpi1_divappr_q				   \
   mu_div_qr mu_divappr_q mu_div_q					   \
@@ -3156,7 +3161,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       case $host in
         *-*-aix*)
 	  case $ABI in
-	    64 | aix64)  GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
+	    mode64)      GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
             *)           GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
           esac
           ;;

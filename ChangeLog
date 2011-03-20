@@ -1,3 +1,8 @@
+2011-03-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (powerpc): Add cpu_path for all three ABIs.
+	Rename "aix64" to "mode64" for consistency.
+
 2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_binary_not_equal): Remove, use !__gmp_binary_equal.
