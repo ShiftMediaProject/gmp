@@ -410,6 +410,52 @@ main (int argc, char **argv)
 	  check_one (qp, NULL, np, nn, dp, dn, "mpn_div_q", 0);
 	}
 
+      if (dn >= 2 && nn >= 2)
+	{
+	  mp_limb_t qh;
+
+	  /* mpn_divrem_2 */
+	  MPN_COPY (rp, np, nn);
+	  qp[nn - 2] = qp[nn-1] = qran1;
+	     
+	  qh = mpn_divrem_2 (qp, 0, rp, nn, dp + dn - 2);
+	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
+	  qp[nn - 2] = qh;
+
+	  check_one (qp, rp, np, nn, dp + dn - 2, 2, "mpn_divrem_2", 0);
+
+	  /* Missing: divrem_2 with fraction limbs. */
+
+	  /* mpn_div_qr_2 (normalized) */
+	  MPN_COPY (rp, np, nn);
+	  qp[nn - 2] = qran1;
+	     
+	  qh = mpn_div_qr_2 (qp, rp, nn, dp + dn - 2);
+	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
+	  qp[nn - 2] = qh;
+
+	  check_one (qp, rp, np, nn, dp + dn - 2, 2, "mpn_div_qr_2 (normalized)", 0);
+
+	  /* mpn_div_qr_2 (unnormalized) */
+	  dp[dn - 1] &= ~GMP_NUMB_HIGHBIT;
+	  if (dp[dn - 1] == 0)
+	    continue;
+
+	  MPN_COPY (rp, np, nn);
+	  qp[nn - 2] = qran1;
+	     
+	  qh = mpn_div_qr_2 (qp, rp, nn, dp + dn - 2);
+	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
+	  qp[nn - 2] = qh;
+
+	  check_one (qp, rp, np, nn, dp + dn - 2, 2, "mpn_div_qr_2 (unnormalized)", 0);	  
+
+	  qp[nn - dn + 1] = qran1;
+	}
+
       /* Finally, test mpn_div_q without msb set.  */
       dp[dn - 1] &= ~GMP_NUMB_HIGHBIT;
       if (dp[dn - 1] == 0)

@@ -1,3 +1,11 @@
+2011-03-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-div.c (main): Added tests for mpn_divrem_2 and
+	mpn_div_qr_2.
+
+	* mpn/generic/div_qr_2.c (mpn_div_qr_2): New file and function.
+	Intended to eventually replace divrem_2.
+
 2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_set_expr): Remove broken declarations.
