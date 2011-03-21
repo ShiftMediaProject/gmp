@@ -1,6 +1,6 @@
 /* mpn_addcnd_n -- Compute R = U + V if CND != 0 or R = U if CND == 0.
    Both cases should take the same time and perform the exact same memory
-   accesses, since this function is intended to be used where side-chanell
+   accesses, since this function is intended to be used where side-channel
    attack resilience is relevant.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
