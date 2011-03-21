@@ -1,3 +1,8 @@
+2011-03-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (gmp_mpn_functions): Reinsert mercurial-bug-removed
+	line.
+
 2011-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (powerpc): Add cpu_path for all three ABIs.
@@ -23,6 +28,7 @@
 
 	* mpn/generic/div_qr_2.c (mpn_div_qr_2): New file and function.
 	Intended to eventually replace divrem_2.
+	* configure.in (gmp_mpn_functions): Add div_qr_2.
 
 2011-03-16  Marc Glisse  <marc.glisse@inria.fr>
 
