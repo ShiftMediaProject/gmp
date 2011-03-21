@@ -1285,7 +1285,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 @item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630}, @samp{powerpc970}, @samp{power4}, @samp{power5})
 @cindex PowerPC
 @table @asis
-@item @samp{ABI=aix64}
+@item @samp{ABI=mode64}
 @cindex AIX
 The AIX 64 ABI uses 64-bit limbs and pointers and is the default on PowerPC 64
 @samp{*-*-aix*} systems.  Applications must be compiled with
@@ -1295,31 +1295,28 @@ gcc  -maix64
 xlc  -q64
 @end example
 
-@item @samp{ABI=mode64}
-The @samp{mode64} ABI uses 64-bit limbs and pointers, and is the default on
-64-bit GNU/Linux, BSD, and Mac OS X/Darwin systems.  Applications must be
-compiled with
+On 64-bit GNU/Linux, BSD, and Mac OS X/Darwin systems, the applications must
+be compiled with
 
 @example
 gcc  -m64
 @end example
 
 @item @samp{ABI=mode32}
-@cindex AIX
 The @samp{mode32} ABI uses a 64-bit @code{long long} limb but with the chip
 still in 32-bit mode and using 32-bit calling conventions.  This is the default
-on for systems where the true 64-bit ABIs are unavailable.  No special compiler
-options are needed for applications.
+for systems where the true 64-bit ABI is unavailable.  No special compiler
+options are typically needed for applications.  This ABI is not available under
+AIX.
 
 @item @samp{ABI=32}
 This is the basic 32-bit PowerPC ABI, with a 32-bit limb.  No special compiler
 options are needed for applications.
 @end table
 
-GMP speed is greatest in @samp{aix64} and @samp{mode32}.  In @samp{ABI=32}
-only the 32-bit ISA is used and this doesn't make full use of a 64-bit chip.
-On a suitable system we could perhaps use more of the ISA, but there are no
-plans to do so.
+GMP's speed is greatest for the @samp{mode64} ABI, the @samp{mode32} ABI is 2nd
+best.  In @samp{ABI=32} only the 32-bit ISA is used and this doesn't make full
+use of a 64-bit chip.
 
 @sp 1
 @need 1000
