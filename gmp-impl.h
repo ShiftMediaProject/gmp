@@ -2731,38 +2731,38 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 #ifndef invert_limb
 #define invert_limb(invxl,xl)                   \
   do {                                          \
-    mp_limb_t dummy;                            \
+    mp_limb_t _dummy;                            \
     ASSERT ((xl) != 0);                         \
-    udiv_qrnnd (invxl, dummy, ~(xl), ~CNST_LIMB(0), xl);  \
+    udiv_qrnnd (invxl, _dummy, ~(xl), ~CNST_LIMB(0), xl);  \
   } while (0)
 #endif
 
-#define invert_pi1(dinv, d1, d0)				\
-  do {								\
-    mp_limb_t v, p, t1, t0, mask;				\
-    invert_limb (v, d1);					\
-    p = d1 * v;							\
-    p += d0;							\
-    if (p < d0)							\
-      {								\
-	v--;							\
-	mask = -(mp_limb_t) (p >= d1);				\
-	p -= d1;						\
-	v += mask;						\
-	p -= mask & d1;						\
-      }								\
-    umul_ppmm (t1, t0, d0, v);					\
-    p += t1;							\
-    if (p < t1)							\
-      {								\
-        v--;							\
-	if (UNLIKELY (p >= d1))					\
-	  {							\
-	    if (p > d1 || t0 >= d0)				\
-	      v--;						\
-	  }							\
-      }								\
-    (dinv).inv32 = v;						\
+#define invert_pi1(dinv, d1, d0)					\
+  do {									\
+    mp_limb_t _v, _p, _t1, _t0, _mask;					\
+    invert_limb (_v, d1);						\
+    _p = (d1) * _v;							\
+    _p += (d0);								\
+    if (_p < (d0))							\
+      {									\
+	_v--;								\
+	_mask = -(mp_limb_t) (_p >= (d1));				\
+	_p -= (d1);							\
+	_v += _mask;							\
+	_p -= _mask & (d1);						\
+      }									\
+    umul_ppmm (_t1, _t0, d0, _v);					\
+    _p += _t1;								\
+    if (_p < _t1)							\
+      {									\
+        _v--;								\
+	if (UNLIKELY (_p >= (d1)))					\
+	  {								\
+	    if (_p > (d1) || _t0 >= (d0))				\
+	      _v--;							\
+	  }								\
+      }									\
+    (dinv).inv32 = _v;							\
   } while (0)
 
 
