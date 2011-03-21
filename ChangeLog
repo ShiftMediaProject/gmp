@@ -1,5 +1,6 @@
 2011-03-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/asm-defs.m4 (define_mpn): Add div_qr_2.
 	* configure.in (gmp_mpn_functions): Reinsert mercurial-bug-removed
 	line.
 
