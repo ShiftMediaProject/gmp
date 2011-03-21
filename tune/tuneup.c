@@ -173,6 +173,7 @@ mp_size_t  mullo_mul_n_threshold        = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  sqrmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
+mp_size_t  div_qr_2_pi2_threshold       = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mu_div_qr_threshold          = MP_SIZE_T_MAX;
@@ -2097,6 +2098,16 @@ tune_divrem_2 (void)
   one (&divrem_2_threshold, &param);
 }
 
+void
+tune_div_qr_2 (void)
+{
+  static struct param_t  param;
+  param.name = "DIV_QR_2_PI2_THRESHOLD";
+  param.function = speed_mpn_div_qr_2_norm;
+  param.check_size = 500;
+  param.min_size = 4;
+  one (&div_qr_2_pi2_threshold, &param);
+}
 
 /* mpn_divexact_1 is vaguely expected to be used on smallish divisors, so
    tune for that.  Its speed can differ on odd or even divisor, so take an
@@ -2508,6 +2519,7 @@ all (void)
 #if 0
   tune_divrem_2 ();
 #endif
+  tune_div_qr_2 ();
   tune_divexact_1 ();
   tune_modexact_1_odd ();
   printf("\n");

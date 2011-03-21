@@ -4472,6 +4472,10 @@ extern mp_size_t			mullo_dc_threshold;
 #define MULLO_MUL_N_THRESHOLD		mullo_mul_n_threshold
 extern mp_size_t			mullo_mul_n_threshold;
 
+#undef	DIV_QR_2_PI2_THRESHOLD
+#define DIV_QR_2_PI2_THRESHOLD		div_qr_2_pi2_threshold
+extern mp_size_t			div_qr_2_pi2_threshold;
+
 #undef	DC_DIV_QR_THRESHOLD
 #define DC_DIV_QR_THRESHOLD		dc_div_qr_threshold
 extern mp_size_t			dc_div_qr_threshold;

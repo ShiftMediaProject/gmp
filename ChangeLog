@@ -1,5 +1,26 @@
 2011-03-21  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/tuneup.c (div_qr_2_pi2_threshold): New global variable.
+	(tune_div_qr_2): New function.
+	(all): Call tune_div_qr_2.
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Added div_qr_2.c.
+
+	* gmp-impl.h (DIV_QR_2_PI2_THRESHOLD): Setup for tuning.
+
+	New 4/2 division loop, based on Torbjörn's work:
+	* mpn/generic/div_qr_2.c (add_sssaaaa, add_csaac): New macros.
+	(udiv_qr_4by2): New macro.
+	(invert_4by2): New function.
+	(mpn_div_qr_2_pi2_norm): New function.
+	(DIV_QR_2_PI2_THRESHOLD): New threshold.
+	(mpn_div_qr_2_pi1_norm): Renamed, from...
+	(mpn_div_qr_2_norm): ... old name.
+	(mpn_div_qr_2_pi1_unnorm): Renamed, from...
+	(mpn_div_qr_2_unnorm): ... old name.
+	(mpn_div_qr_2): Use mpn_div_qr_2_pi2_norm for large enough
+	normalized divisors.
+
 	* gmp-impl.h (udiv_qr_3by2): Avoid a copy.
 
 2011-03-21  Torbjorn Granlund  <tege@gmplib.org>
