@@ -1,5 +1,15 @@
 2011-03-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/addcnd_n.c: New file.
+	* mpn/asm-defs.m4 (define_mpn): Add addcnd_n and subcnd_n.
+	* configure.in (gmp_mpn_functions): Add addcnd_n.
+	* gmp-impl.h (mpn_addcnd_n): Declare.
+
+	* mpn/generic/subcnd_n.c: Combine nails and non-nails functions.
+
+	* gmp-impl.h (invert_pi1): Prepend _ to local variables, protect
+	parameters within () where necessary.
+
 	* mpn/asm-defs.m4 (define_mpn): Add div_qr_2.
 	* configure.in (gmp_mpn_functions): Reinsert mercurial-bug-removed
 	line.
