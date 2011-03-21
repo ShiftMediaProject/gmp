@@ -2860,8 +2860,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 									\
     /* Compute the two most significant limbs of n - q'd */		\
     (r1) = (n1) - (d1) * (q);						\
-    (r0) = (n0);							\
-    sub_ddmmss ((r1), (r0), (r1), (r0), (d1), (d0));			\
+    sub_ddmmss ((r1), (r0), (r1), (n0), (d1), (d0));			\
     umul_ppmm (_t1, _t0, (d0), (q));					\
     sub_ddmmss ((r1), (r0), (r1), (r0), _t1, _t0);			\
     (q)++;								\
