@@ -1,5 +1,8 @@
 2011-03-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (hppa): Under linux, treat 64-bit processors as if they
+	were 32-bit processors.
+
 	* mpn/generic/addcnd_n.c: New file.
 	* mpn/asm-defs.m4 (define_mpn): Add addcnd_n and subcnd_n.
 	* configure.in (gmp_mpn_functions): Add addcnd_n.
