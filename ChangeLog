@@ -1,3 +1,21 @@
+2011-03-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: Copied optimized inner loop
+	from divrem_2.asm.
+
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: First working, but poorly
+	optimized, implementation.
+
+	* mpn/asm-defs.m4 (define_mpn): Added div_qr_2_pi[12]_*norm.
+
+	* mpn/generic/div_qr_2_pi1_norm.c (mpn_div_qr_2_pi1_norm): Moved
+	to separate file, from...
+	* mpn/generic/div_qr_2.c: ... old location.
+
+	* gmp-impl.h (mpn_div_qr_2_pi1_norm): Declare.
+
+	* configure.in: Added div_qr_2_pi1_norm.
+
 2011-03-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (powerpc): Reinsert lost AIX cpu_path 32-bit handling.
