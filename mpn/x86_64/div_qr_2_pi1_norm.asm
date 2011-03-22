@@ -34,11 +34,13 @@ define(`u2',		`%r11')
 define(`u1',		`%r12')
 define(`t1',		`%r13')
 define(`t0',		`%r14')
-	
+define(`md1',		`%r15')
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_div_qr_2_pi1_norm)
+	push	%r15
 	push	%r14
 	push	%r13
 	push	%r12
@@ -57,45 +59,44 @@ PROLOGUE(mpn_div_qr_2_pi1_norm)
 	inc	%rax
 	push	%rax
 	lea	-2(un_param), un
+	mov	d1, md1
+	neg	md1
+
 	jmp	L(next)
 
 	ALIGN(16)
 L(loop):
 	C udiv_qr_3by2 (q,u2,u1,u2,u1,n0, d1,d0,di)
+	C Based on the optimized divrem_2.asm code.
+
 	mov	di, %rax
 	mul	u2
-	mov	u2, t1		C q in t1
-	mov	u1, u2		C Form new u2
-	mov	u1, t0		C q0 in t0
-	add	%rax, t0
-	adc	%rdx, t1
-	mov	d1, %rax
-	imul	t1, %rax
-	sub	%rax, u2
+	mov	u1, t0
+	add	%rax, t0	C q0 in t0
+	adc	u2, %rdx
+	mov	%rdx, t1	C q in t1
+	imul	md1, %rdx
+	mov	d0, %rax
+	lea	(%rdx, u1), u2
+	mul	t1
 	mov	(up, un, 8), u1
 	sub	d0, u1
 	sbb	d1, u2
-	mov	d0, %rax
-	mul	t1
-	add	$1, t1
 	sub	%rax, u1
 	sbb	%rdx, u2
-
-	C Adjustment, mask = - (u2 >= q0) */
-	stc	C Need to subtract u2 + 1
-	sbb	u2, t0
-	sbb	t0, t0
-	add	t0, t1
-	mov	d1, %rax
-	and	t0, %rax
-	and	d0, t0
-	add	t0, u1
-	adc	%rax, u2
+	xor	R32(%rax), R32(%rax)
+	xor	R32(%rdx), R32(%rdx)
+	cmp	t0, u2
+	cmovnc	d0, %rax
+	cmovnc	d1, %rdx
+	adc	$0, t1
+	nop
+	add	%rax, u1
+	adc	%rdx, u2
 	cmp	d1, u2
-	jnc	L(fix)
-L(ok):
+	jae	L(fix)		C jae == jnc
+L(bck):
 	mov	t1, (qp, un, 8)
-	
 L(next):
 	sub	$1, un
 	jnc	L(loop)
@@ -109,16 +110,17 @@ L(end):
 	pop	%r12
 	pop	%r13
 	pop	%r14
+	pop	%r15
 	ret
 
-L(fix):	C Unlikely update. u2 >= d1	
-	jne	L(adjust)	C strict inequality
-	C Now u2 == d1
+L(fix):	C Unlikely update. u2 >= d1
+	seta	%dl
 	cmp	d0, u1
-	jc	L(ok)
-L(adjust):
-	add	$1, t1
+	setae	%al
+	orb	%dl, %al		C "orb" form to placate Sun tools
+	je	L(bck)
+	inc	t1
 	sub	d0, u1
 	sbb	d1, u2
-	jmp 	L(ok)
+	jmp	L(bck)	
 EPILOGUE()

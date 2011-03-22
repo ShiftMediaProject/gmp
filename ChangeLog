@@ -1,5 +1,8 @@
 2011-03-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: Copied optimized inner loop
+	from divrem_2.asm.
+
 	* mpn/x86_64/div_qr_2_pi1_norm.asm: First working, but poorly
 	optimized, implementation.
 
