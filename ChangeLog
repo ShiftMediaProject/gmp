@@ -1,5 +1,8 @@
 2011-03-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (powerpc): Reinsert lost AIX cpu_path 32-bit handling.
+	Reinsert lost linux/bsd cpu_path handling.
+
 	* mpn/generic/mod_1_1.c: Disable powerpc asm for _LONG_LONG_LIMB.
 	* mpn/generic/div_qr_2.c: Likewise.
 
