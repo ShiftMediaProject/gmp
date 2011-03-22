@@ -1,5 +1,8 @@
 2011-03-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: First working, but poorly
+	optimized, implementation.
+
 	* mpn/asm-defs.m4 (define_mpn): Added div_qr_2_pi[12]_*norm.
 
 	* mpn/generic/div_qr_2_pi1_norm.c (mpn_div_qr_2_pi1_norm): Moved
