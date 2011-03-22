@@ -46,6 +46,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    * add_csaac accepts two addends and a carry in, and generates a sum
      and a carry out.  A little like a "full adder".
 */
+#if defined (__GNUC__)  && ! defined (__INTEL_COMPILER)
+
 #if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
   __asm__ ("add\t%7, %k2\n\tadc\t%5, %k1\n\tadc\t$0, %k0"		\
@@ -83,6 +85,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	     "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),			\
 	     "%r" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
 #endif
+#endif /* __GNUC__ */
 
 #ifndef add_sssaaaa
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
@@ -109,7 +112,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     (s) = __s;								\
     (co) = __c + (__s < (ci));						\
   } while (0)
-
 #endif
 
 /* Typically used with r1, r0 same as n3, n2. Other types of overlap
@@ -333,7 +335,7 @@ mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr np, mp_size_t nn,
       r1 |= r0 >> (GMP_LIMB_BITS - shift);
       r0 <<= shift;
       udiv_qr_3by2 (q, r2, r1, r2, r1, r0, d1, d0, di);
-      qp[i] = q;      
+      qp[i] = q;
     }
 
   np[0] = (r1 >> shift) | (r2 << (GMP_LIMB_BITS - shift));
