@@ -76,14 +76,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	     "%1" ((UDItype)(a)), "g" ((UDItype)(b)))
 #endif
 
-/* NOTE: Slightly different from Torbjörn's version. */
 #if HAVE_HOST_CPU_FAMILY_powerpc
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
   __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"	\
 	   : "=r" (s2), "=&r" (s1), "=&r" (s0)				\
-	   : "0"  ((UDItype)(s2)),					\
-	     "r"  ((UDItype)(a1)), "r" ((UDItype)(b1)),			\
-	     "%r" ((UDItype)(a0)), "rI" ((UDItype)(b0)))
+	   : "r"  (s2), "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
 #endif /* __GNUC__ */
 
