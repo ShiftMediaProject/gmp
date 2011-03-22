@@ -1,3 +1,12 @@
+2011-03-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c: Disable powerpc asm for _LONG_LONG_LIMB.
+	* mpn/generic/div_qr_2.c: Likewise.
+
+	* mpn/generic/div_qr_2.c: Use asm just for gcc.
+	Make powerpc add_sssaaaa work for 32-bit case, and use less strict
+	constraints.
+
 2011-03-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (div_qr_2_pi2_threshold): New global variable.
