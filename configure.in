@@ -971,11 +971,14 @@ case $host in
 	    ar_mode64_flags="-X64"
 	    nm_mode64_flags="-X64"
 	    path_mode64=""
+	    p=""
 	    for i in $cpu_path
 	      do path_mode64="${path_mode64}powerpc64/mode64/$i "
 		 path_mode64="${path_mode64}powerpc64/$i "
+		 p="${p} powerpc32/$i "
 	      done
             path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
+	    path="$p $path"
             # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
