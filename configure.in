@@ -955,19 +955,19 @@ case $host in
 
     case $host in
       POWERPC64_PATTERN)
-        case $host in
-          *-*-aix*)
-            # On AIX a true 64-bit ABI is available.
-            # Need -Wc to pass object type flags through to the linker.
-            abilist="mode64 $abilist"
-            cclist_mode64="gcc xlc"
-            gcc_mode64_cflags="-O2 -maix64 -mpowerpc64"
-            gcc_mode64_cflags_optlist="cpu"
+	case $host in
+	  *-*-aix*)
+	    # On AIX a true 64-bit ABI is available.
+	    # Need -Wc to pass object type flags through to the linker.
+	    abilist="mode64 $abilist"
+	    cclist_mode64="gcc xlc"
+	    gcc_mode64_cflags="-O2 -maix64 -mpowerpc64"
+	    gcc_mode64_cflags_optlist="cpu"
 	    gcc_mode64_ldflags="-Wc,-maix64"
-            xlc_mode64_cflags="-O2 -q64 -qmaxmem=20000"
-            xlc_mode64_cflags_optlist="arch"
+	    xlc_mode64_cflags="-O2 -q64 -qmaxmem=20000"
+	    xlc_mode64_cflags_optlist="arch"
 	    xlc_mode64_ldflags="-Wc,-q64"
-            # Must indicate object type to ar and nm
+	    # Must indicate object type to ar and nm
 	    ar_mode64_flags="-X64"
 	    nm_mode64_flags="-X64"
 	    path_mode64=""
@@ -977,25 +977,25 @@ case $host in
 		 path_mode64="${path_mode64}powerpc64/$i "
 		 p="${p} powerpc32/$i "
 	      done
-            path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
+	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
 	    path="$p $path"
-            # grab this object, though it's not a true cycle counter routine
-            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
-            cyclecounter_size_mode64=0
-            ;;
-          *-*-darwin*)
-            # On Darwin we can use 64-bit instructions with a longlong limb,
-            # but the chip still in 32-bit mode.
-            # In theory this can be used on any OS which knows how to save
-            # 64-bit registers in a context switch.
-            #
-            # Note that we must use -mpowerpc64 with gcc, since the
-            # longlong.h macros expect limb operands in a single 64-bit
-            # register, not two 32-bit registers as would be given for a
-            # long long without -mpowerpc64.  In theory we could detect and
-            # accommodate both styles, but the proper 64-bit registers will
-            # be fastest and are what we really want to use.
-            #
+	    # grab this object, though it's not a true cycle counter routine
+	    SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+	    cyclecounter_size_mode64=0
+	    ;;
+	  *-*-darwin*)
+	    # On Darwin we can use 64-bit instructions with a longlong limb,
+	    # but the chip still in 32-bit mode.
+	    # In theory this can be used on any OS which knows how to save
+	    # 64-bit registers in a context switch.
+	    #
+	    # Note that we must use -mpowerpc64 with gcc, since the
+	    # longlong.h macros expect limb operands in a single 64-bit
+	    # register, not two 32-bit registers as would be given for a
+	    # long long without -mpowerpc64.  In theory we could detect and
+	    # accommodate both styles, but the proper 64-bit registers will
+	    # be fastest and are what we really want to use.
+	    #
 	    # One would think -mpowerpc64 would set the assembler in the right
 	    # mode to handle 64-bit instructions.  But for that, also
 	    # -force_cpusubtype_ALL is needed.
@@ -1028,8 +1028,8 @@ case $host in
 	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
 	    path_mode32="${path_mode32}powerpc64/mode32 $vmx_path powerpc64"
 	    path="$p $path"
-            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
-            cyclecounter_size_mode64=0
+	    SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+	    cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
 	  *-*-linux* | *-*-*bsd*)
@@ -1038,38 +1038,44 @@ case $host in
 	    # others require -m64, hence the use of cflags_maybe.  The
 	    # sizeof-long-8 test checks the mode is right (for the no option
 	    # case).
-            #
-            # -mpowerpc64 is not used, since it should be the default in
-            # 64-bit mode.  (We need its effect for the various longlong.h
-            # asm macros to be right of course.)
-            #
-            # gcc64 was an early port of gcc to 64-bit mode, but should be
-            # obsolete before too long.  We prefer plain gcc when it knows
-            # 64-bits.
+	    #
+	    # -mpowerpc64 is not used, since it should be the default in
+	    # 64-bit mode.  (We need its effect for the various longlong.h
+	    # asm macros to be right of course.)
+	    #
+	    # gcc64 was an early port of gcc to 64-bit mode, but should be
+	    # obsolete before too long.	 We prefer plain gcc when it knows
+	    # 64-bits.
 	    #
 	    abilist="mode64 mode32 $abilist"
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
-	    path_mode32="powerpc64/mode32 $vmx_path powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc gcc64"
 	    gcc_mode64_cflags_maybe="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
 	    path_mode64=""
+	    path_mode32=""
+	    p=""
 	    for i in $cpu_path
 	      do path_mode64="${path_mode64}powerpc64/mode64/$i "
 		 path_mode64="${path_mode64}powerpc64/$i "
+		 path_mode32="${path_mode32}powerpc64/mode32/$i "
+		 path_mode32="${path_mode32}powerpc64/$i "
+		 p="${p} powerpc32/$i "
 	      done
 	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
-            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
-            cyclecounter_size_mode64=0
+	    path_mode32="${path_mode32}powerpc64/mode32 $vmx_path powerpc64"
+	    path="$p $path"
+	    SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+	    cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
-        esac
-        ;;
+	esac
+	;;
     esac
     ;;
 
