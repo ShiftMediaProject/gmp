@@ -76,12 +76,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	     "%1" ((UDItype)(a)), "g" ((UDItype)(b)))
 #endif
 
-#if HAVE_HOST_CPU_FAMILY_powerpc
+#if HAVE_HOST_CPU_FAMILY_powerpc && !defined (_LONG_LONG_LIMB)
+/* This works fine for 32-bit and 64-bit limbs, except for 64-bit limbs with a
+   processor running in 32-bit mode, since the carry flag then gets the 32-bit
+   carry.  */
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
   __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"	\
 	   : "=r" (s2), "=&r" (s1), "=&r" (s0)				\
 	   : "r"  (s2), "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
+
 #endif /* __GNUC__ */
 
 #ifndef add_sssaaaa

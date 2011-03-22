@@ -82,7 +82,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	 __CLOBBER_CC)
 #endif
 
-#if HAVE_HOST_CPU_FAMILY_powerpc  /* should work fine for 32-bit and 64-bit */
+#if HAVE_HOST_CPU_FAMILY_powerpc && !defined (_LONG_LONG_LIMB)
+/* This works fine for 32-bit and 64-bit limbs, except for 64-bit limbs with a
+   processor running in 32-bit mode, since the carry flag then gets the 32-bit
+   carry.  */
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
   __asm__ (  "add%I6c	%2, %5, %6\n\t"					\
 	     "adde	%1, %3, %4\n\t"					\
@@ -92,6 +95,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	   : "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
 #endif /* defined (__GNUC__) */
+
 
 #if defined (__arm__) && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
