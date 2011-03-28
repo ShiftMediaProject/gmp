@@ -1,8 +1,8 @@
- dnl  x86 mpn_invert_limb
+dnl  x86 mpn_invert_limb
 
 dnl  Contributed to the GNU project by Niels Möller
 
-dnl  Copyright 2009 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -35,12 +35,17 @@ C AMD K6			 ?
 C AMD K7			46		53
 C AMD K8			 ?
 
-C Register usage:
+C TODO
+C  * These c/l numbers are for a non-PIC build.  Consider falling back to using
+C    the 'div' instruction for PIC builds.
+C  * Avoid push/pop on k7.
+C  * Perhaps use this file--or at least the algorithm--for more machines than k7.
 
-C Input D in %edi
-C Current approximation is in %eax and/or %ecx
-C %ebx and %edx are temporaries.
-C %esi and %ebp is unused.
+C Register usage:
+C   Input D in %edi
+C   Current approximation is in %eax and/or %ecx
+C   %ebx and %edx are temporaries
+C   %esi and %ebp are unused
 
 defframe(PARAM_DIVISOR,4)
 
@@ -55,9 +60,9 @@ ifdef(`DARWIN',`
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
-	C Adding the push of %ebp and the corresponding pop seems to
-	C reduce running time from 46 to 43 cycles on K7. Don't know
-	C if this is a benchmark artefact or some alignment issue.
+	C Adding the unnecessary push of %ebp and the corresponding pop seems
+	C to *reduce* running time from 46 to 43 cycles on K7.  Don't know if
+	C this is a benchmark artefact or some alignment issue.
 
 	push	%ebx	FRAME_pushl()
 	C push	%ebp	FRAME_pushl()
@@ -70,7 +75,7 @@ ifdef(`PIC',`
 	LEA(	approx_tab, %ebx)
 	movzwl	-1024(%ebx, %eax, 2), %eax
 ',`
-	movzwl	-1024+approx_tab(%eax, %eax), %eax	C %eax = v0
+	movzwl	-1024+approx_tab`'(%eax, %eax), %eax	C %eax = v0
 ')
 
 	C v1 = (v0 << 4) - ((v0*v0*d_21) >> 32) - 1
