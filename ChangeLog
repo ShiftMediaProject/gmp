@@ -1,3 +1,8 @@
+2011-03-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/k7/invert_limb.asm: Protect movzwl register parameters from
+	being interpreted as m4 macro parameters.
+
 2011-03-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2_pi1_norm.asm: Copied optimized inner loop
