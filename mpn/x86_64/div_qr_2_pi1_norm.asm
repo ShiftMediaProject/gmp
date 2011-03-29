@@ -25,14 +25,16 @@ include(`../config.m4')
 C		c/l
 C INPUT PARAMETERS
 define(`qp',		`%rdi')
-define(`up',		`%rsi')
-define(`un_param',	`%rdx')
-define(`d1',		`%rcx')
-define(`d0',		`%r8')
-define(`di', 		`%r9')
+define(`rp',		`%rsi')
+define(`up_param',	`%rdx')
+define(`un',		`%rcx')
+define(`d1',		`%r8')
+define(`d0',		`%r9')
+define(`di_param',	`8(%rsp)')
 
-define(`un',		`%r10')
-define(`u2',		`%r11')
+define(`di',		`%r10')
+define(`up',		`%r11')
+define(`u2',		`%rbx')
 define(`u1',		`%r12')
 define(`t1',		`%r13')
 define(`t0',		`%r14')
@@ -42,13 +44,16 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_div_qr_2_pi1_norm)
+	mov	di_param, di
+	mov	up_param, up
 	push	%r15
 	push	%r14
 	push	%r13
 	push	%r12
-
-	mov	-16(up, un_param, 8), u1
-	mov	-8(up, un_param, 8), u2
+	push	%rbx
+	
+	mov	-16(up, un, 8), u1
+	mov	-8(up, un, 8), u2
 
 	mov	u1, t0
 	mov	u2, t1
@@ -60,7 +65,7 @@ PROLOGUE(mpn_div_qr_2_pi1_norm)
 	sbb	%rax, %rax
 	inc	%rax
 	push	%rax
-	lea	-2(un_param), un
+	lea	-2(un), un
 	mov	d1, md1
 	neg	md1
 
@@ -103,12 +108,13 @@ L(next):
 	sub	$1, un
 	jnc	L(loop)
 L(end):
-	mov	u2, 8(up)
-	mov	u1, (up)
+	mov	u2, 8(rp)
+	mov	u1, (rp)
 
 	C qh on stack
 	pop	%rax
 
+	pop	%rbx
 	pop	%r12
 	pop	%r13
 	pop	%r14
