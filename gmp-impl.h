@@ -1296,7 +1296,7 @@ __GMP_DECLSPEC void      mpn_nussbaumer_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_
 __GMP_DECLSPEC mp_size_t mpn_fft_next_size __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
 
 #define   mpn_div_qr_2_pi1_norm __MPN(div_qr_2_pi1_norm)
-  __GMP_DECLSPEC mp_limb_t mpn_div_qr_2_pi1_norm __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t));
+  __GMP_DECLSPEC mp_limb_t mpn_div_qr_2_pi1_norm __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t));
 
 #define   mpn_sbpi1_div_qr __MPN(sbpi1_div_qr)
 __GMP_DECLSPEC mp_limb_t mpn_sbpi1_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));

@@ -428,10 +428,9 @@ main (int argc, char **argv)
 	  /* Missing: divrem_2 with fraction limbs. */
 
 	  /* mpn_div_qr_2 (normalized) */
-	  MPN_COPY (rp, np, nn);
 	  qp[nn - 2] = qran1;
 	     
-	  qh = mpn_div_qr_2 (qp, rp, nn, dp + dn - 2);
+	  qh = mpn_div_qr_2 (qp, rp, np, nn, dp + dn - 2);
 	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
 	  qp[nn - 2] = qh;
@@ -443,10 +442,9 @@ main (int argc, char **argv)
 	  if (dp[dn - 1] == 0)
 	    continue;
 
-	  MPN_COPY (rp, np, nn);
 	  qp[nn - 2] = qran1;
 	     
-	  qh = mpn_div_qr_2 (qp, rp, nn, dp + dn - 2);
+	  qh = mpn_div_qr_2 (qp, rp, np, nn, dp + dn - 2);
 	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
 	  qp[nn - 2] = qh;

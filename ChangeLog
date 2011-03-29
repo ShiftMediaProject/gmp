@@ -1,5 +1,19 @@
 2011-03-29  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h (mpn_div_qr_2_pi1_norm): Updated declaration.
+	* gmp-h.in (mpn_div_qr_2): Likewise.
+
+	* tests/mpn/t-div.c (main): Adapted to new mpn_div_qr2 interface.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DIV_QR_2): Likewise.
+
+	* mpn/generic/div_qr_2.c (mpn_div_qr_2_pi2_norm): Added rp
+	argument. Don't clobber the input dividend.
+	(mpn_div_qr_2_pi1_unnorm): Likewise.
+	(mpn_div_qr_2): Likewise.
+	* mpn/generic/div_qr_2_pi1_norm.c (mpn_div_qr_2_pi1_norm): Likewise.
+
+2011-03-29  Niels Möller  <nisse@lysator.liu.se>
+
 	* mpn/x86/k7/invert_limb.asm: Use mov rather than push and pop.
 	 Earlier load of divisor from stack.
 

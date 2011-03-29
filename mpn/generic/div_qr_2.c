@@ -220,7 +220,7 @@ invert_4by2 (mp_ptr di, mp_limb_t d1, mp_limb_t d0)
 }
 
 static mp_limb_t
-mpn_div_qr_2_pi2_norm (mp_ptr qp, mp_ptr np, mp_size_t nn,
+mpn_div_qr_2_pi2_norm (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 		       mp_limb_t d1, mp_limb_t d0, mp_limb_t di1, mp_limb_t di0)
 {
   mp_limb_t qh;
@@ -262,14 +262,14 @@ mpn_div_qr_2_pi2_norm (mp_ptr qp, mp_ptr np, mp_size_t nn,
       udiv_qr_3by2 (q, r1, r0, r1, r0, np[0], d1, d0, di1);
       qp[0] = q;
     }
-  np[1] = r1;
-  np[0] = r0;
+  rp[1] = r1;
+  rp[0] = r0;
 
   return qh;
 }
 
 static mp_limb_t
-mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr np, mp_size_t nn,
+mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 			 mp_limb_t d1, mp_limb_t d0, int shift, mp_limb_t di)
 {
   mp_limb_t qh;
@@ -296,8 +296,8 @@ mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr np, mp_size_t nn,
       qp[i] = q;
     }
 
-  np[0] = (r1 >> shift) | (r2 << (GMP_LIMB_BITS - shift));
-  np[1] = r2 >> shift;
+  rp[0] = (r1 >> shift) | (r2 << (GMP_LIMB_BITS - shift));
+  rp[1] = r2 >> shift;
   return qh;
 }
 
@@ -312,7 +312,7 @@ mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr np, mp_size_t nn,
    2. nn >= 2.  */
 
 mp_limb_t
-mpn_div_qr_2 (mp_ptr qp, mp_ptr np, mp_size_t nn,
+mpn_div_qr_2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 	      mp_srcptr dp)
 {
   mp_limb_t d1;
@@ -334,13 +334,13 @@ mpn_div_qr_2 (mp_ptr qp, mp_ptr np, mp_size_t nn,
 	{
 	  gmp_pi1_t dinv;
 	  invert_pi1 (dinv, d1, d0);
-	  return mpn_div_qr_2_pi1_norm (qp, np, nn, d1, d0, dinv.inv32);
+	  return mpn_div_qr_2_pi1_norm (qp, rp, np, nn, d1, d0, dinv.inv32);
 	}
       else
 	{
 	  mp_limb_t di[2];
 	  invert_4by2 (di, d1, d0);
-	  return mpn_div_qr_2_pi2_norm (qp, np, nn, d1, d0, di[1], di[0]);
+	  return mpn_div_qr_2_pi2_norm (qp, rp, np, nn, d1, d0, di[1], di[0]);
 	}
     }
   else
@@ -350,6 +350,6 @@ mpn_div_qr_2 (mp_ptr qp, mp_ptr np, mp_size_t nn,
       d1 = (d1 << shift) | (d0 >> (GMP_LIMB_BITS - shift));
       d0 <<= shift;
       invert_pi1 (dinv, d1, d0);
-      return mpn_div_qr_2_pi1_unnorm (qp, np, nn, d1, d0, shift, dinv.inv32);
+      return mpn_div_qr_2_pi1_unnorm (qp, rp, np, nn, d1, d0, shift, dinv.inv32);
     }
 }

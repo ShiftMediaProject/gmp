@@ -2770,6 +2770,7 @@ int speed_routine_count_zeros_setup
   {									\
     mp_ptr    wp, xp;							\
     mp_limb_t yp[2];							\
+    mp_limb_t rp[2];							\
     unsigned  i;							\
     double    t;							\
     TMP_DECL;								\
@@ -2777,11 +2778,7 @@ int speed_routine_count_zeros_setup
     SPEED_RESTRICT_COND (s->size >= 2);					\
 									\
     TMP_MARK;								\
-    SPEED_TMP_ALLOC_LIMBS (xp, s->size, s->align_xp);			\
     SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
-									\
-    /* source is destroyed */						\
-    MPN_COPY (xp, s->xp, s->size);					\
 									\
     /* divisor must be normalized */					\
     MPN_COPY (yp, s->yp_block, 2);					\
@@ -2793,15 +2790,16 @@ int speed_routine_count_zeros_setup
 	if (yp[1] == 0)							\
 	  yp[1] = 1;							\
       }									\
-    speed_operand_src (s, xp, s->size);					\
+    speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, yp, 2);					\
     speed_operand_dst (s, wp, s->size);					\
+    speed_operand_dst (s, rp, 2);					\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, xp, s->size, yp);					\
+      function (wp, rp, s->xp, s->size, yp);				\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\
