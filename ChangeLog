@@ -1,3 +1,8 @@
+2011-03-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/k7/invert_limb.asm: Use mov rather than push and pop.
+	 Earlier load of divisor from stack.
+
 2011-03-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/invert_limb.asm: Protect movzwl register parameters from

@@ -32,13 +32,12 @@ C P4 model 2  (Northwood)	 ?
 C P4 model 3  (Prescott)	 ?
 C P4 model 4  (Nocona)		 ?
 C AMD K6			 ?
-C AMD K7			46		53
+C AMD K7			41		53
 C AMD K8			 ?
 
 C TODO
 C  * These c/l numbers are for a non-PIC build.  Consider falling back to using
 C    the 'div' instruction for PIC builds.
-C  * Avoid push/pop on k7.
 C  * Perhaps use this file--or at least the algorithm--for more machines than k7.
 
 C Register usage:
@@ -60,16 +59,13 @@ ifdef(`DARWIN',`
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
-	C Adding the unnecessary push of %ebp and the corresponding pop seems
-	C to *reduce* running time from 46 to 43 cycles on K7.  Don't know if
-	C this is a benchmark artefact or some alignment issue.
+	mov	PARAM_DIVISOR, %eax
+	C Avoid push/pop on k7.	
+	subl	$8, %esp	FRAME_subl_esp(8)
+	mov	%ebx, (%esp)
+	mov	%edi, 4(%esp)
 
-	push	%ebx	FRAME_pushl()
-	C push	%ebp	FRAME_pushl()
-	push	%edi	FRAME_pushl()
-
-	mov	PARAM_DIVISOR, %edi
-	mov	%edi, %eax
+	mov	%eax, %edi
 	shr	$22, %eax
 ifdef(`PIC',`
 	LEA(	approx_tab, %ebx)
@@ -110,9 +106,9 @@ ifdef(`PIC',`
 	adc	%edi, %edx
 	sub	%edx, %eax				C %eax = v3
 
-	pop	%edi
-	C pop	%ebp
-	pop	%ebx
+	mov	(%esp), %ebx
+	mov	4(%esp), %edi
+	addl	$8, %esp
 
 	ret
 
