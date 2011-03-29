@@ -78,26 +78,26 @@ define(`vp',  `%ebp')
 	mov	$0x2aaaaaab, %eax
 
 	push	%ebx			FRAME_pushl()
-	movl	PARAM_SIZE, %ebx	C size
+	mov	PARAM_SIZE, %ebx	C size
 
 	push	rp			FRAME_pushl()
-	movl	PARAM_DST, rp
+	mov	PARAM_DST, rp
 
-	mull	%ebx
+	mul	%ebx
 
 	push	up			FRAME_pushl()
-	movl	PARAM_SRC, up
+	mov	PARAM_SRC, up
 
 	not	%edx			C count = -(size\8)-1
 	mov	%edx, VAR_COUNT
 
 	push	vp			FRAME_pushl()
-	movl	PARAM_DBLD, vp
+	mov	PARAM_DBLD, vp
 
-	leal	3(%edx,%edx,2), %ecx	C count*3+3 = -(size\6)*3
-	xorl	%edx, %edx
-	leal	(%ebx,%ecx,2), %ebx	C size + (count*3+3)*2 = size % 6
-	orl	%ebx, %ebx
+	lea	3(%edx,%edx,2), %ecx	C count*3+3 = -(size\6)*3
+	xor	%edx, %edx
+	lea	(%ebx,%ecx,2), %ebx	C size + (count*3+3)*2 = size % 6
+	or	%ebx, %ebx
 	jz	L(exact)
 
 L(oop):
@@ -112,11 +112,11 @@ ifdef(`CPU_P6',`
 	adc	%edx, %edx		C save a carry bit in edx
 ifdef(`CPU_P6',`
 	adc	%edx, %edx ')		C save another carry bit in edx
-	decl	%ebx
+	dec	%ebx
 	mov	%eax, (rp)
 	lea	4(rp), rp
 	jnz	L(oop)
-	movl	vp, VAR_TMP
+	mov	vp, VAR_TMP
 L(exact):
 	incl	VAR_COUNT
 	jz	L(end)
