@@ -61,7 +61,7 @@ PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
 	mov	PARAM_DIVISOR, %eax
 	C Avoid push/pop on k7.	
-	subl	$8, %esp	FRAME_subl_esp(8)
+	sub	$8, %esp	FRAME_subl_esp(8)
 	mov	%ebx, (%esp)
 	mov	%edi, 4(%esp)
 
@@ -108,7 +108,7 @@ ifdef(`PIC',`
 
 	mov	(%esp), %ebx
 	mov	4(%esp), %edi
-	addl	$8, %esp
+	add	$8, %esp
 
 	ret
 

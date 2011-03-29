@@ -66,18 +66,18 @@ deflit(`FRAME',0)
 define(`rp',  `%edi')
 define(`up',  `%esi')
 
-	movl	PARAM_SIZE, %eax	C size
+	mov	PARAM_SIZE, %eax	C size
 	push	up			FRAME_pushl()
 	push	rp			FRAME_pushl()
-	xorl	%edx, %edx
-	movl	PARAM_SRC, up
-	movl	PARAM_DST, rp
-	movl	%ebx, SAVE_EBX
-	movl	%eax, %ebx
+	xor	%edx, %edx
+	mov	PARAM_SRC, up
+	mov	PARAM_DST, rp
+	mov	%ebx, SAVE_EBX
+	mov	%eax, %ebx
 	shr	$3, %eax
 
 	not	%eax			C count = -(size\8)-i
-	andl	$7, %ebx		C size % 8
+	and	$7, %ebx		C size % 8
 	jz	L(exact)
 
 L(oop):
@@ -92,13 +92,13 @@ ifdef(`CPU_P6',`
 	adc	%edx, %edx		C save a carry bit in edx
 ifdef(`CPU_P6',`
 	adc	%edx, %edx ')		C save another carry bit in edx
-	decl	%ebx
+	dec	%ebx
 	jnz	L(oop)
 L(exact):
 	inc	%eax
 	jz	L(end)
 	mov	%eax, VAR_COUNT
-	movl	%ebp, SAVE_EBP
+	mov	%ebp, SAVE_EBP
 
 	ALIGN(16)
 L(top):
@@ -143,9 +143,9 @@ ifdef(`CPU_P6',`
 	lea	32(rp), rp
 	jne	L(top)
 
-	movl	SAVE_EBP, %ebp
+	mov	SAVE_EBP, %ebp
 L(end):
-	movl	SAVE_EBX, %ebx
+	mov	SAVE_EBX, %ebx
 
 ifdef(`CPU_P6',`
 	xor	%eax, %eax
