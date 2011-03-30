@@ -1,5 +1,7 @@
 2011-03-30  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/x86_64/div_qr_2u_pi1.asm: New file.
+
 	* configure.in (gmp_mpn_functions): Add div_qr_2u_pi1.
 
 	* gmp-impl.h (mpn_div_qr_2u_pi1): Declare.
