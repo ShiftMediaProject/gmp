@@ -1,4 +1,4 @@
-dnl  x86-64 mpn_div_qr_2_pi1_norm
+dnl  x86-64 mpn_div_qr_2n_pi1
 dnl  -- Divide an mpn number by a normalized 2-limb number,
 dnl     using a single-limb inverse.
 
@@ -43,7 +43,7 @@ define(`md1',		`%r15')
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_div_qr_2_pi1_norm)
+PROLOGUE(mpn_div_qr_2n_pi1)
 	mov	di_param, di
 	mov	up_param, up
 	push	%r15

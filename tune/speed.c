@@ -230,8 +230,8 @@ const struct routine_t {
   { "mpn_divrem_2_div",  speed_mpn_divrem_2_div,    },
   { "mpn_divrem_2_inv",  speed_mpn_divrem_2_inv,    },
 
-  { "mpn_div_qr_2_norm", speed_mpn_div_qr_2_norm,   },
-  { "mpn_div_qr_2_unnorm", speed_mpn_div_qr_2_unnorm, },
+  { "mpn_div_qr_2n",     speed_mpn_div_qr_2n,       },
+  { "mpn_div_qr_2u",     speed_mpn_div_qr_2u,       },
 
   { "mpn_divexact_1",    speed_mpn_divexact_1,    FLAG_R },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3          },

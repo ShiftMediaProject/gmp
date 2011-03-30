@@ -1,3 +1,32 @@
+2011-03-30  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (mpn_div_qr_2n_pi1): Use new name in declaration.
+	* tune/speed.h (speed_mpn_div_qr_2n): Likewise.
+	(speed_mpn_div_qr_2u): Likewise.
+
+	* tune/tuneup.c (tune_div_qr_2): Use new name speed_mpn_div_qr_2n.
+
+	* tune/speed.c (routine): Use new names mpn_div_qr_2n and
+	mpn_div_qr_2u, also on the command line.
+
+	* tune/common.c (speed_mpn_div_qr_2n): Renamed, from...
+	(speed_mpn_div_qr_2_norm): ... old name.
+	(speed_mpn_div_qr_2u): Renamed, from...
+	(speed_mpn_div_qr_2_unnorm): ... old name.
+
+	* mpn/generic/div_qr_2_pi1_norm.c (mpn_div_qr_2n_pi1): Renamed,
+	from...
+	(mpn_div_qr_2_pi1_norm): ...old name.
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: Likewise.
+
+	* mpn/generic/div_qr_2.c (mpn_div_qr_2n_pi2): Renamed, from...
+	(mpn_div_qr_2_pi2_norm): ... old name.
+	(mpn_div_qr_2u_pi1): Renamed, from...
+	(mpn_div_qr_2_pi1_unnorm): ... old name.
+	(mpn_div_qr_2): Cal functions using new names.
+
+	* mpn/asm-defs.m4: Renamed div_qr_2-functions to new names.
+
 2011-03-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2_pi1_norm.asm: Updated to use a separate rp

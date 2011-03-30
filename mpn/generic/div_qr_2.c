@@ -220,8 +220,8 @@ invert_4by2 (mp_ptr di, mp_limb_t d1, mp_limb_t d0)
 }
 
 static mp_limb_t
-mpn_div_qr_2_pi2_norm (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
-		       mp_limb_t d1, mp_limb_t d0, mp_limb_t di1, mp_limb_t di0)
+mpn_div_qr_2n_pi2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
+		   mp_limb_t d1, mp_limb_t d0, mp_limb_t di1, mp_limb_t di0)
 {
   mp_limb_t qh;
   mp_size_t i;
@@ -269,8 +269,8 @@ mpn_div_qr_2_pi2_norm (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 }
 
 static mp_limb_t
-mpn_div_qr_2_pi1_unnorm (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
-			 mp_limb_t d1, mp_limb_t d0, int shift, mp_limb_t di)
+mpn_div_qr_2u_pi1 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
+		   mp_limb_t d1, mp_limb_t d0, int shift, mp_limb_t di)
 {
   mp_limb_t qh;
   mp_limb_t r2, r1, r0;
@@ -334,13 +334,13 @@ mpn_div_qr_2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 	{
 	  gmp_pi1_t dinv;
 	  invert_pi1 (dinv, d1, d0);
-	  return mpn_div_qr_2_pi1_norm (qp, rp, np, nn, d1, d0, dinv.inv32);
+	  return mpn_div_qr_2n_pi1 (qp, rp, np, nn, d1, d0, dinv.inv32);
 	}
       else
 	{
 	  mp_limb_t di[2];
 	  invert_4by2 (di, d1, d0);
-	  return mpn_div_qr_2_pi2_norm (qp, rp, np, nn, d1, d0, di[1], di[0]);
+	  return mpn_div_qr_2n_pi2 (qp, rp, np, nn, d1, d0, di[1], di[0]);
 	}
     }
   else
@@ -350,6 +350,6 @@ mpn_div_qr_2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
       d1 = (d1 << shift) | (d0 >> (GMP_LIMB_BITS - shift));
       d0 <<= shift;
       invert_pi1 (dinv, d1, d0);
-      return mpn_div_qr_2_pi1_unnorm (qp, rp, np, nn, d1, d0, shift, dinv.inv32);
+      return mpn_div_qr_2u_pi1 (qp, rp, np, nn, d1, d0, shift, dinv.inv32);
     }
 }

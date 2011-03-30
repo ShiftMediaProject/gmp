@@ -2103,7 +2103,7 @@ tune_div_qr_2 (void)
 {
   static struct param_t  param;
   param.name = "DIV_QR_2_PI2_THRESHOLD";
-  param.function = speed_mpn_div_qr_2_norm;
+  param.function = speed_mpn_div_qr_2n;
   param.check_size = 500;
   param.min_size = 4;
   one (&div_qr_2_pi2_threshold, &param);
