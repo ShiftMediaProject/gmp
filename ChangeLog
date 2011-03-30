@@ -1,5 +1,18 @@
 2011-03-30  Niels Möller  <nisse@lysator.liu.se>
 
+	* configure.in (gmp_mpn_functions): Add div_qr_2u_pi1.
+
+	* gmp-impl.h (mpn_div_qr_2u_pi1): Declare.
+
+	* mpn/generic/div_qr_2u_pi1.c (mpn_div_qr_2u_pi1): Moved to
+	separate file, from...
+	* mpn/generic/div_qr_2.c: ... old location.
+
+	* mpn/generic/div_qr_2n_pi1.c: Renamed file, from...
+	* mpn/generic/div_qr_2_pi1_norm.c: ...old name.
+	* mpn/x86_64/div_qr_2n_pi1.asm: Renamed file, from...
+	* mpn/x86_64/div_qr_2_pi1_norm.asm: ...old name.
+
 	* gmp-impl.h (mpn_div_qr_2n_pi1): Use new name in declaration.
 	* tune/speed.h (speed_mpn_div_qr_2n): Likewise.
 	(speed_mpn_div_qr_2u): Likewise.
@@ -70,7 +83,7 @@
 
 	* gmp-impl.h (mpn_div_qr_2_pi1_norm): Declare.
 
-	* configure.in: Added div_qr_2_pi1_norm.
+	* configure.in (gmp_mpn_functions): Added div_qr_2_pi1_norm.
 
 2011-03-22  Torbjorn Granlund  <tege@gmplib.org>
 

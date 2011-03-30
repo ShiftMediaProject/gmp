@@ -268,38 +268,6 @@ mpn_div_qr_2n_pi2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
   return qh;
 }
 
-static mp_limb_t
-mpn_div_qr_2u_pi1 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
-		   mp_limb_t d1, mp_limb_t d0, int shift, mp_limb_t di)
-{
-  mp_limb_t qh;
-  mp_limb_t r2, r1, r0;
-  mp_size_t i;
-
-  ASSERT (nn >= 2);
-  ASSERT (d1 & GMP_NUMB_HIGHBIT);
-  ASSERT (shift > 0);
-
-  r2 = np[nn-1] >> (GMP_LIMB_BITS - shift);
-  r1 = (np[nn-1] << shift) | (np[nn-2] >> (GMP_LIMB_BITS - shift));
-  r0 = np[nn-2] << shift;
-
-  udiv_qr_3by2 (qh, r2, r1, r2, r1, r0, d1, d0, di);
-
-  for (i = nn - 2 - 1; i >= 0; i--)
-    {
-      mp_limb_t q;
-      r0 = np[i];
-      r1 |= r0 >> (GMP_LIMB_BITS - shift);
-      r0 <<= shift;
-      udiv_qr_3by2 (q, r2, r1, r2, r1, r0, d1, d0, di);
-      qp[i] = q;
-    }
-
-  rp[0] = (r1 >> shift) | (r2 << (GMP_LIMB_BITS - shift));
-  rp[1] = r2 >> shift;
-  return qh;
-}
 
 /* Divide num {np,nn} by den {dp,2} and write the nn-2 least
    significant quotient limbs at qp and the 2 long remainder at np.
