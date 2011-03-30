@@ -40,6 +40,11 @@ define(`t1',		`%r13')
 define(`t0',		`%r14')
 define(`md1',		`%r15')
 
+C TODO
+C * Store qh in the same stack slot as di_param, instead of pushing
+C   it. (we could put it in register %rbp, but then we would need to
+C   save and restore that instead, which doesn't seem like a win).
+	
 ASM_START()
 	TEXT
 	ALIGN(16)
