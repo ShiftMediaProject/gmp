@@ -23,7 +23,7 @@
 	(mpn_div_qr_2_pi2_norm): ... old name.
 	(mpn_div_qr_2u_pi1): Renamed, from...
 	(mpn_div_qr_2_pi1_unnorm): ... old name.
-	(mpn_div_qr_2): Cal functions using new names.
+	(mpn_div_qr_2): Call functions using new names.
 
 	* mpn/asm-defs.m4: Renamed div_qr_2-functions to new names.
 
