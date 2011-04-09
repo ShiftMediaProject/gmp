@@ -3135,9 +3135,6 @@ int speed_routine_count_zeros_setup
   }
 
 
-#endif
-
-
 #define SPEED_ROUTINE_MPN_BACK_TO_BACK(function)			\
   {									\
     unsigned  i;							\
@@ -3177,3 +3174,6 @@ int speed_routine_count_zeros_setup
 
 #define SPEED_ROUTINE_MPN_ZERO(function)				\
   SPEED_ROUTINE_MPN_ZERO_CALL (function (wp, s->size))
+
+
+#endif
