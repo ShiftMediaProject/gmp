@@ -1515,6 +1515,7 @@ case $host in
 	cyclecounter_size_64=2
 	abilist="64 32"
 	path_64="x86_64"
+	extra_functions_64="invert_limb_table"
 
 	case $host_cpu in
 	  x86_64)

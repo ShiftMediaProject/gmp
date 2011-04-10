@@ -1,3 +1,17 @@
+2011-04-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/asm-defs.m4 (define_mpn): Added invert_limb_table.
+
+	* configure.in: Add invert_limb_table to extra_functions_64 on
+	x86_64.
+
+	* mpn/x86_64/invert_limb.asm: Changed references from approx_tab
+	mpn_invert_limb_table.
+
+	* mpn/x86_64/invert_limb_table.asm (mpn_invert_limb_table): New
+	file. Extracted approximation table from invert_limb.asm, renamed
+	and made global.
+
 2011-03-30  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2u_pi1.asm: New file.
