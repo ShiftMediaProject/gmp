@@ -1,6 +1,9 @@
 2011-04-11  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/x86_64/invert_limb.asm: Make proper PIC reference.
+	* mpn/x86/k7/invert_limb.asm: Use deflit for Darwin bug workaround.
+	Undo 2011-03-28 change.
+
+	* mpn/asm-defs.m4 (define_mpn): Use deflit.
 
 2011-04-10  Niels Möller  <nisse@lysator.liu.se>
 
