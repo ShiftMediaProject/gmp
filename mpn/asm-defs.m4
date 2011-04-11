@@ -1302,7 +1302,7 @@ dnl  function that might be implemented in assembler is here.
 
 define(define_mpn,
 m4_assert_numargs(1)
-`define(`mpn_$1',`MPN(`$1')')')
+`deflit(`mpn_$1',`MPN(`$1')')')
 
 define_mpn(add)
 define_mpn(add_1)
