@@ -52,7 +52,7 @@ ASM_START()
 
 C Make approx_tab global to work around Apple relocation bug.
 ifdef(`DARWIN',`
-	define(`approx_tab', MPN(invert_limb_tab))
+	deflit(`approx_tab', MPN(invert_limb_tab))
 	GLOBL	approx_tab')
 
 	TEXT
@@ -71,7 +71,7 @@ ifdef(`PIC',`
 	LEA(	approx_tab, %ebx)
 	movzwl	-1024(%ebx, %eax, 2), %eax
 ',`
-	movzwl	-1024+approx_tab`'(%eax, %eax), %eax	C %eax = v0
+	movzwl	-1024+approx_tab(%eax, %eax), %eax	C %eax = v0
 ')
 
 	C v1 = (v0 << 4) - ((v0*v0*d_21) >> 32) - 1
