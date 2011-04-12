@@ -45,6 +45,7 @@ ifdef(`DARWIN',`
 	mov	mpn_invert_limb_table@GOTPCREL(%rip), %r8
 	add	$-512, %r8
 ',`
+	.protected mpn_invert_limb_table
 	lea	-512+mpn_invert_limb_table(%rip), %r8
 ')',`
 	movabs	$-512+mpn_invert_limb_table, %r8

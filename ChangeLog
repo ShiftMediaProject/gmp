@@ -1,3 +1,8 @@
+2011-04-12  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86_64/invert_limb.asm [PIC]: Declare mpn_invert_limb_table
+	as .protected.
+
 2011-04-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/invert_limb.asm: Use deflit for Darwin bug workaround.
