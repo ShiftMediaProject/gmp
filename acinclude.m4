@@ -1941,8 +1941,8 @@ X86_PATTERN | x86_64-*-*)
 esac
 
 cat >conftest.c <<EOF
-extern const int foo;		/* Suppresses C++'s suppression of foo */
-const int foo = 123;
+extern const int foo[];		/* Suppresses C++'s suppression of foo */
+const int foo[] = {1,2,3};
 EOF
 echo "Test program:" >&AC_FD_CC
 cat conftest.c >&AC_FD_CC
