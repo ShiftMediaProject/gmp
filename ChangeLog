@@ -1,3 +1,8 @@
+2011-04-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (GMP_ASM_RODATA): Make 'foo' larger to avoid clang
+	problems.
+
 2011-04-12  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/invert_limb.asm [PIC]: Declare mpn_invert_limb_table
