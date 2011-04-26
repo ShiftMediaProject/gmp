@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for SPARC assembler (32 and 64 bit).
 
 
-dnl  Copyright 2002 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -19,6 +19,9 @@ dnl  Lesser General Public License for more details.
 dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
+
+
+changecom(;)
 
 
 dnl  Usage: REGISTER(reg,attr)
