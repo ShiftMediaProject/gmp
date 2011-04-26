@@ -1,6 +1,7 @@
 2011-04-26  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/sparc32/sparc-defs.m4 (changecom): Remove harmful definition.
+	* mpn/sparc32/sparc-defs.m4 (changecom): Don't redefine '!' as it
+	interferes with expressions.
 
 2011-04-20  Torbjorn Granlund  <tege@gmplib.org>
 
