@@ -1,3 +1,7 @@
+2011-04-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc32/sparc-defs.m4 (changecom): Remove harmful definition.
+
 2011-04-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (GMP_ASM_RODATA): Make 'foo' larger to avoid clang
