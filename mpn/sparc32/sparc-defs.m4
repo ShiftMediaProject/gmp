@@ -21,9 +21,6 @@ dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
-changecom(!)
-
-
 dnl  Usage: REGISTER(reg,attr)
 dnl
 dnl  Give a ".register reg,attr" directive, if the assembler supports it.
