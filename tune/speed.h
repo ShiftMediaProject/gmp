@@ -384,7 +384,7 @@ void mftb_function __GMP_PROTO ((unsigned p[2]));
    is used without a -DPIC to tell us about it.  */
 #if defined(__GNUC__) && ! defined (NO_ASM)	\
   && (defined (__i386__) || defined (__i486__))
-#ifdef PIC
+#if defined (PIC) || defined (__APPLE_CC__)
 #define speed_cyclecounter(p)						\
   do {									\
     int	 __speed_cyclecounter__save_ebx;				\
