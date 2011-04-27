@@ -1,5 +1,8 @@
 2011-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h (speed_cyclecounter): Always use PIC variant when
+	compiled with Apple's GCC.
+
 	* mpn/x86/darwin.m4 (LEA): Complete rewrite.
 	(m4append): New macro.
 
