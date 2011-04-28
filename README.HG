@@ -2,11 +2,11 @@ When you have checked out a fresh copy of GMP from the repository, the
 usual ./configure && make is not sufficient to build the sources. You
 need to have the following extra tools installed:
 
-* autoconf-2.59
+* autoconf-2.65
 
-* automake-1.8.4
+* automake-1.11.1
 
-* libtool-1.5.24
+* libtool-2.2.6b
 
 Later versions of these tools may work as well. Then the following
 steps are needed:
