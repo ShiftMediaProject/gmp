@@ -867,7 +867,7 @@ ifelse(eval($'`#>1 || m4_length('m4_doublequote($`'1)`)!=0),1,($'`@))')')
 dnl  Called: deflit_emptyargcheck(macroname,$#,`$1')
 define(deflit_emptyargcheck,
 `ifelse(eval($2==1 && !m4_dollarhash_1_if_noparen_p && m4_length(`$3')==0),1,
-`m4_error(`dont use a deflit as $1() because it loses the brackets (see deflit in asm-incl.m4 for more information)
+`m4_error(`dont use a deflit as $1() because it loses the brackets (see deflit in asm-defs.m4 for more information)
 ')')')
 
 
