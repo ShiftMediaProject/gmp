@@ -417,7 +417,7 @@ main (int argc, char **argv)
 	  /* mpn_divrem_2 */
 	  MPN_COPY (rp, np, nn);
 	  qp[nn - 2] = qp[nn-1] = qran1;
-	     
+
 	  qh = mpn_divrem_2 (qp, 0, rp, nn, dp + dn - 2);
 	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
@@ -429,7 +429,7 @@ main (int argc, char **argv)
 
 	  /* mpn_div_qr_2 (normalized) */
 	  qp[nn - 2] = qran1;
-	     
+
 	  qh = mpn_div_qr_2 (qp, rp, np, nn, dp + dn - 2);
 	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
@@ -443,13 +443,13 @@ main (int argc, char **argv)
 	    continue;
 
 	  qp[nn - 2] = qran1;
-	     
+
 	  qh = mpn_div_qr_2 (qp, rp, np, nn, dp + dn - 2);
 	  ASSERT_ALWAYS (qp[nn - 2] == qran1);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - 1] == qran1);
 	  qp[nn - 2] = qh;
 
-	  check_one (qp, rp, np, nn, dp + dn - 2, 2, "mpn_div_qr_2 (unnormalized)", 0);	  
+	  check_one (qp, rp, np, nn, dp + dn - 2, 2, "mpn_div_qr_2 (unnormalized)", 0);
 
 	  qp[nn - dn + 1] = qran1;
 	}
