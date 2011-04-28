@@ -21,7 +21,7 @@ dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
-changecom(;)
+changecom(;)	dnl cannot use default # since that's used in REGISTER decls
 
 
 dnl  Usage: REGISTER(reg,attr)

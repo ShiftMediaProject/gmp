@@ -2657,6 +2657,11 @@ Recent versions of Valgrind are getting support for MMX and SSE/SSE2
 instructions, for past versions GMP will need to be configured not to use
 those, ie.@: for an x86 without them (for instance plain @samp{i486}).
 
+GMP's assembly code sometimes promotes a read of the limbs to some larger size,
+for efficiency.  GMP will do this even at the start and end of a multilimb
+operand, using naturaly aligned operations on the larger type.  This may lead
+to benign reads outside of allocated areas, triggering complants from Valgrind.
+
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
 application problem, see @ref{Reporting Bugs}.
