@@ -1,6 +1,5 @@
 #! /bin/sh
 
-# FIXME: Add libtoolize too to this list?
 # FIXME: Use automake -a? Then we could remove various
 # automake-supplied files from the repository.
 
@@ -9,7 +8,7 @@ rm -rf autom4te.cache
 
 # Stick to automake-1.8, since later versions require the ylwrap
 # script.
-aclocal && autoconf && autoheader && automake
+aclocal && libtoolize -c && autoconf && autoheader && automake
 
 cat >doc/version.texi <<EOF
 @set UPDATED 19 January 2038

@@ -5,6 +5,9 @@
 	(mpz_remove): Likewise.
 	(mpf_eq): Likewise.
 
+	* ltmain.sh: Remove.
+	* .bootstrap: Let libtoolize generate ltmain.sh.
+
 2011-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (x86_64): Support bobcat specifically.
