@@ -1,3 +1,10 @@
+2011-04-30  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-h.in (mpz_cdiv_q_2exp): Use mp_bitcnt_t to match the definition
+	and the documentation.
+	(mpz_remove): Likewise.
+	(mpf_eq): Likewise.
+
 2011-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (x86_64): Support bobcat specifically.
