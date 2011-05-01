@@ -113,13 +113,24 @@ check_mpf (void)
     r.seed(a);
     mpf_class b;
     b = r.get_f();
+    mpf_class c(r.get_f());
+    ASSERT_ALWAYS (c.get_prec() == mpf_get_default_prec());
+    mpf_class d(r.get_f(),212);
+    ASSERT_ALWAYS (d.get_prec() >= 212);
   }
   {
     gmp_randclass r(gmp_randinit_default);
-    int a = 123, b = 128;
+    int a = 123, b = 198;
     r.seed(a);
     mpf_class c;
     c = r.get_f(b);
+    ASSERT_ALWAYS (c.get_prec() == mpf_get_default_prec());
+    mpf_class d(r.get_f(b));
+    ASSERT_ALWAYS (d.get_prec() >= 198);
+    mpf_class e(r.get_f(b)-r.get_f());
+    ASSERT_ALWAYS (e.get_prec() >= 198);
+    mpf_class f(r.get_f(60),300);
+    ASSERT_ALWAYS (f.get_prec() >= 300);
   }
 }
 

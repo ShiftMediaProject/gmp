@@ -9,6 +9,7 @@
 	* .bootstrap: Let libtoolize generate ltmain.sh.
 
 	* tests/cxx/t-ops2.cc: Add a couple tests.
+	* tests/cxx/t-rand.cc: Likewise.
 
 2011-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
