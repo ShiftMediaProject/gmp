@@ -5021,7 +5021,8 @@ truncated to an integer.
 @cindex Random number functions
 @cindex Float random number functions
 Generate a uniformly distributed random float in @var{rop}, such that @math{0
-@le{} @var{rop} < 1}, with @var{nbits} significant bits in the mantissa.
+@le{} @var{rop} < 1}, with @var{nbits} significant bits in the mantissa or
+less if the precision of @var{rop} is smaller.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization}) before
