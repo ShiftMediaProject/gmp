@@ -8,6 +8,8 @@
 	* ltmain.sh: Remove.
 	* .bootstrap: Let libtoolize generate ltmain.sh.
 
+	* tests/cxx/t-ops2.cc: Add a couple tests.
+
 2011-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (x86_64): Support bobcat specifically.
