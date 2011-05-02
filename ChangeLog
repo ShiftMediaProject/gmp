@@ -1,3 +1,7 @@
+2011-05-02  Marc Glisse  <marc.glisse@inria.fr>
+
+	* .bootstrap: libtoolize doesn't need -c.
+
 2011-05-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Don't allocate extra limbs at the end
