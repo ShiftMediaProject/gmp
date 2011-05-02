@@ -30,7 +30,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 
-/* 3/2 loop, for unnormalized divisor */
+/* 3/2 loop, for unnormalized divisor. Caller must pass shifted d1 and
+   d0, while {np,nn} is shifted on the fly. */
 mp_limb_t
 mpn_div_qr_2u_pi1 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 		   mp_limb_t d1, mp_limb_t d0, int shift, mp_limb_t di)
@@ -40,7 +41,7 @@ mpn_div_qr_2u_pi1 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
   mp_size_t i;
 
   ASSERT (nn >= 2);
-  ASSERT (!(d1 & GMP_NUMB_HIGHBIT));
+  ASSERT (d1 & GMP_NUMB_HIGHBIT);
   ASSERT (shift > 0);
 
   r2 = np[nn-1] >> (GMP_LIMB_BITS - shift);
