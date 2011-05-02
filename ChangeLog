@@ -1,3 +1,10 @@
+2011-05-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/gcdext.c (mpz_gcdext): Don't allocate extra limbs at the end
+	of mpn_gcdext parameters.
+
+	* doc/gmp.texi (mpn_gcdext): Updated doc.
+
 2011-05-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/div_qr_2u_pi1.c (mpn_div_qr_2u_pi1): Fixed ASSERT.

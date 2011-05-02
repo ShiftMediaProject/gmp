@@ -50,8 +50,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
     {
       usize = asize;
       vsize = bsize;
-      up = TMP_ALLOC_LIMBS (usize + 1);
-      vp = TMP_ALLOC_LIMBS (vsize + 1);
+      up = TMP_ALLOC_LIMBS (usize);
+      vp = TMP_ALLOC_LIMBS (vsize);
       MPN_COPY (up, ap, usize);
       MPN_COPY (vp, bp, vsize);
       u = a;
@@ -63,8 +63,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
     {
       usize = bsize;
       vsize = asize;
-      up = TMP_ALLOC_LIMBS (usize + 1);
-      vp = TMP_ALLOC_LIMBS (vsize + 1);
+      up = TMP_ALLOC_LIMBS (usize);
+      vp = TMP_ALLOC_LIMBS (vsize);
       MPN_COPY (up, bp, usize);
       MPN_COPY (vp, ap, vsize);
       u = b;
@@ -73,8 +73,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       tt = s;
     }
 
-  tmp_gp = TMP_ALLOC_LIMBS (usize + 1);
-  tmp_sp = TMP_ALLOC_LIMBS (usize + 1);
+  tmp_gp = TMP_ALLOC_LIMBS (usize);
+  tmp_sp = TMP_ALLOC_LIMBS (usize);
 
   if (vsize == 0)
     {
