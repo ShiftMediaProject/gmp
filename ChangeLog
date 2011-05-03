@@ -2,6 +2,9 @@
 
 	* .bootstrap: libtoolize doesn't need -c.
 
+	* configfsf.guess: Update to version of 2011-02-02.
+	* configfsf.sub: Update to version of 2011-03-23.
+
 2011-05-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Don't allocate extra limbs at the end
