@@ -1,3 +1,8 @@
+2011-05-04  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/gcdext.c (mpz_gcdext): Reduced temporary allocations. Use
+	mpz_divexact when computing the second cofactor.
+
 2011-05-03  David Harvey  <dmharvey@cims.nyu.edu>
 
 	* configure.in: make invert_limb_table work correctly with
