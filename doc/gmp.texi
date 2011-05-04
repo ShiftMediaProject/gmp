@@ -5387,11 +5387,11 @@ Both source operands are destroyed.
 
 Compatibility notes: GMP 4.3.0 and 4.3.1 defined @math{S} less strictly.
 Earlier as well as later GMP releases define @math{S} as described here.
-GMP releases before GMP 4.3.0 required allocation of an extra limb for both
-input and output areas. More precisely, the areas
-@{@var{up}, @math{@var{un}+1}@} and @{@var{vp}, @math{@var{vn}+1}@} were
-destroyed, and the areas pointed to by
-@var{gp} and @var{sp} should each have room for @math{@var{vn}+1} limbs.
+GMP releases before GMP 4.3.0 required additional space for both input and output
+areas. More precisely, the areas @{@var{up}, @math{@var{un}+1}@} and
+@{@var{vp}, @math{@var{vn}+1}@} were destroyed (i.e.@: the operands plus an
+extra limb past the end of each), and the areas pointed to by @var{gp} and
+@var{sp} should each have room for @math{@var{un}+1} limbs.
 
 @end deftypefun
 
