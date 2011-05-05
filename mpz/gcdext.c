@@ -50,10 +50,10 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       MPZ_PTR_SWAP (s, t);
     }
 
-  if (bsize == 0)    
+  if (bsize == 0)
     {
-      /* g = |a|, s = sign(a), t = 0. */
-      ssize = SIZ (a) >= 0 ? 1 : -1;
+      /* g = |a|, s = sgn(a), t = 0. */
+      ssize = SIZ (a) >= 0 ? (asize != 0) : -1;
 
       if (ALLOC (g) < asize)
 	_mpz_realloc (g, asize);
@@ -77,7 +77,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   tmp_bp = TMP_ALLOC_LIMBS (bsize);
   MPN_COPY (tmp_ap, ap, asize);
   MPN_COPY (tmp_bp, bp, bsize);
-  
+
   tmp_gp = TMP_ALLOC_LIMBS (bsize);
   tmp_sp = TMP_ALLOC_LIMBS (bsize);
 
