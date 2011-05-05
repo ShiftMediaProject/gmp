@@ -740,6 +740,10 @@ main ()
   stepping = fms & 0xf;
 
   modelstr = "$guess_cpu";
+
+  /**************************************************/
+  /*** WARNING: keep this list in sync with fat.c ***/
+  /**************************************************/
   if (strcmp (vendor_string, "GenuineIntel") == 0)
     {
       switch (family)

@@ -107,6 +107,9 @@ __gmpn_cpuvec_init (void)
   family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
   model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
 
+  /*********************************************************/
+  /*** WARNING: keep this list in sync with config.guess ***/
+  /*********************************************************/
   if (strcmp (vendor_string, "GenuineIntel") == 0)
     {
       switch (family)
@@ -168,14 +171,18 @@ __gmpn_cpuvec_init (void)
 	    case 0x25:		/* WSM Clarkdale/Arrandale */
 	    case 0x28:
 	    case 0x29:
-	    case 0x2a:		/* SB */
 	    case 0x2b:
 	    case 0x2c:		/* WSM Gulftown */
-	    case 0x2d:		/* SBC-EP */
 	    case 0x2e:		/* NHM Beckton */
 	    case 0x2f:		/* WSM Eagleton */
 	      CPUVEC_SETUP_core2;
-	      CPUVEC_SETUP_corei;
+	      CPUVEC_SETUP_coreinhm;
+	      break;
+
+	    case 0x2a:		/* SB */
+	    case 0x2d:		/* SBC-EP */
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreisbr;
 	      break;
 	    }
 
