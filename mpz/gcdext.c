@@ -55,9 +55,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       /* g = |a|, s = sgn(a), t = 0. */
       ssize = SIZ (a) >= 0 ? (asize != 0) : -1;
 
-      if (ALLOC (g) < asize)
-	_mpz_realloc (g, asize);
-      gp = PTR (g);
+      gp = MPZ_REALLOC (g, asize);
       MPN_COPY (gp, ap, asize);
       SIZ (g) = asize;
 
@@ -102,16 +100,12 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
   if (s != NULL)
     {
-      if (ALLOC (s) < ssize)
-	_mpz_realloc (s, ssize);
-      sp = PTR (s);
+      sp = MPZ_REALLOC (s, ssize);
       MPN_COPY (sp, tmp_sp, ssize);
       SIZ (s) = SIZ (&stmp);
     }
 
-  if (ALLOC (g) < gsize)
-    _mpz_realloc (g, gsize);
-  gp = PTR (g);
+  gp = MPZ_REALLOC (g, gsize);
   MPN_COPY (gp, tmp_gp, gsize);
   SIZ (g) = gsize;
 
