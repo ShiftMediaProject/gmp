@@ -1,3 +1,8 @@
+2011-05-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/gcdext.c: Correct sgn computation.
+	Use MPZ_REALLOC.
+
 2011-05-05  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/x86_64/fat/fat.c: Update for Sandy Bridge.
