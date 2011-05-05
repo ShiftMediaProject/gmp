@@ -3,7 +3,7 @@ dnl  x86 fat binary entrypoints.
 dnl  Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
 dnl  Torbjorn Granlund (port to x86_64)
 
-dnl  Copyright 2003, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2009, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,6 +33,17 @@ dnl  "instrument" profiling scheme anyway.
 define(`WANT_PROFILING',no)
 
 
+dnl  We define PIC_OR_DARWIN as a helper symbol, the use it for suppressing
+dnl  normal, fast call code, since that triggers problems on darwin.
+dnl
+dnl  FIXME: There might be a more elegant solution, adding less overhead.
+
+ifdef(`DARWIN',
+`define(`PIC_OR_DARWIN')')
+ifdef(`PIC',
+`define(`PIC_OR_DARWIN')')
+
+
 	TEXT
 
 
@@ -59,7 +70,7 @@ define(FAT_ENTRY,
 m4_assert_numargs(2)
 `	ALIGN(ifdef(`PIC',16,8))
 `'PROLOGUE($1)
-ifdef(`PIC',
+ifdef(`PIC_OR_DARWIN',
 `	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %rax)
 	jmp	*$2(%rax)
 ',`dnl non-PIC
@@ -129,7 +140,7 @@ L(fat_init):
 	pop	%rdx
 	pop	%rsi
 	pop	%rdi
-ifdef(`PIC',`
+ifdef(`PIC_OR_DARWIN',`
 	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %r10)
 	jmp	*(%r10,%rax)
 ',`dnl non-PIC
