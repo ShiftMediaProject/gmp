@@ -1,3 +1,8 @@
+2011-05-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/fat_entry.asm (PIC_OR_DARWIN): New symbol.  Use it to
+	work around Darwin problems.
+
 2011-05-04  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Reduced temporary allocations. Use
