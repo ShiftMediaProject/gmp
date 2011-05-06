@@ -31,7 +31,7 @@ LDADD = -L$(top_builddir)/.libs \
 
 if WANT_CXX
 check_PROGRAMS = t-assign t-binary t-cast t-constr t-headers t-istream \
-  t-locale t-misc t-ops t-ops2 t-ostream t-prec t-rand t-ternary t-unary
+  t-locale t-misc t-mix t-ops t-ops2 t-ostream t-prec t-rand t-ternary t-unary
 TESTS = $(check_PROGRAMS)
 endif
 
@@ -43,6 +43,7 @@ t_headers_SOURCES = t-headers.cc
 t_istream_SOURCES = t-istream.cc
 t_locale_SOURCES  = t-locale.cc clocale.c
 t_misc_SOURCES    = t-misc.cc
+t_mix_SOURCES     = t-mix.cc
 t_ops_SOURCES     = t-ops.cc
 t_ops2_SOURCES    = t-ops2.cc
 t_ostream_SOURCES = t-ostream.cc

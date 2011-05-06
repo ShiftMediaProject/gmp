@@ -6499,8 +6499,10 @@ anything.
 @deftypefun {} mpz_class::mpz_class (type @var{n})
 Construct an @code{mpz_class}.  All the standard C++ types may be used, except
 @code{long long} and @code{long double}, and all the GMP C++ classes can be
-used.  Any necessary conversion follows the corresponding C function, for
-example @code{double} follows @code{mpz_set_d} (@pxref{Assigning Integers}).
+used, although conversions from @code{mpq_class} and @code{mpf_class} are
+@code{explicit}.  Any necessary conversion follows the corresponding C
+function, for example @code{double} follows @code{mpz_set_d}
+(@pxref{Assigning Integers}).
 @end deftypefun
 
 @deftypefun explicit mpz_class::mpz_class (mpz_t @var{z})
@@ -6583,9 +6585,10 @@ canonical form, or if not then @code{mpq_class::canonicalize} called.
 @deftypefun {} mpq_class::mpq_class (type @var{op})
 @deftypefunx {} mpq_class::mpq_class (integer @var{num}, integer @var{den})
 Construct an @code{mpq_class}.  The initial value can be a single value of any
-type, or a pair of integers (@code{mpz_class} or standard C++ integer types)
-representing a fraction, except that @code{long long} and @code{long double}
-are not supported.  For example,
+type (conversion from @code{mpf_class} is @code{explicit}), or a pair of
+integers (@code{mpz_class} or standard C++ integer types) representing a
+fraction, except that @code{long long} and @code{long double} are not
+supported.  For example,
 
 @example
 mpq_class q (99);

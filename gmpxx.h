@@ -1288,8 +1288,11 @@ public:
   __gmp_expr() { mpz_init(mp); }
 
   __gmp_expr(const __gmp_expr &z) { mpz_init_set(mp, z.mp); }
+  template <class T>
+  __gmp_expr(const __gmp_expr<mpz_t, T> &expr)
+  { mpz_init(mp); __gmp_set_expr(mp, expr); }
   template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr)
+  explicit __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpz_init(mp); __gmp_set_expr(mp, expr); }
 
   __gmp_expr(signed char c) { mpz_init_set_si(mp, c); }
@@ -1456,8 +1459,14 @@ public:
   __gmp_expr() { mpq_init(mp); }
 
   __gmp_expr(const __gmp_expr &q) { mpq_init(mp); mpq_set(mp, q.mp); }
+  template <class T>
+  __gmp_expr(const __gmp_expr<mpz_t, T> &expr)
+  { mpq_init(mp); __gmp_set_expr(mp, expr); }
+  template <class T>
+  __gmp_expr(const __gmp_expr<mpq_t, T> &expr)
+  { mpq_init(mp); __gmp_set_expr(mp, expr); }
   template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr)
+  explicit __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpq_init(mp); __gmp_set_expr(mp, expr); }
 
   __gmp_expr(signed char c) { mpq_init(mp); mpq_set_si(mp, c, 1); }
