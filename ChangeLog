@@ -17,6 +17,9 @@
 	(mpz_class): Dedup the string constructors.
 	(mpq_class): Likewise.
 
+	* tests/cxx/t-ops3.cc: New file.
+	* tests/cxx/Makefile.am: Added t-ops3.
+
 2011-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/gcdext.c: Correct sgn computation.
