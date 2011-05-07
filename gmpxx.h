@@ -1203,19 +1203,6 @@ struct __gmp_resolve_expr<mpf_t, mpq_t>
 
 
 
-template <class T, class U, class V>
-struct __gmp_resolve_temp
-{
-  typedef __gmp_expr<T, T> temp_type;
-};
-
-template <class T>
-struct __gmp_resolve_temp<T, T, T>
-{
-  typedef const __gmp_expr<T, T> & temp_type;
-};
-
-
 // classes for evaluating unary and binary expressions
 template <class T, class Op>
 struct __gmp_unary_expr
@@ -1311,15 +1298,7 @@ public:
   __gmp_expr(double d) { mpz_init_set_d(mp, d); }
   // __gmp_expr(long double ld) { mpz_init_set_d(mp, ld); }
 
-  explicit __gmp_expr(const char *s)
-  {
-    if (mpz_init_set_str (mp, s, 0) != 0)
-      {
-        mpz_clear (mp);
-        throw std::invalid_argument ("mpz_set_str");
-      }
-  }
-  __gmp_expr(const char *s, int base)
+  explicit __gmp_expr(const char *s, int base = 0)
   {
     if (mpz_init_set_str (mp, s, base) != 0)
       {
@@ -1327,15 +1306,7 @@ public:
         throw std::invalid_argument ("mpz_set_str");
       }
   }
-  explicit __gmp_expr(const std::string &s)
-  {
-    if (mpz_init_set_str (mp, s.c_str(), 0) != 0)
-      {
-        mpz_clear (mp);
-        throw std::invalid_argument ("mpz_set_str");
-      }
-  }
-  __gmp_expr(const std::string &s, int base)
+  explicit __gmp_expr(const std::string &s, int base = 0)
   {
     if (mpz_init_set_str(mp, s.c_str(), base) != 0)
       {
@@ -1458,7 +1429,11 @@ public:
   // constructors and destructor
   __gmp_expr() { mpq_init(mp); }
 
-  __gmp_expr(const __gmp_expr &q) { mpq_init(mp); mpq_set(mp, q.mp); }
+  __gmp_expr(const __gmp_expr &q)
+  {
+    mpz_init_set(mpq_numref(mp), mpq_numref(q.mp));
+    mpz_init_set(mpq_denref(mp), mpq_denref(q.mp));
+  }
   template <class T>
   __gmp_expr(const __gmp_expr<mpz_t, T> &expr)
   { mpq_init(mp); __gmp_set_expr(mp, expr); }
@@ -1485,16 +1460,7 @@ public:
   __gmp_expr(double d) { mpq_init(mp); mpq_set_d(mp, d); }
   // __gmp_expr(long double ld) { mpq_init(mp); mpq_set_ld(mp, ld); }
 
-  explicit __gmp_expr(const char *s)
-  {
-    mpq_init (mp);
-    if (mpq_set_str (mp, s, 0) != 0)
-      {
-        mpq_clear (mp);
-        throw std::invalid_argument ("mpq_set_str");
-      }
-  }
-  __gmp_expr(const char *s, int base)
+  explicit __gmp_expr(const char *s, int base = 0)
   {
     mpq_init (mp);
     if (mpq_set_str(mp, s, base) != 0)
@@ -1503,16 +1469,7 @@ public:
         throw std::invalid_argument ("mpq_set_str");
       }
   }
-  explicit __gmp_expr(const std::string &s)
-  {
-    mpq_init (mp);
-    if (mpq_set_str (mp, s.c_str(), 0) != 0)
-      {
-        mpq_clear (mp);
-        throw std::invalid_argument ("mpq_set_str");
-      }
-  }
-  __gmp_expr(const std::string &s, int base)
+  explicit __gmp_expr(const std::string &s, int base = 0)
   {
     mpq_init(mp);
     if (mpq_set_str (mp, s.c_str(), base) != 0)
@@ -1521,13 +1478,16 @@ public:
         throw std::invalid_argument ("mpq_set_str");
       }
   }
-  explicit __gmp_expr(mpq_srcptr q) { mpq_init(mp); mpq_set(mp, q); }
+  explicit __gmp_expr(mpq_srcptr q)
+  {
+    mpz_init_set(mpq_numref(mp), mpq_numref(q));
+    mpz_init_set(mpq_denref(mp), mpq_denref(q));
+  }
 
   __gmp_expr(const mpz_class &num, const mpz_class &den)
   {
-    mpq_init(mp);
-    mpz_set(mpq_numref(mp), num.get_mpz_t());
-    mpz_set(mpq_denref(mp), den.get_mpz_t());
+    mpz_init_set(mpq_numref(mp), num.get_mpz_t());
+    mpz_init_set(mpq_denref(mp), den.get_mpz_t());
   }
 
   ~__gmp_expr() { mpq_clear(mp); }
@@ -1875,40 +1835,25 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpz_t, T> &expr)
   expr.eval(z);
 }
 
-inline void __gmp_set_expr(mpz_ptr z, const mpq_class &q)
-{
-  mpz_set_q(z, q.get_mpq_t());
-}
-
 template <class T>
 inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpq_t, T> &expr)
 {
-  mpq_class temp(expr);
+  mpq_class const& temp(expr);
   mpz_set_q(z, temp.get_mpq_t());
-}
-
-inline void __gmp_set_expr(mpz_ptr z, const mpf_class &f)
-{
-  mpz_set_f(z, f.get_mpf_t());
 }
 
 template <class T>
 inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpf_t, T> &expr)
 {
-  mpf_class temp(expr);
+  mpf_class const& temp(expr);
   mpz_set_f(z, temp.get_mpf_t());
-}
-
-inline void __gmp_set_expr(mpq_ptr q, const mpz_class &z)
-{
-  mpq_set_z(q, z.get_mpz_t());
 }
 
 template <class T>
 inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpz_t, T> &expr)
 {
-  mpz_class temp(expr);
-  mpq_set_z(q, temp.get_mpz_t());
+  __gmp_set_expr(mpq_numref(q), expr);
+  mpz_set_ui(mpq_denref(q), 1);
 }
 
 inline void __gmp_set_expr(mpq_ptr q, const mpq_class &r)
@@ -1922,39 +1867,24 @@ inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpq_t, T> &expr)
   expr.eval(q);
 }
 
-inline void __gmp_set_expr(mpq_ptr q, const mpf_class &f)
-{
-  mpq_set_f(q, f.get_mpf_t());
-}
-
 template <class T>
 inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpf_t, T> &expr)
 {
-  mpf_class temp(expr);
+  mpf_class const& temp(expr);
   mpq_set_f(q, temp.get_mpf_t());
-}
-
-inline void __gmp_set_expr(mpf_ptr f, const mpz_class &z)
-{
-  mpf_set_z(f, z.get_mpz_t());
 }
 
 template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<mpz_t, T> &expr)
 {
-  mpz_class temp(expr);
+  mpz_class const& temp(expr);
   mpf_set_z(f, temp.get_mpz_t());
-}
-
-inline void __gmp_set_expr(mpf_ptr f, const mpq_class &q)
-{
-  mpf_set_q(f, q.get_mpq_t());
 }
 
 template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<mpq_t, T> &expr)
 {
-  mpq_class temp(expr);
+  mpq_class const& temp(expr);
   mpf_set_q(f, temp.get_mpq_t());
 }
 
@@ -2618,7 +2548,7 @@ fun(const __gmp_expr<T, U> &expr)                                            \
 template <class T, class U>                                   \
 inline type fun(const __gmp_expr<T, U> &expr)                 \
 {                                                             \
-  typename __gmp_resolve_temp<T, T, U>::temp_type temp(expr); \
+  __gmp_expr<T, T> const& temp(expr); \
   return eval_fun::eval(temp.__get_mp());                     \
 }
 
@@ -2706,8 +2636,8 @@ inline type fun(const __gmp_expr<T, U> &expr1,                          \
 		const __gmp_expr<V, W> &expr2)                          \
 {                                                                       \
   typedef typename __gmp_resolve_expr<T, V>::value_type eval_type;      \
-  typename __gmp_resolve_temp<eval_type, T, U>::temp_type temp1(expr1); \
-  typename __gmp_resolve_temp<eval_type, V, W>::temp_type temp2(expr2); \
+  __gmp_expr<eval_type, eval_type> const& temp1(expr1); \
+  __gmp_expr<eval_type, eval_type> const& temp2(expr2); \
   return eval_fun::eval(temp1.__get_mp(), temp2.__get_mp());            \
 }
 
@@ -2717,14 +2647,14 @@ inline type fun(const __gmp_expr<T, U> &expr1,                          \
 template <class T, class U>                                        \
 inline type fun(const __gmp_expr<T, U> &expr, type2 t)             \
 {                                                                  \
-  typename __gmp_resolve_temp<T, T, U>::temp_type temp(expr);      \
+  __gmp_expr<T, T> const& temp(expr);      \
   return eval_fun::eval(temp.__get_mp(), static_cast<bigtype>(t)); \
 }                                                                  \
                                                                    \
 template <class T, class U>                                        \
 inline type fun(type2 t, const __gmp_expr<T, U> &expr)             \
 {                                                                  \
-  typename __gmp_resolve_temp<T, T, U>::temp_type temp(expr);      \
+  __gmp_expr<T, T> const& temp(expr);      \
   return eval_fun::eval(static_cast<bigtype>(t), temp.__get_mp()); \
 }
 

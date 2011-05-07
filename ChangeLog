@@ -10,6 +10,13 @@
 	* tests/cxx/t-assign.cc: Minor tweak.
 	* tests/cxx/t-misc.cc: Likewise.
 
+	* gmpxx.h (__gmp_resolve_temp): Remove.
+	(__gmp_set_expr): Remove some overloads.
+	(mpq_class): mpz_init_set the numerator and denominator instead of
+	mpq_init + mpq_set.
+	(mpz_class): Dedup the string constructors.
+	(mpq_class): Likewise.
+
 2011-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/gcdext.c: Correct sgn computation.
