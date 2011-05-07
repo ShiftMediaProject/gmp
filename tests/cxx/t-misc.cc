@@ -186,7 +186,7 @@ check_mpq (void)
 
   // mpq_class::get_num, mpq_class::get_den
   {
-    mpq_class  q(4,5);
+    const mpq_class  q(4,5);
     mpz_class  z;
     z = q.get_num(); ASSERT_ALWAYS (z == 4);
     z = q.get_den(); ASSERT_ALWAYS (z == 5);
@@ -200,7 +200,7 @@ check_mpq (void)
     p = q.get_den_mpz_t(); ASSERT_ALWAYS (mpz_cmp_ui (p, 5) == 0);
   }
   {
-    mpq_class  q(4,5);
+    const mpq_class  q(4,5);
     mpz_srcptr p;
     p = q.get_num_mpz_t(); ASSERT_ALWAYS (mpz_cmp_ui (p, 4) == 0);
     p = q.get_den_mpz_t(); ASSERT_ALWAYS (mpz_cmp_ui (p, 5) == 0);

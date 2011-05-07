@@ -257,7 +257,7 @@ check_mpq (void)
   // operator=(unsigned short int)
   {
     unsigned short int a = 54321u;
-    mpz_class b;
+    mpq_class b;
     b = a; ASSERT_ALWAYS(b == 54321u);
   }
 

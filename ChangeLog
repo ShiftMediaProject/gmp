@@ -7,6 +7,9 @@
 	* tests/cxx/t-mix.cc: New file.
 	* tests/cxx/Makefile.am: Added t-mix.
 
+	* tests/cxx/t-assign.cc: Minor tweak.
+	* tests/cxx/t-misc.cc: Likewise.
+
 2011-05-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/gcdext.c: Correct sgn computation.
