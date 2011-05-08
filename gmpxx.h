@@ -1932,7 +1932,7 @@ public:
 	    unsigned long int = 0) const
   { Op::eval(p, expr.val.__get_mp()); }
   const val_type & get_val() const { return expr.val; }
-  unsigned long int get_prec() const { return expr.val.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
 };
 
 
@@ -1953,7 +1953,7 @@ public:
 	    mp_bitcnt_t prec) const
   { __gmp_expr<T, T> temp(expr.val, prec); Op::eval(p, temp.__get_mp()); }
   const val_type & get_val() const { return expr.val; }
-  unsigned long int get_prec() const { return expr.val.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
 };
 
 
@@ -1986,7 +1986,7 @@ public:
   { Op::eval(p, expr.val1.__get_mp(), expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2013,7 +2013,7 @@ public:
   { Op::eval(p, expr.val1.__get_mp(), expr.val2); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const { return expr.val1.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val1.get_prec(); }
 };
 
 template <class T, class U, class Op>
@@ -2032,7 +2032,7 @@ public:
   { Op::eval(p, expr.val1, expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const { return expr.val2.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val2.get_prec(); }
 };
 
 
@@ -2063,7 +2063,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2096,7 +2096,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2129,7 +2129,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2162,7 +2162,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2197,7 +2197,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const { return expr.val1.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val1.get_prec(); }
 };
 
 template <class T, class U, class V, class Op>
@@ -2224,7 +2224,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const { return expr.val2.get_prec(); }
+  mp_bitcnt_t get_prec() const { return expr.val2.get_prec(); }
 };
 
 
@@ -2255,7 +2255,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2288,7 +2288,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2321,7 +2321,7 @@ public:
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
@@ -2354,7 +2354,7 @@ public:                                                                     \
   { eval_fun::eval(q, expr.val1.get_mpz_t(), expr.val2.get_mpq_t()); }      \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <>                                                                 \
@@ -2372,7 +2372,7 @@ public:                                                                     \
   { eval_fun::eval(q, expr.val1.get_mpq_t(), expr.val2.get_mpz_t()); }      \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2394,7 +2394,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2416,7 +2416,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2438,7 +2438,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2460,7 +2460,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T, class U>                                                 \
@@ -2483,7 +2483,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };                                                                          \
                                                                             \
 template <class T, class U>                                                 \
@@ -2506,7 +2506,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
 };
 
 
@@ -2897,7 +2897,7 @@ private:
 public:
   __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
   void eval(mpz_ptr z) const { __gmp_rand_function::eval(z, state, bits); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 };
 
 template <>
@@ -2910,7 +2910,7 @@ public:
   __gmp_expr(gmp_randstate_t s, const mpz_class &z) : state(s), range(z) { }
   void eval(mpz_ptr z) const
   { __gmp_rand_function::eval(z, state, range.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 };
 
 template <>
@@ -2923,7 +2923,7 @@ public:
   __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
   void eval(mpf_ptr f, mp_bitcnt_t prec) const
   { __gmp_rand_function::eval(f, state, (bits>0) ? get_prec() : prec); }
-  unsigned long int get_prec() const
+  mp_bitcnt_t get_prec() const
   {
     if (bits == 0)
       return mpf_get_default_prec();
