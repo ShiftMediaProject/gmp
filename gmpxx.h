@@ -1929,7 +1929,7 @@ private:
 public:
   __gmp_expr(const val_type &val) : expr(val) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int = 0) const
+	    mp_bitcnt_t = 0) const
   { Op::eval(p, expr.val.__get_mp()); }
   const val_type & get_val() const { return expr.val; }
   mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
@@ -1982,7 +1982,7 @@ public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int = 0) const
+	    mp_bitcnt_t = 0) const
   { Op::eval(p, expr.val1.__get_mp(), expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2009,7 +2009,7 @@ public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int = 0) const
+	    mp_bitcnt_t = 0) const
   { Op::eval(p, expr.val1.__get_mp(), expr.val2); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2028,7 +2028,7 @@ public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int = 0) const
+	    mp_bitcnt_t = 0) const
   { Op::eval(p, expr.val1, expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }

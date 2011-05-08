@@ -1,6 +1,7 @@
 2011-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (get_prec): Return mp_bitcnt_t everywhere.
+	(eval): Take precision argument as mp_bitcnt_t.
 
 2011-05-06  Marc Glisse  <marc.glisse@inria.fr>
 
