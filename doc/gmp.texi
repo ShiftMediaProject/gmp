@@ -6841,7 +6841,7 @@ Generate a random integer in the range 0 to @math{@var{n}-1} inclusive.
 @end deftypefun
 
 @deftypefun mpf_class gmp_randclass::get_f ()
-@deftypefunx mpf_class gmp_randclass::get_f (unsigned long @var{prec})
+@deftypefunx mpf_class gmp_randclass::get_f (mp_bitcnt_t @var{prec})
 Generate a random float @var{f} in the range @math{0 <= @var{f} < 1}.  @var{f}
 will be to @var{prec} bits precision, or if @var{prec} is not given then to
 the precision of the destination.  For example,

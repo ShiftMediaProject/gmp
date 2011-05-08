@@ -1,6 +1,7 @@
 2011-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Replace unsigned long with mp_bitcnt_t in many places.
+	* doc/gmp.texi: Likewise.
 
 2011-05-06  Marc Glisse  <marc.glisse@inria.fr>
 
