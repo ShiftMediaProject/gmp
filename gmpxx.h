@@ -682,21 +682,21 @@ struct __gmp_binary_xor
 
 struct __gmp_binary_lshift
 {
-  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  static void eval(mpz_ptr z, mpz_srcptr w, mp_bitcnt_t l)
   { mpz_mul_2exp(z, w, l); }
-  static void eval(mpq_ptr q, mpq_srcptr r, unsigned long int l)
+  static void eval(mpq_ptr q, mpq_srcptr r, mp_bitcnt_t l)
   { mpq_mul_2exp(q, r, l); }
-  static void eval(mpf_ptr f, mpf_srcptr g, unsigned long int l)
+  static void eval(mpf_ptr f, mpf_srcptr g, mp_bitcnt_t l)
   { mpf_mul_2exp(f, g, l); }
 };
 
 struct __gmp_binary_rshift
 {
-  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  static void eval(mpz_ptr z, mpz_srcptr w, mp_bitcnt_t l)
   { mpz_fdiv_q_2exp(z, w, l); }
-  static void eval(mpq_ptr q, mpq_srcptr r, unsigned long int l)
+  static void eval(mpq_ptr q, mpq_srcptr r, mp_bitcnt_t l)
   { mpq_div_2exp(q, r, l); }
-  static void eval(mpf_ptr f, mpf_srcptr g, unsigned long int l)
+  static void eval(mpf_ptr f, mpf_srcptr g, mp_bitcnt_t l)
   { mpf_div_2exp(f, g, l); }
 };
 
@@ -1253,7 +1253,7 @@ __GMPP_DECLARE_COMPOUND_OPERATOR(fun)        \
 __GMPN_DECLARE_COMPOUND_OPERATOR(fun)
 
 #define __GMP_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
+  __gmp_expr & fun(mp_bitcnt_t);
 
 #define __GMP_DECLARE_INCREMENT_OPERATOR(fun) \
   inline __gmp_expr & fun();                  \
@@ -2621,11 +2621,11 @@ __GMPN_DEFINE_BINARY_FUNCTION(fun, eval_fun)
                                                                        \
 template <class T, class U>                                            \
 inline __gmp_expr                                                      \
-<T, __gmp_binary_expr<__gmp_expr<T, U>, unsigned long int, eval_fun> > \
-fun(const __gmp_expr<T, U> &expr, unsigned long int l)                 \
+<T, __gmp_binary_expr<__gmp_expr<T, U>, mp_bitcnt_t, eval_fun> > \
+fun(const __gmp_expr<T, U> &expr, mp_bitcnt_t l)                 \
 {                                                                      \
   return __gmp_expr<T, __gmp_binary_expr                               \
-    <__gmp_expr<T, U>, unsigned long int, eval_fun> >(expr, l);        \
+    <__gmp_expr<T, U>, mp_bitcnt_t, eval_fun> >(expr, l);        \
 }
 
 
@@ -2756,10 +2756,10 @@ __GMP_DEFINE_COMPOUND_OPERATOR(mpf, fun, eval_fun)
 
 #define __GMP_DEFINE_COMPOUND_OPERATOR_UI(type, fun, eval_fun)  \
                                                                 \
-inline type##_class & type##_class::fun(unsigned long int l)    \
+inline type##_class & type##_class::fun(mp_bitcnt_t l)    \
 {                                                               \
   __gmp_set_expr(mp, __gmp_expr<type##_t, __gmp_binary_expr     \
-    <type##_class, unsigned long int, eval_fun> >(*this, l));   \
+    <type##_class, mp_bitcnt_t, eval_fun> >(*this, l));   \
   return *this;                                                 \
 }
 
