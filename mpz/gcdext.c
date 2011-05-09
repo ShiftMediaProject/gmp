@@ -77,7 +77,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   MPN_COPY (tmp_bp, bp, bsize);
 
   tmp_gp = TMP_ALLOC_LIMBS (bsize);
-  tmp_sp = TMP_ALLOC_LIMBS (bsize);
+  tmp_sp = TMP_ALLOC_LIMBS (bsize + 1);
 
   gsize = mpn_gcdext (tmp_gp, tmp_sp, &tmp_ssize, tmp_ap, asize, tmp_bp, bsize);
 
