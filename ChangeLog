@@ -1,3 +1,8 @@
+2011-05-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/fat/gmp-mparam.h (BMOD_1_TO_MOD_1_THRESHOLD): Define.
+	* mpn/x86_64/fat/gmp-mparam.h (BMOD_1_TO_MOD_1_THRESHOLD): Define.
+
 2011-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Replace unsigned long with mp_bitcnt_t in many places.
