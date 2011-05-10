@@ -1890,7 +1890,7 @@
 
 	* mpn/x86_64/core2/divrem_1.asm: New file.
 
-2010-02-26  Niels Möller  <<nisse@lysator.liu.se>>
+2010-02-26  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.c (routine): Added udiv_qrnnd_preinv3.
 
@@ -2650,7 +2650,7 @@
 
 	* mpn/generic/mu_div_q.c (mpn_mu_div_q_itch): New function.
 
-2009-12-22  Niels Möller  <<nisse@lysator.liu.se>>
+2009-12-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_q.c: Use udiv_qr_3by2.  Intended to change
 	nothing after preprocessing.
