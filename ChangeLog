@@ -1,3 +1,8 @@
+2011-05-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (mpz_gcd): Document that gcd(0,0) = 0.
+	(mpz_gcdext): Document range for cofactors.
+
 2011-05-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Increased sp allocation to bsize+1 limbs.

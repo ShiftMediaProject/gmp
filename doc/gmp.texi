@@ -3529,9 +3529,10 @@ extremely small.
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Greatest common divisor functions
 @cindex GCD functions
-Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
-The result is always positive even if one or both input operands
-are negative.
+Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}. The
+result is always positive even if one or both input operands are negative.
+Except if both inputs are zero; then this function defines @math{gcd(0,0) =
+0}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_gcd_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
@@ -3551,9 +3552,11 @@ Set @var{g} to the greatest common divisor of @var{a} and @var{b}, and in
 addition set @var{s} and @var{t} to coefficients satisfying
 @math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g}}.
 The value in @var{g} is always positive, even if one or both of @var{a} and
-@var{b} are negative.  The values in @var{s} and @var{t} are chosen such that
-@math{@GMPabs{@var{s}} @le{} @GMPabs{@var{b}}} and @math{@GMPabs{@var{t}}
-@le{} @GMPabs{@var{a}}}.
+@var{b} are negative (or zero if both inputs are zero).  The values in @var{s} and @var{t} are chosen such that
+normally, @math{@GMPabs{@var{s}} < @GMPabs{@var{b}} / (2 @var{g})} and
+@math{@GMPabs{@var{t}} < @GMPabs{@var{a}} / (2 @var{g})}. The exceptional
+cases are that @math{@var{s} = sgn(@var{a})} if @math{@var{b} = 0} and
+@math{@var{t} = sgn(@var{b})} if @var{b = 0}.
 
 If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
