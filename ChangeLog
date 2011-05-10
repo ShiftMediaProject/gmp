@@ -1,3 +1,10 @@
+2011-05-10  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_unary_expr): Let things happen in place.
+	(operator>>): Clean the commenting out.
+	* tests/cxx/t-iostream.cc: New file.
+	* tests/cxx/Makefile.am: Added t-iostream.
+
 2011-05-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_gcd): Document that gcd(0,0) = 0.

@@ -1814,12 +1814,15 @@ inline std::istream & operator>>(std::istream &i, __gmp_expr<T, T> &expr)
   return i >> expr.__get_mp();
 }
 
+/*
+// you might want to uncomment this
 inline std::istream & operator>>(std::istream &i, mpq_class &q)
 {
   i >> q.get_mpq_t();
-  // q.canonicalize(); // you might want to uncomment this
+  q.canonicalize();
   return i;
 }
+*/
 
 
 /**************** Functions for type conversion ****************/
@@ -1948,10 +1951,10 @@ private:
 public:
   __gmp_expr(const val_type &val) : expr(val) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
-  { __gmp_expr<T, T> temp(expr.val); Op::eval(p, temp.__get_mp()); }
+  { expr.val.eval(p); Op::eval(p, p); }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t prec) const
-  { __gmp_expr<T, T> temp(expr.val, prec); Op::eval(p, temp.__get_mp()); }
+  { expr.val.eval(p, prec); Op::eval(p, p); }
   const val_type & get_val() const { return expr.val; }
   mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
 };
