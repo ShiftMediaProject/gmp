@@ -3,9 +3,11 @@
 	* gmpxx.h (operator<<): Dedup.
 	* tests/cxx/t-iostream.cc: Test on compound types.
 
+	* gmpxx.h (__gmp_binary_expr): Let things happen in place: c=(a+b)/2.
+
 2011-05-10  Marc Glisse  <marc.glisse@inria.fr>
 
-	* gmpxx.h (__gmp_unary_expr): Let things happen in place.
+	* gmpxx.h (__gmp_unary_expr): Let things happen in place: c=-(a+b).
 	(operator>>): Clean the commenting out.
 	* tests/cxx/t-iostream.cc: New file.
 	* tests/cxx/Makefile.am: Added t-iostream.
