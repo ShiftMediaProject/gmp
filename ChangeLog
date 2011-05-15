@@ -1,3 +1,8 @@
+2011-05-15  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (operator<<): Dedup.
+	* tests/cxx/t-iostream.cc: Test on compound types.
+
 2011-05-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_unary_expr): Let things happen in place.

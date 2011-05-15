@@ -64,15 +64,33 @@ checko ()
   }
   {
     ostringstream o;
+    mpz_class x=123;
+    o << (x+1);
+    ASSERT_ALWAYS (o.str() == "124");
+  }
+  {
+    ostringstream o;
     mpq_class x(3,4);
     o << x;
     ASSERT_ALWAYS (o.str() == "3/4");
   }
   {
     ostringstream o;
+    mpq_class x(3,4);
+    o << (x+1);
+    ASSERT_ALWAYS (o.str() == "7/4");
+  }
+  {
+    ostringstream o;
     mpf_class x=1.5;
     o << x;
     ASSERT_ALWAYS (o.str() == "1.5");
+  }
+  {
+    ostringstream o;
+    mpf_class x=1.5;
+    o << (x+1);
+    ASSERT_ALWAYS (o.str() == "2.5");
   }
 }
 

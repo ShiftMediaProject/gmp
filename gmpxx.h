@@ -1792,21 +1792,13 @@ typedef __gmp_expr<mpf_t, mpf_t> mpf_class;
 
 // these should (and will) be provided separately
 
-template <class T>
-inline std::ostream & operator<<
-(std::ostream &o, const __gmp_expr<T, T> &expr)
-{
-  return o << expr.__get_mp();
-}
-
 template <class T, class U>
 inline std::ostream & operator<<
 (std::ostream &o, const __gmp_expr<T, U> &expr)
 {
-  __gmp_expr<T, T> temp(expr);
+  __gmp_expr<T, T> const& temp(expr);
   return o << temp.__get_mp();
 }
-
 
 template <class T>
 inline std::istream & operator>>(std::istream &i, __gmp_expr<T, T> &expr)
