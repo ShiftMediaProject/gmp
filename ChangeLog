@@ -1,3 +1,12 @@
+2011-05-17  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (mpn_gcd, mpn_gcdext): Document input requirements:
+	Must have un >= vn > 0, and V normalized.
+	* mpn/generic/gcdext.c (mpn_gcdext): Added ASSERT for input
+	normalization.
+	* mpn/generic/gcd.c (mpn_gcd): Added ASSERTs for input
+	requirements.
+
 2011-05-15  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (operator<<): Dedup.

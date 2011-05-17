@@ -132,6 +132,10 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   mp_ptr tp;
   TMP_DECL;
 
+  ASSERT (usize >= n);
+  ASSERT (n > 0);
+  ASSERT (vp[n-1] > 0);
+
   /* FIXME: Check for small sizes first, before setting up temporary
      storage etc. */
   talloc = MPN_GCD_SUBDIV_STEP_ITCH(n);

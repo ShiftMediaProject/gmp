@@ -205,6 +205,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
   ASSERT (an >= n);
   ASSERT (n > 0);
+  ASSERT (bp[n-1] > 0);
 
   TMP_MARK;
 

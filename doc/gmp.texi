@@ -5357,10 +5357,9 @@ Set @{@var{rp}, @var{retval}@} to the greatest common divisor of @{@var{xp},
 the return value is the actual number produced.  Both source operands are
 destroyed.
 
-@{@var{xp}, @var{xn}@} must have at least as many bits as @{@var{yp},
-@var{yn}@}.  @{@var{yp}, @var{yn}@} must be odd.  Both operands must have
-non-zero most significant limbs.  No overlap is permitted between @{@var{xp},
-@var{xn}@} and @{@var{yp}, @var{yn}@}.
+It is required that @math{@var{xn} @ge @var{yn} > 0}, and the most significant
+limb of @{@var{yp}, @var{yn}@} must be non-zero.  No overlap is permitted
+between @{@var{xp}, @var{xn}@} and @{@var{yp}, @var{yn}@}.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{xp}, mp_size_t @var{xn}, mp_limb_t @var{ylimb})
@@ -5376,7 +5375,8 @@ Compute the greatest common divisor @math{G} of @math{U} and @math{V}.  Compute
 a cofactor @math{S} such that @math{G = US + VT}.  The second cofactor @var{T}
 is not computed but can easily be obtained from @m{(G - US) / V, (@var{G} -
 @var{U}*@var{S}) / @var{V}} (the division will be exact).  It is required that
-@math{U @ge V > 0}.
+@math{@var{un} @ge @var{vn} > 0}, and the most significant
+limb of @{@var{vp}, @var{vn}@} must be non-zero.
 
 @math{S} satisfies @math{S = 1} or @math{@GMPabs{S} < V / (2 G)}. @math{S =
 0} if and only if @math{V} divides @math{U} (i.e., @math{G = V}).
