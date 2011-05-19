@@ -2,11 +2,13 @@
 
 	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): New
 	argument s, for use by hgcd.
+	* gmp-impl.h (mpn_gcd_subdiv_step): Update declaration.
 
 	* mpn/generic/gcd.c (mpn_gcd): Pass s = 0 to mpn_gcd_subdiv_step.
 	* mpn/generic/gcdext.c (mpn_gcdext): Likewise. Also added an ASSERT.
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Likewise.
 	(mpn_gcdext_hook): Added some ASSERTs.
+	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_lehmer): Likewise.
 
 2011-05-17  Niels Möller  <nisse@lysator.liu.se>
 

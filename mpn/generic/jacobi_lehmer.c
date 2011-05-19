@@ -831,7 +831,7 @@ mpn_jacobi_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n, unsigned bits, mp_ptr tp)
 	  /* mpn_hgcd2 has failed. Then either one of a or b is very
 	     small, or the difference is very small. Perform one
 	     subtraction followed by one division. */
-	  n = mpn_gcd_subdiv_step (ap, bp, n, &jacobi_hook, &bits, tp);
+	  n = mpn_gcd_subdiv_step (ap, bp, n, 0, &jacobi_hook, &bits, tp);
 	  if (!n)
 	    return bits == BITS_FAIL ? 0 : mpn_jacobi_finish (bits);
 	}
