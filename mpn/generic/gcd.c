@@ -210,7 +210,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
       else
 	{
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (up, vp, n, gcd_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (up, vp, n, 0, gcd_hook, &ctx, tp);
 	  if (n == 0)
 	    goto done;
 	}
@@ -254,7 +254,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	     subtraction followed by one division. */
 
 	  /* Temporary storage n */
-	  n = mpn_gcd_subdiv_step (up, vp, n, &gcd_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (up, vp, n, 0, &gcd_hook, &ctx, tp);
 	  if (n == 0)
 	    goto done;
 	}

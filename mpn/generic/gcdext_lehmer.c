@@ -35,6 +35,9 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
     {
       mp_srcptr up;
 
+      ASSERT (gn > 0);
+      ASSERT (gp[gn-1] > 0);
+
       MPN_COPY (ctx->gp, gp, gn);
       ctx->gn = gn;
 
@@ -216,7 +219,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
 	  /* Temporary storage n for the quotient and ualloc for the
 	     new cofactor. */
-	  n = mpn_gcd_subdiv_step (ap, bp, n, mpn_gcdext_hook, &ctx, tp);
+	  n = mpn_gcd_subdiv_step (ap, bp, n, 0, mpn_gcdext_hook, &ctx, tp);
 	  if (n == 0)
 	    return ctx.gn;
 

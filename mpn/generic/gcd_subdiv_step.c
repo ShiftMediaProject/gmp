@@ -29,8 +29,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Used when mpn_hgcd or mpn_hgcd2 has failed. Then either one of a or
    b is small, or the difference is small. Perform one subtraction
-   followed by one division. Returns zero if the gcd is found.
-   Otherwise, compute the reduced a and b, and return the new size. */
+   followed by one division. The normal case is to compute the reduced
+   a and b, and return the new size.
+
+   If s == 0 (used for gcd and gcdext), returns zero if the gcd is
+   found.
+
+   If s > 0, don't reduce to size <= s, and return zero if no
+   reduction is possible (if either a, b or |a-b| is of size <= s). */
 
 /* The hook function is called as
 
@@ -38,15 +44,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    in the following cases:
 
-   + If A == B at the start, G is the gcd, Q is NULL, d = -1.
+   + If A = B at the start, G is the gcd, Q is NULL, d = -1.
 
    + If one input is zero at the start, G is the gcd, Q is NULL,
-     d = 0 if A == G and d = 1 if B == G.
+     d = 0 if A = G and d = 1 if B = G.
 
    Otherwise, if d = 0 we have just subtracted a multiple of A from B,
    and if d = 1 we have subtracted a multiple of B from A.
 
-   + If A == B after subtraction, G is the gcd, Q is NULL.
+   + If A = B after subtraction, G is the gcd, Q is NULL.
 
    + If we get a zero remainder after division, G is the gcd, Q is the
      quotient.
@@ -56,7 +62,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
  */
 
 mp_size_t
-mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
+mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n, mp_size_t s,
 		     gcd_subdiv_step_hook *hook, void *ctx,
 		     mp_ptr tp)
 {
@@ -82,8 +88,10 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
       MPN_CMP (c, ap, bp, an);
       if (UNLIKELY (c == 0))
 	{
-	  /* For gcdext, return the smallest of the two cofactors. */
-	  hook (ctx, ap, an, NULL, 0, -1);
+	  /* For gcdext, return the smallest of the two cofactors, so
+	     pass d = -1. */
+	  if (s == 0)
+	    hook (ctx, ap, an, NULL, 0, -1);
 	  return 0;
 	}
       else if (c > 0)
@@ -99,15 +107,26 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  MPN_PTR_SWAP (ap, an, bp, bn);
 	  swapped ^= 1;
 	}
-      if (an == 0)
-	{
-	  hook (ctx, bp, bn, NULL, 0, swapped ^ 1);
-	  return 0;
-	}
     }
+  if (an <= s)
+    {
+      if (s == 0)
+	hook (ctx, bp, bn, NULL, 0, swapped ^ 1);
+      return 0;
+    }
+
   ASSERT_NOCARRY (mpn_sub (bp, bp, bn, ap, an));
   MPN_NORMALIZE (bp, bn);
   ASSERT (bn > 0);
+
+  if (bn <= s)
+    {
+      /* Undo subtraction. */
+      mp_limb_t cy = mpn_add (bp, ap, an, bp, bn);
+      if (cy > 0)
+	bp[an] = cy;
+      return 0;
+    }
 
   /* Arrange so that a < b */
   if (an == bn)
@@ -116,7 +135,12 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
       MPN_CMP (c, ap, bp, an);
       if (UNLIKELY (c == 0))
 	{
-	  hook (ctx, bp, bn, NULL, 0, swapped);
+	  if (s > 0)
+	    /* Just record subtraction and return */
+	    hook (ctx, NULL, 0, &one, 1, swapped);
+	  else
+	    /* Found gcd. */
+	    hook (ctx, bp, bn, NULL, 0, swapped);
 	  return 0;
 	}
 
@@ -141,14 +165,30 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
   mpn_tdiv_qr (tp, bp, 0, bp, bn, ap, an);
   qn = bn - an + 1;
-  if (mpn_zero_p (bp, an))
+  bn = an;
+  MPN_NORMALIZE (bp, bn);
+
+  if (UNLIKELY (bn <= s))
     {
-      hook (ctx, ap, an, tp, qn, swapped);
-      return 0;
+      if (s == 0)
+	{
+	  hook (ctx, ap, an, tp, qn, swapped);
+	  return 0;
+	}
+
+      /* Quotient is one too large, so decrement it and add back A. */
+      if (bn > 0)
+	{
+	  mp_limb_t cy = mpn_add (bp, ap, an, bp, bn);
+	  if (cy)
+	    bp[an++] = cy;
+	}
+      else
+	MPN_COPY (bp, ap, an);
+      
+      MPN_DECR_U (tp, qn, 1);
     }
-  else
-    {
-      hook (ctx, NULL, 0, tp, qn, swapped);
-      return an;
-    }
+
+  hook (ctx, NULL, 0, tp, qn, swapped);
+  return an;
 }
