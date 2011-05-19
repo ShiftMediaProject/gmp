@@ -1,5 +1,8 @@
 2011-05-19  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/hgcd_lehmer.c (__gmpn_hgcd_itch): Don't rename symbols for
+	the functions moved to hgcd_matrix.c.
+
 	* configure.in (gmp_mpn_functions): Added hgcd_matrix.
 
 	* mpn/generic/hgcd.c (hgcd_matrix_update_1): Deleted. Several other

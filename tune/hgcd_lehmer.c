@@ -25,9 +25,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD MP_SIZE_T_MAX
 #define __gmpn_hgcd  mpn_hgcd_lehmer
 #define __gmpn_hgcd_itch mpn_hgcd_lehmer_itch
-/* Same functions, needed to avoid linking collisions. FIXME: Move to
- * separate file? */
-#define __gmpn_hgcd_matrix_init mpn_hgcd_lehmer_matrix_init
-#define __gmpn_hgcd_matrix_adjust mpn_hgcd_lehmer_matrix_adjust
-#define __gmpn_hgcd_matrix_mul mpn_hgcd_lehmer_matrix_mul
+
 #include "../mpn/generic/hgcd.c"
