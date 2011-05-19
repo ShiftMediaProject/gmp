@@ -1,5 +1,19 @@
 2011-05-19  Niels Möller  <nisse@lysator.liu.se>
 
+	* configure.in (gmp_mpn_functions): Added hgcd_matrix.
+
+	* mpn/generic/hgcd.c (hgcd_matrix_update_1): Deleted. Several other
+	helper functions moved to hgcd_matrix.c, see below.
+	(hgcd_hook): New function.
+	(hgcd_step): Simplified, using mpn_gcd_subdiv_step and hgcd_hook.
+
+	* mpn/generic/hgcd_matrix.c: New file.
+	(mpn_hgcd_matrix_init): Moved here, from hgcd.c.
+	(mpn_hgcd_matrix_update_q): Likewise.
+	(mpn_hgcd_matrix_mul_1): Likewise.
+	(mpn_hgcd_matrix_mul): Likewise.
+	(mpn_hgcd_matrix_adjust): Likewise.
+
 	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): New
 	argument s, for use by hgcd.
 	* gmp-impl.h (mpn_gcd_subdiv_step): Update declaration.

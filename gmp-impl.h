@@ -3926,6 +3926,12 @@ struct hgcd_matrix
 #define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
 __GMP_DECLSPEC void mpn_hgcd_matrix_init __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr));
 
+#define mpn_hgcd_matrix_update_q __MPN (hgcd_matrix_update_q)
+__GMP_DECLSPEC void mpn_hgcd_matrix_update_q __GMP_PROTO ((struct hgcd_matrix *, mp_srcptr, mp_size_t, unsigned, mp_ptr));
+
+#define mpn_hgcd_matrix_mul_1 __MPN (hgcd_matrix_mul_1)
+__GMP_DECLSPEC void mpn_hgcd_matrix_mul_1 __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix1 *, mp_ptr));
+
 #define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
 __GMP_DECLSPEC void mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix *, mp_ptr));
 
