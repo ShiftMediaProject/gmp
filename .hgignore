@@ -14,6 +14,7 @@ Makefile\.in
 ^gmp\.h
 ^mp\.h
 ^libtool
+^ltmain.sh
 ^stamp-h1
 Makefile
 
