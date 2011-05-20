@@ -30,7 +30,7 @@ static void
 hgcd_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	   mp_srcptr qp, mp_size_t qn, int d)
 {
-  ASSERT (gp == NULL);
+  ASSERT (!gp);
   ASSERT (d >= 0);
   ASSERT (d <= 1);
 

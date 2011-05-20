@@ -1,3 +1,7 @@
+2011-05-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd.c (hgcd_hook): Avoid using NULL.
+
 2011-05-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/hgcd_lehmer.c (__gmpn_hgcd_itch): Don't rename symbols for
