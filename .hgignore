@@ -23,6 +23,7 @@ Makefile
 ^gen-bases
 ^gen-fac_ui
 ^gen-fib
+^gen-jacobitab
 ^gen-psqr
 ^gen-trialdivtab
 ^mp_bases\.h
@@ -30,6 +31,7 @@ Makefile
 ^trialdivtab\.h
 
 ^mpn/perfsqr\.h
+^mpn/jacobitab\.h
 ^mpz/fac_ui\.h
 
 ^doc/gmp\.info.*
