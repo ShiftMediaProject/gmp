@@ -1,5 +1,13 @@
 2011-05-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd_jacobi.c (mpn_hgcd_jacobi): New file and
+	function. A copy of mpn_hgcd, using mpn_hgcd2_jacobi, and with calls to
+	mpn_jacobi_update when appropriate.
+
+	* mpn/generic/jacobi_2.c (mpn_jacobi_2): New file. Extracted from
+	jacobi_lehmer.c.
+	* mpn/generic/hgcd2_jacobi.c (mpn_hgcd2_jacobi): Likewise.
+
 	* mpn/generic/hgcd.c (hgcd_hook): Avoid using NULL.
 
 2011-05-19  Niels Möller  <nisse@lysator.liu.se>
