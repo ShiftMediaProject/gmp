@@ -42,38 +42,18 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    mpn_bdiv_qr should be used instead of mpn_tdiv_qr.
 
-   Current code uses the binary algorithm for the smallest sizes, then
-   Lehmer.  It could stright-forwardly be made subquadratic by using
-   hgcd in the same way as mpn_gcd.  */
-
-/* (a/2) = -1 iff a = 3 or a = -3 (mod 8), and (2/b) = -1 iff b = 3 or
-   b = - 3 (mod 8). Note that when this is used, we have already
-   excluded the case that a and both have a common factor of two. */
-
-#define STRIP_TWOS(bit1, twos, other_low, p, n, low)		   \
-  do {								   \
-    JACOBI_STRIP_LOW_ZEROS ((bit1), (other_low), (p), (n), (low)); \
-    count_trailing_zeros ((twos), (low));			   \
-    (bit1) ^= JACOBI_TWOS_U_BIT1((twos), (other_low));		   \
-    (low) >>= (twos);						   \
-    if ((n) > 1 && (twos) > 0)					   \
-      {								   \
-	mp_limb_t __second = (p)[1];				   \
-	(low) |= __second << (GMP_NUMB_BITS - (twos));		   \
-	if ((n) == 2 && (__second >> (twos) == 0))		   \
-	  n = 1;						   \
-      }								   \
-  } while(0)
+*/
 
 int
 mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
   mp_srcptr  asrcp, bsrcp;
-  mp_size_t  asize, bsize, itch;
+  mp_size_t  asize, bsize, n, itch;
   mp_limb_t  alow, blow;
   mp_ptr     ap, bp, scratch;
-  unsigned   atwos, btwos;
+  unsigned   btwos;
   int        result_bit1;
+  unsigned   bits;
   int        res;
   TMP_DECL;
 
@@ -88,9 +68,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   /* The MPN jacobi functions requies positive a and b, and b odd. So
      we must to handle the cases of a or b zero, then signs, and then
      the case of even b.
-
-     In addition, to reduce the number of cases, we arrange so that a
-     is odd, and asize >= bsize. */
+  */
 
   if ( (((alow | blow) & 1) == 0))
     /* Common factor of 2 ==> (a/b) = 0 */
@@ -113,7 +91,19 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   else
     result_bit1 = 0;
 
-  STRIP_TWOS (result_bit1, btwos, alow, bsrcp, bsize, blow);
+  JACOBI_STRIP_LOW_ZEROS (result_bit1, alow, bsrcp, bsize, blow);
+
+  count_trailing_zeros (btwos, blow);
+  result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
+  blow >>= btwos;
+
+  if (bsize > 1 && btwos > 0)
+    {
+      mp_limb_t second = bsrcp[1];
+      blow |= second << (GMP_NUMB_BITS - btwos);
+      if (bsize == 2 && (second >> btwos) == 0)
+	bsize = 1;
+    }
 
   if (asize < 0)
     {
@@ -121,22 +111,8 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       result_bit1 ^= JACOBI_N1B_BIT1(blow);
       asize = -asize;
     }
-
-  STRIP_TWOS(result_bit1, atwos, blow, asrcp, asize, alow);
-
-  /* Both numbers odd, so arrange so that asize >= bsize */
-  if (asize < bsize)
-    {
-      unsigned t;
-      MPN_SRCPTR_SWAP (asrcp, asize, bsrcp, bsize);
-      MP_LIMB_T_SWAP (alow, blow);
-
-      t = atwos;
-      atwos = btwos;
-      btwos = t;
-
-      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
-    }
+  
+  JACOBI_STRIP_LOW_ZEROS (result_bit1, blow, asrcp, asize, alow);
 
   if (bsize == 1)
     {
@@ -144,102 +120,208 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 	return JACOBI_BIT1_TO_PN (result_bit1);
 
       if (asize > 1)
-	{
-	  /* We work with {asrcp, asize} mod b, hence throw away the
-	     old alow and undo the shift right by atwos. */
-	  result_bit1 ^= JACOBI_TWOS_U_BIT1 (atwos, blow);
-
-	  JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, alow, asrcp, asize, blow);
-	}
+	JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, alow, asrcp, asize, blow);
 
       return mpn_jacobi_base (alow, blow, result_bit1);
     }
 
-  TMP_MARK;
-
-  itch = 3*bsize;
-
-  if (asize > bsize)
+  bits = mpn_jacobi_init (alow, blow, (result_bit1>>1) & 1);
+    
+  if (asize == 1)
     {
-      if (btwos > 0)
+      /* We need least significant bits of the quotient */
+      mp_limb_t b1 = mpn_mod_1 (bsrcp+1, bsize-1, alow);
+      mp_limb_t q;
+      udiv_qrnnd (q, blow, b1, blow, alow);
+
+      bits = mpn_jacobi_update (bits, 0, q & 3);
+
+      if (bits >= 16)
+	MP_LIMB_T_SWAP (alow, blow);
+
+      if (blow == 1)
 	{
-	  if (asize >= 2 * bsize)
-	    itch = asize + bsize + 1;
+	  /* FIXME: Do this in some better way? Currently,
+	     mpn_jacobi_finish requires that one number is reduced to
+	     zero. */
+	  bits = mpn_jacobi_update (bits, 1, alow & 3);
+	  return mpn_jacobi_finish (bits);
 	}
-      else if (atwos > 0)
+      else
+	return mpn_jacobi_base (alow, blow, bits << 1);
+      
+#if 0
+      /* FIXME: Is it better to avoid the use of mpn_jacobi_update for
+	 this special case? The below should work, if it hasn't
+	 suffered bit rot. */
+      if (alow & 1)
 	{
-	  if (asize >= 2*bsize)
-	    itch = 2*asize - bsize + 1;
+	  result_bit1 ^= JACOBI_RECIP_UU_BIT1(alow, blow);
+
+	  if (alow == 1)
+	    return JACOBI_BIT1_TO_PN (result_bit1);
+	  
+	  if (bsize > 1)
+	    JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
+
+	  return mpn_jacobi_base (blow, alow, result_bit1);
 	}
       else
 	{
-	  if (asize >= 3*bsize)
-	    itch = asize + 1;
-	}
-    }
-
-  ap = TMP_ALLOC_LIMBS (itch);
-  bp = ap + bsize;
-  scratch = bp + bsize;
-
-  if (asize > bsize)
-    {
-      /* Do an initial divide. */
-      if (btwos > 0)
-	{
-	  /* Result size: 2*bsize, extra: asize - bsize + 1 for
-	     quotient, total: asize + bsize + 1. */
-	  ASSERT (atwos == 0);
-
-	  ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, btwos));
-	  bsize -= bp[bsize-1] == 0;
-
-	  /* Note that if the shift eliminated the most significant
-	     limb of b, the quotient gets one limb larger, but the
-	     total storage needed for b and the quotient is unchanged.
-	     To get sufficient space, we put the quotient at bp +
-	     bsize rather than at scratch. */
-	  mpn_tdiv_qr (bp + bsize, ap, 0, asrcp, asize, bp, bsize);
-	}
-      else
-	{
-	  if (atwos > 0)
+	  if (alow & 2)
 	    {
-	      /* Result size: bsize, extra: (asize - bsize) + (asize -
-		 bsize + 1) for shifted value, and quotient, total: 2
-		 asize - bsize + 1. */
-	      ASSERT_NOCARRY (mpn_rshift (ap, asrcp, asize, atwos));
-	      mpn_tdiv_qr (ap + asize, ap, 0, ap, asize, bsrcp, bsize);
+	      /* We need least significant bits of the quotient */
+	      if (bsize > 1)
+		{
+		  mp_limb_t b1 = mpn_mod_1 (bsrcp+1, bsize-1, alow);
+		  mp_limb_t q;
+		  udiv_qrnnd (q, blow, b1, blow, alow);
+		  /* Sign change is q (b-1)/2 + q (q-1) / 2
+		     = q (r-1)/2 + q (q+1)/2 */
+		  result_bit1 ^= ((q << 1) & blow) ^ (q << 1) ^q;
+		}
 	    }
 	  else
-	    /* Result size: bsize, extra: asize - bsize + 1 for
-	       quotient, total asize + 1. */
-	    mpn_tdiv_qr (bp, ap, 0, asrcp, asize, bsrcp, bsize);
+	    blow = mpn_mod_1 (bsrcp, bsize, alow);
 
-	  MPN_COPY (bp, bsrcp, bsize);
+	  if (blow == 1)
+	    return JACOBI_BIT1_TO_PN (result_bit1);
+
+	  return mpn_jacobi_base (alow, blow, result_bit1);
 	}
-      alow = ap[0];
+#endif
+    }
+
+  /* Allocation strategy: When one operand is much larger than the
+     other, we currently have to allocate space for the entire
+     quotient, even though we need juste the lowest few bits. But we
+     at least avoid allocating a copy of th larger input.
+
+     We put the reduction of the larger operand first in the scratch
+     area, followed by an area that holds first the quotient, and then
+     the working copy of the smaller operand. */
+
+  if (asize > bsize)
+    {
+      n = bsize;
+      
+      if (asize >= 2*bsize)
+	itch = asize + 1;
+      else
+	itch = 2*bsize;
     }
   else
     {
-      /* Result size: 2 * bsize, extra: 0. */
-      if (atwos > 0)
-	ASSERT_NOCARRY (mpn_rshift (ap, asrcp, asize, atwos));
-      else
-	MPN_COPY (ap, asrcp, asize);
+      n = asize;
 
-      if (btwos > 0)
-	ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, btwos));
+      if (bsize >= 2*asize)
+	itch = bsize + 1;
       else
-	MPN_COPY (bp, bsrcp, bsize);
-
-      bsize -= (ap[bsize-1] | bp[bsize-1]) == 0;
+	itch = 2*asize;
     }
 
-  /* Scratch need: bsize */
-  res = mpn_jacobi_lehmer (ap, bp, bsize,
-			   mpn_jacobi_init (alow, blow, (result_bit1>>1) & 1),
-			   scratch);
+  TMP_MARK;
+
+  scratch = TMP_ALLOC_LIMBS (itch);
+
+  if (n < asize)
+    {
+      mp_limb_t q0;
+      ap = scratch;
+      bp = scratch + n;
+
+      mpn_tdiv_qr (bp, ap, 0, asrcp, asize, bsrcp, n);
+      q0 = bp[0];
+
+      if (btwos > 0)
+	{
+	  ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, n, btwos));
+	  n -= (bp[n-1] | ap[n-1]) == 0;
+
+	  /* We have reduced a -= q * 2^k b */
+	  q0 <<= btwos;
+	}
+      else
+	MPN_COPY (bp, bsrcp, n);
+      
+      bits = mpn_jacobi_update (bits, 1, q0 & 3);
+      if (mpn_zero_p (ap, n))
+	{
+	  /* FIXME: n > 1 always? */
+	  if (n > 1 || bp[0] != 1)
+	    {
+	      TMP_FREE;
+	      return 0;
+	    }
+
+	  TMP_FREE;
+	  return mpn_jacobi_finish (bits);
+	}
+    }
+  else if (n < bsize)
+    {
+      mp_limb_t q0;
+      mp_limb_t cy;
+      bp = scratch;
+      ap = scratch + n;
+
+      mpn_tdiv_qr (ap, bp, 0, bsrcp, bsize, asrcp, n);
+      q0 = ap[0];
+
+      if (btwos > 0)
+	{
+	  /* Let b be the correctly shifted, odd, value, and b' = 2^k
+	     b (k = btwos). We have divided
+
+	       b' = q' a + r'
+
+	     Let q' = 2^k q + ql, then we can recover the correct
+	     division as
+
+	       b = q a + r
+
+	     where the remainder is
+
+	       r = (ql a + r')/2^k
+	   */
+	  mp_limb_t ql, hi;
+
+	  ql = q0 & ((CNST_LIMB(1) << btwos) - 1);
+	  q0 = (q0 >> btwos) | (ap[1] << (GMP_LIMB_BITS - btwos));
+	  hi = mpn_addmul_1 (bp, asrcp, n, ql);
+
+	  ASSERT_NOCARRY (mpn_rshift (bp, bp, n, btwos));
+	  bp[n-1] |= hi << (GMP_LIMB_BITS - btwos);
+	}
+
+      bits = mpn_jacobi_update (bits, 0, q0 & 3);
+
+      if (mpn_zero_p (bp, n))
+	{
+	  TMP_FREE;
+
+	  /* FIXME: n > 1 always? */
+	  if (n > 1 || asrcp[0] != 1)
+	    return 0;
+	  else
+	    return mpn_jacobi_finish (bits);
+	}
+      
+      MPN_COPY (ap, asrcp, n);
+    }
+  else
+    {
+      ap = scratch;
+      bp = scratch + n;
+
+      MPN_COPY (ap, asrcp, n);
+      if (btwos > 0)
+	ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, n, btwos));
+      else
+	MPN_COPY (bp, bsrcp, n);
+    }
+
+  res = mpn_jacobi_n (ap, bp, n, bits);
 
   TMP_FREE;
   return res;

@@ -985,8 +985,11 @@ __GMP_DECLSPEC mp_size_t mpn_fib2_ui __GMP_PROTO ((mp_ptr, mp_ptr, unsigned long
 #define mpn_jacobi_base __MPN(jacobi_base)
 __GMP_DECLSPEC int mpn_jacobi_base __GMP_PROTO ((mp_limb_t, mp_limb_t, int)) ATTRIBUTE_CONST;
 
-#define mpn_jacobi_lehmer __MPN(jacobi_lehmer)
-__GMP_DECLSPEC int mpn_jacobi_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, unsigned, mp_ptr));
+#define mpn_jacobi_2 __MPN(jacobi_2)
+__GMP_DECLSPEC int mpn_jacobi_2 __GMP_PROTO ((mp_srcptr, mp_srcptr, unsigned));
+
+#define mpn_jacobi_n __MPN(jacobi_n)
+__GMP_DECLSPEC int mpn_jacobi_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, unsigned));
 
 #define mpn_mod_1c __MPN(mod_1c)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
@@ -3914,6 +3917,9 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((const struct 
 #define mpn_matrix22_mul1_inverse_vector __MPN (matrix22_mul1_inverse_vector)
 __GMP_DECLSPEC mp_size_t mpn_matrix22_mul1_inverse_vector __GMP_PROTO ((const struct hgcd_matrix1 *, mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
 
+#define mpn_hgcd2_jacobi __MPN (hgcd2_jacobi)
+__GMP_DECLSPEC int mpn_hgcd2_jacobi __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t, struct hgcd_matrix1 *, unsigned *));
+
 struct hgcd_matrix
 {
   mp_size_t alloc;		/* for sanity checking only */
@@ -3943,6 +3949,9 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 
 #define mpn_hgcd __MPN (hgcd)
 __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+
+#define mpn_hgcd_jacobi __MPN (hgcd_jacobi)
+__GMP_DECLSPEC mp_size_t mpn_hgcd_jacobi __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, unsigned *, mp_ptr));
 
 typedef void gcd_subdiv_step_hook(void *, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, int);
 

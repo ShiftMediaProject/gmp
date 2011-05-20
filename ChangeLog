@@ -1,5 +1,19 @@
 2011-05-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h: Jacobi-related prototypes.
+
+	* configure.in (gmp_mpn_functions): Added jacobi_2, jacobi,
+	hgcd2_jacobi, hgcd_jacobi, and removed jacobi_lehmer.
+
+	* mpz/jacobi.c (STRIP_TWOS): Deleted macro.
+	(mpz_jacobi): Partially rewritten, to no longer makes the A
+	operand odd. Use new mpn_jacobi_n.
+
+	* mpn/generic/jacobi_lehmer.c: Deleted file.
+
+	* mpn/generic/jacobi.c (mpn_jacobi_n): New subquadratic jacobi
+	implementation. Supersedes jacobi_lehmer.c.
+
 	* mpn/generic/hgcd_jacobi.c (mpn_hgcd_jacobi): New file and
 	function. A copy of mpn_hgcd, using mpn_hgcd2_jacobi, and with calls to
 	mpn_jacobi_update when appropriate.
