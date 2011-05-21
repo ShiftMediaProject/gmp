@@ -1,3 +1,13 @@
+2011-05-21  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/jacobi.c (mpz_jacobi): The handling of asize == 1 was
+	broken. Rewrote it.
+
+	* tests/mpz/t-jac.c (mpz_nextprime_step): Sanity check that prime
+	candidate and step has no common factor.
+	(check_data): Added some test cases related to the asize == 1 case
+	in mpz_jacobi.
+
 2011-05-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h: Jacobi-related prototypes.

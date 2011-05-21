@@ -125,72 +125,39 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       return mpn_jacobi_base (alow, blow, result_bit1);
     }
 
-  bits = mpn_jacobi_init (alow, blow, (result_bit1>>1) & 1);
-    
   if (asize == 1)
     {
-      /* We need least significant bits of the quotient */
-      mp_limb_t b1 = mpn_mod_1 (bsrcp+1, bsize-1, alow);
-      mp_limb_t q;
-      udiv_qrnnd (q, blow, b1, blow, alow);
-
-      bits = mpn_jacobi_update (bits, 0, q & 3);
-
-      if (bits >= 16)
-	MP_LIMB_T_SWAP (alow, blow);
-
-      if (blow == 1)
+      /* Logic copied from mpz_ui_kronecker */
+      if (alow == 1)
+	return JACOBI_BIT1_TO_PN (result_bit1);  /* (1/b)=1 */
+	
+      if (btwos > 0)
 	{
-	  /* FIXME: Do this in some better way? Currently,
-	     mpn_jacobi_finish requires that one number is reduced to
-	     zero. */
-	  bits = mpn_jacobi_update (bits, 1, alow & 3);
-	  return mpn_jacobi_finish (bits);
-	}
-      else
-	return mpn_jacobi_base (alow, blow, bits << 1);
-      
-#if 0
-      /* FIXME: Is it better to avoid the use of mpn_jacobi_update for
-	 this special case? The below should work, if it hasn't
-	 suffered bit rot. */
-      if (alow & 1)
-	{
-	  result_bit1 ^= JACOBI_RECIP_UU_BIT1(alow, blow);
-
-	  if (alow == 1)
-	    return JACOBI_BIT1_TO_PN (result_bit1);
-	  
-	  if (bsize > 1)
-	    JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
-
-	  return mpn_jacobi_base (blow, alow, result_bit1);
-	}
-      else
-	{
-	  if (alow & 2)
-	    {
-	      /* We need least significant bits of the quotient */
-	      if (bsize > 1)
-		{
-		  mp_limb_t b1 = mpn_mod_1 (bsrcp+1, bsize-1, alow);
-		  mp_limb_t q;
-		  udiv_qrnnd (q, blow, b1, blow, alow);
-		  /* Sign change is q (b-1)/2 + q (q-1) / 2
-		     = q (r-1)/2 + q (q+1)/2 */
-		  result_bit1 ^= ((q << 1) & blow) ^ (q << 1) ^q;
-		}
-	    }
+	  /* Only bit 1 of blow is used below. */
+	  if (btwos == GMP_NUMB_BITS - 1)
+	    blow = bsrcp[1] << 1;
 	  else
-	    blow = mpn_mod_1 (bsrcp, bsize, alow);
-
-	  if (blow == 1)
-	    return JACOBI_BIT1_TO_PN (result_bit1);
-
-	  return mpn_jacobi_base (alow, blow, result_bit1);
+	    blow >> btwos;
 	}
-#endif
+
+      else if ( (alow & 1) == 0)
+	{
+	  unsigned atwos;
+	  count_trailing_zeros (atwos, alow);
+	  alow >>= atwos;
+	  result_bit1 ^= JACOBI_TWOS_U_BIT1 (atwos, blow);
+	}
+
+      if (alow == 1)
+	return JACOBI_BIT1_TO_PN (result_bit1);  /* (1/b)=1 */
+
+      /* (a/b*2^n) = (b*2^n / a) * RECIP(a,b) */
+      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
+      JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
+      return mpn_jacobi_base (blow, alow, result_bit1);
     }
+
+  bits = mpn_jacobi_init (alow, blow, (result_bit1>>1) & 1);
 
   /* Allocation strategy: When one operand is much larger than the
      other, we currently have to allocate space for the entire
