@@ -94,7 +94,6 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   JACOBI_STRIP_LOW_ZEROS (result_bit1, alow, bsrcp, bsize, blow);
 
   count_trailing_zeros (btwos, blow);
-  result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
   blow >>= btwos;
 
   if (bsize > 1 && btwos > 0)
@@ -116,6 +115,8 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
   if (bsize == 1)
     {
+      result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
+
       if (blow == 1)
 	return JACOBI_BIT1_TO_PN (result_bit1);
 
@@ -130,19 +131,11 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       /* Logic copied from mpz_ui_kronecker */
       if (alow == 1)
 	return JACOBI_BIT1_TO_PN (result_bit1);  /* (1/b)=1 */
-	
-      if (btwos > 0)
-	{
-	  /* Only bit 1 of blow is used below. */
-	  if (btwos == GMP_NUMB_BITS - 1)
-	    blow = bsrcp[1] << 1;
-	  else
-	    blow >> btwos;
-	}
 
-      else if ( (alow & 1) == 0)
+      if ( (alow & 1) == 0)
 	{
 	  unsigned atwos;
+	  ASSERT (btwos == 0);
 	  count_trailing_zeros (atwos, alow);
 	  alow >>= atwos;
 	  result_bit1 ^= JACOBI_TWOS_U_BIT1 (atwos, blow);
@@ -156,6 +149,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
       return mpn_jacobi_base (blow, alow, result_bit1);
     }
+  result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
 
   bits = mpn_jacobi_init (alow, blow, (result_bit1>>1) & 1);
 

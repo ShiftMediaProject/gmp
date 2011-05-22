@@ -1,3 +1,8 @@
+2011-05-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/jacobi.c (mpz_jacobi): Another bugfix for the asize == 1
+	case. Sometimes, powers of two in b were taken into account twice.
+
 2011-05-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): The handling of asize == 1 was
