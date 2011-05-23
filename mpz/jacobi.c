@@ -113,6 +113,41 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   
   JACOBI_STRIP_LOW_ZEROS (result_bit1, blow, asrcp, asize, alow);
 
+  /* Ensure asize >= bsize. Take advantage of the generalized
+     reciprocity law (a/b*2^n) = (b*2^n / a) * RECIP(a,b) */
+
+  if (asize < bsize)
+    {
+      MPN_SRCPTR_SWAP (asrcp, asize, bsrcp, bsize);
+      MP_LIMB_T_SWAP (alow, blow);
+
+      /* NOTE: The value of alow (old blow) is a bit subtle. For this
+	 code path, we get alow as the low, always odd, limb of
+	 shifted A. Which is what we need for the reciprocity update
+	 below.
+
+	 However, all other uses of alow assumes that it is *not*
+	 shifted. Luckily, alow matters only when either
+
+	 + btwos > 0, in which case A is always odd
+
+	 + asize == bsize == 1, in which case this code path is never
+   	   taken. */
+
+      count_trailing_zeros (btwos, blow);
+      blow >>= btwos;
+
+      if (bsize > 1 && btwos > 0)
+	{
+	  mp_limb_t b1 = bsrcp[1];
+	  blow |= b1 << (GMP_NUMB_BITS - btwos);
+	  if (bsize == 2 && (b1 >> btwos) == 0)
+	    bsize = 1;
+	}
+
+      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
+    }
+  
   if (bsize == 1)
     {
       result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
@@ -124,45 +159,6 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 	JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, alow, asrcp, asize, blow);
 
       return mpn_jacobi_base (alow, blow, result_bit1);
-    }
-
-  if (asize == 1)
-    {
-      /* Logic copied from mpz_ui_kronecker */
-      if (alow == 1)
-	return JACOBI_BIT1_TO_PN (result_bit1);  /* (1/b)=1 */
-
-      if ( (alow & 1) == 0)
-	{
-	  unsigned atwos;
-	  ASSERT (btwos == 0);
-	  count_trailing_zeros (atwos, alow);
-	  alow >>= atwos;
-	  result_bit1 ^= JACOBI_TWOS_U_BIT1 (atwos, blow);
-	}
-
-      if (alow == 1)
-	return JACOBI_BIT1_TO_PN (result_bit1);  /* (1/b)=1 */
-
-      /* (a/b*2^n) = (b*2^n / a) * RECIP(a,b) */
-      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
-      JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
-      return mpn_jacobi_base (blow, alow, result_bit1);
-    }
-
-  /* Ensure asize >= bsize. Take advantage of the reciprocity law
-     (a/b*2^n) = (b*2^n / a) * RECIP(a,b) */
-
-  if (asize < bsize)
-    {
-      MPN_SRCPTR_SWAP (asrcp, asize, bsrcp, bsize);
-      MP_LIMB_T_SWAP (alow, blow);
-      
-      count_trailing_zeros (btwos, blow);
-      if (btwos > 0)
-	blow = (blow >> btwos) | (bsrcp[1] << (GMP_LIMB_BITS - btwos));
-
-      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
     }
 
   /* Allocation strategy: For A, we allocate a working copy only for A
@@ -177,6 +173,12 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   else
     TMP_ALLOC_LIMBS_2 (ap, bsize, bp, bsize);
 
+  /* In the case of even B, we conceptually shift out the powers of
+     two first, and then divide A mod B. Hence, when taking those
+     powers of two into account, we must use alow *before* the the
+     division. Doing the actual division first is ok, because the
+     point is to remove multiples of B from A, and multiples of 2^k B
+     are good enough. */
   if (asize > bsize)
     mpn_tdiv_qr (bp, ap, 0, asrcp, asize, bsrcp, bsize);
   else
@@ -184,7 +186,6 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
   if (btwos > 0)
     {
-      /* Must use the original alow *before* the division above. */
       result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
 
       ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, btwos));
