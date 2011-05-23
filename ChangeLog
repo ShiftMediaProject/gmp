@@ -1,3 +1,9 @@
+2011-05-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/jacobi.c (mpz_jacobi): Simplied by swapping operands when
+	needed, to get asize >= bsize. Use the reciprocity law generalized
+	to work when one operand is even.
+
 2011-05-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Another bugfix for the asize == 1
