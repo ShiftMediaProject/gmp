@@ -68,7 +68,7 @@ $(top_builddir)/tests/libtests.la:
 # program.  This can always be forced with "make speed_LDFLAGS=-all-static
 # ..." if desired, see tune/README.
 
-EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup
+EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup tune-gcd-p
 
 DEPENDENCIES = libspeed.la
 LDADD = $(DEPENDENCIES) $(TUNE_LIBS)
@@ -86,6 +86,10 @@ nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES) $(TUNE_LIBS)
 tuneup_LDFLAGS = $(STATIC)
+
+tune_gcd_p_SOURCES = tune-gcd-p.c
+tune_gcd_p_DEPENDENCIES = ../mpn/gcd.c
+tune_gcd_p_LDFLAGS = $(STATIC)
 
 
 tune:

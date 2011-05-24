@@ -1,3 +1,15 @@
+2011-05-24  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/Makefile.am (EXTRA_PROGRAMS): Added tune-gcd-p. Also added
+	related automake variables.
+
+	* mpn/Makefile.am (tune-gcd-p): Deleted target.
+
+	* tune/tune-gcd-p.c: New file, extracted from mpn/generic/gcd.c
+	and updated.
+	* mpn/generic/gcd.c: Deleted the corresponding code, including
+	main function.
+
 2011-05-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Simplied by swapping operands when
