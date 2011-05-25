@@ -30,6 +30,58 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "speed.h"
 
+/* Search for minimum over a range. FIXME: Implement golden-section /
+   fibonacci search*/
+static int
+search (double *minp, double (*f)(void *, int), void *ctx, int start, int end)
+{
+  int x[4];
+  double y[4];
+
+  int best_i;
+  
+  x[0] = start;
+  x[3] = end;
+
+  y[0] = f(ctx, x[0]);
+  y[3] = f(ctx, x[3]);
+
+  for (;;)
+    {
+      int i;
+      int length = x[3] - x[0];
+
+      x[1] = x[0] + length/3;
+      x[2] = x[0] + 2*length/3;
+
+      y[1] = f(ctx, x[1]);
+      y[2] = f(ctx, x[2]);
+
+#if 0
+      printf("%d: %f, %d: %f, %d:, %f %d: %f\n",
+	     x[0], y[0], x[1], y[1], x[2], y[2], x[3], y[3]);
+#endif    
+      for (best_i = 0, i = 1; i < 4; i++)
+	if (y[i] < y[best_i])
+	  best_i = i;
+
+      if (length <= 4)
+	break;
+
+      if (best_i >= 2)
+	{
+	  x[0] = x[1];
+	  y[0] = y[1];
+	}
+      else
+	{
+	  x[3] = x[2];
+	  y[3] = y[2];
+	}
+    }
+  *minp = y[best_i];
+  return x[best_i];
+}
 
 static int
 compare_double(const void *ap, const void *bp)
@@ -66,16 +118,38 @@ median (double *v, size_t n)
   res = median(time_measurement, 5);			\
 } while (0)
 
-int
-main(int argc, char **argv)
+struct bench_data
 {
-  gmp_randstate_t rands;
   mp_size_t n;
   mp_ptr ap;
   mp_ptr bp;
   mp_ptr up;
   mp_ptr vp;
   mp_ptr gp;
+};
+
+static double
+bench_gcd (void *ctx, int p)
+{
+  struct bench_data *data = ctx;
+  double t;
+
+  p_table[data->n] = p;
+  TIME(t, {
+      MPN_COPY (data->up, data->ap, data->n);
+      MPN_COPY (data->vp, data->bp, data->n);
+      mpn_gcd (data->gp, data->up, data->n, data->vp, data->n);
+    });
+
+  return t;
+}
+
+int
+main(int argc, char **argv)
+{
+  gmp_randstate_t rands;  struct bench_data data;
+  mp_size_t n;
+
   TMP_DECL;
 
   /* Unbuffered so if output is redirected to a file it isn't lost if the
@@ -87,14 +161,14 @@ main(int argc, char **argv)
 
   TMP_MARK;
 
-  ap = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
-  bp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
-  up = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
-  vp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
-  gp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  data.ap = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  data.bp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  data.up = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  data.vp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  data.gp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
 
-  mpn_random (ap, P_TABLE_SIZE);
-  mpn_random (bp, P_TABLE_SIZE);
+  mpn_random (data.ap, P_TABLE_SIZE);
+  mpn_random (data.bp, P_TABLE_SIZE);
 
   memset (p_table, 0, sizeof(p_table));
 
@@ -105,40 +179,20 @@ main(int argc, char **argv)
       double best_time;
       double lehmer_time;
 
-      if (ap[n-1] == 0)
-	ap[n-1] = 1;
+      if (data.ap[n-1] == 0)
+	data.ap[n-1] = 1;
 
-      if (bp[n-1] == 0)
-	bp[n-1] = 1;
+      if (data.bp[n-1] == 0)
+	data.bp[n-1] = 1;
 
-      p_table[n] = 0;
-      TIME(lehmer_time, {
-	  MPN_COPY (up, ap, n);
-	  MPN_COPY (vp, bp, n);
-	  mpn_gcd (gp, up, n, vp, n);
-	});
+      data.n = n;
 
-      best_time = lehmer_time;
-      best_p = 0;
+      lehmer_time = bench_gcd (&data, 0);
 
-      for (p = n * 0.48; p < n * 0.77; p++)
-	{
-	  double t;
+      best_p = search (&best_time, bench_gcd, &data, 10, n-10);
+      if (best_time > lehmer_time)
+	best_p = 0;
 
-	  p_table[n] = p;
-
-	  TIME(t, {
-	      MPN_COPY (up, ap, n);
-	      MPN_COPY (vp, bp, n);
-	      mpn_gcd (gp, up, n, vp, n);
-	    });
-
-	  if (t < best_time)
-	    {
-	      best_time = t;
-	      best_p = p;
-	    }
-	}
       printf("%6d %6d %5.3g", n, best_p, (double) best_p / n);
       if (best_p > 0)
 	{

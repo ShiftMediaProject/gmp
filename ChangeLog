@@ -1,3 +1,8 @@
+2011-05-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tune-gcd-p.c (search): New function to search for minimum.
+	(main): Replaced slow linear search.
+
 2011-05-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/Makefile.am (EXTRA_PROGRAMS): Added tune-gcd-p. Also added
