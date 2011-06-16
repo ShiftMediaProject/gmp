@@ -1,3 +1,9 @@
+2011-06-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (GMP_ASM_RODATA): Fix typo in 2011-04-20 change.
+
+	* configure.in: Surround tr ranges with [] for portability.
+
 2011-05-25  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tune-gcd-p.c (search): New function to search for minimum.
