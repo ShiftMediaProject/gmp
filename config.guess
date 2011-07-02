@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008 Free Software
+# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2011 Free Software
 # Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
@@ -679,6 +679,12 @@ sparc-*-* | sparc64-*-*)
   fi
   ;;
 
+
+# Recognise x86 processors using a tricky cpuid with 4 arguments, repeating
+# arguments; for x86-64 we effectively pass the 1st in rdx and the 2nd in rcx.
+# This allows the same asm to work for both standard and Windoze calling
+# conventions.
+
 i?86-*-* | amd64-*-* | x86_64-*-*)
   cat <<EOF >${dummy}0.s
 	.globl cpuid
@@ -687,10 +693,10 @@ cpuid:
 _cpuid:
 	pushl %esi
 	pushl %ebx
-	movl 16(%esp),%eax
+	movl 24(%esp),%eax
 	.byte 0x0f
 	.byte 0xa2
-	movl 12(%esp),%esi
+	movl 20(%esp),%esi
 	movl %ebx,(%esi)
 	movl %edx,4(%esi)
 	movl %ecx,8(%esi)
@@ -703,23 +709,25 @@ EOF
 	.globl _cpuid
 cpuid:
 _cpuid:
-	push %rbx
-	mov %esi,%eax
-	.byte 0x0f
-	.byte 0xa2
-	mov %ebx,(%rdi)
-	mov %edx,4(%rdi)
-	mov %ecx,8(%rdi)
-	pop %rbx
+	push	%rbx
+	mov	%rdx, %r8
+	mov	%ecx, %eax
+	.byte	0x0f
+	.byte	0xa2
+	mov	%ebx, (%r8)
+	mov	%edx, 4(%r8)
+	mov	%ecx, 8(%r8)
+	pop	%rbx
 	ret
 EOF
   cat <<EOF >${dummy}2.c
 #include <string.h>
 #include <stdio.h>
+#define CPUID(a,b) cpuid(b,a,a,b)
 #if __cplusplus
 extern "C"
 #endif
-unsigned int cpuid (char dummy_string[12], int);
+unsigned int cpuid (int, char *, char *, int);
 int
 main ()
 {
@@ -730,10 +738,10 @@ main ()
   const char *modelstr;
   int cpu_64bit = 0;
 
-  cpuid (vendor_string, 0);
+  CPUID (vendor_string, 0);
   vendor_string[12] = 0;
 
-  fms = cpuid (dummy_string, 1);
+  fms = CPUID (dummy_string, 1);
 
   family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
   model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
@@ -842,7 +850,7 @@ main ()
   if (strcmp ("$guess_cpu", "x86_64") == 0 && ! cpu_64bit)
     modelstr = "$guess_cpu";
 
-  printf ("%s\n", modelstr);
+  printf ("%s", modelstr);
   return 0;
 }
 EOF
