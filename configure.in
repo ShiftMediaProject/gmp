@@ -123,7 +123,7 @@ esac],
 
 
 AC_ARG_ENABLE(assembly,
-AC_HELP_STRING([--enable-assembly],[enable the use of asembly loops [[default=yes]]]),
+AC_HELP_STRING([--enable-assembly],[enable the use of assembly loops [[default=yes]]]),
 [case $enableval in
 yes|no) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-assembly, need yes or no]) ;;
@@ -1548,9 +1548,10 @@ case $host in
 	    cclist_64="$cclist_64 cc"
 	    cc_64_cflags="-xO3 -m64"
 	    ;;
-	  *-*-mingw*)
+	  *-*-mingw* | *-*-cygwin)
 	    limb_64=longlong
 	    path_64=""	# Windows amd64 calling conventions are *different*
+	    extra_functions_64=""
 	    # Silence many pedantic warnings for w64.  FIXME.
 	    gcc_64_cflags="$gcc_64_cflags -std=gnu99"
 	    ;;
@@ -1572,10 +1573,7 @@ case $host in
     ;;
 
 
-  # Special CPU "none" selects generic C.  -DNO_ASM is used to disable gcc
-  # asm blocks in longlong.h (since they're driven by cpp pre-defined
-  # symbols like __alpha rather than the configured $host_cpu).
-  #
+  # Special CPU "none" used to select generic C, now this is obsolete.
   none-*-*)
     AC_MSG_ERROR([the \"none\" host is obsolete, use --disable-assembly])
     ;;
