@@ -123,9 +123,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    indicates when building libgmpxx, and in that case libgmpxx functions are
    exports, but libgmp functions which might get called are imports.
 
-   libmp.la uses __GMP_DECLSPEC, just as if it were libgmp.la.  libgmp and
-   libmp don't call each other, so there's no conflict or confusion.
-
    Libtool DLL_EXPORT define is not used.
 
    There's no attempt to support GMP built both static and DLL.  Doing so
