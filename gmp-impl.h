@@ -53,7 +53,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* For fat.h and other fat binary stuff.
    No need for __GMP_ATTRIBUTE_PURE or __GMP_NOTHROW, since functions
-   declared this way are only used to set function pointers in __gmp_cpuvec,
+   declared this way are only used to set function pointers in __gmpn_cpuvec,
    they're not called directly.  */
 #define DECL_add_n(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t))
