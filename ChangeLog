@@ -1,3 +1,15 @@
+2011-07-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/misc/t-locale.c: Disable test for mingw.
+
+	* configure.in (x86_64 *-*-mingw*): Handle also cygwin here; clear out
+	extra_functions_64.
+
+2011-07-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Don't print newline in x86 cpuid function.
+	Rewrite x86-64 cpu recognition asm code to work under Windoze.
+
 2011-06-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (GMP_ASM_RODATA): Fix typo in 2011-04-20 change.
