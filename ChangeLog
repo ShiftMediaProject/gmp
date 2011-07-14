@@ -1,3 +1,8 @@
+2011-07-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q): Get mpn_sub_1 size
+	argument right.
+
 2011-07-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/misc/t-locale.c: Disable test for mingw.
