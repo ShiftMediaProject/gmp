@@ -6,6 +6,11 @@
 	(mpz_sqrt): New function.
 	(mpz_mul_2exp): Add faster block shifting code, disabled for now.
 
+2011-07-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/invert_limb.asm: Swap around some registers to silence 'as'
+	warnings.
+
 2011-07-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q): Get mpn_sub_1 size
