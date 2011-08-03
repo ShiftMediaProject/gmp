@@ -1,3 +1,11 @@
+2011-08-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* dumbmp.c (mpz_tdiv_qr): Correctly handle dividend value being equal
+	to divisor value.
+	(mpz_root): Create reasonable starting approximation.
+	(mpz_sqrt): New function.
+	(mpz_mul_2exp): Add faster block shifting code, disabled for now.
+
 2011-07-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q): Get mpn_sub_1 size
