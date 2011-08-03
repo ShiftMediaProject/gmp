@@ -658,7 +658,7 @@ mpz_tdiv_qr (mpz_t q, mpz_t r, mpz_t a, mpz_t b)
   mpz_init_set (tmpb, b);
   mpz_set_ui (q, 0L);
 
-  if (mpz_cmp (tmpr, tmpb) > 0)
+  if (mpz_cmp (tmpr, tmpb) >= 0)
     {
       cnt = mpz_sizeinbase (tmpr, 2) - mpz_sizeinbase (tmpb, 2) + 1;
       mpz_mul_2exp (tmpb, tmpb, cnt);
