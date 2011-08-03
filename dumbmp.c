@@ -517,6 +517,34 @@ void
 mpz_mul_2exp (mpz_t r, mpz_t a, unsigned long int bcnt)
 {
   mpz_set (r, a);
+
+#if 0
+  {
+    unsigned long int lcnt;
+
+    lcnt = bcnt / GMP_LIMB_BITS;
+    if (lcnt > 0)
+      {
+	int rn = ABSIZ (r);
+	mp_limb_t *rp;
+	int i;
+
+	mpz_realloc (r, rn + lcnt);
+	rp = PTR (r);
+
+	for (i = rn - 1; i >= 0; i--)
+	  rp[i + lcnt] = rp[i];
+	for (i = lcnt - 1; i >= 0; i--)
+	  rp[i] = 0;
+
+	rn += lcnt;
+	SIZ (r) = SIZ (r) >= 0 ? rn : -rn;
+
+	bcnt %= GMP_LIMB_BITS;
+      }
+  }
+#endif
+
   while (bcnt)
     {
       mpz_add (r, r, r);
@@ -900,9 +928,12 @@ mpz_root (mpz_t x, mpz_t y, unsigned long z)
       mpz_set (x, y);
       return;
     }
-  mpz_init (t);
-  mpz_init_set (u, y);
-  do
+
+  /* One-bit initial approximation */
+  mpz_init_set_ui (u, 1);
+  mpz_mul_2exp (u, u, ((mpz_sizeinbase (y, 2) - 1) / z) + 1);
+
+  for (;;)
     {
       mpz_pow_ui (t, u, z - 1);
       mpz_tdiv_q (t, y, t);
@@ -912,7 +943,44 @@ mpz_root (mpz_t x, mpz_t y, unsigned long z)
 	break;
       mpz_set (u, t);
     }
-  while (1);
+
+  mpz_set (x, u);
+  mpz_clear (t);
+  mpz_clear (u);
+}
+
+/* x=floor(y^(1/2)) */
+void
+mpz_sqrt (mpz_t x, mpz_t y)
+{
+  mpz_t t, u;
+
+  if (mpz_sgn (y) < 0)
+    {
+      fprintf (stderr, "mpz_sqrt does not accept negative values\n");
+      abort ();
+    }
+  if (mpz_cmp_ui (y, 1) <= 0)
+    {
+      mpz_set (x, y);
+      return;
+    }
+  mpz_init (t);
+
+  /* One-bit initial approximation */
+  mpz_init_set_ui (u, 1);
+  mpz_mul_2exp (u, u, ((mpz_sizeinbase (y, 2) - 1) / 2) + 1);
+
+  for (;;)
+    {
+      mpz_tdiv_q (t, y, u);
+      mpz_add (t, t, u);
+      mpz_tdiv_q_2exp (t, t, 1);
+      if (mpz_cmp (t, u) >= 0)
+	break;
+      mpz_set (u, t);
+    }
+
   mpz_set (x, u);
   mpz_clear (t);
   mpz_clear (u);
