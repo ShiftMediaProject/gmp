@@ -928,6 +928,7 @@ mpz_root (mpz_t x, mpz_t y, unsigned long z)
       mpz_set (x, y);
       return;
     }
+  mpz_init (t);
 
   /* One-bit initial approximation */
   mpz_init_set_ui (u, 1);
