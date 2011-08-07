@@ -2594,7 +2594,10 @@ struct bases
   int chars_per_limb;
 
   /* log(2)/log(conversion_base) */
-  double chars_per_bit_exactly;
+  mp_limb_t logb2;
+
+  /* log(conversion_base)/log(2) */
+  mp_limb_t log2b;
 
   /* base**chars_per_limb, i.e. the biggest number that fits a word, built by
      factors of base.  Exception: For 2, 4, 8, etc, big_base is log2(base),
@@ -2610,6 +2613,20 @@ struct bases
 #define   mp_bases __MPN(bases)
 __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
+
+/* Compute the number of digits in base for nbits bits, making sure the result
+   is never too small.  The +1 in umul_ppmm makes the rounded-down log value to
+   be a rounded-up value.  This make the full ph,,dummy product be rounded up,
+   but we chop the low half, meaning that we round down, but just once.  The
+   return value is then incremented, to make sure it is never too small.
+   Caveat: The table value for base 2 will be all-bit-set, so things will break
+   in that case.  Consider alternatives that allow all bases.  */
+#define DIGITS_IN_BASE_FROM_BITS(res, nbits, b)				\
+  do {									\
+    mp_limb_t ph, dummy;						\
+    umul_ppmm (ph, dummy, mp_bases[b].logb2 + 1, nbits);		\
+    res = ph + 1;							\
+  } while (0)
 
 /* For power of 2 bases this is exact.  For other bases the result is either
    exact or one too big.
@@ -2644,8 +2661,9 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
             (result) = (__totbits + __lb_base - 1) / __lb_base;         \
           }                                                             \
         else                                                            \
-          (result) = (size_t)                                           \
-            (__totbits * mp_bases[base].chars_per_bit_exactly) + 1;     \
+	  {								\
+	    DIGITS_IN_BASE_FROM_BITS (result, __totbits, base);		\
+	  }								\
       }                                                                 \
   } while (0)
 
@@ -4031,6 +4049,24 @@ __GMP_DECLSPEC void      mpn_set_str_compute_powtab __GMP_PROTO ((powers_t *, mp
 
 __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
 
+/* Compute the number of base-b digits corresponding to nlimbs limbs, rounding
+   down.  */
+#define DIGITS_IN_BASE_PER_LIMB(res, nlimbs, b)				\
+  do {									\
+    mp_limb_t ph, dummy;						\
+    umul_ppmm (ph, dummy, mp_bases[b].logb2, GMP_NUMB_BITS * (nlimbs));	\
+    res = ph;								\
+  } while (0)
+
+/* Compute the number of limbs corresponding to ndigits base-b digits, rounding
+   up.  */
+#define LIMBS_PER_DIGIT_IN_BASE(res, ndigits, b)			\
+  do {									\
+    mp_limb_t ph, dummy;						\
+    umul_ppmm (ph, dummy, mp_bases[base].log2b, ndigits);		\
+    res = 8 * ph / GMP_NUMB_BITS + 2;					\
+  } while (0)
+
 
 /* Set n to the number of significant digits an mpf of the given _mp_prec
    field, in the given base.  This is a rounded up value, designed to ensure
@@ -4046,9 +4082,10 @@ __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
 
 #define MPF_SIGNIFICANT_DIGITS(n, base, prec)                           \
   do {                                                                  \
+    size_t rawn;							\
     ASSERT (base >= 2 && base < numberof (mp_bases));                   \
-    (n) = 2 + (size_t) ((((size_t) (prec) - 1) * GMP_NUMB_BITS)         \
-                        * mp_bases[(base)].chars_per_bit_exactly);      \
+    DIGITS_IN_BASE_PER_LIMB (rawn, (prec) - 1, base);			\
+    n = rawn + 2;							\
   } while (0)
 
 

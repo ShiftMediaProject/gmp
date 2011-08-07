@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1995, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001, 2002, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,5 +54,9 @@ mpn_sizeinbase (mp_srcptr xp, mp_size_t xsize, int base)
       return (totbits + lb_base - 1) / lb_base;
     }
   else
-    return (size_t) (totbits * mp_bases[base].chars_per_bit_exactly) + 1;
+    {
+      size_t ndigits;
+      DIGITS_IN_BASE_FROM_BITS (ndigits, totbits, base);
+      return ndigits;
+    }
 }

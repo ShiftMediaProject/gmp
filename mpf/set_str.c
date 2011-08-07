@@ -3,7 +3,7 @@
    of STRING is used to figure out the base.
 
 Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2007,
-2008 Free Software Foundation, Inc.
+2008, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,6 +46,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+
 
 #define digit_value_tab __gmp_digit_value_tab
 
@@ -243,14 +244,12 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     /* This breaks things like 0.000...0001.  To safely ignore superfluous
        digits, we need to skip over leading zeros.  */
     /* Just consider the relevant leading digits of the mantissa.  */
-    n_chars_needed = 2 + (size_t)
-      (((size_t) prec * GMP_NUMB_BITS) * mp_bases[base].chars_per_bit_exactly);
+    LIMBS_PER_DIGIT_IN_BASE (n_chars_needed, prec, base);
     if (str_size > n_chars_needed)
       str_size = n_chars_needed;
 #endif
 
-    ma = 2 + (mp_size_t)
-      (str_size / (GMP_NUMB_BITS * mp_bases[base].chars_per_bit_exactly));
+    LIMBS_PER_DIGIT_IN_BASE (ma, str_size, base);
     mp = TMP_ALLOC_LIMBS (ma);
     mn = mpn_set_str (mp, (unsigned char *) begs, str_size, base);
 

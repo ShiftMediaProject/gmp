@@ -2344,8 +2344,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   for (i = 0; i < s->size; i++)
     str[i] = s->xp[i] % base;
 
-  wn = ((mp_size_t) (s->size / mp_bases[base].chars_per_bit_exactly))
-    / GMP_LIMB_BITS + 2;
+  LIMBS_PER_DIGIT_IN_BASE (wn, s->size, base);
   SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);
 
   /* use this during development to check wn is big enough */

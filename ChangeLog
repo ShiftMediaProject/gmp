@@ -1,3 +1,17 @@
+2011-08-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (struct bases): Add log2b and logb2 field, remove
+	chars_per_limb_exactly field.
+	(DIGITS_IN_BASE_FROM_BITS): New.
+	(DIGITS_IN_BASE_PER_LIMB): New.
+	(LIMBS_PER_DIGIT_IN_BASE): New.
+	* gen-bases.c: Generate log2b and logb2 fields; do not generate
+	chars_per_limb_exactly field.
+	* mpf/get_str.c mpf/out_str.c mpf/set_str.c mpn/generic/get_str.c
+	  mpn/generic/sizeinbase.c mpq/get_str.c mpz/inp_str.c mpz/out_str.c
+	  mpz/set_str.c printf/doprntf.c tune/speed.h tune/tuneup.c:
+	Use new macros.
+
 2011-08-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* dumbmp.c (mpz_tdiv_qr): Correctly handle dividend value being equal

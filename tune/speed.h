@@ -1,7 +1,7 @@
 /* Header for speed and threshold things.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010 Free
-Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010, 2011
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2974,8 +2974,7 @@ int speed_routine_count_zeros_setup
     for (i = 0; i < s->size; i++)					\
       xp[i] = s->xp[i] % base;						\
 									\
-    wn = ((mp_size_t) (s->size / mp_bases[base].chars_per_bit_exactly)) \
-      / GMP_LIMB_BITS + 2;						\
+    LIMBS_PER_DIGIT_IN_BASE (wn, s->size, base);			\
     SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);			\
 									\
     /* use this during development to check wn is big enough */		\

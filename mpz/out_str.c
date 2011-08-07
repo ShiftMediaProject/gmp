@@ -1,7 +1,8 @@
 /* mpz_out_str(stream, base, integer) -- Output to STREAM the multi prec.
    integer INTEGER in base BASE.
 
-Copyright 1991, 1993, 1994, 1996, 2001, 2005 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001, 2005, 2011 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,6 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 size_t
 mpz_out_str (FILE *stream, int base, mpz_srcptr x)
@@ -75,8 +77,8 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
     }
 
   TMP_MARK;
-  str_size = ((size_t) (x_size * GMP_LIMB_BITS
-			* mp_bases[base].chars_per_bit_exactly)) + 3;
+
+  DIGITS_IN_BASE_PER_LIMB (str_size, x_size, base);
   str = (unsigned char *) TMP_ALLOC (str_size);
 
   /* Move the number to convert into temporary space, since mpn_get_str
