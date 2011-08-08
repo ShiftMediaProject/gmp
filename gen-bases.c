@@ -160,8 +160,8 @@ table (int limb_bits, int nail_bits)
   printf ("#endif\n");
   printf ("\n");
   puts ("const struct bases mp_bases[257] =\n{");
-  puts ("  /*   0 */ { 0, 0.0,  0, 0, 0, 0 },");
-  puts ("  /*   1 */ { 0, 1e37, 0, 0, 0, 0 },");
+  puts ("  /*   0 */ { 0, 0, 0, 0, 0 },");
+  puts ("  /*   1 */ { 0, 0, 0, 0, 0 },");
   for (base = 2; base <= 256; base++)
     {
       generate (limb_bits, nail_bits, base);
