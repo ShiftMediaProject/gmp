@@ -12,6 +12,10 @@
 	  mpz/set_str.c printf/doprntf.c tune/speed.h tune/tuneup.c:
 	Use new macros.
 
+2011-08-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* dumbmp.c (mpz_root): Reinsert accidentally removed line.
+
 2011-08-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* dumbmp.c (mpz_tdiv_qr): Correctly handle dividend value being equal
