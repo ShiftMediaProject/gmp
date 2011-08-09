@@ -79,6 +79,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
   TMP_MARK;
 
   DIGITS_IN_BASE_PER_LIMB (str_size, x_size, base);
+  str_size += 3;
   str = (unsigned char *) TMP_ALLOC (str_size);
 
   /* Move the number to convert into temporary space, since mpn_get_str
