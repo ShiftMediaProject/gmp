@@ -1,3 +1,11 @@
+2011-08-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/out_str.c (mpz_out_str): Reinsert accidentally deleted str_size
+	adjustment.
+
+	* gmp-impl.h (DIGITS_IN_BASE_FROM_BITS): Simplify, also avoiding
+	overflow for base 2.
+
 2011-08-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (struct bases): Add log2b and logb2 field, remove
