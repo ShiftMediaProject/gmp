@@ -2615,16 +2615,11 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 
 /* Compute the number of digits in base for nbits bits, making sure the result
-   is never too small.  The +1 in umul_ppmm makes the rounded-down log value to
-   be a rounded-up value.  This make the full ph,,dummy product be rounded up,
-   but we chop the low half, meaning that we round down, but just once.  The
-   return value is then incremented, to make sure it is never too small.
-   Caveat: The table value for base 2 will be all-bit-set, so things will break
-   in that case.  Consider alternatives that allow all bases.  */
+   is never too small.  */
 #define DIGITS_IN_BASE_FROM_BITS(res, nbits, b)				\
   do {									\
     mp_limb_t ph, dummy;						\
-    umul_ppmm (ph, dummy, mp_bases[b].logb2 + 1, nbits);		\
+    umul_ppmm (ph, dummy, mp_bases[b].logb2, nbits);			\
     res = ph + 1;							\
   } while (0)
 
