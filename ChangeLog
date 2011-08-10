@@ -1,3 +1,11 @@
+2011-08-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (DIGITS_IN_BASEGT2_FROM_BITS): New.
+	(DIGITS_IN_BASE_FROM_BITS): Compute more accurate result.
+	(MPN_SIZEINBASE): Use DIGITS_IN_BASEGT2_FROM_BITS.
+
+	* tests/rand/t-lc2exp.c (check_bigc): Call abort after reporting error.
+
 2011-08-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/out_str.c (mpz_out_str): Reinsert accidentally deleted str_size
