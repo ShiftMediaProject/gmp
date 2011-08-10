@@ -2615,12 +2615,22 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 
 /* Compute the number of digits in base for nbits bits, making sure the result
-   is never too small.  */
+   is never too small.  The two variants of the macro implement the same
+   function; the GT2 variant below works just for bases > 2.  */
 #define DIGITS_IN_BASE_FROM_BITS(res, nbits, b)				\
   do {									\
-    mp_limb_t ph, dummy;						\
-    umul_ppmm (ph, dummy, mp_bases[b].logb2, nbits);			\
-    res = ph + 1;							\
+    mp_limb_t _ph, _dummy;						\
+    size_t _nbits = (nbits);						\
+    umul_ppmm (_ph, _dummy, mp_bases[b].logb2, _nbits);			\
+    _ph += (_dummy + _nbits < _dummy);					\
+    res = _ph + 1;							\
+  } while (0)
+#define DIGITS_IN_BASEGT2_FROM_BITS(res, nbits, b)			\
+  do {									\
+    mp_limb_t _ph, _dummy;						\
+    size_t _nbits = (nbits);						\
+    umul_ppmm (_ph, _dummy, mp_bases[b].logb2 + 1, _nbits);		\
+    res = _ph + 1;							\
   } while (0)
 
 /* For power of 2 bases this is exact.  For other bases the result is either
@@ -2657,7 +2667,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
           }                                                             \
         else                                                            \
 	  {								\
-	    DIGITS_IN_BASE_FROM_BITS (result, __totbits, base);		\
+	    DIGITS_IN_BASEGT2_FROM_BITS (result, __totbits, base);	\
 	  }								\
       }                                                                 \
   } while (0)
@@ -4048,18 +4058,18 @@ __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
    down.  */
 #define DIGITS_IN_BASE_PER_LIMB(res, nlimbs, b)				\
   do {									\
-    mp_limb_t ph, dummy;						\
-    umul_ppmm (ph, dummy, mp_bases[b].logb2, GMP_NUMB_BITS * (nlimbs));	\
-    res = ph;								\
+    mp_limb_t _ph, _dummy;						\
+    umul_ppmm (_ph, _dummy, mp_bases[b].logb2, GMP_NUMB_BITS * (nlimbs));	\
+    res = _ph;								\
   } while (0)
 
 /* Compute the number of limbs corresponding to ndigits base-b digits, rounding
    up.  */
 #define LIMBS_PER_DIGIT_IN_BASE(res, ndigits, b)			\
   do {									\
-    mp_limb_t ph, dummy;						\
-    umul_ppmm (ph, dummy, mp_bases[base].log2b, ndigits);		\
-    res = 8 * ph / GMP_NUMB_BITS + 2;					\
+    mp_limb_t _ph, _dummy;						\
+    umul_ppmm (_ph, _dummy, mp_bases[base].log2b, (ndigits));		\
+    res = 8 * _ph / GMP_NUMB_BITS + 2;					\
   } while (0)
 
 
