@@ -108,6 +108,7 @@ check_bigc (void)
           printf     ("   m2exp=%lu\n", m2exp);
           gmp_printf ("   rand=%#ZX\n", a);
           gmp_printf ("   sizeinbase2=%u\n", mpz_sizeinbase (a, 2));
+	  abort ();
         }
     }
 
