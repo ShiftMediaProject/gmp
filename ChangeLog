@@ -1,3 +1,7 @@
+2011-08-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (LIMBS_PER_DIGIT_IN_BASE): Fix typo.
+
 2011-08-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (DIGITS_IN_BASEGT2_FROM_BITS): New.
