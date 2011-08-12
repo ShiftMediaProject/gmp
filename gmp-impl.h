@@ -4068,7 +4068,7 @@ __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
 #define LIMBS_PER_DIGIT_IN_BASE(res, ndigits, b)			\
   do {									\
     mp_limb_t _ph, _dummy;						\
-    umul_ppmm (_ph, _dummy, mp_bases[base].log2b, (ndigits));		\
+    umul_ppmm (_ph, _dummy, mp_bases[b].log2b, (ndigits));		\
     res = 8 * _ph / GMP_NUMB_BITS + 2;					\
   } while (0)
 
