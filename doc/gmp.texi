@@ -2651,7 +2651,7 @@ accesses through bad pointers, and memory leaks.
 
 Recent versions of Valgrind are getting support for MMX and SSE/SSE2
 instructions, for past versions GMP will need to be configured not to use
-those, ie.@: for an x86 without them (for instance plain @samp{i486}).
+those, i.e.@: for an x86 without them (for instance plain @samp{i486}).
 
 GMP's assembly code sometimes promotes a read of the limbs to some larger size,
 for efficiency.  GMP will do this even at the start and end of a multilimb
@@ -3142,7 +3142,7 @@ the function @code{mpz_fits_slong_p}.
 @end deftypefun
 
 @deftypefun double mpz_get_d (mpz_t @var{op})
-Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero).
 
 If the exponent from the conversion is too big, the result is system
@@ -3151,7 +3151,7 @@ may or may not occur.
 @end deftypefun
 
 @deftypefun double mpz_get_d_2exp (signed long int *@var{exp}, mpz_t @var{op})
-Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero), and returning the exponent separately.
 
 The return value is in the range @math{0.5@le{}@GMPabs{@var{d}}<1} and the
@@ -4247,7 +4247,7 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @cindex Conversion functions
 
 @deftypefun double mpq_get_d (mpq_t @var{op})
-Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero).
 
 If the exponent from the conversion is too big or too small to fit a
@@ -4735,7 +4735,7 @@ set by @code{mpf_set_default_prec}.
 @cindex Conversion functions
 
 @deftypefun double mpf_get_d (mpf_t @var{op})
-Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero).
 
 If the exponent in @var{op} is too big or too small to fit a @code{double}
@@ -4745,7 +4745,7 @@ underflow and denorm traps may or may not occur.
 @end deftypefun
 
 @deftypefun double mpf_get_d_2exp (signed long int *@var{exp}, mpf_t @var{op})
-Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero), and with an exponent returned separately.
 
 The return value is in the range @math{0.5@le{}@GMPabs{@var{d}}<1} and the
@@ -5683,7 +5683,7 @@ concatenated.
 Initialize @var{state} for a linear congruential algorithm as per
 @code{gmp_randinit_lc_2exp}.  @var{a}, @var{c} and @var{m2exp} are selected
 from a table, chosen so that @var{size} bits (or more) of each @math{X} will
-be used, ie.@: @math{@var{m2exp}/2 @ge{} @var{size}}.
+be used, i.e.@: @math{@var{m2exp}/2 @ge{} @var{size}}.
 
 If successful the return value is non-zero.  If @var{size} is bigger than the
 table data provides then the return value is zero.  The maximum @var{size}
@@ -5756,7 +5756,7 @@ random data better suited for use as a seed.
 @section Random State Miscellaneous
 
 @deftypefun {unsigned long} gmp_urandomb_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
-Return a uniformly distributed random number of @var{n} bits, ie.@: in the
+Return a uniformly distributed random number of @var{n} bits, i.e.@: in the
 range 0 to @m{2^n-1,2^@var{n}-1} inclusive.  @var{n} must be less than or
 equal to the number of bits in an @code{unsigned long}.
 @end deftypefun
@@ -7077,7 +7077,7 @@ interface, expression templates to eliminate temporaries.
 ALP @spaceuref{http://www-sop.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
 polynomials using templates.
 @item
-Arithmos @spaceuref{http://www.win.ua.ac.be/~cant/arithmos/} @* Rationals
+Arithmos @spaceuref{http://cant.ua.ac.be/old/arithmos/} @* Rationals
 with infinities and square roots.
 @item
 CLN @spaceuref{http://www.ginac.de/CLN/} @* High level classes for arithmetic.
@@ -7257,8 +7257,7 @@ Q @spaceuref{http://q-lang.sourceforge.net/} @* Equational programming system.
 @item
 Regina @spaceuref{http://regina.sourceforge.net/} @* Topological calculator.
 @item
-Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Yet another
-computer algebra system.
+Yacas @spaceuref{yacas.sourceforge.net} @* Yet another computer algebra system.
 @end itemize
 
 @end table
@@ -7460,7 +7459,7 @@ equal length (or the most significant part one limb shorter if N is odd).
 @end example
 @end ifnottex
 
-Let @math{b} be the power of 2 where the split occurs, ie.@: if @ms{x,0} is
+Let @math{b} be the power of 2 where the split occurs, i.e.@: if @ms{x,0} is
 @math{k} limbs (@ms{y,0} the same) then
 @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}}, b=2^(k*mp_bits_per_limb)}.
 With that @m{x=x_1b+x_0,x=x1*b+x0} and @m{y=y_1b+y_0,y=y1*b+y0}, and the
@@ -7639,7 +7638,7 @@ These parts are treated as the coefficients of two polynomials
 @end display
 
 Let @math{b} equal the power of 2 which is the size of the @ms{x,0}, @ms{x,1},
-@ms{y,0} and @ms{y,1} pieces, ie.@: if they're @math{k} limbs each then
+@ms{y,0} and @ms{y,1} pieces, i.e.@: if they're @math{k} limbs each then
 @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}}, b=2^(k*mp_bits_per_limb)}.
 With this @math{x=X(b)} and @math{y=Y(b)}.
 
@@ -8742,7 +8741,7 @@ to save operations, so long as the lookup tables don't become too big.
 
 A square root must still be taken for any value that passes these tests, to
 verify it's really a square and not one of the small fraction of non-squares
-that get through (ie.@: a pseudo-square to all the tested bases).
+that get through (i.e.@: a pseudo-square to all the tested bases).
 
 Clearly more residue tests could be done, @code{mpz_perfect_square_p} only
 uses a compact and efficient set.  Big inputs would probably benefit from more
@@ -8844,7 +8843,7 @@ calculating a bigger radix power.
 
 Another possible improvement for the sub-quadratic part would be to arrange
 for radix powers that balanced the sizes of quotient and remainder produced,
-ie.@: the highest power would be an @m{b^{nk},b^(n*k)} approximately equal to
+i.e.@: the highest power would be an @m{b^{nk},b^(n*k)} approximately equal to
 @m{\sqrt{t},sqrt(t)}, not restricted to a @math{2^i} factor.  That ought to
 smooth out a graph of times against sizes, but may or may not be a net
 speedup.
@@ -10313,7 +10312,7 @@ Analytic Number Theory and Computational Complexity'', Wiley, 1998.
 @item
 Richard Crandall and Carl Pomerance, ``Prime Numbers: A Computational
 Perspective'', 2nd edition, Springer-Verlag, 2005.
-@texlinebreak{} @uref{http://math.dartmouth.edu/~carlp/}
+@texlinebreak{} @uref{http://www.math.dartmouth.edu/~carlp/}
 
 @item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
@@ -10346,8 +10345,8 @@ Collection'', Free Software Foundation, 2008, available online
 @item
 Yves Bertot, Nicolas Magaud and Paul Zimmermann, ``A Proof of GMP Square
 Root'', Journal of Automated Reasoning, volume 29, 2002, pp.@: 225-252.  Also
-available online as INRIA Research Report 4475, June 2001,
-@uref{http://www.inria.fr/rrrt/rr-4475.html}
+available online as INRIA Research Report 4475, June 2002,
+@uref{http://hal.inria.fr/docs/00/07/21/13/PDF/RR-4475.pdf}
 
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
@@ -10437,7 +10436,7 @@ volume 21, number 1, March 1995, pp.@: 111-122.
 
 @item
 Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
-November 1999, @uref{http://www.inria.fr/rrrt/rr-3805.html}
+November 1999, @uref{http://hal.inria.fr/inria-00072854/PDF/RR-3805.pdf}
 
 @item
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
