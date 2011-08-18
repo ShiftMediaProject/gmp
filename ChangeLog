@@ -1,3 +1,12 @@
+2011-08-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* printf/doprntf.c (__gmp_doprnt_mpf): For DOPRNT_CONV_FIXED, ask for
+	one more digit.
+
+2011-08-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpf/sub.c: Fix typo in copy condition.  Delay an allocation.
+
 2011-08-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (LIMBS_PER_DIGIT_IN_BASE): Fix typo.
