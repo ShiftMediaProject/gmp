@@ -1,3 +1,17 @@
+2011-08-21  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-ops2.cc: check mul-div by 2.
+
+	* gmpxx.h (__GMPXX_CONSTANT): New macro (__builtin_constant_p).
+	(__gmp_binary_lshift): Move before multiplication. Optimize x << 0.
+	(__gmp_binary_rshift): Move before division. Optimize x >> 0.
+	(__gmp_binary_plus): Optimize x + 0. Rewrite rational + integer.
+	(__gmp_binary_minus): Optimize x - 0 and 0 - x.
+	Rewrite rational - integer.
+	(__gmp_binary_multiplies): Optimize x * 2^n.
+	(__gmp_binary_divides): Optimize x / 2^n.
+	(__gmp_binary_*): Deduplicate code for symmetric operations.
+
 2011-08-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* printf/doprntf.c (__gmp_doprnt_mpf): For DOPRNT_CONV_FIXED, ask for
