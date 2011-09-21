@@ -1,3 +1,12 @@
+2011-09-21  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (mpz_class::swap): New function.
+	(mpq_class::swap): Likewise.
+	(mpf_class::swap): Likewise.
+	(swap): New function.
+	* tests/cxx/t-assign.cc: Test the above.
+	* doc/gmp.texi (swap): Document the above.
+
 2011-08-21  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-ops2.cc: check mul-div by 2.

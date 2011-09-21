@@ -35,6 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <iosfwd>
 
 #include <cstring>  /* for strlen */
+#include <utility>
 #include <string>
 #include <stdexcept>
 #include <cfloat>
@@ -1450,6 +1451,8 @@ public:
 
   ~__gmp_expr() { mpz_clear(mp); }
 
+  void swap(__gmp_expr& z) { std::swap(*mp, *z.mp); }
+
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &z)
   { mpz_set(mp, z.mp); return *this; }
@@ -1622,6 +1625,8 @@ public:
   }
 
   ~__gmp_expr() { mpq_clear(mp); }
+
+  void swap(__gmp_expr& q) { std::swap(*mp, *q.mp); }
 
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &q)
@@ -1827,6 +1832,8 @@ public:
   { mpf_init2(mp, prec); mpf_set(mp, f); }
 
   ~__gmp_expr() { mpf_clear(mp); }
+
+  void swap(__gmp_expr& f) { std::swap(*mp, *f.mp); }
 
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &f)
@@ -2962,6 +2969,9 @@ __GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
 
 __GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
 __GMP_DEFINE_BINARY_TYPE_FUNCTION(int, cmp, __gmp_cmp_function)
+
+template <class T>
+void swap(__gmp_expr<T, T>& x, __gmp_expr<T, T>& y) { x.swap(y); }
 
 // member operators for mpz_class
 

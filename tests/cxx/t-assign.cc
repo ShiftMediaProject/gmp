@@ -27,7 +27,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-using namespace std;
+using std::string;
+using std::invalid_argument;
 
 
 void
@@ -184,6 +185,35 @@ check_mpz (void)
       ASSERT_ALWAYS (0);  /* should not be reached */
     } catch (invalid_argument) {
     }
+  }
+
+  // swap(mpz_class &)
+  {
+    mpz_class a(123);
+    mpz_class b(456);
+    a.swap(b);
+    a.swap(a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
+  }
+
+  // swap(mpz_class &, mpz_class &)
+  {
+    mpz_class a(123);
+    mpz_class b(456);
+    ::swap(a, b);
+    ::swap(a, a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
+  }
+  {
+    using std::swap;
+    mpz_class a(123);
+    mpz_class b(456);
+    swap(a, b);
+    swap(a, a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
   }
 }
 
@@ -342,6 +372,35 @@ check_mpq (void)
     } catch (invalid_argument) {
     }
   }
+
+  // swap(mpq_class &)
+  {
+    mpq_class a(3, 2);
+    mpq_class b(-1, 4);
+    a.swap(b);
+    a.swap(a);
+    ASSERT_ALWAYS(a == -.25);
+    ASSERT_ALWAYS(b == 1.5);
+  }
+
+  // swap(mpq_class &, mpq_class &)
+  {
+    mpq_class a(3, 2);
+    mpq_class b(-1, 4);
+    ::swap(a, b);
+    ::swap(a, a);
+    ASSERT_ALWAYS(a == -.25);
+    ASSERT_ALWAYS(b == 1.5);
+  }
+  {
+    using std::swap;
+    mpq_class a(3, 2);
+    mpq_class b(-1, 4);
+    swap(a, b);
+    swap(a, a);
+    ASSERT_ALWAYS(a == -.25);
+    ASSERT_ALWAYS(b == 1.5);
+  }
 }
 
 void
@@ -498,6 +557,35 @@ check_mpf (void)
       ASSERT_ALWAYS (0);  /* should not be reached */
     } catch (invalid_argument) {
     }
+  }
+
+  // swap(mpf_class &)
+  {
+    mpf_class a(123);
+    mpf_class b(456);
+    a.swap(b);
+    a.swap(a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
+  }
+
+  // swap(mpf_class &, mpf_class &)
+  {
+    mpf_class a(123);
+    mpf_class b(456);
+    ::swap(a, b);
+    ::swap(a, a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
+  }
+  {
+    using std::swap;
+    mpf_class a(123);
+    mpf_class b(456);
+    swap(a, b);
+    swap(a, a);
+    ASSERT_ALWAYS(a == 456);
+    ASSERT_ALWAYS(b == 123);
   }
 }
 
