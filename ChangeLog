@@ -1,3 +1,8 @@
+2011-09-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sh: Migrate files to '.asm'.
+	* configure.in: Recognise sh3 and sh4.
+
 2011-09-21  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (mpz_class::swap): New function.
