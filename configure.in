@@ -1123,7 +1123,7 @@ case $host in
 
 
   sh-*-*)   path="sh" ;;
-  sh2-*-*)  path="sh/sh2 sh" ;;
+  [sh[2-4]-*-*])  path="sh/sh2 sh" ;;
 
 
   *sparc*-*-*)
