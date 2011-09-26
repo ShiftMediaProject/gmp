@@ -1,3 +1,8 @@
+2011-09-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (SH): Recognise predefs for all SH processors as defined
+	by current gcc versions.
+
 2011-09-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sh: Migrate files to '.asm'.
