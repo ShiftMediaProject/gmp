@@ -27,7 +27,7 @@ C s1_ptr	r5
 C size		r6
 C s2_limb	r7
 
-changecom(blah)			C disable # to make C all comments below work
+changecom(blah)			C disable # to make all C comments below work
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
@@ -42,10 +42,10 @@ L(top):	mov.l	@r5+,r3
 	sts	mach,r2		C new cy_limb = hi_prod
 	mov.l	@r4,r3
 	addc	r0,r2		C cy_limb += T, T = 0
-	subc	r3,r1
+	subc	r1,r3
 	addc	r0,r2		C cy_limb += T, T = 0
 	dt	r6
-	mov.l	r1,@r4
+	mov.l	r3,@r4
 	bf.s	L(top)
 	add	#4,r4
 
