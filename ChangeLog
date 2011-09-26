@@ -1,5 +1,8 @@
 2011-09-26  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sh/sh2/submul_1.asm: Make this old submul_1 implementation
+	actually compute intended function.
+
 	* longlong.h (SH): Recognise predefs for all SH processors as defined
 	by current gcc versions.
 
