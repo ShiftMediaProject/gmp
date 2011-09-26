@@ -1373,7 +1373,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #endif /* RT/ROMP */
 
-#if defined (__sh2__) && W_TYPE_SIZE == 32
+#if (defined (__SH2__) || defined (__SH3__) || defined (__SH4__)) && W_TYPE_SIZE == 32
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("dmulu.l %2,%3\n\tsts macl,%1\n\tsts mach,%0"		\
 	   : "=r" (w1), "=r" (w0) : "r" (u), "r" (v) : "macl", "mach")
