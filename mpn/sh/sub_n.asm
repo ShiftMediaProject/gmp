@@ -27,7 +27,7 @@ C up		r5
 C vp		r6
 C n		r7
 
-changecom(blah)			C disable # to make C all comments below work
+changecom(blah)			C disable # to make all C comments below work
 
 ASM_START()
 PROLOGUE(mpn_sub_n)

@@ -27,7 +27,7 @@ C s1_ptr	r5
 C size		r6
 C s2_limb	r7
 
-changecom(blah)			C disable # to make C all comments below work
+changecom(blah)			C disable # to make all C comments below work
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
