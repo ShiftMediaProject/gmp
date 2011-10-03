@@ -1054,6 +1054,18 @@ dnl  aors_n
 m4_not_for_expansion(`OPERATION_add_n')
 m4_not_for_expansion(`OPERATION_sub_n')
 
+dnl  aors_err1_n
+m4_not_for_expansion(`OPERATION_add_err1_n')
+m4_not_for_expansion(`OPERATION_sub_err1_n')
+
+dnl  aors_err2_n
+m4_not_for_expansion(`OPERATION_add_err2_n')
+m4_not_for_expansion(`OPERATION_sub_err2_n')
+
+dnl  aors_err3_n
+m4_not_for_expansion(`OPERATION_add_err3_n')
+m4_not_for_expansion(`OPERATION_sub_err3_n')
+
 dnl  aorsmul_1
 m4_not_for_expansion(`OPERATION_addmul_1')
 m4_not_for_expansion(`OPERATION_submul_1')
@@ -1306,6 +1318,9 @@ m4_assert_numargs(1)
 
 define_mpn(add)
 define_mpn(add_1)
+define_mpn(add_err1_n)
+define_mpn(add_err2_n)
+define_mpn(add_err3_n)
 define_mpn(add_n)
 define_mpn(add_nc)
 define_mpn(addcnd_n)
@@ -1400,6 +1415,7 @@ define_mpn(mul_6)
 define_mpn(mul_basecase)
 define_mpn(mul_n)
 define_mpn(mullo_basecase)
+define_mpn(mulmid_basecase)
 define_mpn(perfect_square_p)
 define_mpn(popcount)
 define_mpn(preinv_divrem_1)
@@ -1448,6 +1464,9 @@ define_mpn(sublsh_nc_ip1)
 define_mpn(sqrtrem)
 define_mpn(sub)
 define_mpn(sub_1)
+define_mpn(sub_err1_n)
+define_mpn(sub_err2_n)
+define_mpn(sub_err3_n)
 define_mpn(sub_n)
 define_mpn(sub_nc)
 define_mpn(submul_1)

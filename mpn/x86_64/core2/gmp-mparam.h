@@ -52,6 +52,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM6_THRESHOLD                218
 #define SQR_TOOM8_THRESHOLD                296
 
+#define MULMID_TOOM42_THRESHOLD             24
+
 #define MULMOD_BNM1_THRESHOLD               15
 #define SQRMOD_BNM1_THRESHOLD               15
 

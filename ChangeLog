@@ -1,5 +1,17 @@
 2011-10-03  Niels Möller  <nisse@lysator.liu.se>
 
+	mulmid-related assembly for x86_64, from David Harvey:
+	* mpn/asm-defs.m4 (define_mpn): Added [add,sub]_err[1,2,3]_n and
+	mulmid_basecase. Also use m4_not_for_expansion on the
+	corresponding OPERATION_* symbols.
+	* mpn/x86_64/aors_err1_n.asm: New file.
+	* mpn/x86_64/aors_err2_n.asm: Likewise.
+	* mpn/x86_64/aors_err3_n.asm: Likewise.
+	* mpn/x86_64/mulmid_basecase.asm: Likewise.
+	* mpn/x86_64/core2/aors_err1_n.asm: Likewise.
+	* mpn/x86_64/gmp-mparam.h (MULMID_TOOM42_THRESHOLD): New value.
+	* mpn/x86_64/core2/gmp-mparam.h (MULMID_TOOM42_THRESHOLD): Likewise.
+
 	Tuning of mulmid, from David Harvey:
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Added mulmid.c
 	mulmid_n.c toom42_mulmid.c.
