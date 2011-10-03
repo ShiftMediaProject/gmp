@@ -2527,10 +2527,12 @@ gmp_mpn_functions_optional="umul udiv					\
 gmp_mpn_functions="$extra_functions					   \
   add add_1 add_n sub sub_1 sub_n addcnd_n subcnd_n neg com		   \
   mul_1 addmul_1 submul_1						   \
+  add_err1_n add_err2_n add_err3_n sub_err1_n sub_err2_n sub_err3_n	   \
   lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2		   \
   fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump		   \
   mod_1_1 mod_1_2 mod_1_3 mod_1_4 lshiftc				   \
   mul mul_fft mul_n sqr mul_basecase sqr_basecase nussbaumer_mul	   \
+  mulmid_basecase toom42_mulmid mulmid_n mulmid				   \
   random random2 pow_1							   \
   rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp	   \
   perfsqr perfpow							   \
@@ -2571,6 +2573,12 @@ define(GMP_MULFUNC_CHOICES,
 tmp_mulfunc=
 case $tmp_fn in
   add_n|sub_n)       tmp_mulfunc="aors_n"    ;;
+  add_err1_n|sub_err1_n)
+		     tmp_mulfunc="aors_err1_n" ;;
+  add_err2_n|sub_err2_n)
+		     tmp_mulfunc="aors_err2_n" ;;
+  add_err3_n|sub_err3_n)
+		     tmp_mulfunc="aors_err3_n" ;;
   addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
   popcount|hamdist)  tmp_mulfunc="popham"    ;;
   and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)

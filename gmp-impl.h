@@ -960,6 +960,24 @@ __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcp
 #define mpn_lshiftc __MPN(lshiftc)
 __GMP_DECLSPEC mp_limb_t mpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 
+#define mpn_add_err1_n  __MPN(add_err1_n)
+__GMP_DECLSPEC mp_limb_t mpn_add_err1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_add_err2_n  __MPN(add_err2_n)
+__GMP_DECLSPEC mp_limb_t mpn_add_err2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_add_err3_n  __MPN(add_err3_n)
+__GMP_DECLSPEC mp_limb_t mpn_add_err3_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_sub_err1_n  __MPN(sub_err1_n)
+__GMP_DECLSPEC mp_limb_t mpn_sub_err1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_sub_err2_n  __MPN(sub_err2_n)
+__GMP_DECLSPEC mp_limb_t mpn_sub_err2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_sub_err3_n  __MPN(sub_err3_n)
+__GMP_DECLSPEC mp_limb_t mpn_sub_err3_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
 #define mpn_add_n_sub_n __MPN(add_n_sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_add_n_sub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
@@ -1030,6 +1048,15 @@ __GMP_DECLSPEC void mpn_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_sqr_basecase __MPN(sqr_basecase)
 __GMP_DECLSPEC void mpn_sqr_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
+
+#define mpn_mulmid_basecase __MPN(mulmid_basecase)
+__GMP_DECLSPEC void mpn_mulmid_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+
+#define mpn_mulmid_n __MPN(mulmid_n)
+__GMP_DECLSPEC void mpn_mulmid_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+#define mpn_mulmid __MPN(mulmid)
+__GMP_DECLSPEC void mpn_mulmid __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
 #define mpn_submul_1c __MPN(submul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
@@ -1185,6 +1212,8 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM53_MUL_MINSIZE   49 /* ??? */
 #define MPN_TOOM63_MUL_MINSIZE   49
 
+#define MPN_TOOM42_MULMID_MINSIZE    4
+
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 __GMP_DECLSPEC void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
@@ -1282,6 +1311,9 @@ __GMP_DECLSPEC void      mpn_toom8h_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 
 #define   mpn_toom8_sqr __MPN(toom8_sqr)
 __GMP_DECLSPEC void      mpn_toom8_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom42_mulmid __MPN(toom42_mulmid)
+__GMP_DECLSPEC void      mpn_toom42_mulmid __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_fft_best_k __MPN(fft_best_k)
 __GMP_DECLSPEC int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
@@ -1905,6 +1937,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 /* See comments above about MUL_TOOM33_THRESHOLD_LIMIT.  */
 #ifndef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
+#endif
+
+#ifndef MULMID_TOOM42_THRESHOLD
+#define MULMID_TOOM42_THRESHOLD     MUL_TOOM22_THRESHOLD
 #endif
 
 #ifndef DC_DIV_QR_THRESHOLD
@@ -4535,6 +4571,10 @@ extern mp_size_t			mullo_dc_threshold;
 #define MULLO_MUL_N_THRESHOLD		mullo_mul_n_threshold
 extern mp_size_t			mullo_mul_n_threshold;
 
+#undef	MULMID_TOOM42_THRESHOLD
+#define MULMID_TOOM42_THRESHOLD		mulmid_toom42_threshold
+extern mp_size_t			mulmid_toom42_threshold;
+
 #undef	DIV_QR_2_PI2_THRESHOLD
 #define DIV_QR_2_PI2_THRESHOLD		div_qr_2_pi2_threshold
 extern mp_size_t			div_qr_2_pi2_threshold;
@@ -4837,6 +4877,11 @@ mpn_toom63_mul_itch (mp_size_t an, mp_size_t bn)
   mp_size_t n = 1 + (an >= 2 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
   return 9 * n + 3;
 }
+
+/* let S(n) = space required for input size n,
+   then S(n) = 3 floor(n/2) + 1 + S(floor(n/2)).   */
+#define mpn_toom42_mulmid_itch(n) \
+  (3 * (n) + GMP_NUMB_BITS)
 
 #if 0
 #define mpn_fft_mul mpn_mul_fft_full

@@ -1,5 +1,26 @@
 2011-10-03  Niels Möller  <nisse@lysator.liu.se>
 
+	Implementation of mulmid, from David Harvey:
+	* mpn/generic/add_err1_n.c (mpn_add_err1_n): New file and function.
+	* mpn/generic/add_err2_n.c (mpn_add_err2_n): Likewise.
+	* mpn/generic/add_err3_n.c (mpn_add_err3_n): Likewise.
+	* mpn/generic/sub_err1_n.c (mpn_sub_err1_n): Likewise.
+	* mpn/generic/sub_err2_n.c (mpn_sub_err2_n): Likewise.
+	* mpn/generic/sub_err3_n.c (mpn_sub_err3_n): Likewise.
+	* mpn/generic/mulmid_basecase.c (mpn_mulmid_basecase): Likewise.
+	* mpn/generic/mulmid_n.c (mpn_mulmid_n): Likewise.
+	* mpn/generic/toom42_mulmid.c (mpn_toom42_mulmid): Likewise.
+	* configure.in (gmp_mpn_functions): Added mulmid-related
+	functions.
+	(GMP_MULFUNC_CHOICES): Handle aors_err1_n, aors_err2_n, and
+	aors_err3_n.
+	* gmp-impl.h: Added prototypes for mulmid functions.
+	(MPN_TOOM42_MULMID_MINSIZE): New constant.
+	(MULMID_TOOM42_THRESHOLD): New threshold.
+	(mpn_toom42_mulmid_itch): New macro.
+
+2011-10-03  Niels Möller  <nisse@lysator.liu.se>
+
 	* tune/tune-gcd-p.c (main): Fixed broken loop conditions.
 
 2011-09-26  Torbjorn Granlund  <tege@gmplib.org>
