@@ -1,7 +1,7 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
 Copyright 1991, 1992, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
+2004, 2005, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
 
 This file is free software; you can redistribute it and/or modify it under the
 terms of the GNU Lesser General Public License as published by the Free
@@ -674,6 +674,69 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	     : "=r" (__x.__ll)						\
 	     : "0" (__x.__ll), "r" (d));				\
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
+  } while (0)
+#endif
+
+#if defined (__s390x__) && W_TYPE_SIZE == 64
+#define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
+  do {									\
+    if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
+      __asm__ ("algfi\t%1, %5\n\talcgr\t%0, %3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "%1" ((UDItype)(al)), "n" ((UDItype)(bl)));		\
+    else								\
+      __asm__ ("algr\t%1, %5\n\talcgr\t%0, %3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+  } while (0)
+#define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
+  do {									\
+  if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
+      __asm__ ("slgfi\t%1, %n5\n\tslbgr\t%0, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "n" ((UDItype)(bl)));		\
+    else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
+      __asm__ ("algfi\t%1, %n5\n\tslbgr\t%0, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "n" (-(UDItype)(bl)));		\
+    else								\
+      __asm__ ("slgr\t%1, %5\n\tslbgr\t%0, %3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+  } while (0)
+#define umul_ppmm(xh, xl, m0, m1)					\
+  do {									\
+    union {unsigned int __attribute__ ((mode(TI))) __ll;		\
+	   struct {UDItype __h, __l;} __i;				\
+	  } __x;							\
+    __asm__ ("mlgr\t%0, %2"						\
+	     : "=&r" (__x.__ll)						\
+	     : "%0" ((UDItype)(m0)), "r" ((UDItype)(m1)));		\
+    (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
+  } while (0)
+#define udiv_qrnnd(q, r, n1, n0, d)					\
+  do {									\
+    union {unsigned int __attribute__ ((mode(TI))) __ll;		\
+	   struct {UDItype __h, __l;} __i;				\
+	  } __x;							\
+    __x.__i.__h = n1; __x.__i.__l = n0;					\
+    __asm__ ("dlgr\t%0, %2"						\
+	     : "=r" (__x.__ll)						\
+	     : "0" (__x.__ll), "r" (d));				\
+    (q) = __x.__i.__l; (r) = __x.__i.__h;				\
+  } while (0)
+#define count_leading_zeros(cnt, x)					\
+  do {									\
+    union {unsigned int __attribute__ ((mode(TI))) __ll;		\
+	   struct {UDItype __h, __l;} __i;				\
+	  } __clr_cnt;							\
+    __asm__ ("flogr\t%0, %1" : "=r" (__clr_cnt.__ll) : "r" (x));	\
+    (cnt) = __clr_cnt.__i.__h;						\
   } while (0)
 #endif
 

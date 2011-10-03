@@ -1114,11 +1114,23 @@ case $host in
     ;;
 
 
-  # IBM s/370 and similar
+  # IBM System/390 and z/Architecture
   [s3[6-9]0*-*-*])
+    abilist="32"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
-    path="s390"
+    path="s390_32"
     extra_functions="udiv_w_sdiv"
+
+    case $host_cpu in
+      s390x)
+        abilist="64 32"
+	cclist_64="gcc"
+        gcc_64_cflags="$gcc_cflags -m64"
+        gcc_32_cflags="$gcc_cflags -m31"
+	path_32="s390_32/esame s390_32"
+	path_64="s390_64"
+	;;
+      esac
     ;;
 
 
