@@ -153,6 +153,13 @@ const struct routine_t {
   { "mpn_add_n",         speed_mpn_add_n,     FLAG_R_OPTIONAL },
   { "mpn_sub_n",         speed_mpn_sub_n,     FLAG_R_OPTIONAL },
 
+  { "mpn_add_err1_n",    speed_mpn_add_err1_n    },
+  { "mpn_add_err2_n",    speed_mpn_add_err2_n    },
+  { "mpn_add_err3_n",    speed_mpn_add_err3_n    },
+  { "mpn_sub_err1_n",    speed_mpn_sub_err1_n    },
+  { "mpn_sub_err2_n",    speed_mpn_sub_err2_n    },
+  { "mpn_sub_err3_n",    speed_mpn_sub_err3_n    },
+
 #if HAVE_NATIVE_mpn_add_n_sub_n
   { "mpn_add_n_sub_n",      speed_mpn_add_n_sub_n,     FLAG_R_OPTIONAL },
 #endif
@@ -331,6 +338,11 @@ const struct routine_t {
 
   { "mpn_mullo_n",        speed_mpn_mullo_n         },
   { "mpn_mullo_basecase", speed_mpn_mullo_basecase  },
+
+  { "mpn_mulmid_basecase",  speed_mpn_mulmid_basecase, FLAG_R_OPTIONAL },
+  { "mpn_toom42_mulmid",    speed_mpn_toom42_mulmid },
+  { "mpn_mulmid_n",         speed_mpn_mulmid_n },
+  { "mpn_mulmid",           speed_mpn_mulmid, FLAG_R_OPTIONAL },
 
   { "mpn_bc_mulmod_bnm1",      speed_mpn_bc_mulmod_bnm1      },
   { "mpn_mulmod_bnm1",         speed_mpn_mulmod_bnm1         },

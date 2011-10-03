@@ -170,6 +170,7 @@ mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullo_basecase_threshold     = MP_SIZE_T_MAX;
 mp_size_t  mullo_dc_threshold           = MP_SIZE_T_MAX;
 mp_size_t  mullo_mul_n_threshold        = MP_SIZE_T_MAX;
+mp_size_t  mulmid_toom42_threshold      = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  sqrmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
@@ -1342,6 +1343,18 @@ tune_mullo (void)
   print_define_remark ("MULLO_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
                            "without FFT use mullo forever");
 #endif
+}
+
+void
+tune_mulmid (void)
+{
+  static struct param_t  param;
+
+  param.name = "MULMID_TOOM42_THRESHOLD";
+  param.function = speed_mpn_mulmid_n;
+  param.min_size = 4;
+  param.max_size = 100;
+  one (&mulmid_toom42_threshold, &param);
 }
 
 void
@@ -2530,6 +2543,9 @@ all (void)
   printf("\n");
 
   tune_sqr ();
+  printf("\n");
+
+  tune_mulmid ();
   printf("\n");
 
   tune_mulmod_bnm1 ();

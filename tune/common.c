@@ -926,6 +926,38 @@ speed_mpn_sub_n (struct speed_params *s)
 SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n);
 }
 
+double
+speed_mpn_add_err1_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR1_N (mpn_add_err1_n);
+}
+double
+speed_mpn_sub_err1_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR1_N (mpn_sub_err1_n);
+}
+double
+speed_mpn_add_err2_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR2_N (mpn_add_err2_n);
+}
+double
+speed_mpn_sub_err2_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR2_N (mpn_sub_err2_n);
+}
+double
+speed_mpn_add_err3_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR3_N (mpn_add_err3_n);
+}
+double
+speed_mpn_sub_err3_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_ERR3_N (mpn_sub_err3_n);
+}
+
+
 #if HAVE_NATIVE_mpn_add_n_sub_n
 double
 speed_mpn_add_n_sub_n (struct speed_params *s)
@@ -1366,6 +1398,30 @@ double
 speed_mpn_mullo_basecase (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MULLO_BASECASE (mpn_mullo_basecase);
+}
+
+double
+speed_mpn_mulmid_basecase (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMID (mpn_mulmid_basecase);
+}
+
+double
+speed_mpn_mulmid (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMID (mpn_mulmid);
+}
+
+double
+speed_mpn_mulmid_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMID_N (mpn_mulmid_n);
+}
+
+double
+speed_mpn_toom42_mulmid (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_TOOM42_MULMID (mpn_toom42_mulmid);
 }
 
 double

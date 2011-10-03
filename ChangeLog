@@ -1,5 +1,29 @@
 2011-10-03  Niels Möller  <nisse@lysator.liu.se>
 
+	Tuning of mulmid, from David Harvey:
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Added mulmid.c
+	mulmid_n.c toom42_mulmid.c.
+	* tune/speed.h: Prototypes for mulmid-related functions.
+	(struct speed_params): Increased max number of sources to 5.
+	(SPEED_ROUTINE_MPN_BINARY_ERR_N_CALL): New macro.
+	(SPEED_ROUTINE_MPN_BINARY_ERR1_N): Likewise.
+	(SPEED_ROUTINE_MPN_BINARY_ERR2_N): Likewise.
+	(SPEED_ROUTINE_MPN_BINARY_ERR3_N): Likewise.
+	(SPEED_ROUTINE_MPN_MULMID): Likewise.
+	(SPEED_ROUTINE_MPN_MULMID_N): Likewise.
+	(SPEED_ROUTINE_MPN_TOOM42_MULMID): Likewise.
+	* tune/common.c (mpn_[add,sub]_err[1,2,3]_n): New functions.
+	(speed_mpn_mulmid_basecase): New function.
+	(speed_mpn_mulmid): New function.
+	(speed_mpn_mulmid_n): New function.
+	(speed_mpn_toom42_mulmid): New function.
+	* tune/speed.c (routine): Added mpn_[add,sub]_err[1,2,3]_n,
+	mpn_mulmid_basecase, mpn_toom42_mulmid, mpn_mulmid_n, and
+	mpn_mulmid.
+	* tune/tuneup.c (mulmid_toom42_threshold): New threshold variable.
+	(tune_mulmid): New function.
+	(all): Call tune_mulmid.
+
 	Testing of mulmid, from David Harvey:
 	* tests/refmpn.c (AORS_ERR1_N): New macro.
 	(refmpn_add_err1_n, refmpn_sub_err1_n): New functions.
