@@ -116,10 +116,10 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
     }
 }
 
-/* Temporary storage: 3*(n+1) for u. n+1 for the matrix-vector
-   multiplications (if hgcd2 succeeds). If hgcd fails, n+1 limbs are
-   needed for the division, with most n for the quotient, and n+1 for
-   the product q u0. In all, 4n + 3. */
+/* Temporary storage: 3*(n+1) for u. If hgcd2 succeeds, we need n for
+   the matrix-vector multiplication adjusting a, b. If hgcd fails, we
+   need at most n for the quotient and n+1 for the u update (reusing
+   the extra u). In all, 4n + 3. */
 
 mp_size_t
 mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
