@@ -1,3 +1,7 @@
+2011-10-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tune-gcd-p.c (main): Fixed broken loop conditions.
+
 2011-09-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sh/sh2/submul_1.asm: Make this old submul_1 implementation

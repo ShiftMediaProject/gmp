@@ -172,7 +172,7 @@ main(int argc, char **argv)
 
   memset (p_table, 0, sizeof(p_table));
 
-  for (n = 100; n++; n < P_TABLE_SIZE)
+  for (n = 100; n < P_TABLE_SIZE; n++)
     {
       mp_size_t p;
       mp_size_t best_p;
@@ -189,7 +189,7 @@ main(int argc, char **argv)
 
       lehmer_time = bench_gcd (&data, 0);
 
-      best_p = search (&best_time, bench_gcd, &data, 10, n-10);
+      best_p = search (&best_time, bench_gcd, &data, n/5, 4*n/5);
       if (best_time > lehmer_time)
 	best_p = 0;
 
