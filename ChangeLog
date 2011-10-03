@@ -1,3 +1,11 @@
+2011-10-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Custom Allocation): Rephrase a paragraph.
+
+	* demos/factorize.c: Run 25 Miller-Rabin tests.
+
+	* mpz/nextprime.c: Run 25 mpz_millerrabin tests (was 10).
+
 2011-10-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Support s390x.
@@ -4473,7 +4481,7 @@
 
 	* nextprime.c: New file.
 	* gmp-impl.h (gmp_primesieve_t, gmp_init_primesieve, gmp_nextprime):
-	Declare
+	Declare.
 	* Makefile.am (libgmp_la_SOURCES): Add nextprime.c.
 
 2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
