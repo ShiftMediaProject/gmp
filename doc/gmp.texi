@@ -3529,10 +3529,9 @@ extremely small.
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Greatest common divisor functions
 @cindex GCD functions
-Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}. The
+Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.  The
 result is always positive even if one or both input operands are negative.
-Except if both inputs are zero; then this function defines @math{gcd(0,0) =
-0}.
+Except if both inputs are zero; then this function defines @math{gcd(0,0) = 0}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_gcd_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
@@ -5382,8 +5381,8 @@ limb of @{@var{vp}, @var{vn}@} must be non-zero.
 0} if and only if @math{V} divides @math{U} (i.e., @math{G = V}).
 
 Store @math{G} at @var{gp} and let the return value define its limb count.
-Store @math{S} at @var{sp} and let |*@var{sn}| define its limb count. @math{S}
-can be negative; when this happens *@var{sn} will be negative. The area at
+Store @math{S} at @var{sp} and let |*@var{sn}| define its limb count.  @math{S}
+can be negative; when this happens *@var{sn} will be negative.  The area at
 @var{gp} should have room for @var{vn} limbs and the area at @var{sp} should
 have room for @math{@var{vn}+1} limbs.
 
@@ -5396,7 +5395,6 @@ areas. More precisely, the areas @{@var{up}, @math{@var{un}+1}@} and
 @{@var{vp}, @math{@var{vn}+1}@} were destroyed (i.e.@: the operands plus an
 extra limb past the end of each), and the areas pointed to by @var{gp} and
 @var{sp} should each have room for @math{@var{un}+1} limbs.
-
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
@@ -7010,10 +7008,10 @@ De-allocate the space pointed to by @var{ptr}.
 
 A @dfn{byte} here means the unit used by the @code{sizeof} operator.
 
-The @var{old_size} parameters to @var{reallocate_function} and
-@var{free_function} are passed for convenience, but of course can be ignored
-if not needed.  The default functions using @code{malloc} and friends for
-instance don't use them.
+The @var{reallocate_function} parameter @var{old_size} and the
+@var{free_function} parameter @var{size} are passed for convenience, but of
+course they can be ignored if not needed by an implementation.  The default
+functions using @code{malloc} and friends for instance don't use them.
 
 No error return is allowed from any of these functions, if they return then
 they must have performed the specified operation.  In particular note that
