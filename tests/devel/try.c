@@ -240,7 +240,7 @@ struct region_t {
 int trap_location = TRAP_NOWHERE;
 
 
-#define NUM_SOURCES  2
+#define NUM_SOURCES  5
 #define NUM_DESTS    2
 
 struct source_t {
@@ -302,32 +302,36 @@ typedef mp_limb_t (*tryfun_t) __GMP_PROTO ((ANYARGS));
 struct try_t {
   char  retval;
 
-  char  src[2];
-  char  dst[2];
+  char  src[NUM_SOURCES];
+  char  dst[NUM_DESTS];
 
 #define SIZE_YES          1
 #define SIZE_ALLOW_ZERO   2
 #define SIZE_1            3  /* 1 limb  */
 #define SIZE_2            4  /* 2 limbs */
 #define SIZE_3            5  /* 3 limbs */
-#define SIZE_FRACTION     6  /* size2 is fraction for divrem etc */
-#define SIZE_SIZE2        7
-#define SIZE_PLUS_1       8
-#define SIZE_SUM          9
-#define SIZE_DIFF        10
-#define SIZE_DIFF_PLUS_1 11
-#define SIZE_RETVAL      12
-#define SIZE_CEIL_HALF   13
-#define SIZE_GET_STR     14
-#define SIZE_PLUS_MSIZE_SUB_1 15  /* size+msize-1 */
+#define SIZE_4            6  /* 4 limbs */
+#define SIZE_6            7  /* 6 limbs */
+#define SIZE_FRACTION     8  /* size2 is fraction for divrem etc */
+#define SIZE_SIZE2        9
+#define SIZE_PLUS_1      10
+#define SIZE_SUM         11
+#define SIZE_DIFF        12
+#define SIZE_DIFF_PLUS_1 13
+#define SIZE_DIFF_PLUS_3 14
+#define SIZE_RETVAL      15
+#define SIZE_CEIL_HALF   16
+#define SIZE_GET_STR     17
+#define SIZE_PLUS_MSIZE_SUB_1 18  /* size+msize-1 */
+#define SIZE_ODD         19
   char  size;
   char  size2;
-  char  dst_size[2];
+  char  dst_size[NUM_DESTS];
 
   /* multiplier_N size in limbs */
   mp_size_t  msize;
 
-  char  dst_bytes[2];
+  char  dst_bytes[NUM_DESTS];
 
   char  dst0_from_src1;
 
@@ -366,6 +370,7 @@ struct try_t {
 #define OVERLAP_HIGH_TO_LOW  3
 #define OVERLAP_NOT_SRCS     4
 #define OVERLAP_NOT_SRC2     8
+#define OVERLAP_NOT_DST2     16
   char  overlap;
 
   tryfun_t    reference;
@@ -587,6 +592,9 @@ validate_sqrtrem (void)
 enum {
   TYPE_ADD = 1, TYPE_ADD_N, TYPE_ADD_NC, TYPE_SUB, TYPE_SUB_N, TYPE_SUB_NC,
 
+  TYPE_ADD_ERR1_N, TYPE_ADD_ERR2_N, TYPE_ADD_ERR3_N,
+  TYPE_SUB_ERR1_N, TYPE_SUB_ERR2_N, TYPE_SUB_ERR3_N,
+
   TYPE_MUL_1, TYPE_MUL_1C,
 
   TYPE_MUL_2, TYPE_MUL_3, TYPE_MUL_4, TYPE_MUL_5, TYPE_MUL_6,
@@ -631,7 +639,7 @@ enum {
   TYPE_XOR_N, TYPE_XNOR_N,
 
   TYPE_MUL_MN, TYPE_MUL_N, TYPE_SQR, TYPE_UMUL_PPMM, TYPE_UMUL_PPMM_R,
-  TYPE_MULLO_N,
+  TYPE_MULLO_N, TYPE_MULMID_MN, TYPE_MULMID_N,
 
   TYPE_SBPI1_DIV_QR, TYPE_TDIV_QR,
 
@@ -696,6 +704,43 @@ param_init (void)
   p = &param[TYPE_SUB];
   COPY (TYPE_ADD);
   REFERENCE (refmpn_sub);
+
+
+  p = &param[TYPE_ADD_ERR1_N];
+  p->retval = 1;
+  p->dst[0] = 1;
+  p->dst[1] = 1;
+  p->src[0] = 1;
+  p->src[1] = 1;
+  p->src[2] = 1;
+  p->dst_size[1] = SIZE_2;
+  p->carry = CARRY_BIT;
+  p->overlap = OVERLAP_NOT_DST2;
+  REFERENCE (refmpn_add_err1_n);
+
+  p = &param[TYPE_SUB_ERR1_N];
+  COPY (TYPE_ADD_ERR1_N);
+  REFERENCE (refmpn_sub_err1_n);
+
+  p = &param[TYPE_ADD_ERR2_N];
+  COPY (TYPE_ADD_ERR1_N);
+  p->src[3] = 1;
+  p->dst_size[1] = SIZE_4;
+  REFERENCE (refmpn_add_err2_n);
+
+  p = &param[TYPE_SUB_ERR2_N];
+  COPY (TYPE_ADD_ERR2_N);
+  REFERENCE (refmpn_sub_err2_n);
+
+  p = &param[TYPE_ADD_ERR3_N];
+  COPY (TYPE_ADD_ERR2_N);
+  p->src[4] = 1;
+  p->dst_size[1] = SIZE_6;
+  REFERENCE (refmpn_add_err3_n);
+
+  p = &param[TYPE_SUB_ERR3_N];
+  COPY (TYPE_ADD_ERR3_N);
+  REFERENCE (refmpn_sub_err3_n);
 
 
   p = &param[TYPE_MUL_1];
@@ -1210,6 +1255,18 @@ param_init (void)
   p->size2 = 1;
   REFERENCE (refmpn_mul_basecase);
 
+  p = &param[TYPE_MULMID_MN];
+  COPY (TYPE_MUL_MN);
+  p->dst_size[0] = SIZE_DIFF_PLUS_3;
+  REFERENCE (refmpn_mulmid_basecase);
+
+  p = &param[TYPE_MULMID_N];
+  COPY (TYPE_MUL_N);
+  p->size = SIZE_ODD;
+  p->size2 = SIZE_CEIL_HALF;
+  p->dst_size[0] = SIZE_DIFF_PLUS_3;
+  REFERENCE (refmpn_mulmid_n);
+
   p = &param[TYPE_UMUL_PPMM];
   p->retval = 1;
   p->src[0] = 1;
@@ -1529,6 +1586,19 @@ mpn_toom4_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
   TMP_FREE;
 }
 
+void
+mpn_toom42_mulmid_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+		       mp_size_t size)
+{
+  mp_ptr  tspace;
+  mp_size_t n;
+  TMP_DECL;
+  TMP_MARK;
+  tspace = TMP_ALLOC_LIMBS (mpn_toom42_mulmid_itch (size));
+  mpn_toom42_mulmid (dst, src1, src2, size, tspace);
+  TMP_FREE;
+}
+
 mp_limb_t
 umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
 {
@@ -1577,6 +1647,13 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_add_n_sub_nc
   { TRY(mpn_add_n_sub_nc), TYPE_ADDSUB_NC },
 #endif
+
+  { TRY(mpn_add_err1_n),  TYPE_ADD_ERR1_N  },
+  { TRY(mpn_sub_err1_n),  TYPE_SUB_ERR1_N  },
+  { TRY(mpn_add_err2_n),  TYPE_ADD_ERR2_N  },
+  { TRY(mpn_sub_err2_n),  TYPE_SUB_ERR2_N  },
+  { TRY(mpn_add_err3_n),  TYPE_ADD_ERR3_N  },
+  { TRY(mpn_sub_err3_n),  TYPE_SUB_ERR3_N  },
 
   { TRY(mpn_addmul_1),  TYPE_ADDMUL_1  },
   { TRY(mpn_submul_1),  TYPE_SUBMUL_1  },
@@ -1789,6 +1866,7 @@ const struct choice_t choice_array[] = {
 
 
   { TRY(mpn_mul_basecase), TYPE_MUL_MN },
+  { TRY(mpn_mulmid_basecase), TYPE_MULMID_MN },
   { TRY(mpn_mullo_basecase), TYPE_MULLO_N },
 #if SQR_TOOM2_THRESHOLD > 0
   { TRY(mpn_sqr_basecase), TYPE_SQR },
@@ -1812,6 +1890,11 @@ const struct choice_t choice_array[] = {
   { TRY_FUNFUN(mpn_toom3_sqr),   TYPE_SQR,    MPN_TOOM3_SQR_MINSIZE },
   { TRY_FUNFUN(mpn_toom44_mul),  TYPE_MUL_N,  MPN_TOOM44_MUL_MINSIZE },
   { TRY_FUNFUN(mpn_toom4_sqr),   TYPE_SQR,    MPN_TOOM4_SQR_MINSIZE },
+
+  { TRY(mpn_mulmid_n),  TYPE_MULMID_N, 1 },
+  { TRY(mpn_mulmid),  TYPE_MULMID_MN, 1 },
+  { TRY_FUNFUN(mpn_toom42_mulmid),  TYPE_MULMID_N,
+    (2 * MPN_TOOM42_MULMID_MINSIZE - 1) },
 
   { TRY(mpn_gcd_1),        TYPE_GCD_1            },
   { TRY(mpn_gcd),          TYPE_GCD              },
@@ -2032,15 +2115,15 @@ int        divisor_index;
 struct overlap_t {
   int  s[NUM_SOURCES];
 } overlap_array[] = {
-  { { -1, -1 } },
-  { {  0, -1 } },
-  { { -1,  0 } },
-  { {  0,  0 } },
-  { {  1, -1 } },
-  { { -1,  1 } },
-  { {  1,  1 } },
-  { {  0,  1 } },
-  { {  1,  0 } },
+  { { -1, -1, -1, -1, -1 } },
+  { {  0, -1, -1, -1, -1 } },
+  { { -1,  0, -1, -1, -1 } },
+  { {  0,  0, -1, -1, -1 } },
+  { {  1, -1, -1, -1, -1 } },
+  { { -1,  1, -1, -1, -1 } },
+  { {  1,  1, -1, -1, -1 } },
+  { {  0,  1, -1, -1, -1 } },
+  { {  1,  0, -1, -1, -1 } },
 };
 
 struct overlap_t  *overlap, *overlap_limit;
@@ -2049,6 +2132,7 @@ struct overlap_t  *overlap, *overlap_limit;
   (tr->overlap & OVERLAP_NONE       ? 1 \
    : tr->overlap & OVERLAP_NOT_SRCS ? 3 \
    : tr->overlap & OVERLAP_NOT_SRC2 ? 2 \
+   : tr->overlap & OVERLAP_NOT_DST2 ? 4	\
    : tr->dst[1]                     ? 9 \
    : tr->src[1]                     ? 4 \
    : tr->dst[0]                     ? 2 \
@@ -2314,6 +2398,21 @@ call (struct each_t *e, tryfun_t function)
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, e->s[1].p, size, carry);
     break;
+  case TYPE_ADD_ERR1_N:
+  case TYPE_SUB_ERR1_N:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, e->d[1].p, e->s[2].p, size, carry);
+    break;
+  case TYPE_ADD_ERR2_N:
+  case TYPE_SUB_ERR2_N:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, e->d[1].p, e->s[2].p, e->s[3].p, size, carry);
+    break;
+  case TYPE_ADD_ERR3_N:
+  case TYPE_SUB_ERR3_N:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, e->d[1].p, e->s[2].p, e->s[3].p, e->s[4].p, size, carry);
+    break;
 
   case TYPE_MUL_1:
   case TYPE_ADDMUL_1:
@@ -2556,12 +2655,17 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_MUL_MN:
+  case TYPE_MULMID_MN:
     CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, e->s[1].p, size2);
     break;
   case TYPE_MUL_N:
   case TYPE_MULLO_N:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, e->s[1].p, size);
+    break;
+  case TYPE_MULMID_N:
+    CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, e->s[1].p,
+				    (size + 1) / 2);
     break;
   case TYPE_SQR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
@@ -2691,6 +2795,12 @@ pointer_setup (struct each_t *e)
       case SIZE_3:
 	d[i].size = 3;
 	break;
+      case SIZE_4:
+	d[i].size = 4;
+	break;
+      case SIZE_6:
+	d[i].size = 6;
+	break;
 
       case SIZE_PLUS_1:
 	d[i].size = size+1;
@@ -2716,6 +2826,10 @@ pointer_setup (struct each_t *e)
 
       case SIZE_DIFF_PLUS_1:
 	d[i].size = size - size2 + 1;
+	break;
+
+      case SIZE_DIFF_PLUS_3:
+	d[i].size = size - size2 + 3;
 	break;
 
       case SIZE_CEIL_HALF:
@@ -3027,13 +3141,15 @@ try_one (void)
 #define SIZE_ITERATION                                          \
   for (size = MAX3 (option_firstsize,                           \
 		    choice->minsize,                            \
-		    (tr->size == SIZE_ALLOW_ZERO) ? 0 : 1);     \
+		    (tr->size == SIZE_ALLOW_ZERO) ? 0 : 1),	\
+	 size += (tr->size == SIZE_ODD) && !(size & 1);		\
        size <= option_lastsize;                                 \
-       size++)
+       size += (tr->size == SIZE_ODD) ? 2 : 1)
 
 #define SIZE2_FIRST                                     \
   (tr->size2 == SIZE_2 ? 2                              \
    : tr->size2 == SIZE_FRACTION ? option_firstsize2     \
+   : tr->size2 == SIZE_CEIL_HALF ? ((size + 1) / 2)	\
    : tr->size2 ?                                        \
    MAX (choice->minsize, (option_firstsize2 != 0        \
 			  ? option_firstsize2 : 1))     \
@@ -3042,6 +3158,7 @@ try_one (void)
 #define SIZE2_LAST                                      \
   (tr->size2 == SIZE_2 ? 2                              \
    : tr->size2 == SIZE_FRACTION ? FRACTION_COUNT-1      \
+   : tr->size2 == SIZE_CEIL_HALF ? ((size + 1) / 2)	\
    : tr->size2 ? size                                   \
    : 0)
 

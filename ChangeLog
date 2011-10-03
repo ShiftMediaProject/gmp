@@ -1,5 +1,33 @@
 2011-10-03  Niels Möller  <nisse@lysator.liu.se>
 
+	Testing of mulmid, from David Harvey:
+	* tests/refmpn.c (AORS_ERR1_N): New macro.
+	(refmpn_add_err1_n, refmpn_sub_err1_n): New functions.
+	(AORS_ERR2_N): New macro.
+	(refmpn_add_err2_n, refmpn_sub_err2_n): New functions.
+	(AORS_ERR3_N): New macro.
+	(refmpn_add_err3_n, refmpn_sub_err3_n): New functions.
+	(refmpn_mulmid_basecase): New function.
+	(refmpn_toom42_mulmid): New function, wrapper for
+	refmpn_mulmid_basecase.
+	(refmpn_mulmid_n): Likewise.
+	(refmpn_mulmid): Likewise.
+	* tests/tests.h: Prototypes for new functions.
+	* tests/devel/try.c (NUM_SOURCES): Increased to 5.
+	(struct try_t): Use NUM_SOURCES and NUM_DESTS constants.
+	(SIZE_4, SIZE_6, SIZE_DIFF_PLUS_3, SIZE_ODD): New constants.
+	(OVERLAP_NOT_DST2): New flag.
+	(param_init): New mulmid-related operation types.
+	(mpn_toom42_mulmid_fun): New function.
+	(choice_array): Added mulmid-related entries.
+	(overlap_array): Extended for larger NUM_SOURCES.
+	(OVERLAP_COUNT): Handle OVERLAP_NOT_DST2.
+	(call): Support mulmid-related functions.
+	(pointer_setup): Handle SIZE_4, SIZE_6, and SIZE_DIFF_PLUS_3.
+	(SIZE_ITERATION): Handle SIZE_ODD.
+	(SIZE2_FIRST): Handle SIZE_CEIL_HALF.
+	(SIZE2_LAST): Likewise.
+
 	Implementation of mulmid, from David Harvey:
 	* mpn/generic/add_err1_n.c (mpn_add_err1_n): New file and function.
 	* mpn/generic/add_err2_n.c (mpn_add_err2_n): Likewise.

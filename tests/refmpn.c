@@ -596,6 +596,178 @@ refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
   return refmpn_sub_nc (rp, s1p, s2p, size, CNST_LIMB(0));
 }
 
+
+#define AORS_ERR1_N(operation)						\
+  {                                                                     \
+    mp_size_t  i;                                                       \
+    mp_limb_t carry2;							\
+    									\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, yp, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 2, s1p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 2, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 2, yp, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 2, rp, size));			\
+									\
+    ASSERT (carry == 0 || carry == 1);					\
+    ASSERT (size >= 1);							\
+    ASSERT_MPN (s1p, size);						\
+    ASSERT_MPN (s2p, size);						\
+    ASSERT_MPN (yp, size);						\
+									\
+    ep[0] = ep[1] = CNST_LIMB(0);					\
+    									\
+    for (i = 0; i < size; i++)                                          \
+      {									\
+	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\
+	if (carry == 1)							\
+	  {								\
+	    carry2 = ref_addc_limb (&ep[0], ep[0], yp[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[1], ep[1], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	  }								\
+      }									\
+    return carry;                                                       \
+  }
+
+mp_limb_t
+refmpn_add_err1_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr yp,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR1_N (adc);
+}
+mp_limb_t
+refmpn_sub_err1_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr yp,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR1_N (sbb);
+}
+
+
+#define AORS_ERR2_N(operation)						\
+  {                                                                     \
+    mp_size_t  i;                                                       \
+    mp_limb_t carry2;							\
+    									\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, y1p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, y2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 4, s1p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 4, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 4, y1p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 4, y2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 4, rp, size));			\
+									\
+    ASSERT (carry == 0 || carry == 1);					\
+    ASSERT (size >= 1);							\
+    ASSERT_MPN (s1p, size);						\
+    ASSERT_MPN (s2p, size);						\
+    ASSERT_MPN (y1p, size);						\
+    ASSERT_MPN (y2p, size);						\
+									\
+    ep[0] = ep[1] = CNST_LIMB(0);					\
+    ep[2] = ep[3] = CNST_LIMB(0);					\
+    									\
+    for (i = 0; i < size; i++)                                          \
+      {									\
+	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\
+	if (carry == 1)							\
+	  {								\
+	    carry2 = ref_addc_limb (&ep[0], ep[0], y1p[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[1], ep[1], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	    carry2 = ref_addc_limb (&ep[2], ep[2], y2p[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[3], ep[3], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	  }								\
+      }									\
+    return carry;                                                       \
+  }
+
+mp_limb_t
+refmpn_add_err2_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR2_N (adc);
+}
+mp_limb_t
+refmpn_sub_err2_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR2_N (sbb);
+}
+
+
+#define AORS_ERR3_N(operation)						\
+  {                                                                     \
+    mp_size_t  i;                                                       \
+    mp_limb_t carry2;							\
+    									\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
+    ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, y1p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, y2p, size));			\
+    ASSERT (! refmpn_overlap_p (rp, size, y3p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, s1p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, s2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, y1p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, y2p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, y3p, size));			\
+    ASSERT (! refmpn_overlap_p (ep, 6, rp, size));			\
+									\
+    ASSERT (carry == 0 || carry == 1);					\
+    ASSERT (size >= 1);							\
+    ASSERT_MPN (s1p, size);						\
+    ASSERT_MPN (s2p, size);						\
+    ASSERT_MPN (y1p, size);						\
+    ASSERT_MPN (y2p, size);						\
+    ASSERT_MPN (y3p, size);						\
+									\
+    ep[0] = ep[1] = CNST_LIMB(0);					\
+    ep[2] = ep[3] = CNST_LIMB(0);					\
+    ep[4] = ep[5] = CNST_LIMB(0);					\
+    									\
+    for (i = 0; i < size; i++)                                          \
+      {									\
+	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\
+	if (carry == 1)							\
+	  {								\
+	    carry2 = ref_addc_limb (&ep[0], ep[0], y1p[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[1], ep[1], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	    carry2 = ref_addc_limb (&ep[2], ep[2], y2p[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[3], ep[3], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	    carry2 = ref_addc_limb (&ep[4], ep[4], y3p[size - 1 - i]);	\
+	    carry2 = ref_addc_limb (&ep[5], ep[5], carry2);		\
+	    ASSERT (carry2 == 0);					\
+	  }								\
+      }									\
+    return carry;                                                       \
+  }
+
+mp_limb_t
+refmpn_add_err3_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p, mp_srcptr y3p,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR3_N (adc);
+}
+mp_limb_t
+refmpn_sub_err3_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+		   mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p, mp_srcptr y3p,
+		   mp_size_t size, mp_limb_t carry)
+{
+  AORS_ERR3_N (sbb);
+}
+
+
 mp_limb_t
 refmpn_addlsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
 		 mp_size_t n, unsigned int s)
@@ -1602,6 +1774,60 @@ refmpn_mul_basecase (mp_ptr prodp,
   for (i = 1; i < vsize; i++)
     prodp[usize+i] = refmpn_addmul_1 (prodp+i, up, usize, vp[i]);
 }
+
+
+/* The same as mpn/generic/mulmid_basecase.c, but using refmpn functions. */
+void
+refmpn_mulmid_basecase (mp_ptr rp,
+			mp_srcptr up, mp_size_t un,
+			mp_srcptr vp, mp_size_t vn)
+{
+  mp_limb_t cy;
+  mp_size_t i;
+
+  ASSERT (un >= vn);
+  ASSERT (vn >= 1);
+  ASSERT (! refmpn_overlap_p (rp, un - vn + 3, up, un));
+  ASSERT (! refmpn_overlap_p (rp, un - vn + 3, vp, vn));
+  ASSERT_MPN (up, un);
+  ASSERT_MPN (vp, vn);
+
+  rp[un - vn + 1] = refmpn_mul_1 (rp, up + vn - 1, un - vn + 1, vp[0]);
+  rp[un - vn + 2] = CNST_LIMB (0);
+  for (i = 1; i < vn; i++)
+    {
+      cy = refmpn_addmul_1 (rp, up + vn - i - 1, un - vn + 1, vp[i]);
+      cy = ref_addc_limb (&rp[un - vn + 1], rp[un - vn + 1], cy);
+      cy = ref_addc_limb (&rp[un - vn + 2], rp[un - vn + 2], cy);
+      ASSERT (cy == 0);
+    }
+}
+
+void
+refmpn_toom42_mulmid (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n,
+		      mp_ptr scratch)
+{
+  refmpn_mulmid_basecase (rp, up, 2*n - 1, vp, n);
+}
+
+void
+refmpn_mulmid_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  /* FIXME: this could be made faster by using refmpn_mul and then subtracting
+     off products near the middle product region boundary */
+  refmpn_mulmid_basecase (rp, up, 2*n - 1, vp, n);
+}
+
+void
+refmpn_mulmid (mp_ptr rp, mp_srcptr up, mp_size_t un,
+	       mp_srcptr vp, mp_size_t vn)
+{
+  /* FIXME: this could be made faster by using refmpn_mul and then subtracting
+     off products near the middle product region boundary */
+  refmpn_mulmid_basecase (rp, up, un, vp, vn);
+}
+
+
 
 #define TOOM3_THRESHOLD (MAX (MUL_TOOM33_THRESHOLD, SQR_TOOM3_THRESHOLD))
 #define TOOM4_THRESHOLD (MAX (MUL_TOOM44_THRESHOLD, SQR_TOOM4_THRESHOLD))

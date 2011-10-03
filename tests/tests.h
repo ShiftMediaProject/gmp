@@ -177,6 +177,15 @@ mp_limb_t refmpn_add __GMP_PROTO ((mp_ptr rp,
                               mp_srcptr s2p, mp_size_t s2size));
 mp_limb_t refmpn_add_1 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                 mp_limb_t n));
+mp_limb_t refmpn_add_err1_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr yp,
+			  mp_size_t size, mp_limb_t carry));
+mp_limb_t refmpn_add_err2_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p,
+			  mp_size_t size, mp_limb_t carry));
+mp_limb_t refmpn_add_err3_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p, mp_srcptr y3p,
+			  mp_size_t size, mp_limb_t carry));
 mp_limb_t refmpn_add_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
 mp_limb_t refmpn_add_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
@@ -304,6 +313,15 @@ mp_limb_t refmpn_mul_6 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 void refmpn_mul_basecase __GMP_PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,
                                   mp_srcptr vp, mp_size_t vsize));
+void refmpn_mulmid_basecase __GMP_PROTO ((mp_ptr rp,
+                                  mp_srcptr up, mp_size_t un,
+                                  mp_srcptr vp, mp_size_t vn));
+void refmpn_toom42_mulmid __GMP_PROTO ((mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+					mp_size_t n, mp_ptr scratch));
+void refmpn_mulmid_n __GMP_PROTO ((mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+				   mp_size_t n));
+void refmpn_mulmid __GMP_PROTO ((mp_ptr rp, mp_srcptr up, mp_size_t un,
+				 mp_srcptr vp, mp_size_t vn));
 void refmpn_mullo_n __GMP_PROTO ((mp_ptr prodp,
 				  mp_srcptr up, mp_srcptr vp, mp_size_t vsize));
 void refmpn_mul_any __GMP_PROTO ((mp_ptr prodp,
@@ -363,6 +381,15 @@ mp_limb_t refmpn_sub __GMP_PROTO ((mp_ptr rp,
                               mp_srcptr s2p, mp_size_t s2size));
 mp_limb_t refmpn_sub_1 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                 mp_limb_t n));
+mp_limb_t refmpn_sub_err1_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr yp,
+			  mp_size_t size, mp_limb_t carry));
+mp_limb_t refmpn_sub_err2_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p,
+			  mp_size_t size, mp_limb_t carry));
+mp_limb_t refmpn_sub_err3_n __GMP_PROTO ((mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
+			  mp_ptr ep, mp_srcptr y1p, mp_srcptr y2p, mp_srcptr y3p,
+			  mp_size_t size, mp_limb_t carry));
 mp_limb_t refmpn_sub_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
 mp_limb_t refmpn_sub_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
