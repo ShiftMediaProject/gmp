@@ -231,7 +231,7 @@ factor_using_pollard_rho (mpz_t n, unsigned long a, unsigned long p)
 
       mpz_divexact (n, n, t1);	/* divide by t1, before t1 is overwritten */
 
-      if (!mpz_probab_prime_p (t1, 10))
+      if (!mpz_probab_prime_p (t1, 25))
 	{
 	  do
 	    {
@@ -257,7 +257,7 @@ factor_using_pollard_rho (mpz_t n, unsigned long a, unsigned long p)
       mpz_mod (x, x, n);
       mpz_mod (x1, x1, n);
       mpz_mod (y, y, n);
-      if (mpz_probab_prime_p (n, 10))
+      if (mpz_probab_prime_p (n, 25))
 	{
 	  mpz_out_str (stdout, 10, n);
 	  fflush (stdout);
@@ -296,7 +296,7 @@ factor (mpz_t t, unsigned long p)
 	  printf ("[is number prime?] ");
 	  fflush (stdout);
 	}
-      if (mpz_probab_prime_p (t, 10))
+      if (mpz_probab_prime_p (t, 25))
 	mpz_out_str (stdout, 10, t);
       else
 	factor_using_pollard_rho (t, 1L, p);
