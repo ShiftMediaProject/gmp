@@ -1,5 +1,8 @@
 2011-10-03  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-mulmid.
+	* tests/mpn/t-mulmid.c: New file.
+
 	mulmid-related assembly for x86_64, from David Harvey:
 	* mpn/asm-defs.m4 (define_mpn): Added [add,sub]_err[1,2,3]_n and
 	mulmid_basecase. Also use m4_not_for_expansion on the
