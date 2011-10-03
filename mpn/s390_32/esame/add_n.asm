@@ -42,6 +42,6 @@ L(top):	l	%r0, 0(%r12,up)
 	lhi	%r2, 0
 	alcr	%r2, %r2
 
-	lm	%r12, 48(%r15)
+	l	%r12, 48(%r15)
 	br	%r14
 EPILOGUE()
