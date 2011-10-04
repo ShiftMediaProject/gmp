@@ -1,5 +1,10 @@
 2011-10-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mulmid.c (mpn_mulmid): Move a TMP_DECL to block start.
+
+	* mpn/Makefile.am (TARG_DIST): Add s390_32 and s390_64, remove s390 and
+	z8000x.
+
 	* doc/gmp.texi (Custom Allocation): Rephrase a paragraph.
 
 	* demos/factorize.c: Run 25 Miller-Rabin tests.
