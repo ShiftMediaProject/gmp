@@ -33,7 +33,7 @@ PROLOGUE(mpn_addmul_1)
 	lghi	%r12, 0			C zero index register
 	aghi	%r12, 0			C clear carry flag
 	lghi	%r11, 0			C clear carry limb
-	lghi	z, 0			C clear carry limb
+	lghi	z, 0			C keep register zero
 
 L(top):	lg	%r1, 0(%r12,up)
 	lg	%r10, 0(%r12,rp)
