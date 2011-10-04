@@ -103,6 +103,8 @@ mpn_mulmid (mp_ptr rp,
     {
       /* region not wide enough to make toom42 worthwhile for any portion */
 
+      TMP_DECL;
+
       if (bn < CHUNK)
 	{
 	  /* region not too tall either, just call basecase directly */
@@ -119,7 +121,6 @@ mpn_mulmid (mp_ptr rp,
 	 ....CCCCC
       */
 
-      TMP_DECL;
       TMP_MARK;
 
       temp = TMP_ALLOC_LIMBS (rn + 2);
