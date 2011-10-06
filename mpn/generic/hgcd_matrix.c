@@ -42,9 +42,9 @@ mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p)
   M->p[0][0][0] = M->p[1][1][0] = 1;
 }
 
-/* Updated column COL, adding in column Q * (1-COL). Temporary
- * storage: qn + n <= M->alloc, where n is the size of the largest
- * element in column 1 - COL. */
+/* Update column COL, adding in Q * column (1-COL). Temporary storage:
+ * qn + n <= M->alloc, where n is the size of the largest element in
+ * column 1 - COL. */
 void
 mpn_hgcd_matrix_update_q (struct hgcd_matrix *M, mp_srcptr qp, mp_size_t qn,
 			  unsigned col, mp_ptr tp)
