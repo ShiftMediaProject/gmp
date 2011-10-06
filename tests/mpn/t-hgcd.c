@@ -1,4 +1,4 @@
-/* Test mpz_gcd, mpz_gcdext, and mpz_gcd_ui.
+/* Test mpn_hgcd.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004 Free
 Software Foundation, Inc.
@@ -97,9 +97,7 @@ main (int argc, char **argv)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
 	 have proven to trigger certain bugs in development versions of the
-	 gcd code.  The "hgcd->row[3].rsize > M" ASSERT is not triggered by
-	 the division chain code below, but that is most likely just a result
-	 of that other ASSERTs are triggered before it.  */
+	 gcd code. */
 
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 13 + 2;
