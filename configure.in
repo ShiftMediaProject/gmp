@@ -2550,9 +2550,10 @@ gmp_mpn_functions="$extra_functions					   \
   perfsqr perfpow							   \
   gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step				   \
   gcdext_lehmer								   \
-  div_q tdiv_qr jacbase jacobi_2 jacobi get_d		   \
+  div_q tdiv_qr jacbase jacobi_2 jacobi get_d				   \
   matrix22_mul matrix22_mul1_inverse_vector				   \
-  hgcd_matrix hgcd2 hgcd hgcd2_jacobi hgcd_jacobi			   \
+  hgcd_matrix hgcd2 hgcd_step hgcd hgcd_appr				   \
+  hgcd2_jacobi hgcd_jacobi						   \
   mullo_n mullo_basecase						   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
   toom33_mul toom43_mul toom53_mul toom63_mul				   \

@@ -4003,11 +4003,20 @@ __GMP_DECLSPEC void mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, cons
 #define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_matrix_adjust __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
+#define mpn_hgcd_step __MPN(hgcd_step)
+__GMP_DECLSPEC mp_size_t mpn_hgcd_step __GMP_PROTO ((mp_size_t, mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+
 #define mpn_hgcd_itch __MPN (hgcd_itch)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 
 #define mpn_hgcd __MPN (hgcd)
 __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+
+#define mpn_hgcd_appr_itch __MPN (hgcd_appr_itch)
+__GMP_DECLSPEC mp_size_t mpn_hgcd_appr_itch __GMP_PROTO ((mp_size_t));
+
+#define mpn_hgcd_appr __MPN (hgcd_appr)
+__GMP_DECLSPEC int mpn_hgcd_appr __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
 #define mpn_hgcd_jacobi __MPN (hgcd_jacobi)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_jacobi __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, unsigned *, mp_ptr));

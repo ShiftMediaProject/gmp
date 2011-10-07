@@ -1,3 +1,19 @@
+2011-10-07  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.in (gmp_mpn_functions): Added hgcd_step and hgcd_appr.
+
+	* gmp-impl.h: Added prototypes for mpn_hgcd_step,
+	mpn_hgcd_appr_itch and mpn_hgcd_appr.
+
+	* mpn/generic/hgcd_appr.c: New file.
+
+	* mpn/generic/hgcd_step.c: New file, extracted from hgcd.c.
+	(mpn_hgcd_step): Renamed, from...
+	* mpn/generic/hgcd.c (hgcd_step): ...old name. Renamed and moved
+	to hgcd_step.c.
+	(hgcd_hook): Also moved to hgcd_step.c.
+	(mpn_hgcd): Updated for hgcd_step renaming.
+
 2011-10-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_64/submul_1.asm: New file.
