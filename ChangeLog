@@ -1,5 +1,8 @@
 2011-10-07  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/t-hgcd_appr.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-hgcd_appr.
+
 	* configure.in (gmp_mpn_functions): Added hgcd_step and hgcd_appr.
 
 	* gmp-impl.h: Added prototypes for mpn_hgcd_step,
