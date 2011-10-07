@@ -1,3 +1,8 @@
+2011-10-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (s390): Add 32-bit zarch umul_ppmm and udiv_qrnnd.
+	(s390): Overhaul 32-bit and 64-bit code.
+
 2011-10-07  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (speed_mpn_hgcd_appr): New prototype.
@@ -21,6 +26,10 @@
 	to hgcd_step.c.
 	(hgcd_hook): Also moved to hgcd_step.c.
 	(mpn_hgcd): Updated for hgcd_step renaming.
+
+2011-10-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_64/invert_limb.asm: New file.
 
 2011-10-04  Torbjorn Granlund  <tege@gmplib.org>
 
