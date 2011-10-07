@@ -1514,6 +1514,12 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
 }
 
 double
+speed_mpn_hgcd_appr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD_APPR_CALL (mpn_hgcd_appr, mpn_hgcd_appr_itch);
+}
+
+double
 speed_mpn_gcd (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);

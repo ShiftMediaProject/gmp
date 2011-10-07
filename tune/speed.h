@@ -196,6 +196,7 @@ double speed_mpn_fib2_ui __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_matrix22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_lehmer __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_hgcd_appr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1N __GMP_PROTO ((struct speed_params *s));
@@ -2672,6 +2673,49 @@ int speed_routine_count_zeros_setup
 	MPN_COPY (bp, s->yp, s->size);					\
 	mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);			\
 	res = func (ap, bp, s->size, &hgcd, wp);			\
+      }									\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_HGCD_APPR_CALL(func, itchfunc)		\
+  {									\
+    mp_size_t hgcd_init_itch, hgcd_itch;				\
+    mp_ptr wp, tmp1;							\
+    struct hgcd_matrix hgcd;						\
+    int res;								\
+    unsigned i;								\
+    double t;								\
+    TMP_DECL;								\
+    									\
+    if (s->size < 2)							\
+      return -1;							\
+    									\
+    TMP_MARK;								\
+    									\
+    s->xp[s->size - 1] |= 1;						\
+    s->yp[s->size - 1] |= 1;						\
+    									\
+    hgcd_init_itch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);		\
+    hgcd_itch = itchfunc (s->size);					\
+    									\
+    SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_itch, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, hgcd_itch, s->align_wp);			\
+    									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, s->yp, s->size);				\
+    speed_operand_dst (s, wp, hgcd_itch);				\
+    speed_operand_dst (s, tmp1, hgcd_init_itch);			\
+    speed_cache_fill (s);						\
+    									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      {									\
+	mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);			\
+	res = func (s->xp, s->yp, s->size, &hgcd, wp);			\
       }									\
     while (--i != 0);							\
     t = speed_endtime ();						\

@@ -1,5 +1,10 @@
 2011-10-07  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/speed.h (speed_mpn_hgcd_appr): New prototype.
+	(SPEED_ROUTINE_MPN_HGCD_APPR_CALL): New macro.
+	* tune/common.c (speed_mpn_hgcd_appr): New function.
+	* tune/speed.c (routine): Added mpn_hgcd_appr.
+
 	* tests/mpn/t-hgcd_appr.c: New file.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-hgcd_appr.
 
