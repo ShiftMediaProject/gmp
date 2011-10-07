@@ -654,14 +654,37 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* hppa */
 
 #if (defined (__i370__) || defined (__s390__) || defined (__mvs__)) && W_TYPE_SIZE == 32
+#if defined (__zarch__)
+#define umul_ppmm(xh, xl, m0, m1)					\
+  do {									\
+    union {UDItype __ll;						\
+	   struct {USItype __h, __l;} __i;				\
+	  } __x;							\
+    __asm__ ("mlr\t%0,%2"						\
+	     : "=r" (__x.__ll)						\
+	     : "%0" (m0), "r" (m1));					\
+    (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
+  } while (0)
+#define udiv_qrnnd(q, r, n1, n0, d)					\
+  do {									\
+    union {UDItype __ll;						\
+	   struct {USItype __h, __l;} __i;				\
+	  } __x;							\
+    __x.__i.__h = n1; __x.__i.__l = n0;					\
+    __asm__ ("dlr\t%0,%2"						\
+	     : "=r" (__x.__ll)						\
+	     : "0" (__x.__ll), "r" (d));				\
+    (q) = __x.__i.__l; (r) = __x.__i.__h;				\
+  } while (0)
+#else
 #define smul_ppmm(xh, xl, m0, m1) \
   do {									\
     union {DItype __ll;							\
 	   struct {USItype __h, __l;} __i;				\
 	  } __x;							\
-    __asm__ ("lr %N0,%1\n\tmr %0,%2"					\
-	     : "=&r" (__x.__ll)						\
-	     : "r" (m0), "r" (m1));					\
+    __asm__ ("mr\t%0,%2"						\
+	     : "=r" (__x.__ll)						\
+	     : "%0" (m0), "r" (m1));					\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
 #define sdiv_qrnnd(q, r, n1, n0, d) \
@@ -670,11 +693,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   struct {USItype __h, __l;} __i;				\
 	  } __x;							\
     __x.__i.__h = n1; __x.__i.__l = n0;					\
-    __asm__ ("dr %0,%2"							\
+    __asm__ ("dr\t%0,%2"						\
 	     : "=r" (__x.__ll)						\
 	     : "0" (__x.__ll), "r" (d));				\
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
   } while (0)
+#endif
 #endif
 
 #if defined (__s390x__) && W_TYPE_SIZE == 64
@@ -683,40 +707,35 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
       __asm__ ("algfi\t%1, %5\n\talcgr\t%0, %3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "%1" ((UDItype)(al)), "n" ((UDItype)(bl)));		\
+	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
     else								\
       __asm__ ("algr\t%1, %5\n\talcgr\t%0, %3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl));		\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
-  if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
+    if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
       __asm__ ("slgfi\t%1, %n5\n\tslbgr\t%0, %3"			\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "n" ((UDItype)(bl)));		\
+	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
     else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
       __asm__ ("algfi\t%1, %n5\n\tslbgr\t%0, %3"			\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "n" (-(UDItype)(bl)));		\
+	       : "0" (ah), "r" (bh), "1" (al), "n" (-(UDItype)(bl)));	\
     else								\
       __asm__ ("slgr\t%1, %5\n\tslbgr\t%0, %3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+	       : "0" (ah), "r" (bh), "1" (al), "r" (bl));		\
   } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
     union {unsigned int __attribute__ ((mode(TI))) __ll;		\
 	   struct {UDItype __h, __l;} __i;				\
 	  } __x;							\
-    __asm__ ("mlgr\t%0, %2"						\
-	     : "=&r" (__x.__ll)						\
-	     : "%0" ((UDItype)(m0)), "r" ((UDItype)(m1)));		\
+    __asm__ ("mlgr\t%0,%2"						\
+	     : "=r" (__x.__ll)						\
+	     : "%0" (m0), "r" (m1));					\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
 #define udiv_qrnnd(q, r, n1, n0, d)					\
@@ -725,7 +744,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   struct {UDItype __h, __l;} __i;				\
 	  } __x;							\
     __x.__i.__h = n1; __x.__i.__l = n0;					\
-    __asm__ ("dlgr\t%0, %2"						\
+    __asm__ ("dlgr\t%0,%2"						\
 	     : "=r" (__x.__ll)						\
 	     : "0" (__x.__ll), "r" (d));				\
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
