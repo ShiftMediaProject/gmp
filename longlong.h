@@ -655,6 +655,28 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 
 #if (defined (__i370__) || defined (__s390__) || defined (__mvs__)) && W_TYPE_SIZE == 32
 #if defined (__zarch__)
+#define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
+  do {									\
+    if (__builtin_constant_p (bl))					\
+      __asm__ ("alfi\t%1,%o5\n\talcr\t%0,%3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
+    else								\
+      __asm__ ("alr\t%1,%5\n\talcr\t%0,%3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl));		\
+  } while (0)
+#define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
+  do {									\
+    if (__builtin_constant_p (bl))					\
+      __asm__ ("slfi\t%1,%o5\n\tslbr\t%0,%3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
+    else								\
+      __asm__ ("slr\t%1,%5\n\tslbr\t%0,%3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0" (ah), "r" (bh), "1" (al), "r" (bl));		\
+  } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
     union {UDItype __ll;						\
@@ -705,26 +727,30 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
   do {									\
     if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
-      __asm__ ("algfi\t%1, %5\n\talcgr\t%0, %3"				\
+      __asm__ ("algfi\t%1,%5\n\talcgr\t%0,%3"				\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
+    else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
+      __asm__ ("slgfi\t%1,%n5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
     else								\
-      __asm__ ("algr\t%1, %5\n\talcgr\t%0, %3"				\
+      __asm__ ("algr\t%1,%5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl));		\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
     if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
-      __asm__ ("slgfi\t%1, %n5\n\tslbgr\t%0, %3"			\
+      __asm__ ("slgfi\t%1,%5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
     else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
-      __asm__ ("algfi\t%1, %n5\n\tslbgr\t%0, %3"			\
+      __asm__ ("algfi\t%1,%n5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "n" (-(UDItype)(bl)));	\
+	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
     else								\
-      __asm__ ("slgr\t%1, %5\n\tslbgr\t%0, %3"				\
+      __asm__ ("slgr\t%1,%5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0" (ah), "r" (bh), "1" (al), "r" (bl));		\
   } while (0)
