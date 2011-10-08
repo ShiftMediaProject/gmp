@@ -1,3 +1,14 @@
+2011-10-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-hgcd_appr.c (hgcd_appr_valid_p): Adjusted the
+	allowed margin of non-minimality for hgcd_appr.
+
+	* mpn/generic/hgcd_appr.c (mpn_hgcd_appr): Fixed handling of
+	extra_bits, starting at zero, to ensure that we don't produce too
+	small remainders. Added a final reduction loop when we we
+	otherwise terminate with extra_bits > 0, to make the returned
+	remainders closer to minimal.
+
 2011-10-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (s390): Add 32-bit zarch umul_ppmm and udiv_qrnnd.

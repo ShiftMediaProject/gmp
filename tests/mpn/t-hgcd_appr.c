@@ -492,41 +492,17 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
       return 0;
     }
 
+  /* We lose one bit each time we discard the least significant limbs.
+     That can happen at most s * (GMP_NUMB_BITS) / (GMP_NUMB_BITS - 1)
+     times. */
+
+  margin = (n/2+1) * GMP_NUMB_BITS / (GMP_NUMB_BITS - 1);
+
   if (abits > dbits)
-    fprintf (stderr, "n = %u: sbits = %u: ref #(r0-r1): %u, appr #(r0-r1): %u excess: %d\n",
+    fprintf (stderr, "n = %u: sbits = %u: ref #(r0-r1): %u, appr #(r0-r1): %u excess: %d, margin: %u\n",
 	     (unsigned) n, (unsigned) s*GMP_NUMB_BITS,
-	     (unsigned) dbits, (unsigned) abits, (int) abits - s * GMP_NUMB_BITS);
-
-    
-  /* We discard the low limb at most about n/2 times. Each time we
-     lose one bit, but we start with at least GMP_NUMB_BITS/2 - 1
-     extra bits. After consuming these, the number of lost bits are
-     rounded up to a limb.
-     
-     FIXME: Currently, it seems we some times get a bit
-     larger abits than this, so either the analysis or the
-     implementation gets something wrong. */
-
-  /* problematic cases:
-
-       Seed GMP_CHECK_RANDOMIZE=682513484 (include this in bug reports)
-       n = 881: sbits = 28224: ref #(r0-r1): 27999, appr #(r0-r1): 32264
-       appr |r0 - r1| much larger than minimal (by 4040 bits, margin = 1762 bits)
-
-       Seed GMP_CHECK_RANDOMIZE=1469435584 (include this in bug reports)
-       n = 465: sbits = 14912: ref #(r0-r1): 14066, appr #(r0-r1): 17991
-       appr |r0 - r1| much larger than minimal (by 3079 bits, margin = 930 bits)
-
-       Seed GMP_CHECK_RANDOMIZE=2485812869 (include this in bug reports)
-       n = 77: sbits = 2496: ref #(r0-r1): 2495, appr #(r0-r1): 2554 excess: 58
-       appr |r0 - r1| much larger than minimal (by 58 bits, margin = 6 bits)
-
-       
-  */
-  if (n < GMP_NUMB_BITS)
-    margin = 0;
-  else
-    margin = n/2 + GMP_NUMB_BITS/2;
+	     (unsigned) dbits, (unsigned) abits,
+	     (int) abits - s * GMP_NUMB_BITS, (unsigned) margin);
 
   if (abits > s*GMP_NUMB_BITS + margin)
     {
