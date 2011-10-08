@@ -199,7 +199,7 @@ div2 (mp_ptr rp,
 
 /* Reduces a,b until |a-b| (almost) fits in one limb + 1 bit. Constructs
    matrix M. Returns 1 if we make progress, i.e. can perform at least
-   one subtraction. Otherwise returns zero.. */
+   one subtraction. Otherwise returns zero. */
 
 /* FIXME: Possible optimizations:
 
