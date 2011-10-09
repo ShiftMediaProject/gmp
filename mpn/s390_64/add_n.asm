@@ -17,8 +17,13 @@ dnl  License for more details.
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-
 include(`../config.m4')
+
+C            cycles/limb
+C z990           3.5
+
+C TODO
+C  * Optimise for small n
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
@@ -28,20 +33,65 @@ define(`n',	`%r5')
 
 ASM_START()
 PROLOGUE(mpn_add_n)
-	stg	%r12, 96(%r15)
-	lghi	%r12, 0			C zero index register
-	aghi	%r12, 0			C clear C flag
+	stmg	%r6, %r12, 48(%r15)
 
-L(top):	lg	%r0, 0(%r12,up)
-	lg	%r1, 0(%r12,vp)
-	alcgr	%r0, %r1
-	stg	%r0, 0(%r12,rp)
-	la	%r12, 8(%r12)
-	brctg	n, L(top)
+	la	%r1, 3(n)
+	lghi	%r7, 3
+	srlg	%r1, %r1, 2
+	ngr	%r7, n			C n mod 4
+	je	L(top)			C The C flag is clear
+	cghi	%r7, 2
+	jl	L(b1)
+	je	L(b2)
 
-	lghi	%r2, 0
+L(b3):	lmg	%r5, %r7, 0(up)
+	la	up, 24(up)
+	lmg	%r9, %r11, 0(vp)
+	la	vp, 24(vp)
+	algr	%r5, %r9
+	alcgr	%r6, %r10
+	alcgr	%r7, %r11
+	stmg	%r5, %r7, 0(rp)
+	la	rp, 24(rp)
+	brctg	%r1, L(top)
+	j	L(end)
+
+L(b1):	lg	%r5, 0(up)
+	la	up, 8(up)
+	lg	%r9, 0(vp)
+	la	vp, 8(vp)
+	algr	%r5, %r9
+	stg	%r5, 0(rp)
+	la	rp, 8(rp)
+	brctg	%r1, L(top)
+	j	L(end)
+
+L(b2):	lmg	%r5, %r6, 0(up)
+	la	up, 16(up)
+	lmg	%r9, %r10, 0(vp)
+	la	vp, 16(vp)
+	algr	%r5, %r9
+	alcgr	%r6, %r10
+	stmg	%r5, %r6, 0(rp)
+	la	rp, 16(rp)
+	brctg	%r1, L(top)
+	j	L(end)
+
+L(top):	lmg	%r5, %r8, 0(up)
+	la	up, 32(up)
+	lmg	%r9, %r12, 0(vp)
+	la	vp, 32(vp)
+	alcgr	%r5, %r9
+	alcgr	%r6, %r10
+	alcgr	%r7, %r11
+	alcgr	%r8, %r12
+	stmg	%r5, %r8, 0(rp)
+	la	rp, 32(rp)
+	brctg	%r1, L(top)
+
+L(end):	lghi	%r2, 0
 	alcgr	%r2, %r2
 
-	lg	%r12, 96(%r15)
+	lmg	%r6, %r12, 48(%r15)
 	br	%r14
 EPILOGUE()
