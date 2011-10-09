@@ -1,5 +1,9 @@
 2011-10-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/invert_limb.asm: Save a callee-saves register less.
+
+	* tune/time.c (getrusage_backwards_p): Properly cast printed values.
+
 	* longlong.h (s390x): Put back UDItype casts to make gcc reloading use
 	right more for constants.
 	(s390x count_leading_zeros): Disable until we support z10 specifically.
