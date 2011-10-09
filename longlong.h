@@ -724,35 +724,45 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 
 #if defined (__s390x__) && W_TYPE_SIZE == 64
+/* We need to cast operands with register constraints, otherwise their types
+   will be assumed to be SImode by gcc.  For these machines, such operations
+   will insert a value into the low 32 bits, and leave the high 32 bits with
+   garbage.  */
 #define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
   do {									\
     if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
       __asm__ ("algfi\t%1,%5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
+	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "%1" ((UDItype)(al)), "n" (bl));			\
     else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
       __asm__ ("slgfi\t%1,%n5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
+	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "%1" ((UDItype)(al)), "n" (bl));			\
     else								\
       __asm__ ("algr\t%1,%5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl));		\
+	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
     if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
       __asm__ ("slgfi\t%1,%5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "n" (bl));			\
     else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
       __asm__ ("algfi\t%1,%n5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "n" (bl));			\
     else								\
       __asm__ ("slgr\t%1,%5\n\tslbgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "r" (bl));		\
+	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		 "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
   } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
@@ -761,7 +771,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	  } __x;							\
     __asm__ ("mlgr\t%0,%2"						\
 	     : "=r" (__x.__ll)						\
-	     : "%0" (m0), "r" (m1));					\
+	     : "%0" ((UDItype)(m0)), "r" ((UDItype)(m1)));		\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
 #define udiv_qrnnd(q, r, n1, n0, d)					\
@@ -772,9 +782,10 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __x.__i.__h = n1; __x.__i.__l = n0;					\
     __asm__ ("dlgr\t%0,%2"						\
 	     : "=r" (__x.__ll)						\
-	     : "0" (__x.__ll), "r" (d));				\
+	     : "0" (__x.__ll), "r" ((UDItype)(d)));			\
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
   } while (0)
+#if 0 /* FIXME: Enable for z10 (?) */
 #define count_leading_zeros(cnt, x)					\
   do {									\
     union {unsigned int __attribute__ ((mode(TI))) __ll;		\
@@ -783,6 +794,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("flogr\t%0, %1" : "=r" (__clr_cnt.__ll) : "r" (x));	\
     (cnt) = __clr_cnt.__i.__h;						\
   } while (0)
+#endif
 #endif
 
 #if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
