@@ -1,5 +1,12 @@
 2011-10-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/copyi.asm: New file.
+	* mpn/s390_64/lshift.asm: New file.
+	* mpn/s390_64/rshift.asm: New file.
+
+	* mpn/s390_64/add_n.asm: Rewrite using lmg/stmg.
+	* mpn/s390_64/sub_n.asm: Likewise.
+
 	* mpn/s390_64/invert_limb.asm: Save a callee-saves register less.
 
 	* tune/time.c (getrusage_backwards_p): Properly cast printed values.
