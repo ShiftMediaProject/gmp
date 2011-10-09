@@ -21,51 +21,54 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+C            cycles/limb
+C z990           92
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
-	stmg	%r8, %r9, 64(%r15)
-	srlg	%r1, %r2, 55
-	aghi	%r1, -256
-	agr	%r1, %r1
+	stg	%r9, 72(%r15)
+	srlg	%r9, %r2, 55
+	aghi	%r9, -256
+	agr	%r9, %r9
 	larl	%r4, approx_tab
 	srlg	%r3, %r2, 24
 	aghi	%r3, 1
 	lghi	%r5, 1
-	llgh	%r4, 0(%r1, %r4)
-	sllg	%r1, %r4, 11
+	llgh	%r4, 0(%r9, %r4)
+	sllg	%r9, %r4, 11
 	msgr	%r4, %r4
 	msgr	%r4, %r3
 	srlg	%r4, %r4, 40
-	aghi	%r1, -1
-	sgr	%r1, %r4
-	sllg	%r8, %r1, 60
-	sllg	%r9, %r1, 13
-	msgr	%r1, %r1
-	msgr	%r1, %r3
-	sgr	%r8, %r1
+	aghi	%r9, -1
+	sgr	%r9, %r4
+	sllg	%r0, %r9, 60
+	sllg	%r1, %r9, 13
+	msgr	%r9, %r9
+	msgr	%r9, %r3
+	sgr	%r0, %r9
 	ngr	%r5, %r2
 	srlg	%r4, %r2, 1
-	srlg	%r3, %r8, 47
-	agr	%r3, %r9
+	srlg	%r3, %r0, 47
+	agr	%r3, %r1
 	agr	%r4, %r5
 	msgr	%r4, %r3
-	srlg	%r9, %r3, 1
+	srlg	%r1, %r3, 1
 	lcgr	%r5, %r5
-	ngr	%r9, %r5
-	sgr	%r9, %r4
-	mlgr	%r8, %r3
-	srlg	%r1, %r8, 1
+	ngr	%r1, %r5
+	sgr	%r1, %r4
+	mlgr	%r0, %r3
+	srlg	%r9, %r0, 1
 	sllg	%r4, %r3, 31
-	agr	%r4, %r1
-	lgr	%r9, %r4
-	mlgr	%r8, %r2
-	algr	%r9, %r2
-	alcgr	%r8, %r2
+	agr	%r4, %r9
+	lgr	%r1, %r4
+	mlgr	%r0, %r2
+	algr	%r1, %r2
+	alcgr	%r0, %r2
 	lgr	%r2, %r4
-	sgr	%r2, %r8
-	lmg	%r8, %r9, 64(%r15)
+	sgr	%r2, %r0
+	lg	%r9, 72(%r15)
 	br	%r14
 EPILOGUE()
 	RODATA
