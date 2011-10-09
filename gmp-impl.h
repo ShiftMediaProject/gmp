@@ -4001,7 +4001,7 @@ __GMP_DECLSPEC void mpn_hgcd_matrix_mul_1 __GMP_PROTO ((struct hgcd_matrix *, co
 __GMP_DECLSPEC void mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix *, mp_ptr));
 
 #define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
-__GMP_DECLSPEC mp_size_t mpn_hgcd_matrix_adjust __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_size_t mpn_hgcd_matrix_adjust __GMP_PROTO ((const struct hgcd_matrix *, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
 #define mpn_hgcd_step __MPN(hgcd_step)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_step __GMP_PROTO ((mp_size_t, mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));

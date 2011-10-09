@@ -184,7 +184,7 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
 /* Multiplies the least significant p limbs of (a;b) by M^-1.
    Temporary space needed: 2 * (p + M->n)*/
 mp_size_t
-mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
+mpn_hgcd_matrix_adjust (const struct hgcd_matrix *M,
 			mp_size_t n, mp_ptr ap, mp_ptr bp,
 			mp_size_t p, mp_ptr tp)
 {
