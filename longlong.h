@@ -730,39 +730,17 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    garbage.  */
 #define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
   do {									\
-    if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
-      __asm__ ("algfi\t%1,%5\n\talcgr\t%0,%3"				\
-	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "%1" ((UDItype)(al)), "n" (bl));			\
-    else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
-      __asm__ ("slgfi\t%1,%n5\n\talcgr\t%0,%3"				\
-	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "%1" ((UDItype)(al)), "n" (bl));			\
-    else								\
-      __asm__ ("algr\t%1,%5\n\talcgr\t%0,%3"				\
+    __asm__ ("algr\t%1,%5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
 		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
-    if (__builtin_constant_p (bl) && (UDItype)(bl) < 0x100000000ul)	\
-      __asm__ ("slgfi\t%1,%5\n\tslbgr\t%0,%3"				\
-	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "n" (bl));			\
-    else if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x100000000ul) \
-      __asm__ ("algfi\t%1,%n5\n\tslbgr\t%0,%3"				\
-	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "n" (bl));			\
-    else								\
-      __asm__ ("slgr\t%1,%5\n\tslbgr\t%0,%3"				\
-	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+    __asm__ ("slgr\t%1,%5\n\tslbgr\t%0,%3"				\
+	     : "=r" (sh), "=&r" (sl)					\
+	     : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+	       "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
   } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
