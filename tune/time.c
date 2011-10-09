@@ -684,8 +684,8 @@ getrusage_backwards_p (void)
 	  if (speed_option_verbose)
 	    printf ("getrusage went backwards (attempt %d: %ld.%06ld -> %ld.%06ld)\n",
 		    i,
-		    prev.ru_utime.tv_sec, prev.ru_utime.tv_usec,
-		    next.ru_utime.tv_sec, next.ru_utime.tv_usec);
+		    (long) prev.ru_utime.tv_sec, (long) prev.ru_utime.tv_usec,
+		    (long) next.ru_utime.tv_sec, (long) next.ru_utime.tv_usec);
 	  result = 1;
 	  break;
 	}
