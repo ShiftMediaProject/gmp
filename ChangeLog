@@ -1,3 +1,10 @@
+2011-10-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (s390x): Put back UDItype casts to make gcc reloading use
+	right more for constants.
+	(s390x count_leading_zeros): Disable until we support z10 specifically.
+	(s390x add_ssaaaa): Remove algsi/slgsi until we support z10.
+
 2011-10-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_matrix.c (mpn_hgcd_matrix_adjust): Declare
