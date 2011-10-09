@@ -1,6 +1,6 @@
 /* Test for mulmid function.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
