@@ -1,5 +1,7 @@
 2011-10-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/time.c (STCK): Use proper memory constraint.
+
 	From Marco Trudel:
 	* tests/mpz/t-scan.c (check_ref): Fix loop end bound.
 
