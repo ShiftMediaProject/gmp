@@ -1,5 +1,7 @@
 2011-10-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd_appr.c: Deleted debugging code.
+
 	* tests/mpn/t-hgcd_appr.c (main): Added -v flag.
 	(hgcd_appr_valid_p): Increased margin of non-minimality for
 	divide-and-conquer algorithm. Display bit counts only if

@@ -21,14 +21,9 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-
-#define TRACE 0
 
 /* Computes R -= A * B. Result must be non-negative. Normalized down
    to size an, and resulting size is returned. */
@@ -62,8 +57,6 @@ submul (mp_ptr rp, mp_size_t rn,
   return rn;
 }
 
-#define APPLY_SANITY_CHECK 0
-
 /* Computes (a, b)  <--  M^{-1} (a; b) */
 /* FIXME:
     x Take scratch parameter, and figure out scratch need.
@@ -82,10 +75,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
   mp_limb_t cy;
   unsigned i, j;
 
-#if APPLY_SANITY_CHECK 
-  mp_ptr ea, eb, et;
-  mp_size_t en;
-#endif
   TMP_DECL;
 
   ASSERT ( (ap[n-1] | bp[n-1]) > 0);
@@ -109,36 +98,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
   ASSERT ( (mn[0][1] | mn[1][0]) > 0);
 
   TMP_MARK;
-
-#if 0
-  gmp_fprintf (stderr, "matrix_apply: an = %d, bn = %d\n"
-	       " M = (%Nx, %Nx;\n"
-	       "      %Nx, %Nx)\n"
-	       "  A = %Nx\n"
-	       "  B = %Nx\n",
-	       an, bn,
-	       M->p[0][0], M->n, M->p[0][1], M->n,
-	       M->p[1][0], M->n, M->p[1][1], M->n,
-	       ap, an, bp, bn);
-#endif
-#if APPLY_SANITY_CHECK
-  ea = TMP_ALLOC_LIMBS (n + M->n);
-  eb = TMP_ALLOC_LIMBS (n + M->n);
-  et = TMP_ALLOC_LIMBS (n + M->n);
-
-  mpn_mul (ea, ap, n, M->p[1][1], M->n);
-  mpn_mul (et, bp, n, M->p[0][1], M->n);
-  ASSERT_NOCARRY (mpn_sub_n (ea, ea, et, n + M->n));
-  ASSERT (mpn_zero_p (ea + n, M->n));
-
-  mpn_mul (eb, bp, n, M->p[0][0], M->n);
-  mpn_mul (et, ap, n, M->p[1][0], M->n);
-  ASSERT_NOCARRY (mpn_sub_n (eb, eb, et, n + M->n));
-  ASSERT (mpn_zero_p (eb + n, M->n));
-
-  for (en = n; en > 0 && (ea[en-1] | eb[en-1]) == 0; en--)
-    ;
-#endif
 
   if (mn[0][1] == 0)
     {
@@ -181,11 +140,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
 
       ASSERT (n <= 2*modn);
 
-#if 0
-      gmp_fprintf (stderr,
-		   "matrix_apply: an = %d, bn = %d, nn = %d, modn = %d\n",
-		   an, bn, nn, modn);
-#endif
       if (n > modn)
 	{
 	  cy = mpn_add (ap, ap, modn, ap + modn, n - modn);
@@ -209,10 +163,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
       cy = mpn_sub_n (tp, tp, sp, modn);
       MPN_DECR_U (tp, modn, cy);
 
-#if 0
-      gmp_fprintf (stderr, "new A = %Nx\n",
-		   tp, modn);
-#endif
       ASSERT (mpn_zero_p (tp + nn, modn - nn));
 
       mpn_mulmod_bnm1 (sp, modn, ap, n, M->p[1][0], mn[1][0], scratch);
@@ -227,10 +177,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
       cy = mpn_sub_n (tp, tp, sp, modn);
       MPN_DECR_U (tp, modn, cy);
 
-#if 0
-      gmp_fprintf (stderr, "new B = %Nx\n",
-		   tp, modn);
-#endif
       ASSERT (mpn_zero_p (tp + nn, modn - nn));
       MPN_COPY (bp, tp, nn);
 
@@ -240,18 +186,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
 	  ASSERT (nn > 0);
 	}
     }
-#if APPLY_SANITY_CHECK
-  if (nn != en || mpn_cmp (ea, ap, nn) || mpn_cmp (eb, bp, nn))
-    {
-      gmp_fprintf (stderr, "hgcd_matrix_apply: Bad result.\n"
-		   " ea = %Nx\n"
-		   " eb = %Nx\n"
-		   " ap = %Nx\n"
-		   " bp = %Nx\n",
-		   ea, en, eb, en, ap, n, bp, n);
-      abort ();
-    }
-#endif
   TMP_FREE;
 
   return nn;
@@ -300,9 +234,6 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
   ASSERT ((n+1)/2 - 1 < M->alloc);
 
-#if 0
-  gmp_fprintf (stderr, "hgcd_appr: n = %d\n", n);
-#endif
   /* We aim for reduction of to GMP_NUMB_BITS * s bits. But each time
      we discard some of the least significant limbs, we must keep one
      additional bit to account for the truncation error. We maintain
@@ -313,17 +244,10 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
     {
       unsigned extra_bits = 0;
 
-#if TRACE
-      fprintf (stderr, "hgcd_appr: In: n = %u, s = %u\n",
-	       (unsigned) n, (unsigned) s);
-#endif
       while (n > 2)
 	{
 	  mp_size_t nn;
 
-#if TRACE
-	  fprintf (stderr, "loop: n = %u\n", (unsigned) n);
-#endif
 	  ASSERT (n > s);
 	  ASSERT (n <= 2*s);
 
@@ -347,11 +271,6 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	    {
 	      mp_size_t p = (GMP_NUMB_BITS * (2*s - n) - 2*extra_bits) / GMP_NUMB_BITS;
 
-#if TRACE
-	      fprintf (stderr, "before: n = %u, s = %u, e = %u, p = %u\n",
-		       (unsigned) n, (unsigned) s, (unsigned) extra_bits,
-		       (unsigned) p);
-#endif
 	      if (extra_bits == 0)
 		{
 		  /* We cross a limb boundary and bump s. We can't do that
@@ -372,19 +291,10 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
 	      /* Drop the p least significant limbs */
 	      ap += p; bp += p; n -= p; s -= p;
-
-#if TRACE
-	      fprintf (stderr, "after: n = %u, s = %u, e = %u\n",
-		       (unsigned) n, (unsigned) s, (unsigned) extra_bits);
-#endif
 	    }
 	}
 
       ASSERT (s > 0);
-#if TRACE
-      fprintf (stderr, "final: n = %u, s = %u, e = %u\n",
-	       (unsigned) n, (unsigned) s, (unsigned) extra_bits);
-#endif
 
       if (extra_bits > 0)
 	{
@@ -410,14 +320,7 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	      ASSERT (n > s);
 	      ASSERT (n <= 2*s);
 
-#if TRACE
-	      fprintf (stderr, "extra loop: n = %u\n", (unsigned) n);
-#endif
 	      nn = mpn_hgcd_step (n, ap, bp, s, M, tp);
-#if TRACE
-	      fprintf (stderr, "extra bit reduction: %s\n",
-		       nn ? "success" : "fail");
-#endif
 	  
 	      if (!nn)
 		return 1;
@@ -433,9 +336,6 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
 	  if (mpn_hgcd2 (ap[1], ap[0], bp[1], bp[0], &M1))
 	    {
-#if TRACE
-	      fprintf (stderr, "final hgcd2 succeeded\n");
-#endif
 	      /* Multiply M <- M * M1 */
 	      mpn_hgcd_matrix_mul_1 (M, &M1, tp);
 	      success = 1;
@@ -449,17 +349,8 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
       mp_size_t p = n/2;
       mp_size_t input_n = n;
 
-#if 0
-      gmp_fprintf (stderr, "hgcd_appr:\n"
-		   "  A = %Nx\n"
-		   "  B = %Nx\n",
-		   ap, n, bp, n);
-#endif
       MPN_COPY (tp, ap + p, n - p);
       MPN_COPY (tp + n - p, bp + p, n - p);
-#if 0
-      gmp_fprintf (stderr, "first recursive call, input_n = %d\n", input_n);
-#endif
       if (mpn_hgcd_appr (tp, tp + n - p, n - p, M, tp + 2*(n-p)))
 	{
 	  n = hgcd_matrix_apply (M, ap, bp, n);
@@ -488,9 +379,6 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  scratch = MPN_HGCD_MATRIX_INIT_ITCH (n-p);
 
 	  mpn_hgcd_matrix_init(&M1, n - p, tp);
-#if 0
-	  gmp_fprintf (stderr, "second recursive call, input_n = %d\n", input_n);
-#endif
 	  if (mpn_hgcd_appr (ap + p, bp + p, n - p, &M1, tp + scratch))
 	    {
 	      /* We always have max(M) > 2^{-(GMP_NUMB_BITS + 1)} max(M1) */
@@ -527,9 +415,6 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  ASSERT (n > s);
 	  ASSERT (n <= 2*s);
 
-#if 0
-	  fprintf (stderr, "final limb loop: n = %u\n", (unsigned) n);
-#endif
 	  nn = mpn_hgcd_step (n, ap, bp, s, M, tp);
 	  
 	  if (!nn)
