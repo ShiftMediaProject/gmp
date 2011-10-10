@@ -1,3 +1,8 @@
+2011-10-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	From Marco Trudel:
+	* tests/mpz/t-scan.c (check_ref): Fix loop end bound.
+
 2011-10-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_appr.c (mpn_hgcd_appr): Interface change.
