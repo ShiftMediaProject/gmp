@@ -1,3 +1,15 @@
+2011-10-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-hgcd_appr.c (main): Added -v flag.
+	(hgcd_appr_valid_p): Increased margin of non-minimality for
+	divide-and-conquer algorithm. Display bit counts only if
+	-v is used.
+
+	* mpn/generic/hgcd_appr.c (submul): New (static) function.
+	(hgcd_matrix_apply): New function.
+	(mpn_hgcd_appr_itch): Account for divide-and-conquer algorithm.
+	(mpn_hgcd_appr): Implemented divide-and-conquer.
+
 2011-10-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Marco Trudel:

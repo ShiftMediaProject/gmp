@@ -20,6 +20,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -45,6 +46,8 @@ hgcd_appr_valid_p __GMP_PROTO ((mpz_t, mpz_t, mp_size_t,
 				struct hgcd_ref *, mpz_t, mpz_t,
 				mp_size_t, struct hgcd_matrix *));
 
+static int verbose_flag = 0;
+
 int
 main (int argc, char **argv)
 {
@@ -53,6 +56,17 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long size_range;
+
+  if (argc > 1)
+    {
+      if (strcmp (argv[1], "-v") == 0)
+	verbose_flag = 1;
+      else
+	{
+	  fprintf (stderr, "Invalid argument.\n");
+	  return 1;
+	}
+    }
 
   tests_start ();
   rands = RANDS;
@@ -499,12 +513,18 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
     }
 
   /* We lose one bit each time we discard the least significant limbs.
-     That can happen at most s * (GMP_NUMB_BITS) / (GMP_NUMB_BITS - 1)
-     times. */
+     For the lehmer code, that can happen at most s * (GMP_NUMB_BITS)
+     / (GMP_NUMB_BITS - 1) times. For the dc code, we lose an entire
+     limb (or more?) for each level of recursion. */
 
   margin = (n/2+1) * GMP_NUMB_BITS / (GMP_NUMB_BITS - 1);
+  {
+    mp_size_t rn;
+    for (rn = n; ABOVE_THRESHOLD (rn, HGCD_APPR_THRESHOLD); rn = (rn + 1)/2)
+      margin += GMP_NUMB_BITS;
+  }
 
-  if (abits > dbits)
+  if (verbose_flag && abits > dbits)
     fprintf (stderr, "n = %u: sbits = %u: ref #(r0-r1): %u, appr #(r0-r1): %u excess: %d, margin: %u\n",
 	     (unsigned) n, (unsigned) s*GMP_NUMB_BITS,
 	     (unsigned) dbits, (unsigned) abits,
