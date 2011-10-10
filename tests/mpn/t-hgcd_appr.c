@@ -157,6 +157,8 @@ one_test (mpz_t a, mpz_t b, int i)
 
   mpz_t ref_r0;
   mpz_t ref_r1;
+  mpz_t hgcd_r0;
+  mpz_t hgcd_r1;
 
   int res[2];
   mp_size_t asize;
@@ -205,13 +207,15 @@ one_test (mpz_t a, mpz_t b, int i)
   mpz_init_set (ref_r1, b);
   res[0] = hgcd_ref (&ref, ref_r0, ref_r1);
 
+  mpz_init_set (hgcd_r0, a);
+  mpz_init_set (hgcd_r1, b);
   if (bsize < asize)
     {
-      _mpz_realloc (b, asize);
-      MPN_ZERO (b->_mp_d + bsize, asize - bsize);
+      _mpz_realloc (hgcd_r1, asize);
+      MPN_ZERO (hgcd_r1->_mp_d + bsize, asize - bsize);
     }
-  res[1] = mpn_hgcd_appr (a->_mp_d,
-			  b->_mp_d,
+  res[1] = mpn_hgcd_appr (hgcd_r0->_mp_d,
+			  hgcd_r1->_mp_d,
 			  asize,
 			  &hgcd, hgcd_tp);
 
@@ -264,6 +268,8 @@ one_test (mpz_t a, mpz_t b, int i)
   hgcd_ref_clear (&ref);
   mpz_clear (ref_r0);
   mpz_clear (ref_r1);
+  mpz_clear (hgcd_r0);
+  mpz_clear (hgcd_r1);
 
   return res[0];
 }

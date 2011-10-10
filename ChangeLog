@@ -1,3 +1,14 @@
+2011-10-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd_appr.c (mpn_hgcd_appr): Interface change.
+	Destroy inputs, let caller make working copies if needed.
+	(mpn_hgcd_appr_itch): Reduced scratch need.
+	* gmp-impl.h: Updated mpn_hgcd_appr prototype.
+	* tests/mpn/t-hgcd_appr.c (one_test): Make working copies for
+	hgcd_appr.
+	* tune/common.c (speed_mpn_hgcd_appr): Use SPEED_ROUTINE_MPN_HGCD_CALL.
+	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_APPR_CALL): Deleted.
+
 2011-10-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_64/copyi.asm: New file.

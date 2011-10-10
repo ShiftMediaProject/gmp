@@ -4016,7 +4016,7 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struc
 __GMP_DECLSPEC mp_size_t mpn_hgcd_appr_itch __GMP_PROTO ((mp_size_t));
 
 #define mpn_hgcd_appr __MPN (hgcd_appr)
-__GMP_DECLSPEC int mpn_hgcd_appr __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+__GMP_DECLSPEC int mpn_hgcd_appr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
 #define mpn_hgcd_jacobi __MPN (hgcd_jacobi)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_jacobi __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, unsigned *, mp_ptr));
