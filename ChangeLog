@@ -5,6 +5,8 @@
 
 2011-10-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h: (HGCD_APPR_THRESHOLD): New threshold.
+
 	* mpn/generic/hgcd_appr.c (mpn_hgcd_appr): Interface change.
 	Destroy inputs, let caller make working copies if needed.
 	(mpn_hgcd_appr_itch): Reduced scratch need.

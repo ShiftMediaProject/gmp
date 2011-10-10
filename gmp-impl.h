@@ -4057,6 +4057,10 @@ __GMP_DECLSPEC mp_size_t mpn_gcdext_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_si
 #define HGCD_THRESHOLD 400
 #endif
 
+#ifndef HGCD_APPR_THRESHOLD
+#define HGCD_APPR_THRESHOLD 300
+#endif
+
 #ifndef GCD_DC_THRESHOLD
 #define GCD_DC_THRESHOLD 1000
 #endif
