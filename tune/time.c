@@ -255,7 +255,7 @@ static const int  use_stck = 1;  /* always use when available */
 typedef uint64_t  stck_t; /* gcc for s390 is quite new, always has uint64_t */
 #define STCK(timestamp)                 \
   do {                                  \
-    asm ("stck %0" : "=m" (timestamp)); \
+    asm ("stck %0" : "=Q" (timestamp)); \
   } while (0)
 #else
 static const int  have_stck = 0;
