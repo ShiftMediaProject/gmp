@@ -1,3 +1,6 @@
+2011-10-11  Torbjorn Granlund  <tege@gmplib.org>
+	* mpn/s390_64/copyd.asm: New file.
+
 2011-10-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_appr.c: Deleted debugging code.
@@ -13,6 +16,9 @@
 	(mpn_hgcd_appr): Implemented divide-and-conquer.
 
 2011-10-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c (add_mssaaaa): Add s390x variant.  Put arm code
+	inside __GNUC__.
 
 	* tune/time.c (STCK): Use proper memory constraint.
 
