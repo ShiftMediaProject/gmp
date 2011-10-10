@@ -94,8 +94,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
 	   : "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
-#endif /* defined (__GNUC__) */
 
+#if defined (__s390x__) && W_TYPE_SIZE == 64
+#define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
+  __asm__ (  "algr	%2, %6\n\t"					\
+	     "alcgr	%1, %4\n\t"					\
+	     "lghi	%0, 0\n\t"					\
+	     "alcgr	%0, %0\n\t"					\
+	     "lcgr	%0, %0"						\
+	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
+	   : "1"  ((UDItype)(a1)), "r" ((UDItype)(b1)),			\
+	     "%2" ((UDItype)(a0)), "r" ((UDItype)(b0)))
+#endif
 
 #if defined (__arm__) && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
@@ -106,6 +116,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	   : "=r" (m), "=r" (sh), "=&r" (sl)				\
 	   : "r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
 #endif
+#endif /* defined (__GNUC__) */
 
 #ifndef add_mssaaaa
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\
