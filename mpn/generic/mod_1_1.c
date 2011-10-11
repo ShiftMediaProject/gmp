@@ -104,7 +104,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	     "lcgr	%0, %0"						\
 	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
 	   : "1"  ((UDItype)(a1)), "r" ((UDItype)(b1)),			\
-	     "%2" ((UDItype)(a0)), "r" ((UDItype)(b0)))
+	     "%2" ((UDItype)(a0)), "r" ((UDItype)(b0)) __CLOBBER_CC)
 #endif
 
 #if defined (__arm__) && W_TYPE_SIZE == 32
