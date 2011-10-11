@@ -1126,7 +1126,7 @@ case $host in
         abilist="64 32"
 	cclist_64="gcc"
         gcc_64_cflags="$gcc_cflags -m64"
-        gcc_32_cflags="$gcc_cflags -m31"
+        gcc_32_cflags="$gcc_cflags -m31 -mzarch"
 	path_32="s390_32/esame s390_32"
 	path_64="s390_64"
 	;;
