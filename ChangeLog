@@ -1,5 +1,7 @@
 2011-10-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (s390x): Pass -mzarch to gcc in 32-bit mode.
+
 	* longlong.h (s390x): Add __CLOBBER_CC for relevant asm patterns.
 	* mpn/generic/mod_1_1.c (s390x add_mssaaaa): Likewise.
 
