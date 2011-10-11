@@ -1,4 +1,8 @@
 2011-10-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (s390x): Add __CLOBBER_CC for relevant asm patterns.
+	* mpn/generic/mod_1_1.c (s390x add_mssaaaa): Likewise.
+
 	* mpn/s390_64/copyd.asm: New file.
 
 2011-10-10  Niels Möller  <nisse@lysator.liu.se>
