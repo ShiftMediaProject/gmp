@@ -21,7 +21,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z990           1.5
+C z990           1.75		See comment in loop about how to reach 1.5 c/l
 
 C FIXME:
 C  * Avoid saving/restoring callee-saves registers for n < 3.  This could be
@@ -41,11 +41,12 @@ PROLOGUE(mpn_copyd)
 	stmg	%r6, %r10, 48(%r15)
 
 	sllg	%r1, n, 3
-	la	%r10, 7(n)
+	la	%r10, 8(n)
+	aghi	%r1, -64
 	srlg	%r10, %r10, 3
 
-	lay	rp, -64(%r1,rp_param)
-	lay	up, -64(%r1,up_param)
+	la	rp, 0(%r1,rp_param)	C FIXME use lay on z990 and later
+	la	up, 0(%r1,up_param)	C FIXME use lay on z990 and later
 
 	lghi	%r7, 7
 	ngr	%r7, n			C n mod 8
@@ -55,19 +56,20 @@ PROLOGUE(mpn_copyd)
 	je	L(b1)
 	jh	L(b2)
 
-L(b0):	j	L(top)
+L(b0):	brctg	%r10, L(top)
+	j	L(end)
 
 L(b1):	lg	%r0, 56(up)
-	lay	up, -8(up)
+	aghi	up, -8
 	stg	%r0, 56(rp)
-	lay	rp, -8(rp)
+	aghi	rp, -8
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(b2):	lmg	%r0, %r1, 48(up)
-	lay	up, -16(up)
+	aghi	up, -16
 	stmg	%r0, %r1, 48(rp)
-	lay	rp, -16(rp)
+	aghi	rp, -16
 	brctg	%r10, L(top)
 	j	L(end)
 
@@ -80,44 +82,44 @@ L(b34567):
 	jh	L(b7)
 
 L(b5):	lmg	%r0, %r4, 24(up)
-	lay	up, -40(up)
+	aghi	up, -40
 	stmg	%r0, %r4, 24(rp)
-	lay	rp, -40(rp)
+	aghi	rp, -40
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(b3):	lmg	%r0, %r2, 40(up)
-	lay	up, -24(up)
+	aghi	up, -24
 	stmg	%r0, %r2, 40(rp)
-	lay	rp, -24(rp)
+	aghi	rp, -24
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(b4):	lmg	%r0, %r3, 32(up)
-	lay	up, -32(up)
+	aghi	up, -32
 	stmg	%r0, %r3, 32(rp)
-	lay	rp, -32(rp)
+	aghi	rp, -32
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(b6):	lmg	%r0, %r5, 16(up)
-	lay	up, -48(up)
+	aghi	up, -48
 	stmg	%r0, %r5, 16(rp)
-	lay	rp, -48(rp)
+	aghi	rp, -48
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(b7):	lmg	%r0, %r6, 8(up)
-	lay	up, -56(up)
+	aghi	up, -56
 	stmg	%r0, %r6, 8(rp)
-	lay	rp, -56(rp)
+	aghi	rp, -56
 	brctg	%r10, L(top)
 	j	L(end)
 
 L(top):	lmg	%r0, %r7, 0(up)
-	lay	up, -64(up)
+	aghi	up, -64			C FIXME using lay here saves 0.25 c/l
 	stmg	%r0, %r7, 0(rp)
-	lay	rp, -64(rp)
+	aghi	rp, -64
 	brctg	%r10, L(top)
 
 L(end):	lmg	%r6, %r10, 48(%r15)
