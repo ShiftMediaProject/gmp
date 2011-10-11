@@ -660,22 +660,22 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     if (__builtin_constant_p (bl))					\
       __asm__ ("alfi\t%1,%o5\n\talcr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl));		\
+	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl) __CLOBBER_CC);\
     else								\
       __asm__ ("alr\t%1,%5\n\talcr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl));		\
+	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl)__CLOBBER_CC);	\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
     if (__builtin_constant_p (bl))					\
       __asm__ ("slfi\t%1,%o5\n\tslbr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "n" (bl));		\
+	       : "0" (ah), "r" (bh), "1" (al), "n" (bl) __CLOBBER_CC);	\
     else								\
       __asm__ ("slr\t%1,%5\n\tslbr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "0" (ah), "r" (bh), "1" (al), "r" (bl));		\
+	       : "0" (ah), "r" (bh), "1" (al), "r" (bl) __CLOBBER_CC);	\
   } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
@@ -733,14 +733,14 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("algr\t%1,%5\n\talcgr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+		 "%1" ((UDItype)(al)), "r" ((UDItype)(bl)) __CLOBBER_CC); \
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
     __asm__ ("slgr\t%1,%5\n\tslbgr\t%0,%3"				\
 	     : "=r" (sh), "=&r" (sl)					\
 	     : "0" ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-	       "1" ((UDItype)(al)), "r" ((UDItype)(bl)));		\
+	       "1" ((UDItype)(al)), "r" ((UDItype)(bl)) __CLOBBER_CC);	\
   } while (0)
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
@@ -769,7 +769,9 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     union {unsigned int __attribute__ ((mode(TI))) __ll;		\
 	   struct {UDItype __h, __l;} __i;				\
 	  } __clr_cnt;							\
-    __asm__ ("flogr\t%0, %1" : "=r" (__clr_cnt.__ll) : "r" (x));	\
+    __asm__ ("flogr\t%0,%1"						\
+	     : "=r" (__clr_cnt.__ll)					\
+	     : "r" (x) __CLOBBER_CC);					\
     (cnt) = __clr_cnt.__i.__h;						\
   } while (0)
 #endif
