@@ -657,26 +657,39 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__zarch__)
 #define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
   do {									\
-    if (__builtin_constant_p (bl))					\
+/*  if (__builtin_constant_p (bl))					\
       __asm__ ("alfi\t%1,%o5\n\talcr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  (ah), "r" (bh), "%1" (al), "n" (bl) __CLOBBER_CC);\
     else								\
-      __asm__ ("alr\t%1,%5\n\talcr\t%0,%3"				\
+*/    __asm__ ("alr\t%1,%5\n\talcr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0"  (ah), "r" (bh), "%1" (al), "r" (bl)__CLOBBER_CC);	\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
   do {									\
-    if (__builtin_constant_p (bl))					\
+/*  if (__builtin_constant_p (bl))					\
       __asm__ ("slfi\t%1,%o5\n\tslbr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0" (ah), "r" (bh), "1" (al), "n" (bl) __CLOBBER_CC);	\
     else								\
-      __asm__ ("slr\t%1,%5\n\tslbr\t%0,%3"				\
+*/    __asm__ ("slr\t%1,%5\n\tslbr\t%0,%3"				\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "0" (ah), "r" (bh), "1" (al), "r" (bl) __CLOBBER_CC);	\
   } while (0)
+#if __GMP_GNUC_PREREQ (4,5)
+#define umul_ppmm(xh, xl, m0, m1)					\
+  do {									\
+    union {UDItype __ll;						\
+	   struct {USItype __h, __l;} __i;				\
+	  } __x;							\
+    __x.__ll = (UDItype) m0 * (UDItype) m1;				\
+    (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
+  } while (0)
+#else
+#if 0
+/* FIXME: this fails if gcc knows about the 64-bit registers.  Use only
+   with a new enough processor pretending we have 32-bit registers.  */
 #define umul_ppmm(xh, xl, m0, m1)					\
   do {									\
     union {UDItype __ll;						\
@@ -687,6 +700,25 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	     : "%0" (m0), "r" (m1));					\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
+#else
+#define umul_ppmm(xh, xl, m0, m1)					\
+  do {									\
+  /* When we have 64-bit regs and gcc is aware of that, we cannot simply use
+     DImode for the product, since that would be allocated to a single 64-bit
+     register, whereas mlr uses the low 32-bits of an even-odd register pair.
+  */									\
+    register USItype __r0 __asm__ ("0");				\
+    register USItype __r1 __asm__ ("1") = (m0);				\
+    __asm__ ("mlr\t%0,%3"						\
+	     : "=r" (__r0), "=r" (__r1)					\
+	     : "r" (__r1), "r" (m1));					\
+    (xh) = __r0; (xl) = __r1;						\
+  } while (0)
+#endif /* if 0 */
+#endif
+#if 0
+/* FIXME: this fails if gcc knows about the 64-bit registers.  Use only
+   with a new enough processor pretending we have 32-bit registers.  */
 #define udiv_qrnnd(q, r, n1, n0, d)					\
   do {									\
     union {UDItype __ll;						\
@@ -699,7 +731,18 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
   } while (0)
 #else
-#define smul_ppmm(xh, xl, m0, m1) \
+#define udiv_qrnnd(q, r, n1, n0, d)					\
+  do {									\
+    register USItype __r0 __asm__ ("0") = (n1);				\
+    register USItype __r1 __asm__ ("1") = (n0);				\
+    __asm__ ("dlr\t%0,%4"						\
+	     : "=r" (__r0), "=r" (__r1)					\
+	     : "r" (__r0), "r" (__r1), "r" (d));			\
+    (q) = __r1; (r) = __r0;						\
+  } while (0)
+#endif /* if 0 */
+/* FIXME: this fails if gcc knows about the 64-bit registers.  */
+#define smul_ppmm(xh, xl, m0, m1)					\
   do {									\
     union {DItype __ll;							\
 	   struct {USItype __h, __l;} __i;				\
@@ -709,7 +752,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	     : "%0" (m0), "r" (m1));					\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
-#define sdiv_qrnnd(q, r, n1, n0, d) \
+/* FIXME: this fails if gcc knows about the 64-bit registers.  */
+#define sdiv_qrnnd(q, r, n1, n0, d)					\
   do {									\
     union {DItype __ll;							\
 	   struct {USItype __h, __l;} __i;				\
@@ -1757,6 +1801,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* NO_ASM */
 
 
+/* FIXME: "sidi" here is highly doubtful, should sometimes be "diti".  */
 #if !defined (umul_ppmm) && defined (__umulsidi3)
 #define umul_ppmm(ph, pl, m0, m1) \
   {									\
