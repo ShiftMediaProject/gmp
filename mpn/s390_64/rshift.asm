@@ -35,11 +35,11 @@ define(`tnc',	`%r6')
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	stmg	%r6, %r10, 48(%r15)
+	stmg	%r6, %r9, 48(%r15)
 
 	lg	%r9, 0(up)
 
-	srlg	%r10, n, 2		C loop count
+	srlg	%r8, n, 2		C loop count
 	lcgr	tnc, cnt
 
 	lghi	%r7, 3
@@ -47,7 +47,7 @@ PROLOGUE(mpn_rshift)
 
 	ngr	%r7, n			C n mod 4
 	je	L(b0)
-	aghi	%r10, 1
+	aghi	%r8, 1
 	cghi	%r7, 2
 	jl	L(b1)
 	je	L(b2)
@@ -57,36 +57,36 @@ L(b3):	lghi	%r1, -16
 L(b0):	lghi	%r1, -8
 	j	L(m0)
 L(b1):	lghi	%r1, 0
-	brctg	%r10, L(top)
+	brctg	%r8, L(top)
 	j	L(end)
 L(b2):	lghi	%r1, -24
 	j	L(m2)
 
 L(top):	lg	%r7, 8(%r1,up)
-	sllg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	sllg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	srlg	%r0, %r7, 0(cnt)
-	stg	%r8, 0(%r1,rp)
+	stg	%r4, 0(%r1,rp)
 L(m0):	lg	%r7, 16(%r1,up)
-	sllg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	sllg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	srlg	%r0, %r7, 0(cnt)
-	stg	%r8, 8(%r1,rp)
+	stg	%r4, 8(%r1,rp)
 L(m3):	lg	%r7, 24(%r1,up)
-	sllg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	sllg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	srlg	%r0, %r7, 0(cnt)
-	stg	%r8, 16(%r1,rp)
+	stg	%r4, 16(%r1,rp)
 L(m2):	lg	%r7, 32(%r1,up)
-	sllg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	sllg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	srlg	%r0, %r7, 0(cnt)
-	stg	%r8, 24(%r1,rp)
+	stg	%r4, 24(%r1,rp)
 	aghi	%r1, 32
-	brctg	%r10, L(top)
+	brctg	%r8, L(top)
 
 L(end):	stg	%r0, 0(%r1,rp)
 	sllg	%r2, %r9, 0(tnc)
-	lmg	%r6, %r10, 48(%r15)
+	lmg	%r6, %r9, 48(%r15)
 	br	%r14
 EPILOGUE()
