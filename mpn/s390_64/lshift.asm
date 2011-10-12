@@ -44,14 +44,14 @@ PROLOGUE(mpn_lshift)
 	srlg	%r2, %r1, 0(%r4)
 	br	%r14
 
-L(gt1):	stmg	%r6, %r10, 48(%r15)
+L(gt1):	stmg	%r6, %r9, 48(%r15)
 
 	sllg	%r1, n, 3
 	aghi	up, -8
 
 	lg	%r9, 0(%r1,up)
 
-	srlg	%r10, n, 2		C loop count
+	srlg	%r8, n, 2		C loop count
 	lcgr	tnc, cnt
 
 	lghi	%r7, 3
@@ -59,7 +59,7 @@ L(gt1):	stmg	%r6, %r10, 48(%r15)
 
 	ngr	%r7, n			C n mod 4
 	je	L(b0)
-	aghi	%r10, 1
+	aghi	%r8, 1
 	cghi	%r7, 2
 	jl	L(b1)
 	je	L(b2)
@@ -69,36 +69,36 @@ L(b3):	aghi	%r1, -16
 L(b0):	aghi	%r1, -24
 	j	L(m0)
 L(b1):	aghi	%r1, -32
-	aghi	%r10, -1
+	aghi	%r8, -1
 	j	L(top)
 L(b2):	aghi	%r1, -8
 	j	L(m2)
 
 L(top):	lg	%r7, 24(%r1,up)
-	srlg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	srlg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	sllg	%r0, %r7, 0(cnt)
-	stg	%r8, 24(%r1,rp)
+	stg	%r4, 24(%r1,rp)
 L(m0):	lg	%r7, 16(%r1,up)
-	srlg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	srlg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	sllg	%r0, %r7, 0(cnt)
-	stg	%r8, 16(%r1,rp)
+	stg	%r4, 16(%r1,rp)
 L(m3):	lg	%r7, 8(%r1,up)
-	srlg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	srlg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	sllg	%r0, %r7, 0(cnt)
-	stg	%r8, 8(%r1,rp)
+	stg	%r4, 8(%r1,rp)
 L(m2):	lg	%r7, 0(%r1,up)
-	srlg	%r8, %r7, 0(tnc)
-	ogr	%r8, %r0
+	srlg	%r4, %r7, 0(tnc)
+	ogr	%r4, %r0
 	sllg	%r0, %r7, 0(cnt)
-	stg	%r8, 0(%r1,rp)
+	stg	%r4, 0(%r1,rp)
 	aghi	%r1, -32
-	brctg	%r10, L(top)
+	brctg	%r8, L(top)
 
 L(end):	stg	%r0, 24(%r1,rp)
 	srlg	%r2, %r9, 0(tnc)
-	lmg	%r6, %r10, 48(%r15)
+	lmg	%r6, %r9, 48(%r15)
 	br	%r14
 EPILOGUE()
