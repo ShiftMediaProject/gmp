@@ -1,5 +1,8 @@
 2011-10-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/lshift.asm: Reduce register usage.
+	* mpn/s390_64/rshift.asm: Likewise.
+
 	* longlong.h (s390 umul_ppmm): With new-enough gcc, avoid asm.
 
 	From Andreas Krebbel:
