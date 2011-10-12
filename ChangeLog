@@ -1,3 +1,12 @@
+2011-10-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (s390 umul_ppmm): With new-enough gcc, avoid asm.
+
+	From Andreas Krebbel:
+	* longlong.h (s390 umul_ppmm): Support 32-bit limbs with gcc using
+	64-bit registers.
+	(s390 udiv_qrnnd): Likewise.
+
 2011-10-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (s390x): Pass -mzarch to gcc in 32-bit mode.
