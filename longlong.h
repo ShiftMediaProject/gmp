@@ -741,6 +741,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     (q) = __r1; (r) = __r0;						\
   } while (0)
 #endif /* if 0 */
+#else /* if __zarch__ */
 /* FIXME: this fails if gcc knows about the 64-bit registers.  */
 #define smul_ppmm(xh, xl, m0, m1)					\
   do {									\
@@ -764,7 +765,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	     : "0" (__x.__ll), "r" (d));				\
     (q) = __x.__i.__l; (r) = __x.__i.__h;				\
   } while (0)
-#endif
+#endif /* if __zarch__ */
 #endif
 
 #if defined (__s390x__) && W_TYPE_SIZE == 64
