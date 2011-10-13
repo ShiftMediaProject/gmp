@@ -1,5 +1,7 @@
 2011-10-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (s390): Put back an accidentally deleted #else.
+
 	* configure.in (s390): Unset extra_functions for s390x.
 
 2011-10-12  Torbjorn Granlund  <tege@gmplib.org>
