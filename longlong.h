@@ -654,7 +654,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* hppa */
 
 #if (defined (__i370__) || defined (__s390__) || defined (__mvs__)) && W_TYPE_SIZE == 32
-#if defined (__zarch__)
+#if defined (__zarch__) || defined (HAVE_HOST_CPU_s390_zarch)
 #define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
   do {									\
 /*  if (__builtin_constant_p (bl))					\

@@ -290,7 +290,10 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #undef HAVE_HOST_CPU_pentiummmx
 #undef HAVE_HOST_CPU_pentiumpro
 #undef HAVE_HOST_CPU_pentium2
-#undef HAVE_HOST_CPU_pentium3])
+#undef HAVE_HOST_CPU_pentium3
+
+/* Define to 1 iff we have a s390 with 64-bit registers.  */
+#undef HAVE_HOST_CPU_s390_zarch])
 
 
 # Table of compilers, options, and mpn paths.  This code has various related
@@ -1130,6 +1133,7 @@ case $host in
 	path_32="s390_32/esame s390_32"
 	path_64="s390_64"
 	extra_functions=""
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
 	;;
       esac
     ;;
