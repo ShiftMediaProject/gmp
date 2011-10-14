@@ -1,5 +1,10 @@
 2011-10-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	From Per Olofsson:
+	* mpn/generic/popham.c: Add __GMP_NOTHROW to make it match gmp.h.
+	* mpn/generic/gcd_1.c: Separate declarations and initialisers for the
+	benefit of C++.
+
 	* configure.in: AC_DEFINE HAVE_HOST_CPU_s390_zarch.
 	* longlong.h (s390): Use it.
 	(s390 umul_ppmm): Fix typo in pure C variant.
