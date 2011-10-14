@@ -2,6 +2,7 @@
 
 	* configure.in: AC_DEFINE HAVE_HOST_CPU_s390_zarch.
 	* longlong.h (s390): Use it.
+	(s390 umul_ppmm): Fix typo in pure C variant.
 
 2011-10-13  Torbjorn Granlund  <tege@gmplib.org>
 
