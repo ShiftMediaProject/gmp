@@ -683,7 +683,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     union {UDItype __ll;						\
 	   struct {USItype __h, __l;} __i;				\
 	  } __x;							\
-    __x.__ll = (UDItype) m0 * (UDItype) m1;				\
+    __x.__ll = (UDItype) (m0) * (UDItype) (m1);				\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
 #else
