@@ -133,8 +133,11 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
   while (ulimb != vlimb)
     {
       int c;
-      mp_limb_t t = ulimb - vlimb;
-      mp_limb_t vgtu = LIMB_HIGHBIT_TO_MASK (t);
+      mp_limb_t t;
+      mp_limb_t vgtu;
+
+      t = ulimb - vlimb;
+      vgtu = LIMB_HIGHBIT_TO_MASK (t);
 
       /* v <-- min (u, v) */
       vlimb += (vgtu & t);
