@@ -35,7 +35,7 @@ FNAME (mp_srcptr up,
 #if OPERATION_hamdist
        mp_srcptr vp,
 #endif
-       mp_size_t n)
+       mp_size_t n) __GMP_NOTHROW
 {
   mp_bitcnt_t result = 0;
   mp_limb_t p0, p1, p2, p3, x, p01, p23;
