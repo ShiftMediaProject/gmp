@@ -1,3 +1,9 @@
+2011-10-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_64/mod_34lsub1.asm: New file.
+
+	* mpn/s390_64/sqr_diag_addlsh1.asm: New file.
+
 2011-10-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (s390): Rewrite support to handle known CPUs.
