@@ -1118,20 +1118,36 @@ case $host in
 
 
   # IBM System/390 and z/Architecture
-  [s3[6-9]0*-*-*])
+  S390_PATTERN | S390X_PATTERN)
     abilist="32"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
+    gcc_cflags_optlist="arch"
     path="s390_32"
     extra_functions="udiv_w_sdiv"
 
     case $host_cpu in
-      s390x)
-        abilist="64 32"
+      s390)
+	;;
+      z9)
+	path="s390_32/esame/$host_cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=z9-109"
+	gcc_32_cflags="$gcc_cflags -mzarch"
+        ;;
+      *)
+	path="s390_32/esame/$host_cpu s390_32/esame s390_32"
+        gcc_cflags_arch="-march=$host_cpu"
+	gcc_32_cflags="$gcc_cflags -mzarch"
+        ;;
+      esac
+
+    case $host in
+      S390X_PATTERN)
+	abilist="64 32"
 	cclist_64="gcc"
-        gcc_64_cflags="$gcc_cflags -m64"
-        gcc_32_cflags="$gcc_cflags -m31 -mzarch"
-	path_32="s390_32/esame s390_32"
-	path_64="s390_64"
+	gcc_64_cflags_optlist="arch"
+	gcc_64_cflags="$gcc_cflags -m64"
+	gcc_cflags="$gcc_cflags -m31"
+	path_64="s390_64/$host_cpu s390_64"
 	extra_functions=""
 	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
 	;;
