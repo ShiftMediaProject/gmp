@@ -111,6 +111,11 @@ ultrasparc | ultrasparc2 | ultrasparc2i | ultrasparc3 | ultrasparct[1234])
 sh2)
   test_cpu=sh ;;
 
+z900 | z990 | z9 | z10 | z196)
+  test_cpu=s390x;;
+z900esa | z990esa | z9esa | z10esa | z196esa)
+  test_cpu=s390;;
+
 *)
   # Don't need or want to change the given name, just run configfsf.sub
   $SHELL $configfsf_sub "$given_full"
