@@ -291,6 +291,11 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #undef HAVE_HOST_CPU_pentiumpro
 #undef HAVE_HOST_CPU_pentium2
 #undef HAVE_HOST_CPU_pentium3
+#undef HAVE_HOST_CPU_s390_z900
+#undef HAVE_HOST_CPU_s390_z990
+#undef HAVE_HOST_CPU_s390_z9
+#undef HAVE_HOST_CPU_s390_z10
+#undef HAVE_HOST_CPU_s390_z196
 
 /* Define to 1 iff we have a s390 with 64-bit registers.  */
 #undef HAVE_HOST_CPU_s390_zarch])
@@ -1128,15 +1133,40 @@ case $host in
     case $host_cpu in
       s390)
 	;;
-      z9)
-	path="s390_32/esame/$host_cpu s390_32/esame s390_32"
-	gcc_cflags_arch="-march=z9-109"
-	gcc_32_cflags="$gcc_cflags -mzarch"
+      z900 | z900esa)
+        cpu="z900"
+        gccarch="$cpu"
+	path="s390_32/esame/$cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=$gccarch"
+	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
         ;;
-      *)
-	path="s390_32/esame/$host_cpu s390_32/esame s390_32"
-        gcc_cflags_arch="-march=$host_cpu"
-	gcc_32_cflags="$gcc_cflags -mzarch"
+      z990 | z990esa)
+        cpu="z990"
+        gccarch="$cpu"
+	path="s390_32/esame/$cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=$gccarch"
+	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+        ;;
+      z9 | z9esa)
+        cpu="z9"
+	gccarch="z9-109"
+	path="s390_32/esame/$cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=$gccarch"
+	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+        ;;
+      z10 | z10esa)
+        cpu="z10"
+	gccarch="z10"
+	path="s390_32/esame/$cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=$gccarch"
+	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+        ;;
+      z196 | z196esa)
+        cpu="z196"
+	gccarch="z196"
+	path="s390_32/esame/$cpu s390_32/esame s390_32"
+	gcc_cflags_arch="-march=$gccarch"
+	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
         ;;
       esac
 
@@ -1146,7 +1176,7 @@ case $host in
 	cclist_64="gcc"
 	gcc_64_cflags_optlist="arch"
 	gcc_64_cflags="$gcc_cflags -m64"
-	gcc_cflags="$gcc_cflags -m31"
+	gcc_32_cflags="$gcc_cflags -m31"
 	path_64="s390_64/$host_cpu s390_64"
 	extra_functions=""
 	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
