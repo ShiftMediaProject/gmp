@@ -1,3 +1,10 @@
+2011-10-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (s390): Rewrite support to handle known CPUs.
+	* config.guess: Recognise s390 CPUs.
+	* config.sub: Match s390 CPUs.
+	* acinclude.m4 (S390_PATTERN, S390X_PATTERN): New defines.
+
 2011-10-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Per Olofsson:
