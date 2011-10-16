@@ -21,7 +21,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z990           1.75		See comment in loop about how to reach 1.5 c/l
+C z990           1.5
 
 C FIXME:
 C  * Avoid saving/restoring callee-saves registers for n < 3.  This could be
@@ -38,12 +38,13 @@ define(`up',	`%r9')
 
 ASM_START()
 PROLOGUE(mpn_copyd)
-	stmg	%r6, %r10, 48(%r15)
+	stmg	%r6, %r11, 48(%r15)
 
 	sllg	%r1, n, 3
 	la	%r10, 8(n)
 	aghi	%r1, -64
 	srlg	%r10, %r10, 3
+	lghi	%r11, -64
 
 	la	rp, 0(%r1,rp_param)	C FIXME use lay on z990 and later
 	la	up, 0(%r1,up_param)	C FIXME use lay on z990 and later
@@ -117,11 +118,11 @@ L(b7):	lmg	%r0, %r6, 8(up)
 	j	L(end)
 
 L(top):	lmg	%r0, %r7, 0(up)
-	aghi	up, -64			C FIXME using lay here saves 0.25 c/l
+	la	up, 0(%r11,up)
 	stmg	%r0, %r7, 0(rp)
-	aghi	rp, -64
+	la	rp, 0(%r11,rp)
 	brctg	%r10, L(top)
 
-L(end):	lmg	%r6, %r10, 48(%r15)
+L(end):	lmg	%r6, %r11, 48(%r15)
 	br	%r14
 EPILOGUE()
