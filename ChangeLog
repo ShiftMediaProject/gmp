@@ -1,5 +1,10 @@
 2011-10-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_32/esame/sqr_diag_addlsh1.asm: New file.
+
+	* mpn/s390_32/copyi.asm: New file.
+	* mpn/s390_32/copyd.asm: New file.
+
 	* mpn/s390_64/copyd.asm: Optimise.
 
 	* mpn/s390_64/copyi.asm: Rewrite along the lines of glibc memcpy.
