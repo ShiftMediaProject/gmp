@@ -21,10 +21,10 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z990           1		fluctuates somewhat
+C z990           0.75
 
-C FIXME
-C  * Optimise.  GNU memcpy beats us at 0.75 c/l.
+C NOTE
+C  * This is based on GNU libc memcpy which was written by Martin Schwidefsky.
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
@@ -33,12 +33,21 @@ define(`n',	`%r4')
 
 ASM_START()
 PROLOGUE(mpn_copyi)
-	lgr	%r0, %r3
-	sllg	%r3, %r4, 3
-	sllg	%r1, %r4, 3
+	ltgr	%r4, %r4
+	sllg	%r4, %r4, 3
+	je	L(rtn)
+	aghi	%r4, -1
+	srlg	%r5, %r4, 8
+	ltgr	%r5, %r5		C < 256 bytes to copy?
+	je	L(1)
 
-L(top):	mvcle	%r2, %r0, 0(0)
-	jne	L(top)
+L(top):	mvc	0(256, rp), 0(up)
+	la	rp, 256(rp)
+	la	up, 256(up)
+	brctg	%r5, L(top)
 
-	br	%r14
+L(1):	bras	%r5, L(2)		C make r5 point to mvc insn
+	mvc	0(1, rp), 0(up)
+L(2):	ex	%r4, 0(%r5)		C execute mvc with length ((n-1) mod 256)+1
+L(rtn):	br	%r14
 EPILOGUE()
