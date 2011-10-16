@@ -36,18 +36,16 @@ ifdef(`OPERATION_addlsh1_n',`
   define(ADDSUBC,       algr)
   define(ADDSUBE,       alcgr)
   define(INITCY,        `lghi	%r13, -1')
-  define(RETVAL,        `lghi	%r2, 1
-			alcgr	%r2, %r13')
+  define(RETVAL,        `la	%r2, 2(%r1,%r13)')
   define(func, mpn_addlsh1_n)
 ')
 ifdef(`OPERATION_sublsh1_n',`
   define(ADDSUBC,       slgr)
   define(ADDSUBE,       slbgr)
   define(INITCY,        `lghi	%r13, 0')
-  define(RETVAL,        `slbgr	%r2, %r2
-			lcgr	%r2, %r2
-			algr	%r2, %r13
-			aghi	%r2, 1')
+  define(RETVAL,        `slgr	%r1, %r13
+			lghi	%r2, 1
+			algr	%r2, %r1')
   define(func, mpn_sublsh1_n)
 ')
 
@@ -57,13 +55,11 @@ ASM_START()
 PROLOGUE(func)
 	stmg	%r6, %r13, 48(%r15)
 
-	INITCY
-
 	la	%r0, 3(n)
 	lghi	%r7, 3
 	srlg	%r0, %r0, 2
 	ngr	%r7, n			C n mod 4
-	je	L(top)			C The C flag is clear
+	je	L(b0)
 	cghi	%r7, 2
 	jl	L(b1)
 	je	L(b2)
@@ -76,17 +72,21 @@ L(b3):	lmg	%r5, %r7, 0(up)
 	algr	%r9, %r9
 	alcgr	%r10, %r10
 	alcgr	%r11, %r11
-
-	slbgr	%r13, %r13
+	slbgr	%r1, %r1
 
 	ADDSUBC	%r5, %r9
 	ADDSUBE	%r6, %r10
 	ADDSUBE	%r7, %r11
+	slbgr	%r13, %r13
 
 	stmg	%r5, %r7, 0(rp)
 	la	rp, 24(rp)
 	brctg	%r0, L(top)
 	j	L(end)
+
+L(b0):	lghi	%r1, -1
+	INITCY
+	j	L(top)
 
 L(b1):	lg	%r5, 0(up)
 	la	up, 8(up)
@@ -94,8 +94,9 @@ L(b1):	lg	%r5, 0(up)
 	la	vp, 8(vp)
 
 	algr	%r9, %r9
-	slbgr	%r13, %r13
+	slbgr	%r1, %r1
 	ADDSUBC	%r5, %r9
+	slbgr	%r13, %r13
 
 	stg	%r5, 0(rp)
 	la	rp, 8(rp)
@@ -109,11 +110,11 @@ L(b2):	lmg	%r5, %r6, 0(up)
 
 	algr	%r9, %r9
 	alcgr	%r10, %r10
-
-	slbgr	%r13, %r13
+	slbgr	%r1, %r1
 
 	ADDSUBC	%r5, %r9
 	ADDSUBE	%r6, %r10
+	slbgr	%r13, %r13
 
 	stmg	%r5, %r6, 0(rp)
 	la	rp, 16(rp)
@@ -122,6 +123,8 @@ L(b2):	lmg	%r5, %r6, 0(up)
 
 L(top):	lmg	%r9, %r12, 0(vp)
 	la	vp, 32(vp)
+
+	aghi	%r1, 1			C restore carry
 
 	alcgr	%r9, %r9
 	alcgr	%r10, %r10
@@ -140,7 +143,7 @@ L(top):	lmg	%r9, %r12, 0(vp)
 	ADDSUBE	%r7, %r11
 	ADDSUBE	%r8, %r12
 
-	lgr	%r13, %r1
+	slbgr	%r13, %r13
 
 	stmg	%r5, %r8, 0(rp)
 	la	rp, 32(rp)
