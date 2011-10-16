@@ -1139,6 +1139,8 @@ case $host in
 	path="s390_32/esame/$cpu s390_32/esame s390_32"
 	gcc_cflags_arch="-march=$gccarch"
 	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
+	extra_functions=""
         ;;
       z990 | z990esa)
         cpu="z990"
@@ -1146,6 +1148,8 @@ case $host in
 	path="s390_32/esame/$cpu s390_32/esame s390_32"
 	gcc_cflags_arch="-march=$gccarch"
 	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
+	extra_functions=""
         ;;
       z9 | z9esa)
         cpu="z9"
@@ -1153,6 +1157,8 @@ case $host in
 	path="s390_32/esame/$cpu s390_32/esame s390_32"
 	gcc_cflags_arch="-march=$gccarch"
 	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
+	extra_functions=""
         ;;
       z10 | z10esa)
         cpu="z10"
@@ -1160,6 +1166,8 @@ case $host in
 	path="s390_32/esame/$cpu s390_32/esame s390_32"
 	gcc_cflags_arch="-march=$gccarch"
 	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
+	extra_functions=""
         ;;
       z196 | z196esa)
         cpu="z196"
@@ -1167,6 +1175,8 @@ case $host in
 	path="s390_32/esame/$cpu s390_32/esame s390_32"
 	gcc_cflags_arch="-march=$gccarch"
 	AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_s390_$cpu)
+	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
+	extra_functions=""
         ;;
       esac
 
@@ -1179,7 +1189,6 @@ case $host in
 	gcc_32_cflags="$gcc_cflags -m31"
 	path_64="s390_64/$host_cpu s390_64"
 	extra_functions=""
-	AC_DEFINE(HAVE_HOST_CPU_s390_zarch)
 	;;
       esac
     ;;
