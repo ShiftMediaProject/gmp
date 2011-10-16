@@ -24,6 +24,7 @@ C z990           3.5
 
 C TODO
 C  * Optimise for small n
+C  * Use r0 and save/restore one less register
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
@@ -56,7 +57,7 @@ L(b3):	lmg	%r5, %r7, 0(up)
 	brctg	%r1, L(top)
 	j	L(end)
 
-L(b0):	slgr	%r0, %r0		C set C flag
+L(b0):	slgr	%r5, %r5		C set C flag
 	j	L(top)
 	
 L(b1):	lg	%r5, 0(up)

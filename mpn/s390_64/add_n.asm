@@ -24,6 +24,7 @@ C z990           3.5
 
 C TODO
 C  * Optimise for small n
+C  * Use r0 and save/restore one less register
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
