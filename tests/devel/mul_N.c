@@ -49,8 +49,12 @@ cputime ()
 }
 #endif
 
+#ifndef NOCHECK
 static void print_posneg (mp_limb_t);
+#endif
+#ifdef PRINT
 static void mpn_print (mp_ptr, mp_size_t);
+#endif
 
 #define LXW ((int) (2 * sizeof (mp_limb_t)))
 #define M * 1000000
@@ -111,10 +115,12 @@ main (int argc, char **argv)
   mp_limb_t vp[N];
   mp_limb_t cy_ref, cy_try;
   int i;
+#if TIMES != 1
   long t0, t;
+  double cyc;
+#endif
   unsigned test;
   mp_size_t size;
-  double cyc;
   unsigned ntests;
 
   ntests = ~(unsigned) 0;
@@ -132,7 +138,7 @@ main (int argc, char **argv)
 #endif
 
 #ifdef RANDOM
-      size = random () % SIZE + 1;
+      size = random () % (SIZE - N + 1) + N;
 #else
       size = SIZE;
 #endif
@@ -151,25 +157,30 @@ main (int argc, char **argv)
 	mpn_mul_N (ref, up, size, vp);
       t = cputime() - t0;
       cyc = ((double) t * CLOCK) / (TIMES * size * 1000.0) / N;
-      printf ("mpn_mul_N:    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
-	      t, cyc, CLOCK/cyc*GMP_LIMB_BITS*GMP_LIMB_BITS/1e9);
+      printf ("mpn_mul_%d:    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
+	      N, t, cyc, CLOCK/cyc*GMP_LIMB_BITS*GMP_LIMB_BITS/1e9);
+#endif
+
+#ifdef PLAIN_RANDOM
+#define MPN_RANDOM mpn_random
+#else
+#define MPN_RANDOM mpn_random2
 #endif
 
 #ifdef ZEROu
       MPN_ZERO (up, size);
 #else
-      mpn_random2 (up, size);
+      MPN_RANDOM (up, size);
 #endif
-      mpn_random2 (vp, N);
-      mpn_random2 (rp, size + N - 1);
+      MPN_RANDOM (vp, N);
+      /* vp[0] = vp[1] = vp[2] = vp[3] = vp[4] =  vp[5] = 0; */
+      MPN_RANDOM (rp, size + N - 1);
 
 #if defined (PRINT) || defined (PRINTV)
       printf ("vp=");
       mpn_print (vp, N);
 #endif
 #ifdef PRINT
-      printf ("%*s ", 3 + N * LXW, "");
-      mpn_print (rp, size);
       printf ("%*s ", 3 + N * LXW, "");
       mpn_print (up, size);
 #endif
@@ -187,6 +198,7 @@ main (int argc, char **argv)
 
 #ifndef NOCHECK
       if (cy_ref != cy_try || mpn_cmp (ref, rp, size + N - 1) != 0
+//      if (cy_ref != cy_try || mpn_cmp (ref + 5, rp + 5, size + N - 1 - 6) != 0
 	  || rp[size + N - 1] != 0x12345678 || rp[-1] != 0x87654321)
 	{
 	  printf ("\n        ref%*s try%*s diff\n", LXW - 3, "", 2 * LXW - 6, "");
@@ -215,6 +227,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+#ifndef NOCHECK
 static void
 print_posneg (mp_limb_t d)
 {
@@ -232,7 +245,9 @@ print_posneg (mp_limb_t d)
       printf ("%*s+%s", LXW - (int) strlen (buf), "", buf);
     }
 }
+#endif
 
+#ifdef PRINT
 static void
 mpn_print (mp_ptr p, mp_size_t size)
 {
@@ -254,3 +269,4 @@ mpn_print (mp_ptr p, mp_size_t size)
     }
   puts ("");
 }
+#endif

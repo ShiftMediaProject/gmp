@@ -149,10 +149,10 @@ main (int argc, char **argv)
       cyx = refmpn_add_n_sub_n (d1x+1, d2x+1, s1, s2, size);
       cyy = mpn_add_n_sub_n (d1y+1, d2y+1, s1, s2, size);
 #ifdef PRINT
-      printf ("%d ", cyx); mpn_print (d1x+1, size);
-      printf ("%d ", cyx); mpn_print (d2x+1, size);
-      printf ("%d ", cyy); mpn_print (d1y+1, size);
-      printf ("%d ", cyy); mpn_print (d2y+1, size);
+      printf ("ref add %d ", cyx); mpn_print (d1x+1, size);
+      printf ("    add %d ", cyy); mpn_print (d1y+1, size);
+      printf ("ref sub %d ", cyx); mpn_print (d2x+1, size);
+      printf ("    sub %d ", cyy); mpn_print (d2y+1, size);
 #endif
       if (cyx != cyy
 	  || mpn_cmp (d1x, d1y, size+2) != 0
@@ -161,11 +161,20 @@ main (int argc, char **argv)
 	  || d2x[0] != 0x87654321 || d2x[size+1] != 0x12345678)
 	{
 #ifndef PRINT
-	  printf ("%d ", cyx); mpn_print (d1x+1, size);
-	  printf ("%d ", cyx); mpn_print (d2x+1, size);
-	  printf ("%d ", cyy); mpn_print (d1y+1, size);
-	  printf ("%d ", cyy); mpn_print (d2y+1, size);
+	  printf ("ref add %d ", cyx); mpn_print (d1x+1, size);
+	  printf ("    add %d ", cyy); mpn_print (d1y+1, size);
+	  printf ("ref sub %d ", cyx); mpn_print (d2x+1, size);
+	  printf ("    sub %d ", cyy); mpn_print (d2y+1, size);
 #endif
+	  printf ("\n");
+	  if (d1y[0] != 0x87654321)
+	    printf ("add clobbered at low end\n");
+	  if (d1y[size+1] != 0x12345678)
+	    printf ("add clobbered at high end\n");
+	  if (d2y[0] != 0x87654321)
+	    printf ("sub clobbered at low end\n");
+	  if (d2y[size+1] != 0x12345678)
+	    printf ("sub clobbered at high end\n");
 	  printf ("TEST NUMBER %d\n", test);
 	  abort();
 	}

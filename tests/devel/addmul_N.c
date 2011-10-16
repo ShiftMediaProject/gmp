@@ -1,6 +1,6 @@
 /*
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2004, 2007 Free
-Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2004, 2007 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -49,8 +49,12 @@ cputime ()
 }
 #endif
 
+#ifndef NOCHECK
 static void print_posneg (mp_limb_t);
+#endif
+#ifdef PRINT
 static void mpn_print (mp_ptr, mp_size_t);
+#endif
 
 #define LXW ((int) (2 * sizeof (mp_limb_t)))
 #define M * 1000000
@@ -108,10 +112,12 @@ main (int argc, char **argv)
   mp_limb_t vp[N];
   mp_limb_t cy_ref, cy_try;
   int i;
+#if TIMES != 1
   long t0, t;
+  double cyc;
+#endif
   unsigned test;
   mp_size_t size;
-  double cyc;
   unsigned ntests;
 
   ntests = ~(unsigned) 0;
@@ -129,7 +135,7 @@ main (int argc, char **argv)
 #endif
 
 #ifdef RANDOM
-      size = random () % SIZE + 1;
+      size = random () % (SIZE - N + 1) + N;
 #else
       size = SIZE;
 #endif
@@ -149,20 +155,26 @@ main (int argc, char **argv)
 	mpn_addmul_N (ref, up, size, vp);
       t = cputime() - t0;
       cyc = ((double) t * CLOCK) / (TIMES * size * 1000.0) / N;
-      printf ("mpn_addmul_N:    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
-	      t, cyc, CLOCK/cyc*GMP_LIMB_BITS*GMP_LIMB_BITS/1e9);
+      printf ("mpn_addmul_%d:    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
+	      N, t, cyc, CLOCK/cyc*GMP_LIMB_BITS*GMP_LIMB_BITS/1e9);
+#endif
+
+#ifdef PLAIN_RANDOM
+#define MPN_RANDOM mpn_random
+#else
+#define MPN_RANDOM mpn_random2
 #endif
 
 #ifdef ZEROu
       MPN_ZERO (up, size);
 #else
-      mpn_random2 (up, size);
+      MPN_RANDOM (up, size);
 #endif
-      mpn_random2 (vp, N);
+      MPN_RANDOM (vp, N);
 #ifdef ZERO
       MPN_ZERO (rp, size + N - 1);
 #else
-      mpn_random2 (rp, size + N - 1);
+      MPN_RANDOM (rp, size + N - 1);
 #endif
 
 #if defined (PRINT) || defined (PRINTV)
@@ -217,6 +229,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+#ifndef NOCHECK
 static void
 print_posneg (mp_limb_t d)
 {
@@ -234,7 +247,9 @@ print_posneg (mp_limb_t d)
       printf ("%*s+%s", LXW - (int) strlen (buf), "", buf);
     }
 }
+#endif
 
+#ifdef PRINT
 static void
 mpn_print (mp_ptr p, mp_size_t size)
 {
@@ -256,3 +271,4 @@ mpn_print (mp_ptr p, mp_size_t size)
     }
   puts ("");
 }
+#endif

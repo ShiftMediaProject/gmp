@@ -23,7 +23,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-#include "tests.h"
+#include "tests/tests.h"
 
 #ifdef OPERATION_mul_1
 #define func __gmpn_mul_1
@@ -120,6 +120,12 @@ main (int argc, char **argv)
 	}
 #endif
 
+#ifdef PLAIN_RANDOM
+#define MPN_RANDOM mpn_random
+#else
+#define MPN_RANDOM mpn_random2
+#endif
+
 #ifdef RANDOM
       size = random () % SIZE + 1;
 #else
@@ -132,7 +138,7 @@ main (int argc, char **argv)
 #ifdef FIXED_XLIMB
       xlimb = FIXED_XLIMB;
 #else
-      mpn_random2 (&xlimb, 1);
+      MPN_RANDOM (&xlimb, 1);
 #endif
 
 #if TIMES != 1
@@ -151,11 +157,11 @@ main (int argc, char **argv)
 #endif
 
 #ifndef NOCHECK
-      mpn_random2 (s1, size);
+      MPN_RANDOM (s1, size);
 #ifdef ZERO
       memset (rp, 0, size * sizeof *rp);
 #else
-      mpn_random2 (rp, size);
+      MPN_RANDOM (rp, size);
 #endif
 #if defined (PRINT) || defined (XPRINT)
       printf ("xlimb=");
