@@ -1,5 +1,11 @@
 2011-10-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/copyd.asm: Optimise.
+
+	* mpn/s390_64/copyi.asm: Rewrite along the lines of glibc memcpy.
+
+	* mpn/s390_64/aorslsh1_n.asm: New file.
+
 	* mpn/s390_64/mod_34lsub1.asm: New file.
 
 	* mpn/s390_64/sqr_diag_addlsh1.asm: New file.
