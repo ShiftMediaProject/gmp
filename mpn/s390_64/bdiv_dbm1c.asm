@@ -20,7 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z990          23
+C z900		29
+C z990		23
+C z9		 ?
+C z10		 ?
+C z196		 ?
 
 C INPUT PARAMETERS
 define(`qp',	  `%r2')

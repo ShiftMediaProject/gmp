@@ -21,7 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
+C z900		 1.25
 C z990           0.75
+C z9		 ?
+C z10		 ?
+C z196		 ?
 
 C NOTE
 C  * This is based on GNU libc memcpy which was written by Martin Schwidefsky.

@@ -22,7 +22,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z990           92
+C z900	       142
+C z990          88
+C z9		 ?
+C z10		 ?
+C z196		 ?
 
 ASM_START()
 	TEXT

@@ -21,12 +21,17 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
+C z900		 2.67
 C z990           1.5
+C z9		 ?
+C z10		 ?
+C z196		 ?
 
 C FIXME:
 C  * Avoid saving/restoring callee-saves registers for n < 3.  This could be
 C    done by setting rp=r1, up=r2, i=r0 and r3,r4,r5 for clock regs.
-C    We coould then use r3...r10 in main loop.
+C    We could then use r3...r10 in main loop.
+C  * Could we use some EX trick, modifying lmg/stmg, for the feed-in code?
 
 C INPUT PARAMETERS
 define(`rp_param',	`%r2')
