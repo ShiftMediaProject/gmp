@@ -40,21 +40,21 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_TOOM22_THRESHOLD                14
 #define MUL_TOOM33_THRESHOLD                45
-#define MUL_TOOM44_THRESHOLD               106
-#define MUL_TOOM6H_THRESHOLD               148
+#define MUL_TOOM44_THRESHOLD                96
+#define MUL_TOOM6H_THRESHOLD               143
 #define MUL_TOOM8H_THRESHOLD               212
 
-#define MUL_TOOM32_TO_TOOM43_THRESHOLD      65
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD      57
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD      69
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD      73
-#define MUL_TOOM42_TO_TOOM63_THRESHOLD      49
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD      56
 
-#define SQR_BASECASE_THRESHOLD               5
-#define SQR_TOOM2_THRESHOLD                 24
+#define SQR_BASECASE_THRESHOLD               0
+#define SQR_TOOM2_THRESHOLD                 22
 #define SQR_TOOM3_THRESHOLD                 65
 #define SQR_TOOM4_THRESHOLD                112
-#define SQR_TOOM6_THRESHOLD                159
-#define SQR_TOOM8_THRESHOLD                238
+#define SQR_TOOM6_THRESHOLD                156
+#define SQR_TOOM8_THRESHOLD                224
 
 #define MULMID_TOOM42_THRESHOLD             20
 
