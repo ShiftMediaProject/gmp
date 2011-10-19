@@ -21,7 +21,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
+C            cycles/limb
+C z900		 1.65
 C z990           1.125
+C z9		 ?
+C z10		 ?
+C z196		 ?
 
 C FIXME:
 C  * Avoid saving/restoring callee-saves registers for n < 3.  This could be
