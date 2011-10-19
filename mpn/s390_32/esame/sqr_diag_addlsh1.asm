@@ -21,7 +21,7 @@ include(`../config.m4')
 
 C            cycles/limb
 C z900		 ?
-C z990		 8
+C z990           8
 C z9		 ?
 C z10		 ?
 C z196		 ?
@@ -34,9 +34,9 @@ define(`n',	`%r5')
 
 ASM_START()
 PROLOGUE(mpn_sqr_diag_addlsh1)
-	stm	%r6, %r11, 24(%r15)
+	stm	%r6, %r9, 24(%r15)
 
-	lhi	%r11, -1		C save non-carry state
+	lhi	%r9, -1			C save non-carry state
 
 	l	%r1, 0(up)
 	mlr	%r0, %r1
@@ -50,28 +50,28 @@ L(top):	lm	%r6, %r7, 4(tp)
 	la	tp, 8(tp)
 	alcr	%r6, %r6
 	alcr	%r7, %r7
-L(mid):	slbr	%r10, %r10		C save carry
-	ahi	%r11, 1			C restore old carry
+L(mid):	slbr	%r8, %r8		C save carry
+	ahi	%r9, 1			C restore old carry
 	alcr	%r6, %r1
 	alcr	%r7, %r0
 	stm	%r6, %r7, 0(rp)
 	la	rp, 8(rp)
 	l	%r1, 4(up)
 	la	up, 4(up)
-	lr	%r11, %r10		C copy carry save register
+	lr	%r9, %r8		C copy carry save register
 	mlr	%r0, %r1
 	brct	n, L(top)
 
 L(end):	l	%r6, 4(tp)
 	alcr	%r6, %r6
-	slbr	%r10, %r10		C save carry
-	ahi	%r11, 1			C restore old carry
+	slbr	%r8, %r8		C save carry
+	ahi	%r9, 1			C restore old carry
 	lhi	%r7, 1
 	alcr	%r6, %r1
 	alcr	%r7, %r0
-	alr	%r7, %r10
+	alr	%r7, %r8
 	stm	%r6, %r7, 0(rp)
 
-	lm	%r6, %r11, 24(%r15)
+	lm	%r6, %r9, 24(%r15)
 	br	%r14
 EPILOGUE()
