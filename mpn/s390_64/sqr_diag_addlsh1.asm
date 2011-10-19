@@ -20,8 +20,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z900		 24.5
-C z990           18.5
+C z900		 ?
+C z990           14.5
 C z9		 ?
 C z10		 ?
 C z196		 ?
@@ -36,39 +36,40 @@ ASM_START()
 PROLOGUE(mpn_sqr_diag_addlsh1)
 	stmg	%r6, %r9, 48(%r15)
 
+	lghi	%r9, -1			C save non-carry state
+
 	lg	%r1, 0(up)
 	mlgr	%r0, %r1
 	aghi	n, -1
 	lg	%r7, 0(tp)
-	srlg	%r9, %r7, 63
-	sllg	%r7, %r7, 1
-	lgr	%r6, %r1
-	algr	%r7, %r0
+	algr	%r7, %r7
+	lghi	%r6, 0
 	j	L(mid)
 
 L(top):	lmg	%r6, %r7, 8(tp)
 	la	tp, 16(tp)
-	srlg	%r8, %r6, 63
-	sllg	%r6, %r6, 1
-	la	%r6, 0(%r6,%r9)
-	srlg	%r9, %r7, 63
-	sllg	%r7, %r7, 1
-	la	%r7, 0(%r7,%r8)
+	alcgr	%r6, %r6
+	alcgr	%r7, %r7
+L(mid):	slbgr	%r8, %r8		C save carry
+	aghi	%r9, 1			C restore old carry
 	alcgr	%r6, %r1
 	alcgr	%r7, %r0
-L(mid):	stmg	%r6, %r7, 0(rp)
+	stmg	%r6, %r7, 0(rp)
 	la	rp, 16(rp)
 	lg	%r1, 8(up)
 	la	up, 8(up)
+	lgr	%r9, %r8		C copy carry save register
 	mlgr	%r0, %r1
 	brctg	n, L(top)
 
 L(end):	lg	%r6, 8(tp)
-	srlg	%r7, %r6, 63
-	sllg	%r6, %r6, 1
-	la	%r6, 0(%r6,%r9)
+	alcgr	%r6, %r6
+	slbgr	%r8, %r8		C save carry
+	aghi	%r9, 1			C restore old carry
+	lghi	%r7, 1
 	alcgr	%r6, %r1
 	alcgr	%r7, %r0
+	algr	%r7, %r8
 	stmg	%r6, %r7, 0(rp)
 
 	lmg	%r6, %r9, 48(%r15)
