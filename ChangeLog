@@ -1,3 +1,14 @@
+2011-10-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_64/sqr_diag_addlsh1.asm: Rewrite like s390_32/esame code.
+
+	* mpn/s390_32/esame/sqr_diag_addlsh1.asm: Save just needed registers.
+
+2011-10-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_32/esame/add_n.asm: Rewrite, similar to s390_64 code.
+	* mpn/s390_32/esame/add_n.asm: Likewise.
+
 2011-10-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_32/esame/aorslsh1_n.asm: New file.
