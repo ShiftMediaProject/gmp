@@ -1192,6 +1192,16 @@ speed_mpn_sqr_diagonal (struct speed_params *s)
 }
 #endif
 
+#if HAVE_NATIVE_mpn_sqr_diag_addlsh1
+double
+speed_mpn_sqr_diag_addlsh1 (struct speed_params *s)
+{
+  /* FIXME: (1) This gives a 2x value for measurements.
+            (2) Pass different arguments for rp and tp.  */
+  SPEED_ROUTINE_MPN_SQR_DIAL_ADDLSH1_CALL (mpn_sqr_diag_addlsh1 (wp, tp, s->xp, s->size));
+}
+#endif
+
 double
 speed_mpn_toom2_sqr (struct speed_params *s)
 {

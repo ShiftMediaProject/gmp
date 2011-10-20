@@ -296,6 +296,7 @@ double speed_mpn_bc_set_str __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dc_set_str __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_set_str_pre __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sqr_diag_addlsh1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqr_diagonal __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqrtrem __GMP_PROTO ((struct speed_params *s));
@@ -1442,9 +1443,34 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_SQR(function)					\
   SPEED_ROUTINE_MPN_SQR_CALL (function (wp, s->xp, s->size))
 
-#define SPEED_ROUTINE_MPN_SQR_DIAGONAL(function)			\
-  SPEED_ROUTINE_MPN_SQR (function)
-
+#define SPEED_ROUTINE_MPN_SQR_DIAL_ADDLSH1_CALL(call)			\
+  {									\
+    mp_ptr    wp, tp;							\
+    unsigned  i;							\
+    double    t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, 2 * s->size, s->align_wp);		\
+									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_dst (s, wp, 2 * s->size);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      call;								\
+    while (--i != 0);							\
+    t = speed_endtime () / 2;						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
 
 #define SPEED_ROUTINE_MPN_SQR_TSPACE(call, tsize, minsize)		\
   {									\

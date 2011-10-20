@@ -310,6 +310,9 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_sqr_diagonal
   { "mpn_sqr_diagonal",  speed_mpn_sqr_diagonal     },
 #endif
+#if HAVE_NATIVE_mpn_sqr_diag_addlsh1
+  { "mpn_sqr_diag_addlsh1", speed_mpn_sqr_diag_addlsh1 },
+#endif
 
   { "mpn_mul_n",         speed_mpn_mul_n            },
   { "mpn_sqr",           speed_mpn_sqr              },
