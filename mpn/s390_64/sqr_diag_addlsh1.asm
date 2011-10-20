@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z900		 ?
+C z900		 21.5
 C z990           14.5
 C z9		 ?
 C z10		 ?
@@ -36,7 +36,7 @@ ASM_START()
 PROLOGUE(mpn_sqr_diag_addlsh1)
 	stmg	%r6, %r9, 48(%r15)
 
-	lghi	%r9, -1			C save non-carry state
+	lghi	%r9, -1			C set non-carry state
 
 	lg	%r1, 0(up)
 	mlgr	%r0, %r1
