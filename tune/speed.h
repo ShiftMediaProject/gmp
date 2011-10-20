@@ -1443,14 +1443,14 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_SQR(function)					\
   SPEED_ROUTINE_MPN_SQR_CALL (function (wp, s->xp, s->size))
 
-#define SPEED_ROUTINE_MPN_SQR_DIAL_ADDLSH1_CALL(call)			\
+#define SPEED_ROUTINE_MPN_SQR_DIAG_ADDLSH1_CALL(call)			\
   {									\
     mp_ptr    wp, tp;							\
     unsigned  i;							\
     double    t;							\
     TMP_DECL;								\
 									\
-    SPEED_RESTRICT_COND (s->size >= 1);					\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_wp);		\
