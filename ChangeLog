@@ -1,5 +1,9 @@
 2011-10-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h (SPEED_ROUTINE_MPN_SQR_DIAL_ADDLSH1_CALL): New macro.
+	* tune/common.c (speed_mpn_sqr_diag_addlsh1): New function.
+	* tune/speed.c (routine): Measure mpn_sqr_diag_addlsh1.
+
 	* mpn/s390_64/sqr_diag_addlsh1.asm: Rewrite like s390_32/esame code.
 
 	* mpn/s390_32/esame/sqr_diag_addlsh1.asm: Save just needed registers.
