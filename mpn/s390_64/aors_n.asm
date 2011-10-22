@@ -1,4 +1,4 @@
-dnl  S/390-64 mpn_add_n
+dnl  S/390-64 mpn_add_n and mpn_sub_n.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -20,8 +20,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z900		 6.5
-C z990		 3.5
+C z900		 5.5
+C z990		 3
 C z9		 ?
 C z10		 ?
 C z196		 ?
@@ -36,36 +36,61 @@ define(`up',	`%r3')
 define(`vp',	`%r4')
 define(`n',	`%r5')
 
+ifdef(`OPERATION_add_n', `
+  define(ADSB,		alg)
+  define(ADSBCR,	alcgr)
+  define(ADSBC,		alcg)
+  define(RETVAL,`
+	lghi	%r2, 0
+	alcgr	%r2, %r2')
+  define(func,		mpn_add_n)
+  define(func_nc,	mpn_add_nc)')
+ifdef(`OPERATION_sub_n', `
+  define(ADSB,		slg)
+  define(ADSBCR,	slbgr)
+  define(ADSBC,		slbg)
+  define(RETVAL,`
+	slbgr	%r2, %r2
+	lcgr	%r2, %r2')
+  define(func,		mpn_sub_n)
+  define(func_nc,	mpn_sub_nc)')
+
+MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
+
 ASM_START()
-PROLOGUE(mpn_add_n)
+PROLOGUE(func)
 	stmg	%r6, %r12, 48(%r15)
 
-	la	%r1, 3(n)
+	aghi	n, 3
 	lghi	%r7, 3
-	srlg	%r1, %r1, 2
+	srlg	%r1, n, 2
 	ngr	%r7, n			C n mod 4
-	je	L(top)			C The C flag is clear
+	je	L(b1)
 	cghi	%r7, 2
-	jl	L(b1)
-	je	L(b2)
+	jl	L(b2)
+	jne	L(b0)
 
 L(b3):	lmg	%r5, %r7, 0(up)
 	la	up, 24(up)
-	lmg	%r9, %r11, 0(vp)
+	ADSB	%r5, 0(vp)
+	ADSBC	%r6, 8(vp)
+	ADSBC	%r7, 16(vp)
 	la	vp, 24(vp)
-	algr	%r5, %r9
-	alcgr	%r6, %r10
-	alcgr	%r7, %r11
 	stmg	%r5, %r7, 0(rp)
 	la	rp, 24(rp)
 	brctg	%r1, L(top)
 	j	L(end)
 
+L(b0):	lmg	%r5, %r8, 0(up)		C This redundant insns is no mistake,
+	la	up, 32(up)		C it is needed to make main loop run
+	ADSB	%r5, 0(vp)		C fast for n = 0 (mod 4).
+	ADSBC	%r6, 8(vp)
+	j	L(m0)
+
 L(b1):	lg	%r5, 0(up)
 	la	up, 8(up)
-	lg	%r9, 0(vp)
+	ADSB	%r5, 0(vp)
 	la	vp, 8(vp)
-	algr	%r5, %r9
 	stg	%r5, 0(rp)
 	la	rp, 8(rp)
 	brctg	%r1, L(top)
@@ -73,10 +98,9 @@ L(b1):	lg	%r5, 0(up)
 
 L(b2):	lmg	%r5, %r6, 0(up)
 	la	up, 16(up)
-	lmg	%r9, %r10, 0(vp)
+	ADSB	%r5, 0(vp)
+	ADSBC	%r6, 8(vp)
 	la	vp, 16(vp)
-	algr	%r5, %r9
-	alcgr	%r6, %r10
 	stmg	%r5, %r6, 0(rp)
 	la	rp, 16(rp)
 	brctg	%r1, L(top)
@@ -84,18 +108,16 @@ L(b2):	lmg	%r5, %r6, 0(up)
 
 L(top):	lmg	%r5, %r8, 0(up)
 	la	up, 32(up)
-	lmg	%r9, %r12, 0(vp)
+	ADSBC	%r5, 0(vp)
+	ADSBC	%r6, 8(vp)
+L(m0):	ADSBC	%r7, 16(vp)
+	ADSBC	%r8, 24(vp)
 	la	vp, 32(vp)
-	alcgr	%r5, %r9
-	alcgr	%r6, %r10
-	alcgr	%r7, %r11
-	alcgr	%r8, %r12
 	stmg	%r5, %r8, 0(rp)
 	la	rp, 32(rp)
 	brctg	%r1, L(top)
 
-L(end):	lghi	%r2, 0
-	alcgr	%r2, %r2
+L(end):	RETVAL
 
 	lmg	%r6, %r12, 48(%r15)
 	br	%r14
