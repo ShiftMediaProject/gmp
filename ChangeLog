@@ -1,5 +1,7 @@
 2011-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/bdiv_dbm1c.asm: Shave off 1 c/l.
+
 	* mpn/s390_64/aorrlsh1_n.asm: New file, developed from aorslsh1_n.asm.
 	* mpn/s390_64/sublsh1_n.asm: New file.
 	* mpn/s390_64/aorslsh1_n.asm: Remove file.
