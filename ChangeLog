@@ -1,5 +1,7 @@
 2011-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/logops_n.asm: Use nc, oc, xc when possible.
+
 	* tune/common.c (speed_mpn_and_n, speed_mpn_andn_n, etc):
 	Pass correct input args.
 
