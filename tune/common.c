@@ -1112,42 +1112,42 @@ speed_mpn_rsh1sub_n (struct speed_params *s)
 double
 speed_mpn_and_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_and_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_and_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_andn_n (struct speed_params *s)
 {
-SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_andn_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_andn_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_nand_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_nand_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_nand_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_ior_n (struct speed_params *s)
 {
-SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_ior_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_ior_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_iorn_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_iorn_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_iorn_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_nior_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_nior_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_nior_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_xor_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_xor_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_xor_n (wp, xp, yp, s->size));
 }
 double
 speed_mpn_xnor_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_xnor_n (wp, s->xp, s->yp, s->size));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_xnor_n (wp, xp, yp, s->size));
 }
 
 
