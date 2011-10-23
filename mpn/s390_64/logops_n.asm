@@ -71,7 +71,7 @@ MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n
 ASM_START()
 PROLOGUE(func)
 ifdef(`VARIANT_1',`
-	stmg	%r6, %r13, 48(%r15)
+	stmg	%r6, %r8, 48(%r15)
 	aghi	n, 3
 	lghi	%r7, 3
 	srlg	%r0, n, 2
@@ -81,50 +81,50 @@ ifdef(`VARIANT_1',`
 	jl	L(b2)
 	jne	L(top)
 
-L(b3):	lmg	%r6, %r8, 0(up)
+L(b3):	lmg	%r5, %r7, 0(up)
 	la	up, 24(up)
-	LOGOP	%r6, 0(vp)
-	LOGOP	%r7, 8(vp)
-	LOGOP	%r8, 16(vp)
-	stmg	%r6, %r8, 0(rp)
+	LOGOP	%r5, 0(vp)
+	LOGOP	%r6, 8(vp)
+	LOGOP	%r7, 16(vp)
+	stmg	%r5, %r7, 0(rp)
 	la	rp, 24(rp)
 	la	vp, 24(vp)
 	j	L(mid)
 
-L(b1):	lg	%r6, 0(up)
+L(b1):	lg	%r5, 0(up)
 	la	up, 8(up)
-	LOGOP	%r6, 0(vp)
-	stg	%r6, 0(rp)
+	LOGOP	%r5, 0(vp)
+	stg	%r5, 0(rp)
 	la	rp, 8(rp)
 	la	vp, 8(vp)
 	j	L(mid)
 
-L(b2):	lmg	%r6, %r7, 0(up)
+L(b2):	lmg	%r5, %r6, 0(up)
 	la	up, 16(up)
-	LOGOP	%r6, 0(vp)
-	LOGOP	%r7, 8(vp)
-	stmg	%r6, %r7, 0(rp)
+	LOGOP	%r5, 0(vp)
+	LOGOP	%r6, 8(vp)
+	stmg	%r5, %r6, 0(rp)
 	la	rp, 16(rp)
 	la	vp, 16(vp)
 	j	L(mid)
 
-L(top):	lmg	%r6, %r9, 0(up)
+L(top):	lmg	%r5, %r8, 0(up)
 	la	up, 32(up)
-	LOGOP	%r6, 0(vp)
-	LOGOP	%r7, 8(vp)
-	LOGOP	%r8, 16(vp)
-	LOGOP	%r9, 24(vp)
-	stmg	%r6, %r9, 0(rp)
+	LOGOP	%r5, 0(vp)
+	LOGOP	%r6, 8(vp)
+	LOGOP	%r7, 16(vp)
+	LOGOP	%r8, 24(vp)
+	stmg	%r5, %r8, 0(rp)
 	la	rp, 32(rp)
 	la	vp, 32(vp)
 L(mid):	brctg	%r0, L(top)
 
-	lmg	%r6, %r13, 48(%r15)
+	lmg	%r6, %r8, 48(%r15)
 	br	%r14
 ')
 
 ifdef(`VARIANT_2',`
-	stmg	%r6, %r13, 48(%r15)
+	stmg	%r6, %r8, 48(%r15)
 	lghi	%r1, -1
 
 	aghi	n, 3
@@ -136,60 +136,60 @@ ifdef(`VARIANT_2',`
 	jl	L(b2)
 	jne	L(top)
 
-L(b3):	lmg	%r6, %r8, 0(vp)
+L(b3):	lmg	%r5, %r7, 0(vp)
 	la	vp, 24(vp)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
 	xgr	%r7, %r1
-	xgr	%r8, %r1
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
-	LOGOP	%r8, 16(up)
-	stmg	%r6, %r8, 0(rp)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	LOGOP	%r7, 16(up)
+	stmg	%r5, %r7, 0(rp)
 	la	rp, 24(rp)
 	la	up, 24(up)
 	j	L(mid)
 
-L(b1):	lg	%r6, 0(vp)
+L(b1):	lg	%r5, 0(vp)
 	la	vp, 8(vp)
-	xgr	%r6, %r1
-	LOGOP	%r6, 0(up)
-	stg	%r6, 0(rp)
+	xgr	%r5, %r1
+	LOGOP	%r5, 0(up)
+	stg	%r5, 0(rp)
 	la	rp, 8(rp)
 	la	up, 8(up)
 	j	L(mid)
 
-L(b2):	lmg	%r6, %r7, 0(vp)
+L(b2):	lmg	%r5, %r6, 0(vp)
 	la	vp, 16(vp)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
-	xgr	%r7, %r1
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
-	stmg	%r6, %r7, 0(rp)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	stmg	%r5, %r6, 0(rp)
 	la	rp, 16(rp)
 	la	up, 16(up)
 	j	L(mid)
 
-L(top):	lmg	%r6, %r9, 0(vp)
+L(top):	lmg	%r5, %r8, 0(vp)
 	la	vp, 32(vp)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
 	xgr	%r7, %r1
 	xgr	%r8, %r1
-	xgr	%r9, %r1
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
-	LOGOP	%r8, 16(up)
-	LOGOP	%r9, 24(up)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	LOGOP	%r7, 16(up)
+	LOGOP	%r8, 24(up)
 	la	up, 32(up)
-	stmg	%r6, %r9, 0(rp)
+	stmg	%r5, %r8, 0(rp)
 	la	rp, 32(rp)
 L(mid):	brctg	%r0, L(top)
 
-	lmg	%r6, %r13, 48(%r15)
+	lmg	%r6, %r8, 48(%r15)
 	br	%r14
 ')
 
 ifdef(`VARIANT_3',`
-	stmg	%r6, %r13, 48(%r15)
+	stmg	%r6, %r8, 48(%r15)
 	srlg	%r0, n, 2
 	lghi	%r1, -1
 
@@ -202,55 +202,55 @@ ifdef(`VARIANT_3',`
 	jl	L(b2)
 	jne	L(top)
 
-L(b3):	lmg	%r6, %r8, 0(vp)
+L(b3):	lmg	%r5, %r7, 0(vp)
 	la	vp, 24(vp)
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
+	LOGOP	%r7, 16(up)
 	xgr	%r7, %r1
-	LOGOP	%r8, 16(up)
-	xgr	%r8, %r1
-	stmg	%r6, %r8, 0(rp)
+	stmg	%r5, %r7, 0(rp)
 	la	rp, 24(rp)
 	la	up, 24(up)
 	j	L(mid)
 
-L(b1):	lg	%r6, 0(vp)
+L(b1):	lg	%r5, 0(vp)
 	la	vp, 8(vp)
-	LOGOP	%r6, 0(up)
-	xgr	%r6, %r1
-	stg	%r6, 0(rp)
+	LOGOP	%r5, 0(up)
+	xgr	%r5, %r1
+	stg	%r5, 0(rp)
 	la	rp, 8(rp)
 	la	up, 8(up)
 	j	L(mid)
 
-L(b2):	lmg	%r6, %r7, 0(vp)
+L(b2):	lmg	%r5, %r6, 0(vp)
 	la	vp, 16(vp)
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
-	xgr	%r7, %r1
-	stmg	%r6, %r7, 0(rp)
+	stmg	%r5, %r6, 0(rp)
 	la	rp, 16(rp)
 	la	up, 16(up)
 	j	L(mid)
 
-L(top):	lmg	%r6, %r9, 0(vp)
+L(top):	lmg	%r5, %r8, 0(vp)
 	la	vp, 32(vp)
-	LOGOP	%r6, 0(up)
-	LOGOP	%r7, 8(up)
+	LOGOP	%r5, 0(up)
+	LOGOP	%r6, 8(up)
+	xgr	%r5, %r1
 	xgr	%r6, %r1
+	LOGOP	%r7, 16(up)
+	LOGOP	%r8, 24(up)
 	xgr	%r7, %r1
-	LOGOP	%r8, 16(up)
-	LOGOP	%r9, 24(up)
 	xgr	%r8, %r1
-	xgr	%r9, %r1
-	stmg	%r6, %r9, 0(rp)
+	stmg	%r5, %r8, 0(rp)
 	la	up, 32(up)
 	la	rp, 32(rp)
 L(mid):	brctg	%r0, L(top)
 
-	lmg	%r6, %r13, 48(%r15)
+	lmg	%r6, %r8, 48(%r15)
 	br	%r14
 ')
 

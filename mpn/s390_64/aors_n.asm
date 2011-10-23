@@ -29,6 +29,8 @@ C z196		 ?
 C TODO
 C  * Optimise for small n
 C  * Use r0 and save/restore one less register
+C  * Using logops_n's v1 inner loop operand order make the loop about 20%
+C    faster, at the expense of highly alignment-dependent performance.
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
@@ -40,7 +42,7 @@ ifdef(`OPERATION_add_n', `
   define(ADSB,		alg)
   define(ADSBCR,	alcgr)
   define(ADSBC,		alcg)
-  define(RETVAL,`
+  define(RETVAL,`dnl
 	lghi	%r2, 0
 	alcgr	%r2, %r2')
   define(func,		mpn_add_n)
@@ -49,7 +51,7 @@ ifdef(`OPERATION_sub_n', `
   define(ADSB,		slg)
   define(ADSBCR,	slbgr)
   define(ADSBC,		slbg)
-  define(RETVAL,`
+  define(RETVAL,`dnl
 	slbgr	%r2, %r2
 	lcgr	%r2, %r2')
   define(func,		mpn_sub_n)
@@ -59,7 +61,7 @@ MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
 
 ASM_START()
 PROLOGUE(func)
-	stmg	%r6, %r12, 48(%r15)
+	stmg	%r6, %r8, 48(%r15)
 
 	aghi	n, 3
 	lghi	%r7, 3
@@ -118,7 +120,6 @@ L(m0):	ADSBC	%r7, 16(vp)
 	brctg	%r1, L(top)
 
 L(end):	RETVAL
-
-	lmg	%r6, %r12, 48(%r15)
+	lmg	%r6, %r8, 48(%r15)
 	br	%r14
 EPILOGUE()
