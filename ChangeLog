@@ -1,5 +1,7 @@
 2011-10-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/logops_n.asm: New file.
+
 	* mpn/s390_64/aors_n.asm: New file, with rewritten add/sub code.
 
 2011-10-20  Torbjorn Granlund  <tege@gmplib.org>
