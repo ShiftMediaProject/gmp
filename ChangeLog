@@ -1,5 +1,12 @@
 2011-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/mod_34lsub1.asm: Use llgfr for zero extensions.
+
+	* mpn/s390_64/mul_basecase.asm: New file.
+
+	* mpn/s390_64/sqr_basecase.asm: New file.
+	* mpn/s390_64/sqr_diag_addlsh1.asm: Removed, lives on in sqr_basecase.
+
 	* mpn/s390_64/bdiv_dbm1c.asm: Shave off 1 c/l.
 
 	* mpn/s390_64/aorrlsh1_n.asm: New file, developed from aorslsh1_n.asm.
