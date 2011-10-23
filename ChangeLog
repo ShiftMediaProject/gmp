@@ -1,5 +1,8 @@
 2011-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/common.c (speed_mpn_and_n, speed_mpn_andn_n, etc):
+	Pass correct input args.
+
 	* mpn/s390_64/mod_34lsub1.asm: Use llgfr for zero extensions.
 
 	* mpn/s390_64/mul_basecase.asm: New file.
