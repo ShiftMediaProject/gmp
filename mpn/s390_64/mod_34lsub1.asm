@@ -35,8 +35,7 @@ define(`n',	`%r3')
 
 ASM_START()
 PROLOGUE(mpn_mod_34lsub1)
-	stmg	%r7, %r13, 56(%r15)
-	larl	%r13, .L12
+	stmg	%r7, %r12, 56(%r15)
 	lghi	%r11, 0
 	lghi	%r12, 0
 	lghi	%r0, 0
@@ -82,10 +81,10 @@ L(top):	alg	%r0, 0(%r2)
 	agr	%r0, %r1
 	srlg	%r1, %r10, 32
 	agr	%r0, %r1
-	ng	%r12, .L14-.L12(%r13)
+	llgfr	%r12, %r12
 	srlg	%r1, %r9, 16
 	sllg	%r12, %r12, 16
-	ng	%r10, .L14-.L12(%r13)
+	llgfr	%r10, %r10
 	agr	%r0, %r1
 	llill	%r2, 65535
 	agr	%r0, %r12
@@ -94,11 +93,6 @@ L(top):	alg	%r0, 0(%r2)
 	agr	%r0, %r10
 	sllg	%r2, %r2, 32
 	agr	%r2, %r0
-	lmg	%r7, %r13, 56(%r15)
+	lmg	%r7, %r12, 56(%r15)
 	br	%r14
 EPILOGUE()
-
-	RODATA
-	ALIGN(8)
-.L12:
-.L14:	.quad	4294967295
