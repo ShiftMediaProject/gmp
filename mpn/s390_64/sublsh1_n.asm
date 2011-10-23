@@ -1,4 +1,4 @@
-dnl  S/390-64 mpn_addlsh1_n
+dnl  S/390-64 mpn_sublsh1_n
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -37,36 +37,35 @@ define(`vp',	`%r4')
 define(`n',	`%r5')
 
 ifdef(`OPERATION_addlsh1_n',`
-  define(ADDSUBC,       algr)
-  define(ADDSUBE,       alcgr)
-  define(INITCY,        `lghi	%r13, -1')
-  define(RETVAL,        `la	%r2, 2(%r1,%r13)')
+  define(ADSBR,		algr)
+  define(ADSBCR,	alcgr)
+  define(INITCY,	`lghi	%r13, -1')
+  define(RETVAL,	`la	%r2, 2(%r1,%r13)')
   define(func, mpn_addlsh1_n)
 ')
 ifdef(`OPERATION_sublsh1_n',`
-  define(ADDSUBC,       slgr)
-  define(ADDSUBE,       slbgr)
-  define(INITCY,        `lghi	%r13, 0')
-  define(RETVAL,        `slgr	%r1, %r13
-			lghi	%r2, 1
-			algr	%r2, %r1')
+  define(ADSBR,		slgr)
+  define(ADSBCR,	slbgr)
+  define(INITCY,	`lghi	%r13, 0')
+  define(RETVAL,`dnl
+	slgr	%r1, %r13
+	lghi	%r2, 1
+	algr	%r2, %r1')
   define(func, mpn_sublsh1_n)
 ')
 
-MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
-
 ASM_START()
-PROLOGUE(func)
+PROLOGUE(mpn_sublsh1_n)
 	stmg	%r6, %r13, 48(%r15)
 
-	la	%r0, 3(n)
+	aghi	n, 3
 	lghi	%r7, 3
-	srlg	%r0, %r0, 2
+	srlg	%r0, n, 2
 	ngr	%r7, n			C n mod 4
-	je	L(b0)
+	je	L(b1)
 	cghi	%r7, 2
-	jl	L(b1)
-	je	L(b2)
+	jl	L(b2)
+	jne	L(b0)
 
 L(b3):	lmg	%r5, %r7, 0(up)
 	la	up, 24(up)
@@ -78,9 +77,9 @@ L(b3):	lmg	%r5, %r7, 0(up)
 	alcgr	%r11, %r11
 	slbgr	%r1, %r1
 
-	ADDSUBC	%r5, %r9
-	ADDSUBE	%r6, %r10
-	ADDSUBE	%r7, %r11
+	ADSBR	%r5, %r9
+	ADSBCR	%r6, %r10
+	ADSBCR	%r7, %r11
 	slbgr	%r13, %r13
 
 	stmg	%r5, %r7, 0(rp)
@@ -99,7 +98,7 @@ L(b1):	lg	%r5, 0(up)
 
 	algr	%r9, %r9
 	slbgr	%r1, %r1
-	ADDSUBC	%r5, %r9
+	ADSBR	%r5, %r9
 	slbgr	%r13, %r13
 
 	stg	%r5, 0(rp)
@@ -116,8 +115,8 @@ L(b2):	lmg	%r5, %r6, 0(up)
 	alcgr	%r10, %r10
 	slbgr	%r1, %r1
 
-	ADDSUBC	%r5, %r9
-	ADDSUBE	%r6, %r10
+	ADSBR	%r5, %r9
+	ADSBCR	%r6, %r10
 	slbgr	%r13, %r13
 
 	stmg	%r5, %r6, 0(rp)
@@ -142,19 +141,18 @@ L(top):	lmg	%r9, %r12, 0(vp)
 
 	aghi	%r13, 1			C restore carry
 
-	ADDSUBE	%r5, %r9
-	ADDSUBE	%r6, %r10
-	ADDSUBE	%r7, %r11
-	ADDSUBE	%r8, %r12
+	ADSBCR	%r5, %r9
+	ADSBCR	%r6, %r10
+	ADSBCR	%r7, %r11
+	ADSBCR	%r8, %r12
 
-	slbgr	%r13, %r13
+	slbgr	%r13, %r13		C save carry
 
 	stmg	%r5, %r8, 0(rp)
 	la	rp, 32(rp)
 	brctg	%r0, L(top)
 
-L(end):
-	RETVAL
+L(end):	RETVAL
 	lmg	%r6, %r13, 48(%r15)
 	br	%r14
 EPILOGUE()
