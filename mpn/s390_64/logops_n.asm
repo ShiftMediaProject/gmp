@@ -19,13 +19,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C            cycles/limb     cycles/limb     cycles/limb
-C                v1              v2              v3
-C z900		 4.5		 5.5		 5.5
-C z990		 2.75		 3.25		 3.25
-C z9		 ?		 ?		 ?
-C z10		 ?		 ?		 ?
-C z196		 ?		 ?		 ?
+C cycles/limb     variant 1           variant 2       variant 3
+C	        rp!=up  rp=up
+C z900		 4.5	 ?		 5.5		 5.5
+C z990		 2.75	1.75-2		 3.25		 3.25
+C z9		 ?			 ?		 ?
+C z10		 ?			 ?		 ?
+C z196		 ?			 ?		 ?
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
@@ -36,6 +36,7 @@ define(`n',	`%r5')
 ifdef(`OPERATION_and_n',`
   define(`func',`mpn_and_n')
   define(`VARIANT_1')
+  define(`LOGOPC',`nc')
   define(`LOGOP',`ng')')
 ifdef(`OPERATION_andn_n',`
   define(`func',`mpn_andn_n')
@@ -48,6 +49,7 @@ ifdef(`OPERATION_nand_n',`
 ifdef(`OPERATION_ior_n',`
   define(`func',`mpn_ior_n')
   define(`VARIANT_1')
+  define(`LOGOPC',`oc')
   define(`LOGOP',`og')')
 ifdef(`OPERATION_iorn_n',`
   define(`func',`mpn_iorn_n')
@@ -60,6 +62,7 @@ ifdef(`OPERATION_nior_n',`
 ifdef(`OPERATION_xor_n',`
   define(`func',`mpn_xor_n')
   define(`VARIANT_1')
+  define(`LOGOPC',`xc')
   define(`LOGOP',`xg')')
 ifdef(`OPERATION_xnor_n',`
   define(`func',`mpn_xnor_n')
@@ -71,6 +74,27 @@ MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n
 ASM_START()
 PROLOGUE(func)
 ifdef(`VARIANT_1',`
+	cgr	rp, up
+	jne	L(normal)
+
+	sllg	n, n, 3
+	aghi	n, -1
+	srlg	%r1, n, 8
+	ltgr	%r1, %r1		C < 256 bytes to copy?
+	je	L(1)
+
+L(tp): 	LOGOPC	0(256, rp), 0(vp)
+	la	rp, 256(rp)
+	la	vp, 256(vp)
+	brctg	%r1, L(tp)
+
+L(1):	bras	%r1, L(2)		C make r1 point to mvc insn
+	nc	0(1, rp), 0(vp)
+L(2):	ex	n, 0(%r1)		C execute mvc with length ((n-1) mod 256)+1
+L(rtn):	br	%r14
+
+
+L(normal):
 	stmg	%r6, %r8, 48(%r15)
 	aghi	n, 3
 	lghi	%r7, 3
