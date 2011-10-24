@@ -1,3 +1,8 @@
+2011-10-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/sqr_basecase.asm: Put intermediate result into R, don't
+	allocate any stack space.
+
 2011-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_64/logops_n.asm: Use nc, oc, xc when possible.
