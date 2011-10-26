@@ -1,3 +1,14 @@
+2011-10-26  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (mpn_hgcd_reduce, mpn_hgcd_reduce_itch): Added
+	prototypes.
+	(HGCD_APPR_THRESHOLD): Set up threshold for tuning.
+	(HGCD_REDUCE_THRESHOLD): Likewise.
+
+	* configure.in (gmp_mpn_functions): Added hgcd_reduce.
+
+	* mpn/generic/hgcd_reduce.c: New file.
+
 2011-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/sqr_basecase.asm: Put intermediate result into R, don't

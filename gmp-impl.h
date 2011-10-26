@@ -4007,6 +4007,12 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_matrix_adjust __GMP_PROTO ((const struct hgcd_
 #define mpn_hgcd_step __MPN(hgcd_step)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_step __GMP_PROTO ((mp_size_t, mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
+#define mpn_hgcd_reduce __MPN(hgcd_reduce)
+__GMP_DECLSPEC mp_size_t mpn_hgcd_reduce __GMP_PROTO ((struct hgcd_matrix *, mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_ptr));
+
+#define mpn_hgcd_reduce_itch __MPN(hgcd_reduce_itch)
+__GMP_DECLSPEC mp_size_t mpn_hgcd_reduce_itch __GMP_PROTO ((mp_size_t, mp_size_t));
+
 #define mpn_hgcd_itch __MPN (hgcd_itch)
 __GMP_DECLSPEC mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 
@@ -4059,7 +4065,11 @@ __GMP_DECLSPEC mp_size_t mpn_gcdext_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_si
 #endif
 
 #ifndef HGCD_APPR_THRESHOLD
-#define HGCD_APPR_THRESHOLD 300
+#define HGCD_APPR_THRESHOLD 400
+#endif
+
+#ifndef HGCD_REDUCE_THRESHOLD
+#define HGCD_REDUCE_THRESHOLD 1000
 #endif
 
 #ifndef GCD_DC_THRESHOLD
@@ -4664,6 +4674,14 @@ extern mp_size_t			matrix22_strassen_threshold;
 #undef	HGCD_THRESHOLD
 #define HGCD_THRESHOLD			hgcd_threshold
 extern mp_size_t			hgcd_threshold;
+
+#undef	HGCD_APPR_THRESHOLD
+#define HGCD_APPR_THRESHOLD		hgcd_appr_threshold
+extern mp_size_t			hgcd_appr_threshold;
+
+#undef	HGCD_REDUCE_THRESHOLD
+#define HGCD_REDUCE_THRESHOLD		hgcd_reduce_threshold
+extern mp_size_t			hgcd_reduce_threshold;
 
 #undef	GCD_DC_THRESHOLD
 #define GCD_DC_THRESHOLD		gcd_dc_threshold
