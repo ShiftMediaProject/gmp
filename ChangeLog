@@ -1,5 +1,9 @@
 2011-10-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	From Per Olofsson:
+	* gmp-impl.h (BSWAP_LIMB): Rename variable to avoid BSWAP_LIMB_FETCH
+	clash.
+
 	* mpn/s390_32/esame/mul_basecase.asm: New file.
 
 	* mpn/s390_32/esame/sqr_basecase.asm: New file.
