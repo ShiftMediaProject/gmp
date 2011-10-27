@@ -3303,14 +3303,14 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 #define BSWAP_LIMB(dst, src)						\
   do {									\
     mp_limb_t  __bswapl_src = (src);					\
-    mp_limb_t  __dst = 0;						\
+    mp_limb_t  __dstl = 0;						\
     int	       __i;							\
     for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)			\
       {									\
-	__dst = (__dst << 8) | (__bswapl_src & 0xFF);			\
+	__dstl = (__dstl << 8) | (__bswapl_src & 0xFF);			\
 	__bswapl_src >>= 8;						\
       }									\
-    (dst) = __dst;							\
+    (dst) = __dstl;							\
   } while (0)
 #endif
 
