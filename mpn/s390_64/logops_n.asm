@@ -21,8 +21,8 @@ include(`../config.m4')
 
 C cycles/limb     variant 1           variant 2       variant 3
 C	        rp!=up  rp=up
-C z900		 4.5	 ?		 5.5		 5.5
-C z990		 2.75	1.75-2		 3.25		 3.25
+C z900		 4.5	 2.25		 5.5		 5.5
+C z990		 2.75	 2		 3.25		 3.25
 C z9		 ?			 ?		 ?
 C z10		 ?			 ?		 ?
 C z196		 ?			 ?		 ?
@@ -89,7 +89,7 @@ L(tp): 	LOGOPC	0(256, rp), 0(vp)
 	brctg	%r1, L(tp)
 
 L(1):	bras	%r1, L(2)		C make r1 point to mvc insn
-	nc	0(1, rp), 0(vp)
+	LOGOPC	0(1, rp), 0(vp)
 L(2):	ex	n, 0(%r1)		C execute mvc with length ((n-1) mod 256)+1
 L(rtn):	br	%r14
 
@@ -214,7 +214,6 @@ L(mid):	brctg	%r0, L(top)
 
 ifdef(`VARIANT_3',`
 	stmg	%r6, %r8, 48(%r15)
-	srlg	%r0, n, 2
 	lghi	%r1, -1
 
 	aghi	n, 3
