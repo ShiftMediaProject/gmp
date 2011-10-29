@@ -1,3 +1,10 @@
+2011-10-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_64/lshift.asm: Complete rewrite.
+	* mpn/s390_64/rshift.asm: Likewise.
+
+	* mpn/s390_64/lshiftc.asm: New file.
+
 2011-10-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_32/esame/aors_n.asm: New file, with rewritten add/sub code.
