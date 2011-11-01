@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z900	       (29)
+C z900		29
 C z990		22
 C z9		 ?
 C z10		 ?
