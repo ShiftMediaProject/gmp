@@ -160,42 +160,32 @@ L(outer_end):
 
 C sqr_diag_addlsh1 ============================================================
 
-	lgr	up, up_saved
-	lgr	rp, rp_saved
-	lgr	n, n_saved
+define(`up', `up_saved')
+define(`rp', `rp_saved')
+	la	n, 1(n_saved)
 
-	lghi	%r9, -1			C set non-carry state
 	lg	%r1, 0(up)
 	mlgr	%r0, %r1
-	aghi	n, 1
-	lg	%r7, 8(rp)
-	lghi	%r6, 0
-	algr	%r7, %r7
-	j	L(mid)
+	stg	%r1, 0(rp)
+C	clr	%r15, %r15		C clear carry (already clear per above)
 
-L(top):	lmg	%r6, %r7, 0(rp)
+L(top):	lg	%r11, 8(up)
+	la	up, 8(up)
+	lg	%r6, 8(rp)
+	lg	%r7, 16(rp)
+	mlgr	%r10, %r11
 	alcgr	%r6, %r6
 	alcgr	%r7, %r7
-L(mid):	slbgr	%r13, %r13		C save carry
-	aghi	%r9, 1			C restore old carry
-	alcgr	%r6, %r1
-	alcgr	%r7, %r0
-	stmg	%r6, %r7, 0(rp)
+	alcgr	%r10, zero		C propagate carry to high product limb
+	algr	%r6, %r0
+	alcgr	%r7, %r11
+	stmg	%r6, %r7, 8(rp)
 	la	rp, 16(rp)
-	lg	%r1, 8(up)
-	la	up, 8(up)
-	lgr	%r9, %r13		C copy carry save register
-	mlgr	%r0, %r1
+	lgr	%r0, %r10		C copy carry limb
 	brctg	n, L(top)
 
-	lg	%r6, 0(rp)
-	lghi	%r7, 0
-	alcgr	%r6, %r6
-	alcgr	%r7, %r7
-	aghi	%r9, 1			C restore old carry
-	alcgr	%r6, %r1
-	alcgr	%r7, %r0
-	stmg	%r6, %r7, 0(rp)
+	alcgr	%r0, zero
+	stg	%r0, 8(rp)
 
 	lmg	%r6, %r14, 48(%r15)
 	br	%r14
