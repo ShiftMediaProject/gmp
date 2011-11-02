@@ -20,16 +20,16 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C z900		10
-C z990		 5
+C z900		 9
+C z990		 4.75
 C z9		 ?
 C z10		 ?
 C z196		 ?
 
 C TODO
 C  * Optimise for small n, avoid 'la' like in aors_n.asm.
-C  * Tune to reach 4 c/l.  For addlsh1, we could let the main alcgr propagate
-C    carry to the lsh1 alcgr.  But even for sublsh1_n 5 c/l cannot be optimal.
+C  * Tune to reach 3.5 c/l.  For addlsh1, we could let the main alcgr propagate
+C    carry to the lsh1 alcgr.
 C  * Compute RETVAL for sublsh1_n less stupidly.
 
 C INPUT PARAMETERS
