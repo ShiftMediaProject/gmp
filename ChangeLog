@@ -1,3 +1,19 @@
+2011-11-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/s390_32/lshift.asm: New file.
+	* mpn/s390_32/rshift.asm: New file.
+	* mpn/s390_32/lshiftc.asm: New file.
+
+2011-10-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/sqr_diagonal.asm: Move from here...
+	* mpn/powerpc64/mode32/sqr_diagonal.asm: ...to here.
+
+	* mpn/powerpc64/mode64/sqr_diag_addlsh1.asm: New file.
+
+	* mpn/s390_64/sqr_basecase.asm: Rewrite sqr_diag_addlsh1 code.
+	* mpn/s390_32/esame/sqr_basecase.asm: Likewise.
+
 2011-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/s390_64/lshift.asm: Complete rewrite.
