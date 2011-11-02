@@ -1129,6 +1129,7 @@ case $host in
     gcc_cflags_optlist="arch"
     path="s390_32"
     extra_functions="udiv_w_sdiv"
+    gcc_32_cflags_maybe="-m31"
 
     case $host_cpu in
       s390)
@@ -1186,7 +1187,6 @@ case $host in
 	cclist_64="gcc"
 	gcc_64_cflags_optlist="arch"
 	gcc_64_cflags="$gcc_cflags -m64"
-	gcc_32_cflags="$gcc_cflags -m31"
 	path_64="s390_64/$host_cpu s390_64"
 	extra_functions=""
 	;;
