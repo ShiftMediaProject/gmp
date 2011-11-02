@@ -1,4 +1,4 @@
-/* AMD K8 gmp-mparam.h -- Compiler/machine parameter header file.
+/* AMD K8-K10 gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright 1991, 1993, 1994, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
 2008, 2009, 2010 Free Software Foundation, Inc.
