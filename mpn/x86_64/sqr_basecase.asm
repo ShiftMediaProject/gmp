@@ -30,6 +30,8 @@ C     large trip count.  Instead, we should follow the generic/sqr_basecase.c
 C     code which uses addmul_2s from the start, conditionally leaving a 1x1
 C     multiply to the end.  (In assembly code, one would stop invoking
 C     addmul_2s loops when perhaps 3x2s respectively a 2x2s remains.)
+C   * Another stupidity is in the sqr_diag_addlsh1 code.  It does not need to
+C     save/restore carry, instead it can propagate into the high product word.
 C   * Align more labels, should shave off a few cycles.
 C   * We can safely use 32-bit size operations, since operands with (2^32)
 C     limbs will lead to non-termination in practice.
