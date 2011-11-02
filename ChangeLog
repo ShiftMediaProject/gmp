@@ -1,5 +1,14 @@
 2011-11-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/invert_limb.asm: Slight optimisation.
+
+	* configure.in (s390): Set gcc_32_cflags_maybe.
+
+	* mpn/s390_32/gmp-mparam.h: Put in proper data.
+	* mpn/s390_32/esame/gmp-mparam.h: New file.
+
+	* mpn/x86_64/bobcat/gmp-mparam.h: New file.
+
 	* mpn/s390_32/lshift.asm: New file.
 	* mpn/s390_32/rshift.asm: New file.
 	* mpn/s390_32/lshiftc.asm: New file.
