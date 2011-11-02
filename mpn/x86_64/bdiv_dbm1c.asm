@@ -48,7 +48,7 @@ PROLOGUE(mpn_bdiv_dbm1c)
 	mov	(up), %rax
 	mov	n_param, n
 	mov	R32(n_param), R32(%r11)
-	mul	%rcx
+	mul	bd
 	lea	(up,n,8), up
 	lea	(qp,n,8), qp
 	neg	n
@@ -62,22 +62,22 @@ PROLOGUE(mpn_bdiv_dbm1c)
 
 	ALIGN(16)
 L(top):	mov	(up,n,8), %rax
-	mul	%rcx
+	mul	bd
 L(lo0):	sub	%rax, %r8
 	mov	%r8, (qp,n,8)
 	sbb	%rdx, %r8
 	mov	8(up,n,8), %rax
-	mul	%rcx
+	mul	bd
 L(lo3):	sub	%rax, %r8
 	mov	%r8, 8(qp,n,8)
 	sbb	%rdx, %r8
 	mov	16(up,n,8), %rax
-	mul	%rcx
+	mul	bd
 L(lo2):	sub	%rax, %r8
 	mov	%r8, 16(qp,n,8)
 	sbb	%rdx, %r8
 	mov	24(up,n,8), %rax
-	mul	%rcx
+	mul	bd
 L(lo1):	sub	%rax, %r8
 	mov	%r8, 24(qp,n,8)
 	sbb	%rdx, %r8
