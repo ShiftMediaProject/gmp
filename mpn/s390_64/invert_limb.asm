@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C            cycles/limb
 C z900	       142
-C z990          88
+C z990          86
 C z9		 ?
 C z10		 ?
 C z196		 ?
@@ -34,9 +34,8 @@ ASM_START()
 PROLOGUE(mpn_invert_limb)
 	stg	%r9, 72(%r15)
 	srlg	%r9, %r2, 55
-	aghi	%r9, -256
 	agr	%r9, %r9
-	larl	%r4, approx_tab
+	larl	%r4, approx_tab-512
 	srlg	%r3, %r2, 24
 	aghi	%r3, 1
 	lghi	%r5, 1
