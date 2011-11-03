@@ -1,5 +1,10 @@
 2011-11-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* dumbmp.c (mpz_sub): Abort for non-handled case.
+
+	* mpn/powerpc64/mode64/lshiftc.asm: Move file from here...
+	* mpn/powerpc64/lshiftc.asm: ...to here, with trivial modifications.
+
 	* configure.in: Pass -m32 in more cases, using via _maybe mechanism.
 	Inherit default gcc_cflags in more places.
 
