@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		    cycles/limb
-C POWER3/PPC630		 ?
-C POWER4/PPC970		17
-C POWER5		16
-C POWER6		30
+C                   cycles/limb
+C POWER3/PPC630          ?
+C POWER4/PPC970         17
+C POWER5                16
+C POWER6                30
+C POWER7                10.2
 
 C TODO
 C  * Optimise, in particular the cps function.  This was compiler-generated and

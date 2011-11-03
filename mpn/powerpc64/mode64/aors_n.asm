@@ -20,11 +20,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		    cycles/limb
-C POWER3/PPC630		 1.5
-C POWER4/PPC970		 2
-C POWER5		 2.25
-C POWER6		 2.63
+C                   cycles/limb
+C POWER3/PPC630          1.5
+C POWER4/PPC970          2
+C POWER5                 2.25
+C POWER6                 2.63
+C POWER7               2.25-2.87
 
 C This code is a little bit slower for POWER3/PPC630 than the simple code used
 C previously, but it is much faster for POWER4/PPC970.  The reason for the

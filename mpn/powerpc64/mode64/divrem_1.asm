@@ -20,12 +20,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C			    cycles/limb
-C			norm	unorm	frac
-C POWER3/PPC630		16-34	16-34	~11
-C POWER4/PPC970		 29		 19
-C POWER5		 29	 29	~20
-C POWER6		 50	 59	~42
+C                           cycles/limb
+C                       norm    unorm   frac
+C POWER3/PPC630         16-34   16-34   ~11
+C POWER4/PPC970          29              19
+C POWER5                 29      29     ~20
+C POWER6                 50      59     ~42
+C POWER7                 25      25     ~14
 
 C INPUT PARAMETERS
 C qp  = r3

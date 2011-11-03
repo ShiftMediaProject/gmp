@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		   cycles/limb (approximate)
-C POWER3/PPC630		80
-C POWER4/PPC970		86
-C POWER5		86
-C POWER6	       170
+C                  cycles/limb (approximate)
+C POWER3/PPC630         80
+C POWER4/PPC970         86
+C POWER5                86
+C POWER6               170
+C POWER7                66
 
 ASM_START()
 PROLOGUE(mpn_invert_limb)

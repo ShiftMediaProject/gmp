@@ -19,12 +19,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C			cycles/limb
-C			norm	unorm
+C                       cycles/limb
+C                       norm    unorm
 C POWER3/PPC630        13-19
-C POWER4/PPC970		16
-C POWER5		16	16
-C POWER6		37	46
+C POWER4/PPC970         16
+C POWER5                16      16
+C POWER6                37      46
+C POWER7                12      12
 
 C TODO
 C  * Check if n=1 code is really an improvement.  It probably isn't.

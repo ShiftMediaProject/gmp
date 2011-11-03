@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		    cycles/limb
-C POWER3/PPC630		 ?
-C POWER4/PPC970		 ?
-C POWER5		 2.25
-C POWER6		 9.5
+C                   cycles/limb
+C POWER3/PPC630          ?
+C POWER4/PPC970          ?
+C POWER5                 2.25
+C POWER6                 9.5
+C POWER7                 2.15
 
 C TODO
 C  * Try to reduce the number of needed live registers

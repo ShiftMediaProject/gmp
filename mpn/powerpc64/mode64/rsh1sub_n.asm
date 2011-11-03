@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		   cycles/limb
-C POWER3/PPC630		 2		(1.5 c/l should be possible)
-C POWER4/PPC970		 4		(2.0 c/l should be possible)
-C POWER5		 3.5		(2.0 c/l should be possible)
-C POWER6		 4.5
+C                  cycles/limb
+C POWER3/PPC630          2              (1.5 c/l should be possible)
+C POWER4/PPC970          4              (2.0 c/l should be possible)
+C POWER5                 3.5            (2.0 c/l should be possible)
+C POWER6                 4.5
+C POWER7                 3.5
 
 define(`rp',`r3')
 define(`up',`r4')

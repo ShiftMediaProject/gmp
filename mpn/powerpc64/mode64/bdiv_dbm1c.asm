@@ -19,11 +19,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		  cycles/limb
+C                 cycles/limb
 C POWER3/PPC630       6-18
 C POWER4/PPC970       8.5?
 C POWER5              8.5  fluctuating as function of n % 3
 C POWER6             15
+C POWER6             15
+C POWER7              4.75
 
 C TODO
 C  * Nothing to do...

@@ -17,11 +17,12 @@ dnl  License for more details.
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-C		   cycles/limb
-C POWER3/PPC630		 1.83	(1.5 c/l should be possible)
-C POWER4/PPC970		 3	(2.0 c/l should be possible)
-C POWER5		 3
-C POWER6	      3.5-47
+C                  cycles/limb
+C POWER3/PPC630          1.83   (1.5 c/l should be possible)
+C POWER4/PPC970          3      (2.0 c/l should be possible)
+C POWER5                 3
+C POWER6              3.5-47
+C POWER7                 3
 
 C STATUS
 C  * Try combining upx+up, and vpx+vp.

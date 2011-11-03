@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C		cycles/limb
-C POWER3/PPC630   10
-C POWER4/PPC970	   6
-C POWER5	   5.375
-C POWER6	   8.5
+C               cycles/limb
+C POWER3/PPC630      10
+C POWER4/PPC970       6
+C POWER5              5.375
+C POWER6              8.5
+C POWER7              3.4
 
 C NOTES
 C  * This was written for POWER6 and its preferences for adjacent integer
