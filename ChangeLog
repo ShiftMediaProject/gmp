@@ -1,5 +1,8 @@
 2011-11-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Pass -m32 in more cases, using via _maybe mechanism.
+	Inherit default gcc_cflags in more places.
+
 	* mpn/powerpc64/mode64/p7/gmp-mparam.h: New file.
 
 2011-11-02  Torbjorn Granlund  <tege@gmplib.org>
