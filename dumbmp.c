@@ -421,6 +421,8 @@ mpz_sub (mpz_t r, mpz_t a, mpz_t b)
       mp_limb_t *tp;  int tn;
       tn = an; an = bn; bn = tn;
       tp = ap; ap = bp; bp = tp;
+      /* This needs sign change, not done so abort.  */
+      abort ();
     }
 
   cy = 0;
