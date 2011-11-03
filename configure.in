@@ -648,7 +648,7 @@ case $host in
         # -mpa-risc-2-0 is only an optional flag, in case an old gcc is
         # used.  Assembler support for 2.0 is essential though, for our asm
         # files.
-	gcc_20n_cflags="-O2"
+	gcc_20n_cflags="$gcc_cflags"
 	gcc_20n_cflags_optlist="arch"
         gcc_20n_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
         gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
@@ -671,7 +671,7 @@ case $host in
           esac
 
           cclist_20w="gcc cc"
-	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
+	  gcc_20w_cflags="$gcc_cflags -mpa-risc-2-0"
           cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
@@ -735,7 +735,7 @@ case $host in
         cc_32_cflags=""
         cc_32_cflags_optlist="opt"
         cc_32_cflags_opt="+O3 +O2 +O1"
-        gcc_32_cflags="-milp32 -O2"
+        gcc_32_cflags="$gcc_cflags -milp32"
         limb_32=longlong
         SPEED_CYCLECOUNTER_OBJ_32=ia64.lo
         cyclecounter_size_32=2
@@ -750,7 +750,7 @@ case $host in
         cc_64_cppflags="+DD64"
         cc_64_cflags_optlist="opt"
         cc_64_cflags_opt="+O3 +O2 +O1"
-        gcc_64_cflags="$gcc_64_cflags -mlp64"
+        gcc_64_cflags="$gcc_cflags -mlp64"
         ;;
     esac
     ;;
@@ -831,13 +831,13 @@ case $host in
         abilist="n32 64 o32"
 
         cclist_n32="gcc cc"
-        gcc_n32_cflags="-O2 -mabi=n32"
+        gcc_n32_cflags="$gcc_cflags -mabi=n32"
         cc_n32_cflags="-O2 -n32"	# no -g, it disables all optimizations
         limb_n32=longlong
         path_n32="mips64"
 
         cclist_64="gcc cc"
-        gcc_64_cflags="$gcc_64_cflags -mabi=64"
+        gcc_64_cflags="$gcc_cflags -mabi=64"
         gcc_64_ldflags="-Wc,-mabi=64"
         cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
         cc_64_ldflags="-Wc,-64"
@@ -969,7 +969,7 @@ case $host in
 	    # Need -Wc to pass object type flags through to the linker.
 	    abilist="mode64 $abilist"
 	    cclist_mode64="gcc xlc"
-	    gcc_mode64_cflags="-O2 -maix64 -mpowerpc64"
+	    gcc_mode64_cflags="$gcc_cflags -maix64 -mpowerpc64"
 	    gcc_mode64_cflags_optlist="cpu"
 	    gcc_mode64_ldflags="-Wc,-maix64"
 	    xlc_mode64_cflags="-O2 -q64 -qmaxmem=20000"
@@ -1014,6 +1014,7 @@ case $host in
 	    abilist="mode64 mode32 $abilist"
 	    gcc_cflags_opt="-O3 -O2 -O1"	# will this become used?
 	    cclist_mode32="gcc"
+	    gcc_mode32_cflags_maybe="-m32"
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="subtype cpu opt"
 	    gcc_mode32_cflags_subtype="-force_cpusubtype_ALL"
@@ -1057,6 +1058,7 @@ case $host in
 	    #
 	    abilist="mode64 mode32 $abilist"
 	    cclist_mode32="gcc"
+	    gcc_mode32_cflags_maybe="-m32"
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
@@ -1358,7 +1360,7 @@ case $host in
         # it until we're sure.  (Might want -xarch=v9a or -xarch=v9b for the
         # higher cpu types instead.)
         #
-        gcc_64_cflags="$gcc_64_cflags -m64 -mptr64"
+        gcc_64_cflags="$gcc_cflags -m64 -mptr64"
         gcc_64_ldflags="-Wc,-m64"
         gcc_64_cflags_optlist="cpu"
 
@@ -1580,7 +1582,7 @@ case $host in
     case $host in
       X86_64_PATTERN)
 	cclist_64="gcc"
-	gcc_64_cflags="$gcc_64_cflags -m64"
+	gcc_64_cflags="$gcc_cflags -m64"
 	gcc_64_cflags_optlist="cpu arch"
 	CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
 	SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
@@ -1625,7 +1627,7 @@ case $host in
 	    path_64=""	# Windows amd64 calling conventions are *different*
 	    extra_functions_64=""
 	    # Silence many pedantic warnings for w64.  FIXME.
-	    gcc_64_cflags="$gcc_64_cflags -std=gnu99"
+	    gcc_64_cflags="$gcc_cflags -std=gnu99"
 	    ;;
 	esac
 	;;
