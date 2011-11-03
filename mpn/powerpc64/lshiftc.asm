@@ -190,6 +190,9 @@ L(cj2):	std	r10, -32(rp)
 
 L(ret):	ld	r31, -8(r1)
 	ld	r30, -16(r1)
-	mr	r3, retval
+ifdef(`HAVE_ABI_mode32',
+`	srdi	r3, retval, 32
+	mr	r4, retval
+',`	mr	r3, retval')
 	blr
 EPILOGUE()
