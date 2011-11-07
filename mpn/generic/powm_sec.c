@@ -7,7 +7,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007, 2008, 2009 Free Software Foundation, Inc.
+Copyright 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,6 +56,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define WANT_CACHE_SECURITY 1
 
+#undef MPN_REDC_1_SEC
+#define MPN_REDC_1_SEC(rp, up, mp, n, invm)				\
+  do {									\
+    mp_limb_t cy;							\
+    mpn_redc_1 (up, mp, n, invm);					\
+    cy = mpn_add_n (rp, up + n, up, n);					\
+    mpn_subcnd_n (rp, rp, mp, n, cy);					\
+  } while (0)
 
 /* Define our own mpn squaring function.  We do this since we cannot use a
    native mpn_sqr_basecase over TUNE_SQR_TOOM2_MAX, or a non-native one over
@@ -252,7 +260,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       mpn_mul_basecase (tp, this_pp, n, pp + n, n);
       this_pp += n;
-      mpn_redc_1_sec (this_pp, tp, mp, n, minv);
+      MPN_REDC_1_SEC (this_pp, tp, mp, n, minv);
     }
 
   expbits = getbits (ep, ebi, windowsize);
@@ -278,7 +286,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       do
 	{
 	  mpn_local_sqr (tp, rp, n, tp + 2 * n);
-	  mpn_redc_1_sec (rp, tp, mp, n, minv);
+	  MPN_REDC_1_SEC (rp, tp, mp, n, minv);
 	  this_windowsize--;
 	}
       while (this_windowsize != 0);
@@ -289,12 +297,12 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #else
       mpn_mul_basecase (tp, rp, n, pp + n * expbits, n);
 #endif
-      mpn_redc_1_sec (rp, tp, mp, n, minv);
+      MPN_REDC_1_SEC (rp, tp, mp, n, minv);
     }
 
   MPN_COPY (tp, rp, n);
   MPN_ZERO (tp + n, n);
-  mpn_redc_1_sec (rp, tp, mp, n, minv);
+  MPN_REDC_1_SEC (rp, tp, mp, n, minv);
   cnd = mpn_sub_n (tp, rp, mp, n);	/* we need just retval */
   mpn_subcnd_n (rp, rp, mp, n, !cnd);
   TMP_FREE;

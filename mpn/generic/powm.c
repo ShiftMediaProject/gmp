@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,6 +73,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+
+#undef MPN_REDC_1
+#define MPN_REDC_1(rp, up, mp, n, invm)					\
+  do {									\
+    mp_limb_t cy;							\
+    mpn_redc_1 (up, mp, n, invm);					\
+    cy = mpn_add_n (rp, up + n, up, n);					\
+    if (cy != 0)							\
+      mpn_sub_n (rp, rp, mp, n);					\
+  } while (0)
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 #define WANT_REDC_2 1
@@ -212,12 +222,12 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   mpn_sqr (tp, this_pp, n);
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+    MPN_REDC_1 (rp, tp, mp, n, mip[0]);
   else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     mpn_redc_2 (rp, tp, mp, n, mip);
 #else
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
-    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+    MPN_REDC_1 (rp, tp, mp, n, mip[0]);
 #endif
   else
     mpn_redc_n (rp, tp, mp, n, mip);
@@ -229,12 +239,12 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       this_pp += n;
 #if WANT_REDC_2
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
+	MPN_REDC_1 (this_pp, tp, mp, n, mip[0]);
       else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
 	mpn_redc_2 (this_pp, tp, mp, n, mip);
 #else
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
-	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
+	MPN_REDC_1 (this_pp, tp, mp, n, mip[0]);
 #endif
       else
 	mpn_redc_n (this_pp, tp, mp, n, mip);
@@ -309,7 +319,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	  else
@@ -319,7 +329,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	}
@@ -380,7 +390,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	  else
@@ -390,7 +400,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	}
@@ -401,7 +411,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	  INNERLOOP;
 	}
       else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
@@ -440,7 +450,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	  else
@@ -450,7 +460,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	}
@@ -501,7 +511,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	  else
@@ -511,7 +521,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	      INNERLOOP;
 	    }
 	}
@@ -522,7 +532,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1 (rp, tp, mp, n, mip[0])
 	  INNERLOOP;
 	}
       else
@@ -545,12 +555,12 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+    MPN_REDC_1 (rp, tp, mp, n, mip[0]);
   else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     mpn_redc_2 (rp, tp, mp, n, mip);
 #else
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
-    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+    MPN_REDC_1 (rp, tp, mp, n, mip[0]);
 #endif
   else
     mpn_redc_n (rp, tp, mp, n, mip);

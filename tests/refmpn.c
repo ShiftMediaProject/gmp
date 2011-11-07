@@ -2,7 +2,7 @@
    of the normal gmp code.  Speed isn't a consideration.
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009 Free Software Foundation, Inc.
+2007, 2008, 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2303,12 +2303,9 @@ refmpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
 
   for (j = n - 1; j >= 0; j--)
     {
-      up[0] = mpn_addmul_1 (up, mp, n, (up[0] * invm) & GMP_NUMB_MASK);
+      up[0] = refmpn_addmul_1 (up, mp, n, (up[0] * invm) & GMP_NUMB_MASK);
       up++;
     }
-  cy = mpn_add_n (rp, up, up - n, n);
-  if (cy != 0)
-    mpn_sub_n (rp, rp, mp, n);
 }
 
 size_t

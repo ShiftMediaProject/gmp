@@ -25,7 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
+mpn_redc_1 (mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
 {
   mp_size_t j;
   mp_limb_t cy;
@@ -40,7 +40,4 @@ mpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
       up[0] = cy;
       up++;
     }
-  cy = mpn_add_n (rp, up, up - n, n);
-  if (cy != 0)
-    mpn_sub_n (rp, rp, mp, n);
 }

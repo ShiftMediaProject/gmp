@@ -1063,7 +1063,7 @@ __GMP_DECLSPEC void mpn_mulmid __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_sr
 __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
 #define mpn_redc_1 __MPN(redc_1)
-__GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+__GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_redc_2 __MPN(redc_2)
 __GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
@@ -1471,9 +1471,6 @@ __GMP_DECLSPEC void      mpn_powm_sec __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
 __GMP_DECLSPEC mp_size_t mpn_powm_sec_itch __GMP_PROTO ((mp_size_t, mp_size_t, mp_size_t));
 #define   mpn_tabselect __MPN(tabselect)
 __GMP_DECLSPEC void      mpn_tabselect __GMP_PROTO ((volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t));
-#define mpn_redc_1_sec __MPN(redc_1_sec)
-__GMP_DECLSPEC void mpn_redc_1_sec __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
-
 #define   mpn_addcnd_n __MPN(addcnd_n)
 __GMP_DECLSPEC mp_limb_t mpn_addcnd_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 #define   mpn_subcnd_n __MPN(subcnd_n)

@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_redc_1 -- Montgomery reduction with a one-limb modular inverse.
 
-dnl  Copyright 2004, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2008, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -34,22 +34,18 @@ C TODO
 C  * Handle certain sizes, e.g., 1, 2, 3, 4, 8, with single-loop code.
 C    The code for 1, 2, 3, 4 should perhaps be completely register based.
 C  * Perhaps align outer loops.
-C  * The sub_n at the end leaks side-channel data.  How do we fix that?
-C  * Write mpn_add_n_sub_n computing R = A + B - C.  It should run at 2 c/l.
 C  * We could software pipeline the IMUL stuff, by putting it before the
 C    outer loops and before the end of the outer loops.  The last outer
 C    loop iteration would then compute an unneeded product, but it is at
 C    least not a stray read from up[], since it is at up[n].
-C  * Can we combine both the add_n and sub_n into the loops, somehow?
 
 C INPUT PARAMETERS
-define(`rp',	  `%rdi')
-define(`up',	  `%rsi')
-define(`param_mp',`%rdx')
-define(`n',	  `%rcx')
-define(`invm',	  `%r8')
+define(`up',	  `%rdi')
+define(`mp',	  `%rsi')
+define(`n_param', `%rdx')
+define(`invm',	  `%rcx')
 
-define(`mp',	  `%r13')
+define(`n',	  `%r13')
 define(`i',	  `%r11')
 define(`nneg',	  `%r12')
 
@@ -62,13 +58,12 @@ PROLOGUE(mpn_redc_1)
 	push	%r12
 	push	%r13
 	push	%r14
-	push	n
-	sub	$8, %rsp		C maintain ABI required rsp alignment
 
-	lea	(param_mp,n,8), mp	C mp += n
-	lea	(up,n,8), up		C up += n
+	lea	(mp,n_param,8), mp	C mp += n
+	lea	(up,n_param,8), up	C up += n
 
-	mov	n, nneg
+	mov	n_param, nneg
+	mov	n_param, n
 	neg	nneg
 
 	mov	R32(n), R32(%rax)
@@ -136,9 +131,7 @@ L(n1):	mov	%r14, 16(up,nneg,8)	C up[0]
 	add	$8, up
 	dec	n
 	jnz	L(o1)
-C	lea	(mp), mp
-	lea	16(up), up
-	jmp	L(common)
+	jmp	L(ret)
 
 L(b0):	C lea	(mp), mp
 	lea	-16(up), up
@@ -190,10 +183,7 @@ L(ed0):	add	%r10, (up)
 	add	$8, up
 	dec	n
 	jnz	L(o0)
-C	lea	(mp), mp
-	lea	16(up), up
-	jmp	L(common)
-
+	jmp	L(ret)
 
 L(b3):	lea	-8(mp), mp
 	lea	-24(up), up
@@ -244,9 +234,7 @@ L(ed3):	add	%r10, 8(up)
 	add	$8, up
 	dec	n
 	jnz	L(o3)
-	lea	8(mp), mp
-	lea	24(up), up
-	jmp	L(common)
+	jmp	L(ret)
 
 L(b2):	lea	-16(mp), mp
 	lea	-32(up), up
@@ -299,36 +287,8 @@ L(ed2):	add	%r10, 16(up)
 	add	$8, up
 	dec	n
 	jnz	L(o2)
-	lea	16(mp), mp
-	lea	32(up), up
 
-
-L(common):
-	lea	(mp,nneg,8), mp		C restore entry mp
-
-C   cy = mpn_add_n (rp, up, up - n, n);
-C		    rdi rsi  rdx    rcx
-	lea	(up,nneg,8), up		C up -= n
-	lea	(up,nneg,8), %rdx	C rdx = up - n [up entry value]
-	mov	rp, nneg		C preserve rp over first call
-	mov	8(%rsp), %rcx		C pass entry n
-C	mov	rp, %rdi
-	CALL(	mpn_add_n)
-	test	R32(%rax), R32(%rax)
-	jz	L(ret)
-
-C     mpn_sub_n (rp, rp, mp, n);
-C		 rdi rsi rdx rcx
-	mov	nneg, %rdi
-	mov	nneg, %rsi
-	mov	mp, %rdx
-	mov	8(%rsp), %rcx		C pass entry n
-	CALL(	mpn_sub_n)
-
-L(ret):
-	add	$8, %rsp
-	pop	n			C just increment rsp
-	pop	%r14
+L(ret):	pop	%r14
 	pop	%r13
 	pop	%r12
 	pop	%rbx
