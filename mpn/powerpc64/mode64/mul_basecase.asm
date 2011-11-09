@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_basecase.
+dnl  PowerPC-64 mpn_mul_basecase.
 
 dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2008 Free Software
 dnl  Foundation, Inc.
