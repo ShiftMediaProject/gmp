@@ -596,6 +596,29 @@ refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
   return refmpn_sub_nc (rp, s1p, s2p, size, CNST_LIMB(0));
 }
 
+mp_limb_t
+refmpn_addcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_limb_t cnd)
+{
+  if (cnd != 0)
+    return refmpn_add_n (rp, s1p, s2p, size);
+  else
+    {
+      refmpn_copyi (rp, s1p, size);
+      return 0;
+    }
+}
+mp_limb_t
+refmpn_subcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_limb_t cnd)
+{
+  if (cnd != 0)
+    return refmpn_sub_n (rp, s1p, s2p, size);
+  else
+    {
+      refmpn_copyi (rp, s1p, size);
+      return 0;
+    }
+}
+
 
 #define AORS_ERR1_N(operation)						\
   {                                                                     \

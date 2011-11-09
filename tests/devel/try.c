@@ -622,6 +622,8 @@ enum {
   TYPE_SUBLSH1_NC, TYPE_SUBLSH2_NC, TYPE_SUBLSH_NC,
   TYPE_RSBLSH1_NC, TYPE_RSBLSH2_NC, TYPE_RSBLSH_NC,
 
+  TYPE_ADDCND_N, TYPE_SUBCND_N,
+
   TYPE_MOD_1, TYPE_MOD_1C, TYPE_DIVMOD_1, TYPE_DIVMOD_1C, TYPE_DIVREM_1,
   TYPE_DIVREM_1C, TYPE_PREINV_DIVREM_1, TYPE_DIVREM_2, TYPE_PREINV_MOD_1,
   TYPE_MOD_34LSUB1, TYPE_UDIV_QRNND, TYPE_UDIV_QRNND_R,
@@ -741,6 +743,16 @@ param_init (void)
   p = &param[TYPE_SUB_ERR3_N];
   COPY (TYPE_ADD_ERR3_N);
   REFERENCE (refmpn_sub_err3_n);
+
+  p = &param[TYPE_ADDCND_N];
+  COPY (TYPE_ADD_N);
+  p->carry = CARRY_BIT;
+  REFERENCE (refmpn_addcnd_n);
+
+  p = &param[TYPE_SUBCND_N];
+  COPY (TYPE_ADD_N);
+  p->carry = CARRY_BIT;
+  REFERENCE (refmpn_subcnd_n);
 
 
   p = &param[TYPE_MUL_1];
@@ -1704,6 +1716,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_copyd), TYPE_COPYD },
 #endif
 
+  { TRY(mpn_addcnd_n), TYPE_ADDCND_N },
+  { TRY(mpn_subcnd_n), TYPE_SUBCND_N },
 #if HAVE_NATIVE_mpn_addlsh1_n
   { TRY(mpn_addlsh1_n), TYPE_ADDLSH1_N },
 #endif
@@ -2395,6 +2409,8 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_RSBLSH2_NC:
   case TYPE_ADD_NC:
   case TYPE_SUB_NC:
+  case TYPE_ADDCND_N:
+  case TYPE_SUBCND_N:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, e->s[1].p, size, carry);
     break;
