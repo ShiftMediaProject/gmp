@@ -1,3 +1,19 @@
+2011-11-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/sqr_basecase.asm: New file.
+
+	* mpn/x86_64/aorscnd_n.asm: New file.
+
+	* tune/speed.c (routine): Add measuring of mpn_addcnd_n, mpn_subcnd_n.
+	* tune/common.c (speed_mpn_addcnd_n,speed_mpn_subcnd_n): New functions.
+	* tune/speed.h: Declare them.
+
+	* tests/devel/try.c: Add tests for mpn_addcnd_n and mpn_subcnd_n.
+	* tests/refmpn.c (refmpn_addcnd_n, refmpn_subcnd_n): New functions.
+	* tests/tests.h: Declare them.
+
+	* configure.in (gmp_mpn_functions): Add addcnd_n and subcnd_n.
+
 2011-11-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/redc_1.c: Just reduce U uperand using Hensel norm, but
