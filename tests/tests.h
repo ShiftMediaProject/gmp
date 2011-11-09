@@ -172,6 +172,11 @@ int refmpf_validate_division __GMP_PROTO ((const char *name, mpf_srcptr got,
                                            mpf_srcptr n, mpf_srcptr d));
 
 
+mp_limb_t refmpn_addcnd_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+					mp_size_t size, mp_limb_t cnd));
+mp_limb_t refmpn_subcnd_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+					mp_size_t size, mp_limb_t cnd));
+
 mp_limb_t refmpn_add __GMP_PROTO ((mp_ptr rp,
                               mp_srcptr s1p, mp_size_t s1size,
                               mp_srcptr s2p, mp_size_t s2size));
