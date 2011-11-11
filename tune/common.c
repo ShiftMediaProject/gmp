@@ -1539,6 +1539,22 @@ speed_mpn_hgcd_appr (struct speed_params *s)
 }
 
 double
+speed_mpn_hgcd_reduce (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD_REDUCE_CALL (mpn_hgcd_reduce, mpn_hgcd_reduce_itch);
+}
+double
+speed_mpn_hgcd_reduce_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD_REDUCE_CALL (mpn_hgcd_reduce_1, mpn_hgcd_reduce_1_itch);
+}
+double
+speed_mpn_hgcd_reduce_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD_REDUCE_CALL (mpn_hgcd_reduce_2, mpn_hgcd_reduce_2_itch);
+}
+
+double
 speed_mpn_gcd (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);

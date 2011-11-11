@@ -43,7 +43,8 @@ libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
   freq.c								\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
-  hgcd_lehmer.c jacbase1.c jacbase2.c jacbase3.c jacbase4.c		\
+  hgcd_lehmer.c hgcd_reduce_1.c hgcd_reduce_2.c				\
+  jacbase1.c jacbase2.c jacbase3.c jacbase4.c				\
   mod_1_div.c mod_1_inv.c mod_1_1-1.c mod_1_1-2.c modlinv.c		\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
   set_strb.c set_strs.c set_strp.c time.c
@@ -129,7 +130,9 @@ TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = div_qr_2.c bdiv_q.c bdiv_qr.c			\
   dcpi1_div_qr.c dcpi1_divappr_q.c dcpi1_bdiv_qr.c dcpi1_bdiv_q.c	\
   invertappr.c invert.c binvert.c divrem_2.c gcd.c gcdext.c		\
-  get_str.c set_str.c matrix22_mul.c hgcd.c mul_n.c sqr.c		\
+  get_str.c set_str.c matrix22_mul.c					\
+  hgcd.c hgcd_appr.c hgcd_reduce.c					\
+  mul_n.c sqr.c								\
   mullo_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c sqrmod_bnm1.c	\
   mulmid.c mulmid_n.c toom42_mulmid.c					\
   nussbaumer_mul.c toom6h_mul.c toom8h_mul.c toom6_sqr.c toom8_sqr.c	\

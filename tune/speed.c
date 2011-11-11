@@ -279,6 +279,10 @@ const struct routine_t {
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
   { "mpn_hgcd_appr",     speed_mpn_hgcd_appr        },
 
+  { "mpn_hgcd_reduce",   speed_mpn_hgcd_reduce      },
+  { "mpn_hgcd_reduce_1", speed_mpn_hgcd_reduce_1    },
+  { "mpn_hgcd_reduce_2", speed_mpn_hgcd_reduce_2    },
+  
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 

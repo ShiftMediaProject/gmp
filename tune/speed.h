@@ -198,6 +198,9 @@ double speed_mpn_matrix22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_lehmer __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_appr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_hgcd_reduce __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_hgcd_reduce_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_hgcd_reduce_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1N __GMP_PROTO ((struct speed_params *s));
@@ -487,6 +490,16 @@ mp_size_t mpn_gcdext_double
 mp_size_t mpn_hgcd_lehmer
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 #define MPN_HGCD_LEHMER_ITCH(n) (n)
+
+mp_size_t mpn_hgcd_reduce_1
+  __GMP_PROTO ((struct hgcd_matrix *, mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_ptr));
+mp_size_t mpn_hgcd_reduce_1_itch
+  __GMP_PROTO ((mp_size_t, mp_size_t));
+
+mp_size_t mpn_hgcd_reduce_2
+  __GMP_PROTO ((struct hgcd_matrix *, mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_ptr));
+mp_size_t mpn_hgcd_reduce_2_itch
+  __GMP_PROTO ((mp_size_t, mp_size_t));
 
 mp_limb_t mpn_sb_divrem_mn_div __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sb_divrem_mn_inv __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
@@ -2699,6 +2712,57 @@ int speed_routine_count_zeros_setup
 	MPN_COPY (bp, s->yp, s->size);					\
 	mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);			\
 	res = func (ap, bp, s->size, &hgcd, wp);			\
+      }									\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_HGCD_REDUCE_CALL(func, itchfunc)		\
+  {									\
+    mp_size_t hgcd_init_itch, hgcd_step_itch;				\
+    mp_ptr ap, bp, wp, tmp1;						\
+    struct hgcd_matrix hgcd;						\
+    mp_size_t p = s->size/2;						\
+    int res;								\
+    unsigned i;								\
+    double t;								\
+    TMP_DECL;								\
+    									\
+    if (s->size < 2)							\
+      return -1;							\
+    									\
+    TMP_MARK;								\
+    									\
+    SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);		\
+    									\
+    s->xp[s->size - 1] |= 1;						\
+    s->yp[s->size - 1] |= 1;						\
+    									\
+    hgcd_init_itch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);		\
+    hgcd_step_itch = itchfunc (s->size, p);				\
+    									\
+    SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_itch, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, hgcd_step_itch, s->align_wp);			\
+    									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, s->yp, s->size);				\
+    speed_operand_dst (s, ap, s->size + 1);				\
+    speed_operand_dst (s, bp, s->size + 1);				\
+    speed_operand_dst (s, wp, hgcd_step_itch);				\
+    speed_operand_dst (s, tmp1, hgcd_init_itch);			\
+    speed_cache_fill (s);						\
+    									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      {									\
+	MPN_COPY (ap, s->xp, s->size);					\
+	MPN_COPY (bp, s->yp, s->size);					\
+	mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);			\
+	res = func (&hgcd, ap, bp, s->size, p, wp);			\
       }									\
     while (--i != 0);							\
     t = speed_endtime ();						\

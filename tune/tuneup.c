@@ -195,6 +195,8 @@ mp_size_t  redc_2_to_redc_n_threshold   = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
+mp_size_t  hgcd_appr_threshold          = MP_SIZE_T_MAX;
+mp_size_t  hgcd_reduce_threshold        = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
 mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  gcdext_dc_threshold          = MP_SIZE_T_MAX;
@@ -1755,6 +1757,27 @@ tune_hgcd (void)
 }
 
 void
+tune_hgcd_appr (void)
+{
+  static struct param_t  param;
+  param.name = "HGCD_APPR_THRESHOLD";
+  param.function = speed_mpn_hgcd_appr;
+  /* We seem to get strange results for small sizes */
+  param.min_size = 30;
+  one (&hgcd_appr_threshold, &param);
+}
+
+void
+tune_hgcd_reduce (void)
+{
+  static struct param_t  param;
+  param.name = "HGCD_REDUCE_THRESHOLD";
+  param.function = speed_mpn_hgcd_reduce;
+  param.min_size = 30;
+  one (&hgcd_reduce_threshold, &param);
+}
+
+void
 tune_gcd_dc (void)
 {
   static struct param_t  param;
@@ -2579,6 +2602,8 @@ all (void)
 
   tune_matrix22_mul ();
   tune_hgcd ();
+  tune_hgcd_appr ();
+  tune_hgcd_reduce();
   tune_gcd_dc ();
   tune_gcdext_dc ();
   tune_jacobi_base ();

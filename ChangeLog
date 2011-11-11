@@ -1,5 +1,29 @@
 2011-11-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/hgcd_reduce_2.c: New file.
+	* tune/hgcd_reduce_1.c: New file.
+
+	* tune/tuneup.c (hgcd_appr_threshold): New threshold variable.
+	(hgcd_reduce_threshold): Likewise.
+	(tune_hgcd_appr): New function.
+	(tune_hgcd_reduce): New function.
+	(all): Call tune_hgcd_appr and tune_hgcd_reduce.
+
+	* tune/speed.h (speed_mpn_hgcd_reduce): Declaration.
+	(speed_mpn_hgcd_reduce_[12]): Likewise.
+	(mpn_hgcd_reduce_[12]): Likewise.
+	(SPEED_ROUTINE_MPN_HGCD_REDUCE_CALL): New macro.
+
+	* tune/speed.c (routine): Added mpn_hgcd_reduce,
+	mpn_hgcd_reduce_1, and mpn_hgcd_reduce_2.
+
+	* tune/common.c (speed_mpn_hgcd_reduce): New function.
+	(speed_mpn_hgcd_reduce_[12]): Likewise.
+
+	* tune/Makefile.am (libspeed_la_SOURCES): Added hgcd_reduce_1.c
+	hgcd_reduce_2.c.
+	(TUNE_MPN_SRCS_BASIC): Added hgcd_appr.c and hgcd_reduce.c.
+
 	* mpn/generic/hgcd_appr.c (submul, hgcd_matrix_apply): Deleted
 	functions, earlier copied to hgcd_reduce.c.
 	(mpn_hgcd_appr): Use hgcd_reduce.
