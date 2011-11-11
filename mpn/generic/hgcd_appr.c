@@ -25,172 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Computes R -= A * B. Result must be non-negative. Normalized down
-   to size an, and resulting size is returned. */
-static mp_size_t
-submul (mp_ptr rp, mp_size_t rn,
-	mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn)
-{
-  mp_ptr tp;
-  TMP_DECL;
-
-  ASSERT (bn > 0);
-  ASSERT (an >= bn);
-  ASSERT (rn >= an);
-  ASSERT (an + bn <= rn + 1);
-  
-  TMP_MARK;
-  tp = TMP_ALLOC_LIMBS (an + bn);
-
-  mpn_mul (tp, ap, an, bp, bn);
-  if (an + bn > rn)
-    {
-      ASSERT (tp[rn] == 0);
-      bn--;
-    }
-  ASSERT_NOCARRY (mpn_sub (rp, rp, rn, tp, an + bn));
-  TMP_FREE;
-
-  while (rn > an && (rp[rn-1] == 0))
-    rn--;
-
-  return rn;
-}
-
-/* Computes (a, b)  <--  M^{-1} (a; b) */
-/* FIXME:
-    x Take scratch parameter, and figure out scratch need.
-
-    x Use some fallback for small M->n?    
-*/
-static mp_size_t
-hgcd_matrix_apply (const struct hgcd_matrix *M,
-		   mp_ptr ap, mp_ptr bp,
-		   mp_size_t n)
-{
-  mp_size_t an, bn, un, vn, nn;
-  mp_size_t mn[2][2];
-  mp_size_t modn;
-  mp_ptr tp, sp, scratch;
-  mp_limb_t cy;
-  unsigned i, j;
-
-  TMP_DECL;
-
-  ASSERT ( (ap[n-1] | bp[n-1]) > 0);
-
-  an = n;
-  MPN_NORMALIZE (ap, an);
-  bn = n;
-  MPN_NORMALIZE (bp, bn);
-  
-  for (i = 0; i < 2; i++)
-    for (j = 0; j < 2; j++)
-      {
-	mp_size_t k;
-	k = M->n;
-	MPN_NORMALIZE (M->p[i][j], k);
-	mn[i][j] = k;
-      }
-
-  ASSERT (mn[0][0] > 0);
-  ASSERT (mn[1][1] > 0);
-  ASSERT ( (mn[0][1] | mn[1][0]) > 0);
-
-  TMP_MARK;
-
-  if (mn[0][1] == 0)
-    {
-      mp_size_t qn;
-      
-      /* A unchanged, M = (1, 0; q, 1) */
-      ASSERT (mn[0][0] == 1);
-      ASSERT (M->p[0][0][0] == 1);
-      ASSERT (mn[1][1] == 1);
-      ASSERT (M->p[1][1][0] == 1);
-
-      /* Put B <-- B - q A */
-      nn = submul (bp, bn, ap, an, M->p[1][0], mn[1][0]);
-    }
-  else if (mn[1][0] == 0)
-    {
-      /* B unchanged, M = (1, q; 0, 1) */
-      ASSERT (mn[0][0] == 1);
-      ASSERT (M->p[0][0][0] == 1);
-      ASSERT (mn[1][1] == 1);
-      ASSERT (M->p[1][1][0] == 1);
-
-      /* Put A  <-- A - q * B */
-      nn = submul (ap, an, bp, bn, M->p[0][1], mn[0][1]);      
-    }
-  else
-    {
-      /* A = m00 a + m01 b  ==> a <= A / m00, b <= A / m01.
-	 B = m10 a + m11 b  ==> a <= B / m10, b <= B / m11. */
-      un = MIN (an - mn[0][0], bn - mn[1][0]) + 1;
-      vn = MIN (an - mn[0][1], bn - mn[1][1]) + 1;
-
-      nn = MAX (un, vn);
-      /* In the range of interest, mulmod_bnm1 should always beat mullo. */
-      modn = mpn_mulmod_bnm1_next_size (nn + 1);
-
-      scratch = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (modn, modn, M->n));
-      tp = TMP_ALLOC_LIMBS (modn);
-      sp = TMP_ALLOC_LIMBS (modn);
-
-      ASSERT (n <= 2*modn);
-
-      if (n > modn)
-	{
-	  cy = mpn_add (ap, ap, modn, ap + modn, n - modn);
-	  MPN_INCR_U (ap, modn, cy);
-
-	  cy = mpn_add (bp, bp, modn, bp + modn, n - modn);
-	  MPN_INCR_U (bp, modn, cy);
-
-	  n = modn;
-	}
-
-      mpn_mulmod_bnm1 (tp, modn, ap, n, M->p[1][1], mn[1][1], scratch);
-      mpn_mulmod_bnm1 (sp, modn, bp, n, M->p[0][1], mn[0][1], scratch);
-
-      /* FIXME: Handle the small n case in some better way. */
-      if (n + mn[1][1] < modn)
-	MPN_ZERO (tp + n + mn[1][1], modn - n - mn[1][1]);
-      if (n + mn[0][1] < modn)
-	MPN_ZERO (sp + n + mn[0][1], modn - n - mn[0][1]);
-  
-      cy = mpn_sub_n (tp, tp, sp, modn);
-      MPN_DECR_U (tp, modn, cy);
-
-      ASSERT (mpn_zero_p (tp + nn, modn - nn));
-
-      mpn_mulmod_bnm1 (sp, modn, ap, n, M->p[1][0], mn[1][0], scratch);
-      MPN_COPY (ap, tp, nn);
-      mpn_mulmod_bnm1 (tp, modn, bp, n, M->p[0][0], mn[0][0], scratch);
-
-      if (n + mn[1][0] < modn)
-	MPN_ZERO (sp + n + mn[1][0], modn - n - mn[1][0]);
-      if (n + mn[0][0] < modn)
-	MPN_ZERO (tp + n + mn[0][0], modn - n - mn[0][0]);
-
-      cy = mpn_sub_n (tp, tp, sp, modn);
-      MPN_DECR_U (tp, modn, cy);
-
-      ASSERT (mpn_zero_p (tp + nn, modn - nn));
-      MPN_COPY (bp, tp, nn);
-
-      while ( (ap[nn-1] | bp[nn-1]) == 0)
-	{
-	  nn--;
-	  ASSERT (nn > 0);
-	}
-    }
-  TMP_FREE;
-
-  return nn;
-}
-
 /* Identical to mpn_hgcd_itch. FIXME: Do we really need to add
    HGCD_THRESHOLD at the end? */
 mp_size_t
@@ -347,13 +181,12 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
     {
       mp_size_t n2 = (3*n)/4 + 1;
       mp_size_t p = n/2;
-      mp_size_t input_n = n;
+      mp_size_t nn;
 
-      MPN_COPY (tp, ap + p, n - p);
-      MPN_COPY (tp + n - p, bp + p, n - p);
-      if (mpn_hgcd_appr (tp, tp + n - p, n - p, M, tp + 2*(n-p)))
+      nn = mpn_hgcd_reduce (M, ap, bp, n, p, tp);
+      if (nn)
 	{
-	  n = hgcd_matrix_apply (M, ap, bp, n);
+	  n = nn;
 	  /* FIXME: Discard some of the low limbs immediately? */
 	  success = 1;
 	}

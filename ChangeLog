@@ -1,3 +1,9 @@
+2011-11-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd_appr.c (submul, hgcd_matrix_apply): Deleted
+	functions, earlier copied to hgcd_reduce.c.
+	(mpn_hgcd_appr): Use hgcd_reduce.
+
 2011-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/sqr_basecase.asm: New file.
