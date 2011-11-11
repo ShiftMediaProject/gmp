@@ -1,3 +1,7 @@
+2011-11-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/sqr_diag_addlsh1.asm: Remove.
+
 2011-11-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/hgcd_reduce_2.c: New file.
