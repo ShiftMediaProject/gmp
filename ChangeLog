@@ -1,3 +1,16 @@
+2011-11-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add powm_sec.c.
+
+	* mpn/generic/powm_sec.c (win_size): Use POWM_SEC_TABLE
+	(POWM_SEC_TABLE): Define default.
+
+	* tune/tuneup.c (tune_powm_sec): New function computing POWM_SEC_TABLE.
+	(all): Call new function.
+
+	* mpn/generic/powm_sec.c (win_size): Define only when
+	TUNE_PROGRAM_BUILD is not set.
+
 2011-11-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_hgcd_appr): Use default min_size.
