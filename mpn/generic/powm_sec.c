@@ -189,15 +189,27 @@ getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
     }
 }
 
+#ifndef POWM_SEC_TABLE
+#if GMP_NUMB_BITS < 50
+#define POWM_SEC_TABLE  2,33,96,780,2741
+#else
+#define POWM_SEC_TABLE  2,130,524,2578
+#endif
+#endif
+
+#if TUNE_PROGRAM_BUILD
+extern int win_size (mp_bitcnt_t);
+#else
 static inline int
 win_size (mp_bitcnt_t eb)
 {
   int k;
-  static mp_bitcnt_t x[] = {0,4,27,100,325,1026,2905,7848,20457,51670,~(mp_bitcnt_t)0};
+  static mp_bitcnt_t x[] = {0,POWM_SEC_TABLE,~(mp_bitcnt_t)0};
   for (k = 1; eb > x[k]; k++)
     ;
   return k;
 }
+#endif
 
 /* Convert U to REDC form, U_r = B^n * U mod M */
 static void

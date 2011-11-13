@@ -192,7 +192,6 @@ mp_size_t  binv_newton_threshold        = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_2_to_redc_n_threshold   = MP_SIZE_T_MAX;
-mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  hgcd_appr_threshold          = MP_SIZE_T_MAX;
@@ -1801,6 +1800,134 @@ tune_gcdext_dc (void)
   one (&gcdext_dc_threshold, &param);
 }
 
+/* In tune_powm_sec we compute the table used by the win_size function.  The
+   cutoff points are in exponent bits, disregarding other operand sizes.  It is
+   not possible to use the one framework since it currently uses a granilarity
+   of full limbs.
+*/
+
+/* This win_size replaces the variant in the powm code, allowing us to
+   control k in the k-ary algorithms.  */
+int winsize;
+int
+win_size (mp_bitcnt_t eb)
+{
+  return winsize;
+}
+
+void
+tune_powm_sec (void)
+{
+  mp_size_t n;
+  int k, i;
+  mp_size_t itch;
+  mp_bitcnt_t nbits, nbits_next, possible_nbits_cutoff;
+  const int n_max = 3000 / GMP_NUMB_BITS;
+  const int n_measurements = 5;
+  mp_ptr rp, bp, ep, mp, tp;
+  double ttab[n_measurements], tk, tkp1;
+  TMP_DECL;
+  TMP_MARK;
+
+  possible_nbits_cutoff = 0;
+
+  k = 1;
+
+  winsize = 10;			/* the itch function needs this */
+  itch = mpn_powm_sec_itch (n_max, n_max, n_max);
+
+  rp = TMP_ALLOC_LIMBS (n_max);
+  bp = TMP_ALLOC_LIMBS (n_max);
+  ep = TMP_ALLOC_LIMBS (n_max);
+  mp = TMP_ALLOC_LIMBS (n_max);
+  tp = TMP_ALLOC_LIMBS (itch);
+
+  mpn_random (bp, n_max);
+  mpn_random (mp, n_max);
+  mp[0] |= 1;
+
+/* How about taking the M operand size into account?
+
+   An operation R=powm(B,E,N) will take time O(log(E)*M(log(N))) (assuming
+   B = O(M)).
+
+   Using k-ary and no sliding window, the precomputation will need time
+   O(2^(k-1)*M(log(N))) and the main computation will need O(log(E)*S(N)) +
+   O(log(E)/k*M(N)), for the squarings, multiplications, respectively.
+
+   An operation R=powm_sec(B,E,N) will take time like powm.
+
+   Using k-ary, the precomputation will need time O(2^k*M(log(N))) and the
+   main computation will need O(log(E)*S(N)) + O(log(E)/k*M(N)) +
+   O(log(E)/k*2^k*log(N)), for the squarings, multiplications, and full
+   table reads, respectively.  */
+
+  printf ("#define POWM_SEC_TABLE  ");
+
+  for (nbits = 1; nbits <= n_max * GMP_NUMB_BITS; )
+    {
+      n = (nbits - 1) / GMP_NUMB_BITS + 1;
+
+      /* Generate E such that sliding-window for k and k+1 works equally
+	 well/poorly (but sliding is not used in powm_sec, of course). */
+      for (i = 0; i < n; i++)
+	ep[i] = ~CNST_LIMB(0);
+
+      /* Truncate E to be exactly nbits large.  */
+      if (nbits % GMP_NUMB_BITS != 0)
+	mpn_rshift (ep, ep, n, GMP_NUMB_BITS - nbits % GMP_NUMB_BITS);
+      ep[n - 1] |= CNST_LIMB(1) << (nbits - 1) % GMP_NUMB_BITS;
+
+      winsize = k;
+      for (i = 0; i < n_measurements; i++)
+	{
+	  speed_starttime ();
+	  mpn_powm_sec (rp, bp, n, ep, n, mp, n, tp);
+	  ttab[i] = speed_endtime ();
+	}
+      tk = median (ttab, n_measurements);
+
+      winsize = k + 1;
+      speed_starttime ();
+      for (i = 0; i < n_measurements; i++)
+	{
+	  speed_starttime ();
+	  mpn_powm_sec (rp, bp, n, ep, n, mp, n, tp);
+	  ttab[i] = speed_endtime ();
+	}
+      tkp1 = median (ttab, n_measurements);
+/*
+      printf ("testing: %ld, %d", nbits, k, ep[n-1]);
+      printf ("   %10.5f  %10.5f\n", tk, tkp1);
+*/
+      if (tkp1 < tk)
+	{
+	  if (possible_nbits_cutoff)
+	    {
+	      /* Two consecutive sizes indicate k increase, obey.  */
+	      if (k > 1)
+		printf (",");
+	      printf ("%ld", (long) possible_nbits_cutoff);
+	      k++;
+	      possible_nbits_cutoff = 0;
+	    }
+	  else
+	    {
+	      /* One measurement indicate k increase, save nbits for further
+		 consideration.  */
+	      possible_nbits_cutoff = nbits;
+	    }
+	}
+      else
+	possible_nbits_cutoff = 0;
+
+      nbits_next = nbits * 65 / 64;
+      nbits = nbits_next + (nbits_next == nbits);
+    }
+  printf ("\n");
+  TMP_FREE;
+}
+
 
 /* size_extra==1 reflects the fact that with high<divisor one division is
    always skipped.  Forcing high<divisor while testing ensures consistency
@@ -1896,7 +2023,6 @@ tune_mod_1 (void)
     {
       static struct param_t  param;
       double   t1, t2;
-      int      method;
 
       s.size = 10;
       s.r = randlimb_half ();
@@ -2574,6 +2700,11 @@ all (void)
   tune_mulmod_bnm1 ();
   tune_sqrmod_bnm1 ();
   printf("\n");
+
+#if 1
+  tune_powm_sec ();
+  printf("\n");
+#endif
 
   tune_fft_mul ();
   printf("\n");
