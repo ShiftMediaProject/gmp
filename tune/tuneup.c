@@ -1762,8 +1762,6 @@ tune_hgcd_appr (void)
   static struct param_t  param;
   param.name = "HGCD_APPR_THRESHOLD";
   param.function = speed_mpn_hgcd_appr;
-  /* We seem to get strange results for small sizes */
-  param.min_size = 30;
   one (&hgcd_appr_threshold, &param);
 }
 
@@ -1774,6 +1772,8 @@ tune_hgcd_reduce (void)
   param.name = "HGCD_REDUCE_THRESHOLD";
   param.function = speed_mpn_hgcd_reduce;
   param.min_size = 30;
+  param.max_size = 7000;
+  param.step_factor = 0.04;
   one (&hgcd_reduce_threshold, &param);
 }
 

@@ -1,3 +1,9 @@
+2011-11-13  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_hgcd_appr): Use default min_size.
+	(tune_hgcd_reduce): Increase max_size and step_factor, to 7000
+	and 0.04, respectively.
+
 2011-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/sqr_diag_addlsh1.asm: Remove.
