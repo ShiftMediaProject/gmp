@@ -2640,7 +2640,7 @@ gmp_mpn_functions="$extra_functions					   \
   divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo powm_sec		   \
   trialdiv remove							   \
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \
-  copyi copyd zero							   \
+  copyi copyd zero tabselect						   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
@@ -3103,6 +3103,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_add_n_sub_n
 #undef HAVE_NATIVE_mpn_add_nc
 #undef HAVE_NATIVE_mpn_addaddmul_1msb0
+#undef HAVE_NATIVE_mpn_addcnd_n
 #undef HAVE_NATIVE_mpn_addlsh1_n
 #undef HAVE_NATIVE_mpn_addlsh2_n
 #undef HAVE_NATIVE_mpn_addlsh_n
@@ -3191,6 +3192,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sqr_diag_addlsh1
 #undef HAVE_NATIVE_mpn_sub_n
 #undef HAVE_NATIVE_mpn_sub_nc
+#undef HAVE_NATIVE_mpn_subcnd_n
 #undef HAVE_NATIVE_mpn_sublsh1_n
 #undef HAVE_NATIVE_mpn_sublsh2_n
 #undef HAVE_NATIVE_mpn_sublsh_n
@@ -3204,6 +3206,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sublsh2_nc_ip1
 #undef HAVE_NATIVE_mpn_sublsh_nc_ip1
 #undef HAVE_NATIVE_mpn_submul_1c
+#undef HAVE_NATIVE_mpn_tabselect
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
 #undef HAVE_NATIVE_mpn_udiv_qrnnd_r
 #undef HAVE_NATIVE_mpn_umul_ppmm
