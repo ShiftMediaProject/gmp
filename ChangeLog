@@ -1,10 +1,15 @@
 2011-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/tabselect.asm: New file.
+	* mpn/x86_64/tabselect.asm: New file.
+	* mpn/x86/tabselect.asm: New file.
+	* mpn/ia64/tabselect.asm: New file.
+
 	* mpn/asm-defs.m4 (define_mpn): Add tabselect.
 
 	* configure.in (gmp_mpn_functions): Add tabselect.
 	(HAVE_NATIVE): Add entries for addncd_n, subcnd_n, tabselect.
-	
+
 	* mpn/generic/powm_sec.c: Remove mpn_tabselect implementation.
 	* mpn/generic/tabselect.c: New file with removed code.
 
