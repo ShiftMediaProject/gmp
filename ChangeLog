@@ -1,5 +1,22 @@
 2011-11-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/speed.h (speed_mpn_hgcd_appr_lehmer): New prototype.
+	(mpn_hgcd_lehmer_itch): Likewise.
+	(mpn_hgcd_appr_lehmer): Likewise.
+	(mpn_hgcd_appr_lehmer_itch): Likewise.
+	(MPN_HGCD_LEHMER_ITCH): Deleted macro.
+
+	* tune/speed.c (routine): Added mpn_hgcd_appr_lehmer.
+
+	* tune/common.c (speed_mpn_hgcd_lehmer): Use mpn_hgcd_lehmer_itch
+	rather than similarly named macro.
+	(speed_mpn_hgcd_appr_lehmer): New function.
+
+	* tune/Makefile.am (libspeed_la_SOURCES): Added
+	hgcd_appr_lehmer.c.
+
+	* tune/hgcd_appr_lehmer.c: New file.
+
 	* tune/tuneup.c (tune_hgcd_appr): Increased min_size to 50; some
 	machines got small thresholds which appear to be bogus.
 

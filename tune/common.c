@@ -1529,13 +1529,19 @@ speed_mpn_hgcd (struct speed_params *s)
 double
 speed_mpn_hgcd_lehmer (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd_lehmer, MPN_HGCD_LEHMER_ITCH);
+  SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd_lehmer, mpn_hgcd_lehmer_itch);
 }
 
 double
 speed_mpn_hgcd_appr (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd_appr, mpn_hgcd_appr_itch);
+}
+
+double
+speed_mpn_hgcd_appr_lehmer (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD_CALL (mpn_hgcd_appr_lehmer, mpn_hgcd_appr_lehmer_itch);
 }
 
 double

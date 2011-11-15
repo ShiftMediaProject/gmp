@@ -43,7 +43,7 @@ libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
   freq.c								\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
-  hgcd_lehmer.c hgcd_reduce_1.c hgcd_reduce_2.c				\
+  hgcd_lehmer.c hgcd_appr_lehmer.c hgcd_reduce_1.c hgcd_reduce_2.c	\
   jacbase1.c jacbase2.c jacbase3.c jacbase4.c				\
   mod_1_div.c mod_1_inv.c mod_1_1-1.c mod_1_1-2.c modlinv.c		\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\

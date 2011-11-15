@@ -198,6 +198,7 @@ double speed_mpn_matrix22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_lehmer __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_appr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_hgcd_appr_lehmer __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_reduce __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_reduce_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_hgcd_reduce_2 __GMP_PROTO ((struct speed_params *s));
@@ -489,7 +490,11 @@ mp_size_t mpn_gcdext_double
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 mp_size_t mpn_hgcd_lehmer
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
-#define MPN_HGCD_LEHMER_ITCH(n) (n)
+mp_size_t mpn_hgcd_lehmer_itch __GMP_PROTO ((mp_size_t));
+
+mp_size_t mpn_hgcd_appr_lehmer
+  __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+mp_size_t mpn_hgcd_appr_lehmer_itch __GMP_PROTO ((mp_size_t));
 
 mp_size_t mpn_hgcd_reduce_1
   __GMP_PROTO ((struct hgcd_matrix *, mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_ptr));
