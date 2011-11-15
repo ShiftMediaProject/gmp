@@ -1,3 +1,8 @@
+2011-11-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_hgcd_appr): Increased min_size to 50; some
+	machines got small thresholds which appear to be bogus.
+
 2011-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Amend 2011-11-03 gcc_cflags change.
