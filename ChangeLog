@@ -1,5 +1,15 @@
 2011-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm_sec.c (mpn_local_sqr): Remove forgotten TMP_* calls.
+	(redcify): Likewise.
+	(mpn_powm_sec): Likewise.
+
+	* mpn/generic/powm_sec.c (mpn_powm_sec): Rework scratch usage
+	(mpn_powm_sec_itch): Rewrite.
+
+	* mpn/generic/powm_sec.c (mpn_powm_sec): Use mpn_tabselect also in
+	initialisation.
+
 	* configure.in: Amend 2011-11-03 gcc_cflags change.
 
 	* mpn/powerpc64/tabselect.asm: New file.

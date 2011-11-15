@@ -133,8 +133,6 @@ mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
   if (n > 1)
     {
       mp_limb_t cy;
-      TMP_DECL;
-      TMP_MARK;
 
       cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
       tp[n - 1] = cy;
@@ -156,8 +154,6 @@ mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
 #endif
 	rp[2 * n - 1] += cy;
       }
-
-      TMP_FREE;
     }
 }
 #endif
@@ -211,26 +207,24 @@ win_size (mp_bitcnt_t eb)
 }
 #endif
 
-/* Convert U to REDC form, U_r = B^n * U mod M */
+/* Convert U to REDC form, U_r = B^n * U mod M.
+   Uses scratch space at tp of size 2un + n + 1.  */
 static void
 redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
   mp_ptr qp;
-  TMP_DECL;
-  TMP_MARK;
 
-  qp = tp + un + n;
+  qp = tp + un + n;		/* un + n - n + 1 = un + 1 limbs */
 
   MPN_ZERO (tp, n);
   MPN_COPY (tp + n, up, un);
   mpn_tdiv_qr (qp, rp, 0L, tp, un + n, mp, n);
-  TMP_FREE;
 }
 
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
-   Requires that mp[n-1..0] is odd.  FIXME: is this true?
-   Requires that ep[en-1..0] is > 1.
-   Uses scratch space at tp of 3n+1 limbs.  */
+   Requires that mp[n-1..0] is odd.
+   Requires that ep[en-1..0] > 1.
+   Uses scratch space at tp as defined by mpn_powm_sec_itch.  */
 void
 mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	      mp_srcptr ep, mp_size_t en,
@@ -244,12 +238,9 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   mp_ptr pp, this_pp;
   long i;
   int cnd;
-  TMP_DECL;
 
   ASSERT (en > 1 || (en == 1 && ep[0] > 0));
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
-
-  TMP_MARK;
 
   count_leading_zeros (cnt, ep[en - 1]);
   ebi = (mp_bitcnt_t) en * GMP_LIMB_BITS - cnt;
@@ -259,15 +250,27 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   binvert_limb (minv, mp[0]);
   minv = -minv;
 
-  pp = tp + 4 * n;
+  pp = tp;
+  tp += (n << windowsize);	/* put tp after power table */
 
+  /* Compute pp[0] table entry */
+  /* scratch: |   n   | 1 |   n+2    |  */
+  /*          | pp[0] | 1 | redcify  |  */
   this_pp = pp;
   this_pp[n] = 1;
-  redcify (this_pp, this_pp + n, 1, mp, n, tp + 6 * n);
+  redcify (this_pp, this_pp + n, 1, mp, n, this_pp + n + 1);
   this_pp += n;
-  redcify (this_pp, bp, bn, mp, n, tp + 6 * n);
+
+  /* Compute pp[1] table entry.  To avoid excessive scratch usage in the
+     degenerate situation where B >> M, we let redcify use scratch space which
+     will later be used by the pp table (element 2 and up).  */
+  /* scratch: |   n   |   n   |  bn + n + 1  |  */
+  /*          | pp[0] | pp[1] |   redcify    |  */
+  redcify (this_pp, bp, bn, mp, n, this_pp + n);
 
   /* Precompute powers of b and put them in the temporary area at pp.  */
+  /* scratch: |   n   |   n   | ...  |                    |   2n      |  */
+  /*          | pp[0] | pp[1] | ...  | pp[2^windowsize-1] |  product  |  */
   for (i = (1 << windowsize) - 2; i > 0; i--)
     {
       mpn_mul_basecase (tp, this_pp, n, pp + n, n);
@@ -281,8 +284,15 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   else
     ebi -= windowsize;
 
+#if WANT_CACHE_SECURITY
+  mpn_tabselect (rp, pp, n, 1 << windowsize, expbits);
+#else
   MPN_COPY (rp, pp + n * expbits, n);
+#endif
 
+  /* Main exponentiation loop.  */
+  /* scratch: |   n   |   n   | ...  |                    |     3n-4n     |  */
+  /*          | pp[0] | pp[1] | ...  | pp[2^windowsize-1] |  loop scratch |  */
   while (ebi != 0)
     {
       expbits = getbits (ep, ebi, windowsize);
@@ -317,7 +327,6 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   MPN_REDC_1_SEC (rp, tp, mp, n, minv);
   cnd = mpn_sub_n (tp, rp, mp, n);	/* we need just retval */
   mpn_subcnd_n (rp, rp, mp, n, !cnd);
-  TMP_FREE;
 }
 
 mp_size_t
@@ -326,10 +335,20 @@ mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
   int windowsize;
   mp_size_t redcify_itch, itch;
 
-  windowsize = win_size (en * GMP_NUMB_BITS); /* slight over-estimate of exp */
-  itch = 4 * n + (n << windowsize);
-  redcify_itch = 2 * bn + n + 1;
-  /* The 6n is due to the placement of reduce scratch 6n into the start of the
-     scratch area.  */
-  return MAX (itch, redcify_itch + 6 * n);
+  /* The top scratch usage will either be when reducing B in the 2nd redcify
+     call, or more typically n*2^windowsize + 3n or 4n, in the main loop.  (It
+     is 3n or 4n depending on if we use mpn_local_sqr or a native
+     mpn_sqr_basecase.  We assume 4n always for now.) */
+
+  windowsize = win_size (en * GMP_LIMB_BITS); /* slight over-estimate of exp */
+
+  /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
+     the 2bn + n + 1 term is due to redcify's own usage.  */
+  redcify_itch = (2 * n) + (2 * bn + n + 1);
+
+  /* The n * 2^windowsize term is due to the power table, the 4n term is due to
+     scratch needs of squaring/multiplication in the exponentiation loop.  */
+  itch = (n << windowsize) + (4 * n);
+
+  return MAX (itch, redcify_itch);
 }
