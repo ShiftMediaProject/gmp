@@ -1,5 +1,7 @@
 2011-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Amend 2011-11-03 gcc_cflags change.
+
 	* mpn/powerpc64/tabselect.asm: New file.
 	* mpn/x86_64/tabselect.asm: New file.
 	* mpn/x86/tabselect.asm: New file.

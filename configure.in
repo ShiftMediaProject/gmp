@@ -875,7 +875,7 @@ case $host in
     abilist="32"
     cclist="gcc cc"
     cc_cflags="-O2"
-    gcc_cflags="$gcc_cflags -mpowerpc"
+    gcc_32_cflags="$gcc_cflags -mpowerpc"
     gcc_cflags_optlist="precomp subtype asm cpu"
     gcc_cflags_precomp="-no-cpp-precomp"
     gcc_cflags_subtype="-force_cpusubtype_ALL"	# for vmx on darwin
@@ -1243,9 +1243,7 @@ case $host in
     #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
-        gcc_cflags="$gcc_cflags -Wa,-xarch=v8plus" ;;
-      *)
-        gcc_cflags="$gcc_cflags" ;;
+        gcc_32_cflags="$gcc_cflags -Wa,-xarch=v8plus" ;;
     esac
     gcc_32_cflags_maybe="-m32"
     gcc_cflags_optlist="cpu"
