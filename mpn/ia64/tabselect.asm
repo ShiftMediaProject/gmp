@@ -21,12 +21,12 @@ include(`../config.m4')
 
 C           cycles/limb
 C Itanium:       ?
-C Itanium 2:     5  (estimated)
+C Itanium 2:     2.5
 
 C NOTES
-C  * Using software pipelining could trivially yield 3 c/l even without
-C    unrolling.  (This code was modelled after the powerpc64 code, for
-C    simplicity.)
+C  * Using software pipelining could trivially yield 2 c/l without unrolling,
+C    or 1+epsilon with unrolling.  (This code was modelled after the powerpc64
+C    code, for simplicity.)
 
 C mpn_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
 define(`rp',     `r32')
