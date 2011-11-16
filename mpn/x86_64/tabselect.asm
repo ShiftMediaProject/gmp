@@ -21,14 +21,14 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C AMD K8,K9	 ?
-C AMD K10	 ?
-C Intel P4	 ?
-C Intel core2	 ?
-C Intel NHM	 ?
-C Intel SBR	 ?
+C AMD K8,K9	 2.5
+C AMD K10	 2.5
+C Intel P4	 4
+C Intel core2	 2.3
+C Intel NHM	 2.5
+C Intel SBR	 2.2
 C Intel atom	 ?
-C VIA nano	 ?
+C VIA nano	 3.5
 
 C NOTES
 C  * This has not been tuned for any specific processor.  Its speed should not
