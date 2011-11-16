@@ -21,10 +21,10 @@ include(`../config.m4')
 
 C                  cycles/limb
 C POWER3/PPC630          ?
-C POWER4/PPC970          ?
+C POWER4/PPC970          3.3
 C POWER5                 ?
 C POWER6                 ?
-C POWER7                 ?
+C POWER7                 2.5
 
 C NOTES
 C  * This has not been tuned for any specific processor.  Its speed should not
@@ -60,18 +60,20 @@ L(outer):
 	beq	cr0, L(top)		C branch to loop entry if n even
 
 	ld	r9, 0(tp)
+	addi	tp, tp, 8
 	and	r9, r9, mask
 	ld	r11, 0(rp)
 	andc	r11, r11, mask
 	or	r9, r9, r11
 	std	r9, 0(rp)
-	addi	tp, tp, 8
 	addi	rp, rp, 8
 	bdz	L(end)
 
 	ALIGN(16)
 L(top):	ld	r9, 0(tp)
 	ld	r10, 8(tp)
+	addi	tp, tp, 16
+	nop
 	and	r9, r9, mask
 	and	r10, r10, mask
 	ld	r11, 0(rp)
@@ -82,13 +84,12 @@ L(top):	ld	r9, 0(tp)
 	or	r10, r10, r12
 	std	r9, 0(rp)
 	std	r10, 8(rp)
-	addi	tp, tp, 16
 	addi	rp, rp, 16
 	bdnz	L(top)
 
 L(end):	subf	rp, n, rp		C move rp back to beginning
+	cmpdi	cr6, nents, 1
 	addi	nents, nents, -1
-	cmpdi	cr6, nents, 0
 	bne	cr6, L(outer)
 
 	blr
