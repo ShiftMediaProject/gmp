@@ -1,5 +1,7 @@
 2011-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc32/tabselect.asm: New file.
+
 	* mpn/powerpc64/mode64/aorscnd_n.asm: New file.
 
 2011-11-15  Niels Möller  <nisse@lysator.liu.se>
