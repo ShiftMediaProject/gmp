@@ -1,3 +1,7 @@
+2011-11-17  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_hgcd_appr): Increase stop_since_change.
+
 2011-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc32/tabselect.asm: New file.

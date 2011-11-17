@@ -1763,6 +1763,7 @@ tune_hgcd_appr (void)
   param.function = speed_mpn_hgcd_appr;
   /* We seem to get strange results for small sizes */
   param.min_size = 50;
+  param.stop_since_change = 150;
   one (&hgcd_appr_threshold, &param);
 }
 
