@@ -47,10 +47,10 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_tabselect)
 	addi	r0, n, 1
-	srdi	r0, r0, 1		C inner loop count
+	srwi	r0, r0, 1		C inner loop count
 	andi.	r9, n, 1		C set cr0 for use in inner loop
 	subf	which, nents, which
-	sldi	n, n, 2
+	slwi	n, n, 2
 
 L(outer):
 	mtctr	r0			C put inner loop count in ctr
@@ -90,7 +90,7 @@ L(top):	lwz	r9, 0(tp)
 	bdnz	L(top)
 
 L(end):	subf	rp, n, rp		C move rp back to beginning
-	cmpdi	cr6, nents, 1
+	cmpwi	cr6, nents, 1
 	addi	nents, nents, -1
 	bne	cr6, L(outer)
 
