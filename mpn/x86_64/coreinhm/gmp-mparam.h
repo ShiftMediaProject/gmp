@@ -31,6 +31,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD        15
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD      7
 #define USE_PREINV_DIVREM_1                  1  /* native */
+#define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           17
 
@@ -54,6 +55,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULMOD_BNM1_THRESHOLD               13
 #define SQRMOD_BNM1_THRESHOLD               13
+
+#define POWM_SEC_TABLE  2,65,322,1084
 
 #define MUL_FFT_MODF_THRESHOLD             380  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
@@ -112,8 +115,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD                32
 #define DC_BDIV_Q_THRESHOLD                 70
 
-#define INV_MULMOD_BNM1_THRESHOLD           46
-#define INV_NEWTON_THRESHOLD               195
+#define INV_MULMOD_BNM1_THRESHOLD           34
+#define INV_NEWTON_THRESHOLD               177
 #define INV_APPR_THRESHOLD                 147
 
 #define BINV_NEWTON_THRESHOLD              252
@@ -126,13 +129,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD              1120
 #define MU_BDIV_Q_THRESHOLD               1187
 
-#define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                     117
-#define GCD_DC_THRESHOLD                   330
-#define GCDEXT_DC_THRESHOLD                382
+#define MATRIX22_STRASSEN_THRESHOLD         15
+#define HGCD_THRESHOLD                     126
+#define HGCD_APPR_THRESHOLD                171
+#define HGCD_REDUCE_THRESHOLD             2205
+#define GCD_DC_THRESHOLD                   345
+#define GCDEXT_DC_THRESHOLD                386
 #define JACOBI_BASE_METHOD                   4
 
-#define GET_STR_DC_THRESHOLD                12
+#define GET_STR_DC_THRESHOLD                15
 #define GET_STR_PRECOMPUTE_THRESHOLD        20
-#define SET_STR_DC_THRESHOLD               552
-#define SET_STR_PRECOMPUTE_THRESHOLD      1655
+#define SET_STR_DC_THRESHOLD               232
+#define SET_STR_PRECOMPUTE_THRESHOLD      1585

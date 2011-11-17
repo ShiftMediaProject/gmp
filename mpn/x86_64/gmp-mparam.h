@@ -30,6 +30,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD        28
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD      7
 #define USE_PREINV_DIVREM_1                  1  /* native */
+#define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           15
 
@@ -55,6 +56,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULMOD_BNM1_THRESHOLD               17
 #define SQRMOD_BNM1_THRESHOLD               17
+
+#define POWM_SEC_TABLE  2,67,322,991
 
 #define MUL_FFT_MODF_THRESHOLD             570  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
@@ -187,10 +190,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD              1589
 #define MU_BDIV_Q_THRESHOLD               1718
 
-#define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                     139
-#define GCD_DC_THRESHOLD                   606
-#define GCDEXT_DC_THRESHOLD                474
+#define MATRIX22_STRASSEN_THRESHOLD         16
+#define HGCD_THRESHOLD                     125
+#define HGCD_APPR_THRESHOLD                 50
+#define HGCD_REDUCE_THRESHOLD             3524
+#define GCD_DC_THRESHOLD                   555
+#define GCDEXT_DC_THRESHOLD                478
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                12

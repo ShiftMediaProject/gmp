@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD          6
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          5
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD         7
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        22
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        18
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     13
 #define USE_PREINV_DIVREM_1                  0
 #define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
@@ -46,17 +46,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD     135
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD     141
 
-#define SQR_BASECASE_THRESHOLD              10
-#define SQR_TOOM2_THRESHOLD                 50
-#define SQR_TOOM3_THRESHOLD                 84
-#define SQR_TOOM4_THRESHOLD                160
-#define SQR_TOOM6_THRESHOLD                246
-#define SQR_TOOM8_THRESHOLD                296
+#define SQR_BASECASE_THRESHOLD               0  /* always (native) */
+#define SQR_TOOM2_THRESHOLD                 36
+#define SQR_TOOM3_THRESHOLD                109
+#define SQR_TOOM4_THRESHOLD                202
+#define SQR_TOOM6_THRESHOLD                303
+#define SQR_TOOM8_THRESHOLD                399
 
 #define MULMID_TOOM42_THRESHOLD             62
 
 #define MULMOD_BNM1_THRESHOLD               15
 #define SQRMOD_BNM1_THRESHOLD               16
+
+#define POWM_SEC_TABLE  6,65,342,1465
 
 #define MUL_FFT_MODF_THRESHOLD             436  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
@@ -121,8 +123,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_TABLE3_SIZE 103
 #define SQR_FFT_THRESHOLD                 3264
 
-#define MULLO_BASECASE_THRESHOLD             4
-#define MULLO_DC_THRESHOLD                  34
+#define MULLO_BASECASE_THRESHOLD             3
+#define MULLO_DC_THRESHOLD                  23
 #define MULLO_MUL_N_THRESHOLD             9174
 
 #define DC_DIV_QR_THRESHOLD                 30
@@ -144,12 +146,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_Q_THRESHOLD               1499
 
 #define MATRIX22_STRASSEN_THRESHOLD         15
-#define HGCD_THRESHOLD                     121
-#define GCD_DC_THRESHOLD                   443
-#define GCDEXT_DC_THRESHOLD                396
+#define HGCD_THRESHOLD                     124
+#define HGCD_APPR_THRESHOLD                155
+#define HGCD_REDUCE_THRESHOLD             3134
+#define GCD_DC_THRESHOLD                   492
+#define GCDEXT_DC_THRESHOLD                333
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                11
-#define GET_STR_PRECOMPUTE_THRESHOLD        22
+#define GET_STR_PRECOMPUTE_THRESHOLD        17
 #define SET_STR_DC_THRESHOLD              1517
-#define SET_STR_PRECOMPUTE_THRESHOLD      4040
+#define SET_STR_PRECOMPUTE_THRESHOLD      3421

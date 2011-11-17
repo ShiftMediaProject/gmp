@@ -58,6 +58,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULMOD_BNM1_THRESHOLD               11
 #define SQRMOD_BNM1_THRESHOLD               15
 
+#define POWM_SEC_TABLE  2,23,322,840
+
 #define MUL_FFT_MODF_THRESHOLD             376  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
   { {    376, 5}, {     17, 6}, {      9, 5}, {     19, 6}, \
@@ -145,9 +147,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_Q_THRESHOLD               1308
 
 #define MATRIX22_STRASSEN_THRESHOLD         14
-#define HGCD_THRESHOLD                     103
-#define GCD_DC_THRESHOLD                   469
-#define GCDEXT_DC_THRESHOLD                290
+#define HGCD_THRESHOLD                     105
+#define HGCD_APPR_THRESHOLD                113
+#define HGCD_REDUCE_THRESHOLD             2479
+#define GCD_DC_THRESHOLD                   330
+#define GCDEXT_DC_THRESHOLD                306
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                17
