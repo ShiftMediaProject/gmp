@@ -283,7 +283,7 @@ const struct routine_t {
   { "mpn_hgcd_reduce",   speed_mpn_hgcd_reduce      },
   { "mpn_hgcd_reduce_1", speed_mpn_hgcd_reduce_1    },
   { "mpn_hgcd_reduce_2", speed_mpn_hgcd_reduce_2    },
-  
+
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
@@ -412,6 +412,7 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_copyd
   { "mpn_copyd",         speed_mpn_copyd            },
 #endif
+  { "mpn_tabselect",     speed_mpn_tabselect, FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_addlsh1_n
   { "mpn_addlsh1_n",     speed_mpn_addlsh1_n, FLAG_R_OPTIONAL },
 #endif

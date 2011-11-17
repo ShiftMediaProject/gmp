@@ -175,6 +175,7 @@ double speed_mpn_copyi __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY_INCR __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_tabselect __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divexact_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divexact_by3 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_bdiv_q_1 __GMP_PROTO ((struct speed_params *));
@@ -613,7 +614,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;
 
 /* For mpn_copy or similar. */
-#define SPEED_ROUTINE_MPN_COPY(function)				\
+#define SPEED_ROUTINE_MPN_COPY_CALL(call)				\
   {									\
     mp_ptr    wp;							\
     unsigned  i;							\
@@ -632,13 +633,18 @@ int speed_routine_count_zeros_setup
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, s->xp, s->size);					\
+      call;								\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\
     TMP_FREE;								\
     return t;								\
   }
+#define SPEED_ROUTINE_MPN_COPY(function)				\
+  SPEED_ROUTINE_MPN_COPY_CALL (function (wp, s->xp, s->size))
+
+#define SPEED_ROUTINE_MPN_TABSELECT(function)				\
+  SPEED_ROUTINE_MPN_COPY_CALL (function (wp, s->xp, s->size, 1, s->r))
 
 #define SPEED_ROUTINE_MPN_COPYC(function)				\
   {									\
