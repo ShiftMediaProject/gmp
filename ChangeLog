@@ -1,3 +1,10 @@
+2011-11-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Pass -m32 for powerpc64 with abi=32, using via _maybe
+	mechanism.
+
+	* configure.in: Support powerpc32/p3-p7 directory for affected CPUs.
+
 2011-11-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Add mpn_tabselect.
