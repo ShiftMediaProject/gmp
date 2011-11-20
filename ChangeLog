@@ -1,5 +1,7 @@
 2011-11-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc32/p3-p7/aors_n.asm: New file.
+
 	* configure.in: Pass -m32 for powerpc64 with abi=32, using via _maybe
 	mechanism.
 
