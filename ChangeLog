@@ -1,3 +1,7 @@
+2011-11-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-h.in (__GNU_MP_RELEASE): Renamed from typo name.
+
 2011-11-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Split x86 CPUs into more subtypes for more accurate
