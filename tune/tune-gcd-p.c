@@ -39,7 +39,7 @@ search (double *minp, double (*f)(void *, int), void *ctx, int start, int end)
   double y[4];
 
   int best_i;
-  
+
   x[0] = start;
   x[3] = end;
 
@@ -60,7 +60,7 @@ search (double *minp, double (*f)(void *, int), void *ctx, int start, int end)
 #if 0
       printf("%d: %f, %d: %f, %d:, %f %d: %f\n",
 	     x[0], y[0], x[1], y[1], x[2], y[2], x[3], y[3]);
-#endif    
+#endif
       for (best_i = 0, i = 1; i < 4; i++)
 	if (y[i] < y[best_i])
 	  best_i = i;

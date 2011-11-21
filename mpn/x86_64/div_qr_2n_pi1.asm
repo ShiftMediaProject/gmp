@@ -44,7 +44,7 @@ C TODO
 C * Store qh in the same stack slot as di_param, instead of pushing
 C   it. (we could put it in register %rbp, but then we would need to
 C   save and restore that instead, which doesn't seem like a win).
-	
+
 ASM_START()
 	TEXT
 	ALIGN(16)
@@ -56,7 +56,7 @@ PROLOGUE(mpn_div_qr_2n_pi1)
 	push	%r13
 	push	%r12
 	push	%rbx
-	
+
 	mov	-16(up, un, 8), u1
 	mov	-8(up, un, 8), u2
 
@@ -135,5 +135,5 @@ L(fix):	C Unlikely update. u2 >= d1
 	inc	t1
 	sub	d0, u1
 	sbb	d1, u2
-	jmp	L(bck)	
+	jmp	L(bck)
 EPILOGUE()

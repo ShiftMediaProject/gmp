@@ -27,7 +27,7 @@ C       odd   even
 C P54:  24.5  30.5   cycles/limb
 C P55:  23.0  28.0
 
-MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)	
+MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)
 
 C The P55 speeds noted above, 23 cycles odd or 28 cycles even, are as
 C expected.  On P54 in the even case the shrdl pairing nonsense (see

@@ -921,7 +921,7 @@ mpz_nextprime_step (mpz_ptr p, mpz_srcptr n, mpz_srcptr step_in)
   mpz_gcd (gcd, p, step);
   ASSERT_ALWAYS (mpz_cmp_ui (gcd, 1) == 0);
   mpz_clear (gcd);
-    
+
   pn = SIZ(p);
   count_leading_zeros (cnt, PTR(p)[pn - 1]);
   nbits = pn * GMP_NUMB_BITS - (cnt - GMP_NAIL_BITS);
@@ -1016,7 +1016,7 @@ check_large_quotients (void)
       mpz_set_ui (op1, 0);
       mpz_urandomb (bs, rands, 32);
       mpz_urandomb (bs, rands, mpz_get_ui (bs) % 10 + 1);
-      
+
       gcd_size = 1 + mpz_get_ui (bs);
       if (gcd_size & 1)
 	{

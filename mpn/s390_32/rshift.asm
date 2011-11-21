@@ -120,7 +120,7 @@ L(top):	l	%r11, 0(up)
 L(end):	l	%r11, 0(up)
 	srl	%r11, 0(cnt)
 	st	%r11, 0(rp)
-	
+
 	lr	%r2, %r12
 	lm	%r6, %r12, 24(%r15)
 	br	%r14

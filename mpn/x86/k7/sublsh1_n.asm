@@ -30,7 +30,7 @@ C			    cycles/limb
 C P5
 C P6 model 0-8,10-12
 C P6 model 9  (Banias)
-C P6 model 13 (Dothan)		 
+C P6 model 13 (Dothan)
 C P4 model 0  (Willamette)
 C P4 model 1  (?)
 C P4 model 2  (Northwood)
@@ -38,12 +38,12 @@ C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
 C Intel Atom			 6.75
 C AMD K6
-C AMD K7			 
+C AMD K7
 C AMD K8
 
 C This is a basic sublsh1_n for k7, atom, and perhaps some other x86-32
 C processors.  It uses 2*4-way unrolling, for good reasons.
-C 
+C
 C Breaking carry recurrency might be a good idea.  We would then need separate
 C registers for the shift carry and add/subtract carry, which in turn would
 C force is to 2*2-way unrolling.
@@ -114,7 +114,7 @@ ifdef(`CPU_P6',`
 	adc	%ebp, %ebp
 
 	rcr	%edx			C restore 1st saved carry bit
-	
+
 	sbb	%eax, (rp)
 	sbb	%ebx, 4(rp)
 	sbb	%ecx, 8(rp)

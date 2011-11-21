@@ -126,7 +126,7 @@ L(top):	l	%r10, 16(up)
 L(end):	l	%r10, 16(up)
 	sll	%r10, 0(cnt)
 	st	%r10, 12(rp)
-	
+
 	lr	%r2, %r12
 	lm	%r6, %r12, 24(%r15)
 	br	%r14

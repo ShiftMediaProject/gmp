@@ -110,7 +110,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       result_bit1 ^= JACOBI_N1B_BIT1(blow);
       asize = -asize;
     }
-  
+
   JACOBI_STRIP_LOW_ZEROS (result_bit1, blow, asrcp, asize, alow);
 
   /* Ensure asize >= bsize. Take advantage of the generalized
@@ -147,7 +147,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
       result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
     }
-  
+
   if (bsize == 1)
     {
       result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
@@ -165,7 +165,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
      % B, but when A is much larger than B, we have to allocate space
      for the large quotient. We use the same area, pointed to by bp,
      for both the quotient A/B and the working copy of B. */
-  
+
   TMP_MARK;
 
   if (asize >= 2*bsize)
@@ -189,7 +189,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       result_bit1 ^= JACOBI_TWOS_U_BIT1(btwos, alow);
 
       ASSERT_NOCARRY (mpn_rshift (bp, bsrcp, bsize, btwos));
-      bsize -= (ap[bsize-1] | bp[bsize-1]) == 0;      
+      bsize -= (ap[bsize-1] | bp[bsize-1]) == 0;
     }
   else
     MPN_COPY (bp, bsrcp, bsize);

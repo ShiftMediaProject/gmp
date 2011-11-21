@@ -459,7 +459,7 @@ validate_bdiv_q_1
 
     refmpn_mul_1 (tp, dst, size, divisor);
     /* Set ignored low bits */
-    tp[0] |= (src[0] & LOW_ZEROS_MASK (divisor)); 
+    tp[0] |= (src[0] & LOW_ZEROS_MASK (divisor));
     if (! refmpn_equal_anynail (tp, src, size))
       {
 	printf ("Bdiv wrong: res * divisor != src (mod B^size)\n");

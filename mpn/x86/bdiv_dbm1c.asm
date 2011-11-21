@@ -24,10 +24,10 @@ C P5
 C P6 model 0-8,10-12)
 C P6 model 9  (Banias)
 C P6 model 13 (Dothan)		 5.1
-C P4 model 0  (Willamette)	 
+C P4 model 0  (Willamette)
 C P4 model 1  (?)
 C P4 model 2  (Northwood)	13.67
-C P4 model 3  (Prescott)	 
+C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
 C Intel Atom
 C AMD K6

@@ -62,7 +62,7 @@ EPILOGUE()
 PROLOGUE(mpn_mul_1)
 	pxor	%mm6, %mm6
 L(ent):	push	%esi			FRAME_pushl()
-	mov	PARAM_SRC, up		
+	mov	PARAM_SRC, up
 	mov	PARAM_SIZE, %eax	C size
 	movd	PARAM_MUL, %mm7
 	movd	(up), %mm0

@@ -72,7 +72,7 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
      we discard some of the least significant limbs, we must keep one
      additional bit to account for the truncation error. We maintain
      the GMP_NUMB_BITS * s - extra_bits as the current target size. */
-     
+
   s = n/2 + 1;
   if (BELOW_THRESHOLD (n, HGCD_APPR_THRESHOLD))
     {
@@ -155,7 +155,7 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	      ASSERT (n <= 2*s);
 
 	      nn = mpn_hgcd_step (n, ap, bp, s, M, tp);
-	  
+
 	      if (!nn)
 		return 1;
 
@@ -249,7 +249,7 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  ASSERT (n <= 2*s);
 
 	  nn = mpn_hgcd_step (n, ap, bp, s, M, tp);
-	  
+
 	  if (!nn)
 	    return success;
 

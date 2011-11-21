@@ -148,18 +148,18 @@ void checkqf (){
   CHECK_SI(T,0,3,*);
   CHECK_ALL_COMPARISONS(T,5.,2);
   CHECK_ALL_SIGNS_COMPARISONS(T,11.,3);
-  CHECK_MPZ(T,5,-2,<); 
-  CHECK_MPZ(T,5,-2,>); 
+  CHECK_MPZ(T,5,-2,<);
+  CHECK_MPZ(T,5,-2,>);
   CHECK_MPZ(T,5,-2,<=);
   CHECK_MPZ(T,5,-2,>=);
   CHECK_MPZ(T,5,-2,==);
   CHECK_MPZ(T,5,-2,!=);
-  CHECK_MPZ(T,0,0,<);  
-  CHECK_MPZ(T,0,0,>);  
-  CHECK_MPZ(T,0,0,<=); 
-  CHECK_MPZ(T,0,0,>=); 
-  CHECK_MPZ(T,0,0,==); 
-  CHECK_MPZ(T,0,0,!=); 
+  CHECK_MPZ(T,0,0,<);
+  CHECK_MPZ(T,0,0,>);
+  CHECK_MPZ(T,0,0,<=);
+  CHECK_MPZ(T,0,0,>=);
+  CHECK_MPZ(T,0,0,==);
+  CHECK_MPZ(T,0,0,!=);
   ASSERT_ALWAYS(T(6)<<2==6.*4);
   ASSERT_ALWAYS(T(6)>>2==6./4);
   ASSERT_ALWAYS(T(-13)<<2==-13.*4);
@@ -217,18 +217,18 @@ void checkf (){
   CHECK_MPQ(mpf_class,-5.5,-2.25,-);
   CHECK_MPQ(mpf_class,-5.5,-2.25,*);
   CHECK_MPQ(mpf_class,-5.25,-0.5,/);
-  CHECK_MPQ(mpf_class,5,-2,<);  
-  CHECK_MPQ(mpf_class,5,-2,>);  
-  CHECK_MPQ(mpf_class,5,-2,<=); 
-  CHECK_MPQ(mpf_class,5,-2,>=); 
-  CHECK_MPQ(mpf_class,5,-2,==); 
-  CHECK_MPQ(mpf_class,5,-2,!=); 
-  CHECK_MPQ(mpf_class,0,0,<);  
-  CHECK_MPQ(mpf_class,0,0,>);  
-  CHECK_MPQ(mpf_class,0,0,<=); 
-  CHECK_MPQ(mpf_class,0,0,>=); 
-  CHECK_MPQ(mpf_class,0,0,==); 
-  CHECK_MPQ(mpf_class,0,0,!=); 
+  CHECK_MPQ(mpf_class,5,-2,<);
+  CHECK_MPQ(mpf_class,5,-2,>);
+  CHECK_MPQ(mpf_class,5,-2,<=);
+  CHECK_MPQ(mpf_class,5,-2,>=);
+  CHECK_MPQ(mpf_class,5,-2,==);
+  CHECK_MPQ(mpf_class,5,-2,!=);
+  CHECK_MPQ(mpf_class,0,0,<);
+  CHECK_MPQ(mpf_class,0,0,>);
+  CHECK_MPQ(mpf_class,0,0,<=);
+  CHECK_MPQ(mpf_class,0,0,>=);
+  CHECK_MPQ(mpf_class,0,0,==);
+  CHECK_MPQ(mpf_class,0,0,!=);
 }
 
 int

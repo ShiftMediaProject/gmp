@@ -51,7 +51,7 @@ C Note: This implementation needs B1modb only when cnt > 0
 C The iteration is almost as follows,
 C
 C   r_2 B^3 + r_1 B^2 + r_0 B + u = r_1 B2modb + (r_0 + r_2 B2mod) B + u
-C                                                
+C
 C where r2 is a single bit represented as a mask. But to make sure that the
 C result fits in two limbs and a bit, carry from the addition
 C
@@ -206,7 +206,7 @@ ifdef(`SHLD_SLOW',`
 ')
 	imul	%rdx, %r8
 	shr	R8(%rcx), %r8
-	mov	%r8, 16(%rbx)		C store B1modb	
+	mov	%r8, 16(%rbx)		C store B1modb
 L(z):
 	pop	%r12
 	pop	%rbx

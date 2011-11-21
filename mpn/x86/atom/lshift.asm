@@ -160,7 +160,7 @@ deflit(`FRAME',4)
 	shr	$2, %eax		C (size + 3) / 4
 	and	$3, %edx		C (size - 1) % 4
 	jz	L(goloop)		C jmp if  size == 1 (mod 4)
-	shr	%edx			
+	shr	%edx
 	jnc	L(odd)			C jum if  size == 3 (mod 4)
 
 	add	%ecx, %ecx
@@ -173,7 +173,7 @@ deflit(`FRAME',4)
 	jnz	L(goloop)		C jump if  size == 0 (mod 4)
 L(odd):	lea	-8(up), up
 	lea	-8(rp), rp
-	jmp	L(sentry)		C reached if size == 2 or 3 (mod 4) 
+	jmp	L(sentry)		C reached if size == 2 or 3 (mod 4)
 
 L(sloop):
 	adc	%ecx, %ecx

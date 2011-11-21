@@ -60,7 +60,7 @@ ifdef(`DARWIN',`
 PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
 	mov	PARAM_DIVISOR, %eax
-	C Avoid push/pop on k7.	
+	C Avoid push/pop on k7.
 	sub	$8, %esp	FRAME_subl_esp(8)
 	mov	%ebx, (%esp)
 	mov	%edi, 4(%esp)

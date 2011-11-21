@@ -25,7 +25,7 @@ include(`../config.m4')
 C       odd  even  divisor
 C P6:  10.0  12.0  cycles/limb
 
-C MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)	
+C MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)
 
 C The odd case is basically the same as mpn_modexact_1_odd, just with an
 C extra store, and it runs at the same 10 cycles which is the dependent
@@ -269,7 +269,7 @@ ifdef(`PIC',`
 	imull	%edx, %eax	C inv*inv*d
 
 	subl	%eax, %ebp		C inv = 2*inv - inv*inv*d
-	
+
 	jmp	L(common)
 
 EPILOGUE()

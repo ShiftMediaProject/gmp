@@ -54,7 +54,7 @@ ifdef(`OPERATION_submul_1',`
 ')
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
-	
+
 ASM_START()
 PROLOGUE(func_nc)
 EPILOGUE()

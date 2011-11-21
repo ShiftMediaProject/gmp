@@ -90,7 +90,7 @@ main (int argc, char **argv)
   rands = RANDS;
   mpz_init (a);
   mpz_init (b);
-  
+
   for (i = 0; i < 300; i++)
     {
       mp_size_t asize;

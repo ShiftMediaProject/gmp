@@ -30,7 +30,7 @@ C K6     14.0
 C K7     12.0
 C P4     42.0
 
-MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)	
+MULFUNC_PROLOGUE(mpn_bdiv_q_1 mpn_pi1_bdiv_q_1)
 
 defframe(PARAM_SHIFT,  24)
 defframe(PARAM_INVERSE,20)

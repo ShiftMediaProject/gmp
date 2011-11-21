@@ -185,7 +185,7 @@ mpn_gcd_subdiv_step (mp_ptr ap, mp_ptr bp, mp_size_t n, mp_size_t s,
 	}
       else
 	MPN_COPY (bp, ap, an);
-      
+
       MPN_DECR_U (tp, qn, 1);
     }
 

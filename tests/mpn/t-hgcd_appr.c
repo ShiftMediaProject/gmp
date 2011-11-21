@@ -261,7 +261,7 @@ one_test (mpz_t a, mpz_t b, int i)
 		     "after tp: %Mx\n"
 		     "expected: %Mx\n",
 		     hgcd_tp[hgcd_scratch], marker[3]);
-      
+
       abort ();
     }
 
@@ -424,7 +424,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
   mp_bitcnt_t dbits, abits, margin;
   mpz_t appr_r0, appr_r1, t, q;
   struct hgcd_ref appr;
-  
+
   if (!res0)
     {
       if (!res1)
@@ -433,7 +433,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
       fprintf (stderr, "mpn_hgcd_appr returned 1 when no reduction possible.\n");
       return 0;
     }
-      
+
   /* NOTE: No *_clear calls on error return, since we're going to
      abort anyway. */
   mpz_init (t);
@@ -441,7 +441,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
   hgcd_ref_init (&appr);
   mpz_init (appr_r0);
   mpz_init (appr_r1);
- 
+
   if (mpz_size (ref_r0) <= s)
     {
       fprintf (stderr, "ref_r0 too small!!!: "); debug_mp (ref_r0, 16);
@@ -460,7 +460,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
       fprintf (stderr, "ref |r0 - r1| too large!!!: "); debug_mp (t, 16);
       return 0;
     }
-   
+
   if (!res1)
     {
       mpz_set (appr_r0, a);
@@ -473,7 +473,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
       for (i = 0; i<2; i++)
 	{
 	  unsigned j;
-	  
+
 	  for (j = 0; j<2; j++)
 	    {
 	      mp_size_t mn = hgcd->n;
@@ -567,7 +567,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
 
       fprintf (stderr, "appr_r1: "); debug_mp (appr_r1, 16);
       fprintf (stderr, "ref_r1: "); debug_mp (ref_r1, 16);
-      
+
       return 0;
     }
   mpz_clear (t);

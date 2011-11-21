@@ -616,7 +616,7 @@ struct __gmp_binary_divides
     }
     else
 #endif
-      mpz_tdiv_q_ui(z, w, l); 
+      mpz_tdiv_q_ui(z, w, l);
   }
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
   {

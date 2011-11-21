@@ -44,14 +44,14 @@ C AMD K8
 C This is a basic addlsh1_n for k7, atom, and perhaps some other x86-32
 C processors.  It uses 2*3-way unrolling, for good reasons.  Unfortunately,
 C that means we need an initial magic multiply.
-C 
+C
 C It is not clear how to do sublsh1_n or rsblsh1_n using the same pattern.  We
 C cannot do rsblsh1_n since we feed carry from the shift blocks to the
 C add/subtract blocks, which is right for addition but reversed for
 C subtraction.  We could perhaps do sublsh1_n, with some extra move insns,
 C without losing any time, since we're not issue limited but carry recurrency
 C latency.
-C 
+C
 C Breaking carry recurrency might be a good idea.  We would then need separate
 C registers for the shift carry and add/subtract carry, which in turn would
 C force is to 2*2-way unrolling.
@@ -120,7 +120,7 @@ ifdef(`CPU_P6',`
 L(exact):
 	incl	VAR_COUNT
 	jz	L(end)
-	
+
 	ALIGN(16)
 L(top):
 ifdef(`CPU_P6',`

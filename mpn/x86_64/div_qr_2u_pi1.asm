@@ -66,7 +66,7 @@ deflit(`FRAME', 56)
 	movl	shift_param, R32(%rcx)
 
 	C FIXME: Different code for SHLD_SLOW
-	
+
 	xor	R32(u2), R32(u2)
 	mov	8(up, un, 8), u1
 	shld	%cl, u1, u2
@@ -173,7 +173,7 @@ L(fix):	C Unlikely update. u2 >= d1
 	inc	t1
 	sub	d0, u1
 	sbb	d1, u2
-	jmp	L(bck)	
+	jmp	L(bck)
 
 C Duplicated, just jumping back to a different address.
 L(fix_qh):	C Unlikely update. u2 >= d1
@@ -185,5 +185,5 @@ L(fix_qh):	C Unlikely update. u2 >= d1
 	inc	t1
 	sub	d0, u1
 	sbb	d1, u2
-	jmp	L(bck_qh)	
+	jmp	L(bck_qh)
 EPILOGUE()

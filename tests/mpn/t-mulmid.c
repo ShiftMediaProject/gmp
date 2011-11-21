@@ -52,7 +52,7 @@ main (int argc, char **argv)
   bp = TMP_ALLOC_LIMBS (MAX_N);
   rp = TMP_ALLOC_LIMBS (MAX_N + 2);
   refp = TMP_ALLOC_LIMBS (MAX_N + 2);
-  
+
   for (test = 0; test < COUNT; test++)
     {
       mp_size_t an, bn, rn;

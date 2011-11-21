@@ -26,7 +26,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 /* This file is almost a copy of hgcd.c, with some added calls to
-   mpn_jacobi_update */ 
+   mpn_jacobi_update */
 
 struct hgcd_jacobi_ctx
 {
@@ -127,7 +127,7 @@ hgcd_jacobi_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
     struct hgcd_jacobi_ctx ctx;
     ctx.M = M;
     ctx.bitsp = bitsp;
-    
+
     return mpn_gcd_subdiv_step (ap, bp, n, s, hgcd_jacobi_hook, &ctx, tp);
   }
 }

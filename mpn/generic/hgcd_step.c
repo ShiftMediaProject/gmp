@@ -112,7 +112,7 @@ mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
       /* Multiply M1^{-1} (a;b) */
       return mpn_matrix22_mul1_inverse_vector (&M1, ap, tp, bp, n);
     }
- 
+
  subtract:
 
   return mpn_gcd_subdiv_step (ap, bp, n, s, hgcd_hook, M, tp);

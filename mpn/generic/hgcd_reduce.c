@@ -38,7 +38,7 @@ submul (mp_ptr rp, mp_size_t rn,
   ASSERT (an >= bn);
   ASSERT (rn >= an);
   ASSERT (an + bn <= rn + 1);
-  
+
   TMP_MARK;
   tp = TMP_ALLOC_LIMBS (an + bn);
 
@@ -61,7 +61,7 @@ submul (mp_ptr rp, mp_size_t rn,
 /* FIXME:
     x Take scratch parameter, and figure out scratch need.
 
-    x Use some fallback for small M->n?    
+    x Use some fallback for small M->n?
 */
 static mp_size_t
 hgcd_matrix_apply (const struct hgcd_matrix *M,
@@ -83,7 +83,7 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
   MPN_NORMALIZE (ap, an);
   bn = n;
   MPN_NORMALIZE (bp, bn);
-  
+
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++)
       {
@@ -102,7 +102,7 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
   if (mn[0][1] == 0)
     {
       mp_size_t qn;
-      
+
       /* A unchanged, M = (1, 0; q, 1) */
       ASSERT (mn[0][0] == 1);
       ASSERT (M->p[0][0][0] == 1);
@@ -121,7 +121,7 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
       ASSERT (M->p[1][1][0] == 1);
 
       /* Put A  <-- A - q * B */
-      nn = submul (ap, an, bp, bn, M->p[0][1], mn[0][1]);      
+      nn = submul (ap, an, bp, bn, M->p[0][1], mn[0][1]);
     }
   else
     {
@@ -159,7 +159,7 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
 	MPN_ZERO (tp + n + mn[1][1], modn - n - mn[1][1]);
       if (n + mn[0][1] < modn)
 	MPN_ZERO (sp + n + mn[0][1], modn - n - mn[0][1]);
-  
+
       cy = mpn_sub_n (tp, tp, sp, modn);
       MPN_DECR_U (tp, modn, cy);
 
@@ -209,7 +209,7 @@ mpn_hgcd_reduce_itch (mp_size_t n, mp_size_t p)
       itch = 2*(n-p) + mpn_hgcd_itch (n-p);
       /* Currently, hgcd_matrix_apply allocates its own storage. */
     }
-  return itch;      
+  return itch;
 }
 
 /* FIXME: Document storage need. */
