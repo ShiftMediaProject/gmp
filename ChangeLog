@@ -1,3 +1,7 @@
+2011-11-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p6/addmul_1.asm: New file.
+
 2011-11-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GNU_MP_RELEASE): Renamed from typo name.
