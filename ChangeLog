@@ -1,5 +1,10 @@
 2011-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Don't fail fat builds under 64-bit DOS.
+
+	* mpn/powerpc64/mode64/aors_n.asm: Align loop for slightly better
+	power5 performance.
+
 	* mpn/powerpc64/mode64/p6/addmul_1.asm: New file.
 
 2011-11-21  Torbjorn Granlund  <tege@gmplib.org>
