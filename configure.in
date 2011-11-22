@@ -1930,9 +1930,17 @@ case $host in
 
       if test "$abi" = 64; then
 	gcc_64_cflags=""
-	extra_functions_64="$extra_functions_64 fat fat_entry"
-	path_64="x86_64/fat x86_64"
-	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/atom x86_64/nano"
+	case $host in
+	  *-*-mingw* | *-*-cygwin)
+	    path_64=""	# Windows amd64 calling conventions are *different*
+	    fat_path=""
+	    ;;
+	  *)
+	    extra_functions_64="$extra_functions_64 fat fat_entry"
+	    path_64="x86_64/fat x86_64"
+	    fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/atom x86_64/nano"
+	    ;;
+	esac
       fi
 
       fat_functions="add_n addmul_1 copyd copyi
