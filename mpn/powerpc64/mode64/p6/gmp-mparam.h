@@ -1,7 +1,7 @@
 /* POWER6 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2003, 2009, 2010 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2003, 2009, 2010, 2011
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -53,7 +53,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM6_THRESHOLD                274
 #define SQR_TOOM8_THRESHOLD                410
 
-#define MULMID_TOOM42_THRESHOLD             24
+#define MULMID_TOOM42_THRESHOLD             36
 
 #define MULMOD_BNM1_THRESHOLD               14
 #define SQRMOD_BNM1_THRESHOLD               14
@@ -111,36 +111,36 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_THRESHOLD                 2368
 
 #define MULLO_BASECASE_THRESHOLD             5
-#define MULLO_DC_THRESHOLD                  28
-#define MULLO_MUL_N_THRESHOLD             3084
+#define MULLO_DC_THRESHOLD                  61
+#define MULLO_MUL_N_THRESHOLD             5558
 
-#define DC_DIV_QR_THRESHOLD                 23
+#define DC_DIV_QR_THRESHOLD                 29
 #define DC_DIVAPPR_Q_THRESHOLD             112
-#define DC_BDIV_QR_THRESHOLD                29
-#define DC_BDIV_Q_THRESHOLD                 79
+#define DC_BDIV_QR_THRESHOLD                70
+#define DC_BDIV_Q_THRESHOLD                168
 
-#define INV_MULMOD_BNM1_THRESHOLD           51
+#define INV_MULMOD_BNM1_THRESHOLD           61
 #define INV_NEWTON_THRESHOLD                93
 #define INV_APPR_THRESHOLD                  91
 
-#define BINV_NEWTON_THRESHOLD              132
-#define REDC_1_TO_REDC_N_THRESHOLD          39
+#define BINV_NEWTON_THRESHOLD              222
+#define REDC_1_TO_REDC_N_THRESHOLD          63
 
-#define MU_DIV_QR_THRESHOLD                855
+#define MU_DIV_QR_THRESHOLD                807
 #define MU_DIVAPPR_Q_THRESHOLD             807
-#define MUPI_DIV_QR_THRESHOLD               23
-#define MU_BDIV_QR_THRESHOLD               807
-#define MU_BDIV_Q_THRESHOLD                872
+#define MUPI_DIV_QR_THRESHOLD               27
+#define MU_BDIV_QR_THRESHOLD               872
+#define MU_BDIV_Q_THRESHOLD               1078
 
 #define MATRIX22_STRASSEN_THRESHOLD         13
-#define HGCD_THRESHOLD                      69
-#define HGCD_APPR_THRESHOLD                 50
+#define HGCD_THRESHOLD                      94
+#define HGCD_APPR_THRESHOLD                 55
 #define HGCD_REDUCE_THRESHOLD             2121
-#define GCD_DC_THRESHOLD                   268
-#define GCDEXT_DC_THRESHOLD                209
+#define GCD_DC_THRESHOLD                   253
+#define GCDEXT_DC_THRESHOLD                217
 #define JACOBI_BASE_METHOD                   4
 
-#define GET_STR_DC_THRESHOLD                17
-#define GET_STR_PRECOMPUTE_THRESHOLD        27
+#define GET_STR_DC_THRESHOLD                16
+#define GET_STR_PRECOMPUTE_THRESHOLD        29
 #define SET_STR_DC_THRESHOLD               532
-#define SET_STR_PRECOMPUTE_THRESHOLD      1648
+#define SET_STR_PRECOMPUTE_THRESHOLD      1561
