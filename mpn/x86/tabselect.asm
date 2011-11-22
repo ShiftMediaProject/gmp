@@ -27,12 +27,12 @@ C P6 model 9  (Banias)		 ?
 C P6 model 13 (Dothan)		 ?
 C P4 model 0  (Willamette)	 ?
 C P4 model 1  (?)		 ?
-C P4 model 2  (Northwood)	 ?
+C P4 model 2  (Northwood)	 4.5
 C P4 model 3  (Prescott)	 ?
 C P4 model 4  (Nocona)		 ?
 C Intel Atom			 ?
 C AMD K6			 ?
-C AMD K7			 ?
+C AMD K7			 3.4
 C AMD K8			 ?
 C AMD K10			 ?
 
