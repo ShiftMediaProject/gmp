@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007 Free Software
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007, 2011 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -23,7 +23,7 @@ include(`../config.m4')
 C                   cycles/limb
 C POWER3/PPC630          1.5
 C POWER4/PPC970          2
-C POWER5                 2.25
+C POWER5                 2
 C POWER6                 2.63
 C POWER7               2.25-2.87
 
@@ -137,6 +137,7 @@ L(go):	ld	r6, 0(r4)	C load s1 limb
 	addi	r4, r4, 32
 	addi	r5, r5, 32
 
+	ALIGN(16)
 L(top):	ADDSUBC	r28, r7, r6
 	ld	r6, 0(r4)	C load s1 limb
 	ld	r7, 0(r5)	C load s2 limb
