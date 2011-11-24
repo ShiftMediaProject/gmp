@@ -1,3 +1,10 @@
+2011-11-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc32/p7/gmp-mparam.h: New file.
+
+	* tune/tuneup.c (tune_mu_div, tune_mu_bdiv): Up min_size to karatsuba's
+	threshold.
+
 2011-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/p6/aorsmul_1.asm: New file.
