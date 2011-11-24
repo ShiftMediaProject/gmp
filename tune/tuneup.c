@@ -1568,7 +1568,7 @@ tune_mu_div (void)
     param.name = "MU_DIV_QR_THRESHOLD";
     param.function = speed_mpn_dcpi1_div_qr;
     param.function2 = speed_mpn_mu_div_qr;
-    param.min_size = 6;
+    param.min_size = mul_toom22_threshold;
     param.max_size = 5000;
     param.step_factor = 0.02;
     one (&mu_div_qr_threshold, &param);
@@ -1578,7 +1578,7 @@ tune_mu_div (void)
     param.name = "MU_DIVAPPR_Q_THRESHOLD";
     param.function = speed_mpn_dcpi1_divappr_q;
     param.function2 = speed_mpn_mu_divappr_q;
-    param.min_size = 6;
+    param.min_size = mul_toom22_threshold;
     param.max_size = 5000;
     param.step_factor = 0.02;
     one (&mu_divappr_q_threshold, &param);
@@ -1627,7 +1627,7 @@ tune_mu_bdiv (void)
     param.name = "MU_BDIV_QR_THRESHOLD";
     param.function = speed_mpn_dcpi1_bdiv_qr;
     param.function2 = speed_mpn_mu_bdiv_qr;
-    param.min_size = 4;
+    param.min_size = mul_toom22_threshold;
     param.max_size = 5000;
     param.step_factor = 0.02;
     one (&mu_bdiv_qr_threshold, &param);
@@ -1637,7 +1637,7 @@ tune_mu_bdiv (void)
     param.name = "MU_BDIV_Q_THRESHOLD";
     param.function = speed_mpn_dcpi1_bdiv_q;
     param.function2 = speed_mpn_mu_bdiv_q;
-    param.min_size = 4;
+    param.min_size = mul_toom22_threshold;
     param.max_size = 5000;
     param.step_factor = 0.02;
     one (&mu_bdiv_q_threshold, &param);
