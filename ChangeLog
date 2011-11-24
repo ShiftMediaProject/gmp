@@ -1,5 +1,8 @@
 2011-11-24  Torbjorn Granlund  <tege@gmplib.org>
 
+	* doc/gmp.texi (Formatted Output Strings): Clarify rules for mpf_t
+	precision.
+
 	* mpn/powerpc32/p7/gmp-mparam.h: New file.
 
 	* tune/tuneup.c (tune_mu_div, tune_mu_bdiv): Up min_size to karatsuba's
