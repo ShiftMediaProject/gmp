@@ -1,3 +1,10 @@
+2011-11-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* x86/*: Many new gmp-mparam.h file for 64-bit CPUs in 32-bit mode.
+
+	* configure.in: Overhaul x86/x86_64 support, merging three case
+	statements into one.
+
 2011-11-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Formatted Output Strings): Clarify rules for mpf_t
