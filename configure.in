@@ -1560,25 +1560,25 @@ case $host in
       athlon64 | k8 | x86_64)
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
-	path="x86/k8 x86"
+	path="x86/k8 x86/k7/mmx x86/k7 x86"
 	path_64="x86_64/k8 x86_64"
         ;;
       k10)
         gcc_cflags_cpu="-mtune=amdfam10 -mtune=k8"
         gcc_cflags_arch="-march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/k10 x86/k8 x86"
+	path="x86/k10 x86/k8 x86/k7/mmx x86/k7 x86"
 	path_64="x86_64/k10 x86_64/k8 x86_64"
         ;;
       bobcat)
         gcc_cflags_cpu="-mtune=btver1 -mtune=amdfam10 -mtune=k8"
         gcc_cflags_arch="-march=btver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/bobcat x86"
+	path="x86/bobcat x86/k7/mmx x86/k7 x86"
 	path_64="x86_64/bobcat x86_64/k10 x86_64/k8 x86_64"
         ;;
       bulldozer | bd1)
         gcc_cflags_cpu="-mtune=bdver1 -mtune=amdfam10 -mtune=k8"
         gcc_cflags_arch="-march=bdver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/bd1 x86"
+	path="x86/bd1 x86/k7/mmx x86/k7 x86"
 	path_64="x86_64/bd1 x86_64"
         ;;
       core2)
