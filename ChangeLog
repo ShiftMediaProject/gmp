@@ -1,3 +1,22 @@
+2011-11-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/mul_basecase.asm: Support ABI DOS64.
+	* mpn/x86_64/sqr_basecase.asm: Support ABI DOS64.
+	* mpn/x86_64/aorsmul_1.asm: Support ABI DOS64.
+	* mpn/x86_64/mul_1.asm: Support ABI DOS64.
+
+	* mpn/x86_64/x86_64-defs.m4 (DOS64_ENTRY, DOS64_EXIT): New, empty defs.
+
+	* mpn/x86_64/dos64.m4: New file.
+
+	* mpn/asm-defs.m4 (ABI_SUPPORT): New dummy macro.
+
+	* configure.in (64-bit mingw/cygwin): Define HOST_DOS64,GMP_NONSTD_ABI.
+	No longer clear out path_64.
+	(mpn code selection loop): Handle GMP_NONSTD_ABI.
+
+	* mpn/generic/udiv_w_sdiv.c: Use CNST_LIMB for some constants.
+
 2011-11-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* x86/*: Many new gmp-mparam.h file for 64-bit CPUs in 32-bit mode.
