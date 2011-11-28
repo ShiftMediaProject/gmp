@@ -2,8 +2,8 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009, 2011
+dnl  Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -168,5 +168,8 @@ ifdef(`PIC',
 
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
+
+define(`DOS64_ENTRY',`')
+define(`DOS64_EXIT',`')
 
 divert`'dnl
