@@ -192,7 +192,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MATRIX22_STRASSEN_THRESHOLD         16
 #define HGCD_THRESHOLD                     125
-#define HGCD_APPR_THRESHOLD                 50
+#define HGCD_APPR_THRESHOLD                173
 #define HGCD_REDUCE_THRESHOLD             3524
 #define GCD_DC_THRESHOLD                   555
 #define GCDEXT_DC_THRESHOLD                478
