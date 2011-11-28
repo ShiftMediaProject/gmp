@@ -26,10 +26,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_1P_METHOD                      2
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD          3
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          8
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0  /* never mpn_mod_1_1p */
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        21
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          4
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        26
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD         0  /* never mpn_mod_1s_2p */
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     10
 #define USE_PREINV_DIVREM_1                  1  /* native */
 #define DIV_QR_2_PI2_THRESHOLD              12
@@ -53,6 +53,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM4_THRESHOLD                494
 #define SQR_TOOM6_THRESHOLD                  0  /* always */
 #define SQR_TOOM8_THRESHOLD                  0  /* always */
+
+#define MULMID_TOOM42_THRESHOLD             98
 
 #define MULMOD_BNM1_THRESHOLD               23
 #define SQRMOD_BNM1_THRESHOLD               28
@@ -171,9 +173,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MATRIX22_STRASSEN_THRESHOLD         23
 #define HGCD_THRESHOLD                     117
-#define HGCD_APPR_THRESHOLD                 50
-#define HGCD_REDUCE_THRESHOLD             3389
-#define GCD_DC_THRESHOLD                   496
+#define HGCD_APPR_THRESHOLD                111
+#define HGCD_REDUCE_THRESHOLD             3014
+#define GCD_DC_THRESHOLD                   555
 #define GCDEXT_DC_THRESHOLD                368
 #define JACOBI_BASE_METHOD                   4
 

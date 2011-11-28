@@ -28,19 +28,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_1P_METHOD                      2
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD          9
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          8
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          5
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD        58
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        38
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD         0
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     19
 #define USE_PREINV_DIVREM_1                  1
 #define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always */
-#define BMOD_1_TO_MOD_1_THRESHOLD           47
+#define BMOD_1_TO_MOD_1_THRESHOLD           88
 
 #define MUL_TOOM22_THRESHOLD                10
 #define MUL_TOOM33_THRESHOLD                41
-#define MUL_TOOM44_THRESHOLD                99
+#define MUL_TOOM44_THRESHOLD               104
 #define MUL_TOOM6H_THRESHOLD               149
 #define MUL_TOOM8H_THRESHOLD               212
 
