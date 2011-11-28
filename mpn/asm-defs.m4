@@ -1713,6 +1713,22 @@ m4_assert_numargs(1)
 )
 
 
+dnl  Usage: ABI_SUPPORT(abi)
+dnl
+dnl  A dummy macro which is grepped for by ./configure to know what ABIs
+dnl  are supported in an asm file.
+dnl
+dnl  If multiple non-standard ABIs are supported, several ABI_SUPPORT
+dnl  declarations should be used:
+dnl
+dnl         ABI_SUPPORT(FOOABI)
+dnl         ABI_SUPPORT(BARABI)
+
+define(ABI_SUPPORT,
+m4_assert_numargs(1)
+)
+
+
 dnl  Usage: GMP_NUMB_MASK
 dnl
 dnl  A bit mask for the number part of a limb.  Eg. with 6 bit nails in a
