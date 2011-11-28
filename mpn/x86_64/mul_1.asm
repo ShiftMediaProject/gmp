@@ -28,38 +28,65 @@ C Intel corei	 3.8
 C Intel atom	19.8
 C VIA nano	 ?
 
-C The inner loop of this code is the result of running a code generation and
+C The loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
-C TODO:
-C  * The inner loop is great, but the prologue and epilogue code was
-C    quickly written.  Tune it!
+C TODO
+C  * The loop is great, but the prologue and epilogue code was quickly written.
+C    Tune it!
 
-C INPUT PARAMETERS
-define(`rp',	 `%rdi')
-define(`up',	 `%rsi')
-define(`n_param',`%rdx')
-define(`vl',	 `%rcx')
+define(`rp',      `%rdi')   C rcx
+define(`up',      `%rsi')   C rdx
+define(`n_param', `%rdx')   C r8
+define(`vl',      `%rcx')   C r9
 
-define(`n',	`%r11')
+define(`n',       `%r11')
+
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
+IFDOS(`	define(`up', ``%rsi'')	') dnl
+IFDOS(`	define(`rp', ``%rcx'')	') dnl
+IFDOS(`	define(`vl', ``%r9'')	') dnl
+IFDOS(`	define(`r9', ``rdi'')	') dnl
+IFDOS(`	define(`n',  ``%r8'')	') dnl
+IFDOS(`	define(`r8', ``r11'')	') dnl
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_1c)
+IFDOS(``push	%rsi		'')
+IFDOS(``push	%rdi		'')
+IFDOS(``mov	%rdx, %rsi	'')
 	push	%rbx
-	mov	%r8, %r10
+IFELF(`	mov	%r8, %r10')
+IFDOS(`	mov	64(%rsp), %r10')	C 40 + 3*8  (3 push insns)
 	jmp	L(common)
 EPILOGUE()
 
 PROLOGUE(mpn_mul_1)
+
+IFDOS(``push	%rsi		'')
+IFDOS(``push	%rdi		'')
+IFDOS(``mov	%rdx, %rsi	'')
+
 	push	%rbx
 	xor	%r10, %r10
 L(common):
 	mov	(up), %rax		C read first u limb early
-	mov	n_param, %rbx		C move away n from rdx, mul uses it
+IFELF(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
+IFDOS(`	mov	n, %rbx         ')
 	mul	vl
-	mov	%rbx, %r11
+IFELF(`	mov	%rbx, n         ')
 
 	add	%r10, %rax
 	adc	$0, %rdx
@@ -145,5 +172,7 @@ L(L2):	mul	vl
 L(ret):	mov	%rdx, %rax
 
 	pop	%rbx
+IFDOS(``pop	%rdi		'')
+IFDOS(``pop	%rsi		'')
 	ret
 EPILOGUE()

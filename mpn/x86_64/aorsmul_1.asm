@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -28,20 +28,27 @@ C Intel corei	 ?
 C Intel atom	21.3
 C VIA nano	 5.5
 
-C The inner loop of this code is the result of running a code generation and
+C The loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
-C TODO:
-C  * The inner loop is great, but the prologue and epilogue code was
-C    quickly written.  Tune it!
+C TODO
+C  * The loop is great, but the prologue and epilogue code was quickly written.
+C    Tune it!
 
-C INPUT PARAMETERS
-define(`rp',	 `%rdi')
-define(`up',	 `%rsi')
-define(`n_param',`%rdx')
-define(`vl',	 `%rcx')
+define(`rp',      `%rdi')   C rcx
+define(`up',      `%rsi')   C rdx
+define(`n_param', `%rdx')   C r8
+define(`vl',      `%rcx')   C r9
 
-define(`n',	`%r11')
+define(`n',       `%r11')
+
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
 
 ifdef(`OPERATION_addmul_1',`
       define(`ADDSUB',        `add')
@@ -52,17 +59,33 @@ ifdef(`OPERATION_submul_1',`
       define(`func',  `mpn_submul_1')
 ')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
+
+IFDOS(`	define(`up', ``%rsi'')	') dnl
+IFDOS(`	define(`rp', ``%rcx'')	') dnl
+IFDOS(`	define(`vl', ``%r9'')	') dnl
+IFDOS(`	define(`r9', ``rdi'')	') dnl
+IFDOS(`	define(`n',  ``%r8'')	') dnl
+IFDOS(`	define(`r8', ``r11'')	') dnl
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+
+IFDOS(``push	%rsi		'')
+IFDOS(``push	%rdi		'')
+IFDOS(``mov	%rdx, %rsi	'')
+
 	mov	(up), %rax		C read first u limb early
 	push	%rbx
-	mov	n_param, %rbx		C move away n from rdx, mul uses it
+IFELF(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
+IFDOS(`	mov	n, %rbx         ')
 	mul	vl
-	mov	%rbx, n
+IFELF(`	mov	%rbx, n         ')
 
 	and	$3, R32(%rbx)
 	jz	L(b0)
@@ -145,5 +168,7 @@ L(ret):	adc	$0, %rdx
 	mov	%rdx, %rax
 
 	pop	%rbx
+IFDOS(``pop	%rdi		'')
+IFDOS(``pop	%rsi		'')
 	ret
 EPILOGUE()

@@ -75,12 +75,22 @@ define(`w1',	`%rcx')
 define(`w2',	`%rbp')
 define(`w3',	`%r10')
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
-
 PROLOGUE(mpn_sqr_basecase)
+	DOS64_ENTRY(3)
 	add	$-40, %rsp
 	mov	%rbx, 32(%rsp)
 	mov	%rbp, 24(%rsp)
@@ -115,6 +125,7 @@ L(1):	mov	(up), %rax
 	mov	%rdx, 8(rp)
 	add	$32, %rsp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 L(2):	mov	(up), %rax
@@ -139,6 +150,7 @@ L(2):	mov	(up), %rax
 	mov	%r11, 24(rp)
 	add	$32, %rsp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 L(3):	mov	(up), %rax
@@ -184,6 +196,7 @@ L(3):	mov	(up), %rax
 	adc	%rbx, 40(rp)
 	add	$32, %rsp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 L(4):	mov	(up), %rax
@@ -256,6 +269,7 @@ L(4):	mov	(up), %rax
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 
@@ -780,5 +794,6 @@ L(d1):	mov	%r11, 24(rp,j,8)
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
