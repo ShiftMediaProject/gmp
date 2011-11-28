@@ -1640,10 +1640,9 @@ case $host in
 	    ;;
 	  *-*-mingw* | *-*-cygwin)
 	    limb_64=longlong
-	    path_64=""	# Windows amd64 calling conventions are *different*
-	    extra_functions_64=""
-	    # Silence many pedantic warnings for w64.  FIXME.
-	    gcc_64_cflags="$gcc_cflags -std=gnu99"
+	    extra_functions_64=""# FIXME: remove when invert_limb is ported
+	    AC_DEFINE(HOST_DOS64,1,[Define to 1 for Windos/64])
+	    AC_DEFINE(GMP_NONSTD_ABI,1,[Define to 1 if ABI is non-standard])
 	    ;;
 	esac
 	;;
@@ -3061,6 +3060,17 @@ for tmp_fn in $gmp_mpn_functions; do
             esac
           fi
 
+	  # If the host uses a non-standard ABI, check if tmp_file supports it
+	  #
+	  if test -n "$GMP_NONSTD_ABI" && test $tmp_dir != generic; then
+	    abi=[`sed -n 's/^[ 	]*ABI_SUPPORT(\(.*\))/\1/p' $tmp_file `]
+	    if echo "$abi" | grep -q "\\b${GMP_NONSTD_ABI}\\b"; then
+	      true
+	    else
+	      continue
+	    fi
+	  fi
+
           found=yes
           eval found_$tmp_ext=yes
 
@@ -3344,6 +3354,8 @@ if test "$gmp_asm_syntax_testing" != no; then
 	  case $host in
 	    *-*-darwin*)
 	      GMP_INCLUDE_MPN(x86_64/darwin.m4) ;;
+	    *-*-mingw* | *-*-cygwin)
+	      GMP_INCLUDE_MPN(x86_64/dos64.m4) ;;
 	  esac
           ;;
       esac
