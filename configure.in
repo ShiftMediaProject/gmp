@@ -1640,9 +1640,10 @@ case $host in
 	    ;;
 	  *-*-mingw* | *-*-cygwin)
 	    limb_64=longlong
-	    extra_functions_64=""# FIXME: remove when invert_limb is ported
+	    extra_functions_64="" # FIXME: remove when invert_limb is ported
+	    CALLING_CONVENTIONS_OBJS_64=""
 	    AC_DEFINE(HOST_DOS64,1,[Define to 1 for Windos/64])
-	    AC_DEFINE(GMP_NONSTD_ABI,1,[Define to 1 if ABI is non-standard])
+	    AC_SUBST(GMP_NONSTD_ABI,DOS64)
 	    ;;
 	esac
 	;;
