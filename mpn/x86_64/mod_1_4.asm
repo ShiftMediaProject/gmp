@@ -160,6 +160,7 @@ L(end):	mov	8(%r14), R32(%rsi)
 	pop	%r12
 	pop	%r13
 	pop	%r14
+	pop	%r15
 	DOS64_EXIT()
 	ret
 EPILOGUE()
