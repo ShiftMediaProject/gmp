@@ -50,10 +50,14 @@ define(`w2', `%rbp')
 define(`w3', `%r10')
 define(`n',  `%r11')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(mpn_addmul_2)
+	DOS64_ENTRY(4)
 	mov	n_param, n
 	push	%rbx
 	push	%rbp
@@ -164,6 +168,7 @@ L(end):	xor	R32(w1), R32(w1)
 
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 

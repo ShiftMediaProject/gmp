@@ -1,6 +1,6 @@
 dnl  AMD64 logops.
 
-dnl  Copyright 2004, 2005, 2006 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2006, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -72,6 +72,8 @@ define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n',`%rcx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 
@@ -79,6 +81,7 @@ ifdef(`VARIANT_1',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	movq	(vp), %r8
 	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
@@ -117,7 +120,8 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	ret
+L(ret):	DOS64_EXIT()
+	ret
 EPILOGUE()
 ')
 
@@ -125,6 +129,7 @@ ifdef(`VARIANT_2',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	movq	(vp), %r8
 	notq	%r8
 	movl	R32(%rcx), R32(%rax)
@@ -168,7 +173,8 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	ret
+L(ret):	DOS64_EXIT()
+	ret
 EPILOGUE()
 ')
 
@@ -176,6 +182,7 @@ ifdef(`VARIANT_3',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	movq	(vp), %r8
 	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
@@ -220,6 +227,7 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	ret
+L(ret):	DOS64_EXIT()
+	ret
 EPILOGUE()
 ')

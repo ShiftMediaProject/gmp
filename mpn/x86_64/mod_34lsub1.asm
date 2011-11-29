@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mod_34lsub1 -- remainder modulo 2^48-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2009, 2010 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2009, 2010, 2011 Free
+dnl  Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -39,10 +39,14 @@ C mp_limb_t mpn_mod_34lsub1 (mp_srcptr up, mp_size_t n)
 C TODO
 C  * Review feed-in and wind-down code.
 
+C ABI_SUPPORT(DOS64)
+C ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)
+	DOS64_ENTRY(2)
 
 	mov	$0x0000FFFFFFFFFFFF, %r11
 
@@ -66,7 +70,8 @@ PROLOGUE(mpn_mod_34lsub1)
 
 	shl	$16, %rdx		C src[1] low
 	add	%rdx, %rax
-L(one):	ret
+L(one):	DOS64_EXIT()
+	ret
 
 
 C Don't change this, the wind-down code is not able to handle greater values
@@ -176,5 +181,6 @@ L(0):	add	%r9, %rax
 	add	%rdx, %rax		C apply 2mod3 high
 	add	%rdi, %rax		C apply 2mod3 low
 
+	DOS64_EXIT()
 	ret
 EPILOGUE()

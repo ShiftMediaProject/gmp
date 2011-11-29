@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_rshift optimized for "Core 2".
 
-dnl  Copyright 2007, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2009, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -35,12 +35,16 @@ C INPUT PARAMETERS
 define(`rp',	`%rdi')
 define(`up',	`%rsi')
 define(`n',	`%rdx')
-define(`cnt',	`%cl')
+define(`cnt',	`%rcx')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_rshift)
+	DOS64_ENTRY(4)
 	mov	R32(%rdx), R32(%rax)
 	and	$3, R32(%rax)
 	jne	L(nb00)
@@ -48,7 +52,7 @@ L(b00):	C n = 4, 8, 12, ...
 	mov	(up), %r10
 	mov	8(up), %r11
 	xor	R32(%rax), R32(%rax)
-	shrd	R8(%rcx), %r10, %rax
+	shrd	R8(cnt), %r10, %rax
 	mov	16(up), %r8
 	lea	8(up), up
 	lea	-24(rp), rp
@@ -60,7 +64,7 @@ L(nb00):C n = 1, 5, 9, ...
 	jae	L(nb01)
 L(b01):	mov	(up), %r9
 	xor	R32(%rax), R32(%rax)
-	shrd	R8(%rcx), %r9, %rax
+	shrd	R8(cnt), %r9, %rax
 	sub	$2, n
 	jb	L(le1)
 	mov	8(up), %r10
@@ -68,8 +72,9 @@ L(b01):	mov	(up), %r9
 	lea	16(up), up
 	lea	-16(rp), rp
 	jmp	L(01)
-L(le1):	shr	R8(%rcx), %r9
+L(le1):	shr	R8(cnt), %r9
 	mov	%r9, (rp)
+	DOS64_EXIT()
 	ret
 
 L(nb01):C n = 2, 6, 10, ...
@@ -77,17 +82,18 @@ L(nb01):C n = 2, 6, 10, ...
 L(b10):	mov	(up), %r8
 	mov	8(up), %r9
 	xor	R32(%rax), R32(%rax)
-	shrd	R8(%rcx), %r8, %rax
+	shrd	R8(cnt), %r8, %rax
 	sub	$3, n
 	jb	L(le2)
 	mov	16(up), %r10
 	lea	24(up), up
 	lea	-8(rp), rp
 	jmp	L(10)
-L(le2):	shrd	R8(%rcx), %r9, %r8
+L(le2):	shrd	R8(cnt), %r9, %r8
 	mov	%r8, (rp)
-	shr	R8(%rcx), %r9
+	shr	R8(cnt), %r9
 	mov	%r9, 8(rp)
+	DOS64_EXIT()
 	ret
 
 	ALIGN(16)
@@ -95,23 +101,23 @@ L(b11):	C n = 3, 7, 11, ...
 	mov	(up), %r11
 	mov	8(up), %r8
 	xor	R32(%rax), R32(%rax)
-	shrd	R8(%rcx), %r11, %rax
+	shrd	R8(cnt), %r11, %rax
 	mov	16(up), %r9
 	lea	32(up), up
 	sub	$4, n
 	jb	L(end)
 
 	ALIGN(16)
-L(top):	shrd	R8(%rcx), %r8, %r11
+L(top):	shrd	R8(cnt), %r8, %r11
 	mov	-8(up), %r10
 	mov	%r11, (rp)
-L(10):	shrd	R8(%rcx), %r9, %r8
+L(10):	shrd	R8(cnt), %r9, %r8
 	mov	(up), %r11
 	mov	%r8, 8(rp)
-L(01):	shrd	R8(%rcx), %r10, %r9
+L(01):	shrd	R8(cnt), %r10, %r9
 	mov	8(up), %r8
 	mov	%r9, 16(rp)
-L(00):	shrd	R8(%rcx), %r11, %r10
+L(00):	shrd	R8(cnt), %r11, %r10
 	mov	16(up), %r9
 	mov	%r10, 24(rp)
 	add	$32, up
@@ -119,11 +125,12 @@ L(00):	shrd	R8(%rcx), %r11, %r10
 	sub	$4, n
 	jnc	L(top)
 
-L(end):	shrd	R8(%rcx), %r8, %r11
+L(end):	shrd	R8(cnt), %r8, %r11
 	mov	%r11, (rp)
-	shrd	R8(%rcx), %r9, %r8
+	shrd	R8(cnt), %r9, %r8
 	mov	%r8, 8(rp)
-	shr	R8(%rcx), %r9
+	shr	R8(cnt), %r9
 	mov	%r9, 16(rp)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

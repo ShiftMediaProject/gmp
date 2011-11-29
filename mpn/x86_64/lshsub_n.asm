@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_lshsub_n.  R = 2^k(U - V).
 
-dnl  Copyright 2006 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -44,10 +44,23 @@ define(`vp',	`%rdx')
 define(`n',	`%rcx')
 define(`cnt',	`%r8')
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_lshsub_n)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 
 	push	%r12
 	push	%r13
@@ -151,5 +164,6 @@ L(end):
 	pop	%r13
 	pop	%r12
 
+	DOS64_EXIT()
 	ret
 EPILOGUE()

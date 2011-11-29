@@ -2,7 +2,7 @@ dnl  AMD64 mpn_mod_1s_2p
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -31,10 +31,14 @@ C Intel SBR	 4.5
 C Intel atom	28
 C VIA nano	 8
 
+C ABI_SUPPORT(DOS64)
+C ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_2p)
+	DOS64_ENTRY(4)
 	push	%r14
 	test	$1, R8(%rsi)
 	mov	%rdx, %r14
@@ -145,6 +149,7 @@ L(1):	xor	R32(%rcx), R32(%rcx)
 	pop	%r12
 	pop	%r13
 	pop	%r14
+	DOS64_EXIT()
 	ret
 L(one):
 	mov	(%rdi), %r8
@@ -154,6 +159,7 @@ L(one):
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1s_2p_cps)
+	DOS64_ENTRY(2)
 	push	%rbp
 	bsr	%rsi, %rcx
 	push	%rbx
@@ -214,5 +220,6 @@ ifdef(`SHLD_SLOW',`
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 EPILOGUE()

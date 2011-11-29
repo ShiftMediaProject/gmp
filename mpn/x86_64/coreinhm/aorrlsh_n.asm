@@ -62,10 +62,23 @@ C mpn_rsblsh_nc removed below, its idea of carry-in is inconsistent with
 C refmpn_rsblsh_nc
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_addlsh_nc mpn_rsblsh_n)
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(func_n)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
 	push	%rbx
 	xor	R32(%rbx), R32(%rbx)	C clear CF save register
 L(ent):	push	%rbp
@@ -170,9 +183,13 @@ L(wd1):	shrd	%cl, %r8, %r11
 IFRSB(	neg	%rax)
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
+IFDOS(`	mov	64(%rsp), %r9	')	C cy
 	push	%rbx
 	neg	cy
 	sbb	R32(%rbx), R32(%rbx)	C initialise CF save register

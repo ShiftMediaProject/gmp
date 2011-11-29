@@ -3,7 +3,7 @@ dnl  Core iN.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -40,6 +40,7 @@ ASM_START()
 	TEXT
 	ALIGN(8)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	push	%rbx
 	push	%r12
 
@@ -141,5 +142,6 @@ L(end):	shr	$RSH, %r11
 	pop	%rbx
 	sub	R32(%r11), R32(%rax)
 	neg	R32(%rax)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

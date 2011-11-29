@@ -50,11 +50,23 @@ define(`vp',  `%r15')
 
 define(`vp_inner', `%r10')
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mulmid_basecase)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%rbx
 	push	%rbp
 	push	%r12
@@ -539,6 +551,6 @@ L(ret):	pop	%r15
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
-
 EPILOGUE()

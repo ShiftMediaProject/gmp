@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_add_n, mpn_sub_n
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -30,15 +30,15 @@ C Intel SBR	 1.59
 C Intel atom	 4
 C VIA nano	 3.25
 
-C The inner loop of this code is the result of running a code generation and
+C The loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`vp',	`%rdx')
-define(`n',	`%rcx')
-define(`cy',	`%r8')		C (only for mpn_add_nc)
+define(`rp',	`%rdi')	C rcx
+define(`up',	`%rsi')	C rdx
+define(`vp',	`%rdx')	C r8
+define(`n',	`%rcx')	C r9
+define(`cy',	`%r8')	C rsp+40    (only for mpn_add_nc)
 
 ifdef(`OPERATION_add_n', `
 	define(ADCSBB,	      adc)
@@ -51,10 +51,23 @@ ifdef(`OPERATION_sub_n', `
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	mov	R32(n), R32(%rax)
 	shr	$2, n
 	and	$3, R32(%rax)
@@ -69,6 +82,7 @@ PROLOGUE(func_nc)
 EPILOGUE()
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	mov	R32(n), R32(%rax)
 	shr	$2, n
 	and	$3, R32(%rax)
@@ -85,6 +99,7 @@ L(lt4):	dec	R32(%rax)
 	ADCSBB	(vp), %r8
 	mov	%r8, (rp)
 	adc	R32(%rax), R32(%rax)
+	DOS64_EXIT()
 	ret
 
 L(2):	dec	R32(%rax)
@@ -95,6 +110,7 @@ L(2):	dec	R32(%rax)
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
 	adc	R32(%rax), R32(%rax)
+	DOS64_EXIT()
 	ret
 
 L(3):	mov	16(up), %r10
@@ -105,6 +121,7 @@ L(3):	mov	16(up), %r10
 	mov	%r9, 8(rp)
 	mov	%r10, 16(rp)
 	setc	R8(%rax)
+	DOS64_EXIT()
 	ret
 
 	ALIGN(16)
@@ -142,5 +159,6 @@ L(end):	lea	32(up), up
 	dec	R32(%rax)
 	jnz	L(lt4)
 	adc	R32(%rax), R32(%rax)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

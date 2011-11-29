@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_popcount, mpn_hamdist -- population count and hamming distance.
 
-dnl  Copyright 2004, 2005, 2007, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2007, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -44,6 +44,7 @@ ifdef(`OPERATION_popcount',`
   define(`h33333333',	`%r11')
   define(`h0f0f0f0f',	`%rcx')
   define(`h01010101',	`%rdx')
+  define(`POP',		`$1')
   define(`HAM',		`dnl')
 ')
 ifdef(`OPERATION_hamdist',`
@@ -55,17 +56,22 @@ ifdef(`OPERATION_hamdist',`
   define(`h33333333',	`%r11')
   define(`h0f0f0f0f',	`%rcx')
   define(`h01010101',	`%r14')
+  define(`POP',		`dnl')
   define(`HAM',		`$1')
 ')
 
 
 MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
-
+ POP(`	DOS64_ENTRY(2)		')
+ HAM(`	DOS64_ENTRY(3)		')
 	push	%r12
 	push	%r13
  HAM(`	push	%r14		')
@@ -155,6 +161,6 @@ L(end):
  HAM(`	pop	%r14		')
 	pop	%r13
 	pop	%r12
+	DOS64_EXIT()
 	ret
-
 EPILOGUE()

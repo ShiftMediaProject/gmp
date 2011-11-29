@@ -1,8 +1,8 @@
 dnl  AMD64 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- schoolbook Hensel division by
 dnl  1-limb divisor, returning quotient only.
 
-dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2009 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2009, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -41,10 +41,22 @@ C di		r8	just mpn_pi1_bdiv_q_1
 C shift		r9	just mpn_pi1_bdiv_q_1
 
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_bdiv_q_1)
+	DOS64_ENTRY(4)
 	push	%rbx
 
 	mov	%rcx, %rax
@@ -91,6 +103,9 @@ L(evn):	bsf	%rax, %rcx
 EPILOGUE()
 
 PROLOGUE(mpn_pi1_bdiv_q_1)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
+IFDOS(`	mov	64(%rsp), %r9	')
 	push	%rbx
 
 	mov	%rcx, %r11		C d
@@ -144,11 +159,13 @@ L(ent):	imul	%r8, %rax
 	imul	%r8, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 L(one):	shr	R8(%rcx), %rax
 	imul	%r8, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

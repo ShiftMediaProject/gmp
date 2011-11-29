@@ -75,14 +75,6 @@ define(`w1',	`%rcx')
 define(`w2',	`%rbp')
 define(`w3',	`%r10')
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(ELF64)
 

@@ -41,10 +41,23 @@ define(`cy',	  `%r8')
 
 define(`n',       `%r9')
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_bdiv_dbm1c)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	mov	(up), %rax
 	mov	n_param, n
 	mov	R32(n_param), R32(%r11)
@@ -84,6 +97,7 @@ L(lo1):	sub	%rax, %r8
 	add	$4, n
 	jnz	L(top)
 
-L(end):	mov	%r8, %rax
+	mov	%r8, %rax
+	DOS64_EXIT()
 	ret
 EPILOGUE()

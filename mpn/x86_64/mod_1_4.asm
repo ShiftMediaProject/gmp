@@ -2,7 +2,7 @@ dnl  AMD64 mpn_mod_1s_4p
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -30,17 +30,22 @@ C Intel corei	 4
 C Intel atom	23
 C VIA nano	 4.75
 
+C ABI_SUPPORT(DOS64)
+C ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p)
+	DOS64_ENTRY(4)
+	push	%r15
 	push	%r14
 	push	%r13
 	push	%r12
 	push	%rbp
 	push	%rbx
 
-	mov	%rdx, -16(%rsp)
+	mov	%rdx, %r15
 	mov	%rcx, %r14
 	mov	16(%rcx), %r11		C B1modb
 	mov	24(%rcx), %rbx		C B2modb
@@ -135,7 +140,7 @@ L(end):	mov	8(%r14), R32(%rsi)
 	or	%rdx, %rdi
 	mov	%rdi, %rax
 	mulq	(%r14)
-	mov	-16(%rsp), %rbx
+	mov	%r15, %rbx
 	mov	%rax, %r9
 	sal	R8(%rcx), %r8
 	inc	%rdi
@@ -155,11 +160,13 @@ L(end):	mov	8(%r14), R32(%rsi)
 	pop	%r12
 	pop	%r13
 	pop	%r14
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p_cps)
+	DOS64_ENTRY(2)
 	push	%rbp
 	bsr	%rsi, %rcx
 	push	%rbx
@@ -244,5 +251,6 @@ ifdef(`SHLD_SLOW',`
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 EPILOGUE()

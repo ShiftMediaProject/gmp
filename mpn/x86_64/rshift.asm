@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_rshift -- mpn right shift.
 
-dnl  Copyright 2003, 2005, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -36,10 +36,14 @@ define(`up',	`%rsi')
 define(`n',	`%rdx')
 define(`cnt',	`%rcx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
+	DOS64_ENTRY(4)
 	neg	R32(%rcx)		C put rsh count in cl
 	mov	(up), %rax
 	shl	R8(%rcx), %rax		C function return value
@@ -156,5 +160,6 @@ L(end):
 L(ast):	mov	(up), %r10
 	shr	R8(%rcx), %r10
 	mov	%r10, (rp)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

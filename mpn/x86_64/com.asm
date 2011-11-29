@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_com.
 
-dnl  Copyright 2004, 2005, 2006 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2006, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -34,11 +34,14 @@ define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`n',`%rdx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_com)
+	DOS64_ENTRY(3)
 	movq	(up), %r8
 	movl	R32(%rdx), R32(%rax)
 	leaq	(up,n,8), up
@@ -76,5 +79,6 @@ L(e10):	movq	24(up,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	ret
+L(ret):	DOS64_EXIT()
+	ret
 EPILOGUE()

@@ -1,7 +1,8 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 
-dnl  Copyright 2003, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -54,10 +55,14 @@ ifdef(`OPERATION_rsblsh1_n', `
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_rsblsh1_n)
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	push	%rbp
 
 	mov	(vp), %r8
@@ -147,5 +152,6 @@ ifdef(`OPERATION_rsblsh1_n',`
 	movslq	R32(%rbp), %rax')
 
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 EPILOGUE()

@@ -3,7 +3,7 @@ dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -35,5 +35,8 @@ ifdef(`OPERATION_rsblsh1_n', `
 	define(func,	mpn_rsblsh1_n)')
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_rsblsh1_n)
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 include_mpn(`x86_64/aorrlshC_n.asm')

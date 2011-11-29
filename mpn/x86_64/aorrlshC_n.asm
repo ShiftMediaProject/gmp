@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_addlshC_n -- rp[] = up[] + (vp[] << C)
 dnl  AMD64 mpn_rsblshC_n -- rp[] = (vp[] << C) - up[]
 
-dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -37,10 +37,14 @@ define(`n',	`%rcx')
 
 define(M, eval(m4_lshift(1,LSH)))
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	push	%r12
 	push	%r13
 	push	%r14
@@ -140,5 +144,6 @@ ifelse(ADDSUB,add,`
 	pop	%r14
 	pop	%r13
 	pop	%r12
+	DOS64_EXIT()
 	ret
 EPILOGUE()

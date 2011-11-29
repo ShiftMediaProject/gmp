@@ -49,10 +49,14 @@ define(`n',	  `%r13')
 define(`i',	  `%r11')
 define(`nneg',	  `%r12')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_redc_1)
+	DOS64_ENTRY(4)
 	push	%rbp
 	push	%rbx
 	push	%r12
@@ -293,5 +297,6 @@ L(ret):	pop	%r14
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 EPILOGUE()

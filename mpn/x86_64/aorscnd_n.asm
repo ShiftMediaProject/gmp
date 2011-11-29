@@ -59,10 +59,23 @@ ifdef(`OPERATION_subcnd_n', `
 
 MULFUNC_PROLOGUE(mpn_addcnd_n mpn_subcnd_n)
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbx
 	push	%rbp
 	push	%r12
@@ -160,5 +173,6 @@ L(end):	neg	R32(%rax)
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

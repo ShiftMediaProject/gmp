@@ -1,3 +1,7 @@
+2011-11-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64: Add DOS64 ABI support to most files.
+
 2011-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mul_basecase.asm: Support ABI DOS64.

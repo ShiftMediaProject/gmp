@@ -2,7 +2,7 @@ dnl  AMD64 mpn_invert_limb -- Invert a normalized limb.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund and Niels Möller.
 
-dnl  Copyright 2004, 2007, 2008, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -33,11 +33,14 @@ C VIA nano	 79			157
 
 C rax rcx rdx rdi rsi r8
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)		C			Kn	C2	Ci
+	DOS64_ENTRY(1)
 	mov	%rdi, %rax		C			 0	 0	 0
 	shr	$55, %rax		C			 1	 1	 1
 ifdef(`PIC',`
@@ -94,6 +97,7 @@ ifdef(`DARWIN',`
 	adc	%rdi, %rdx
 	sub	%rdx, %rax
 
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 ASM_END()

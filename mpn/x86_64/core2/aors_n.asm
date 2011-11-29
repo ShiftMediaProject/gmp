@@ -1,6 +1,6 @@
 dnl  Intel P6-15 mpn_add_n/mpn_sub_n -- mpn add or subtract.
 
-dnl  Copyright 2006, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2007, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -48,16 +48,28 @@ ifdef(`OPERATION_sub_n', `
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 
-ASM_START()
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
+ASM_START()
 	TEXT
 	ALIGN(16)
-
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	jmp	L(start)
 EPILOGUE()
 
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	xor	%r8, %r8
 L(start):
 	mov	(up), %r10
@@ -96,6 +108,7 @@ L(end):	ADCSBB	%r11, %r10
 	mov	%r10, 8(rp)
 	mov	R32(%rcx), R32(%rax)	C clear eax, ecx contains 0
 	adc	R32(%rax), R32(%rax)
+	DOS64_EXIT()
 	ret
 
 	ALIGN(16)

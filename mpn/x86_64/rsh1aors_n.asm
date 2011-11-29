@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_rsh1add_n -- rp[] = (up[] + vp[]) >> 1
 dnl  AMD64 mpn_rsh1sub_n -- rp[] = (up[] - vp[]) >> 1
 
-dnl  Copyright 2003, 2005, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -53,11 +53,24 @@ ifdef(`OPERATION_rsh1sub_n', `
 
 MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1add_nc mpn_rsh1sub_n mpn_rsh1sub_nc)
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 
 	ALIGN(16)
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbx
 
 	xor	R32(%rax), R32(%rax)
@@ -69,6 +82,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(func_n)
+	DOS64_ENTRY(4)
 	push	%rbx
 
 	xor	R32(%rax), R32(%rax)
@@ -169,5 +183,6 @@ L(top):	add	%rbx, %rbx		C rotate carry limb, restore acy
 
 L(end):	mov	%rbx, (rp)
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

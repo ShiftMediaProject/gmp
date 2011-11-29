@@ -56,10 +56,23 @@ ifdef(`OPERATION_rsblsh_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%r12
 	push	%r13
 	push	%r14
@@ -155,5 +168,6 @@ L(end):	add	R32(%rbx), R32(%rbx)
 	pop	%r14
 	pop	%r13
 	pop	%r12
+	DOS64_EXIT()
 	ret
 EPILOGUE()

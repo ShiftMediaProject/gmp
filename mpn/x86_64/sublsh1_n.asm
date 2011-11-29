@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1)
 
-dnl  Copyright 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2007, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -41,10 +41,14 @@ define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n', `%rcx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_sublsh1_n)
+	DOS64_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
@@ -140,5 +144,6 @@ L(end):	add	R32(%rbp), R32(%rax)
 
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

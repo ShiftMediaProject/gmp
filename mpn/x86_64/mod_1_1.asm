@@ -67,10 +67,14 @@ C the source of the cmov in the loop.
 C
 C We have the invariant that r_2 B^2 + r_1 B + r_0 < B^2 + B b
 
+C ABI_SUPPORT(DOS64)
+C ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1_1p)
+	DOS64_ENTRY(4)
 	push	%rbp
 	push	%rbx
 	mov	%rdx, b
@@ -163,6 +167,7 @@ L(ok):	shr	R8(%rcx), %rax
 
 	pop	%rbx
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 L(fix):	sub	b, %rax
 	jmp	L(ok)
@@ -170,6 +175,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1_1p_cps)
+	DOS64_ENTRY(2)
 	push	%rbp
 	bsr	%rsi, %rcx
 	push	%rbx
@@ -211,6 +217,7 @@ L(z):
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 ASM_END()

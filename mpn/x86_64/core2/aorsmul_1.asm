@@ -1,6 +1,7 @@
 dnl  x86-64 mpn_addmul_1 and mpn_submul_1, optimized for "Core 2".
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -45,10 +46,14 @@ ifdef(`OPERATION_submul_1',`
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	push	%rbx
 	push	%rbp
 	lea	(%rdx), %rbx
@@ -127,5 +132,6 @@ L(n1):	mov	8(rp), %r10
 	adc	%rdx, %rax
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

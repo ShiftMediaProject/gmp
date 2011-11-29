@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_copyd -- copy limb vector, decrementing.
 
-dnl  Copyright 2003, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2007, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -39,10 +39,14 @@ define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`n',`%rdx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_copyd)
+	DOS64_ENTRY(3)
 	leaq	-8(up,n,8), up
 	leaq	(rp,n,8), rp
 	subq	$4, n
@@ -73,5 +77,6 @@ L(end):	shrl	R32(%rdx)		C edx = lowpart(n)
 	movq	-8(up), %r9
 	movq	%r8, -8(rp)
 	movq	%r9, -16(rp)
-1:	ret
+1:	DOS64_EXIT()
+	ret
 EPILOGUE()

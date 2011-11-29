@@ -50,10 +50,23 @@ define(`maskn',  `%r12')
 C rax rbx  rcx  rdx rdi rsi rbp (rsp)  r8   r9 r10 r11 r12 r13 r14 r15
 C         nents  n  rp  tab           which
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_tabselect)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%rbx
 	push	%rbp
 	push	%r12
@@ -105,5 +118,6 @@ L(outer_end):
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
