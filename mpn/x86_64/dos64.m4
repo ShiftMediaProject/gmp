@@ -53,4 +53,7 @@ dnl
 
 define(`PIC')
 
+define(`IFDOS',   `$1')
+define(`IFSTD',   `')
+
 divert`'dnl

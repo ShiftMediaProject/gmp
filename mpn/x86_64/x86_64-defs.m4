@@ -172,4 +172,7 @@ define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
 define(`DOS64_ENTRY',`')
 define(`DOS64_EXIT',`')
 
+define(`IFDOS',   `')
+define(`IFSTD',   `$1')
+
 divert`'dnl
