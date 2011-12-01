@@ -64,7 +64,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DECL_copyi(name) \
   DECL_copyd (name)
 #define DECL_divexact_1(name) \
-  __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
+  __GMP_DECLSPEC void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
 #define DECL_divexact_by3c(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
 #define DECL_divrem_1(name) \
