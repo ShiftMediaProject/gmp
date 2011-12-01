@@ -39,8 +39,8 @@ C mp_limb_t mpn_mod_34lsub1 (mp_srcptr up, mp_size_t n)
 C TODO
 C  * Review feed-in and wind-down code.
 
-C ABI_SUPPORT(DOS64)
-C ABI_SUPPORT(ELF64)
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
