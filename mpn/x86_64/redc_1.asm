@@ -50,7 +50,7 @@ define(`i',	  `%r11')
 define(`nneg',	  `%r12')
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT

@@ -73,7 +73,7 @@ define(`vp',`%rdx')
 define(`n',`%rcx')
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 

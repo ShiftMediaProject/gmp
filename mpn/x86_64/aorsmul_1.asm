@@ -42,14 +42,6 @@ define(`vl',      `%rcx')   C r9
 
 define(`n',       `%r11')
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ifdef(`OPERATION_addmul_1',`
       define(`ADDSUB',        `add')
       define(`func',  `mpn_addmul_1')
@@ -60,7 +52,7 @@ ifdef(`OPERATION_submul_1',`
 ')
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
@@ -82,10 +74,10 @@ IFDOS(``mov	%rdx, %rsi	'')
 
 	mov	(up), %rax		C read first u limb early
 	push	%rbx
-IFELF(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
+IFSTD(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
 IFDOS(`	mov	n, %rbx         ')
 	mul	vl
-IFELF(`	mov	%rbx, n         ')
+IFSTD(`	mov	%rbx, n         ')
 
 	and	$3, R32(%rbx)
 	jz	L(b0)

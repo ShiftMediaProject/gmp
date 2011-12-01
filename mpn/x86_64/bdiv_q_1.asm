@@ -41,16 +41,8 @@ C di		r8	just mpn_pi1_bdiv_q_1
 C shift		r9	just mpn_pi1_bdiv_q_1
 
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT

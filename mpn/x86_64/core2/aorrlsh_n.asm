@@ -22,6 +22,6 @@ include(`../config.m4')
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_addlsh_nc mpn_rsblsh_n)
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 include_mpn(`x86_64/coreinhm/aorrlsh_n.asm')

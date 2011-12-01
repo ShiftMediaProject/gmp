@@ -33,18 +33,10 @@ C VIA nano	 79			157
 
 C rax rcx rdx rdi rsi r8
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
-IFELF(`	.protected mpn_invert_limb_table ')
+IFSTD(`	.protected mpn_invert_limb_table ')
 
 ASM_START()
 	TEXT

@@ -63,16 +63,8 @@ C divq for size==1 was measured at about 79 cycles, compared to the inverse
 C at about 25 cycles (both including function call overheads), so that's not
 C used.
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT

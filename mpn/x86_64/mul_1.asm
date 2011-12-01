@@ -42,16 +42,8 @@ define(`vl',      `%rcx')   C r9
 
 define(`n',       `%r11')
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 IFDOS(`	define(`up', ``%rsi'')	') dnl
 IFDOS(`	define(`rp', ``%rcx'')	') dnl
@@ -68,7 +60,7 @@ IFDOS(``push	%rsi		'')
 IFDOS(``push	%rdi		'')
 IFDOS(``mov	%rdx, %rsi	'')
 	push	%rbx
-IFELF(`	mov	%r8, %r10')
+IFSTD(`	mov	%r8, %r10')
 IFDOS(`	mov	64(%rsp), %r10')	C 40 + 3*8  (3 push insns)
 	jmp	L(common)
 EPILOGUE()
@@ -83,10 +75,10 @@ IFDOS(``mov	%rdx, %rsi	'')
 	xor	%r10, %r10
 L(common):
 	mov	(up), %rax		C read first u limb early
-IFELF(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
+IFSTD(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
 IFDOS(`	mov	n, %rbx         ')
 	mul	vl
-IFELF(`	mov	%rbx, n         ')
+IFSTD(`	mov	%rbx, n         ')
 
 	add	%r10, %rax
 	adc	$0, %rdx

@@ -56,16 +56,8 @@ ifdef(`OPERATION_rsblsh_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
-ifdef(`HOST_DOS64',`
-  define(`IFDOS',   `$1')
-  define(`IFELF',   `')
-',`
-  define(`IFDOS',   `')
-  define(`IFELF',   `$1')
-')
-
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT

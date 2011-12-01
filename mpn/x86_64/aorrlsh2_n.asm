@@ -37,6 +37,6 @@ ifdef(`OPERATION_rsblsh2_n',`
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 include_mpn(`x86_64/aorrlshC_n.asm')

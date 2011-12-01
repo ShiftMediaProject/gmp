@@ -31,6 +31,6 @@ define(func,	mpn_sublsh2_n)
 MULFUNC_PROLOGUE(mpn_sublsh2_n)
 
 ABI_SUPPORT(DOS64)
-ABI_SUPPORT(ELF64)
+ABI_SUPPORT(STD64)
 
 include_mpn(`x86_64/core2/sublshC_n.asm')
