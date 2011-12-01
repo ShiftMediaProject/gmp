@@ -1,3 +1,30 @@
+2011-12-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64: Add DOS64 ABI support to more files.
+
+	* mpn/x86_64/mod_1_1.asm: Finish DOS64 support.
+	* mpn/x86_64/mod_1_2.asm: Likewise.
+	* mpn/x86_64/mod_1_4.asm: Likewise.
+
+	* configure.in: Add GMP_NONSTD_ABI also for fat builds.
+
+	* mpn/x86_64/fat/fat_entry.asm: Rewrite to support DOS64.
+
+	* mpn/x86_64/dos64.m4 (IFDOS, IFSTD): New defines.
+	* mpn/x86_64/x86_64-defs (IFDOS, IFSTD): New defines.
+
+	* mpn/x86_64/dive_1.asm: Add DOS64 ABI support.
+	* mpn/x86_64/mode1o.asm: Likewise.
+
+	* mpn/x86_64/mod_34lsub1.asm: Enable for DOS64.
+
+	* mpn/x86_64/invert_limb.asm: Wrap .protected decl.
+
+	* gmp-impl.h (DECL_divexact_1): Fix typo in return typo.
+
+	* mpn/x86_64/dos64.m4 (LEA): New define.
+	(PIC): Define.
+
 2011-11-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64: Add DOS64 ABI support to most files.
