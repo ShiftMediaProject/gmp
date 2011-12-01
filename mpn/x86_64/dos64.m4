@@ -18,7 +18,18 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 define(`HOST_DOS64')
 
-define(`JUMPTABSECT', `.section .rdata,"dr"')
+define(`LEA',`
+	lea	$1(%rip), $2
+')
+
+define(`JUMPTABSECT', `RODATA')
+
+
+dnl  Usage: DOS64_ENTRY(nregparmas)
+dnl  Usage: DOS64_EXIT()
+
+dnl  DOS64_ENTRY and DOS64_EXIT provide an easy path for adoption of standard
+dnl  ABI assembly to the DOS64 ABI.
 
 define(`DOS64_ENTRY',
 	`push	%rdi
@@ -35,5 +46,11 @@ ifelse(eval($1>=4),1,`dnl
 define(`DOS64_EXIT',
 	`pop	%rsi
 	pop	%rdi')
+
+
+dnl  On DOS64 we always generate position-independent-code
+dnl
+
+define(`PIC')
 
 divert`'dnl
