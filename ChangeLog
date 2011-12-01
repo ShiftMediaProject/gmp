@@ -1,5 +1,8 @@
 2011-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64 (STD64, IFSTD): New names for ELF64, IFELF (since these
+	denote all standard calling conventions).
+
 	* mpn/x86_64: Add DOS64 ABI support to more files.
 
 	* mpn/x86_64/mod_1_1.asm: Finish DOS64 support.
