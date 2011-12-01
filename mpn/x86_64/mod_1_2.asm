@@ -31,8 +31,8 @@ C Intel SBR	 4.5
 C Intel atom	28
 C VIA nano	 8
 
-C ABI_SUPPORT(DOS64)
-C ABI_SUPPORT(ELF64)
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
@@ -158,6 +158,7 @@ L(one):
 	jmp	L(1)
 EPILOGUE()
 
+	ALIGN(16)
 PROLOGUE(mpn_mod_1s_2p_cps)
 	DOS64_ENTRY(2)
 	push	%rbp
@@ -169,7 +170,8 @@ PROLOGUE(mpn_mod_1s_2p_cps)
 	mov	%rsi, %r12
 	mov	R32(%rcx), R32(%rbp)	C preserve cnt over call
 	sal	R8(%rcx), %r12		C b << cnt
-	mov	%r12, %rdi		C pass parameter
+IFSTD(`	mov	%r12, %rdi	')	C pass parameter
+IFDOS(`	mov	%r12, %rcx	')	C pass parameter
 	CALL(	mpn_invert_limb)
 	mov	%r12, %r8
 	mov	%rax, %r11

@@ -67,8 +67,8 @@ C the source of the cmov in the loop.
 C
 C We have the invariant that r_2 B^2 + r_1 B + r_0 < B^2 + B b
 
-C ABI_SUPPORT(DOS64)
-C ABI_SUPPORT(ELF64)
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
@@ -185,7 +185,8 @@ PROLOGUE(mpn_mod_1_1p_cps)
 	mov	%rsi, %r12
 	mov	R32(%rcx), R32(%rbp)
 	sal	R8(%rcx), %r12
-	mov	%r12, %rdi
+IFSTD(`	mov	%r12, %rdi	')	C pass parameter
+IFDOS(`	mov	%r12, %rcx	')	C pass parameter
 	CALL(	mpn_invert_limb)
 	neg	%r12
 	mov	%r12, %r8
