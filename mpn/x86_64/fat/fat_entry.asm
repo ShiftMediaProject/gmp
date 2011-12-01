@@ -43,9 +43,10 @@ ifdef(`DARWIN',
 ifdef(`PIC',
 `define(`PIC_OR_DARWIN')')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
 
 	TEXT
-
 
 dnl  Usage: FAT_ENTRY(name, offset)
 dnl
@@ -58,9 +59,13 @@ dnl
 dnl  For non-PIC, the jumps are 5 bytes each, aligning them to 8 should be
 dnl  fine for all x86s.
 dnl
-dnl  For PIC, the jumps are 20 bytes each, and are best aligned to 16 to
-dnl  ensure at least the first two instructions don't cross a cache line
+dnl  For ELF/DARWIN PIC, the jumps are 20 bytes each, and are best aligned to
+dnl  16 to ensure at least the first two instructions don't cross a cache line
 dnl  boundary.
+dnl
+dnl  For DOS64, the jumps are 6 bytes.  The same form works also for GNU/Linux
+dnl  (at least with certain assembler/linkers) but FreeBSD 8.2 crashes.  Not
+dnl  tested on Darwin, Slowaris, NetBSD, etc.
 dnl
 dnl  Note the extra `' ahead of PROLOGUE obscures it from the HAVE_NATIVE
 dnl  grepping in configure, stopping that code trying to eval something with
@@ -68,6 +73,12 @@ dnl  $1 in it.
 
 define(FAT_ENTRY,
 m4_assert_numargs(2)
+`ifdef(`HOST_DOS64',
+`	ALIGN(8)
+`'PROLOGUE($1)
+	jmp	*$2+GSYM_PREFIX`'__gmpn_cpuvec(%rip)
+EPILOGUE()
+',
 `	ALIGN(ifdef(`PIC',16,8))
 `'PROLOGUE($1)
 ifdef(`PIC_OR_DARWIN',
@@ -77,7 +88,7 @@ ifdef(`PIC_OR_DARWIN',
 	jmp	*GSYM_PREFIX`'__gmpn_cpuvec+$2
 ')
 EPILOGUE()
-')
+')')
 
 
 dnl  FAT_ENTRY for each CPUVEC_FUNCS_LIST
@@ -125,8 +136,8 @@ L(fat_init):
 	C al	__gmpn_cpuvec byte offset
 
 	movzbl	%al, %eax
-	push	%rdi
-	push	%rsi
+IFSTD(`	push	%rdi	')
+IFSTD(`	push	%rsi	')
 	push	%rdx
 	push	%rcx
 	push	%r8
@@ -138,8 +149,8 @@ L(fat_init):
 	pop	%r8
 	pop	%rcx
 	pop	%rdx
-	pop	%rsi
-	pop	%rdi
+IFSTD(`	pop	%rsi	')
+IFSTD(`	pop	%rdi	')
 ifdef(`PIC_OR_DARWIN',`
 	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %r10)
 	jmp	*(%r10,%rax)
@@ -163,13 +174,18 @@ C
 C This is called only once, so just something simple and compact is fine.
 
 
+define(`rp',  `%rdi')
+define(`idx', `%rsi')
+
 PROLOGUE(__gmpn_cpuid)
+	DOS64_ENTRY(2)
 	mov	%rbx, %r8
-	mov	%esi, %eax
+	mov	R32(idx), R32(%rax)
 	cpuid
-	mov	%ebx, (%rdi)
-	mov	%edx, 4(%rdi)
-	mov	%ecx, 8(%rdi)
+	mov	%ebx, (rp)
+	mov	%edx, 4(rp)
+	mov	%ecx, 8(rp)
 	mov	%r8, %rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
