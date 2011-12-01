@@ -1,7 +1,7 @@
 dnl  x86-64 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 2004, 2005, 2007, 2008, 2009, 2010 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2004, 2005, 2007, 2008, 2009, 2010, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -57,10 +57,19 @@ define(`un',		`%rbx')
 C rax rbx rcx rdx rsi rdi rbp r8  r9  r10 r11 r12 r13 r14 r15
 C         cnt         qp      d  dinv
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
+IFSTD(`define(`CNTOFF',		`40($1)')')
+IFDOS(`define(`CNTOFF',		`104($1)')')
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_preinv_divrem_1)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
+IFDOS(`	mov	64(%rsp), %r9	')
 	xor	R32(%rax), R32(%rax)
 	push	%r13
 	push	%r12
@@ -77,13 +86,15 @@ PROLOGUE(mpn_preinv_divrem_1)
 	test	d, d
 	js	L(nent)
 
-	mov	40(%rsp), R8(cnt)
+	mov	CNTOFF(%rsp), R8(cnt)
 	shl	R8(cnt), d
 	jmp	L(uent)
 EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_divrem_1)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	xor	R32(%rax), R32(%rax)
 	push	%r13
 	push	%r12
@@ -115,14 +126,15 @@ L(normalized):
 	mov	%rax, (qp)
 	lea	-8(qp), qp
 L(8):
-	push	%rdi
-	push	%rsi
+IFSTD(`	push	%rdi		')
+IFSTD(`	push	%rsi		')
 	push	%r8
-	mov	d, %rdi
+IFSTD(`	mov	d, %rdi		')
+IFDOS(`	mov	d, %rcx		')
 	CALL(	mpn_invert_limb)
 	pop	%r8
-	pop	%rsi
-	pop	%rdi
+IFSTD(`	pop	%rsi		')
+IFSTD(`	pop	%rdi		')
 
 	mov	%rax, dinv
 	mov	%rbp, %rax
@@ -176,14 +188,15 @@ L(44):
 	shl	R8(%rcx), %rbp
 
 	push	%rcx
-	push	%rdi
-	push	%rsi
+IFSTD(`	push	%rdi		')
+IFSTD(`	push	%rsi		')
 	push	%r8
-	mov	d, %rdi
+IFSTD(`	mov	d, %rdi		')
+IFDOS(`	mov	d, %rcx		')
 	CALL(	mpn_invert_limb)
 	pop	%r8
-	pop	%rsi
-	pop	%rdi
+IFSTD(`	pop	%rsi		')
+IFSTD(`	pop	%rdi		')
 	pop	%rcx
 
 	mov	%rax, dinv
@@ -279,5 +292,6 @@ L(ret):	pop	%rbx
 	pop	%rbp
 	pop	%r12
 	pop	%r13
+	DOS64_EXIT()
 	ret
 EPILOGUE()

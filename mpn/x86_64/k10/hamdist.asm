@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_hamdist -- hamming distance.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -38,10 +38,14 @@ define(`ap',		`%rdi')
 define(`bp',		`%rsi')
 define(`n',		`%rdx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_hamdist)
+	DOS64_ENTRY(3)
 	mov	(ap), %r8
 	xor	(bp), %r8
 
@@ -56,6 +60,7 @@ L(1):	.byte	0xf3,0x49,0x0f,0xb8,0xc0	C popcnt %r8, %rax
 	xor	R32(%r10), R32(%r10)
 	add	$1, n
 	js	L(top)
+	DOS64_EXIT()
 	ret
 
 	ALIGN(16)
@@ -66,6 +71,7 @@ L(2):	mov	8(ap,n,8), %r9
 	add	$2, n
 	js	L(top)
 	lea	(%r10, %rax), %rax
+	DOS64_EXIT()
 	ret
 
 	ALIGN(16)
@@ -81,5 +87,6 @@ L(top):	mov	(ap,n,8), %r8
 	js	L(top)
 
 	lea	(%r10, %rax), %rax
+	DOS64_EXIT()
 	ret
 EPILOGUE()

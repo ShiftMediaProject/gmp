@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_popcount -- population count.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -19,6 +19,9 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
 include(`../config.m4')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_popcount)
 include_mpn(`x86_64/k10/popcount.asm')

@@ -55,10 +55,15 @@ ifdef(`OPERATION_rsblsh_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
         TEXT
         ALIGN(16)
 PROLOGUE(func)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%r12
 	push	%rbp
 	push	%rbx
@@ -196,5 +201,6 @@ L(cj1):	mov	%r9, 8(rp,n,8)
 	pop	%rbx
 	pop	%rbp
 	pop	%r12
+	DOS64_EXIT()
 	ret
 EPILOGUE()

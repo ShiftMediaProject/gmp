@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_popcount -- population count.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -39,10 +39,14 @@ C  * Improve switching code, the current code sucks.
 define(`up',		`%rdi')
 define(`n',		`%rsi')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_popcount)
+	DOS64_ENTRY(2)
 
 ifelse(1,1,`
 	lea	(up,n,8), up
@@ -118,5 +122,6 @@ C 1 = n mod 8
 
 	add	$8, n
 	js	L(top)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

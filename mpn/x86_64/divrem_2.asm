@@ -37,11 +37,15 @@ define(`up_param',	`%rdx')
 define(`un_param',	`%rcx')
 define(`dp',		`%r8')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_divrem_2)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%r15
 	push	%r14
 	push	%r13
@@ -75,7 +79,8 @@ L(2):
 	push	%r8
 	push	%r10
 	push	%r11
-	mov	%r11, %rdi
+IFSTD(`	mov	%r11, %rdi	')
+IFDOS(`	mov	%r11, %rcx	')
 	CALL(	mpn_invert_limb)
 	pop	%r11
 	pop	%r10
@@ -150,6 +155,7 @@ L(end):	mov	%r10, 8(%r12)
 	pop	%r14
 	mov	%r15, %rax
 	pop	%r15
+	DOS64_EXIT()
 	ret
 
 L(fix):	seta	%dl
