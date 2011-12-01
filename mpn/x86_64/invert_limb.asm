@@ -33,8 +33,18 @@ C VIA nano	 79			157
 
 C rax rcx rdx rdi rsi r8
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(ELF64)
+
+IFELF(`	.protected mpn_invert_limb_table ')
 
 ASM_START()
 	TEXT
@@ -48,7 +58,6 @@ ifdef(`DARWIN',`
 	mov	mpn_invert_limb_table@GOTPCREL(%rip), %r8
 	add	$-512, %r8
 ',`
-	.protected mpn_invert_limb_table
 	lea	-512+mpn_invert_limb_table(%rip), %r8
 ')',`
 	movabs	$-512+mpn_invert_limb_table, %r8
