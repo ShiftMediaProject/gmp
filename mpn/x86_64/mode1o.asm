@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2011 Free Software
 dnl  Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
@@ -62,80 +62,82 @@ C
 C divq for size==1 was measured at about 79 cycles, compared to the inverse
 C at about 25 cycles (both including function call overheads), so that's not
 C used.
-C
-C Enhancements:
-C
-C For PIC, we shouldn't really need the GOT fetch for binvert_limb_table,
-C it'll be in rodata or text in libgmp.so and can be accessed directly %rip
-C relative.  This would be for small model only (something we don't
-C presently detect, but which is all that gcc 3.3.3 supports), since 8-byte
-C PC-relative relocations are apparently not available.  Some rough
-C experiments with binutils 2.13 looked worrylingly like it might come out
-C with an unwanted text segment relocation though, even with ".protected".
 
+ifdef(`HOST_DOS64',`
+  define(`IFDOS',   `$1')
+  define(`IFELF',   `')
+',`
+  define(`IFDOS',   `')
+  define(`IFELF',   `$1')
+')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(ELF64)
 
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
-
-	movl	$0, R32(%rcx)
+	DOS64_ENTRY(3)
+	mov	$0, R32(%rcx)
+IFDOS(`	jmp	L(ent)		')
 
 PROLOGUE(mpn_modexact_1c_odd)
-
+	DOS64_ENTRY(4)
+L(ent):
 	C rdi	src
 	C rsi	size
 	C rdx	divisor
 	C rcx	carry
 
-	movq	%rdx, %r8		C d
-	shrl	R32(%rdx)		C d/2
+	mov	%rdx, %r8		C d
+	shr	R32(%rdx)		C d/2
 ifdef(`PIC',`
-	movq	binvert_limb_table@GOTPCREL(%rip), %r9
+	LEA(	binvert_limb_table, %r9)
 ',`
-	movabsq	$binvert_limb_table, %r9
+	movabs	$binvert_limb_table, %r9
 ')
 
-	andl	$127, R32(%rdx)
-	movq	%rcx, %r10		C initial carry
+	and	$127, R32(%rdx)
+	mov	%rcx, %r10		C initial carry
 
 	movzbl	(%r9,%rdx), R32(%rdx)	C inv 8 bits
 
-	movq	(%rdi), %rax		C src[0]
-	leaq	(%rdi,%rsi,8), %r11	C src end
-	movq	%r8, %rdi		C d, made available to imull
+	mov	(%rdi), %rax		C src[0]
+	lea	(%rdi,%rsi,8), %r11	C src end
+	mov	%r8, %rdi		C d, made available to imull
 
-	leal	(%rdx,%rdx), R32(%rcx)	C 2*inv
-	imull	R32(%rdx), R32(%rdx)	C inv*inv
+	lea	(%rdx,%rdx), R32(%rcx)	C 2*inv
+	imul	R32(%rdx), R32(%rdx)	C inv*inv
 
-	negq	%rsi			C -size
+	neg	%rsi			C -size
 
-	imull	R32(%rdi), R32(%rdx)	C inv*inv*d
+	imul	R32(%rdi), R32(%rdx)	C inv*inv*d
 
-	subl	R32(%rdx), R32(%rcx)	C inv = 2*inv - inv*inv*d, 16 bits
+	sub	R32(%rdx), R32(%rcx)	C inv = 2*inv - inv*inv*d, 16 bits
 
-	leal	(%rcx,%rcx), R32(%rdx)	C 2*inv
-	imull	R32(%rcx), R32(%rcx)	C inv*inv
+	lea	(%rcx,%rcx), R32(%rdx)	C 2*inv
+	imul	R32(%rcx), R32(%rcx)	C inv*inv
 
-	imull	R32(%rdi), R32(%rcx)	C inv*inv*d
+	imul	R32(%rdi), R32(%rcx)	C inv*inv*d
 
-	subl	R32(%rcx), R32(%rdx)	C inv = 2*inv - inv*inv*d, 32 bits
-	xorl	R32(%rcx), R32(%rcx)	C initial cbit
+	sub	R32(%rcx), R32(%rdx)	C inv = 2*inv - inv*inv*d, 32 bits
+	xor	R32(%rcx), R32(%rcx)	C initial cbit
 
-	leaq	(%rdx,%rdx), %r9	C 2*inv
-	imulq	%rdx, %rdx		C inv*inv
+	lea	(%rdx,%rdx), %r9	C 2*inv
+	imul	%rdx, %rdx		C inv*inv
 
-	imulq	%r8, %rdx		C inv*inv*d
+	imul	%r8, %rdx		C inv*inv*d
 
-	subq	%rdx, %r9		C inv = 2*inv - inv*inv*d, 64 bits
-	movq	%r10, %rdx		C initial climb
+	sub	%rdx, %r9		C inv = 2*inv - inv*inv*d, 64 bits
+	mov	%r10, %rdx		C initial climb
 
 	ASSERT(e,`	C d*inv == 1 mod 2^64
-	movq	%r8, %r10
-	imulq	%r9, %r10
-	cmpq	$1, %r10')
+	mov	%r8, %r10
+	imul	%r9, %r10
+	cmp	$1, %r10')
 
-	incq	%rsi
+	inc	%rsi
 	jz	L(one)
 
 
@@ -150,30 +152,31 @@ L(top):
 	C r9	inverse
 	C r11	src end ptr
 
-	subq	%rdx, %rax		C l = src[i]-cbit - climb
+	sub	%rdx, %rax		C l = src[i]-cbit - climb
 
-	adcq	$0, %rcx		C more cbit
-	imulq	%r9, %rax		C q = l * inverse
+	adc	$0, %rcx		C more cbit
+	imul	%r9, %rax		C q = l * inverse
 
-	mulq	%r8			C climb = high (q * d)
+	mul	%r8			C climb = high (q * d)
 
-	movq	(%r11,%rsi,8), %rax	C src[i+1]
-	subq	%rcx, %rax		C next l = src[i+1] - cbit
+	mov	(%r11,%rsi,8), %rax	C src[i+1]
+	sub	%rcx, %rax		C next l = src[i+1] - cbit
 	setc	R8(%rcx)		C new cbit
 
-	incq	%rsi
+	inc	%rsi
 	jnz	L(top)
 
 
 L(one):
-	subq	%rdx, %rax		C l = src[i]-cbit - climb
+	sub	%rdx, %rax		C l = src[i]-cbit - climb
 
-	adcq	$0, %rcx		C more cbit
-	imulq	%r9, %rax		C q = l * inverse
+	adc	$0, %rcx		C more cbit
+	imul	%r9, %rax		C q = l * inverse
 
-	mulq	%r8			C climb = high (q * d)
+	mul	%r8			C climb = high (q * d)
 
-	leaq	(%rcx,%rdx), %rax	C climb+cbit
+	lea	(%rcx,%rdx), %rax	C climb+cbit
+	DOS64_EXIT()
 	ret
 
 EPILOGUE(mpn_modexact_1c_odd)
