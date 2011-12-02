@@ -1,3 +1,12 @@
+2011-12-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/invert_limb_table.asm: Use PROTECT.
+	* mpn/x86_64/invert_limb.asm: Likewise.
+
+	* mpn/x86_64/darwin.m4 (PROTECT, IFELF): New defines.
+	* mpn/x86_64/dos64.m4 (PROTECT, IFELF): New defines.
+	* mpn/x86_64/x86_64-defs.m4 (PROTECT, IFELF): New defines.
+
 2011-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c: Copy fake cpuid code from x86/fat/fat.c.
