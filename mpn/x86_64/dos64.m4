@@ -53,7 +53,21 @@ dnl
 
 define(`PIC')
 
+
+dnl  Target ABI macros.  For DOS64 we override the defaults.
+
 define(`IFDOS',   `$1')
 define(`IFSTD',   `')
+define(`IFELF',   `')
+
+
+dnl  Usage: PROTECT(symbol)
+dnl
+dnl  Used for private GMP symbols that should never be overridden by users.
+dnl  This can save reloc entries and improve shlib sharing as well as
+dnl  application startup times
+
+define(`PROTECT',  `')
+
 
 divert`'dnl

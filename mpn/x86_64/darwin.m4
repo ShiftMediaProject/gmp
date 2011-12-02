@@ -31,4 +31,20 @@ define(`CALL',`call	GSYM_PREFIX`'$1')
 
 define(`JUMPTABSECT', `DATA')
 
+
+dnl  Target ABI macros.  For Darwin we override IFELF (and leave default for
+dnl  IFDOS and IFSTD).
+
+define(`IFELF',   `')
+
+
+dnl  Usage: PROTECT(symbol)
+dnl
+dnl  Used for private GMP symbols that should never be overridden by users.
+dnl  This can save reloc entries and improve shlib sharing as well as
+dnl  application startup times
+
+define(`PROTECT',  `')
+
+
 divert`'dnl

@@ -169,10 +169,28 @@ ifdef(`PIC',
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
 
+
+dnl  These macros are defined just for DOS64, where they provide calling
+dnl  sequence glue code.
+
 define(`DOS64_ENTRY',`')
 define(`DOS64_EXIT',`')
 
+
+dnl  Target ABI macros.
+
 define(`IFDOS',   `')
 define(`IFSTD',   `$1')
+define(`IFELF',   `$1')
+
+
+dnl  Usage: PROTECT(symbol)
+dnl
+dnl  Used for private GMP symbols that should never be overridden by users.
+dnl  This can save reloc entries and improve shlib sharing as well as
+dnl  application startup times
+
+define(`PROTECT',  `.protected $1')
+
 
 divert`'dnl
