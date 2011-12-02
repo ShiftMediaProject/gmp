@@ -36,7 +36,7 @@ C rax rcx rdx rdi rsi r8
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-IFSTD(`	.protected mpn_invert_limb_table ')
+PROTECT(`mpn_invert_limb_table')
 
 ASM_START()
 	TEXT

@@ -24,6 +24,8 @@ include(`../config.m4')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
+PROTECT(`mpn_invert_limb_table')
+
 ASM_START()
 C Table entry X contains floor (0x7fd00 / (0x100 + X))
 
