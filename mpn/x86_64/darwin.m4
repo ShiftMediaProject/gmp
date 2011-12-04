@@ -1,5 +1,5 @@
 divert(-1)
-dnl  Copyright 2008 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2011 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -44,7 +44,7 @@ dnl  Used for private GMP symbols that should never be overridden by users.
 dnl  This can save reloc entries and improve shlib sharing as well as
 dnl  application startup times
 
-define(`PROTECT',  `')
+define(`PROTECT',  `.private_extern $1')
 
 
 divert`'dnl
