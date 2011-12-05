@@ -40,7 +40,6 @@ long __gmpn_cpuid __GMP_PROTO ((char dst[12], int id));
 int  __gmpn_cpuid_available __GMP_PROTO ((void));
 
 
-
 #if WANT_FAKE_CPUID
 /* The "name"s in the table are values for the GMP_CPU_TYPE environment
    variable.  Anything can be used, but for now it's the canonical cpu types
@@ -50,7 +49,7 @@ int  __gmpn_cpuid_available __GMP_PROTO ((void));
 #define __gmpn_cpuid_available  fake_cpuid_available
 
 #define MAKE_FMS(family, model)						\
-  ((((family) & 0xf) << 8) + (((family) & 0xff0) << 16)			\
+  ((((family) & 0xf) << 8) + (((family) & 0xff0) << 20)			\
    + (((model) & 0xf) << 4) + (((model)  &  0xf0) << 12))
 
 static struct {

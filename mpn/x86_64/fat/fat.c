@@ -41,6 +41,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* fat_entry.asm */
 long __gmpn_cpuid __GMP_PROTO ((char dst[12], int id));
 
+
 #if WANT_FAKE_CPUID
 /* The "name"s in the table are values for the GMP_CPU_TYPE environment
    variable.  Anything can be used, but for now it's the canonical cpu types
@@ -50,7 +51,7 @@ long __gmpn_cpuid __GMP_PROTO ((char dst[12], int id));
 #define __gmpn_cpuid_available  fake_cpuid_available
 
 #define MAKE_FMS(family, model)						\
-  ((((family) & 0xf) << 8) + (((family) & 0xff0) << 16)			\
+  ((((family) & 0xf) << 8) + (((family) & 0xff0) << 20)			\
    + (((model) & 0xf) << 4) + (((model)  &  0xf0) << 12))
 
 static struct {
