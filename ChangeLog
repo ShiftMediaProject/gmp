@@ -1,5 +1,25 @@
 2011-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/fat/lshiftc.c: New file.
+	* mpn/x86/fat/mod_1_1.c: New file.
+	* mpn/x86/fat/mod_1_2.c: New file.
+	* mpn/x86/fat/mod_1_4.c: New file.
+
+	* mpn/x86/fat/diveby3.c: Remove no longer fat function.
+	* mpn/x86_64/fat/diveby3.c: Likewise.
+
+	* mpn/x86_64/fat/gcd_1.c: Remove since always provided as asm.
+	* mpn/x86_64/fat/mode1o.c: Likewise.
+
+	* configure.in (fat_functions): Update to more relevant function set.
+	Add special handling for mod_1_N_cps functions.
+	* gmp-impl.h (struct cpuvec_t) : Corresponding changes.  Also add
+	vrious declarations for new functions.
+	* mpn/x86/x86-defs.m4 (CPUVEC_FUNCS_LIST): Corresponding changes.
+	* mpn/x86_64/x86_64-defs.m4 (CPUVEC_FUNCS_LIST): Corresponding changes.
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec): Corresponding changes.
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec): Corresponding changes.
+
 	* mpn/x86_64: Port most remaining x86_64 files to DOS64.
 
 	* mpn/x86_64/coreisbr/aors_n.asm: Add forgotten DOS64_EXIT.

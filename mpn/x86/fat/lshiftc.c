@@ -1,6 +1,6 @@
-/* Fat binary fallback mpn_divexact_by3c.
+/* Fat binary fallback mpn_lshiftc.
 
-Copyright 2003, 2009 Free Software Foundation, Inc.
+Copyright 2003, 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,4 +18,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-#include "mpn/generic/diveby3.c"
+#include "mpn/generic/lshiftc.c"

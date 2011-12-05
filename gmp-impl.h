@@ -59,6 +59,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t))
 #define DECL_addmul_1(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_bdiv_dbm1c(name) \
+  __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t))
+#define DECL_com(name) \
+  __GMP_DECLSPEC void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t))
 #define DECL_copyd(name) \
   __GMP_DECLSPEC void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t))
 #define DECL_copyi(name) \
@@ -73,8 +77,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t))
 #define DECL_lshift(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned))
+#define DECL_lshiftc(name) \
+  DECL_lshift (name)
 #define DECL_mod_1(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_mod_1_1p(name) \
+  __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t []))
+#define DECL_mod_1_1p_cps(name) \
+  __GMP_DECLSPEC void name __GMP_PROTO ((mp_limb_t cps[], mp_limb_t b))
+#define DECL_mod_1s_2p(name) \
+  DECL_mod_1_1p (name)
+#define DECL_mod_1s_2p_cps(name) \
+  DECL_mod_1_1p_cps (name)
+#define DECL_mod_1s_4p(name) \
+  DECL_mod_1_1p (name)
+#define DECL_mod_1s_4p_cps(name) \
+  DECL_mod_1_1p_cps (name)
 #define DECL_mod_34lsub1(name) \
   __GMP_DECLSPEC mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t))
 #define DECL_modexact_1c_odd(name) \
@@ -958,8 +976,10 @@ __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 #define mpn_rsh1sub_nc __MPN(rsh1sub_nc)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
+#ifndef mpn_lshiftc  /* if not done with cpuvec in a fat binary */
 #define mpn_lshiftc __MPN(lshiftc)
 __GMP_DECLSPEC mp_limb_t mpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
+#endif
 
 #define mpn_add_err1_n  __MPN(add_err1_n)
 __GMP_DECLSPEC mp_limb_t mpn_add_err1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
@@ -1071,25 +1091,41 @@ __GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_
 __GMP_DECLSPEC void mpn_redc_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 
+#ifndef mpn_mod_1_1p_cps  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1_1p_cps __MPN(mod_1_1p_cps)
 __GMP_DECLSPEC void mpn_mod_1_1p_cps __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+#endif
+#ifndef mpn_mod_1_1p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1_1p __MPN(mod_1_1p)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1_1p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4])) __GMP_ATTRIBUTE_PURE;
+#endif
 
+#ifndef mpn_mod_1s_2p_cps  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_2p_cps __MPN(mod_1s_2p_cps)
 __GMP_DECLSPEC void mpn_mod_1s_2p_cps __GMP_PROTO ((mp_limb_t [5], mp_limb_t));
+#endif
+#ifndef mpn_mod_1s_2p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_2p __MPN(mod_1s_2p)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1s_2p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [5])) __GMP_ATTRIBUTE_PURE;
+#endif
 
+#ifndef mpn_mod_1s_3p_cps  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_3p_cps __MPN(mod_1s_3p_cps)
 __GMP_DECLSPEC void mpn_mod_1s_3p_cps __GMP_PROTO ((mp_limb_t [6], mp_limb_t));
+#endif
+#ifndef mpn_mod_1s_3p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_3p __MPN(mod_1s_3p)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1s_3p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [6])) __GMP_ATTRIBUTE_PURE;
+#endif
 
+#ifndef mpn_mod_1s_4p_cps  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_4p_cps __MPN(mod_1s_4p_cps)
 __GMP_DECLSPEC void mpn_mod_1s_4p_cps __GMP_PROTO ((mp_limb_t [7], mp_limb_t));
+#endif
+#ifndef mpn_mod_1s_4p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_4p __MPN(mod_1s_4p)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [7])) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpn_bc_mulmod_bnm1 __MPN(bc_mulmod_bnm1)
 __GMP_DECLSPEC void mpn_bc_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -1456,8 +1492,11 @@ __GMP_DECLSPEC void      mpn_divexact __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
 #define   mpn_divexact_itch __MPN(divexact_itch)
 __GMP_DECLSPEC mp_size_t mpn_divexact_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
+#ifndef mpn_bdiv_dbm1c  /* if not done with cpuvec in a fat binary */
 #define   mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
 __GMP_DECLSPEC mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+#endif
+
 #define   mpn_bdiv_dbm1(dst, src, size, divisor) \
   mpn_bdiv_dbm1c (dst, src, size, divisor, __GMP_CAST (mp_limb_t, 0))
 
@@ -2979,7 +3018,7 @@ __GMP_DECLSPEC mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp
 
 
 #ifndef mpn_mod_34lsub1  /* if not done with cpuvec in a fat binary */
-#define   mpn_mod_34lsub1 __MPN(mod_34lsub1)
+#define mpn_mod_34lsub1 __MPN(mod_34lsub1)
 __GMP_DECLSPEC mp_limb_t mpn_mod_34lsub1 __GMP_PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 #endif
 
@@ -3013,7 +3052,7 @@ __GMP_DECLSPEC void    mpn_divexact_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
   } while (0)
 
 #ifndef mpn_modexact_1c_odd  /* if not done with cpuvec in a fat binary */
-#define   mpn_modexact_1c_odd __MPN(modexact_1c_odd)
+#define mpn_modexact_1c_odd __MPN(modexact_1c_odd)
 __GMP_DECLSPEC mp_limb_t mpn_modexact_1c_odd __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
 #endif
 
@@ -4396,14 +4435,22 @@ __GMP_DECLSPEC int __gmp_doscan __GMP_PROTO ((const struct gmp_doscan_funs_t *, 
 struct cpuvec_t {
   DECL_add_n           ((*add_n));
   DECL_addmul_1        ((*addmul_1));
+  DECL_bdiv_dbm1c      ((*bdiv_dbm1c));
+  DECL_com             ((*com));
   DECL_copyd           ((*copyd));
   DECL_copyi           ((*copyi));
   DECL_divexact_1      ((*divexact_1));
-  DECL_divexact_by3c   ((*divexact_by3c));
   DECL_divrem_1        ((*divrem_1));
   DECL_gcd_1           ((*gcd_1));
   DECL_lshift          ((*lshift));
+  DECL_lshiftc         ((*lshiftc));
   DECL_mod_1           ((*mod_1));
+  DECL_mod_1_1p        ((*mod_1_1p));
+  DECL_mod_1_1p_cps    ((*mod_1_1p_cps));
+  DECL_mod_1s_2p       ((*mod_1s_2p));
+  DECL_mod_1s_2p_cps   ((*mod_1s_2p_cps));
+  DECL_mod_1s_4p       ((*mod_1s_4p));
+  DECL_mod_1s_4p_cps   ((*mod_1s_4p_cps));
   DECL_mod_34lsub1     ((*mod_34lsub1));
   DECL_modexact_1c_odd ((*modexact_1c_odd));
   DECL_mul_1           ((*mul_1));

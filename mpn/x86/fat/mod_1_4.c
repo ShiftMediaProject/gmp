@@ -1,6 +1,6 @@
-/* Fat binary fallback mpn_gcd_1.
+/* Fat binary fallback mpn_mod_1s_4p.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,5 +17,9 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+/*
+PROLOGUE(mpn_mod_1s_4p_cps)
+*/
 
-#include "mpn/generic/gcd_1.c"
+#define OPERATION_mod_1_4_cps 1
+#include "mpn/generic/mod_1_4.c"

@@ -1934,10 +1934,11 @@ case $host in
 	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/atom x86_64/nano"
       fi
 
-      fat_functions="add_n addmul_1 copyd copyi
-		     dive_1 diveby3 divrem_1 gcd_1 lshift
-		     mod_1 mod_34lsub1 mode1o mul_1 mul_basecase
-		     pre_divrem_1 pre_mod_1 rshift
+      fat_functions="add_n addmul_1 bdiv_dbm1c com copyd copyi
+		     dive_1 divrem_1 gcd_1 lshift lshiftc mod_1
+		     mod_1_1 mod_1_1_cps mod_1_2 mod_1_2_cps mod_1_4 mod_1_4_cps
+		     mod_34lsub1 mode1o
+		     mul_1 mul_basecase pre_divrem_1 pre_mod_1 rshift
 		     sqr_basecase sub_n submul_1"
       fat_thresholds="MUL_TOOM22_THRESHOLD MUL_TOOM33_THRESHOLD
 		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD
@@ -2732,6 +2733,14 @@ define(GMP_FILE_TO_FUNCTION,
   pre_divrem_1) $1=preinv_divrem_1 ;;
   mode1o)	$1=modexact_1c_odd ;;
   pre_mod_1)	$1=preinv_mod_1 ;;
+  mod_1_1)	$1=mod_1_1p ;;
+  mod_1_1_cps)	$1=mod_1_1p_cps ;;
+  mod_1_2)	$1=mod_1s_2p ;;
+  mod_1_2_cps)	$1=mod_1s_2p_cps ;;
+  mod_1_3)	$1=mod_1s_3p ;;
+  mod_1_3_cps)	$1=mod_1s_3p_cps ;;
+  mod_1_4)	$1=mod_1s_4p ;;
+  mod_1_4_cps)	$1=mod_1s_4p_cps ;;
   *)		$1=$$2 ;;
 esac
 ])
@@ -2933,6 +2942,7 @@ define(OPERATION_$tmp_fn)
 define(__gmpn_$tmp_fbase, __gmpn_${tmp_fbase}_$tmp_suffix)
 define(__gmpn_$tmp_fbasec,__gmpn_${tmp_fbasec}_${tmp_suffix})
 define(__gmpn_preinv_${tmp_fbase},__gmpn_preinv_${tmp_fbase}_${tmp_suffix})
+define(__gmpn_${tmp_fbase}_cps,__gmpn_${tmp_fbase}_cps_${tmp_suffix})
 
 $tmp_d_n_l  For k6 and k7 gcd_1 calling their corresponding mpn_modexact_1_odd
 ifdef(\`__gmpn_modexact_1_odd',,
@@ -2950,6 +2960,7 @@ include][($mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.asm)
 #define __gmpn_$tmp_fbase           __gmpn_${tmp_fbase}_$tmp_suffix
 #define __gmpn_$tmp_fbasec          __gmpn_${tmp_fbasec}_${tmp_suffix}
 #define __gmpn_preinv_${tmp_fbase}  __gmpn_preinv_${tmp_fbase}_${tmp_suffix}
+#define __gmpn_${tmp_fbase}_cps     __gmpn_${tmp_fbase}_cps_${tmp_suffix}
 
 #include \"$mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.c\"
 "] >mpn/${tmp_prefix}_$tmp_fn.c
@@ -2964,6 +2975,13 @@ include][($mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.asm)
             if grep "^PROLOGUE(mpn_preinv_$tmp_fn)" $tmp_file >/dev/null; then
               echo "DECL_preinv_$tmp_fbase (__gmpn_preinv_${tmp_fbase}_$tmp_suffix);" >>fat.h
               CPUVEC_SETUP="$CPUVEC_SETUP    decided_cpuvec.preinv_$tmp_fbase = __gmpn_preinv_${tmp_fbase}_${tmp_suffix}; \\
+"
+            fi
+
+            # Ditto for any mod_1...cps variant
+            if grep "^PROLOGUE(mpn_${tmp_fbase}_cps)" $tmp_file >/dev/null; then
+              echo "DECL_${tmp_fbase}_cps (__gmpn_${tmp_fbase}_cps_$tmp_suffix);" >>fat.h
+              CPUVEC_SETUP="$CPUVEC_SETUP    decided_cpuvec.${tmp_fbase}_cps = __gmpn_${tmp_fbase}_cps_${tmp_suffix}; \\
 "
             fi
           fi

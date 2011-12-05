@@ -1,6 +1,6 @@
-/* Fat binary fallback mpn_modexact_1c_odd.
+/* Fat binary fallback mpn_mod_1_1p.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2009, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,5 +17,9 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+/*
+PROLOGUE(mpn_mod_1_1p_cps)
+*/
 
-#include "mpn/generic/mode1o.c"
+#define OPERATION_mod_1_1_cps 1
+#include "mpn/generic/mod_1_1.c"
