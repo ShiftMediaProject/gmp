@@ -60,11 +60,7 @@ L(odd):	mov	%rax, %rbx
 	shr	R32(%rax)
 	and	$127, R32(%rax)		C d/2, 7 bits
 
-ifdef(`PIC',`
 	LEA(	binvert_limb_table, %rdx)
-',`
-	movabs	$binvert_limb_table, %rdx
-')
 
 	movzbl	(%rdx,%rax), R32(%rax)	C inv 8 bits
 

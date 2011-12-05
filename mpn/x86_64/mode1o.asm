@@ -84,11 +84,8 @@ L(ent):
 
 	mov	%rdx, %r8		C d
 	shr	R32(%rdx)		C d/2
-ifdef(`PIC',`
+
 	LEA(	binvert_limb_table, %r9)
-',`
-	movabs	$binvert_limb_table, %r9
-')
 
 	and	$127, R32(%rdx)
 	mov	%rcx, %r10		C initial carry
