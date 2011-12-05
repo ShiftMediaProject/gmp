@@ -18,8 +18,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 define(`DARWIN')
 
-define(`LEA',`
-	lea	$1(%rip), $2
+define(`LEA',`dnl
+ifdef(`PIC',
+	`lea	$1(%rip), $2'
+,
+	`mov	`$'$1, $2')
 ')
 
 dnl  Usage: CALL(funcname)

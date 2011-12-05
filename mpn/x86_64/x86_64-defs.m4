@@ -108,8 +108,11 @@ define(`ASSERT_counter',incr(ASSERT_counter))')')')
 
 define(ASSERT_counter,1)
 
-define(`LEA',`
-	mov	$1@GOTPCREL(%rip), $2
+define(`LEA',`dnl
+ifdef(`PIC',
+	`mov	$1@GOTPCREL(%rip), $2'
+,
+	`mov	`$'$1, $2')
 ')
 
 
