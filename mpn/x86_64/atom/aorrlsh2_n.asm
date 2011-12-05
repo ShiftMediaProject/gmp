@@ -38,7 +38,6 @@ define(`rp',       `%rdi')
 define(`up',       `%rsi')
 define(`vp',       `%rdx')
 define(`n',        `%rcx')
-define(`cy',       `%r8')
 
 define(`LSH', 2)
 define(`RSH', 62)
@@ -55,12 +54,16 @@ ifdef(`OPERATION_rsblsh2_n', `
   define(func_n,	mpn_rsblsh2_n)
   define(func_nc,	mpn_rsblsh2_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_n)
+	DOS64_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
@@ -172,5 +175,6 @@ ifdef(`OPERATION_rsblsh2_n',`
 
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

@@ -36,5 +36,8 @@ ifdef(`OPERATION_rsblsh1_n', `
 	define(func_n,	mpn_rsblsh1_n)
 	define(func_nc,	mpn_rsblsh1_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_addlsh1_nc mpn_rsblsh1_n mpn_rsblsh1_nc)
 include_mpn(`x86_64/coreisbr/aorrlshC_n.asm')

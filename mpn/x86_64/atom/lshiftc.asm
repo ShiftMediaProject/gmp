@@ -41,10 +41,14 @@ define(`up',	`%rsi')
 define(`n',	`%rdx')
 define(`cnt',	`%rcx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_lshiftc)
+	DOS64_ENTRY(4)
 	lea	-8(up,n,8), up
 	lea	-8(rp,n,8), rp
 	shr	R32(n)
@@ -59,6 +63,7 @@ PROLOGUE(mpn_lshiftc)
 	jnz	L(gt1)
 	not	%r11
 	mov	%r11, (rp)
+	DOS64_EXIT()
 	ret
 
 L(gt1):	mov	-8(up), %r8
@@ -106,5 +111,6 @@ L(end):	shl	R8(%rcx), %r10
 	not	%r11
 	mov	%r9, -8(rp)
 	mov	%r11, -16(rp)
+	DOS64_EXIT()
 	ret
 EPILOGUE()

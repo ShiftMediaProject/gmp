@@ -36,6 +36,9 @@ ifdef(`OPERATION_rsblsh2_n', `
 	define(func_n,	mpn_rsblsh2_n)
 	define(func_nc,	mpn_rsblsh2_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 C mpn_rsblsh2_nc removed below, its idea of carry-in is inconsistent with
 C refmpn_rsblsh2_nc
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_addlsh2_nc mpn_rsblsh2_n)

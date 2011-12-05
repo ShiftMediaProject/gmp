@@ -58,6 +58,9 @@ ifdef(`OPERATION_rsblsh_n', `
 	define(func_n,	mpn_rsblsh_n)
 	define(func_nc,	mpn_rsblsh_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 C mpn_rsblsh_nc removed below, its idea of carry-in is inconsistent with
 C refmpn_rsblsh_nc
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_addlsh_nc mpn_rsblsh_n)
@@ -66,6 +69,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(func_n)
+	DOS64_ENTRY(4)
 	push	%rbx
 	xor	R32(%rbx), R32(%rbx)	C clear CF save register
 L(ent):	push	%rbp
@@ -185,9 +189,12 @@ L(wd1):	mov	%r10, 24(rp)
 IFRSB(	neg	%rax)
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbx
 	neg	cy
 	sbb	R32(%rbx), R32(%rbx)	C initialise CF save register

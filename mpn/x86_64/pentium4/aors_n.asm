@@ -2,7 +2,7 @@ dnl  x86-64 mpn_add_n/mpn_sub_n optimized for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2007, 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -48,16 +48,19 @@ ifdef(`OPERATION_sub_n', `
 	define(func,	      mpn_sub_n)
 	define(func_nc,	      mpn_sub_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
-
 ASM_START()
-
 	TEXT
-
 PROLOGUE(func)
+	DOS64_ENTRY(4)
 	xor	%r8, %r8
 EPILOGUE()
 PROLOGUE(func_nc)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbx
 	push	%r12
 
@@ -176,5 +179,6 @@ L(1):	mov	%r11, 8(rp)
 L(ret):	mov	R32(%rbx), R32(%rax)
 	pop	%r12
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

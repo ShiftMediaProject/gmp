@@ -3,7 +3,7 @@ dnl  optimised for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2008, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -32,6 +32,8 @@ ifdef(`OPERATION_sublsh2_n', `
   define(ADDSUB,	sub)
   define(func,		mpn_sublsh2_n)')
 
-MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
 
+MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
 include_mpn(`x86_64/pentium4/aorslshC_n.asm')

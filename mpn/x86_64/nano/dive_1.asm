@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2010, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -37,10 +38,14 @@ C up		rsi
 C n		rdx
 C divisor	rcx
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_divexact_1)
+	DOS64_ENTRY(4)
 	push	%rbx
 
 	mov	%rcx, %rax
@@ -55,11 +60,7 @@ L(odd):	mov	%rax, %rbx
 	shr	R32(%rax)
 	and	$127, R32(%rax)		C d/2, 7 bits
 
-ifdef(`PIC',`
-	mov	binvert_limb_table@GOTPCREL(%rip), %rdx
-',`
-	movabs	$binvert_limb_table, %rdx
-')
+	LEA(	binvert_limb_table, %rdx)
 
 	movzbl	(%rdx,%rax), R32(%rax)	C inv 8 bits
 
@@ -143,12 +144,13 @@ L(com):	mul	%r11			C carry limb in rdx
 	imul	%r10, %r9
 	mov	%r9, (%rdi)
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 
 L(one):	shr	R8(%rcx), %rax
 	imul	%r10, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
+	DOS64_EXIT()
 	ret
-
 EPILOGUE()

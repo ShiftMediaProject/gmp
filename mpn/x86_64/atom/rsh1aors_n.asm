@@ -52,12 +52,16 @@ ifdef(`OPERATION_rsh1sub_n', `
 	define(func_n,	      mpn_rsh1sub_n)
 	define(func_nc,	      mpn_rsh1sub_nc)')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1sub_n)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_n)
+	DOS64_ENTRY(4)
 	push	%rbx
 	push	%rbp
 	push	%r12
@@ -267,5 +271,6 @@ L(cj1):	pop	%r15
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()

@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mod_34lsub1 -- remainder modulo 2^48-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2010 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2010, 2011 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -43,10 +43,14 @@ C    sbb to placate Pentium4.
 C  * It seems possible to reach 2.67 c/l by using a cleaner 6-way unrolling,
 C    without the dual loop exits.
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)
+	DOS64_ENTRY(2)
 
 	mov	$0x0000FFFFFFFFFFFF, %r11
 
@@ -71,7 +75,8 @@ PROLOGUE(mpn_mod_34lsub1)
 	shl	$16, %rdx		C src[1] low
 	add	%rdx, %rax
 
-L(1):	ret
+L(1):	DOS64_EXIT()
+	ret
 
 
 	ALIGN(16)
@@ -146,5 +151,6 @@ L(combine):
 	add	%rdx, %rax		C apply 2mod3 high
 	add	%rdi, %rax		C apply 2mod3 low
 
+	DOS64_EXIT()
 	ret
 EPILOGUE()

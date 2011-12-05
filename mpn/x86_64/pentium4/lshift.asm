@@ -35,10 +35,14 @@ define(`up',`%rsi')
 define(`n',`%rdx')
 define(`cnt',`%cl')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_lshift)
+	DOS64_ENTRY(4)
 	mov	-8(up,n,8), %rax
 	movd	R32(%rcx), %mm4
 	neg	R32(%rcx)		C put rsh count in cl
@@ -146,5 +150,6 @@ L(ast):	movq	(up), %mm2
 	psllq	%mm4, %mm2
 	movq	%mm2, (rp)
 	emms
+	DOS64_EXIT()
 	ret
 EPILOGUE()

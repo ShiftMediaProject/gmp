@@ -45,10 +45,17 @@ C * Store qh in the same stack slot as di_param, instead of pushing
 C   it. (we could put it in register %rbp, but then we would need to
 C   save and restore that instead, which doesn't seem like a win).
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_div_qr_2n_pi1)
+	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
+IFDOS(`	mov	64(%rsp), %r9	')
+IFDOS(`define(`di_param', `72(%rsp)')')
 	mov	di_param, di
 	mov	up_param, up
 	push	%r15
@@ -124,6 +131,7 @@ L(end):
 	pop	%r13
 	pop	%r14
 	pop	%r15
+	DOS64_EXIT()
 	ret
 
 L(fix):	C Unlikely update. u2 >= d1
