@@ -29,14 +29,19 @@ dnl  order they appear in that structure.
 define(CPUVEC_FUNCS_LIST,
 ``add_n',
 `addmul_1',
+`bdiv_dbm1c',
+`com',
 `copyd',
 `copyi',
 `divexact_1',
-`divexact_by3c',
 `divrem_1',
 `gcd_1',
 `lshift',
+`lshiftc',
 `mod_1',
+`mod_1_1p',
+`mod_1s_2p',
+`mod_1s_4p',
 `mod_34lsub1',
 `modexact_1c_odd',
 `mul_1',
@@ -112,7 +117,7 @@ define(`LEA',`dnl
 ifdef(`PIC',
 	`mov	$1@GOTPCREL(%rip), $2'
 ,
-	`mov	`$'$1, $2')
+	`movabs	`$'$1, $2')
 ')
 
 

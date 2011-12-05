@@ -22,7 +22,7 @@ define(`LEA',`dnl
 ifdef(`PIC',
 	`lea	$1(%rip), $2'
 ,
-	`mov	`$'$1, $2')
+	`movabs	`$'$1, $2')
 ')
 
 dnl  Usage: CALL(funcname)
