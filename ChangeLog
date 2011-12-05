@@ -1,3 +1,19 @@
+2011-12-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64: Port most remaining x86_64 files to DOS64.
+
+	* mpn/x86_64/coreisbr/aors_n.asm: Add forgotten DOS64_EXIT.
+
+	* mpn/x86_64/x86_64-defs.m4 (LEA): Handle non-PIC code.
+	* mpn/x86_64/darwin.m4 (LEA): Likewise.
+
+2011-12-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/fat.c (MAKE_FMS): Rewrite to handle modern CPUs.
+	* mpn/x86/fat/fat.c (MAKE_FMS): Likewise.
+
+	* mpn/x86_64/darwin.m4 (PROTECT): Define to potentially useful value.
+
 2011-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/invert_limb_table.asm: Use PROTECT.
