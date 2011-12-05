@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-  This file current as of 3 Mar 2011.  An up-to-date version is available at
+  This file current as of 5 Dec 2011.  An up-to-date version is available at
   <a href="http://gmplib.org/tasks.html">http://gmplib.org/tasks.html</a>.
   Please send comments about this page to gmp-devel<font>@</font>gmplib.org.
 
@@ -62,13 +62,6 @@ either already been taken care of, or have become irrelevant.
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
      <code>mpz_XXX(a,a,a)</code>.
-<li> When printing <code>mpf_t</code> numbers with exponents &gt;2^53 on
-     machines with 64-bit <code>mp_exp_t</code>, the precision of
-     <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
-     <code>mpf_get_str</code> aborts.  Detect and compensate.  Alternately,
-     think seriously about using some sort of fixed-point integer value.
-     Avoiding unnecessary floating point is probably a good thing in general,
-     and it might be faster on some CPUs.
 <li> Make the string reading functions allow the `0x' prefix when the base is
      explicitly 16.  They currently only allow that prefix when the base is
      unspecified (zero).
