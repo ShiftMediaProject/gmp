@@ -1,3 +1,8 @@
+2011-12-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd.c (mpn_hgcd): Use hgcd_reduce for first
+	recursive call.
+
 2011-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/mod_1_1-1.c: Redefine the mpn_ functions, not __gmpn_ (for the

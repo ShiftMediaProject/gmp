@@ -91,16 +91,15 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
       mp_size_t n2 = (3*n)/4 + 1;
       mp_size_t p = n/2;
 
-      nn = mpn_hgcd (ap + p, bp + p, n - p, M, tp);
-      if (nn > 0)
+      nn = mpn_hgcd_reduce (M, ap, bp, n, p, tp);
+      if (nn)
 	{
-	  /* Needs 2*(p + M->n) <= 2*(floor(n/2) + ceil(n/2) - 1)
-	     = 2 (n - 1) */
-	  n = mpn_hgcd_matrix_adjust (M, p + nn, ap, bp, p, tp);
+	  n = nn;
 	  success = 1;
 	}
 
-      /* NOTE: It apppears this loop never runs more than once. */
+      /* NOTE: It apppears this loop never runs more than once (at
+	 least when not recursing to hgcd_appr). */
       while (n > n2)
 	{
 	  /* Needs n + 1 storage */
@@ -121,6 +120,10 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  scratch = MPN_HGCD_MATRIX_INIT_ITCH (n-p);
 
 	  mpn_hgcd_matrix_init(&M1, n - p, tp);
+
+	  /* FIXME: Should use hgcd_reduce, but that may require more
+	     scratch space, which requires review. */
+
 	  nn = mpn_hgcd (ap + p, bp + p, n - p, &M1, tp + scratch);
 	  if (nn > 0)
 	    {
