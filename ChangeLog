@@ -1,3 +1,9 @@
+2011-12-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/mod_1_1-1.c: Redefine the mpn_ functions, not __gmpn_ (for the
+	benefit of fat builds).
+	* tune/mod_1_1-2.c: Likewise.
+
 2011-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/fat/lshiftc.c: New file.
