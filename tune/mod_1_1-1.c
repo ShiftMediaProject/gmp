@@ -22,7 +22,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #undef MOD_1_1P_METHOD
 #define MOD_1_1P_METHOD 1
-#define __gmpn_mod_1_1p mpn_mod_1_1p_1
-#define __gmpn_mod_1_1p_cps mpn_mod_1_1p_cps_1
+#undef mpn_mod_1_1p
+#undef mpn_mod_1_1p_cps
+#define mpn_mod_1_1p mpn_mod_1_1p_1
+#define mpn_mod_1_1p_cps mpn_mod_1_1p_cps_1
 
 #include "mpn/generic/mod_1_1.c"
