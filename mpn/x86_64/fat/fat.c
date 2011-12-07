@@ -273,6 +273,7 @@ __gmpn_cpuvec_init (void)
 	      CPUVEC_SETUP_coreisbr;
 	      break;
 	    }
+	  break;
 
 	case 15:
 	  CPUVEC_SETUP_pentium4;
