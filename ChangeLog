@@ -1,9 +1,13 @@
+2011-12-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Add a missing break.
+
 2011-12-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gen-fac_ui.c: Generate two more tables: odd factorial, swing.
 
 	* mpz/fac_ui.c: Rewrite.
-	
+
 2011-12-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd): Use hgcd_reduce for first
