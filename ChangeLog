@@ -1,3 +1,7 @@
+2011-12-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gen-fac_ui.c: Generate two more tables: odd factorial, swing.
+
 2011-12-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd): Use hgcd_reduce for first
