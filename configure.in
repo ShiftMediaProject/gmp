@@ -2796,7 +2796,7 @@ if test -n "$fat_path"; then
 #endif
 DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
     # encourage various macros to use fat functions
-    AC_DEFINE_UNQUOTED(HAVE_NATIVE_$tmp_fbase)
+    AC_DEFINE_UNQUOTED(HAVE_NATIVE_mpn_$tmp_fbase)
   done
 
   echo "" >>fat.h
