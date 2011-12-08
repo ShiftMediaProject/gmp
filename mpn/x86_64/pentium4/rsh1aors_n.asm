@@ -64,7 +64,7 @@ ASM_START()
 PROLOGUE(func)
 	DOS64_ENTRY(4)
 	xor	%r8, %r8
-	jmp	L(ent)
+IFDOS(`	jmp	L(ent)		')
 EPILOGUE()
 PROLOGUE(func_nc)
 	DOS64_ENTRY(4)
