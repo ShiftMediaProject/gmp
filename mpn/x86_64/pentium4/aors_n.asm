@@ -57,11 +57,12 @@ ASM_START()
 PROLOGUE(func)
 	DOS64_ENTRY(4)
 	xor	%r8, %r8
+IFDOS(`	jmp	L(ent)		')
 EPILOGUE()
 PROLOGUE(func_nc)
 	DOS64_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
-	push	%rbx
+L(ent):	push	%rbx
 	push	%r12
 
 	mov	(vp), %r9
