@@ -1,5 +1,7 @@
 2011-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/fac_ui.c (mpz_bc_fac_1): Fix typo in allocation size.
+
 	* mpn/x86/fat/com.c: New file.
 
 	* mpn/x86_64/pentium4/aors_n.asm: Make it actually work for DOS64.

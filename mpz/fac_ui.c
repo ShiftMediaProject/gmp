@@ -42,19 +42,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
   ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
 
-#define FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I)	\
-  if ((PR) > (MAX_PR)) {			\
-    (VEC)[(I)++] = (PR);			\
-    (PR) = 1;					\
+#define FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I)			\
+  if ((PR) > (MAX_PR)) {					\
+    (VEC)[(I)++] = (PR);					\
+    (PR) = 1;							\
   }
 
-#define FACTOR_LIST_STORE(P, PR, MAX_PR, VEC, I)	\
-  do {						\
-    if ((PR) > (MAX_PR)) {			\
-      (VEC)[(I)++] = (PR);			\
-      (PR) = (P);				\
-    } else					\
-      (PR) *= (P);				\
+#define FACTOR_LIST_STORE(P, PR, MAX_PR, VEC, I)		\
+  do {								\
+    if ((PR) > (MAX_PR)) {					\
+      (VEC)[(I)++] = (PR);					\
+      (PR) = (P);						\
+    } else							\
+      (PR) *= (P);						\
   } while (0)
 
 #define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
@@ -78,7 +78,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	}							\
       __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
       __index += __mask & 1;					\
-    }  while (__i <= __max_i);				\
+    }  while (__i <= __max_i);					\
   } while (0)
 
 /*********************************************************/
@@ -112,7 +112,7 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 #define SIEVE_SEED CNST_LIMB(0x8480)
 #define SEED_LIMIT 54
 #else
-#error Not implemented 
+#error Not implemented
 #endif
 #endif
 
@@ -149,9 +149,9 @@ first_block_primesieve (mp_limb_t *bit_array, mp_limb_t n)
 	  int maskrot;
 
 	  step = id_to_n(i);
-/* 	  lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
+/*	  lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
 	  lindex = i*(step+1+(i&1))-1+(i&1);
-/* 	  lindex = i*(i*3+2+(i&1)*2)-1+(i&1); */
+/*	  lindex = i*(i*3+2+(i&1)*2)-1+(i&1); */
 	  if (lindex > bits)
 	    break;
 
@@ -165,7 +165,7 @@ first_block_primesieve (mp_limb_t *bit_array, mp_limb_t n)
 	    lindex += step;
 	  } while (lindex <= bits);
 
-/* 	  lindex = n_to_bit(id_to_n(i)*bit_to_n(i)); */
+/*	  lindex = n_to_bit(id_to_n(i)*bit_to_n(i)); */
 	  lindex = i*(i*3+6)+(i&1);
 
 	  lmask = CNST_LIMB(1) << (lindex % GMP_LIMB_BITS);
@@ -493,7 +493,7 @@ mpz_bc_oddfac_1 (mpz_ptr x, mp_limb_t n)
     } while (i <= n);
     n >>= 1;
   } while (n >= numberof (table));
- 
+
   factors[j++] = prod;
   factors[j++] = table[n];
   mpz_prodlimbs (x, factors, j);
@@ -577,7 +577,7 @@ mpz_bc_fac_1 (mpz_ptr x, mp_limb_t n)
 
       TMP_SMARK;
       i = numberof (table);
-      factors = TMP_SALLOC_LIMBS (1 + (n - numberof (table)) / FACTORS_PER_LIMB);
+      factors = TMP_SALLOC_LIMBS (2 + (n - numberof (table)) / FACTORS_PER_LIMB);
 
       factors[0] = table[numberof (table)-1];
       j = 1;
