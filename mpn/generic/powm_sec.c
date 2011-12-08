@@ -103,6 +103,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 #endif
 
+#ifdef WANT_FAT_BINARY
+/* For fat builds, we would need to quantify over all mpn_sqr_basecase limit
+   that may appear in __gmpn_cpuvec.  This asks for some configure.in hacking.
+   For now, define a safe limit which all mpn_sqr_basecase will handle.
+   FIXME!  */
+#define SQR_BASECASE_MAX 32
+#endif
+
 #ifndef SQR_BASECASE_MAX
 /* If SQR_BASECASE_MAX is now not defined, use mpn_sqr_basecase for any operand
    size.  */
@@ -118,7 +126,7 @@ mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
 
-  if (n < SQR_BASECASE_MAX)
+  if (n <= SQR_BASECASE_MAX)
     {
       mpn_sqr_basecase (rp, up, n);
       return;
