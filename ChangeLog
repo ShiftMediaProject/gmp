@@ -1,3 +1,11 @@
+2011-12-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/pentium4/aors_n.asm: Make it actually work for DOS64.
+	* mpn/x86_64/pentium4/rsh1aors_n.asm: Conditionalise jump on DOS64
+	to avoid overhead for standard ABIs.
+
+	* mpn/x86_64/gcd_1.asm: Support DOS64.
+
 2011-12-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Fix typo making HAVE_NATIVE_mpn_X fail for fat
