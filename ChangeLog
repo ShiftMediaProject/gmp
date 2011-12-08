@@ -1,5 +1,7 @@
 2011-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/fat/com.c: New file.
+
 	* mpn/x86_64/pentium4/aors_n.asm: Make it actually work for DOS64.
 	* mpn/x86_64/pentium4/rsh1aors_n.asm: Conditionalise jump on DOS64
 	to avoid overhead for standard ABIs.
