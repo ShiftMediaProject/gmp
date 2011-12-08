@@ -3,7 +3,8 @@ dnl  AMD64 mpn_gcd_1 -- mpn by 1 gcd.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -57,10 +58,14 @@ define(`up',    `%rdi')
 define(`n',     `%rsi')
 define(`vlimb', `%rdx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
+ASM_START()
 	TEXT
 	ALIGN(16)
-
 PROLOGUE(mpn_gcd_1)
+	DOS64_ENTRY(3)
 	mov	(%rdi), %r8		C src low limb
 	or	%rdx, %r8		C x | y
 	mov	$-1, R32(%rcx)
@@ -82,6 +87,9 @@ L(divide_strip_y):
 	push	%rdx
 	sub	$8, %rsp		C maintain ABI required rsp alignment
 
+IFDOS(`	mov	%rdx, %r8	')
+IFDOS(`	mov	%rsi, %rdx	')
+IFDOS(`	mov	%rdi, %rcx	')
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %rsi
 	jl	L(bmod)
 	CALL(	mpn_mod_1)
@@ -128,6 +136,7 @@ L(strip_x_top):
 L(done):
 	mov	%r8, %rcx
 	shl	R8(%rcx), %rax
+	DOS64_EXIT()
 	ret
 
 EPILOGUE()
