@@ -1,3 +1,7 @@
+2011-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/fac_ui.c: fac_bc_ui inlined in fac_ui.
+
 2011-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/fac_ui.c (mpz_bc_fac_1): Fix typo in allocation size.

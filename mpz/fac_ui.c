@@ -72,7 +72,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       ++__i;							\
       if (((sieve)[__index] & __mask) == 0)			\
 	{							\
-      (prime) = id_to_n(__i)
+	  (prime) = id_to_n(__i)
 
 #define LOOP_ON_SIEVE_END					\
 	}							\
@@ -318,12 +318,14 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
     prod = MPZ_REALLOC (x, j);
     size = 1;
 
-    for (i = 1; i < j; i++)
+    i = 1;
+    do
       {
 	cy = mpn_mul_1 (prod, prod, size, factors[i]);
 	prod[size] = cy;
 	size += cy != 0;
-      }
+ 	i++;
+      } while (i < j);
 
     SIZ (x) = size;
   } else {
@@ -363,7 +365,7 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
     __q = n;					\
     do {					\
       __q /= __prime;				\
-      if ((__q & 1) == 1) (PR) *= __prime;	\
+      if ((__q & 1) != 0) (PR) *= __prime;	\
     } while (__q >= __prime);			\
   } while (0)
 
@@ -560,17 +562,22 @@ mpz_dsc_oddfac_1 (mpz_ptr x, mp_limb_t n)
   TMP_FREE;
 }
 
-static void
-mpz_bc_fac_1 (mpz_ptr x, mp_limb_t n)
+/* Computes n!, the factorial of n.
+   WARNING: it assumes that n fits in a limb!
+ */
+void
+mpz_fac_ui (mpz_ptr x, unsigned long n)
 {
   static const mp_limb_t table[] = { ONE_LIMB_FACTORIAL_TABLE };
+
+  ASSERT (n <= GMP_NUMB_MAX);
 
   if (n < numberof (table))
     {
       PTR (x)[0] = table[n];
       SIZ (x) = 1;
     }
-  else
+  else if (BELOW_THRESHOLD (n, FAC_ODD_THRESHOLD))
     {
       mp_limb_t *factors, prod, max_prod, i, j;
       TMP_SDECL;
@@ -592,38 +599,14 @@ mpz_bc_fac_1 (mpz_ptr x, mp_limb_t n)
 
       TMP_SFREE;
     }
-}
-
-/* Computes n!, the factorial of n.
-   WARNING: it assumes that n fits in a limb!
- */
-void
-mpz_fac_ui (mpz_ptr x, unsigned long n)
-{
-  static const mp_limb_t table[] = { ONE_LIMB_FACTORIAL_TABLE };
-
-  ASSERT (n <= GMP_NUMB_MAX);
-
-  if (n < numberof (table))
-    {
-      PTR (x)[0] = table[n];
-      SIZ (x) = 1;
-    }
-  else if (BELOW_THRESHOLD (n, FAC_ODD_THRESHOLD))
-    {
-      mpz_bc_fac_1 (x, n);
-    }
   else
     {
       mp_limb_t count;
       if (BELOW_THRESHOLD (n, FAC_DSC_THRESHOLD))
 	mpz_bc_oddfac_1 (x, n);
-/*       mpz_dc_fac_1 (x, n, 0); */
       else
 	mpz_dsc_oddfac_1 (x, n);
       popc_limb (count, n);
       mpz_mul_2exp (x, x, n - count);
     }
 }
-
-#undef FACTORS_PER_LIMB
