@@ -1,8 +1,16 @@
+2011-12-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sbpi1_bdiv_q.c: Delay quotient limb stores in order to
+	allow quotient and dividend to completely overlap.
+	* mpn/generic/sbpi1_bdiv_qr.c: Likewise.
+
 2011-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/fac_ui.c: fac_bc_ui inlined in fac_ui.
 
 2011-12-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm_sec.c: Handle fat binaries better.
 
 	* mpz/fac_ui.c (mpz_bc_fac_1): Fix typo in allocation size.
 
