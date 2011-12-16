@@ -533,7 +533,7 @@ sbb (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
 
 #define AORS_1(operation)                               \
   {                                                     \
-    mp_limb_t  i;                                       \
+    mp_size_t  i;                                       \
 							\
     ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));  \
     ASSERT (size >= 1);                                 \
