@@ -233,7 +233,7 @@ main (int argc, char **argv)
 
   check_tests ();
 
-  n_tests = 1000;
+  n_tests = 500;
   if (argc == 2)
     n_tests = atoi (argv[1]);
   check_random (n_tests);
