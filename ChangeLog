@@ -1,3 +1,7 @@
+2011-12-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-perfpow.c: Decrease default # of tests.
+
 2011-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/refmpn.c (AORS_1): Fix typo in variable type.
