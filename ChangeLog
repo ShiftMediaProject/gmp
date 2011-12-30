@@ -1,5 +1,7 @@
 2011-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/hamdist.c: Fix typo in a return statement.
+
 	* mpn/generic/powm_sec.c (SQR_BASECASE_MAX): Set safely from
 	SQR_TOOM2_THRESHOLD.
 
