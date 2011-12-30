@@ -99,7 +99,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    mpn_sqr_basecase, it comes from SQR_TOOM2_THRESHOLD_MAX in the assembly
    file.  An assembly mpn_sqr_basecase that does not define it, should allow
    any size.  */
-#define SQR_BASECASE_MAX  SQR_TOOM2_THRESHOLD
+#define SQR_BASECASE_MAX  (SQR_TOOM2_THRESHOLD - 1)
 #endif
 #endif
 
