@@ -2148,6 +2148,14 @@ struct fft_table_nk
 #define SET_STR_PRECOMPUTE_THRESHOLD   2000
 #endif
 
+#ifndef FAC_ODD_THRESHOLD
+#define FAC_ODD_THRESHOLD   100
+#endif
+
+#ifndef FAC_DSC_THRESHOLD
+#define FAC_DSC_THRESHOLD   300
+#endif
+
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
    overlap.  If both these are false, there's an overlap. */
@@ -4805,6 +4813,14 @@ extern mp_size_t			set_str_dc_threshold;
 #define SET_STR_PRECOMPUTE_THRESHOLD	set_str_precompute_threshold
 extern mp_size_t			set_str_precompute_threshold;
 
+#undef  FAC_ODD_THRESHOLD
+#define FAC_ODD_THRESHOLD		fac_odd_threshold
+extern  mp_size_t     			fac_odd_threshold;
+
+#undef  FAC_DSC_THRESHOLD
+#define FAC_DSC_THRESHOLD		fac_dsc_threshold
+extern  mp_size_t 			fac_dsc_threshold;
+
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS
 extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
@@ -4828,6 +4844,7 @@ extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 #define SQR_TOOM8_THRESHOLD_LIMIT      1200
 #define MULLO_BASECASE_THRESHOLD_LIMIT  200
 #define GET_STR_THRESHOLD_LIMIT         150
+#define FAC_DSC_THRESHOLD_LIMIT        2048
 
 #endif /* TUNE_PROGRAM_BUILD */
 

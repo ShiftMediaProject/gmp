@@ -1,6 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009,
+# 2010, 2011 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -83,7 +84,7 @@ speed_ext_SOURCES = speed-ext.c
 speed_ext_LDFLAGS = $(STATIC)
 
 tuneup_SOURCES = tuneup.c
-nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS)
+nodist_tuneup_SOURCES = sqr_basecase.c fac_ui.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES) $(TUNE_LIBS)
 tuneup_LDFLAGS = $(STATIC)
@@ -101,7 +102,7 @@ allprogs: $(EXTRA_PROGRAMS)
 
 # $(MANY_CLEAN) and $(MANY_DISTCLEAN) are hooks for many.pl
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(TUNE_MPN_SRCS) sqr_asm.asm \
+	$(TUNE_MPN_SRCS) fac_ui.c sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
@@ -158,5 +159,10 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(SQR_TOOM2_THRESHOLD_OVERRIDE,SQR_TOOM2_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 
+# FIXME: Should it depend on $(top_builddir)/mpz/fac_ui.h too?
+fac_ui.c: $(top_builddir)/mpz/fac_ui.c
+	echo "#define TUNE_PROGRAM_BUILD 1"          >fac_ui.c
+	echo "#define __gmpz_fac_ui mpz_fac_ui_tune" >>fac_ui.c
+	echo "#include \"mpz/fac_ui.c\""             >>fac_ui.c
 
 include ../mpn/Makeasm.am

@@ -214,6 +214,8 @@ mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
 mp_size_t  set_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  set_str_precompute_threshold = MP_SIZE_T_MAX;
+mp_size_t  fac_odd_threshold            = MP_SIZE_T_MAX;
+mp_size_t  fac_dsc_threshold            = FAC_DSC_THRESHOLD_LIMIT;
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
@@ -366,12 +368,15 @@ analyze_dat (int final)
 }
 
 
-/* Measuring for recompiled mpn/generic/divrem_1.c and mpn/generic/mod_1.c */
+/* Measuring for recompiled mpn/generic/divrem_1.c, mpn/generic/mod_1.c
+ * and mpz/fac_ui.c */
 
 mp_limb_t mpn_divrem_1_tune
   __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_mod_1_tune
    __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
+void mpz_fac_ui_tune
+   __GMP_PROTO ((mpz_ptr, unsigned long));
 
 double
 speed_mpn_mod_1_tune (struct speed_params *s)
@@ -382,6 +387,11 @@ double
 speed_mpn_divrem_1_tune (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1_tune);
+}
+double
+speed_mpz_fac_ui_tune (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_FAC_UI (mpz_fac_ui_tune);
 }
 
 
@@ -2612,6 +2622,24 @@ tune_fft_sqr (void)
 }
 
 void
+tune_fac_ui (void)
+{
+  static struct param_t  param;
+
+  param.function = speed_mpz_fac_ui_tune;
+
+  param.name = "FAC_ODD_THRESHOLD";
+  param.min_size = 3;
+  param.min_is_always = 0;
+  one (&fac_odd_threshold, &param);
+
+  param.name = "FAC_DSC_THRESHOLD";
+  param.min_size = MAX (32, fac_odd_threshold);
+  param.max_size = FAC_DSC_THRESHOLD_LIMIT;
+  one (&fac_dsc_threshold, &param);
+}
+
+void
 all (void)
 {
   time_t  start_time, end_time;
@@ -2745,6 +2773,9 @@ all (void)
 
   tune_get_str ();
   tune_set_str ();
+  printf("\n");
+
+  tune_fac_ui ();
   printf("\n");
 
   time (&end_time);

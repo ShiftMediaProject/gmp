@@ -432,13 +432,7 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
 /* Section oddfac: odd factorial, needed also by binomial*/
 /*********************************************************/
 
-/* FIXME: should be tuned */
-#ifndef FAC_DSC_THRESHOLD
-#define FAC_DSC_THRESHOLD 210
-#endif
-
 #if TUNE_PROGRAM_BUILD
-#define FAC_DSC_THRESHOLD_LIMIT 1024
 #define FACTORS_PER_LIMB (GMP_NUMB_BITS / (LOG2C(FAC_DSC_THRESHOLD_LIMIT-1)+1))
 #else
 #define FACTORS_PER_LIMB (GMP_NUMB_BITS / (LOG2C(FAC_DSC_THRESHOLD-1)+1))
@@ -506,11 +500,6 @@ mpz_bc_oddfac_1 (mpz_ptr x, mp_limb_t n)
 /*********************************************************/
 /* Section factorial: fast factorial implementations     */
 /*********************************************************/
-
-/* FIXME: should be tuned */
-#ifndef FAC_ODD_THRESHOLD
-#define FAC_ODD_THRESHOLD 93
-#endif
 
 /* mpz_dsc_oddfac_1 computes the odd part of the factorial of the parameter n.
    I.e. n! = x 2^a, the result x is an odd positive integer.
