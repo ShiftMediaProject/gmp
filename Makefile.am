@@ -2,7 +2,7 @@
 
 
 # Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004,
-# 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+# 2006, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -311,9 +311,9 @@ install-data-hook:
 
 EXTRA_DIST += dumbmp.c
 
-mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
-	./gen-fac_ui $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpz/fac_ui.h || (rm -f mpz/fac_ui.h; exit 1)
-BUILT_SOURCES += mpz/fac_ui.h
+fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
+	./gen-fac_ui $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fac_ui.h || (rm -f fac_ui.h; exit 1)
+BUILT_SOURCES += fac_ui.h
 
 gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
 	$(CC_FOR_BUILD) `test -f 'gen-fac_ui$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
