@@ -1,7 +1,7 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010, 2011
-Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010,
+2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -214,7 +214,7 @@ mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
 mp_size_t  set_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  set_str_precompute_threshold = MP_SIZE_T_MAX;
-mp_size_t  fac_odd_threshold            = MP_SIZE_T_MAX;
+mp_size_t  fac_odd_threshold            = 0;
 mp_size_t  fac_dsc_threshold            = FAC_DSC_THRESHOLD_LIMIT;
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
@@ -2628,15 +2628,14 @@ tune_fac_ui (void)
 
   param.function = speed_mpz_fac_ui_tune;
 
-  param.name = "FAC_ODD_THRESHOLD";
-  param.min_size = 3;
-  param.min_is_always = 0;
-  one (&fac_odd_threshold, &param);
-
   param.name = "FAC_DSC_THRESHOLD";
-  param.min_size = MAX (32, fac_odd_threshold);
+  param.min_size = 32;
   param.max_size = FAC_DSC_THRESHOLD_LIMIT;
   one (&fac_dsc_threshold, &param);
+
+  param.name = "FAC_ODD_THRESHOLD";
+  param.min_size = 9;
+  one (&fac_odd_threshold, &param);
 }
 
 void

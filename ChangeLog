@@ -1,3 +1,7 @@
+2012-01-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/tuneup.c (tune_fac_ui): Compute FAC_DSC before FAC_ODD.
+
 2011-12-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (fac_ui.h): Put file in top-level dir, not in mpz.
