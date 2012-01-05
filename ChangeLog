@@ -1,3 +1,11 @@
+2012-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gen-fac_ui.c: Remove currently unused constants; add new odd
+	double factorial table.
+	* mpz/fac_ui.h (RECURSIVE_PROD_THRESHOLD): Increase default.
+	(mpz_oddfac_1): New function: a merge of _bc_odd and _dsc_odd.
+	(mpz_prodlimbs): More in-place computations.
+
 2012-01-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/tuneup.c (tune_fac_ui): Compute FAC_DSC before FAC_ODD.

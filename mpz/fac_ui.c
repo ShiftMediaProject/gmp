@@ -2,8 +2,8 @@
 
 Contributed to the GNU project by Marco Bodrato.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2003, 2011 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2003, 2011, 2012
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -293,11 +293,12 @@ bitwise_primesieve (mp_ptr bit_array, mp_limb_t n)
 
 /* FIXME: should be tuned */
 #ifndef RECURSIVE_PROD_THRESHOLD
-#define RECURSIVE_PROD_THRESHOLD MUL_TOOM22_THRESHOLD
+#define RECURSIVE_PROD_THRESHOLD (MUL_TOOM22_THRESHOLD|(MUL_TOOM22_THRESHOLD>>1))
 #endif
 
 /* Computes the product of the j>1 limbs pointed by factors, puts the
    result in x.
+   The list in {factors, j} is overwritten.
 */
 
 static void
@@ -313,21 +314,21 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
   if (BELOW_THRESHOLD (j, RECURSIVE_PROD_THRESHOLD)) {
     mp_limb_t cy;
 
-    PTR (x)[0] = factors[0];
-    SIZ (x) = 1;
-    prod = MPZ_REALLOC (x, j);
+    j--;
     size = 1;
 
-    i = 1;
-    do
+    for (i = 1; i < j; i++)
       {
-	cy = mpn_mul_1 (prod, prod, size, factors[i]);
-	prod[size] = cy;
+	cy = mpn_mul_1 (factors, factors, size, factors[i]);
+	factors[size] = cy;
 	size += cy != 0;
- 	i++;
-      } while (i < j);
+      };
 
-    SIZ (x) = size;
+    prod = MPZ_REALLOC (x, size + 1);
+
+    cy = mpn_mul_1 (prod, factors, size, factors[i]);
+    prod[size] = cy;
+    SIZ (x) = size + (cy != 0);;
   } else {
     mpz_t x1, x2;
     TMP_DECL;
@@ -361,7 +362,7 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
   do {						\
     mp_limb_t __q, __prime;			\
     __prime = (P);				\
-    FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I);		\
+    FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I);	\
     __q = n;					\
     do {					\
       __q /= __prime;				\
@@ -457,98 +458,108 @@ log_n_max (mp_limb_t n)
   return log;
 }
 
-/* mpz_bc_oddfac_1 computes the odd part of the factorial of the parameter n.
-   I.e. n! = x 2^a, the result x is an odd positive integer.
- */
-
-static void
-mpz_bc_oddfac_1 (mpz_ptr x, mp_limb_t n)
-{
-  static const mp_limb_t table[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
-
-  mp_limb_t *factors, prod, max_prod, i, j;
-  TMP_SDECL;
-
-  ASSERT (numberof (table) > 3);
-#if TUNE_PROGRAM_BUILD
-  ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
-#endif
-
-  j = 0;
-  prod = 1;
-
-  TMP_SMARK;
-  factors = TMP_SALLOC_LIMBS (1 + n / FACTORS_PER_LIMB);
-
-  do {
-    i = 3;
-    max_prod = GMP_NUMB_MAX / n;
-    do {
-      FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
-      i += 2;
-    } while (i <= n);
-    n >>= 1;
-  } while (n >= numberof (table));
-
-  factors[j++] = prod;
-  factors[j++] = table[n];
-  mpz_prodlimbs (x, factors, j);
-
-  TMP_SFREE;
-}
-
 /*********************************************************/
 /* Section factorial: fast factorial implementations     */
 /*********************************************************/
 
-/* mpz_dsc_oddfac_1 computes the odd part of the factorial of the parameter n.
-   I.e. n! = x 2^a, the result x is an odd positive integer.
-
-   Uses the algorithm described by Peter Luschny in "Divide, Swing and
-   Conquer the Factorial!".
+/* mpz_oddfac_1 computes the odd part of the factorial of the
+   parameter n.  I.e. n! = x 2^a, where x is the returned value: an
+   odd positive integer.
  */
-
 static void
-mpz_dsc_oddfac_1 (mpz_ptr x, mp_limb_t n)
+mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 {
-  mpz_t swing;
-  mp_limb_t *sieve, *factors;
-  mp_size_t size;
-  unsigned s;
-  TMP_DECL;
+  static const mp_limb_t tablef[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
+  static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
 
-  ASSERT (n <= GMP_NUMB_MAX);
+  if (n < numberof (tablef))
+    {
+      PTR (x)[0] = tablef[n];
+      SIZ (x) = 1;
+    }
+  else
+    {
+      unsigned s;
+      mp_limb_t *factors;
 
-  s = 1;
-  size = n;
-  for ( ; (size >>= 1) > FAC_DSC_THRESHOLD; s++)
-    ;
-  mpz_bc_oddfac_1 (x, size);
+      ASSERT (n <= GMP_NUMB_MAX);
 
-  TMP_MARK;
-  sieve = TMP_ALLOC_LIMBS (primesieve_size (n));
+      s = 0;
+      {
+	mp_limb_t tn;
+	mp_limb_t prod, max_prod, i, j;
+	TMP_SDECL;
 
-  size = (bitwise_primesieve (sieve, n) + 1) / log_n_max (n) + 1;
+	ASSERT (numberof (tablef) > 3);
+#if TUNE_PROGRAM_BUILD
+	ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
+#endif
 
-  MPZ_TMP_INIT (swing, size << 1);
-  factors = PTR(swing) + size;
-  do {
-    mpz_t square;
-    TMP_DECL;
+	/* Compute the number of recursive steps for the DSC algorithm. */
+	for (tn = n; ABOVE_THRESHOLD (tn, FAC_DSC_THRESHOLD); s++)
+	  tn >>= 1;
 
-    s--;
-    mpz_oddswing_1 (swing, n>>s, sieve, factors);
+	j = 0;
+	prod = 1;
 
-    TMP_MARK;
-    size = SIZ (x);
-    MPZ_TMP_INIT (square, size << 1);
-    mpn_sqr (PTR (square), PTR (x), size);
-    SIZ (square) = (size << 1) - (PTR (square)[(size << 1) - 1] == 0);
-    mpz_mul (x, square, swing); /* n!= n$ * floor(n/2)!^2 */
+	TMP_SMARK;
+	factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
 
-    TMP_FREE;
-  } while (s != 0);
-  TMP_FREE;
+	for (; (tn - 1) >> 1 >= numberof (tabled); tn >>= 1) {
+	  i = numberof (tabled) * 2 + 1;
+	  max_prod = GMP_NUMB_MAX / tn;
+	  factors[j++] = tabled[numberof (tabled) - 1];
+	  do {
+	    FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
+	    i += 2;
+	  } while (i <= tn);
+	}
+
+	factors[j] = prod;
+	j += prod > 1;
+	factors[j++] = tabled[(tn - 1) >> 1];
+	factors[j++] = tablef[tn >> 1];
+	mpz_prodlimbs (x, factors, j);
+
+	TMP_SFREE;
+      }
+
+      if (s != 0)
+	/* Use the algorithm described by Peter Luschny in "Divide,
+	   Swing and Conquer the Factorial!".
+	*/
+	{
+	  mpz_t swing;
+	  mp_limb_t *sieve;
+	  mp_size_t size;
+	  TMP_DECL;
+
+	  TMP_MARK;
+	  sieve = TMP_ALLOC_LIMBS (primesieve_size (n));
+
+	  size = (bitwise_primesieve (sieve, n) + 1) / log_n_max (n) + 1;
+
+	  MPZ_TMP_INIT (swing, size << 1);
+	  factors = PTR(swing) + size;
+	  do {
+	    mpz_t square;
+	    TMP_DECL;
+
+	    s--;
+	    mpz_oddswing_1 (swing, n>>s, sieve, factors);
+
+	    TMP_MARK;
+	    size = SIZ (x);
+	    MPZ_TMP_INIT (square, size << 1);
+	    mpn_sqr (PTR (square), PTR (x), size);
+	    SIZ (square) = (size << 1) - (PTR (square)[(size << 1) - 1] == 0);
+	    mpz_mul (x, square, swing); /* n!= n$ * floor(n/2)!^2 */
+
+	    TMP_FREE;
+	  } while (s != 0);
+	  TMP_FREE;
+	}
+    }
 }
 
 /* Computes n!, the factorial of n.
@@ -591,10 +602,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   else
     {
       mp_limb_t count;
-      if (BELOW_THRESHOLD (n, FAC_DSC_THRESHOLD))
-	mpz_bc_oddfac_1 (x, n);
-      else
-	mpz_dsc_oddfac_1 (x, n);
+      mpz_oddfac_1 (x, n);
       popc_limb (count, n);
       mpz_mul_2exp (x, x, n - count);
     }

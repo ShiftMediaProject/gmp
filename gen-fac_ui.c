@@ -1,6 +1,6 @@
 /* Generate mpz_fac_ui data.
 
-Copyright 2002, 2011 Free Software Foundation, Inc.
+Copyright 2002, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -76,7 +76,7 @@ gen_consts (int numb, int nail, int limb)
     ("/* odd integer for each n, and n!/2^sn has <= GMP_NUMB_BITS bits */\n");
   printf
     ("#define ONE_LIMB_ODD_FACTORIAL_TABLE CNST_LIMB(0x1),CNST_LIMB(0x1),CNST_LIMB(0x1");
-  mpz_init_set_ui (x, 1);
+  mpz_set_ui (x, 1);
   for (b = 3;; b++)
     {
       for (a = b; (a & 1) == 0; a >>= 1);
@@ -88,18 +88,14 @@ gen_consts (int numb, int nail, int limb)
     }
   printf (")\n");
 
-
   printf
-    ("\n/* This table is 0$,1$,2$,3$,...,n$ where n$=binomial(2n,n) */\n");
+    ("\n/* This table is 1!!,3!!,...,(2n+1)!! where (2n+1)!! has <= GMP_NUMB_BITS bits */\n");
   printf
-    ("/* is the swing factorial, and n$ has <= GMP_NUMB_BITS bits */\n");
-  printf
-    ("#define ONE_LIMB_EVEN_SWING_TABLE CNST_LIMB(0x1),CNST_LIMB(0x2");
-  mpz_init_set_ui (x, 2);
-  for (b = 2;; b++)
+    ("#define ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE CNST_LIMB(0x1");
+  mpz_set_ui (x, 1);
+  for (b = 3;; b+=2)
     {
-      mpz_tdiv_q_ui (x, x, b);
-      mpz_mul_ui (x, x, 4*b-2);
+      mpz_mul_ui (x, x, b);
       if (mpz_sizeinbase (x, 2) > numb)
 	break;
       printf ("),CNST_LIMB(0x");
@@ -107,7 +103,7 @@ gen_consts (int numb, int nail, int limb)
     }
   printf (")\n");
 
-
+#if 0
   mpz_set_ui (x, 1);
   mpz_mul_2exp (x, x, limb + 1);	/* x=2^(limb+1)        */
   mpz_init (y);
@@ -160,6 +156,7 @@ gen_consts (int numb, int nail, int limb)
       mpz_out_str (stdout, 16, x);
       printf (")\n");
     }
+#endif
 
   return 0;
 }
