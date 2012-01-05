@@ -6,6 +6,8 @@
 	(mpz_oddfac_1): New function: a merge of _bc_odd and _dsc_odd.
 	(mpz_prodlimbs): More in-place computations.
 
+	* tune/tuneup.c (tune_fac_ui): min_is_always for FAC_ODD_.
+
 2012-01-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/tuneup.c (tune_fac_ui): Compute FAC_DSC before FAC_ODD.
