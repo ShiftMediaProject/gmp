@@ -2635,6 +2635,7 @@ tune_fac_ui (void)
 
   param.name = "FAC_ODD_THRESHOLD";
   param.min_size = 22;
+  param.stop_factor = 1.7;
   param.min_is_always = 1;
   one (&fac_odd_threshold, &param);
 }
