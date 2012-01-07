@@ -1,3 +1,8 @@
+2012-01-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/mul_2exp.c: Rewrite.
+	* mpz/tdiv_q_2exp.c: Rewrite.
+
 2012-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gen-fac_ui.c: Remove currently unused constants; add new odd
