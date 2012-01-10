@@ -1,3 +1,9 @@
+2012-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/minithres/gmp-mparam.h: New FAC_ODD_ and FAC_DSC_
+	thresholds.	
+	* tune/tuneup.c (tune_fac_ui): Correct minimum for FAC_DSC_.
+	
 2012-01-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/mul_2exp.c: Rewrite.

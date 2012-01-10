@@ -93,3 +93,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GET_STR_PRECOMPUTE_THRESHOLD        10
 #define SET_STR_THRESHOLD                   64
 #define SET_STR_PRECOMPUTE_THRESHOLD       100
+
+#define FAC_ODD_THRESHOLD                    0  /* always */
+#define FAC_DSC_THRESHOLD                   16

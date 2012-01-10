@@ -2629,7 +2629,7 @@ tune_fac_ui (void)
   param.function = speed_mpz_fac_ui_tune;
 
   param.name = "FAC_DSC_THRESHOLD";
-  param.min_size = 32;
+  param.min_size = 16;
   param.max_size = FAC_DSC_THRESHOLD_LIMIT;
   one (&fac_dsc_threshold, &param);
 
