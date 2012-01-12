@@ -1,6 +1,7 @@
 2012-01-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/divexact.c: Tight realloc, delayed if variables are reused.
+	* mpz/lcm.c: Smaller temp space, avoid goto.
 
 2012-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
