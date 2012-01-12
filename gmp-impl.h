@@ -4,7 +4,8 @@
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -3495,8 +3496,8 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
     mp_limb_t  __x = (input);						\
     __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
     __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
-    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
-    (result) = __x & 0xff;						\
+    __x = ((__x >> 4) + __x);						\
+    (result) = __x & 0x0f;						\
   } while (0)
 #endif
 

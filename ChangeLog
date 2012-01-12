@@ -2,6 +2,7 @@
 
 	* mpz/divexact.c: Tight realloc, delayed if variables are reused.
 	* mpz/lcm.c: Smaller temp space, avoid goto.
+	* gmp-impl.h (popc_limb): avoid double & (for 8-bits limb).
 
 2012-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
