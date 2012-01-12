@@ -1,3 +1,7 @@
+2012-01-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/t-popc.c: Test longer bit strings.
+
 2012-01-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/divexact.c: Tight realloc, delayed if variables are reused.
