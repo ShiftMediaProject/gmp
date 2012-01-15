@@ -42,7 +42,7 @@ mpz_scan1 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
   /* Past the end there's no 1 bits for u>=0, or an immediate 1 bit for u<0.
      Notice this test picks up any u==0 too. */
   if (starting_limb >= abs_size)
-    return (size >= 0 ? ULONG_MAX : starting_bit);
+    return (size >= 0 ? ~(mp_bitcnt_t) 0 : starting_bit);
 
   limb = *p;
 
@@ -57,7 +57,7 @@ mpz_scan1 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
 	     no 1 bits after starting_bit.  */
 	  p++;
 	  if (p == u_end)
-	    return ULONG_MAX;
+	    return ~(mp_bitcnt_t) 0;
 
 	  /* Otherwise search further for a non-zero limb.  The high limb is
 	     non-zero, if nothing else.  */

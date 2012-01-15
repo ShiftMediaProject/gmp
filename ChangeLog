@@ -1,3 +1,9 @@
+2012-01-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/scan0.c (mpz_scan0): Use ~(mp_bitcnt_t) 0, rather than
+	ULONG_MAX, when returning "infinity".
+	* mpz/scan1.c (mpz_scan1): Likewise.
+
 2012-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/t-popc.c: Test longer bit strings.
