@@ -550,14 +550,19 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 	TMP_SMARK;
 	factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
 
+#if TUNE_PROGRAM_BUILD
+	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
+#else
+	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
+#endif
 	for (; (tn - 1) >> 1 >= numberof (tabled); tn >>= 1) {
 	  i = numberof (tabled) * 2 + 1;
-	  max_prod = GMP_NUMB_MAX / tn;
 	  factors[j++] = tabled[numberof (tabled) - 1];
 	  do {
 	    FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
 	    i += 2;
 	  } while (i <= tn);
+	  max_prod <<= 1;
 	}
 
 	factors[j] = prod;
@@ -638,7 +643,11 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
       factors[0] = table[numberof (table)-1];
       j = 1;
       prod = 1;
-      max_prod = GMP_NUMB_MAX / n; /* GMP_NUMB_MAX/FAC_DSC_THRESHOLD */
+#if TUNE_PROGRAM_BUILD
+      max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
+#else
+      max_prod = GMP_NUMB_MAX / (FAC_ODD_THRESHOLD | 1);
+#endif
       do {
 	FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
       } while (++i <= n);
