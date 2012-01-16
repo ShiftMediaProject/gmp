@@ -22,11 +22,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 #include "fac_ui.h"
 
 /* TODO:
-   - write the code for tuning thresholds;
+   - write the code for tuning more thresholds;
    - split this file in smaller parts with functions that can be recycled for different computations.
  */
 
@@ -98,23 +99,28 @@ n_to_bit (mp_limb_t n) { return ((n-5)|1)/3U; }
 static mp_size_t
 primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 
-/* FIXME: also for 8... */
-#if GMP_LIMB_BITS > 30
-#if GMP_LIMB_BITS < 62
-#define SIEVE_SEED CNST_LIMB(0x69128480)
-#define SEED_LIMIT 114
-#else
+#if GMP_LIMB_BITS > 61
 #define SIEVE_SEED CNST_LIMB(0x3294C9E069128480)
 #define SEED_LIMIT 202
-#endif
+#else
+#if GMP_LIMB_BITS > 30
+#define SIEVE_SEED CNST_LIMB(0x69128480)
+#define SEED_LIMIT 114
 #else
 #if GMP_LIMB_BITS > 15
 #define SIEVE_SEED CNST_LIMB(0x8480)
 #define SEED_LIMIT 54
 #else
-#error Not implemented
-#endif
-#endif
+#if GMP_LIMB_BITS > 7
+#define SIEVE_SEED CNST_LIMB(0x80)
+#define SEED_LIMIT 34
+#else
+#define SIEVE_SEED CNST_LIMB(0x0)
+#define SEED_LIMIT 24
+#endif /* 7 */
+#endif /* 15 */
+#endif /* 30 */
+#endif /* 61 */
 
 static void
 first_block_primesieve (mp_limb_t *bit_array, mp_limb_t n)
@@ -358,16 +364,37 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
 /* Section swing: swing factorial                        */
 /*********************************************************/
 
-#define SWING_A_PRIME(P, PR, MAX_PR, VEC, I)	\
+/* Returns an approximation of the sqare root of x.  *
+ * It gives: x <= limb_apprsqrt (x) ^ 2 < x * 9/4    */
+static mp_limb_t
+limb_apprsqrt (mp_limb_t x)
+{
+  int s;
+
+  ASSERT (x > 2);
+  count_leading_zeros (s, x - 1);
+  s = GMP_LIMB_BITS - 1 - s;
+  return (CNST_LIMB(1) << (s >> 1)) + (CNST_LIMB(1) << ((s - 1) >> 1));
+}
+
+#define SWING_A_PRIME(P, N, PR, MAX_PR, VEC, I)	\
   do {						\
     mp_limb_t __q, __prime;			\
     __prime = (P);				\
     FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I);	\
-    __q = n;					\
+    __q = (N);					\
     do {					\
       __q /= __prime;				\
       if ((__q & 1) != 0) (PR) *= __prime;	\
     } while (__q >= __prime);			\
+  } while (0)
+
+#define SH_SWING_A_PRIME(P, N, PR, MAX_PR, VEC, I)	\
+  do {							\
+    mp_limb_t __prime;					\
+    __prime = (P);					\
+    if ((((N) / __prime) & 1) != 0)			\
+      FACTOR_LIST_STORE(__prime, PR, MAX_PR, VEC, I);	\
   } while (0)
 
 /* mpz_oddswing_1 computes the odd part of the swing factorial of the parameter n.
@@ -387,7 +414,7 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
   mp_limb_t prod, max_prod;
   mp_limb_t j;
 
-  ASSERT (n > 15);
+  ASSERT (n > 24);
 
   j = 0;
 
@@ -395,16 +422,37 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
   max_prod = GMP_NUMB_MAX / n;
 
   /* Handle prime = 3 separately. */
-  SWING_A_PRIME (3, prod, max_prod, factors, j);
+  SWING_A_PRIME (3, n, prod, max_prod, factors, j);
 
   /* Swing primes from 5 to n/3 */
-  if (1 || n > 5*3)
+  if (1 || n > 5*3) {
+    mp_limb_t s;
+
+    if (1 || n >= 5*5) {
+      mp_limb_t prime;
+
+      s = limb_apprsqrt(n);
+      s = n_to_bit (s);
+      LOOP_ON_SIEVE_BEGIN (prime, 0, s, 0,sieve);
+      SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
+      LOOP_ON_SIEVE_END;
+      s++;
+    } else
+      s = 0;
+
+    ASSERT (max_prod <= GMP_NUMB_MAX / 3);
+    max_prod *= 3;
+    ASSERT (bit_to_n (s) * bit_to_n (s) > n);
+    ASSERT (s <= n_to_bit (n / 3));
     {
       mp_limb_t prime;
-      LOOP_ON_SIEVE_BEGIN (prime, 0, n_to_bit (n/3), 0,sieve);
-      SWING_A_PRIME (prime, prod, max_prod, factors, j);
+
+      LOOP_ON_SIEVE_BEGIN (prime, s, n_to_bit (n/3), 0, sieve);
+      SH_SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
       LOOP_ON_SIEVE_END;
     }
+    max_prod /= 3;
+  }
 
   /* Store primes from (n+1)/2 to n */
   {
@@ -428,6 +476,7 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
 }
 
 #undef SWING_A_PRIME
+#undef SH_SWING_A_PRIME
 
 /*********************************************************/
 /* Section oddfac: odd factorial, needed also by binomial*/
@@ -457,10 +506,6 @@ log_n_max (mp_limb_t n)
 
   return log;
 }
-
-/*********************************************************/
-/* Section factorial: fast factorial implementations     */
-/*********************************************************/
 
 /* mpz_oddfac_1 computes the odd part of the factorial of the
    parameter n.  I.e. n! = x 2^a, where x is the returned value: an
@@ -539,8 +584,8 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 
 	  size = (bitwise_primesieve (sieve, n) + 1) / log_n_max (n) + 1;
 
-	  MPZ_TMP_INIT (swing, size << 1);
-	  factors = PTR(swing) + size;
+	  MPZ_TMP_INIT (swing, size + n / GMP_NUMB_BITS + 4);
+	  factors = PTR(swing) + n / GMP_NUMB_BITS + 4;
 	  do {
 	    mpz_t square;
 	    TMP_DECL;
@@ -561,6 +606,10 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 	}
     }
 }
+
+/*********************************************************/
+/* Section factorial: fast factorial implementations     */
+/*********************************************************/
 
 /* Computes n!, the factorial of n.
    WARNING: it assumes that n fits in a limb!

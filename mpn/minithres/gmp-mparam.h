@@ -1,7 +1,7 @@
 /* Minimal values gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000, 2006, 2008, 2009, 2010 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2006, 2008, 2009, 2010, 2012 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -95,4 +95,4 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SET_STR_PRECOMPUTE_THRESHOLD       100
 
 #define FAC_ODD_THRESHOLD                    0  /* always */
-#define FAC_DSC_THRESHOLD                   16
+#define FAC_DSC_THRESHOLD                   25

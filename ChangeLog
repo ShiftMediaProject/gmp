@@ -1,3 +1,11 @@
+2012-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/fac_ui.h (SIEVE_SEED): Define value for small limb size.
+	(mpz_oddswing_1): Reduce the number of divisions.
+	(mpz_oddfac_1): Reduce memory usage.
+	* mpn/minithres/gmp-mparam.h: Correct minimum for FAC_DSC_.
+	* tune/tuneup.c (tune_fac_ui): Likewise.
+
 2012-01-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/scan0.c (mpz_scan0): Use ~(mp_bitcnt_t) 0, rather than
