@@ -1,3 +1,7 @@
+2012-01-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* demos/isprime.c (main): Run 25 millerrabin tests.
+
 2012-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/fac_ui.h (SIEVE_SEED): Define value for small limb size.
@@ -24,8 +28,7 @@
 
 2012-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpn/minithres/gmp-mparam.h: New FAC_ODD_ and FAC_DSC_
-	thresholds.
+	* mpn/minithres/gmp-mparam.h: New FAC_ODD_ and FAC_DSC_ thresholds.
 	* tune/tuneup.c (tune_fac_ui): Correct minimum for FAC_DSC_.
 
 2012-01-07  Torbjorn Granlund  <tege@gmplib.org>
@@ -200,7 +203,7 @@
 
 	* mpn/x86_64/invert_limb.asm: Wrap .protected decl.
 
-	* gmp-impl.h (DECL_divexact_1): Fix typo in return typo.
+	* gmp-impl.h (DECL_divexact_1): Fix typo in return type.
 
 	* mpn/x86_64/dos64.m4 (LEA): New define.
 	(PIC): Define.
@@ -437,7 +440,7 @@
 	* mpn/powerpc64/mode64/lshiftc.asm: Move file from here...
 	* mpn/powerpc64/lshiftc.asm: ...to here, with trivial modifications.
 
-	* configure.in: Pass -m32 in more cases, using via _maybe mechanism.
+	* configure.in: Pass -m32 in more cases, using _maybe mechanism.
 	Inherit default gcc_cflags in more places.
 
 	* mpn/powerpc64/mode64/p7/gmp-mparam.h: New file.
