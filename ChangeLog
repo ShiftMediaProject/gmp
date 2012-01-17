@@ -1,5 +1,7 @@
 2012-01-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Add ultrasparc T4 support.
+
 	* demos/isprime.c (main): Run 25 millerrabin tests.
 
 2012-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
