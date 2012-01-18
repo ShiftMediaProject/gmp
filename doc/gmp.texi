@@ -6685,7 +6685,7 @@ as the destination @code{f}.  Explicit constructors can be used if this
 doesn't suit.
 
 @deftypefun {} mpf_class::mpf_class (type @var{op})
-@deftypefunx {} mpf_class::mpf_class (type @var{op}, unsigned long @var{prec})
+@deftypefunx {} mpf_class::mpf_class (type @var{op}, mp_bitcnt_t @var{prec})
 Construct an @code{mpf_class}.  Any standard C++ type can be used, except
 @code{long long} and @code{long double}, and any of the GMP C++ classes can be
 used.
@@ -6709,7 +6709,7 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @end deftypefun
 
 @deftypefun explicit mpf_class::mpf_class (mpf_t @var{f})
-@deftypefunx {} mpf_class::mpf_class (mpf_t @var{f}, unsigned long @var{prec})
+@deftypefunx {} mpf_class::mpf_class (mpf_t @var{f}, mp_bitcnt_t @var{prec})
 Construct an @code{mpf_class} from an @code{mpf_t}.  The value in @var{f} is
 copied into the new @code{mpf_class}, there won't be any permanent association
 between it and @var{f}.
@@ -6719,9 +6719,9 @@ If @var{prec} is given, the initial precision is that value, in bits.  If
 @end deftypefun
 
 @deftypefun explicit mpf_class::mpf_class (const char *@var{s})
-@deftypefunx {} mpf_class::mpf_class (const char *@var{s}, unsigned long @var{prec}, int @var{base} = 0)
+@deftypefunx {} mpf_class::mpf_class (const char *@var{s}, mp_bitcnt_t @var{prec}, int @var{base} = 0)
 @deftypefunx explicit mpf_class::mpf_class (const string& @var{s})
-@deftypefunx {} mpf_class::mpf_class (const string& @var{s}, unsigned long @var{prec}, int @var{base} = 0)
+@deftypefunx {} mpf_class::mpf_class (const string& @var{s}, mp_bitcnt_t @var{prec}, int @var{base} = 0)
 Construct an @code{mpf_class} converted from a string using @code{mpf_set_str}
 (@pxref{Assigning Floats}).  If @var{prec} is given, the initial precision is
 that value, in bits.  If not, the default @code{mpf} precision
