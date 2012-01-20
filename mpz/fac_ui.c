@@ -472,7 +472,6 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
       PTR (x)[0] = prod;
       SIZ (x) = 1;
     }
-
 }
 
 #undef SWING_A_PRIME
@@ -524,7 +523,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
     }
   else
     {
-      unsigned s;
+      unsigned   s;
       mp_limb_t *factors;
 
       ASSERT (n <= GMP_NUMB_MAX);
@@ -532,10 +531,9 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
       s = 0;
       {
 	mp_limb_t tn;
-	mp_limb_t prod, max_prod, i, j;
+	unsigned  j;
 	TMP_SDECL;
 
-	ASSERT (numberof (tablef) > 3);
 #if TUNE_PROGRAM_BUILD
 	ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
 #endif
@@ -545,28 +543,36 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 	  tn >>= 1;
 
 	j = 0;
-	prod = 1;
 
 	TMP_SMARK;
 	factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
+	ASSERT (tn >= FACTORS_PER_LIMB);
 
+	if (tn >= numberof (tabled) * 2 + 1) {
+	  mp_limb_t prod, max_prod, i;
+
+	  prod = 1;
 #if TUNE_PROGRAM_BUILD
-	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
+	  max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
 #else
-	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
+	  max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
 #endif
-	for (; (tn - 1) >> 1 >= numberof (tabled); tn >>= 1) {
-	  i = numberof (tabled) * 2 + 1;
-	  factors[j++] = tabled[numberof (tabled) - 1];
+
 	  do {
-	    FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
-	    i += 2;
-	  } while (i <= tn);
-	  max_prod <<= 1;
+	    i = numberof (tabled) * 2 + 1;
+	    factors[j++] = tabled[numberof (tabled) - 1];
+	    do {
+	      FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
+	      i += 2;
+	    } while (i <= tn);
+	    max_prod <<= 1;
+	    tn >>= 1;
+	  } while (tn >= numberof (tabled) * 2 + 1);
+
+	  factors[j++] = prod;
 	}
 
-	factors[j] = prod;
-	j += prod > 1;
+	ASSERT (numberof (tablef) > numberof (tabled));
 	factors[j++] = tabled[(tn - 1) >> 1];
 	factors[j++] = tablef[tn >> 1];
 	mpz_prodlimbs (x, factors, j);
@@ -633,24 +639,22 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
     }
   else if (BELOW_THRESHOLD (n, FAC_ODD_THRESHOLD))
     {
-      mp_limb_t *factors, prod, max_prod, i, j;
+      mp_limb_t *factors, prod, max_prod, j;
       TMP_SDECL;
 
       TMP_SMARK;
-      i = numberof (table);
       factors = TMP_SALLOC_LIMBS (2 + (n - numberof (table)) / FACTORS_PER_LIMB);
 
       factors[0] = table[numberof (table)-1];
       j = 1;
-      prod = 1;
+      prod = n;
 #if TUNE_PROGRAM_BUILD
       max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
 #else
       max_prod = GMP_NUMB_MAX / (FAC_ODD_THRESHOLD | 1);
 #endif
-      do {
-	FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
-      } while (++i <= n);
+      for (; --n >= numberof (table);)
+	FACTOR_LIST_STORE (n, prod, max_prod, factors, j);
 
       factors[j++] = prod;
       mpz_prodlimbs (x, factors, j);

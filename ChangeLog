@@ -1,3 +1,7 @@
+2012-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/fac_ui.h: Reduce branches in basecases.
+
 2012-01-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* doc/gmp.texi (mpf_class::mpf_class): Use mp_bitcnt_t.
