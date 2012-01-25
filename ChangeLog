@@ -1,3 +1,7 @@
+2012-01-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c: Remove unused tuneup variables.
+
 2012-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/fac_ui.h: Reduce branches in basecases.
@@ -754,6 +758,7 @@
 
 	* longlong.h: Add spport for 64-bit s390x.
 
+	* mpn/s390_64: New directory.
 	* mpn/s390_64/add_n.asm: New file.
 	* mpn/s390_64/sub_n.asm: New file.
 	* mpn/s390_64/mul_1.asm: New file.
