@@ -2666,8 +2666,7 @@ __GMP_DECLSPEC mp_bitcnt_t mpn_remove __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr,
 #endif
 
 
-/* Structure for conversion between internal binary format and
-   strings in base 2..36.  */
+/* Structure for conversion between internal binary format and strings.  */
 struct bases
 {
   /* Number of digits in the conversion base that always fits in an mp_limb_t.

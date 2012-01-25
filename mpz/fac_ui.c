@@ -334,7 +334,7 @@ mpz_prodlimbs (mpz_ptr x, mp_limb_t *factors, mp_limb_t j)
 
     cy = mpn_mul_1 (prod, factors, size, factors[i]);
     prod[size] = cy;
-    SIZ (x) = size + (cy != 0);;
+    SIZ (x) = size + (cy != 0);
   } else {
     mpz_t x1, x2;
     TMP_DECL;
