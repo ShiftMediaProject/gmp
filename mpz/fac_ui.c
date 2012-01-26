@@ -535,12 +535,13 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 
 	  TMP_MARK;
 
-	  ASSERT (primesieve_size (n - 1) <= (n / GMP_NUMB_BITS + 4) - (n / GMP_NUMB_BITS / 2 + 3));
+	  size = n / GMP_NUMB_BITS;
+	  ASSERT (primesieve_size (n - 1) <= (size + 4) - (size / 2 + 3));
 	  /* swing(n) < 2^(n-1)*sqrt(n/pi) < 2^(n+GMP_NUMB_BITS); one
 	     more can be overwritten by mul, another for the sieve */
-	  MPZ_TMP_INIT (swing, n / GMP_NUMB_BITS + 4);
+	  MPZ_TMP_INIT (swing, size + 4);
 	  /* Put the sieve on the second half, it will be overwritten by the last swing. */
-	  sieve = PTR(swing) + n / GMP_NUMB_BITS / 2 + 3;
+	  sieve = PTR(swing) + size / 2 + 3;
 
 	  size = (bitwise_primesieve (sieve, n - 1) + 1) / log_n_max (n) + 1;
 
