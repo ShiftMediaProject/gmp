@@ -1,4 +1,4 @@
-/* mpz_fac_ui(result, n) -- Set RESULT to N!.
+/* mpz_fac_ui(RESULT, N) -- Set RESULT to N!.
 
 Contributed to the GNU project by Marco Bodrato.
 
@@ -58,6 +58,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       (PR) *= (P);						\
   } while (0)
 
+#define LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)			\
+    __max_i = (end);						\
+								\
+    do {							\
+      ++__i;							\
+      if (((sieve)[__index] & __mask) == 0)			\
+	{							\
+	  (prime) = id_to_n(__i)
+
 #define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
   do {								\
     mp_limb_t __mask, __index, __max_i, __i;			\
@@ -67,19 +76,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     __mask = CNST_LIMB(1) << (__i % GMP_LIMB_BITS);		\
     __i += (off);						\
 								\
-    __max_i = (end);						\
-								\
-    do {							\
-      ++__i;							\
-      if (((sieve)[__index] & __mask) == 0)			\
-	{							\
-	  (prime) = id_to_n(__i)
+    LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)
 
-#define LOOP_ON_SIEVE_END					\
+#define LOOP_ON_SIEVE_STOP					\
 	}							\
       __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
       __index += __mask & 1;					\
-    }  while (__i <= __max_i);					\
+    }  while (__i <= __max_i)					\
+
+#define LOOP_ON_SIEVE_END					\
+    LOOP_ON_SIEVE_STOP;						\
   } while (0)
 
 /*********************************************************/
@@ -89,10 +95,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 static mp_limb_t
 bit_to_n (mp_limb_t bit) { return (bit*3+4)|1; }
 
-/* id_to_n (x) = bit_to_n (x-1) = id*3+1+(id&1)*/
+/* id_to_n (x) = bit_to_n (x-1) = (id*3+1)|1*/
 static mp_limb_t
-id_to_n  (mp_limb_t id)  { return (id*3+1)|1; }
+id_to_n  (mp_limb_t id)  { return id*3+1+(id&1); }
 
+/* n_to_bit (n) = ((n-1)&(-CNST_LIMB(2)))/3U-1 */
 static mp_limb_t
 n_to_bit (mp_limb_t n) { return ((n-5)|1)/3U; }
 
@@ -123,7 +130,7 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 #endif /* 61 */
 
 static void
-first_block_primesieve (mp_limb_t *bit_array, mp_limb_t n)
+first_block_primesieve (mp_ptr bit_array, mp_limb_t n)
 {
   mp_size_t bits, limbs;
 
@@ -152,12 +159,12 @@ first_block_primesieve (mp_limb_t *bit_array, mp_limb_t n)
 	{
 	  mp_size_t step, lindex;
 	  mp_limb_t lmask;
-	  int maskrot;
+	  unsigned  maskrot;
 
 	  step = id_to_n(i);
 /*	  lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
-	  lindex = i*(step+1+(i&1))-1+(i&1);
-/*	  lindex = i*(i*3+2+(i&1)*2)-1+(i&1); */
+	  lindex = i*(step+1)-1+(-(i&1)&(i+1));
+/*	  lindex = i*(step+1+(i&1))-1+(i&1); */
 	  if (lindex > bits)
 	    break;
 
@@ -204,11 +211,11 @@ block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
   {
     mp_size_t lindex;
     mp_limb_t lmask;
-    int maskrot;
+    unsigned  maskrot;
 
 /*  lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
-    lindex = __i*(step+1+(__i&1))-1+(__i&1);
-/*  lindex = i*(i*3+2+(i&1)*2)-1+(i&1); */
+    lindex = __i*(step+1)-1+(-(__i&1)&(__i+1));
+/*  lindex = __i*(step+1+(__i&1))-1+(__i&1); */
     if (lindex > bits + offset)
       break;
 
@@ -342,17 +349,19 @@ limb_apprsqrt (mp_limb_t x)
  */
 
 static void
-mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
+mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
 {
   mp_limb_t prod, max_prod;
-  mp_limb_t j;
+  mp_size_t j;
 
-  ASSERT (n > 24);
+  ASSERT (n >= 15);
 
   j = 0;
+  prod  = -(n & 1);
+  n &= ~ CNST_LIMB(1); /* n-1, if n is odd */
 
-  prod = 1;
-  max_prod = GMP_NUMB_MAX / n;
+  prod = (prod & n) + 1; /* the original n, if it was odd, 1 otherwise */
+  max_prod = GMP_NUMB_MAX / (n-1);
 
   /* Handle prime = 3 separately. */
   SWING_A_PRIME (3, n, prod, max_prod, factors, j);
@@ -365,13 +374,14 @@ mpz_oddswing_1 (mpz_ptr x, mp_limb_t n, mp_limb_t *sieve, mp_limb_t *factors)
       mp_limb_t prime;
 
       s = limb_apprsqrt(n);
+      ASSERT (s >= 5);
       s = n_to_bit (s);
-      LOOP_ON_SIEVE_BEGIN (prime, 0, s, 0,sieve);
+      LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
       SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
       LOOP_ON_SIEVE_END;
       s++;
     } else
-      s = 0;
+      s = n_to_bit (5);
 
     ASSERT (max_prod <= GMP_NUMB_MAX / 3);
     max_prod *= 3;
@@ -456,15 +466,15 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
     }
   else
     {
-      unsigned   s;
-      mp_limb_t *factors;
+      unsigned s;
+      mp_ptr   factors;
 
       ASSERT (n <= GMP_NUMB_MAX);
 
       s = 0;
       {
 	mp_limb_t tn;
-	unsigned  j;
+	mp_size_t j;
 	TMP_SDECL;
 
 #if TUNE_PROGRAM_BUILD
@@ -519,23 +529,28 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 	*/
 	{
 	  mpz_t swing;
-	  mp_limb_t *sieve;
+	  mp_ptr sieve;
 	  mp_size_t size;
 	  TMP_DECL;
 
 	  TMP_MARK;
-	  sieve = TMP_ALLOC_LIMBS (primesieve_size (n));
 
-	  size = (bitwise_primesieve (sieve, n) + 1) / log_n_max (n) + 1;
+	  ASSERT (primesieve_size (n - 1) <= (n / GMP_NUMB_BITS + 4) - (n / GMP_NUMB_BITS / 2 + 3));
+	  /* swing(n) < 2^(n-1)*sqrt(n/pi) < 2^(n+GMP_NUMB_BITS); one
+	     more can be overwritten by mul, another for the sieve */
+	  MPZ_TMP_INIT (swing, n / GMP_NUMB_BITS + 4);
+	  /* Put the sieve on the second half, it will be overwritten by the last swing. */
+	  sieve = PTR(swing) + n / GMP_NUMB_BITS / 2 + 3;
 
-	  MPZ_TMP_INIT (swing, size + n / GMP_NUMB_BITS + 4);
-	  factors = PTR(swing) + n / GMP_NUMB_BITS + 4;
+	  size = (bitwise_primesieve (sieve, n - 1) + 1) / log_n_max (n) + 1;
+
+	  factors = TMP_ALLOC_LIMBS (size);
 	  do {
 	    mpz_t square;
 	    TMP_DECL;
 
 	    s--;
-	    mpz_oddswing_1 (swing, n>>s, sieve, factors);
+	    mpz_oddswing_1 (swing, n >> s, sieve, factors);
 
 	    TMP_MARK;
 	    size = SIZ (x);
@@ -572,7 +587,9 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
     }
   else if (BELOW_THRESHOLD (n, FAC_ODD_THRESHOLD))
     {
-      mp_limb_t *factors, prod, max_prod, j;
+      mp_limb_t prod, max_prod;
+      mp_size_t j;
+      mp_ptr    factors;
       TMP_SDECL;
 
       TMP_SMARK;
