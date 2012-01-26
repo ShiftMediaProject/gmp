@@ -1569,6 +1569,9 @@ __GMP_DECLSPEC mp_limb_t mpn_subcnd_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 __GMP_DECLSPEC void    mpz_divexact_gcd __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
+#define mpz_prodlimbs  __gmpz_prodlimbs
+__GMP_DECLSPEC mp_size_t mpz_prodlimbs __GMP_PROTO ((mpz_ptr, mp_ptr, mp_size_t));
+
 #define mpz_inp_str_nowhite __gmpz_inp_str_nowhite
 #ifdef _GMP_H_HAVE_FILE
 __GMP_DECLSPEC size_t  mpz_inp_str_nowhite __GMP_PROTO ((mpz_ptr, FILE *, int, int, size_t));
