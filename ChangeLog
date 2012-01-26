@@ -3,11 +3,11 @@
 	* tests/mpz/t-fac_ui.c: Increase default test cases.
 
 	* mpz/prodlimbs.c: New file, mpz_prodlimbs implementation.
-	* mpz/fac_ui.c: mpz_prodlimbs removed.
 	* gmp-impl.h: mpz_prodlimbs declaration.
 	* Makefile.am (MPZ_OBJECTS): add mpz/prodlimbs$U.lo .
 	* mpz/Makefile.am (libmpz_la_SOURCES): add prodlimbs.c .
 	(fac_ui.h): remove target (moved up one directory).
+	* mpz/fac_ui.c: mpz_prodlimbs removed, micro-optimisations.
 
 2012-01-25  Torbjorn Granlund  <tege@gmplib.org>
 
