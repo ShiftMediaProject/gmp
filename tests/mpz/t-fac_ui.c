@@ -1,6 +1,6 @@
 /* Exercise mpz_fac_ui.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,7 +36,7 @@ int
 main (int argc, char *argv[])
 {
   unsigned long  n;
-  unsigned long  limit = 1500;
+  unsigned long  limit = 2222;
   mpz_t          f, r;
 
   tests_start ();

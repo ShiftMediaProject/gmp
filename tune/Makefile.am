@@ -159,7 +159,7 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(SQR_TOOM2_THRESHOLD_OVERRIDE,SQR_TOOM2_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 
-# FIXME: Should it depend on $(top_builddir)/mpz/fac_ui.h too?
+# FIXME: Should it depend on $(top_builddir)/fac_ui.h too?
 fac_ui.c: $(top_builddir)/mpz/fac_ui.c
 	echo "#define TUNE_PROGRAM_BUILD 1"          >fac_ui.c
 	echo "#define __gmpz_fac_ui mpz_fac_ui_tune" >>fac_ui.c

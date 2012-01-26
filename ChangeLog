@@ -1,10 +1,14 @@
+2012-01-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-fac_ui.c: Increase default test cases.
+
 2012-01-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c: Remove unused tuneup variables.
 
 2012-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpz/fac_ui.h: Reduce branches in basecases.
+	* mpz/fac_ui.c: Reduce branches in basecases.
 
 2012-01-18  Marc Glisse  <marc.glisse@inria.fr>
 
@@ -18,7 +22,7 @@
 
 2012-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpz/fac_ui.h (SIEVE_SEED): Define value for small limb size.
+	* mpz/fac_ui.c (SIEVE_SEED): Define value for small limb size.
 	(mpz_oddswing_1): Reduce the number of divisions.
 	(mpz_oddfac_1): Reduce memory usage.
 	* mpn/minithres/gmp-mparam.h: Correct minimum for FAC_DSC_.
@@ -54,7 +58,7 @@
 
 	* gen-fac_ui.c: Remove currently unused constants; add new odd
 	double factorial table.
-	* mpz/fac_ui.h (RECURSIVE_PROD_THRESHOLD): Increase default.
+	* mpz/fac_ui.c (RECURSIVE_PROD_THRESHOLD): Increase default.
 	(mpz_oddfac_1): New function: a merge of _bc_odd and _dsc_odd.
 	(mpz_prodlimbs): More in-place computations.
 
@@ -79,7 +83,7 @@
 	* gmp-impl.h (FAC_ODD_THRESHOLD,FAC_DSC_THRESHOLD):
 	New thresholds: default values, and setup for tuning.
 	(FAC_DSC_THRESHOLD_LIMIT): Define (when tuning).
-	* mpz/fac_ui.h (FAC_ODD_THRESHOLD,FAC_DSC_THRESHOLD):
+	* mpz/fac_ui.c (FAC_ODD_THRESHOLD,FAC_DSC_THRESHOLD):
 	Default values removed.
 
 2011-12-30  Torbjorn Granlund  <tege@gmplib.org>
