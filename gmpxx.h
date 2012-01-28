@@ -1223,7 +1223,7 @@ struct __gmp_cmp_function
 
 struct __gmp_rand_function
 {
-  static void eval(mpz_ptr z, gmp_randstate_t s, unsigned long int l)
+  static void eval(mpz_ptr z, gmp_randstate_t s, mp_bitcnt_t l)
   { mpz_urandomb(z, s, l); }
   static void eval(mpz_ptr z, gmp_randstate_t s, mpz_srcptr w)
   { mpz_urandomm(z, s, w); }
@@ -3029,9 +3029,9 @@ class __gmp_expr<mpz_t, __gmp_urandomb_value>
 {
 private:
   __gmp_randstate_struct *state;
-  unsigned long int bits;
+  mp_bitcnt_t bits;
 public:
-  __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
+  __gmp_expr(gmp_randstate_t s, mp_bitcnt_t l) : state(s), bits(l) { }
   void eval(mpz_ptr z) const { __gmp_rand_function::eval(z, state, bits); }
   mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 };
@@ -3054,9 +3054,9 @@ class __gmp_expr<mpf_t, __gmp_urandomb_value>
 {
 private:
   __gmp_randstate_struct *state;
-  unsigned long int bits;
+  mp_bitcnt_t bits;
 public:
-  __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
+  __gmp_expr(gmp_randstate_t s, mp_bitcnt_t l) : state(s), bits(l) { }
   void eval(mpf_ptr f, mp_bitcnt_t prec) const
   { __gmp_rand_function::eval(f, state, (bits>0) ? get_prec() : prec); }
   mp_bitcnt_t get_prec() const
@@ -3070,8 +3070,8 @@ public:
 
 extern "C" {
   typedef void __gmp_randinit_default_t (gmp_randstate_t);
-  typedef void __gmp_randinit_lc_2exp_t (gmp_randstate_t, mpz_srcptr, unsigned long int, unsigned long int);
-  typedef int __gmp_randinit_lc_2exp_size_t (gmp_randstate_t, unsigned long int);
+  typedef void __gmp_randinit_lc_2exp_t (gmp_randstate_t, mpz_srcptr, unsigned long int, mp_bitcnt_t);
+  typedef int __gmp_randinit_lc_2exp_size_t (gmp_randstate_t, mp_bitcnt_t);
 }
 
 class gmp_randclass
@@ -3100,12 +3100,12 @@ public:
 
   // gmp_randinit_lc_2exp
   gmp_randclass(__gmp_randinit_lc_2exp_t* f,
-		mpz_class z, unsigned long int l1, unsigned long int l2)
+		mpz_class z, unsigned long int l1, mp_bitcnt_t l2)
   { f(state, z.get_mpz_t(), l1, l2); }
 
   // gmp_randinit_lc_2exp_size
   gmp_randclass(__gmp_randinit_lc_2exp_size_t* f,
-		unsigned long int size)
+		mp_bitcnt_t size)
   {
     if (f (state, size) == 0)
       throw std::length_error ("gmp_randinit_lc_2exp_size");
@@ -3119,10 +3119,11 @@ public:
   void seed(const mpz_class &z) { gmp_randseed(state, z.get_mpz_t()); }
 
   // get random number
-  __gmp_expr<mpz_t, __gmp_urandomb_value> get_z_bits(unsigned long int l)
+  __gmp_expr<mpz_t, __gmp_urandomb_value> get_z_bits(mp_bitcnt_t l)
   { return __gmp_expr<mpz_t, __gmp_urandomb_value>(state, l); }
   __gmp_expr<mpz_t, __gmp_urandomb_value> get_z_bits(const mpz_class &z)
   { return get_z_bits(z.get_ui()); }
+  // FIXME: z.get_bitcnt_t() ?
 
   __gmp_expr<mpz_t, __gmp_urandomm_value> get_z_range(const mpz_class &z)
   { return __gmp_expr<mpz_t, __gmp_urandomm_value>(state, z); }

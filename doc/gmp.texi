@@ -6845,7 +6845,7 @@ Seed a random number generator.  See @pxref{Random Number Functions}, for how
 to choose a good seed.
 @end deftypefun
 
-@deftypefun mpz_class gmp_randclass::get_z_bits (unsigned long @var{bits})
+@deftypefun mpz_class gmp_randclass::get_z_bits (mp_bitcnt_t @var{bits})
 @deftypefunx mpz_class gmp_randclass::get_z_bits (mpz_class @var{bits})
 Generate a random integer with a specified number of bits.
 @end deftypefun
