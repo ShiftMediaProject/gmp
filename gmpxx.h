@@ -72,7 +72,7 @@ inline void __mpz_set_si_safe(mpz_ptr p, long l)
 {
   if(l < 0)
   {
-    __mpz_set_ui_safe(p, -l);
+    __mpz_set_ui_safe(p, -static_cast<unsigned long>(l));
     mpz_neg(p, p);
   }
   else
@@ -115,6 +115,11 @@ inline void __mpz_set_si_safe(mpz_ptr p, long l)
   mpq_denref(temp)->_mp_size = 1;					\
   mpq_denref(temp)->_mp_d[0] = 1
 
+inline unsigned long __gmpxx_abs_ui (signed long l)
+{
+  return l >= 0 ? static_cast<unsigned long>(l)
+	  : -static_cast<unsigned long>(l);
+}
 
 /**************** Function objects ****************/
 /* Any evaluation of a __gmp_expr ends up calling one of these functions
@@ -164,7 +169,7 @@ struct __gmp_binary_plus
     if (l >= 0)
       eval(z, w, static_cast<unsigned long>(l));
     else
-      mpz_sub_ui(z, w, -l);
+      mpz_sub_ui(z, w, -static_cast<unsigned long>(l));
   }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   { eval(z, w, l); }
@@ -237,7 +242,7 @@ struct __gmp_binary_plus
     if (l >= 0)
       mpf_add_ui(f, g, l);
     else
-      mpf_sub_ui(f, g, -l);
+      mpf_sub_ui(f, g, -static_cast<unsigned long>(l));
   }
   static void eval(mpf_ptr f, signed long int l, mpf_srcptr g)
   { eval(f, g, l); }
@@ -281,7 +286,7 @@ struct __gmp_binary_minus
     if (l >= 0)
       eval(z, w, static_cast<unsigned long>(l));
     else
-      mpz_add_ui(z, w, -l);
+      mpz_add_ui(z, w, -static_cast<unsigned long>(l));
   }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   {
@@ -289,7 +294,7 @@ struct __gmp_binary_minus
       eval(z, static_cast<unsigned long>(l), w);
     else
       {
-        mpz_add_ui(z, w, -l);
+        mpz_add_ui(z, w, -static_cast<unsigned long>(l));
         mpz_neg(z, z);
       }
   }
@@ -326,7 +331,7 @@ struct __gmp_binary_minus
     if (l >= 0)
       eval(q, r, static_cast<unsigned long>(l));
     else
-      __gmp_binary_plus::eval(q, r, static_cast<unsigned long>(-l));
+      __gmp_binary_plus::eval(q, r, -static_cast<unsigned long>(l));
   }
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   { eval(q, r, l); mpq_neg(q, q); }
@@ -373,14 +378,14 @@ struct __gmp_binary_minus
     if (l >= 0)
       mpf_sub_ui(f, g, l);
     else
-      mpf_add_ui(f, g, -l);
+      mpf_add_ui(f, g, -static_cast<unsigned long>(l));
   }
   static void eval(mpf_ptr f, signed long int l, mpf_srcptr g)
   {
     if (l >= 0)
       mpf_sub_ui(f, g, l);
     else
-      mpf_add_ui(f, g, -l);
+      mpf_add_ui(f, g, -static_cast<unsigned long>(l));
     mpf_neg(f, f);
   }
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
@@ -408,7 +413,7 @@ __gmp_binary_plus::eval(mpq_ptr q, mpq_srcptr r, signed long int l)
   if (l >= 0)
     eval(q, r, static_cast<unsigned long>(l));
   else
-    __gmp_binary_minus::eval(q, r, static_cast<unsigned long>(-l));
+    __gmp_binary_minus::eval(q, r, -static_cast<unsigned long>(l));
 }
 
 struct __gmp_binary_lshift
@@ -493,7 +498,7 @@ struct __gmp_binary_multiplies
         eval(z, w, static_cast<unsigned long>(l));
       else
       {
-        eval(z, w, static_cast<unsigned long>(-l));
+        eval(z, w, -static_cast<unsigned long>(l));
 	mpz_neg(z, z);
       }
     }
@@ -541,7 +546,7 @@ struct __gmp_binary_multiplies
         eval(q, r, static_cast<unsigned long>(l));
       else
       {
-        eval(q, r, static_cast<unsigned long>(-l));
+        eval(q, r, -static_cast<unsigned long>(l));
 	mpq_neg(q, q);
       }
     }
@@ -577,7 +582,7 @@ struct __gmp_binary_multiplies
       mpf_mul_ui(f, g, l);
     else
       {
-	mpf_mul_ui(f, g, -l);
+	mpf_mul_ui(f, g, -static_cast<unsigned long>(l));
 	mpf_neg(f, f);
       }
   }
@@ -645,7 +650,7 @@ struct __gmp_binary_divides
       eval(z, w, static_cast<unsigned long>(l));
     else
       {
-	eval(z, w, static_cast<unsigned long>(-l));
+	eval(z, w, -static_cast<unsigned long>(l));
 	mpz_neg(z, z);
       }
   }
@@ -657,7 +662,7 @@ struct __gmp_binary_divides
       {
         /* if w is bigger than a long then the quotient must be zero, unless
            l==LONG_MIN and w==-LONG_MIN in which case the quotient is -1 */
-        mpz_set_si (z, (mpz_cmpabs_ui (w, (l >= 0 ? l : -l)) == 0 ? -1 : 0));
+        mpz_set_si (z, (mpz_cmpabs_ui (w, __gmpxx_abs_ui(l)) == 0 ? -1 : 0));
       }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
@@ -690,7 +695,7 @@ struct __gmp_binary_divides
         eval(q, r, static_cast<unsigned long>(l));
       else
       {
-        eval(q, r, static_cast<unsigned long>(-l));
+        eval(q, r, -static_cast<unsigned long>(l));
 	mpq_neg(q, q);
       }
     }
@@ -732,7 +737,7 @@ struct __gmp_binary_divides
       mpf_div_ui(f, g, l);
     else
       {
-	mpf_div_ui(f, g, -l);
+	mpf_div_ui(f, g, -static_cast<unsigned long>(l));
 	mpf_neg(f, f);
       }
   }
@@ -742,7 +747,7 @@ struct __gmp_binary_divides
       mpf_ui_div(f, l, g);
     else
       {
-	mpf_ui_div(f, -l, g);
+	mpf_ui_div(f, -static_cast<unsigned long>(l), g);
 	mpf_neg(f, f);
       }
   }
@@ -791,7 +796,7 @@ struct __gmp_binary_modulus
   }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
   {
-    mpz_tdiv_r_ui (z, w, (l >= 0 ? l : -l));
+    mpz_tdiv_r_ui (z, w, __gmpxx_abs_ui(l));
   }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   {
@@ -801,7 +806,7 @@ struct __gmp_binary_modulus
       {
         /* if w is bigger than a long then the remainder is l unchanged,
            unless l==LONG_MIN and w==-LONG_MIN in which case it's 0 */
-        mpz_set_si (z, mpz_cmpabs_ui (w, (l >= 0 ? l : -l)) == 0 ? 0 : l);
+        mpz_set_si (z, mpz_cmpabs_ui (w, __gmpxx_abs_ui(l)) == 0 ? 0 : l);
       }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
