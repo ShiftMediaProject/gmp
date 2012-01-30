@@ -1,6 +1,6 @@
 /* Test mpz_powm, mpz_mul, mpz_mod, mpz_mod_ui, mpz_div_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001, 2009 Free Software
+Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001, 2009, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -20,12 +20,28 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "tests.h"
 
 void debug_mp __GMP_PROTO ((mpz_t, int));
+
+#define SIZEM 13
+
+/* Check that all sizes up to just above MUL_TOOM22_THRESHOLD have been tested
+   a few times.  FIXME: If SIZEM is set too low, this will never happen.  */
+int
+allsizes_seen (int *allsizes)
+{
+  mp_size_t i;
+
+  for (i = 1; i < MUL_TOOM22_THRESHOLD + 4; i++)
+    if (allsizes[i] < 4)
+      return 0;
+  return 1;
+}
 
 int
 main (int argc, char **argv)
@@ -38,6 +54,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
+  unsigned int allsizes[1 << (SIZEM + 2 - 1)];
 
   tests_start ();
   TESTS_REPS (reps, argv, argc);
@@ -55,10 +72,12 @@ main (int argc, char **argv)
   mpz_init (exp2);
   mpz_init (base2);
 
-  for (i = 0; i < reps; i++)
+  memset (allsizes, 0, (1 << (SIZEM + 2 - 1)) * sizeof (int));
+
+  for (i = 0; i < reps || ! allsizes_seen (allsizes); i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 13 + 2;
+      size_range = mpz_get_ui (bs) % SIZEM + 2;
 
       do  /* Loop until mathematically well-defined.  */
 	{
@@ -79,6 +98,8 @@ main (int argc, char **argv)
 	  mpz_rrandomb (mod, rands, mod_size);
 	}
       while (mpz_cmp_ui (mod, 0) == 0);
+
+      allsizes[SIZ(mod)] += 1;
 
       mpz_urandomb (bs, rands, 2);
       bsi = mpz_get_ui (bs);
