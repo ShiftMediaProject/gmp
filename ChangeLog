@@ -2,6 +2,7 @@
 
 	* gmpxx.h (__gmp_binary_expr): Let things happen in place: d=a+b+c
 	when d != c.
+	* tests/cxx/t-binary.cc: Test variable reuse: c=a+b+c.
 
 2012-01-28  Marc Glisse  <marc.glisse@inria.fr>
 

@@ -94,6 +94,7 @@ check_mpz (void)
   {
     mpz_class a(3), b(4);
     mpz_class c(a * (-b)); ASSERT_ALWAYS(c == -12);
+    c = c * (-b); ASSERT_ALWAYS(c == 48);
   }
 
   // template <class T, class U, class Op>
@@ -102,6 +103,7 @@ check_mpz (void)
     mpz_class a(3), b(2), c(1);
     mpz_class d;
     d = (a % b) + c; ASSERT_ALWAYS(d == 2);
+    d = (a % b) + d; ASSERT_ALWAYS(d == 3);
   }
 
   // template <class T, class U, class V, class Op>
@@ -215,6 +217,7 @@ check_mpq (void)
     double c = 2.0;
     mpq_class d;
     d = a * (b + c); ASSERT_ALWAYS(d == 2);
+    d = d * (b + c); ASSERT_ALWAYS(d == 6);
   }
 
   // template <class T, class U, class V, class Op>
@@ -229,6 +232,7 @@ check_mpq (void)
     mpz_class b(1), c(4);
     mpq_class d;
     d = (b - c) * a; ASSERT_ALWAYS(d == -2);
+    d = (b - c) * d; ASSERT_ALWAYS(d == 6);
   }
 
   // template <class T, class U, class Op>
@@ -237,6 +241,7 @@ check_mpq (void)
     mpq_class a(1, 3), b(3, 4);
     mpq_class c;
     c = a * (-b); ASSERT_ALWAYS(c == -0.25);
+    a = a * (-b); ASSERT_ALWAYS(a == -0.25);
   }
 
   // template <class T, class U, class Op>
@@ -244,6 +249,7 @@ check_mpq (void)
   {
     mpq_class a(1, 3), b(2, 3), c(1, 4);
     mpq_class d((a / b) + c); ASSERT_ALWAYS(d == 0.75);
+    c = (a / b) + c; ASSERT_ALWAYS(c == 0.75);
   }
 
   // template <class T, class U, class V, class Op>
@@ -350,6 +356,7 @@ check_mpf (void)
     mpz_class b(2), c(1);
     mpf_class d;
     d = a * (b + c); ASSERT_ALWAYS(d == 9);
+    a = a * (b + c); ASSERT_ALWAYS(a == 9);
   }
 
   // template <class T, class U, class V, class Op>
@@ -366,6 +373,7 @@ check_mpf (void)
     mpf_class a(2), b(-3);
     mpf_class c;
     c = a * (-b); ASSERT_ALWAYS(c == 6);
+    c = c * (-b); ASSERT_ALWAYS(c == 18);
   }
 
   // template <class T, class U, class Op>
@@ -374,6 +382,7 @@ check_mpf (void)
     mpf_class a(3), b(4), c(5);
     mpf_class d;
     d = (a / b) - c; ASSERT_ALWAYS(d == -4.25);
+    c = (a / b) - c; ASSERT_ALWAYS(c == -4.25);
   }
 
   // template <class T, class U, class V, class Op>
