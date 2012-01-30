@@ -2190,8 +2190,16 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp(expr.val2);
-    Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
+    if(p != expr.val1.__get_mp())
+    {
+      __gmp_set_expr(p, expr.val2);
+      Op::eval(p, expr.val1.__get_mp(), p);
+    }
+    else
+    {
+      __gmp_expr<T, T> temp(expr.val2);
+      Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
+    }
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t prec) const
@@ -2223,8 +2231,16 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp(expr.val1);
-    Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
+    if(p != expr.val2.__get_mp())
+    {
+      __gmp_set_expr(p, expr.val1);
+      Op::eval(p, p, expr.val2.__get_mp());
+    }
+    else
+    {
+      __gmp_expr<T, T> temp(expr.val1);
+      Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
+    }
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t prec) const
@@ -2256,8 +2272,16 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp(expr.val2);
-    Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
+    if(p != expr.val1.__get_mp())
+    {
+      __gmp_set_expr(p, expr.val2);
+      Op::eval(p, expr.val1.__get_mp(), p);
+    }
+    else
+    {
+      __gmp_expr<T, T> temp(expr.val2);
+      Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
+    }
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t prec) const
@@ -2289,8 +2313,16 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp(expr.val1);
-    Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
+    if(p != expr.val2.__get_mp())
+    {
+      __gmp_set_expr(p, expr.val1);
+      Op::eval(p, p, expr.val2.__get_mp());
+    }
+    else
+    {
+      __gmp_expr<T, T> temp(expr.val1);
+      Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
+    }
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t prec) const
