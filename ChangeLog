@@ -1,3 +1,14 @@
+2012-02-01  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_unary_expr): Make the constructor explicit.
+	(__gmp_expr(__gmp_expr&&)): New move constructors.
+	(__gmp_expr::operator=(__gmp_expr&&)): New move assignments.
+	(swap): Mark as noexcept.
+	(__GMPXX_USE_CXX11): New macro.
+	(__GMPXX_NOEXCEPT): New macro.
+	* tests/cxx/t-cxx11.cc: New file.
+	* tests/cxx/Makefile.am: Added t-cxx11.
+
 2012-01-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-powm.c: Ensure all sizes are seen.

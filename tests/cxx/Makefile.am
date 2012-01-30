@@ -30,8 +30,9 @@ LDADD = -L$(top_builddir)/.libs \
   $(top_builddir)/libgmp.la
 
 if WANT_CXX
-check_PROGRAMS = t-assign t-binary t-cast t-constr t-headers t-iostream \
-  t-istream t-locale t-misc t-mix t-ops t-ops2 t-ops3 t-ostream t-prec \
+check_PROGRAMS = t-assign t-binary t-cast t-constr t-cxx11 \
+  t-headers t-iostream t-istream t-locale t-misc t-mix \
+  t-ops t-ops2 t-ops3 t-ostream t-prec \
   t-rand t-ternary t-unary
 TESTS = $(check_PROGRAMS)
 endif
@@ -40,6 +41,7 @@ t_assign_SOURCES  = t-assign.cc
 t_binary_SOURCES  = t-binary.cc
 t_cast_SOURCES    = t-cast.cc
 t_constr_SOURCES  = t-constr.cc
+t_cxx11_SOURCES   = t-cxx11.cc
 t_headers_SOURCES = t-headers.cc
 t_iostream_SOURCES= t-iostream.cc
 t_istream_SOURCES = t-istream.cc

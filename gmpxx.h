@@ -48,6 +48,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define __GMPXX_CONSTANT(X) false
 #endif
 
+// Use C++11 features
+#ifndef __GMPXX_USE_CXX11
+#if (__cplusplus >= 201103L) \
+    || (__GMP_GNUC_PREREQ(4, 6) && defined __GXX_EXPERIMENTAL_CXX0X__)
+#define __GMPXX_USE_CXX11 1
+#define __GMPXX_NOEXCEPT noexcept
+#else
+#define __GMPXX_USE_CXX11 0
+#define __GMPXX_NOEXCEPT
+#endif
+#endif
+
 // Max allocations for plain types when converted to mpz_t
 #define __GMPZ_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
 
@@ -1412,6 +1424,10 @@ public:
   __gmp_expr() { mpz_init(mp); }
 
   __gmp_expr(const __gmp_expr &z) { mpz_init_set(mp, z.mp); }
+#if __GMPXX_USE_CXX11
+  __gmp_expr(__gmp_expr &&z)
+  { *mp = *z.mp; mpz_init(z.mp); }
+#endif
   template <class T>
   __gmp_expr(const __gmp_expr<mpz_t, T> &expr)
   { mpz_init(mp); __gmp_set_expr(mp, expr); }
@@ -1456,11 +1472,15 @@ public:
 
   ~__gmp_expr() { mpz_clear(mp); }
 
-  void swap(__gmp_expr& z) { std::swap(*mp, *z.mp); }
+  void swap(__gmp_expr& z) __GMPXX_NOEXCEPT { std::swap(*mp, *z.mp); }
 
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &z)
   { mpz_set(mp, z.mp); return *this; }
+#if __GMPXX_USE_CXX11
+  __gmp_expr & operator=(__gmp_expr &&z) noexcept
+  { swap(z); return *this; }
+#endif
   template <class T, class U>
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
@@ -1573,6 +1593,10 @@ public:
     mpz_init_set(mpq_numref(mp), mpq_numref(q.mp));
     mpz_init_set(mpq_denref(mp), mpq_denref(q.mp));
   }
+#if __GMPXX_USE_CXX11
+  __gmp_expr(__gmp_expr &&q)
+  { *mp = *q.mp; mpq_init(q.mp); }
+#endif
   template <class T>
   __gmp_expr(const __gmp_expr<mpz_t, T> &expr)
   { mpq_init(mp); __gmp_set_expr(mp, expr); }
@@ -1631,11 +1655,17 @@ public:
 
   ~__gmp_expr() { mpq_clear(mp); }
 
-  void swap(__gmp_expr& q) { std::swap(*mp, *q.mp); }
+  void swap(__gmp_expr& q) __GMPXX_NOEXCEPT { std::swap(*mp, *q.mp); }
 
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &q)
   { mpq_set(mp, q.mp); return *this; }
+#if __GMPXX_USE_CXX11
+  __gmp_expr & operator=(__gmp_expr &&q) noexcept
+  { swap(q); return *this; }
+  __gmp_expr & operator=(mpz_class &&z) noexcept
+  { get_num() = std::move(z); get_den() = 1u; return *this; }
+#endif
   template <class T, class U>
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
@@ -1749,6 +1779,10 @@ public:
 
   __gmp_expr(const __gmp_expr &f)
   { mpf_init2(mp, f.get_prec()); mpf_set(mp, f.mp); }
+#if __GMPXX_USE_CXX11
+  __gmp_expr(__gmp_expr &&f)
+  { *mp = *f.mp; mpf_init2(f.mp, get_prec()); }
+#endif
   __gmp_expr(const __gmp_expr &f, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set(mp, f.mp); }
   template <class T, class U>
@@ -1838,11 +1872,15 @@ public:
 
   ~__gmp_expr() { mpf_clear(mp); }
 
-  void swap(__gmp_expr& f) { std::swap(*mp, *f.mp); }
+  void swap(__gmp_expr& f) __GMPXX_NOEXCEPT { std::swap(*mp, *f.mp); }
 
   // assignment operators
   __gmp_expr & operator=(const __gmp_expr &f)
   { mpf_set(mp, f.mp); return *this; }
+#if __GMPXX_USE_CXX11
+  __gmp_expr & operator=(__gmp_expr &&f) noexcept
+  { swap(f); return *this; }
+#endif
   template <class T, class U>
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
@@ -2065,7 +2103,7 @@ private:
 
   __gmp_unary_expr<val_type, Op> expr;
 public:
-  __gmp_expr(const val_type &val) : expr(val) { }
+  explicit __gmp_expr(const val_type &val) : expr(val) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
 	    mp_bitcnt_t = 0) const
   { Op::eval(p, expr.val.__get_mp()); }
@@ -2084,7 +2122,7 @@ private:
 
   __gmp_unary_expr<val_type, Op> expr;
 public:
-  __gmp_expr(const val_type &val) : expr(val) { }
+  explicit __gmp_expr(const val_type &val) : expr(val) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { expr.val.eval(p); Op::eval(p, p); }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
@@ -3008,7 +3046,8 @@ __GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
 __GMP_DEFINE_BINARY_TYPE_FUNCTION(int, cmp, __gmp_cmp_function)
 
 template <class T>
-void swap(__gmp_expr<T, T>& x, __gmp_expr<T, T>& y) { x.swap(y); }
+void swap(__gmp_expr<T, T>& x, __gmp_expr<T, T>& y) __GMPXX_NOEXCEPT
+{ x.swap(y); }
 
 // member operators for mpz_class
 
