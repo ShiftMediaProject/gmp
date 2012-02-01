@@ -34,7 +34,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    1/6  1/5 1/4 4/13 1/3 3/8 2/5 5/11 1/2 3/5 2/3 3/4 4/5   1 vn/un
                                         4/7              6/7
 				       6/11
-                                       |-----------------  -| toom22 (small)
+                                       |--------------------| toom22 (small)
                                                            || toom22 (large)
                                                        |xxxx| toom22 called
                       |-------------------------------------| toom32
