@@ -1,3 +1,8 @@
+2012-02-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-mul.c: New file.
+	* tests/mpn/Makefile.am: Compile it.
+
 2012-02-01  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Remove check for g++ older than 2.91.
