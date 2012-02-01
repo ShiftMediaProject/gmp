@@ -1,3 +1,7 @@
+2012-02-01  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h: Remove check for g++ older than 2.91.
+
 2012-02-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mul.c: Added diagram on where toom functions can be

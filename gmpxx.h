@@ -1,6 +1,7 @@
 /* gmpxx.h -- C++ class wrapper for GMP types.  -*- C++ -*-
 
-Copyright 2001, 2002, 2003, 2006, 2008 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2006, 2008, 2011, 2012 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -16,18 +17,6 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
-
-/* the C++ compiler must implement the following features:
-   - member templates
-   - partial specialization of templates
-   - namespace support
-   for g++, this means version 2.91 or higher
-   for other compilers, I don't know */
-#ifdef __GNUC__
-#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 91)
-#error gmpxx.h requires g++ version 2.91 (egcs 1.1.2) or higher
-#endif
-#endif
 
 #ifndef __GMP_PLUSPLUS__
 #define __GMP_PLUSPLUS__
