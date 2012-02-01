@@ -1,3 +1,8 @@
+2012-02-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/mul.c: Added diagram on where toom functions can be
+	called.
+
 2012-02-01  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_unary_expr): Make the constructor explicit.

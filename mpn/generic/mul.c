@@ -28,6 +28,25 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_BASECASE_MAX_UN 500
 #endif
 
+/* Areas where the different toom algorithms can be called (extracted
+   from the t-toom*.c files, and ignoring small constant offsets):
+
+   1/6  1/5 1/4 4/13 1/3 3/8 2/5 5/11 1/2 3/5 2/3 3/4     1 vn/un
+                                       |------------------| toom22 (small)
+                                                         || toom22 (large)
+                      |-----------------------------------| toom32
+                                               |----------| toom33
+             |---------------------------------|          | toom42   
+                                       |------------------| toom43
+         |-----------------------------|                    toom52
+                                                   |------| toom44
+                              |--------------------|      | toom53
+    |-------------------------|                             toom62
+                      |--------------------|                toom63
+                          |-------------------------------| toom6h
+                                  |-----------------------| toom8h (32 bit)
+                 |----------------------------------------| toom8h (64 bit)
+*/
 #define TOOM33_OK(an,bn) (6 + 2 * an < 3 * bn)
 #define TOOM44_OK(an,bn) (12 + 3 * an < 4 * bn)
 
