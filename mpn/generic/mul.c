@@ -31,22 +31,35 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* Areas where the different toom algorithms can be called (extracted
    from the t-toom*.c files, and ignoring small constant offsets):
 
-   1/6  1/5 1/4 4/13 1/3 3/8 2/5 5/11 1/2 3/5 2/3 3/4     1 vn/un
-                                       |------------------| toom22 (small)
-                                                         || toom22 (large)
-                      |-----------------------------------| toom32
-                                               |----------| toom33
-             |---------------------------------|          | toom42   
-                                       |------------------| toom43
-         |-----------------------------|                    toom52
-                                                   |------| toom44
-                              |--------------------|      | toom53
-    |-------------------------|                             toom62
-                      |--------------------|                toom63
-                          |-------------------------------| toom6h
-                                  |-----------------------| toom8h (32 bit)
-                 |----------------------------------------| toom8h (64 bit)
+   1/6  1/5 1/4 4/13 1/3 3/8 2/5 5/11 1/2 3/5 2/3 3/4 4/5   1 vn/un
+                                        4/7              6/7
+				       6/11
+                                       |-----------------  -| toom22 (small)
+                                                           || toom22 (large)
+                                                       |xxxx| toom22 called
+                      |-------------------------------------| toom32
+                                         |xxxxxxxxxxxxxxxx| | toom32 called
+                                               |------------| toom33
+                                                          |x| toom33 called
+             |---------------------------------|            | toom42
+	              |xxxxxxxxxxxxxxxxxxxxxxxx|            | toom42 called
+                                       |--------------------| toom43
+                                               |xxxxxxxxxx|   toom43 called
+         |-----------------------------|                      toom52 (unused)
+                                                   |--------| toom44
+						   |xxxxxxxx| toom44 called
+                              |--------------------|        | toom53
+                                        |xxxxxx|              toom53 called
+    |-------------------------|                               toom62 (unused)
+                      |--------------------|                  toom63
+	              |xxxxxxxxxxxxxxxxxxxxxxxx|            | toom63 called
+                          |---------------------------------| toom6h
+						   |xxxxxxxx| toom6h called
+                                  |-------------------------| toom8h (32 bit)
+                 |------------------------------------------| toom8h (64 bit)
+						   |xxxxxxxx| toom8h called
 */
+
 #define TOOM33_OK(an,bn) (6 + 2 * an < 3 * bn)
 #define TOOM44_OK(an,bn) (12 + 3 * an < 4 * bn)
 
