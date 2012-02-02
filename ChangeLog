@@ -1,3 +1,7 @@
+2012-02-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_16pts.c: Correct an unlikely 32-bit bug.
+
 2012-02-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom63_mul.c: Allow s+t==n by adjusting an ASSERT.
