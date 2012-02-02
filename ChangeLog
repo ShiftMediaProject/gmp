@@ -1,5 +1,8 @@
 2012-02-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom63_mul.c: Allow s+t==n by adjusting an ASSERT.
+	* mpn/generic/toom_interpolate_8pts.c: Perform final incr iff s+t!=n.
+
 	* tests/mpn/t-toom6h.c (MIN_BN): Make more consistent with ASSERT in
 	tested function.
 
