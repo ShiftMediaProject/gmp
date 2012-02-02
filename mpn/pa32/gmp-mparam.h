@@ -1,7 +1,7 @@
 /* HP-PA 1.0 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,15 +39,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef DIV_DC_THRESHOLD
-#define DIV_DC_THRESHOLD             108
+#define DIV_DC_THRESHOLD         108
 #endif
 
 #ifndef POWM_THRESHOLD
 #define POWM_THRESHOLD            18
 #endif
 
-#ifndef GCD_ACCEL_THRESHOLD
-#define GCD_ACCEL_THRESHOLD       46
-#endif
+#ifndef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD          33
 #endif
