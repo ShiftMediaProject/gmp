@@ -2015,6 +2015,7 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
     (q) = __MPN(udiv_w_sdiv) (&__r, nh, nl, d);				\
     (r) = __r;								\
   } while (0)
+__GMP_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 
 /* If udiv_qrnnd was not defined for this processor, use __udiv_qrnnd_c.  */
