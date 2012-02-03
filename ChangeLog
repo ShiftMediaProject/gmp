@@ -1,3 +1,12 @@
+2012-02-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/fac_ui.c: mpz_oddfac_1 removed, with many related functions.
+	* mpz/oddfac_1.c: New file, mpz_oddfac_1 implementation.
+	* gmp-impl.h: mpz_oddfac_1 declaration.
+	* Makefile.am (MPZ_OBJECTS): add mpz/oddfac_1$U.lo .
+	* mpz/Makefile.am (libmpz_la_SOURCES): add oddfac_1.c .
+	* tune/Makefile.am (fac_ui.c): include mpz/oddfac_1.c .
+
 2012-02-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_16pts.c: Correct an unlikely 32-bit bug.

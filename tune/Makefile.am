@@ -163,6 +163,8 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 fac_ui.c: $(top_builddir)/mpz/fac_ui.c
 	echo "#define TUNE_PROGRAM_BUILD 1"          >fac_ui.c
 	echo "#define __gmpz_fac_ui mpz_fac_ui_tune" >>fac_ui.c
+	echo "#define __gmpz_oddfac_1 mpz_oddfac_1_tune" >>fac_ui.c
+	echo "#include \"mpz/oddfac_1.c\""           >>fac_ui.c
 	echo "#include \"mpz/fac_ui.c\""             >>fac_ui.c
 
 include ../mpn/Makeasm.am
