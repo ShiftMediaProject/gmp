@@ -1,3 +1,7 @@
+2012-02-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/refmpn.c (refmpn_mul): More conservative allocations.
+
 2012-02-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (udiv_qrnnd from sdiv_qrnnd): Declare udiv_w_sdiv.

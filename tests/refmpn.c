@@ -2,7 +2,7 @@
    of the normal gmp code.  Speed isn't a consideration.
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2011 Free Software Foundation, Inc.
+2007, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1881,21 +1881,21 @@ refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
   if (vn < TOOM4_THRESHOLD)
     {
       /* In the mpn_toom33_mul range, use mpn_toom22_mul.  */
-      tn = 2 * vn + mpn_toom22_mul_itch (vn, vn);
+      tn = 3 * vn + mpn_toom22_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom22_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
   else if (vn < FFT_THRESHOLD)
     {
       /* In the mpn_toom44_mul range, use mpn_toom33_mul.  */
-      tn = 2 * vn + mpn_toom33_mul_itch (vn, vn);
+      tn = 3 * vn + mpn_toom33_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom33_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
   else
     {
       /* Finally, for the largest operands, use mpn_toom44_mul.  */
-      tn = 2 * vn + mpn_toom44_mul_itch (vn, vn);
+      tn = 3 * vn + mpn_toom44_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom44_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
