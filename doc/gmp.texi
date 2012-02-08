@@ -3555,7 +3555,7 @@ The value in @var{g} is always positive, even if one or both of @var{a} and
 normally, @math{@GMPabs{@var{s}} < @GMPabs{@var{b}} / (2 @var{g})} and
 @math{@GMPabs{@var{t}} < @GMPabs{@var{a}} / (2 @var{g})}. The exceptional
 cases are that @math{@var{s} = sgn(@var{a})} if @math{@var{b} = 0} and
-@math{@var{t} = sgn(@var{b})} if @var{b = 0}.
+@math{@var{t} = sgn(@var{b})} if @var{a = 0}.
 
 If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
