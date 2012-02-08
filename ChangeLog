@@ -1,3 +1,8 @@
+2012-02-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (mpz_gcdext): Clarified corner cases in cofactor
+	canonicalization.
+
 2012-02-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/refmpn.c (refmpn_mul): More conservative allocations.
