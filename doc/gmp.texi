@@ -3551,10 +3551,10 @@ Set @var{g} to the greatest common divisor of @var{a} and @var{b}, and in
 addition set @var{s} and @var{t} to coefficients satisfying
 @math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g}}.
 The value in @var{g} is always positive, even if one or both of @var{a} and
-@var{b} are negative (or zero if both inputs are zero). The values in @var{s}
+@var{b} are negative (or zero if both inputs are zero).  The values in @var{s}
 and @var{t} are chosen such that normally, @math{@GMPabs{@var{s}} <
 @GMPabs{@var{b}} / (2 @var{g})} and @math{@GMPabs{@var{t}} < @GMPabs{@var{a}}
-/ (2 @var{g})}, and these relations define @var{s} and @var{t} uniquely. There
+/ (2 @var{g})}, and these relations define @var{s} and @var{t} uniquely.  There
 are a few exceptional cases:
 
 If @math{@GMPabs{@var{a}} = @GMPabs{@var{b}}}, then @math{@var{s} = 0},
@@ -3566,7 +3566,7 @@ Otherwise, @math{@var{s} = sgn(@var{a})} if @math{@var{b} = 0} or
 
 In all cases, @math{@var{s} = 0} if and only if @math{@var{g} =
 @GMPabs{@var{b}}}, i.e., if @var{b} divides @var{a} or @math{@var{a} = @var{b}
-= 0}. 
+= 0}.
 
 If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
