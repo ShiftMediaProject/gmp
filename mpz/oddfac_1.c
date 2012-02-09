@@ -463,12 +463,18 @@ log_n_max (mp_limb_t n)
 /* mpz_oddfac_1 computes the odd part of the factorial of the
    parameter n.  I.e. n! = x 2^a, where x is the returned value: an
    odd positive integer.
+
+   If flag != 0 a square is skipped in the DSC part, e.g.
+   if n is odd, n > FAC_DSC_THRESHOLD and flag = 1, x is set to n!!.
+
+   If n is too small, flag is ignored, and an ASSERT can be triggered.
  */
 void
-mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
+mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
   static const mp_limb_t tablef[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
-  static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
+
+  ASSERT (flag == 0 || (n >= numberof (tablef) && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
   if (n < numberof (tablef))
     {
@@ -484,6 +490,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 
       s = 0;
       {
+	static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
 	mp_limb_t tn;
 	mp_size_t j;
 	TMP_SDECL;
@@ -546,13 +553,15 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 
 	  TMP_MARK;
 
-	  size = n / GMP_NUMB_BITS;
-	  ASSERT (primesieve_size (n - 1) <= (size + 4) - (size / 2 + 3));
+	  flag--;
+	  size = n / GMP_NUMB_BITS + 4;
+	  ASSERT (primesieve_size (n - 1) <= size - (size / 2 + 1));
 	  /* 2-multiswing(n) < 2^(n-1)*sqrt(n/pi) < 2^(n+GMP_NUMB_BITS);
 	     one more can be overwritten by mul, another for the sieve */
-	  MPZ_TMP_INIT (mswing, size + 4);
+	  MPZ_TMP_INIT (mswing, size);
 	  /* Put the sieve on the second half, it will be overwritten by the last mswing. */
-	  sieve = PTR(mswing) + size / 2 + 3;
+	  sieve = PTR (mswing) + size / 2 + 1;
+	  ASSERT ((SIZ (mswing) = 0) || ALLOC (mswing) == size);
 
 	  size = (bitwise_primesieve (sieve, n - 1) + 1) / log_n_max (n) + 1;
 
@@ -564,15 +573,22 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n)
 	    TMP_DECL;
 
 	    s--;
+	    ASSERT (ABSIZ (mswing) < ALLOC (mswing) / 2); /* Check: sieve has not been overwritten */
 	    mpz_2multiswing_1 (mswing, n >> s, sieve, factors);
 
 	    TMP_MARK;
 	    nx = SIZ (x);
-	    size = nx << 1;
-	    square = TMP_ALLOC_LIMBS (size);
-	    mpn_sqr (square, PTR (x), nx);
-	    ns = SIZ(mswing);
-	    size -= (square[size - 1] == 0);
+	    if (s == flag) {
+	      size = nx;
+	      square = TMP_ALLOC_LIMBS (size);
+	      MPN_COPY (square, PTR (x), nx);
+	    } else {
+	      size = nx << 1;
+	      square = TMP_ALLOC_LIMBS (size);
+	      mpn_sqr (square, PTR (x), nx);
+	      size -= (square[size - 1] == 0);
+	    }
+	    ns = SIZ (mswing);
 	    nx = size + ns;
 	    MPZ_REALLOC (x, nx);
 	    ASSERT (ns <= size);

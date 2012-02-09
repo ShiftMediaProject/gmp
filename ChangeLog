@@ -1,3 +1,9 @@
+2012-02-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/oddfac_1.c (mpz_oddfac_1): Get ready for n!!
+	* gmp-impl.h (mpz_oddfac_1): Update signature.
+	* mpz/fac_ui.c (mpz_fac_ui): Update call to mpz_oddfac_1.
+
 2012-02-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_gcdext): Clarified corner cases in cofactor

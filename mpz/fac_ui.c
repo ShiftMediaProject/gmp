@@ -92,7 +92,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   else
     {
       mp_limb_t count;
-      mpz_oddfac_1 (x, n);
+      mpz_oddfac_1 (x, n, 0);
       popc_limb (count, n);
       mpz_mul_2exp (x, x, n - count);
     }
