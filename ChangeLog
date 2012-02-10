@@ -1,5 +1,10 @@
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcdext.c (mpn_gcdext): Fixed assert, related to the
+	special case A = (2k+1) G, B = 2 G. Fix copied from gmp-5.0 repo.
+
+2012-02-10  Niels Möller  <nisse@lysator.liu.se>
+
 	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce sligthly stricter
 	bound for cofactors.
 
@@ -7,10 +12,11 @@
 	not mpz_urandomb. Change copied from gmp-5.0 repo.
 	* tests/mpn/t-hgcd.c (main): Likewise.
 
-2012-02-06  Niels Möller  <nisse@lysator.liu.se>
+2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_matrix.c (hgcd_matrix_update_q): Fixed carry
-	handling bug. Fix copied from gmp-5.0 repo.
+	handling bug. Fix copied from gmp-5.0 repo, where the function is
+	found in hgcd.c.
 
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
