@@ -94,6 +94,13 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	  if (u1n == 0)
 	    return;
 
+	  /* Should always have u1n == un here, and u1 >= u0. The
+	     reason is that we alternate adding u0 to u1 and u1 to u0
+	     (corresponding to subtractions a - b and b - a), and we
+	     can get a large quotient only just after a switch, which
+	     means that we'll add (a multiple of) the larger u to the
+	     smaller. */
+	  
 	  tp = ctx->tp;
 
 	  if (qn > u1n)
