@@ -154,9 +154,9 @@ main (int argc, char **argv)
       size_range = mpz_get_ui (bs) % 17 + 2;
 
       mpz_urandomb (bs, rands, size_range);
-      mpz_urandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
+      mpz_rrandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
       mpz_urandomb (bs, rands, size_range);
-      mpz_urandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
+      mpz_rrandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
 
       mpz_urandomb (bs, rands, 8);
       bsi = mpz_get_ui (bs);
