@@ -104,12 +104,15 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	  u1n += qn;
 	  u1n -= tp[u1n-1] == 0;
 
-	  if (u1n > un)
-	    cy = mpn_add (u0, tp, u1n, u0, un);
+	  if (u1n >= un)
+	    {
+	      cy = mpn_add (u0, tp, u1n, u0, un);
+	      un = u1n;
+	    }
 	  else
+	    /* Note: Unlikely case, maybe never happens? */
 	    cy = mpn_add (u0, u0, un, tp, u1n);
 
-	  un = u1n;
 	}
       u0[un] = cy;
       ctx->un = un + (cy > 0);

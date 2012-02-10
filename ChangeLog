@@ -1,3 +1,9 @@
+2012-02-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_hook): Corrected
+	handling of unlikely (maybe impossible?) case u1n < un. Related to
+	the 2012-02-05 bugfix of gcdext_subdiv_step.c in the gmp-5.0 repo.
+
 2012-02-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/oddfac_1.c (mpz_oddfac_1): Get ready for n!!
