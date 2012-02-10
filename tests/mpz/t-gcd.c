@@ -370,7 +370,7 @@ gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
   if (mpz_cmpabs_ui (s, 1) > 0)
     {
       mpz_mul_2exp (temp3, s, 1);
-      if (mpz_cmpabs (temp3, temp2) > 0)
+      if (mpz_cmpabs (temp3, temp2) >= 0)
 	return 0;
     }
 
@@ -386,7 +386,7 @@ gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
   if (mpz_cmpabs_ui (temp2, 1) > 0)
     {
       mpz_mul_2exp (temp2, temp2, 1);
-      if (mpz_cmpabs (temp2, temp1) > 0)
+      if (mpz_cmpabs (temp2, temp1) >= 0)
 	return 0;
     }
   return 1;

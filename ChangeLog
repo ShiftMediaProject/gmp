@@ -1,5 +1,8 @@
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce sligthly stricter
+	bound for cofactors.
+
 	* tests/mpz/t-gcd.c (main): Use mpz_rrandomb for test operands,
 	not mpz_urandomb. Change copied from gmp-5.0 repo.
 	* tests/mpn/t-hgcd.c (main): Likewise.
