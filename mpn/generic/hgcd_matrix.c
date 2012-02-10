@@ -95,19 +95,21 @@ mpn_hgcd_matrix_update_q (struct hgcd_matrix *M, mp_srcptr qp, mp_size_t qn,
 	  ASSERT (n + qn >= M->n);
 	  c[row] = mpn_add (M->p[row][col], tp, n + qn, M->p[row][col], M->n);
 	}
+
+      n += qn;
+
       if (c[0] | c[1])
 	{
-	  M->n = n + qn + 1;
-	  M->p[0][col][n-1] = c[0];
-	  M->p[1][col][n-1] = c[1];
+	  M->p[0][col][n] = c[0];
+	  M->p[1][col][n] = c[1];
+	  n++;
 	}
       else
 	{
-	  n += qn;
 	  n -= (M->p[0][col][n-1] | M->p[1][col][n-1]) == 0;
-	  if (n > M->n)
-	    M->n = n;
+	  ASSERT (n >= M->n);
 	}
+      M->n = n;
     }
 
   ASSERT (M->n < M->alloc);

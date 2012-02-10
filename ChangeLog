@@ -1,3 +1,8 @@
+2012-02-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd_matrix.c (hgcd_matrix_update_q): Fixed carry
+	handling bug. Fix copied from gmp-5.0 repo.
+
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_hook): Corrected
