@@ -2225,7 +2225,7 @@ __GMP_DECLSPEC void __gmp_assert_fail __GMP_PROTO ((const char *, int, const cha
 
 #define ASSERT_ALWAYS(expr)						\
   do {									\
-    if (!(expr))							\
+    if (UNLIKELY (!(expr)))						\
       ASSERT_FAIL (expr);						\
   } while (0)
 
