@@ -1,3 +1,7 @@
+2012-02-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* doc/gmp.texi (Factorial): Shortly describe current algorithm.
+
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce sligthly stricter

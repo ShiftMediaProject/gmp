@@ -314,6 +314,25 @@ limb_apprsqrt (mp_limb_t x)
   return (CNST_LIMB(1) << (s >> 1)) + (CNST_LIMB(1) << ((s - 1) >> 1));
 }
 
+#if 0
+/* A count-then-exponentiate variant for SWING_A_PRIME */
+#define SWING_A_PRIME(P, N, PR, MAX_PR, VEC, I)		\
+  do {							\
+    mp_limb_t __q, __prime;				\
+    int __exp;						\
+    __prime = (P);					\
+    __exp = 0;						\
+    __q = (N);						\
+    do {						\
+      __q /= __prime;					\
+      __exp += __q & 1;					\
+    } while (__q >= __prime);				\
+    if (__exp) { /* Store $prime^{exp}$ */		\
+      for (__q = __prime; --__exp; __q *= __prime);	\
+      FACTOR_LIST_STORE(__q, PR, MAX_PR, VEC, I);	\
+    };							\
+  } while (0)
+#else
 #define SWING_A_PRIME(P, N, PR, MAX_PR, VEC, I)	\
   do {						\
     mp_limb_t __q, __prime;			\
@@ -325,6 +344,7 @@ limb_apprsqrt (mp_limb_t x)
       if ((__q & 1) != 0) (PR) *= __prime;	\
     } while (__q >= __prime);			\
   } while (0)
+#endif
 
 #define SH_SWING_A_PRIME(P, N, PR, MAX_PR, VEC, I)	\
   do {							\
@@ -544,6 +564,11 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
       if (s != 0)
 	/* Use the algorithm described by Peter Luschny in "Divide,
 	   Swing and Conquer the Factorial!".
+
+	   Improvement: there are two temporary buffers, factors and
+	   square, that are never used together; with a good estimate
+	   of the maximal needed size, they could share a single
+	   allocation.
 	*/
 	{
 	  mpz_t mswing;
