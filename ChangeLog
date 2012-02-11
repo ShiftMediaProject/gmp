@@ -1,3 +1,7 @@
+2012-02-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/tests.h (TESTS_REPS): Print any non-standard repetitions.
+
 2012-02-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (Factorial): Shortly describe current algorithm.

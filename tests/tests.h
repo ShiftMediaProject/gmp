@@ -503,6 +503,7 @@ istringstream : public std::istrstream {
   do {									\
   char *envval, *end;							\
   long repfactor;							\
+  int reps_nondefault = 0;						\
   if (argc > 1)								\
     {									\
       count = strtol (argv[1], &end, 0);				\
@@ -513,6 +514,7 @@ istringstream : public std::istrstream {
 	}								\
       argv++;								\
       argc--;								\
+      reps_nondefault = 1;						\
     }									\
   envval = getenv ("GMP_CHECK_REPFACTOR");				\
   if (envval != NULL)							\
@@ -524,7 +526,10 @@ istringstream : public std::istrstream {
 	  exit (1);							\
 	}								\
       count *= repfactor;						\
+      reps_nondefault = 1;						\
     }									\
+  if (reps_nondefault)							\
+    printf ("Running test with %ld repetitions (include this in bug reports)\n", count);		\
   } while (0)
 
 
