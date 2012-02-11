@@ -58,6 +58,8 @@
 
 2012-02-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/bd1/gmp-mparam.h: New file.
+
 	* longlong.h (udiv_qrnnd from sdiv_qrnnd): Declare udiv_w_sdiv.
 
 	* mpn/generic/udiv_w_sdiv.c: Use c89 function header.
@@ -133,6 +135,10 @@
 
 	* doc/gmp.texi (gmp_randclass::get_z_bits): Use mp_bitcnt_t.
 	* gmpxx.h: Replace unsigned long with mp_bitcnt_t.
+
+2012-01-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Upgrade to libtool 2.4.2.
 
 2012-01-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
