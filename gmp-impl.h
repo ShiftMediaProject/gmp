@@ -4875,12 +4875,17 @@ extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 #define mpn_toom2_sqr_itch(an) \
   (2 * ((an) + GMP_NUMB_BITS))
 
-/* Can probably be trimmed to 2 an + O(log an). */
+/* toom33/toom3: Scratch need is 5an/2 + 10k, k is the recursion depth.
+   We use 3an + C, so that we can use a smaller constant.
+ */
 #define mpn_toom33_mul_itch(an, bn) \
-  ((5 * (an) >> 1) + GMP_NUMB_BITS)
+  (3 * (an) + GMP_NUMB_BITS)
 #define mpn_toom3_sqr_itch(an) \
-  ((5 * (an) >> 1) + GMP_NUMB_BITS)
+  (3 * (an) + GMP_NUMB_BITS)
 
+/* toom33/toom3: Scratch need is 8an/3 + 13k, k is the recursion depth.
+   We use 3an + C, so that we can use a smaller constant.
+ */
 #define mpn_toom44_mul_itch(an, bn) \
   (3 * (an) + GMP_NUMB_BITS)
 #define mpn_toom4_sqr_itch(an) \

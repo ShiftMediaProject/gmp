@@ -14,6 +14,9 @@
 
 2012-02-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* gmp-impl.h (mpn_toom3*_itch): Support any recursion depth.
+	* tests/refmpn.c (refmpn_mul): Restore tight allocations.
+
 	* mpz/oddfac_1.c (mpz_oddfac_1): Get ready for n!!
 	* gmp-impl.h (mpz_oddfac_1): Update signature.
 	* mpz/fac_ui.c (mpz_fac_ui): Update call to mpz_oddfac_1.
