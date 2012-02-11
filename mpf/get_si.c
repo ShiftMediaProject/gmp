@@ -72,5 +72,5 @@ mpf_get_si (mpf_srcptr f) __GMP_NOTHROW
     return fl & LONG_MAX;
   else
     /* this form necessary to correctly handle -0x80..00 */
-    return ~ ((fl - 1) & LONG_MAX);
+    return -1 - (long) ((fl - 1) & LONG_MAX);
 }

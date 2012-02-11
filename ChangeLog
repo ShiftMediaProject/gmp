@@ -13,6 +13,20 @@
 	* gmp-impl.h (mpz_oddfac_1): Update signature.
 	* mpz/fac_ui.c (mpz_fac_ui): Update call to mpz_oddfac_1.
 
+2012-02-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-impl.h (ABS_CAST): New macro.
+	* mpf/cmp_si.c: Use ABS_CAST.
+	* mpf/get_si.c: Use ABS_CAST.
+	* mpf/iset_si.c: Use ABS_CAST.
+	* mpf/set_si.c: Use ABS_CAST.
+	* mpq/set_si.c: Use ABS_CAST.
+	* mpz/cmp_si.c: Use ABS_CAST.
+	* mpz/get_si.c: Use ABS_CAST.
+	* mpz/iset_si.c: Use ABS_CAST.
+	* mpz/mul_i.h: Use ABS_CAST.
+	* mpz/set_si.c: Use ABS_CAST.
+
 2012-02-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc32/divrem_2.asm: Fix off-by-one condition in invert_limb
