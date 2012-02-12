@@ -1034,9 +1034,9 @@ debugging memory related problems (@pxref{Debugging}).
 @item FFT Multiplication, @option{--disable-fft}
 @cindex FFT multiplication
 @cindex @code{--disable-fft}
-By default multiplications are done using Karatsuba, 3-way Toom, and
-Fermat FFT@.  The FFT is only used on large to very large operands and can be
-disabled to save code size if desired.
+By default multiplications are done using Karatsuba, 3-way Toom, higher degree
+Toom, and Fermat FFT@.  The FFT is only used on large to very large operands
+and can be disabled to save code size if desired.
 
 @item Assertion Checking, @option{--enable-assert}
 @cindex Assertion checking
@@ -7312,7 +7312,7 @@ documented functions.
 @section Multiplication
 @cindex Multiplication algorithms
 
-N@cross{}N limb multiplications and squares are done using one of five
+N@cross{}N limb multiplications and squares are done using one of seven
 algorithms, as the size N increases.
 
 @quotation
@@ -7322,6 +7322,8 @@ algorithms, as the size N increases.
 @item Karatsuba @tab @code{MUL_TOOM22_THRESHOLD}
 @item Toom-3    @tab @code{MUL_TOOM33_THRESHOLD}
 @item Toom-4    @tab @code{MUL_TOOM44_THRESHOLD}
+@item Toom-6.5  @tab @code{MUL_TOOM6H_THRESHOLD}
+@item Toom-8.5  @tab @code{MUL_TOOM8H_THRESHOLD}
 @item FFT       @tab @code{MUL_FFT_THRESHOLD}
 @end multitable
 @end quotation
@@ -7338,6 +7340,7 @@ Multiplication}).
 * Karatsuba Multiplication::
 * Toom 3-Way Multiplication::
 * Toom 4-Way Multiplication::
+* Higher degree Toom'n'half::
 * FFT Multiplication::
 * Other Multiplication::
 * Unbalanced Multiplication::
@@ -7794,7 +7797,7 @@ the @m{w_i,w[i]}.
 Squaring follows the same procedure as multiplication, but there's only one
 @math{X(t)} and it's evaluated at the 5 points, and those values squared to
 give values of @math{W(t)}.  The interpolation is then identical, and in fact
-the same @code{toom3_interpolate} subroutine is used for both squaring and
+the same @code{toom_interpolate_5pts} subroutine is used for both squaring and
 multiplying.
 
 Toom-3 is asymptotically @math{O(N^@W{1.465})}, the exponent being
@@ -7832,7 +7835,7 @@ and for example with a bit of rearrangement just one division by 6 can be
 done.
 
 
-@node Toom 4-Way Multiplication, FFT Multiplication, Toom 3-Way Multiplication, Multiplication Algorithms
+@node Toom 4-Way Multiplication, Higher degree Toom'n'half, Toom 3-Way Multiplication, Multiplication Algorithms
 @subsection Toom 4-Way Multiplication
 @cindex Toom multiplication
 
@@ -7875,7 +7878,32 @@ Toom-4 is asymptotically @math{O(N^@W{1.404})}, the exponent being
 original size each.
 
 
-@node FFT Multiplication, Other Multiplication, Toom 4-Way Multiplication, Multiplication Algorithms
+@node Higher degree Toom'n'half, FFT Multiplication, Toom 4-Way Multiplication, Multiplication Algorithms
+@subsection Higher degree Toom'n'half
+@cindex Toom multiplication
+
+The Toom algorithms described above (@pxref{Toom 3-Way Multiplication},
+@pxref{Toom 4-Way Multiplication}) generalizes to split into an arbitrary
+number of pieces. In general a split of two equally long operands into
+@math{r} pieces leads to evaluations and pointwise multiplications done at
+@m{2r-1,2*r-1} points. To fully exploit symmetries it would be better to have
+a multiple of 4 points, that's why for higher degree Toom'n'half is used.
+
+Toom'n'half means that the existence of one more piece is considered for a
+single operand. It can be virtual, i.e. zero, or real, when the two operand
+are not exactly balanced. By chosing an even @math{r},
+Toom-@m{r{1\over2},r+1/2} requires @math{2r} points, a multiple of four.
+
+The four-plets of points inlcude 0, @m{\infty,inf}, +1, -1 and
+@m{\pm2^i,+-2^i}, @m{\pm2^{-i},+-2^-i} . Each of them giving shortcuts for the
+evaluation phase and for some steps in the interpolation phase. Further tricks
+are used to reduce the memory footprint of the whole multiplication algorithm
+to a memory buffer equanl in size to the result of the product.
+
+Current GMP uses both Toom-6'n'half and Toom-8'n'half.
+
+
+@node FFT Multiplication, Other Multiplication, Higher degree Toom'n'half, Multiplication Algorithms
 @subsection FFT Multiplication
 @cindex FFT multiplication
 @cindex Fast Fourier Transform
@@ -8002,7 +8030,7 @@ currently used.  The notes here are merely for interest.
 In general a split into @math{r+1} pieces is made, and evaluations and
 pointwise multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7
 pointwise multiplies, 5-way does 9, etc.  Asymptotically an @math{(r+1)}-way
-algorithm is @m{O(N^{log(2r+1)/log(r+1)}, O(N^(log(2*r+1)/log(r+1)))}.  Only
+algorithm is @m{O(N^{log(2r+1)/log(r+1)}), O(N^(log(2*r+1)/log(r+1)))}.  Only
 the pointwise multiplications count towards big-@math{O} complexity, but the
 time spent in the evaluate and interpolate stages grows with @math{r} and has
 a significant practical impact, with the asymptotic advantage of each @math{r}
