@@ -52,7 +52,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
                                         |xxxxxx|              toom53 called
     |-------------------------|                               toom62 (unused)
                       |--------------------|                  toom63
-	              |xxxxxxxxxxxxxxxxxxxxxxxx|            | toom63 called
+	                      |xxxxxxxxx|                   | toom63 called
                           |---------------------------------| toom6h
 						   |xxxxxxxx| toom6h called
                                   |-------------------------| toom8h (32 bit)
