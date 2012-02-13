@@ -3590,3 +3590,26 @@ AC_OUTPUT(Makefile							\
   doc/Makefile tune/Makefile						\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
   gmp.h:gmp-h.in)
+
+AC_MSG_NOTICE([summary of build options:
+
+  Version:           ${PACKAGE_STRING}
+  Host type:         ${host}
+  ABI:               ${ABI}
+  Install prefix:    ${prefix}
+  Compiler:          ${CC}
+  Static libraries:  ${enable_static}
+  Shared libraries:  ${enable_shared}
+])
+
+if test x$cross_compiling = xyes ; then	
+   case "$host" in
+     *-*-mingw* | *-*-cygwin)
+     if test x$ABI = x64 ; then
+     	AC_MSG_NOTICE([If wine64 is installed, use make check TESTS_ENVIRONMENT=wine64.])
+     else
+     	AC_MSG_NOTICE([If wine is installed, use make check TESTS_ENVIRONMENT=wine.])
+     fi
+     ;;
+   esac
+fi
