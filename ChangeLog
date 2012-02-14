@@ -1,3 +1,12 @@
+2012-02-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom54_mul.c: New file, originally contributed by
+	Marco.
+	* gmp-impl.h (mpn_toom54_mul_itch): New function.
+	* configure.in (gmp_mpn_functions): Added toom54_mul.
+	* tests/mpn/t-toom54.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom54.
+
 2012-02-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.in: Display summary of options.

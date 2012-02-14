@@ -2634,7 +2634,7 @@ gmp_mpn_functions="$extra_functions					   \
   hgcd2_jacobi hgcd_jacobi						   \
   mullo_n mullo_basecase						   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
-  toom33_mul toom43_mul toom53_mul toom63_mul				   \
+  toom33_mul toom43_mul toom53_mul toom54_mul toom63_mul		   \
   toom44_mul								   \
   toom6h_mul toom6_sqr toom8h_mul toom8_sqr				   \
   toom_couple_handling							   \
