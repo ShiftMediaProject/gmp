@@ -156,6 +156,7 @@ mp_size_t  mul_toom32_to_toom43_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_toom32_to_toom53_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_toom42_to_toom53_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_toom42_to_toom63_threshold = MP_SIZE_T_MAX;
+mp_size_t  mul_toom43_to_toom54_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
@@ -1306,6 +1307,15 @@ tune_mul (void)
   one (&thres, &param);
   mul_toom42_to_toom63_threshold = thres / 2;
   print_define ("MUL_TOOM42_TO_TOOM63_THRESHOLD", mul_toom42_to_toom63_threshold);
+
+  /* Use ratio 5/6 when measuring, the middle of the range 2/3 to 1. */
+  param.function = speed_mpn_toom43_for_toom54_mul;
+  param.function2 = speed_mpn_toom54_for_toom43_mul;
+  param.name = "MUL_TOOM43_TO_TOOM54_THRESHOLD";
+  param.min_size = MPN_TOOM54_MUL_MINSIZE * 6 / 5;
+  one (&thres, &param);
+  mul_toom43_to_toom54_threshold = thres * 5 / 6;
+  print_define ("MUL_TOOM43_TO_TOOM54_THRESHOLD", mul_toom43_to_toom54_threshold);
 }
 
 

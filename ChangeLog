@@ -1,5 +1,13 @@
 2012-02-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/tuneup.c (mul_toom43_to_toom54_threshold): New global.
+	(tune_mul): Added tuning of MUL_TOOM43_TO_TOOM54_THRESHOLD.
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM43_FOR_TOOM54_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM54_FOR_TOOM43_MUL): New macro.
+	Prototypes for corresponding functions.
+	* tune/common.c (speed_mpn_toom43_for_toom54_mul): New function.
+	(speed_mpn_toom54_for_toom43_mul): New function.
+
 	* gmp-impl.h (MPN_TOOM43_MUL_MINSIZE): Corrected constant.
 	(MPN_TOOM53_MUL_MINSIZE): Likewise.
 	(MPN_TOOM54_MUL_MINSIZE): New constant.
