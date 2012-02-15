@@ -1,3 +1,12 @@
+2012-02-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (MPN_TOOM43_MUL_MINSIZE): Corrected constant.
+	(MPN_TOOM53_MUL_MINSIZE): Likewise.
+	(MPN_TOOM54_MUL_MINSIZE): New constant.
+	(mpn_toom54_mul): Added prototype.
+	(MUL_TOOM43_TO_TOOM54_THRESHOLD): New threshold. Default value and
+	tuning setup.
+
 2012-02-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom54_mul.c: New file, originally contributed by

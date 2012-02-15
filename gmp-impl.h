@@ -1247,8 +1247,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
 #define MPN_TOOM32_MUL_MINSIZE   10
 #define MPN_TOOM42_MUL_MINSIZE   10
-#define MPN_TOOM43_MUL_MINSIZE   49 /* ??? */
-#define MPN_TOOM53_MUL_MINSIZE   49 /* ??? */
+#define MPN_TOOM43_MUL_MINSIZE   25
+#define MPN_TOOM53_MUL_MINSIZE   17
+#define MPN_TOOM54_MUL_MINSIZE   31
 #define MPN_TOOM63_MUL_MINSIZE   49
 
 #define MPN_TOOM42_MULMID_MINSIZE    4
@@ -1326,6 +1327,9 @@ __GMP_DECLSPEC void      mpn_toom43_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 
 #define   mpn_toom53_mul __MPN(toom53_mul)
 __GMP_DECLSPEC void      mpn_toom53_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom54_mul __MPN(toom54_mul)
+__GMP_DECLSPEC void      mpn_toom54_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom63_mul __MPN(toom63_mul)
 __GMP_DECLSPEC void      mpn_toom63_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
@@ -1937,6 +1941,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MUL_TOOM42_TO_TOOM63_THRESHOLD
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD  110
+#endif
+
+#ifndef MUL_TOOM43_TO_TOOM54_THRESHOLD
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD  150
 #endif
 
 /* MUL_TOOM22_THRESHOLD_LIMIT is the maximum for MUL_TOOM22_THRESHOLD.  In a
@@ -4580,6 +4588,10 @@ extern mp_size_t			mul_toom42_to_toom53_threshold;
 #undef	MUL_TOOM42_TO_TOOM63_THRESHOLD
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD	mul_toom42_to_toom63_threshold
 extern mp_size_t			mul_toom42_to_toom63_threshold;
+
+#undef  MUL_TOOM43_TO_TOOM54_THRESHOLD
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD	mul_toom43_to_toom54_threshold;
+extern mp_size_t			mul_toom43_to_toom54_threshold;
 
 #undef	MUL_FFT_THRESHOLD
 #define MUL_FFT_THRESHOLD		mul_fft_threshold
