@@ -1,6 +1,6 @@
 /* Generate mp_bases data.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2002, 2004, 2011 Free Software
+Copyright 1991, 1993, 1994, 1996, 2000, 2002, 2004, 2011, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -17,8 +17,6 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
-
-#include <math.h>
 
 #include "dumbmp.c"
 
