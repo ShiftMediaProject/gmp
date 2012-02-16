@@ -23,11 +23,14 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 4
 C AMD K10	 4
+C AMD bd1	 5.1
+C AMD bobcat	 
 C Intel P4	 ?
 C Intel core2	 4.3-4.5 (fluctuating)
-C Intel corei	 5
+C Intel NHM	 5.0
+C Intel SBR	 4.1
 C Intel atom	 ?
-C VIA nano	 ?
+C VIA nano	 5.25
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

@@ -22,11 +22,14 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 2.5
 C AMD K10	 2.5
+C AMD bd1	 5.0
+C AMD bobcat	 6.17
 C Intel P4	14.9
 C Intel core2	 5.09
-C Intel corei	 ?
+C Intel NHM	 4.9
+C Intel SBR	 4.0
 C Intel atom	21.3
-C VIA nano	 5.5
+C VIA nano	 5.0
 
 C The loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.
