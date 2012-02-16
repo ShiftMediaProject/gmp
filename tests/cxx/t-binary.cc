@@ -1,6 +1,6 @@
 /* Test mp*_class binary expressions.
 
-Copyright 2001, 2002, 2003, 2008 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2008, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -148,6 +148,8 @@ check_mpz (void)
     mpz_class a(3), b(5), c(7);
     mpz_class d;
     d = (a - b) * (-c); ASSERT_ALWAYS(d == 14);
+    d = (b - d) * (-a); ASSERT_ALWAYS(d == 27);
+    d = (a - b) * (-d); ASSERT_ALWAYS(d == 54);
   }
 
   {
@@ -275,12 +277,14 @@ check_mpq (void)
     mpq_class a(1, 2), b(1, 4);
     mpz_class c(1);
     mpq_class d((a + b) - c); ASSERT_ALWAYS(d == -0.25);
+    d = (a + d) - c; ASSERT_ALWAYS(d == -0.75);
   }
   {
     mpq_class a(1, 3), b(3, 2);
     mpz_class c(2), d(4);
     mpq_class e;
     e = (a * b) / (c - d); ASSERT_ALWAYS(e == -0.25);
+    e = (2 * e) / (c - d); ASSERT_ALWAYS(e ==  0.25);
   }
 
   // template <class T, class U, class V, class W, class Op>
@@ -304,6 +308,8 @@ check_mpq (void)
     mpq_class a(1, 3), b(3, 4), c(2, 5);
     mpq_class d;
     d = (a * b) / (-c); ASSERT_ALWAYS(d == -0.625);
+    d = (c * d) / (-b); ASSERT_ALWAYS(3 * d == 1);
+    d = (a * c) / (-d); ASSERT_ALWAYS(5 * d == -2);
   }
 }
 

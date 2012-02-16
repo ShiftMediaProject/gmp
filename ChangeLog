@@ -1,3 +1,9 @@
+2012-02-16  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_binary_expr): Let things happen in place: e=a*b-c*d
+	becomes tmp=c*d, e=a*b, e-=tmp.
+	* tests/cxx/t-binary.cc: More variable reuse tests.
+
 2012-02-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (mul_toom43_to_toom54_threshold): New global.
