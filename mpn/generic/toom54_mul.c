@@ -31,7 +31,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    Evaluate in: infinity, +4, -4, +2, -2, +1, -1, 0.
 
   <--s-><--n--><--n--><--n--><--n-->
-   ____ ______ ______ ______ ______ 
+   ____ ______ ______ ______ ______
   |_a4_|__a3__|__a2__|__a1__|__a0__|
 	  |b3_|__b2__|__b1__|__b0__|
 	  <-t-><--n--><--n--><--n-->
@@ -130,4 +130,3 @@ mpn_toom54_mul (mp_ptr pp,
 #undef r8
 #undef ws
 }
-  

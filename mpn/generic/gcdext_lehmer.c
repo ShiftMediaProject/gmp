@@ -100,7 +100,7 @@ mpn_gcdext_hook (void *p, mp_srcptr gp, mp_size_t gn,
 	     can get a large quotient only just after a switch, which
 	     means that we'll add (a multiple of) the larger u to the
 	     smaller. */
-	  
+
 	  tp = ctx->tp;
 
 	  if (qn > u1n)
