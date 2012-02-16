@@ -2747,12 +2747,12 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
     ASSERT ((base) >= 2);						\
     ASSERT ((base) < numberof (mp_bases));				\
 									\
-    /* Special case for X == 0.	 */					\
+    /* Special case for X == 0.  */					\
     if ((size) == 0)							\
       (result) = 1;							\
     else								\
       {									\
-	/* Calculate the total number of significant bits of X.	 */	\
+	/* Calculate the total number of significant bits of X.  */	\
 	count_leading_zeros (__cnt, (ptr)[(size)-1]);			\
 	__totbits = (size_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);\
 									\
@@ -2776,12 +2776,12 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 									\
     ASSERT ((size) >= 0);						\
 									\
-    /* Special case for X == 0.	 */					\
+    /* Special case for X == 0.  */					\
     if ((size) == 0)							\
       (result) = 1;							\
     else								\
       {									\
-	/* Calculate the total number of significant bits of X.	 */	\
+	/* Calculate the total number of significant bits of X.  */	\
 	count_leading_zeros (__cnt, (ptr)[(size)-1]);			\
 	__totbits = (size_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);\
 	(result) = (__totbits + 4 - 1) / 4;				\
