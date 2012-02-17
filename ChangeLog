@@ -1,3 +1,9 @@
+2012-02-17  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-h.in (__GMP_WITHIN_GMP): Test with #ifdef instead of #if, for
+	the benefit of applications using gcc -Wundef.
+	(__GMP_WITHIN_GMPXX): Likewise.
+
 2012-02-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_binary_expr): Let things happen in place: e=a*b-c*d
