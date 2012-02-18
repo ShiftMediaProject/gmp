@@ -45,9 +45,39 @@ void check_common_type ()
 {
 #define CHECK_COMMON_TYPE(T, U, Res) \
   static_assert(std::is_same<std::common_type<T, U>::type, Res>::value, "sorry")
+#define CHECK_COMMON_TYPE_BUILTIN1(T, Res) \
+  CHECK_COMMON_TYPE(  signed char , T, Res); \
+  CHECK_COMMON_TYPE(unsigned char , T, Res); \
+  CHECK_COMMON_TYPE(  signed short, T, Res); \
+  CHECK_COMMON_TYPE(unsigned short, T, Res); \
+  CHECK_COMMON_TYPE(  signed int  , T, Res); \
+  CHECK_COMMON_TYPE(unsigned int  , T, Res); \
+  CHECK_COMMON_TYPE(  signed long , T, Res); \
+  CHECK_COMMON_TYPE(unsigned long , T, Res); \
+  CHECK_COMMON_TYPE(float , T, Res); \
+  CHECK_COMMON_TYPE(double, T, Res)
+#define CHECK_COMMON_TYPE_BUILTIN2(T, Res) \
+  CHECK_COMMON_TYPE(T,   signed char , Res); \
+  CHECK_COMMON_TYPE(T, unsigned char , Res); \
+  CHECK_COMMON_TYPE(T,   signed short, Res); \
+  CHECK_COMMON_TYPE(T, unsigned short, Res); \
+  CHECK_COMMON_TYPE(T,   signed int  , Res); \
+  CHECK_COMMON_TYPE(T, unsigned int  , Res); \
+  CHECK_COMMON_TYPE(T,   signed long , Res); \
+  CHECK_COMMON_TYPE(T, unsigned long , Res); \
+  CHECK_COMMON_TYPE(T, float , Res); \
+  CHECK_COMMON_TYPE(T, double, Res)
+#define CHECK_COMMON_TYPE_BUILTIN(T, Res) \
+  CHECK_COMMON_TYPE_BUILTIN1(T, Res); \
+  CHECK_COMMON_TYPE_BUILTIN2(T, Res)
+  /* These would just work with implicit conversions */
   CHECK_COMMON_TYPE (mpz_class, mpq_class, mpq_class);
   CHECK_COMMON_TYPE (mpz_class, mpf_class, mpf_class);
   CHECK_COMMON_TYPE (mpf_class, mpq_class, mpf_class);
+
+  CHECK_COMMON_TYPE_BUILTIN (mpz_class, mpz_class);
+  CHECK_COMMON_TYPE_BUILTIN (mpq_class, mpq_class);
+  CHECK_COMMON_TYPE_BUILTIN (mpf_class, mpf_class);
 
   mpz_class z; mpq_class q; mpf_class f;
 
@@ -59,14 +89,28 @@ void check_common_type ()
   CHECK_COMMON_TYPE (decltype(-z), mpf_class, mpf_class);
   CHECK_COMMON_TYPE (decltype(-q), mpf_class, mpf_class);
 
-  /* Not currently supported
+  /* These require a common_type specialization */
+  CHECK_COMMON_TYPE (decltype(-z), decltype(z+z), mpz_class);
+  CHECK_COMMON_TYPE (decltype(-q), decltype(q+q), mpq_class);
+  CHECK_COMMON_TYPE (decltype(-f), decltype(f+f), mpf_class);
+
   CHECK_COMMON_TYPE (decltype(-q), mpz_class, mpq_class);
   CHECK_COMMON_TYPE (decltype(-f), mpz_class, mpf_class);
   CHECK_COMMON_TYPE (decltype(-f), mpq_class, mpf_class);
 
   CHECK_COMMON_TYPE (decltype(-z), decltype(-q), mpq_class);
-  CHECK_COMMON_TYPE (decltype(-z), decltype(-f), mpq_class);
-  CHECK_COMMON_TYPE (decltype(-q), decltype(-f), mpq_class);
+  CHECK_COMMON_TYPE (decltype(-z), decltype(-f), mpf_class);
+  CHECK_COMMON_TYPE (decltype(-q), decltype(-f), mpf_class);
+
+  /* These could be broken by a naive common_type specialization */
+  CHECK_COMMON_TYPE (decltype(-z), decltype(-z), decltype(-z));
+  CHECK_COMMON_TYPE (decltype(-q), decltype(-q), decltype(-q));
+  CHECK_COMMON_TYPE (decltype(-f), decltype(-f), decltype(-f));
+
+  /* Not yet supported
+  CHECK_COMMON_TYPE_BUILTIN (decltype(-z), mpz_class);
+  CHECK_COMMON_TYPE_BUILTIN (decltype(-q), mpq_class);
+  CHECK_COMMON_TYPE_BUILTIN (decltype(-f), mpf_class);
   */
 }
 

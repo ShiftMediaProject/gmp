@@ -42,11 +42,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #if (__cplusplus >= 201103L) \
     || (__GMP_GNUC_PREREQ(4, 6) && defined __GXX_EXPERIMENTAL_CXX0X__)
 #define __GMPXX_USE_CXX11 1
-#define __GMPXX_NOEXCEPT noexcept
 #else
 #define __GMPXX_USE_CXX11 0
-#define __GMPXX_NOEXCEPT
 #endif
+#endif
+
+#if __GMPXX_USE_CXX11
+#define __GMPXX_NOEXCEPT noexcept
+#include <type_traits> // for common_type
+#else
+#define __GMPXX_NOEXCEPT
 #endif
 
 // Max allocations for plain types when converted to mpz_t
@@ -1339,7 +1344,24 @@ struct __gmp_resolve_expr<mpf_t, mpq_t>
   typedef mpf_t value_type;
 };
 
+#if __GMPXX_USE_CXX11
+namespace std {
+  template <class T, class U, class V, class W>
+  struct common_type <__gmp_expr<T, U>, __gmp_expr<V, W> >
+  {
+  private:
+    typedef typename __gmp_resolve_expr<T, V>::value_type X;
+  public:
+    typedef __gmp_expr<X, X> type;
+  };
 
+  template <class T, class U>
+  struct common_type <__gmp_expr<T, U>, __gmp_expr<T, U> >
+  {
+    typedef __gmp_expr<T, U> type;
+  };
+}
+#endif
 
 // classes for evaluating unary and binary expressions
 template <class T, class Op>
