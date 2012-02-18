@@ -3,6 +3,8 @@
 	* gmpxx.h (std::common_type): New partial specialization in C++11.
 	* tests/cxx/t-cxx11.cc: Test it.
 
+	* gmpxx.h: Don't declare long double functions that are never defined.
+
 2012-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in (__GMP_WITHIN_GMP): Test with #ifdef instead of #if, for

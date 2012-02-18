@@ -1406,7 +1406,7 @@ private:
   __gmp_expr & fun(unsigned long int);        \
   __gmp_expr & fun(float);                    \
   __gmp_expr & fun(double);                   \
-  __gmp_expr & fun(long double);
+  /* __gmp_expr & fun(long double); */
 
 #define __GMP_DECLARE_COMPOUND_OPERATOR(fun) \
 __GMPP_DECLARE_COMPOUND_OPERATOR(fun)        \
@@ -2832,7 +2832,7 @@ __GMPNS_DEFINE_BINARY_FUNCTION(fun, eval_fun, signed long int)    \
 __GMPNU_DEFINE_BINARY_FUNCTION(fun, eval_fun, unsigned long int)  \
 __GMPND_DEFINE_BINARY_FUNCTION(fun, eval_fun, float)              \
 __GMPND_DEFINE_BINARY_FUNCTION(fun, eval_fun, double)             \
-__GMPNLD_DEFINE_BINARY_FUNCTION(fun, eval_fun, long double)
+/* __GMPNLD_DEFINE_BINARY_FUNCTION(fun, eval_fun, long double) */
 
 #define __GMP_DEFINE_BINARY_FUNCTION(fun, eval_fun) \
 __GMPP_DEFINE_BINARY_FUNCTION(fun, eval_fun)        \
@@ -2905,7 +2905,7 @@ __GMPNS_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, signed long int)    \
 __GMPNU_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, unsigned long int)  \
 __GMPND_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, float)              \
 __GMPND_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, double)             \
-__GMPNLD_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, long double)
+/* __GMPNLD_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun, long double) */
 
 #define __GMP_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun) \
 __GMPP_DEFINE_BINARY_TYPE_FUNCTION(type, fun, eval_fun)        \
