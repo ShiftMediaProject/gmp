@@ -5,6 +5,10 @@
 
 	* gmpxx.h: Don't declare long double functions that are never defined.
 
+	* gmpxx.h (__gmp_binary_expr): Let things happen in place: q=q*q+z*z
+	becomes tmp=z*z, q=q*q, q+=tmp.
+	* tests/cxx/t-binary.cc: More variable reuse tests.
+
 2012-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in (__GMP_WITHIN_GMP): Test with #ifdef instead of #if, for

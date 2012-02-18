@@ -2576,7 +2576,7 @@ public:                                                                     \
   { eval_fun::eval(q, expr.val1.get_mpz_t(), expr.val2.get_mpq_t()); }      \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <>                                                                 \
@@ -2594,7 +2594,7 @@ public:                                                                     \
   { eval_fun::eval(q, expr.val1.get_mpq_t(), expr.val2.get_mpz_t()); }      \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2616,7 +2616,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2638,7 +2638,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2660,7 +2660,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T>                                                          \
@@ -2682,7 +2682,7 @@ public:                                                                     \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T, class U>                                                 \
@@ -2700,12 +2700,12 @@ public:                                                                     \
   void eval(mpq_ptr q) const                                                \
   {                                                                         \
     mpz_class temp1(expr.val1);                                             \
-    mpq_class temp2(expr.val2);                                             \
-    eval_fun::eval(q, temp1.get_mpz_t(), temp2.get_mpq_t());                \
+    expr.val2.eval(q);                                                      \
+    eval_fun::eval(q, temp1.get_mpz_t(), q);                                \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };                                                                          \
                                                                             \
 template <class T, class U>                                                 \
@@ -2722,13 +2722,13 @@ public:                                                                     \
     : expr(val1, val2) { }                                                  \
   void eval(mpq_ptr q) const                                                \
   {                                                                         \
-    mpq_class temp1(expr.val1);                                             \
     mpz_class temp2(expr.val2);                                             \
-    eval_fun::eval(q, temp1.get_mpq_t(), temp2.get_mpz_t());                \
+    expr.val1.eval(q);                                             \
+    eval_fun::eval(q, q, temp2.get_mpz_t());                \
   }                                                                         \
   const val1_type & get_val1() const { return expr.val1; }                  \
   const val2_type & get_val2() const { return expr.val2; }                  \
-  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }     \
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }           \
 };
 
 

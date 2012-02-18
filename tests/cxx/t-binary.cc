@@ -278,6 +278,9 @@ check_mpq (void)
     mpz_class c(1);
     mpq_class d((a + b) - c); ASSERT_ALWAYS(d == -0.25);
     d = (a + d) - c; ASSERT_ALWAYS(d == -0.75);
+    d = (a + d) - d.get_num(); ASSERT_ALWAYS(d == 2.75);
+    d = (2 * d) * d.get_den(); ASSERT_ALWAYS(d == 22);
+    d = (b * d) / -d.get_num(); ASSERT_ALWAYS(d == -0.25);
   }
   {
     mpq_class a(1, 3), b(3, 2);
@@ -300,6 +303,7 @@ check_mpq (void)
     signed int d = 4;
     mpq_class e;
     e = (c % d) / (a * b); ASSERT_ALWAYS(e == 10);
+    e = (e.get_num() % d) / (2 / e); ASSERT_ALWAYS(e == 10);
   }
 
   // template <class T, class U, class V, class Op>
