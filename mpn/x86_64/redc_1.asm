@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_redc_1 -- Montgomery reduction with a one-limb modular inverse.
 
-dnl  Copyright 2004, 2008, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2008, 2011, 2012 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -38,14 +38,16 @@ C  * We could software pipeline the IMUL stuff, by putting it before the
 C    outer loops and before the end of the outer loops.  The last outer
 C    loop iteration would then compute an unneeded product, but it is at
 C    least not a stray read from up[], since it is at up[n].
+C  * Make a tail call to mpn_add_n.
 
 C INPUT PARAMETERS
-define(`up',	  `%rdi')
-define(`mp',	  `%rsi')
-define(`n_param', `%rdx')
-define(`invm',	  `%rcx')
+define(`rp',	  `%rdi')
+define(`up',	  `%rsi')
+define(`mp_param',`%rdx')
+define(`n',	  `%rcx')
+define(`invm',	  `%r8')
 
-define(`n',	  `%r13')
+define(`mp',	  `%r13')
 define(`i',	  `%r11')
 define(`nneg',	  `%r12')
 
@@ -57,17 +59,17 @@ ASM_START()
 	ALIGN(32)
 PROLOGUE(mpn_redc_1)
 	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbp
 	push	%rbx
 	push	%r12
 	push	%r13
 	push	%r14
 
-	lea	(mp,n_param,8), mp	C mp += n
-	lea	(up,n_param,8), up	C up += n
+	lea	(mp_param,n,8), mp	C mp += n
+	lea	(up,n,8), up		C up += n
 
-	mov	n_param, nneg
-	mov	n_param, n
+	mov	n, nneg
 	neg	nneg
 
 	mov	R32(n), R32(%rax)
@@ -135,7 +137,8 @@ L(n1):	mov	%r14, 16(up,nneg,8)	C up[0]
 	add	$8, up
 	dec	n
 	jnz	L(o1)
-	jmp	L(ret)
+	lea	16(up,nneg,8), up
+	jmp	L(common)
 
 L(b0):	C lea	(mp), mp
 	lea	-16(up), up
@@ -187,7 +190,8 @@ L(ed0):	add	%r10, (up)
 	add	$8, up
 	dec	n
 	jnz	L(o0)
-	jmp	L(ret)
+	lea	16(up,nneg,8), up
+	jmp	L(common)
 
 L(b3):	lea	-8(mp), mp
 	lea	-24(up), up
@@ -238,7 +242,8 @@ L(ed3):	add	%r10, 8(up)
 	add	$8, up
 	dec	n
 	jnz	L(o3)
-	jmp	L(ret)
+	lea	24(up,nneg,8), up
+	jmp	L(common)
 
 L(b2):	lea	-16(mp), mp
 	lea	-32(up), up
@@ -291,8 +296,21 @@ L(ed2):	add	%r10, 16(up)
 	add	$8, up
 	dec	n
 	jnz	L(o2)
+	lea	32(up,nneg,8), up
 
-L(ret):	pop	%r14
+
+L(common):
+
+C   cy = mpn_add_n (rp, up, up - n, n);
+C		    rdi rsi  rdx    rcx
+C	lea	(up,nneg,8), up		C up -= n
+	lea	(up,nneg,8), %rdx	C rdx = up - n [up entry value]
+	mov	nneg, %rcx
+	neg	%rcx
+C	mov	rp, %rdi		C rp already in place
+	CALL(	mpn_add_n)
+
+	pop	%r14
 	pop	%r13
 	pop	%r12
 	pop	%rbx

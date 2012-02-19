@@ -60,8 +60,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MPN_REDC_1_SEC(rp, up, mp, n, invm)				\
   do {									\
     mp_limb_t cy;							\
-    mpn_redc_1 (up, mp, n, invm);					\
-    cy = mpn_add_n (rp, up + n, up, n);					\
+    cy = mpn_redc_1 (rp, up, mp, n, invm);				\
     mpn_subcnd_n (rp, rp, mp, n, cy);					\
   } while (0)
 

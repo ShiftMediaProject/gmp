@@ -2313,7 +2313,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
     }
 }
 
-void
+mp_limb_t
 refmpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
 {
   mp_size_t j;
@@ -2329,6 +2329,8 @@ refmpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
       up[0] = refmpn_addmul_1 (up, mp, n, (up[0] * invm) & GMP_NUMB_MASK);
       up++;
     }
+  cy = mpn_add_n (rp, up, up - n, n);
+  return cy;
 }
 
 size_t

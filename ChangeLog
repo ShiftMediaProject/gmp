@@ -1,3 +1,22 @@
+2012-02-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/redc_1.c: Put back mpn_add_n call, return its carry.
+	Reintroduce previously removed RP argument.
+	* mpn/x86_64/redc_1.asm: Likewise.
+
+	* mpn/generic/redc_2.c:  Remove mpn_sub_n call, return carry from
+	mpn_add_n call.
+
+	* gmp-impl.h (mpn_redc_1, mpn_redc_2): Now return an mp_limb_t.
+
+	* tune/speed.h (SPEED_ROUTINE_REDC_1): Adopt to pass RP argument.
+
+	* tests/refmpn.c (refmpn_redc_1): Adopt to new redc_1 interface.
+
+	* mpn/generic/powm.c (MPN_REDC_1): Pass rp parameter to mpn_redc_1.
+	* mpn/generic/powm_sec.c (MPN_REDC_1_SEC): Likewise.
+	* mpn/generic/powm.c (MPN_REDC_2): New macro, use for mpn_redc_2.
+
 2012-02-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): New partial specialization in C++11.
@@ -645,7 +664,7 @@
 
 2011-11-07  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/redc_1.c: Just reduce U uperand using Hensel norm, but
+	* mpn/generic/redc_1.c: Just reduce U operand using Hensel norm, but
 	not fully canonically; leave add_n and conditional sub_n to caller.
 	Therefore omit R argument.
 

@@ -2232,7 +2232,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_REDC_1(function)					\
   {									\
     unsigned   i;							\
-    mp_ptr     mp, tp, ap;						\
+    mp_ptr     cp, mp, tp, ap;						\
     mp_limb_t  inv;							\
     double     t;							\
     TMP_DECL;								\
@@ -2242,6 +2242,7 @@ int speed_routine_count_zeros_setup
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size+1, s->align_xp);		\
     SPEED_TMP_ALLOC_LIMBS (mp, s->size,     s->align_yp);		\
+    SPEED_TMP_ALLOC_LIMBS (cp, s->size,     s->align_wp);		\
     SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size+1, s->align_wp2);		\
 									\
     MPN_COPY (ap,         s->xp, s->size);				\
@@ -2256,13 +2257,14 @@ int speed_routine_count_zeros_setup
     speed_operand_src (s, ap, 2*s->size+1);				\
     speed_operand_dst (s, tp, 2*s->size+1);				\
     speed_operand_src (s, mp, s->size);					\
+    speed_operand_dst (s, cp, s->size);					\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do {								\
       MPN_COPY (tp, ap, 2*s->size);					\
-      function (tp, mp, s->size, inv);					\
+      function (cp, tp, mp, s->size, inv);				\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\
