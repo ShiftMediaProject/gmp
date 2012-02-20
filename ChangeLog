@@ -2,6 +2,8 @@
 
 	* mpn/generic/toom_interpolate_8pts.c: Compute carry iif non-trivial.
 
+	* mpz/gcdext.c: Adapt to relaxed mpn_gcdext's input requirements.
+
 2012-02-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/aorsmul_1.asm: New file.

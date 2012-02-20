@@ -1,8 +1,8 @@
 /* mpz_gcdext(g, s, t, a, b) -- Set G to gcd(a, b), and S and T such that
    g = as + bt.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2005, 2011 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2005, 2011,
+2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,16 +34,17 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   __mpz_struct stmp, gtmp;
   TMP_DECL;
 
-  /* mpn_gcdext requires that U >= V.  Therefore, we often have to swap U and
-     V.  This in turn leads to a lot of complications.  The computed cofactor
-     will be the wrong one, so we have to fix that up at the end.  */
+  /* mpn_gcdext requires that Usize >= Vsize.  Therefore, we often
+     have to swap U and V.  The computed cofactor will be the
+     "smallest" one, which is faster to produce.  The wanted one will
+     be computed here; this is needed anyway when both are requested.  */
 
   asize = ABS (SIZ (a));
   bsize = ABS (SIZ (b));
   ap = PTR (a);
   bp = PTR (b);
 
-  if (asize < bsize || (asize == bsize && mpn_cmp (ap, bp, asize) < 0))
+  if (asize < bsize)
     {
       MPZ_SRCPTR_SWAP (a, b);
       MPN_SRCPTR_SWAP (ap, asize, bp, bsize);
