@@ -1,3 +1,7 @@
+2012-02-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/aorsmul_1.asm: New file.
+
 2012-02-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/redc_1.c: Put back mpn_add_n call, return its carry.
