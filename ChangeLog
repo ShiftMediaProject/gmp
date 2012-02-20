@@ -1,3 +1,7 @@
+2012-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_8pts.c: Compute carry iif non-trivial.
+
 2012-02-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/aorsmul_1.asm: New file.
@@ -21,6 +25,7 @@
 	* mpn/generic/powm_sec.c (MPN_REDC_1_SEC): Likewise.
 	* mpn/generic/powm.c (MPN_REDC_2): New macro, use for mpn_redc_2.
 
+>>>>>>> other
 2012-02-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): New partial specialization in C++11.

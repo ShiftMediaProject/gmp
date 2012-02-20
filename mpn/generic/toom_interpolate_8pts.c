@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2009, 2011 Free Software Foundation, Inc.
+Copyright 2009, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -193,9 +193,9 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 
   cy = mpn_add_1 (pp + 6*n, r3 + n, n, pp[6*n]);
   MPN_INCR_U (r3 + 2*n, n + 1, cy);
-  cy = r3[3*n] + mpn_add_n (pp + 7*n, pp + 7*n, r3 + 2*n, n);
+  cy = mpn_add_n (pp + 7*n, pp + 7*n, r3 + 2*n, n);
   if (LIKELY(spt != n))
-    MPN_INCR_U (pp + 8*n, spt - n, cy);
+    MPN_INCR_U (pp + 8*n, spt - n, cy + r3[3*n]);
   else
-    ASSERT (cy == 0);
+    ASSERT (r3[3*n] | cy == 0);
 }
