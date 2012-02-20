@@ -87,7 +87,10 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  op1_size = -op1_size;
 	  op2_size = -op2_size;
 
-	  res_alloc = 1 + MAX (op1_size, op2_size);
+	  if (op1_size > op2_size)
+	    MPN_SRCPTR_SWAP (op1_ptr, op1_size, op2_ptr, op2_size);
+
+	  res_alloc = 1 + op2_size;
 
 	  opx = TMP_ALLOC_LIMBS (op1_size);
 	  mpn_sub_1 (opx, op1_ptr, op1_size, (mp_limb_t) 1);
@@ -102,27 +105,14 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	     space--never to the space PTR(res) used to point to before
 	     reallocation.  */
 
-	  if (op1_size >= op2_size)
-	    {
-	      MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
-			op1_size - op2_size);
-	      mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op2_size);
-	      res_size = op1_size;
-	    }
-	  else
-	    {
-	      MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
-			op2_size - op1_size);
-	      mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op1_size);
-	      res_size = op2_size;
-	    }
+	  MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
+		    op2_size - op1_size);
+	  mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op1_size);
+	  res_size = op2_size;
 
 	  cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
-	  if (cy)
-	    {
-	      res_ptr[res_size] = cy;
-	      res_size++;
-	    }
+	  res_ptr[res_size] = cy;
+	  res_size += (cy != 0);
 
 	  SIZ(res) = -res_size;
 	  TMP_FREE;
