@@ -1,7 +1,7 @@
 /* mpz_and -- Logical and.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003, 2005 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003, 2005, 2012
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -115,16 +115,14 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    {
 	      MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
 			op1_size - op2_size);
-	      for (i = op2_size - 1; i >= 0; i--)
-		res_ptr[i] = op1_ptr[i] | op2_ptr[i];
+	      mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op2_size);
 	      res_size = op1_size;
 	    }
 	  else
 	    {
 	      MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
 			op2_size - op1_size);
-	      for (i = op1_size - 1; i >= 0; i--)
-		res_ptr[i] = op1_ptr[i] | op2_ptr[i];
+	      mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op1_size);
 	      res_size = op2_size;
 	    }
 
@@ -231,8 +229,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  }
 
 	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, res_size - op2_size);
-	for (i = op2_size - 1; i >= 0; i--)
-	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
+	mpn_andn_n (res_ptr, op1_ptr, op2_ptr, op2_size);
 
 	SIZ(res) = res_size;
       }
@@ -257,8 +254,8 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	       to the space PTR(res) used to point to before reallocation.  */
 	  }
 
-	for (i = res_size - 1; i >= 0; i--)
-	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
+	if (LIKELY (res_size != 0))
+	  mpn_andn_n (res_ptr, op1_ptr, op2_ptr, res_size);
 
 	SIZ(res) = res_size;
       }
