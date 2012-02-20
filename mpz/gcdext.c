@@ -27,11 +27,9 @@ void
 mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 {
   mp_size_t asize, bsize;
-  mp_srcptr ap, bp;
   mp_ptr tmp_ap, tmp_bp;
   mp_size_t gsize, ssize, tmp_ssize;
-  mp_ptr gp, sp, tmp_gp, tmp_sp;
-  __mpz_struct stmp, gtmp;
+  mp_ptr gp, tmp_gp, tmp_sp;
   TMP_DECL;
 
   /* mpn_gcdext requires that Usize >= Vsize.  Therefore, we often
@@ -39,15 +37,13 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
      "smallest" one, which is faster to produce.  The wanted one will
      be computed here; this is needed anyway when both are requested.  */
 
-  asize = ABS (SIZ (a));
-  bsize = ABS (SIZ (b));
-  ap = PTR (a);
-  bp = PTR (b);
+  asize = ABSIZ (a);
+  bsize = ABSIZ (b);
 
   if (asize < bsize)
     {
       MPZ_SRCPTR_SWAP (a, b);
-      MPN_SRCPTR_SWAP (ap, asize, bp, bsize);
+      MP_SIZE_T_SWAP (asize, bsize);
       MPZ_PTR_SWAP (s, t);
     }
 
@@ -57,7 +53,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       ssize = SIZ (a) >= 0 ? (asize != 0) : -1;
 
       gp = MPZ_REALLOC (g, asize);
-      MPN_COPY (gp, ap, asize);
+      MPN_COPY (gp, PTR (a), asize);
       SIZ (g) = asize;
 
       if (t != NULL)
@@ -72,27 +68,28 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
   TMP_MARK;
 
-  tmp_ap = TMP_ALLOC_LIMBS (asize);
-  tmp_bp = TMP_ALLOC_LIMBS (bsize);
-  MPN_COPY (tmp_ap, ap, asize);
-  MPN_COPY (tmp_bp, bp, bsize);
+  TMP_ALLOC_LIMBS_2 (tmp_ap, asize, tmp_bp, bsize);
+  MPN_COPY (tmp_ap, PTR (a), asize);
+  MPN_COPY (tmp_bp, PTR (b), bsize);
 
-  tmp_gp = TMP_ALLOC_LIMBS (bsize);
-  tmp_sp = TMP_ALLOC_LIMBS (bsize + 1);
+  TMP_ALLOC_LIMBS_2 (tmp_gp, bsize, tmp_sp, bsize + 1);
 
   gsize = mpn_gcdext (tmp_gp, tmp_sp, &tmp_ssize, tmp_ap, asize, tmp_bp, bsize);
 
   ssize = ABS (tmp_ssize);
-
-  PTR (&gtmp) = tmp_gp;
-  SIZ (&gtmp) = gsize;
-
-  PTR (&stmp) = tmp_sp;
-  SIZ (&stmp) = (tmp_ssize ^ SIZ (a)) >= 0 ? ssize : -ssize;
+  tmp_ssize = SIZ (a) >= 0 ? tmp_ssize : -tmp_ssize;
 
   if (t != NULL)
     {
       mpz_t x;
+      __mpz_struct gtmp, stmp;
+
+      PTR (&gtmp) = tmp_gp;
+      SIZ (&gtmp) = gsize;
+
+      PTR (&stmp) = tmp_sp;
+      SIZ (&stmp) = tmp_ssize;
+
       MPZ_TMP_INIT (x, ssize + asize + 1);
       mpz_mul (x, &stmp, a);
       mpz_sub (x, &gtmp, x);
@@ -101,9 +98,11 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
   if (s != NULL)
     {
+      mp_ptr sp;
+
       sp = MPZ_REALLOC (s, ssize);
       MPN_COPY (sp, tmp_sp, ssize);
-      SIZ (s) = SIZ (&stmp);
+      SIZ (s) = tmp_ssize;
     }
 
   gp = MPZ_REALLOC (g, gsize);
