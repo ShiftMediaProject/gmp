@@ -70,9 +70,8 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     {
       if (op2_size < 0)
 	{
-	  mp_ptr opx;
+	  mp_ptr opx, opy;
 	  mp_limb_t cy;
-	  mp_size_t res_alloc;
 
 	  /* Both operands are negative, so will be the result.
 	     -((-OP1) & (-OP2)) = -(~(OP1 - 1) & ~(OP2 - 1)) =
@@ -90,17 +89,14 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  if (op1_size > op2_size)
 	    MPN_SRCPTR_SWAP (op1_ptr, op1_size, op2_ptr, op2_size);
 
-	  res_alloc = 1 + op2_size;
-
-	  opx = TMP_ALLOC_LIMBS (op1_size);
+	  TMP_ALLOC_LIMBS_2 (opx, op1_size, opy, op2_size);
 	  mpn_sub_1 (opx, op1_ptr, op1_size, (mp_limb_t) 1);
 	  op1_ptr = opx;
 
-	  opx = TMP_ALLOC_LIMBS (op2_size);
-	  mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
-	  op2_ptr = opx;
+	  mpn_sub_1 (opy, op2_ptr, op2_size, (mp_limb_t) 1);
+	  op2_ptr = opy;
 
-	  res_ptr = MPZ_REALLOC (res, res_alloc);
+	  res_ptr = MPZ_REALLOC (res, 1 + op2_size);
 	  /* Don't re-read OP1_PTR and OP2_PTR.  They point to temporary
 	     space--never to the space PTR(res) used to point to before
 	     reallocation.  */
