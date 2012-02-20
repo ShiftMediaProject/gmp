@@ -41,7 +41,7 @@ C  * The loop is great, but the prologue code was quickly written.  Tune it!
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx
 define(`n_param', `%rdx')   C r8
-define(`vl',      `%rcx')   C r9
+define(`v0',      `%rcx')   C r9
 
 define(`n',	  `%rbx')
 
@@ -54,14 +54,14 @@ ifdef(`OPERATION_submul_1',`
       define(`func',  `mpn_submul_1')
 ')
 
-ABI_SUPPORT(DOS64)
+dnl Disable until tested ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
 IFDOS(`	define(`up', ``%rsi'')	') dnl
 IFDOS(`	define(`rp', ``%rcx'')	') dnl
-IFDOS(`	define(`vl', ``%r9'')	') dnl
+IFDOS(`	define(`v0', ``%r9'')	') dnl
 IFDOS(`	define(`r9', ``rdi'')	') dnl
 IFDOS(`	define(`n',  ``%r8'')	') dnl
 IFDOS(`	define(`r8', ``r11'')	') dnl
@@ -100,7 +100,7 @@ L(b2):	mov	(rp), %r10
 	lea	-8(rp,n,8), rp
 	neg	n
 	add	$1, n
-	mul	%rcx
+	mul	v0
 	ADDSUB	%rax, %r10
 	mov	8(up,n,8), %rax
 	mov	%rdx, %r11
@@ -111,7 +111,7 @@ L(b3):	mov	(rp), %r8
 	lea	-8(rp,n,8), rp
 	neg	n
 	add	$2, n
-	mul	%rcx
+	mul	v0
 	mov	%rdx, %r9
 	mov	$0, R32(%r11)
 	jmp	L(L3)
@@ -120,7 +120,7 @@ L(b0):	mov	(rp), %r10
 	lea	-8(rp,n,8), rp
 	neg	n
 	add	$3, n
-	mul	%rcx
+	mul	v0
 	ADDSUB	%rax, %r10
 	mov	%rdx, %r11
 	mov	-8(up,n,8), %rax
@@ -129,7 +129,7 @@ L(b0):	mov	(rp), %r10
 	jmp	L(L0)
 
 	ALIGN(16)
-L(top):	mul	%rcx
+L(top):	mul	v0
 	ADDSUB	%rax, %r8
 	mov	%rdx, %r9
 	adc	$0, %r9
@@ -137,13 +137,13 @@ L(top):	mul	%rcx
 	ADDSUB	%r11, %r8
 	mov	-16(rp,n,8), %r10
 	adc	$0, %r9
-	mul	%rcx
+	mul	v0
 	ADDSUB	%rax, %r10
 	mov	%rdx, %r11
 	mov	-8(up,n,8), %rax
 	adc	$0, %r11
 	mov	%r8, -24(rp,n,8)
-L(L0):	mul	%rcx
+L(L0):	mul	v0
 	ADDSUB	%r9, %r10
 	mov	-8(rp,n,8), %r8
 	adc	$0, %r11
@@ -155,7 +155,7 @@ L(L3):	ADDSUB	%rax, %r8
 	ADDSUB	%r11, %r8
 	adc	$0, %r9
 	mov	(rp,n,8), %r10
-	mul	%rcx
+	mul	v0
 	ADDSUB	%rax, %r10
 	mov	8(up,n,8), %rax
 	mov	%rdx, %r11
@@ -168,7 +168,7 @@ L(L2):	adc	$0, %r11
 	add	$4, n 
 	jnc	L(top)
 
-L(end):	mul	%rcx
+L(end):	mul	v0
 	ADDSUB	%rax, %r8
 	mov	%rdx, %rax
 	adc	$0, %rax
