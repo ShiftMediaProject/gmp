@@ -187,11 +187,8 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
       }
 
     cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
-    if (cy)
-      {
-	res_ptr[res_size] = cy;
-	res_size++;
-      }
+    res_ptr[res_size] = cy;
+    res_size += (cy != 0);
 
     MPN_NORMALIZE (res_ptr, res_size);
     SIZ(res) = -res_size;

@@ -5,6 +5,8 @@
 	* mpz/gcdext.c: Adapt to relaxed mpn_gcdext's input requirements.
 
 	* mpz/and.c: Use mpn_ logic everywhere. Reduce branches.
+	* mpz/ior.c: Likewise.
+	* mpz/xor.c: Likewise.
 
 2012-02-20  Torbjorn Granlund  <tege@gmplib.org>
 
