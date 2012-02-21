@@ -90,7 +90,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     {
       if (op2_size < 0)
 	{
-	  mp_ptr opx;
+	  mp_ptr opx, opy;
 	  mp_limb_t cy;
 
 	  /* Both operands are negative, so will be the result.
@@ -105,13 +105,12 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  /* Possible optimization: Decrease mpn_sub precision,
 	     as we won't use the entire res of both.  */
-	  opx = TMP_ALLOC_LIMBS (res_size);
+	  TMP_ALLOC_LIMBS_2 (opx, res_size, opy, res_size);
 	  mpn_sub_1 (opx, op1_ptr, res_size, (mp_limb_t) 1);
 	  op1_ptr = opx;
 
-	  opx = TMP_ALLOC_LIMBS (res_size);
-	  mpn_sub_1 (opx, op2_ptr, res_size, (mp_limb_t) 1);
-	  op2_ptr = opx;
+	  mpn_sub_1 (opy, op2_ptr, res_size, (mp_limb_t) 1);
+	  op2_ptr = opy;
 
 	  if (ALLOC(res) < res_size)
 	    {
