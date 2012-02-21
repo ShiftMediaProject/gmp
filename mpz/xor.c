@@ -110,23 +110,16 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  mpn_sub_1 (opy, op2_ptr, op2_size, (mp_limb_t) 1);
 	  op2_ptr = opy;
 
-	  res_alloc = MAX (op1_size, op2_size);
+	  if (op1_size > op2_size)
+	    MPN_SRCPTR_SWAP (op1_ptr,op1_size, op2_ptr,op2_size);
+
+	  res_alloc = op2_size;
 	  res_ptr = MPZ_REALLOC (res, res_alloc);
 
-	  if (op1_size > op2_size)
-	    {
-	      MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
-			op1_size - op2_size);
-	      mpn_xor_n (res_ptr, op1_ptr, op2_ptr, op2_size);
-	      res_size = op1_size;
-	    }
-	  else
-	    {
-	      MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
-			op2_size - op1_size);
-	      mpn_xor_n (res_ptr, op1_ptr, op2_ptr, op1_size);
-	      res_size = op2_size;
-	    }
+	  MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
+		    op2_size - op1_size);
+	  mpn_xor_n (res_ptr, op1_ptr, op2_ptr, op1_size);
+	  res_size = op2_size;
 
 	  MPN_NORMALIZE (res_ptr, res_size);
 	  SIZ(res) = res_size;
