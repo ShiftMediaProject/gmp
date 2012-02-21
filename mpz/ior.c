@@ -112,13 +112,6 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  mpn_sub_1 (opy, op2_ptr, res_size, (mp_limb_t) 1);
 	  op2_ptr = opy;
 
-	  if (ALLOC(res) < res_size)
-	    {
-	      _mpz_realloc (res, res_size);
-	      /* op1_ptr and op2_ptr point to temporary space.  */
-	      res_ptr = PTR(res);
-	    }
-
 	  /* First loop finds the size of the result.  */
 	  for (i = res_size - 1; i >= 0; i--)
 	    if ((op1_ptr[i] & op2_ptr[i]) != 0)
@@ -127,6 +120,8 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  if (res_size != 0)
 	    {
+	      res_ptr = MPZ_REALLOC (res, res_size);
+
 	      /* Second loop computes the real result.  */
 	      mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
 

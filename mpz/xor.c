@@ -111,12 +111,7 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  op2_ptr = opy;
 
 	  res_alloc = MAX (op1_size, op2_size);
-	  if (ALLOC(res) < res_alloc)
-	    {
-	      _mpz_realloc (res, res_alloc);
-	      res_ptr = PTR(res);
-	      /* op1_ptr and op2_ptr point to temporary space.  */
-	    }
+	  res_ptr = MPZ_REALLOC (res, res_alloc);
 
 	  if (op1_size > op2_size)
 	    {
