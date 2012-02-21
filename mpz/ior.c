@@ -1,7 +1,7 @@
 /* mpz_ior -- Logical inclusive or.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2005 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2005, 2012 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,8 +56,8 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      if (res_ptr != op1_ptr)
 		MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
 			  op1_size - op2_size);
-	      for (i = op2_size - 1; i >= 0; i--)
-		res_ptr[i] = op1_ptr[i] | op2_ptr[i];
+	      if (LIKELY (op2_size != 0))
+		mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op2_size);
 	      res_size = op1_size;
 	    }
 	  else
@@ -73,8 +73,8 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      if (res_ptr != op2_ptr)
 		MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
 			  op2_size - op1_size);
-	      for (i = op1_size - 1; i >= 0; i--)
-		res_ptr[i] = op1_ptr[i] | op2_ptr[i];
+	      if (LIKELY (op1_size != 0))
+		mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op1_size);
 	      res_size = op2_size;
 	    }
 
@@ -129,8 +129,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  if (res_size != 0)
 	    {
 	      /* Second loop computes the real result.  */
-	      for (i = res_size - 1; i >= 0; i--)
-		res_ptr[i] = op1_ptr[i] & op2_ptr[i];
+	      mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
 
 	      cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
 	      if (cy)
@@ -210,8 +209,8 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     if (res_size != 0)
       {
 	/* Second loop computes the real result.  */
-	for (i = count - 1; i >= 0; i--)
-	  res_ptr[i] = ~op1_ptr[i] & op2_ptr[i];
+	if (LIKELY (count != 0))
+	  mpn_andn_n (res_ptr, op2_ptr, op1_ptr, count);
 
 	cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
 	if (cy)
