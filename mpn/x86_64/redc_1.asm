@@ -41,11 +41,11 @@ C    least not a stray read from up[], since it is at up[n].
 C  * Make a tail call to mpn_add_n.
 
 C INPUT PARAMETERS
-define(`rp',	  `%rdi')
-define(`up',	  `%rsi')
-define(`mp_param',`%rdx')
-define(`n',	  `%rcx')
-define(`invm',	  `%r8')
+define(`rp',	  `%rdi')	C rcx
+define(`up',	  `%rsi')	C rdx
+define(`mp_param',`%rdx')	C r8
+define(`n',	  `%rcx')	C r9
+define(`invm',	  `%r8')	C stack
 
 define(`mp',	  `%r13')
 define(`i',	  `%r11')
@@ -302,13 +302,18 @@ L(ed2):	add	%r10, 16(up)
 L(common):
 
 C   cy = mpn_add_n (rp, up, up - n, n);
-C		    rdi rsi  rdx    rcx
-C	lea	(up,nneg,8), up		C up -= n
-	lea	(up,nneg,8), %rdx	C rdx = up - n [up entry value]
-	mov	nneg, %rcx
-	neg	%rcx
-C	mov	rp, %rdi		C rp already in place
-	CALL(	mpn_add_n)
+C		    rdi rsi  rdx    rcx		STD
+C		    rcx rdx  r8     r9		DOS
+
+IFSTD(` lea	(up,nneg,8), %rdx	') C rdx = up - n [up entry value]
+IFSTD(` mov	nneg, %rcx		')
+IFSTD(` neg	%rcx			') C rcx = -nneg = n
+
+IFDOS(` lea	(up,nneg,8), %r8	') C r8 = up - n
+IFDOS(` mov	up, %rdx		') C rdx = up
+IFDOS(` mov	nneg, %r9		')
+IFDOS(` neg	%r9			') C r9 = -nneg = n
+IFDOS(` mov	rp, %rcx		') C rcx = rp
 
 	pop	%r14
 	pop	%r13
