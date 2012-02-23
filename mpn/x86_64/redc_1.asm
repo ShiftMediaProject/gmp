@@ -315,6 +315,8 @@ IFDOS(` mov	nneg, %r9		')
 IFDOS(` neg	%r9			') C r9 = -nneg = n
 IFDOS(` mov	rp, %rcx		') C rcx = rp
 
+	CALL(	mpn_add_n)
+
 	pop	%r14
 	pop	%r13
 	pop	%r12
