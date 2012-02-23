@@ -24,8 +24,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_init_set_d (mpz_ptr dest, double val)
 {
-  dest->_mp_alloc = 1;
-  dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-  dest->_mp_size = 0;
+  ALLOC (dest) = 1;
+  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  SIZ (dest) = 0;
   mpz_set_d (dest, val);
 }

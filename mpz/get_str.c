@@ -31,7 +31,7 @@ char *
 mpz_get_str (char *res_str, int base, mpz_srcptr x)
 {
   mp_ptr xp;
-  mp_size_t x_size = x->_mp_size;
+  mp_size_t x_size = SIZ (x);
   char *str;
   char *return_str;
   size_t str_size;
@@ -80,11 +80,11 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
 
   /* mpn_get_str clobbers its input on non power-of-2 bases */
   TMP_MARK;
-  xp = x->_mp_d;
+  xp = PTR (x);
   if (! POW2_P (base))
     {
       xp = TMP_ALLOC_LIMBS (x_size + 1);  /* +1 in case x_size==0 */
-      MPN_COPY (xp, x->_mp_d, x_size);
+      MPN_COPY (xp, PTR (x), x_size);
     }
 
   str_size = mpn_get_str ((unsigned char *) res_str, base, xp, x_size);

@@ -60,6 +60,8 @@ check_mpz (void)
     mpz_class a(-123);
     mpz_class b;
     b = abs(a); ASSERT_ALWAYS(b == 123);
+    a <<= 300;
+    b = abs(a); ASSERT_ALWAYS(a + b == 0);
   }
 
   // sqrt

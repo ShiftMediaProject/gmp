@@ -147,7 +147,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   /* Make sure the string is not empty, mpn_set_str would fail.  */
   if (str_size == 0)
     {
-      x->_mp_size = 0;
+      SIZ (x) = 0;
     }
   else
     {
@@ -155,8 +155,8 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
       MPZ_REALLOC (x, xsize);
 
       /* Convert the byte array in base BASE to our bignum format.  */
-      xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
-      x->_mp_size = negative ? -xsize : xsize;
+      xsize = mpn_set_str (PTR (x), (unsigned char *) str, str_size, base);
+      SIZ (x) = negative ? -xsize : xsize;
     }
   (*__gmp_free_func) (str, alloc_size);
   return nread;

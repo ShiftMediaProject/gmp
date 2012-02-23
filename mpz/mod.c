@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_mod (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
 {
-  mp_size_t divisor_size = divisor->_mp_size;
+  mp_size_t divisor_size = SIZ (divisor);
   mp_size_t rn, bn;
   mpz_t temp_divisor;
   TMP_DECL;

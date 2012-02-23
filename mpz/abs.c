@@ -25,21 +25,21 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_abs (mpz_ptr w, mpz_srcptr u)
 {
-  mp_ptr wp, up;
+  mp_ptr wp;
+  mp_srcptr up;
   mp_size_t size;
 
-  size = ABS (u->_mp_size);
+  size = ABSIZ (u);
 
   if (u != w)
     {
-      if (w->_mp_alloc < size)
-	_mpz_realloc (w, size);
+      MPZ_REALLOC (w, size);
 
-      wp = w->_mp_d;
-      up = u->_mp_d;
+      wp = PTR (w);
+      up = PTR (u);
 
       MPN_COPY (wp, up, size);
     }
 
-  w->_mp_size = size;
+  SIZ (w) = size;
 }

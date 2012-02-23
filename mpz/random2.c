@@ -30,11 +30,10 @@ mpz_random2 (mpz_ptr x, mp_size_t size)
   abs_size = ABS (size);
   if (abs_size != 0)
     {
-      if (x->_mp_alloc < abs_size)
-	_mpz_realloc (x, abs_size);
+      MPZ_REALLOC (x, abs_size);
 
-      mpn_random2 (x->_mp_d, abs_size);
+      mpn_random2 (PTR (x), abs_size);
     }
 
-  x->_mp_size = size;
+  SIZ (x) = size;
 }

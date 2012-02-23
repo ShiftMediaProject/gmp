@@ -24,8 +24,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 signed long int
 mpz_get_si (mpz_srcptr z) __GMP_NOTHROW
 {
-  mp_ptr zp = z->_mp_d;
-  mp_size_t size = z->_mp_size;
+  mp_ptr zp = PTR (z);
+  mp_size_t size = SIZ (z);
   mp_limb_t zl = zp[0];
 
 #if GMP_NAIL_BITS != 0

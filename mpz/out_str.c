@@ -28,7 +28,7 @@ size_t
 mpz_out_str (FILE *stream, int base, mpz_srcptr x)
 {
   mp_ptr xp;
-  mp_size_t x_size = x->_mp_size;
+  mp_size_t x_size = SIZ (x);
   unsigned char *str;
   size_t str_size;
   size_t i;
@@ -85,7 +85,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
   /* Move the number to convert into temporary space, since mpn_get_str
      clobbers its argument + needs one extra high limb....  */
   xp = TMP_ALLOC_LIMBS (x_size + 1);
-  MPN_COPY (xp, x->_mp_d, x_size);
+  MPN_COPY (xp, PTR (x), x_size);
 
   str_size = mpn_get_str (str, base, xp, x_size);
 

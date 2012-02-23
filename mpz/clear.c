@@ -24,5 +24,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_clear (mpz_ptr m)
 {
-  (*__gmp_free_func) (m->_mp_d, m->_mp_alloc * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) (PTR (m), ALLOC (m) * BYTES_PER_MP_LIMB);
 }

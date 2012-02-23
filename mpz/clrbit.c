@@ -23,8 +23,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 {
-  mp_size_t dsize = d->_mp_size;
-  mp_ptr dp = d->_mp_d;
+  mp_size_t dsize = SIZ (d);
+  mp_ptr dp = PTR (d);
   mp_size_t limb_index;
 
   limb_index = bit_index / GMP_NUMB_BITS;
@@ -43,7 +43,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	      do {
 		dsize--;
 	      } while (dsize > 0 && dp[dsize-1] == 0);
-	      d->_mp_size = dsize;
+	      SIZ (d) = dsize;
 	    }
 	}
       else
@@ -78,7 +78,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 
 	      MPN_ZERO (dp + dsize, limb_index - dsize);
 	      dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
-	      d->_mp_size = -(limb_index + 1);
+	      SIZ (d) = -(limb_index + 1);
 	    }
 	}
       else if (limb_index == zero_bound)
@@ -101,7 +101,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	      dp = MPZ_REALLOC (d, dsize);
 
 	      dp[i] = 1;
-	      d->_mp_size = -dsize;
+	      SIZ (d) = -dsize;
 	    fin:;
 	    }
 	}

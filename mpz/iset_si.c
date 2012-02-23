@@ -28,22 +28,22 @@ mpz_init_set_si (mpz_ptr dest, signed long int val)
   mp_size_t size;
   mp_limb_t vl;
 
-  dest->_mp_alloc = 1;
-  dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  ALLOC (dest) = 1;
+  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
 
   vl = (mp_limb_t) ABS_CAST (unsigned long int, val);
 
-  dest->_mp_d[0] = vl & GMP_NUMB_MASK;
+  PTR (dest)[0] = vl & GMP_NUMB_MASK;
   size = vl != 0;
 
 #if GMP_NAIL_BITS != 0
   if (vl > GMP_NUMB_MAX)
     {
       MPZ_REALLOC (dest, 2);
-      dest->_mp_d[1] = vl >> GMP_NUMB_BITS;
+      PTR (dest)[1] = vl >> GMP_NUMB_BITS;
       size = 2;
     }
 #endif
 
-  dest->_mp_size = val >= 0 ? size : -size;
+  SIZ (dest) = val >= 0 ? size : -size;
 }

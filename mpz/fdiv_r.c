@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_fdiv_r (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
 {
-  mp_size_t divisor_size = divisor->_mp_size;
+  mp_size_t divisor_size = SIZ (divisor);
   mpz_t temp_divisor;		/* N.B.: lives until function returns! */
   TMP_DECL;
 
@@ -42,7 +42,7 @@ mpz_fdiv_r (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
 
   mpz_tdiv_r (rem, dividend, divisor);
 
-  if ((divisor_size ^ dividend->_mp_size) < 0 && rem->_mp_size != 0)
+  if ((divisor_size ^ SIZ (dividend)) < 0 && SIZ (rem) != 0)
     mpz_add (rem, rem, divisor);
 
   TMP_FREE;

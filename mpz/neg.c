@@ -28,20 +28,19 @@ mpz_neg (mpz_ptr w, mpz_srcptr u)
   mp_ptr wp, up;
   mp_size_t usize, size;
 
-  usize = u->_mp_size;
+  usize = SIZ (u);
 
   if (u != w)
     {
       size = ABS (usize);
 
-      if (w->_mp_alloc < size)
-	_mpz_realloc (w, size);
+      MPZ_REALLOC (w, size);
 
-      wp = w->_mp_d;
-      up = u->_mp_d;
+      wp = PTR (w);
+      up = PTR (u);
 
       MPN_COPY (wp, up, size);
     }
 
-  w->_mp_size = -usize;
+  SIZ (w) = -usize;
 }

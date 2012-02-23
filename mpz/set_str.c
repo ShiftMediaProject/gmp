@@ -95,7 +95,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   /* Make sure the string does not become empty, mpn_set_str would fail.  */
   if (c == 0)
     {
-      x->_mp_size = 0;
+      SIZ (x) = 0;
       return 0;
     }
 
@@ -126,8 +126,8 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   MPZ_REALLOC (x, xsize);
 
   /* Convert the byte array in base BASE to our bignum format.  */
-  xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, base);
-  x->_mp_size = negative ? -xsize : xsize;
+  xsize = mpn_set_str (PTR (x), (unsigned char *) begs, str_size, base);
+  SIZ (x) = negative ? -xsize : xsize;
 
   TMP_FREE;
   return 0;

@@ -66,22 +66,21 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int vval)
     }
 #endif
 
-  usize = u->_mp_size;
+  usize = SIZ (u);
   abs_usize = ABS (usize);
 
   /* If not space for W (and possible carry), increase space.  */
   wsize = abs_usize + 1;
-  if (w->_mp_alloc < wsize)
-    _mpz_realloc (w, wsize);
+  MPZ_REALLOC (w, wsize);
 
   /* These must be after realloc (U may be the same as W).  */
-  up = u->_mp_d;
-  wp = w->_mp_d;
+  up = PTR (u);
+  wp = PTR (w);
 
   if (abs_usize == 0)
     {
       wp[0] = vval;
-      w->_mp_size = VARIATION_NEG (vval != 0);
+      SIZ (w) = VARIATION_NEG (vval != 0);
       return;
     }
 
@@ -109,5 +108,5 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int vval)
 	}
     }
 
-  w->_mp_size = wsize;
+  SIZ (w) = wsize;
 }

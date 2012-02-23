@@ -1,3 +1,41 @@
+2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
+
+	* mpz/abs.c: Use ALLOC, SIZ, ABSIZ, PTR, MPZ_REALLOC.
+	* mpz/aors_ui.h: Likewise.
+	* mpz/array_init.c: Likewise.
+	* mpz/cdiv_q.c: Likewise.
+	* mpz/cdiv_qr.c: Likewise.
+	* mpz/cdiv_r.c: Likewise.
+	* mpz/clear.c: Likewise.
+	* mpz/clrbit.c: Likewise.
+	* mpz/cmp_si.c: Likewise.
+	* mpz/com.c: Likewise.
+	* mpz/fdiv_q.c: Likewise.
+	* mpz/fdiv_qr.c: Likewise.
+	* mpz/fdiv_r.c: Likewise.
+	* mpz/get_si.c: Likewise.
+	* mpz/get_str.c: Likewise.
+	* mpz/init.c: Likewise.
+	* mpz/inp_str.c: Likewise.
+	* mpz/iset.c: Likewise.
+	* mpz/iset_d.c: Likewise.
+	* mpz/iset_si.c: Likewise.
+	* mpz/iset_str.c: Likewise.
+	* mpz/iset_ui.c: Likewise.
+	* mpz/mod.c: Likewise.
+	* mpz/neg.c: Likewise.
+	* mpz/out_str.c: Likewise.
+	* mpz/random2.c: Likewise.
+	* mpz/set_si.c: Likewise.
+	* mpz/set_str.c: Likewise.
+	* mpz/set_ui.c: Likewise.
+	* mpz/setbit.c: Likewise.
+	* mpz/sqrt.c: Likewise.
+	* mpz/swap.c: Likewise.
+	* mpz/tdiv_r_2exp.c: Likewise.
+
+	* tests/cxx/t-ops.cc: Test mpz_abs reallocation.
+
 2012-02-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/rsh1aors_n.asm: Complete rewrite.

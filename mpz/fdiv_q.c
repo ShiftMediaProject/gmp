@@ -24,8 +24,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_fdiv_q (mpz_ptr quot, mpz_srcptr dividend, mpz_srcptr divisor)
 {
-  mp_size_t dividend_size = dividend->_mp_size;
-  mp_size_t divisor_size = divisor->_mp_size;
+  mp_size_t dividend_size = SIZ (dividend);
+  mp_size_t divisor_size = SIZ (divisor);
   mpz_t rem;
   TMP_DECL;
 
@@ -35,7 +35,7 @@ mpz_fdiv_q (mpz_ptr quot, mpz_srcptr dividend, mpz_srcptr divisor)
 
   mpz_tdiv_qr (quot, rem, dividend, divisor);
 
-  if ((divisor_size ^ dividend_size) < 0 && rem->_mp_size != 0)
+  if ((divisor_size ^ dividend_size) < 0 && SIZ (rem) != 0)
     mpz_sub_ui (quot, quot, 1L);
 
   TMP_FREE;
