@@ -1,6 +1,6 @@
-dnl  Intel P6/64 mpn_rsh1add_n and mpn_rsh1sub_n -- rp[] = (up[] +- vp[]) >> 1
+dnl  X86-64 mpn_rsh1add_n, mpn_rsh1sub_n optimised for Intel Conroe/Penryn.
 
-dnl  Copyright 2003, 2005, 2009, 2010, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,13 +22,16 @@ include(`../config.m4')
 
 C	     cycles/limb
 C AMD K8,K9	 ?
-C AMD K10	 4.25
-C Intel P4	 21.5
-C Intel core2	 3.2
-C Intel NHM	 3.87
-C Intel SBR	 2.05
+C AMD K10	 ?
+C Intel P4	 ?
+C Intel core2	 3.05
+C Intel NHM	 3.3
+C Intel SBR	 2.5
 C Intel atom	 ?
-C VIA nano	 44.9
+C VIA nano	 ?
+
+C TODO
+C  * Loopmix to approach 2.5 c/l on NHM.
 
 C INPUT PARAMETERS
 define(`rp', `%rdi')
@@ -49,134 +52,102 @@ ifdef(`OPERATION_rsh1sub_n', `
 
 MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1add_nc mpn_rsh1sub_n mpn_rsh1sub_nc)
 
-ABI_SUPPORT(DOS64)
-ABI_SUPPORT(STD64)
-
 ASM_START()
 	TEXT
 
 	ALIGN(16)
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
-IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbx
 	push	%rbp
 
 	neg	%r8			C set C flag from parameter
-	mov	(up), %rbp
-	ADCSBB	(vp), %rbp
-
+	mov	(up), %r8
+	ADCSBB	(vp), %r8
 	jmp	L(ent)
 EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(func_n)
-	DOS64_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
-	mov	(up), %rbp
-	ADDSUB	(vp), %rbp
-L(ent):
-	sbb	R32(%rbx), R32(%rbx)	C save cy
-	mov	R32(%rbp), R32(%rax)
+	mov	(up), %r8
+	ADDSUB	(vp), %r8
+L(ent):	sbb	R32(%rbx), R32(%rbx)	C save cy
+	mov	%r8, %rax
 	and	$1, R32(%rax)		C return value
 
-	mov	R32(n), R32(%r11)
-	and	$3, R32(%r11)
+	lea	(up,n,8), up
+	lea	(vp,n,8), vp
+	lea	(rp,n,8), rp
+	mov	R32(n), R32(%rbp)
+	neg	n
+	and	$3, R32(%rbp)
+	jz	L(b0)
+	cmp	$2, R32(%rbp)
+	jae	L(n1)
 
-	cmp	$1, R32(%r11)
-	je	L(do)			C jump if n = 1 5 9 ...
+L(b1):	mov	%r8, %rbp
+	inc	n
+	js	L(top)
+	jmp	L(end)
 
-L(n1):	cmp	$2, R32(%r11)
-	jne	L(n2)			C jump unless n = 2 6 10 ...
+L(n1):	jnz	L(b3)
 	add	R32(%rbx), R32(%rbx)	C restore cy
-	mov	8(up), %r10
-	ADCSBB	8(vp), %r10
-	lea	8(up), up
-	lea	8(vp), vp
-	lea	8(rp), rp
+	mov	8(up,n,8), %r11
+	ADCSBB	8(vp,n,8), %r11
 	sbb	R32(%rbx), R32(%rbx)	C save cy
+	mov	%r8, %r10
+	add	$-2, n
+	jmp	L(2)
 
-	shrd	$1, %r10, %rbp
-	mov	%rbp, -8(rp)
-	jmp	L(cj1)
-
-L(n2):	cmp	$3, R32(%r11)
-	jne	L(n3)			C jump unless n = 3 7 11 ...
-	add	R32(%rbx), R32(%rbx)	C restore cy
-	mov	8(up), %r9
-	mov	16(up), %r10
-	ADCSBB	8(vp), %r9
-	ADCSBB	16(vp), %r10
-	lea	16(up), up
-	lea	16(vp), vp
-	lea	16(rp), rp
+L(b3):	add	R32(%rbx), R32(%rbx)	C restore cy
+	mov	8(up,n,8), %r10
+	mov	16(up,n,8), %r11
+	ADCSBB	8(vp,n,8), %r10
+	ADCSBB	16(vp,n,8), %r11
 	sbb	R32(%rbx), R32(%rbx)	C save cy
-
-	shrd	$1, %r9, %rbp
-	mov	%rbp, -16(rp)
-	jmp	L(cj2)
-
-L(n3):	dec	n			C come here for n = 4 8 12 ...
-	add	R32(%rbx), R32(%rbx)	C restore cy
-	mov	8(up), %r8
-	mov	16(up), %r9
-	ADCSBB	8(vp), %r8
-	ADCSBB	16(vp), %r9
-	mov	24(up), %r10
-	ADCSBB	24(vp), %r10
-	lea	24(up), up
-	lea	24(vp), vp
-	lea	24(rp), rp
-	sbb	R32(%rbx), R32(%rbx)	C save cy
-
-	shrd	$1, %r8, %rbp
-	mov	%rbp, -24(rp)
-	shrd	$1, %r9, %r8
-	mov	%r8, -16(rp)
-L(cj2):	shrd	$1, %r10, %r9
-	mov	%r9, -8(rp)
-L(cj1):	mov	%r10, %rbp
-
-L(do):
-	shr	$2, n			C				4
-	je	L(end)			C				2
-	ALIGN(16)
-L(top):	add	R32(%rbx), R32(%rbx)		C restore cy
-
-	mov	8(up), %r8
-	mov	16(up), %r9
-	ADCSBB	8(vp), %r8
-	ADCSBB	16(vp), %r9
-	mov	24(up), %r10
-	mov	32(up), %r11
-	ADCSBB	24(vp), %r10
-	ADCSBB	32(vp), %r11
-
-	lea	32(up), up
-	lea	32(vp), vp
-
-	sbb	R32(%rbx), R32(%rbx)	C save cy
-
-	shrd	$1, %r8, %rbp
-	mov	%rbp, (rp)
-	shrd	$1, %r9, %r8
-	mov	%r8, 8(rp)
-	shrd	$1, %r10, %r9
-	mov	%r9, 16(rp)
-	shrd	$1, %r11, %r10
-	mov	%r10, 24(rp)
-
+	mov	%r8, %r9
 	dec	n
+	jmp	L(3)
+
+L(b0):	add	R32(%rbx), R32(%rbx)	C restore cy
+	mov	8(up,n,8), %r9
+	mov	16(up,n,8), %r10
+	mov	24(up,n,8), %r11
+	ADCSBB	8(vp,n,8), %r9
+	ADCSBB	16(vp,n,8), %r10
+	ADCSBB	24(vp,n,8), %r11
+	sbb	R32(%rbx), R32(%rbx)	C save cy
+	jmp	L(4)
+
+	ALIGN(16)
+
+L(top):	add	R32(%rbx), R32(%rbx)	C restore cy
+	mov	(up,n,8), %r8
+	mov	8(up,n,8), %r9
+	mov	16(up,n,8), %r10
+	mov	24(up,n,8), %r11
+	ADCSBB	(vp,n,8), %r8
+	ADCSBB	8(vp,n,8), %r9
+	ADCSBB	16(vp,n,8), %r10
+	ADCSBB	24(vp,n,8), %r11
+	sbb	R32(%rbx), R32(%rbx)	C save cy
+	shrd	$1, %r8, %rbp
+	mov	%rbp, -8(rp,n,8)
+L(4):	shrd	$1, %r9, %r8
+	mov	%r8, (rp,n,8)
+L(3):	shrd	$1, %r10, %r9
+	mov	%r9, 8(rp,n,8)
+L(2):	shrd	$1, %r11, %r10
+	mov	%r10, 16(rp,n,8)
+L(1):	add	$4, n
 	mov	%r11, %rbp
-	lea	32(rp), rp
-	jne	L(top)
+	js	L(top)
 
 L(end):	shrd	$1, %rbx, %rbp
-	mov	%rbp, (rp)
+	mov	%rbp, -8(rp)
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
 	ret
 EPILOGUE()

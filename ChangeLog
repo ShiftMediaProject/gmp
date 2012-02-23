@@ -1,5 +1,8 @@
 2012-02-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/core2/rsh1aors_n.asm: Complete rewrite.
+	* mpn/x86_64/coreisbr/rsh1aors_n.asm: Move old core2 code here.
+
 	* mpn/x86_64/redc_1.asm: Make it work for DOS64 (broken in last edit).
 
 2012-02-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
@@ -40,7 +43,6 @@
 	* mpn/generic/powm_sec.c (MPN_REDC_1_SEC): Likewise.
 	* mpn/generic/powm.c (MPN_REDC_2): New macro, use for mpn_redc_2.
 
->>>>>>> other
 2012-02-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): New partial specialization in C++11.
