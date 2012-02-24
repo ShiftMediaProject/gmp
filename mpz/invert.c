@@ -34,8 +34,8 @@ mpz_invert (mpz_ptr inverse, mpz_srcptr x, mpz_srcptr n)
   nsize = ABSIZ (n);
 
   /* No inverse exists if the leftside operand is 0.  Likewise, no
-     inverse exists if the mod operand is 1.  */
-  if (xsize == 0 || (nsize == 1 && (PTR (n))[0] == 1))
+     inverse exists if the mod operand is 1 or 0.  */
+  if (xsize == 0 || nsize == 0 || (nsize == 1 && (PTR (n))[0] == 1))
     return 0;
 
   size = MAX (xsize, nsize) + 1;
