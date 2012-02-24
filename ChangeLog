@@ -1,3 +1,11 @@
+2012-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/invert.c: Use ABSIZ, MPZ_EQUAL_1_P.
+	* mpz/abs.c: Collapse MPZ_REALLOC(x,.) and PTR(x).
+	* mpz/aors_ui.h: Likewise.
+	* mpz/com.c: Likewise.
+        * mpz/neg.c: Likewise.
+
 2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpz/abs.c: Use ALLOC, SIZ, ABSIZ, PTR, MPZ_REALLOC.

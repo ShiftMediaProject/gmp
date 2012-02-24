@@ -71,11 +71,10 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int vval)
 
   /* If not space for W (and possible carry), increase space.  */
   wsize = abs_usize + 1;
-  MPZ_REALLOC (w, wsize);
+  wp = MPZ_REALLOC (w, wsize);
 
   /* These must be after realloc (U may be the same as W).  */
   up = PTR (u);
-  wp = PTR (w);
 
   if (abs_usize == 0)
     {

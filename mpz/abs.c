@@ -33,9 +33,8 @@ mpz_abs (mpz_ptr w, mpz_srcptr u)
 
   if (u != w)
     {
-      MPZ_REALLOC (w, size);
+      wp = MPZ_REALLOC (w, size);
 
-      wp = PTR (w);
       up = PTR (u);
 
       MPN_COPY (wp, up, size);
