@@ -56,9 +56,6 @@ main (int argc, char **argv)
       mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (m, rands, mpz_get_ui (bs));
 
-      if (mpz_sgn (m) == 0)
-	continue;
-
       mpz_urandomb (bs, rands, 8);
       bsi = mpz_get_ui (bs);
 
@@ -70,6 +67,17 @@ main (int argc, char **argv)
       r = mpz_invert (ainv, a, m);
       if (r != 0)
 	{
+	  MPZ_CHECK_FORMAT (ainv);
+
+	  if (mpz_cmp_ui (ainv, 0) <= 0 || mpz_cmpabs (ainv, m) > 0)
+	    {
+	      fprintf (stderr, "ERROR in test %d\n", test);
+	      gmp_fprintf (stderr, "Inverse out of range.\n");
+	      gmp_fprintf (stderr, "a = %Zx\n", a);
+	      gmp_fprintf (stderr, "m = %Zx\n", m);
+	      abort ();
+	    }
+
 	  mpz_mul (t, ainv, a);
 	  mpz_mod (t, t, m);
 
@@ -77,6 +85,21 @@ main (int argc, char **argv)
 	    {
 	      fprintf (stderr, "ERROR in test %d\n", test);
 	      gmp_fprintf (stderr, "a^(-1)*a != 1 (mod m)\n");
+	      gmp_fprintf (stderr, "a = %Zx\n", a);
+	      gmp_fprintf (stderr, "m = %Zx\n", m);
+	      abort ();
+	    }
+	}
+      else /* Inverse deos not exist */
+	{
+	  if (mpz_cmpabs_ui (m, 1) <= 0)
+	    continue; /* OK */
+
+	  mpz_gcd (t, a, m);
+	  if (mpz_cmp_ui (t, 1) == 0)
+	    {
+	      fprintf (stderr, "ERROR in test %d\n", test);
+	      gmp_fprintf (stderr, "Inverse exists, but was not found.\n");
 	      gmp_fprintf (stderr, "a = %Zx\n", a);
 	      gmp_fprintf (stderr, "m = %Zx\n", m);
 	      abort ();
