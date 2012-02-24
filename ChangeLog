@@ -1,3 +1,8 @@
+2012-02-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-invert.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-invert.
+
 2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/mpq/t-cmp.c: Move NUM and DEN macros...
