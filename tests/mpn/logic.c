@@ -1,4 +1,4 @@
-/* Test mpn_and, mpn_ior, mpn_xor, mpn_andm, mpn_iorn, mpn_xnor, mpn_nand, and
+/* Test mpn_and, mpn_ior, mpn_xor, mpn_andn, mpn_iorn, mpn_xnor, mpn_nand, and
    mpn_nior.
 
 Copyright 2011, 2012 Free Software Foundation, Inc.
