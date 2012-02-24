@@ -46,7 +46,7 @@ mpz_invert (mpz_ptr inverse, mpz_srcptr x, mpz_srcptr n)
   mpz_gcdext (gcd, tmp, (mpz_ptr) 0, x, n);
 
   /* If no inverse existed, return with an indication of that.  */
-  if (MPZ_EQUAL_1_P (gcd))
+  if (!MPZ_EQUAL_1_P (gcd))
     {
       TMP_FREE;
       return 0;
