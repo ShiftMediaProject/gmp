@@ -71,8 +71,7 @@ mpq_set_d (mpq_ptr dest, double d)
 	}
 
       dn = -exp;
-      MPZ_REALLOC (NUM(dest), 3);
-      np = PTR(NUM(dest));
+      np = MPZ_REALLOC (NUM(dest), 3);
 #if LIMBS_PER_DOUBLE == 4
       if ((tp[0] | tp[1] | tp[2]) == 0)
 	np[0] = tp[3], nn = 1;

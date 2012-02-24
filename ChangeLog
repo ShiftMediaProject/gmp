@@ -39,6 +39,10 @@
 
 	* gmpxx.h (__gmp_set_expr): Use mpq_set_z.
 
+	* mpq/md_2exp.c: Collapse MPZ_REALLOC(x,.) and PTR(x).
+	* mpq/set_d.c: Likewise.
+	* mpq/set_f.c: Likewise.
+
 2012-02-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/core2/aorsmul_1.asm: Added mpn_addmul_1c and

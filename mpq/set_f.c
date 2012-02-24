@@ -49,8 +49,7 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
       /* radix point is to the right of the limbs, no denominator */
       mp_ptr  num_ptr;
 
-      MPZ_REALLOC (mpq_numref (q), fexp);
-      num_ptr = PTR(NUM(q));
+      num_ptr = MPZ_REALLOC (mpq_numref (q), fexp);
       MPN_ZERO (num_ptr, fexp - abs_fsize);
       MPN_COPY (num_ptr + fexp - abs_fsize, fptr, abs_fsize);
 
@@ -65,10 +64,8 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
       mp_size_t  den_size;
 
       den_size = abs_fsize - fexp;
-      MPZ_REALLOC (mpq_numref (q), abs_fsize);
-      MPZ_REALLOC (mpq_denref (q), den_size+1);
-      num_ptr = PTR(NUM(q));
-      den_ptr = PTR(DEN(q));
+      num_ptr = MPZ_REALLOC (mpq_numref (q), abs_fsize);
+      den_ptr = MPZ_REALLOC (mpq_denref (q), den_size+1);
 
       if (flow & 1)
         {

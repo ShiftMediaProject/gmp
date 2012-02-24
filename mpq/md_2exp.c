@@ -48,8 +48,7 @@ mord_2exp (mpz_ptr ldst, mpz_ptr rdst, mpz_srcptr lsrc, mpz_srcptr rsrc,
 
   /* no realloc here if rsrc==rdst, so p and rsrc_ptr remain valid */
   len -= (p - rsrc_ptr);
-  MPZ_REALLOC (rdst, len);
-  rdst_ptr = PTR(rdst);
+  rdst_ptr = MPZ_REALLOC (rdst, len);
 
   if ((plow & 1) || n == 0)
     {
