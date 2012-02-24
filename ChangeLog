@@ -1,3 +1,15 @@
+2012-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/invert.c: Use ABSIZ, MPZ_EQUAL_1_P.
+	* mpz/abs.c: Collapse MPZ_REALLOC(x,.) and PTR(x).
+	* mpz/aors_ui.h: Likewise.
+	* mpz/com.c: Likewise.
+        * mpz/neg.c: Likewise.
+
+	* mpz/invert.c: Reply "no-inverse" when modulus is zero.
+	* tests/mpz/t-invert.c: Add more checks.
+	* doc/gmp.texi (mpz_invert): Inverse can not be zero.
+
 2012-02-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/logic.c: New file.
@@ -6,7 +18,7 @@
 	* tests/mpz/t-invert.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-invert.
 
-2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
+2012-02-24  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/mpq/t-cmp.c: Move NUM and DEN macros...
 	* tests/mpq/t-cmp_ui.c: Likewise...
@@ -55,14 +67,6 @@
 
 	* mpn/x86_64/core2/aorsmul_1.asm: Added mpn_addmul_1c and
 	mpn_submul_1c entry points.
-
-2012-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mpz/invert.c: Use ABSIZ, MPZ_EQUAL_1_P.
-	* mpz/abs.c: Collapse MPZ_REALLOC(x,.) and PTR(x).
-	* mpz/aors_ui.h: Likewise.
-	* mpz/com.c: Likewise.
-        * mpz/neg.c: Likewise.
 
 2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
 
