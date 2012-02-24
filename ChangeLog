@@ -1,3 +1,44 @@
+2012-02-23  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/mpq/t-cmp.c: Move NUM and DEN macros...
+	* tests/mpq/t-cmp_ui.c: Likewise...
+	* gmp-impl.h: ... to here.
+
+	* mpq/abs.c: Use NUM, DEN, SIZ, ALLOC, PTR, MPZ_REALLOC.
+	* mpq/aors.c: Likewise.
+	* mpq/canonicalize.c: Likewise.
+	* mpq/clear.c: Likewise.
+	* mpq/cmp.c: Likewise.
+	* mpq/cmp_si.c: Likewise.
+	* mpq/cmp_ui.c: Likewise.
+	* mpq/div.c: Likewise.
+	* mpq/equal.c: Likewise.
+	* mpq/get_d.c: Likewise.
+	* mpq/get_den.c: Likewise.
+	* mpq/get_num.c: Likewise.
+	* mpq/get_str.c: Likewise.
+	* mpq/init.c: Likewise.
+	* mpq/inp_str.c: Likewise.
+	* mpq/inv.c: Likewise.
+	* mpq/md_2exp.c: Likewise.
+	* mpq/mul.c: Likewise.
+	* mpq/neg.c: Likewise.
+	* mpq/set.c: Likewise.
+	* mpq/set_d.c: Likewise.
+	* mpq/set_den.c: Likewise.
+	* mpq/set_f.c: Likewise.
+	* mpq/set_num.c: Likewise.
+	* mpq/set_si.c: Likewise.
+	* mpq/set_str.c: Likewise.
+	* mpq/set_ui.c: Likewise.
+	* mpq/set_z.c: Likewise.
+	* mpq/swap.c: Likewise.
+
+	* tests/mpq/t-inv.c: New test file.
+	* tests/mpq/Makefile.am: Add the above.
+
+	* gmpxx.h (__gmp_set_expr): Use mpq_set_z.
+
 2012-02-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/core2/aorsmul_1.asm: Added mpn_addmul_1c and

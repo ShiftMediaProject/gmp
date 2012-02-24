@@ -64,15 +64,15 @@ mpq_set_d (mpq_ptr dest, double d)
     {
       if (d == 0.0)
 	{
-	  SIZ(&(dest->_mp_num)) = 0;
-	  SIZ(&(dest->_mp_den)) = 1;
-	  PTR(&(dest->_mp_den))[0] = 1;
+	  SIZ(NUM(dest)) = 0;
+	  SIZ(DEN(dest)) = 1;
+	  PTR(DEN(dest))[0] = 1;
 	  return;
 	}
 
       dn = -exp;
-      MPZ_REALLOC (&(dest->_mp_num), 3);
-      np = PTR(&(dest->_mp_num));
+      MPZ_REALLOC (NUM(dest), 3);
+      np = PTR(NUM(dest));
 #if LIMBS_PER_DOUBLE == 4
       if ((tp[0] | tp[1] | tp[2]) == 0)
 	np[0] = tp[3], nn = 1;
@@ -99,8 +99,8 @@ mpq_set_d (mpq_ptr dest, double d)
 #endif
       dn += nn + 1;
       ASSERT_ALWAYS (dn > 0);
-      MPZ_REALLOC (&(dest->_mp_den), dn);
-      dp = PTR(&(dest->_mp_den));
+      MPZ_REALLOC (DEN(dest), dn);
+      dp = PTR(DEN(dest));
       MPN_ZERO (dp, dn - 1);
       dp[dn - 1] = 1;
       count_trailing_zeros (c, np[0] | dp[0]);
@@ -111,14 +111,14 @@ mpq_set_d (mpq_ptr dest, double d)
 	  mpn_rshift (dp, dp, dn, c);
 	  dn -= dp[dn - 1] == 0;
 	}
-      SIZ(&(dest->_mp_den)) = dn;
-      SIZ(&(dest->_mp_num)) = negative ? -nn : nn;
+      SIZ(DEN(dest)) = dn;
+      SIZ(NUM(dest)) = negative ? -nn : nn;
     }
   else
     {
       nn = exp;
-      MPZ_REALLOC (&(dest->_mp_num), nn);
-      np = PTR(&(dest->_mp_num));
+      MPZ_REALLOC (NUM(dest), nn);
+      np = PTR(NUM(dest));
       switch (nn)
         {
 	default:
@@ -150,9 +150,9 @@ mpq_set_d (mpq_ptr dest, double d)
 	  break;
 #endif
 	}
-      dp = PTR(&(dest->_mp_den));
+      dp = PTR(DEN(dest));
       dp[0] = 1;
-      SIZ(&(dest->_mp_den)) = 1;
-      SIZ(&(dest->_mp_num)) = negative ? -nn : nn;
+      SIZ(DEN(dest)) = 1;
+      SIZ(NUM(dest)) = negative ? -nn : nn;
     }
 }

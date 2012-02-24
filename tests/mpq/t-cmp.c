@@ -24,9 +24,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-#define NUM(x) (&((x)->_mp_num))
-#define DEN(x) (&((x)->_mp_den))
-
 #define SGN(x) ((x) < 0 ? -1 : (x) > 0 ? 1 : 0)
 
 int

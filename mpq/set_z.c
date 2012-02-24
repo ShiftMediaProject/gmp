@@ -26,13 +26,12 @@ mpq_set_z (mpq_ptr dest, mpz_srcptr src)
   mp_size_t num_size;
   mp_size_t abs_num_size;
 
-  num_size = src->_mp_size;
+  num_size = SIZ (src);
   abs_num_size = ABS (num_size);
-  if (dest->_mp_num._mp_alloc < abs_num_size)
-    _mpz_realloc (&(dest->_mp_num), abs_num_size);
-  MPN_COPY (dest->_mp_num._mp_d, src->_mp_d, abs_num_size);
-  dest->_mp_num._mp_size = num_size;
+  MPZ_REALLOC (NUM(dest), abs_num_size);
+  MPN_COPY (PTR(NUM(dest)), PTR(src), abs_num_size);
+  SIZ(NUM(dest)) = num_size;
 
-  dest->_mp_den._mp_d[0] = 1;
-  dest->_mp_den._mp_size = 1;
+  PTR(DEN(dest))[0] = 1;
+  SIZ(DEN(dest)) = 1;
 }

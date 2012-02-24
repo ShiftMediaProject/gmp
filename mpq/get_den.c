@@ -23,11 +23,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpq_get_den (MP_INT *den, const MP_RAT *src)
 {
-  mp_size_t size = src->_mp_den._mp_size;
+  mp_size_t size = SIZ(DEN(src));
 
-  if (den->_mp_alloc < size)
-    _mpz_realloc (den, size);
+  MPZ_REALLOC (den, size);
 
-  MPN_COPY (den->_mp_d, src->_mp_den._mp_d, size);
-  den->_mp_size = size;
+  MPN_COPY (PTR(den), PTR(DEN(src)), size);
+  SIZ(den) = size;
 }

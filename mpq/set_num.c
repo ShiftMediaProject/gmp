@@ -23,12 +23,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpq_set_num (MP_RAT *dest, const MP_INT *num)
 {
-  mp_size_t size = num->_mp_size;
+  mp_size_t size = SIZ (num);
   mp_size_t abs_size = ABS (size);
 
-  if (dest->_mp_num._mp_alloc < abs_size)
-    _mpz_realloc (&(dest->_mp_num), abs_size);
+  MPZ_REALLOC (NUM(dest), abs_size);
 
-  MPN_COPY (dest->_mp_num._mp_d, num->_mp_d, abs_size);
-  dest->_mp_num._mp_size = size;
+  MPN_COPY (PTR(NUM(dest)), PTR(num), abs_size);
+  SIZ(NUM(dest)) = size;
 }

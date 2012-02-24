@@ -92,9 +92,9 @@ mpq_div_2exp (mpq_ptr dst, mpq_srcptr src, mp_bitcnt_t n)
 {
   if (SIZ (mpq_numref(src)) == 0)
     {
-      dst->_mp_num._mp_size = 0;
-      dst->_mp_den._mp_size = 1;
-      dst->_mp_den._mp_d[0] = 1;
+      SIZ(NUM(dst)) = 0;
+      SIZ(DEN(dst)) = 1;
+      PTR(DEN(dst))[0] = 1;
       return;
     }
 

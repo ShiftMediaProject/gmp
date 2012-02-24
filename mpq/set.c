@@ -26,16 +26,14 @@ mpq_set (MP_RAT *dest, const MP_RAT *src)
   mp_size_t num_size, den_size;
   mp_size_t abs_num_size;
 
-  num_size = src->_mp_num._mp_size;
+  num_size = SIZ(NUM(src));
   abs_num_size = ABS (num_size);
-  if (dest->_mp_num._mp_alloc < abs_num_size)
-    _mpz_realloc (&(dest->_mp_num), abs_num_size);
-  MPN_COPY (dest->_mp_num._mp_d, src->_mp_num._mp_d, abs_num_size);
-  dest->_mp_num._mp_size = num_size;
+  MPZ_REALLOC (NUM(dest), abs_num_size);
+  MPN_COPY (PTR(NUM(dest)), PTR(NUM(src)), abs_num_size);
+  SIZ(NUM(dest)) = num_size;
 
-  den_size = src->_mp_den._mp_size;
-  if (dest->_mp_den._mp_alloc < den_size)
-    _mpz_realloc (&(dest->_mp_den), den_size);
-  MPN_COPY (dest->_mp_den._mp_d, src->_mp_den._mp_d, den_size);
-  dest->_mp_den._mp_size = den_size;
+  den_size = SIZ(DEN(src));
+  MPZ_REALLOC (DEN(dest), den_size);
+  MPN_COPY (PTR(DEN(dest)), PTR(DEN(src)), den_size);
+  SIZ(DEN(dest)) = den_size;
 }

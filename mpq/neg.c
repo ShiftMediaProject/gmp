@@ -26,21 +26,21 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpq_neg (mpq_ptr dst, mpq_srcptr src)
 {
-  mp_size_t  num_size = src->_mp_num._mp_size;
+  mp_size_t  num_size = SIZ(NUM(src));
 
   if (src != dst)
     {
       mp_size_t  num_abs_size = ABS(num_size);
-      mp_size_t  den_size = src->_mp_den._mp_size;
+      mp_size_t  den_size = SIZ(DEN(src));
 
       MPZ_REALLOC (mpq_numref(dst), num_abs_size);
       MPZ_REALLOC (mpq_denref(dst), den_size);
 
-      MPN_COPY (dst->_mp_num._mp_d, src->_mp_num._mp_d, num_abs_size);
-      MPN_COPY (dst->_mp_den._mp_d, src->_mp_den._mp_d, den_size);
+      MPN_COPY (PTR(NUM(dst)), PTR(NUM(src)), num_abs_size);
+      MPN_COPY (PTR(DEN(dst)), PTR(DEN(src)), den_size);
 
-      dst->_mp_den._mp_size = den_size;
+      SIZ(DEN(dst)) = den_size;
     }
 
-  dst->_mp_num._mp_size = -num_size;
+  SIZ(NUM(dst)) = -num_size;
 }

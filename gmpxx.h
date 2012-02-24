@@ -2036,6 +2036,11 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<mpf_t, T> &expr)
   mpz_set_f(z, temp.get_mpf_t());
 }
 
+inline void __gmp_set_expr(mpq_ptr q, const mpz_class &z)
+{
+  mpq_set_z(q, z.get_mpz_t());
+}
+
 template <class T>
 inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<mpz_t, T> &expr)
 {
