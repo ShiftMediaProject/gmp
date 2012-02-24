@@ -1,5 +1,8 @@
 2012-02-24  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/logic.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add logic.
+
 	* tests/mpz/t-invert.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-invert.
 
