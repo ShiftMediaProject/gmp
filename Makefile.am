@@ -157,7 +157,8 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/cong$U.lo mpz/cong_2exp$U.lo mpz/cong_ui$U.lo			\
   mpz/divexact$U.lo mpz/divegcd$U.lo mpz/dive_ui$U.lo			\
   mpz/divis$U.lo mpz/divis_ui$U.lo mpz/divis_2exp$U.lo mpz/dump$U.lo	\
-  mpz/export$U.lo mpz/fac_ui$U.lo mpz/oddfac_1$U.lo mpz/prodlimbs$U.lo	\
+  mpz/export$U.lo							\
+  mpz/2fac_ui$U.lo mpz/fac_ui$U.lo mpz/oddfac_1$U.lo mpz/prodlimbs$U.lo	\
   mpz/fdiv_q_ui$U.lo mpz/fdiv_qr$U.lo mpz/fdiv_qr_ui$U.lo		\
   mpz/fdiv_r$U.lo mpz/fdiv_r_ui$U.lo mpz/fdiv_q$U.lo			\
   mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fib2_ui$U.lo mpz/fits_sint$U.lo	\
