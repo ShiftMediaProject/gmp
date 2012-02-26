@@ -81,7 +81,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
 #else
       max_prod = GMP_NUMB_MAX / (FAC_ODD_THRESHOLD | 1);
 #endif
-      for (; --n >= numberof (table);)
+      while (--n >= numberof (table))
 	FACTOR_LIST_STORE (n, prod, max_prod, factors, j);
 
       factors[j++] = prod;
