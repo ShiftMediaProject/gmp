@@ -36,7 +36,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "dumbmp.c"
+#include "bootstrap.c"
 
 int sumspills (mpz_t, mpz_t *, int);
 void mpn_mod_1s_4p_cps (mpz_t [7], mpz_t);

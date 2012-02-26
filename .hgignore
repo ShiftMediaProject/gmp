@@ -56,6 +56,22 @@ Makefile
 ^tests/mpz/logic$
 ^tests/mpz/reuse$
 
+^mini-gmp/tests/t-add$
+^mini-gmp/tests/t-sub$
+^mini-gmp/tests/t-mul$
+^mini-gmp/tests/t-invert$
+^mini-gmp/tests/t-div$
+^mini-gmp/tests/t-div_2exp$
+^mini-gmp/tests/t-double$
+^mini-gmp/tests/t-gcd$
+^mini-gmp/tests/t-lcm$
+^mini-gmp/tests/t-sqrt
+^mini-gmp/tests/t-powm$
+^mini-gmp/tests/t-logops$
+^mini-gmp/tests/t-bitops$
+^mini-gmp/tests/t-scan$
+^mini-gmp/tests/t-str$
+
 ^\.libs
 
 .*\.a$
