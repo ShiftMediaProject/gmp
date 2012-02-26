@@ -71,11 +71,11 @@ int mpn_cmp (mp_srcptr, mp_srcptr, mp_size_t);
 
 mp_limb_t mpn_add_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_add_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
-mp_limb_t mpn_add (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t);
+mp_limb_t mpn_add (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
 mp_limb_t mpn_sub_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_sub_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
-mp_limb_t mpn_sub (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t);
+mp_limb_t mpn_sub (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
 mp_limb_t mpn_mul_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b);
 mp_limb_t mpn_addmul_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b);
