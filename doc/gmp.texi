@@ -3635,6 +3635,11 @@ removed.
 Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @end deftypefun
 
+@deftypefun void mpz_2fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
+@cindex Factorial functions
+Set @var{rop} to @var{op}!!, the double-factorial of @var{op}.
+@end deftypefun
+
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
 @deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, @w{unsigned long int @var{k}})
 @cindex Binomial coefficient functions
