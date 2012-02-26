@@ -20,7 +20,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "dumbmp.c"
+#include "bootstrap.c"
 
 
 /* sets x=y*(y+2)*(y+4)*....*(y+2*(z-1))	*/

@@ -1,3 +1,26 @@
+2012-02-26  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp: New subdirectory. For use by GMP bootstrap, and as a
+	fallback for applications needing bignums but not high
+	performance.
+
+	* bootstrap.c: New file, replacing dumbmp.c. Uses mini-gmp for the
+	standard GMP functions, and then defines the few functions
+	particular for the bootstrap.
+	* dumbmp.c: Deleted file. A few functions moved to bootstrap.c.
+
+	* gen-bases.c: Include bootstrap.c, not dumbmp.c.
+	* gen-fac_ui.c: Likewise.
+	* gen-trialdivtab.c: Likewise.
+	* gen-fib.c: Include bootstrap.c, not dumbmp.c. Use assert rather
+	than ASSERT. Deleted casts of xmalloc return value.
+	* gen-psqr.c: Likewise.
+	(COLLAPSE_ELEMENT): Use memmove rather than mem_copyi.
+
+	* Makefile.am: Replaced all uses of dumbmp.c by bootstrap.c.
+	(EXTRA_DIST, dist-hook): Arrange for distribution of the mini-gmp
+	files.
+
 2012-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/invert.c: Use ABSIZ, MPZ_EQUAL_1_P.

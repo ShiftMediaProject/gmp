@@ -309,13 +309,13 @@ install-data-hook:
 # the .h files are not properly expressed for the various objects that use
 # them.
 
-EXTRA_DIST += dumbmp.c
+EXTRA_DIST += bootstrap.c
 
 fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
 	./gen-fac_ui $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fac_ui.h || (rm -f fac_ui.h; exit 1)
 BUILT_SOURCES += fac_ui.h
 
-gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
+gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c bootstrap.c
 	$(CC_FOR_BUILD) `test -f 'gen-fac_ui$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fac_ui$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fac_ui.c
@@ -329,7 +329,7 @@ mpn/fib_table.c: gen-fib$(EXEEXT_FOR_BUILD)
 	./gen-fib table $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/fib_table.c || (rm -f mpn/fib_table.c; exit 1)
 BUILT_SOURCES += mpn/fib_table.c
 
-gen-fib$(EXEEXT_FOR_BUILD): gen-fib$(U_FOR_BUILD).c dumbmp.c
+gen-fib$(EXEEXT_FOR_BUILD): gen-fib$(U_FOR_BUILD).c bootstrap.c
 	$(CC_FOR_BUILD) `test -f 'gen-fib$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fib$(U_FOR_BUILD).c -o gen-fib$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fib$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fib.c
@@ -343,7 +343,7 @@ mpn/mp_bases.c: gen-bases$(EXEEXT_FOR_BUILD)
 	./gen-bases table $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/mp_bases.c || (rm -f mpn/mp_bases.c; exit 1)
 BUILT_SOURCES += mpn/mp_bases.c
 
-gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c dumbmp.c
+gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c bootstrap.c
 	$(CC_FOR_BUILD) `test -f 'gen-bases$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-bases$(U_FOR_BUILD).c -o gen-bases$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
 DISTCLEANFILES += gen-bases$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-bases.c
@@ -353,7 +353,7 @@ trialdivtab.h: gen-trialdivtab$(EXEEXT_FOR_BUILD)
 	./gen-trialdivtab $(GMP_LIMB_BITS) 8000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
 BUILT_SOURCES += trialdivtab.h
 
-gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c dumbmp.c
+gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c bootstrap.c
 	$(CC_FOR_BUILD) `test -f 'gen-trialdivtab$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-trialdivtab$(U_FOR_BUILD).c -o gen-trialdivtab$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
 DISTCLEANFILES += gen-trialdivtab$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-trialdivtab.c
@@ -373,12 +373,14 @@ mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
 	./gen-psqr $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
 BUILT_SOURCES += mpn/perfsqr.h
 
-gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c dumbmp.c
+gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c bootstrap.c
 	$(CC_FOR_BUILD) `test -f 'gen-psqr$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-psqr$(U_FOR_BUILD).c -o gen-psqr$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
 DISTCLEANFILES += gen-psqr$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-psqr.c
 
-
+# Distribute mini-gmp. Test sources copied by dist-hook.
+EXTRA_DIST += mini-gmp/README mini-gmp/mini-gmp.c mini-gmp/mini-gmp.h \
+	      mini-gmp/tests/Makefile mini-gmp/tests/run-tests
 
 # Avoid: CVS - cvs directories
 #        *~  - emacs backups
@@ -390,6 +392,7 @@ EXTRA_DIST += gen-psqr.c
 dist-hook:
 	-find $(distdir) \( -name CVS -type d \) -o -name "*~" -o -name ".#*" \
 		| xargs rm -rf
+	cp "$(srcdir)"/mini-gmp/tests/*.[ch] "$(distdir)/mini-gmp/tests"
 #	grep -F $(VERSION) $(srcdir)/Makefile.am \
 #		| grep -q "^# *$(VERSION) *$(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE) *$(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE) *$(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)"
 #	test -z "`sed -n 's/^# *[0-9]*\.[0-9]*\.[0-9]* *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\).*/A\1\nB\2\nC\3/p' $(srcdir)/Makefile.am | grep -v 'A6:3:3\|B3:5:0\|C4:7:1' | sort | uniq -d`"
