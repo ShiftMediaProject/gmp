@@ -3,6 +3,7 @@
 	* mpz/2fac_ui.c: New file: implements n!!.
 	* Makefile.am (MPZ_OBJECTS): Add mpz/2fac_ui.
 	* gmp-h.in: Declare mpz_2fac_ui.
+	* tests/mpz/t-fac.c: Test mpz_2fac_ui.
 
 2012-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 

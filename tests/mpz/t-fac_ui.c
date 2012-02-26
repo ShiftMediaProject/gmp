@@ -1,4 +1,4 @@
-/* Exercise mpz_fac_ui.
+/* Exercise mpz_fac_ui and mpz_2fac_ui.
 
 Copyright 2000, 2001, 2002, 2012 Free Software Foundation, Inc.
 
@@ -35,9 +35,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 int
 main (int argc, char *argv[])
 {
-  unsigned long  n;
+  unsigned long  n, m;
   unsigned long  limit = 2222;
-  mpz_t          f, r;
+  mpz_t          df[2], f, r;
 
   tests_start ();
 
@@ -49,10 +49,12 @@ main (int argc, char *argv[])
   /* for small limb testing */
   limit = MIN (limit, MP_LIMB_T_MAX);
 
+  mpz_init_set_ui (df[0], 1);  /* 0!! = 1 */
+  mpz_init_set_ui (df[1], 1);  /* -1!! = 1 */
   mpz_init_set_ui (f, 1);  /* 0! = 1 */
   mpz_init (r);
 
-  for (n = 0; n < limit; n++)
+  for (n = 0, m = 0; n < limit; n++)
     {
       mpz_fac_ui (r, n);
       MPZ_CHECK_FORMAT (r);
@@ -65,9 +67,24 @@ main (int argc, char *argv[])
           abort ();
         }
 
+      mpz_2fac_ui (r, n);
+      MPZ_CHECK_FORMAT (r);
+
+      if (mpz_cmp (df[m], r) != 0)
+        {
+          printf ("mpz_2fac_ui(%lu) wrong\n", n);
+          printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
+          printf ("  want "); mpz_out_str (stdout, 10, df[m]); printf("\n");
+          abort ();
+        }
+
+      m ^= 1;
+      mpz_mul_ui (df[m], df[m], n+1);  /* (n+1)!! = (n-1)!! * (n+1) */
       mpz_mul_ui (f, f, n+1);  /* (n+1)! = n! * (n+1) */
     }
 
+  mpz_clear (df[0]);
+  mpz_clear (df[1]);
   mpz_clear (f);
   mpz_clear (r);
 
