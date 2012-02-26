@@ -1,5 +1,7 @@
 2012-02-26  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreisbr/addmul_2.asm: New file.
+
 	* tests/devel/try.c (param_init): Don't require addmul_N to handle
 	overlap.
 
