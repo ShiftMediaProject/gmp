@@ -17,6 +17,8 @@
 	* doc/gmp.texi: Document mpz_2fac_ui.
 	* mpz/Makefile.am (libmpz_la_SOURCES): Add 2fac_ui.c.
 
+	* mpz/oddfac_1.c (mpz_oddfac_1): Use umul_ppmm when size = 2. 
+
 2012-02-26  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp: New subdirectory. For use by GMP bootstrap, and as a

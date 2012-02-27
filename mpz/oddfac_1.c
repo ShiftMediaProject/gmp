@@ -488,6 +488,11 @@ log_n_max (mp_limb_t n)
    if n is odd, n > FAC_DSC_THRESHOLD and flag = 1, x is set to n!!.
 
    If n is too small, flag is ignored, and an ASSERT can be triggered.
+
+   TODO: FAC_DSC_THRESHOLD is used here with two different roles:
+    - to decide when prime factorisation is needed,
+    - to stop the recursion, once sieving is done.
+   Maybe two thresholds can do a better job.
  */
 void
 mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
@@ -512,8 +517,6 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
       {
 	static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
 	mp_limb_t tn;
-	mp_size_t j;
-	TMP_SDECL;
 
 #if TUNE_PROGRAM_BUILD
 	ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
@@ -523,14 +526,16 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	for (tn = n; ABOVE_THRESHOLD (tn, FAC_DSC_THRESHOLD); s++)
 	  tn >>= 1;
 
-	j = 0;
-
-	TMP_SMARK;
-	factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
-	ASSERT (tn >= FACTORS_PER_LIMB);
-
 	if (tn >= numberof (tabled) * 2 + 1) {
 	  mp_limb_t prod, max_prod, i;
+	  mp_size_t j;
+	  TMP_SDECL;
+
+	  j = 0;
+
+	  TMP_SMARK;
+	  factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
+	  ASSERT (tn >= FACTORS_PER_LIMB);
 
 	  prod = 1;
 #if TUNE_PROGRAM_BUILD
@@ -551,14 +556,17 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	  } while (tn >= numberof (tabled) * 2 + 1);
 
 	  factors[j++] = prod;
+	  ASSERT (numberof (tablef) > numberof (tabled));
+	  factors[j++] = tabled[(tn - 1) >> 1];
+	  factors[j++] = tablef[tn >> 1];
+	  mpz_prodlimbs (x, factors, j);
+
+	  TMP_SFREE;
+	} else {
+	  MPZ_REALLOC (x, 2);
+	  umul_ppmm (PTR (x)[1], PTR (x)[0], tabled[(tn - 1) >> 1], tablef[tn >> 1]);
+	  SIZ (x) = 2;
 	}
-
-	ASSERT (numberof (tablef) > numberof (tabled));
-	factors[j++] = tabled[(tn - 1) >> 1];
-	factors[j++] = tablef[tn >> 1];
-	mpz_prodlimbs (x, factors, j);
-
-	TMP_SFREE;
       }
 
       if (s != 0)
