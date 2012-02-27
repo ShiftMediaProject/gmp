@@ -1,5 +1,8 @@
 2012-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/bd1/popcount.asm: New file.
+	* mpn/x86_64/bd1/hamdist.asm: New file.
+
 	* mpn/x86_64/fastsse/copyi.asm: New file.
 	* mpn/x86_64/fastsse/copyd.asm: New file.
 	* mpn/x86_64/fastsse/lshift.asm: New file.
