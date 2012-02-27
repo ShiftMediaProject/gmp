@@ -145,7 +145,7 @@ C *****************************************************************************
 	ALIGN(16)
 L(le2):	jne	L(end8)
 
-L(2):	movq	8(ap), %xmm0
+	movq	8(ap), %xmm0
 	movq	(ap), %xmm1
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
