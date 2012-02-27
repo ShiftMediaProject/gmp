@@ -15,6 +15,7 @@
 	* gmp-h.in: Declare mpz_2fac_ui.
 	* tests/mpz/t-fac.c: Test mpz_2fac_ui.
 	* doc/gmp.texi: Document mpz_2fac_ui.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add 2fac_ui.c.
 
 2012-02-26  Niels Möller  <nisse@lysator.liu.se>
 
