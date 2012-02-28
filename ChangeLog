@@ -1,5 +1,13 @@
 2012-02-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* Makefile.am (check-mini-gmp): New target, for running the
+	mini-gmp testsuite.
+
+	* mini-gmp/tests/Makefile (srcdir, MINI_GMP_DIR): New make
+	variables. These can be overridden when using a separate build
+	directory.
+	(EXTRA_CFLAGS): Renamed, was OPTFLAGS.
+
 	* mini-gmp/mini-gmp.c (mpz_abs_add): Don't cache limb pointers
 	over MPZ_REALLOC, since that breaks in-place operation. Bug
 	spotted by Torbjörn.

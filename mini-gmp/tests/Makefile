@@ -1,8 +1,11 @@
 # Note: Requires GNU make
 
+srcdir=.
+MINI_GMP_DIR=..
+
 CC = gcc
-OPTFLAGS = -O
-CFLAGS = $(OPTFLAGS) -Wall -g -I ..
+EXTRA_CFLAGS = -O -Wall -g
+CFLAGS = $(EXTRA_CFLAGS) -I$(MINI_GMP_DIR)
 LDFLAGS =
 
 LIBS = -lgmp -lm -lmcheck
@@ -24,11 +27,11 @@ clean:
 # Keep object files
 .PRECIOUS: %.o
 
-%.o: %.c ../mini-gmp.h hex-random.h mini-random.h
+%.o: %.c $(MINI_GMP_DIR)/mini-gmp.h hex-random.h mini-random.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-mini-gmp.o: ../mini-gmp.c ../mini-gmp.h
-	$(CC) $(CFLAGS) -c ../mini-gmp.c -o mini-gmp.o
+mini-gmp.o: $(MINI_GMP_DIR)/mini-gmp.c $(MINI_GMP_DIR)/mini-gmp.h
+	$(CC) $(CFLAGS) -c $(MINI_GMP_DIR)/mini-gmp.c -o mini-gmp.o
 
 %: %.o $(MISC_OBJS)
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
@@ -37,4 +40,4 @@ mini-gmp.o: ../mini-gmp.c ../mini-gmp.h
 #   mpz_cmp_d, mpz_popcount, mpz_hamdist, mpz_ui_pow_ui
 
 check: $(CHECK_PROGRAMS)
-	./run-tests $(CHECK_PROGRAMS)
+	$(srcdir)/run-tests $(CHECK_PROGRAMS)
