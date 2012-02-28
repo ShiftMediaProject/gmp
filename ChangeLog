@@ -1,3 +1,10 @@
+2012-02-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpz_abs_add): Don't cache limb pointers
+	over MPZ_REALLOC, since that breaks in-place operation. Bug
+	spotted by Torbjörn.
+	(mpz_and, mpz_ior, mpz_xor): Likewise.
+
 2012-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshiftc.asm: New file.
@@ -29,7 +36,7 @@
 	* doc/gmp.texi: Document mpz_2fac_ui.
 	* mpz/Makefile.am (libmpz_la_SOURCES): Add 2fac_ui.c.
 
-	* mpz/oddfac_1.c (mpz_oddfac_1): Use umul_ppmm when size = 2. 
+	* mpz/oddfac_1.c (mpz_oddfac_1): Use umul_ppmm when size = 2.
 
 2012-02-26  Niels Möller  <nisse@lysator.liu.se>
 

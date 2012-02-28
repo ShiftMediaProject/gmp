@@ -1835,21 +1835,20 @@ mpz_abs_add (mpz_t r, const mpz_t a, const mpz_t b)
 {
   mp_size_t an = GMP_ABS (a->_mp_size);
   mp_size_t bn = GMP_ABS (b->_mp_size);
-  mp_ptr ap = a->_mp_d;
-  mp_ptr bp = b->_mp_d;
+  mp_size_t rn;
   mp_ptr rp;
   mp_limb_t cy;
 
-  if (an < bn)
-    MPN_PTR_SWAP (ap, an, bp, bn);
+  rn = GMP_MAX (an, bn);
+  rp = MPZ_REALLOC (r, rn + 1);
+  if (an >= bn)
+    cy = mpn_add (rp, a->_mp_d, an, b->_mp_d, bn);
+  else
+    cy = mpn_add (rp, b->_mp_d, bn, a->_mp_d, an);
 
-  rp = MPZ_REALLOC (r, an + 1);
+  rp[rn] = cy;
 
-  cy = mpn_add (rp, ap, an, bp, bn);
-  rp[an] = cy;
-  an += (cy > 0);
-
-  return an;
+  return rn + (cy > 0);
 }
 
 static mp_size_t
@@ -3287,9 +3286,6 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
       return;
     }
 
-  up = u->_mp_d;
-  vp = v->_mp_d;
-
   uc = u->_mp_size < 0;
   vc = v->_mp_size < 0;
   rc = uc & vc;
@@ -3302,6 +3298,9 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
   rn = vx ? un : vn;
 
   rp = MPZ_REALLOC (r, rn + rc);
+
+  up = u->_mp_d;
+  vp = v->_mp_d;
 
   for (i = 0; i < vn; i++)
     {
@@ -3356,8 +3355,6 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
       mpz_set (r, u);
       return;
     }
-  up = u->_mp_d;
-  vp = v->_mp_d;
 
   uc = u->_mp_size < 0;
   vc = v->_mp_size < 0;
@@ -3372,6 +3369,10 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
   rn = vx ? vn : un;
 
   rp = MPZ_REALLOC (r, rn + rc);
+
+  up = u->_mp_d;
+  vp = v->_mp_d;
+
   for (i = 0; i < vn; i++)
     {
       ul = (up[i] ^ ux) + uc;
@@ -3426,9 +3427,6 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
       return;
     }
 
-  up = u->_mp_d;
-  vp = v->_mp_d;
-
   uc = u->_mp_size < 0;
   vc = v->_mp_size < 0;
   rc = uc ^ vc;
@@ -3438,6 +3436,10 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
   rx = -rc;
 
   rp = MPZ_REALLOC (r, un + rc);
+
+  up = u->_mp_d;
+  vp = v->_mp_d;
+
   for (i = 0; i < vn; i++)
     {
       ul = (up[i] ^ ux) + uc;
