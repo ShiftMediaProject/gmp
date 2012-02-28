@@ -1694,7 +1694,7 @@ mpz_cmp (const mpz_t a, const mpz_t b)
   else if (asize > 0)
     return mpn_cmp (a->_mp_d, b->_mp_d, asize);
   else if (asize < 0)
-    return -mpn_cmp (a->_mp_d, b->_mp_d, asize);
+    return -mpn_cmp (a->_mp_d, b->_mp_d, -asize);
   else
     return 0;
 }

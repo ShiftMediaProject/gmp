@@ -4,6 +4,7 @@
 	over MPZ_REALLOC, since that breaks in-place operation. Bug
 	spotted by Torbjörn.
 	(mpz_and, mpz_ior, mpz_xor): Likewise.
+	(mpz_cmp): Fixed comparison of negative numbers.
 
 2012-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
