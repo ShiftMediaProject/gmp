@@ -2711,7 +2711,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
   if (v->_mp_size == 0)
     {
       /* g = sgn(u) u + 0 v */
-      signed long sign = mpz_sgn (v);
+      signed long sign = mpz_sgn (u);
       mpz_abs (g, u);
       if (s)
 	mpz_set_si (s, sign);
