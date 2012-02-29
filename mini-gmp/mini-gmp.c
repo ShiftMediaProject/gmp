@@ -3007,17 +3007,29 @@ mpz_sqrt (mpz_t s, const mpz_t u)
 }
 
 void
-mpz_ui_pow_ui (mpz_t r, unsigned long b, unsigned long e)
+mpz_pow_ui (mpz_t r, const mpz_t b, unsigned long e)
 {
   unsigned long bit;
-  mpz_set_ui (r, 1);
+  mpz_t tr;
+  mpz_init_set_ui (tr, 1);
 
   for (bit = GMP_ULONG_HIGHBIT; bit > 0; bit >>= 1)
     {
-      mpz_mul (r, r, r);
+      mpz_mul (tr, tr, tr);
       if (e & bit)
-	mpz_mul_ui (r, r, b);
+	mpz_mul (tr, tr, b);
     }
+  mpz_swap (r, tr);
+  mpz_clear (tr);
+}
+
+void
+mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
+{
+  mpz_t b;
+  mpz_init_set_ui (b, blimb);
+  mpz_pow_ui (r, b, e);
+  mpz_clear (b);
 }
 
 void

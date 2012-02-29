@@ -172,6 +172,7 @@ int mpz_invert (mpz_t, const mpz_t, const mpz_t);
 void mpz_sqrtrem (mpz_t, mpz_t, const mpz_t);
 void mpz_sqrt (mpz_t, const mpz_t);
 
+void mpz_pow_ui (mpz_t, const mpz_t, unsigned long);
 void mpz_ui_pow_ui (mpz_t, unsigned long, unsigned long);
 void mpz_powm (mpz_t, const mpz_t, const mpz_t, const mpz_t);
 void mpz_powm_ui (mpz_t, const mpz_t, unsigned long, const mpz_t);
