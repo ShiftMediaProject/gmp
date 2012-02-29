@@ -71,6 +71,7 @@ Makefile
 ^mini-gmp/tests/t-bitops$
 ^mini-gmp/tests/t-scan$
 ^mini-gmp/tests/t-str$
+^mini-gmp/tests/t-reuse$
 
 ^\.libs
 

@@ -1,5 +1,8 @@
 2012-02-29  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-reuse.c: New test case, based on
+	tests/mpz/reuse.c.
+
 	* mini-gmp/mini-gmp.c (mpz_cdiv_r_ui): New function.
 	(mpz_fdiv_r_ui): New function.
 	(mpz_tdiv_r_ui): New function.
