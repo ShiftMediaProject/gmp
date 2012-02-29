@@ -1,5 +1,13 @@
 2012-02-29  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/mini-gmp.c (mpz_cdiv_r_ui): New function.
+	(mpz_fdiv_r_ui): Likewise.
+	(mpz_tdiv_r_ui): Likewise.
+	(mpz_gcdext): Fixed input/output overlap, for the case of one
+	input being zero.
+	(mpz_powm_ui): New function.
+	(mpz_sqrtrem): Fix for the case r NULL, U zero.
+
 	* Makefile.am (check-mini-gmp): Use $(MAKE).
 	(clean-mini-gmp): New target.
 	(clean-local, distclean-local): New automake targets. Depend on

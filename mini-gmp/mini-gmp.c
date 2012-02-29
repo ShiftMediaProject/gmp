@@ -2486,6 +2486,22 @@ mpz_tdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 }
 
 unsigned long
+mpz_cdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
+{
+  return mpz_div_qr_ui (NULL, r, n, d, DIV_CEIL);
+}
+unsigned long
+mpz_fdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
+{
+  return mpz_div_qr_ui (NULL, r, n, d, DIV_FLOOR);
+}
+unsigned long
+mpz_tdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
+{
+  return mpz_div_qr_ui (NULL, r, n, d, DIV_TRUNC);
+}
+
+unsigned long
 mpz_cdiv_ui (const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, NULL, n, d, DIV_CEIL);
@@ -2683,20 +2699,22 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
   if (u->_mp_size == 0)
     {
       /* g = 0 u + sgn(v) v */
+      signed long sign = mpz_sgn (v);
       mpz_abs (g, v);
       if (s)
 	mpz_set_ui (s, 0);
       if (t)
-	mpz_set_si (t, mpz_sgn (v));
+	mpz_set_si (t, sign);
       return;
     }
 
   if (v->_mp_size == 0)
     {
       /* g = sgn(u) u + 0 v */
+      signed long sign = mpz_sgn (v);
       mpz_abs (g, u);
       if (s)
-	mpz_set_si (s, mpz_sgn (u));
+	mpz_set_si (s, sign);
       if (t)
 	mpz_set_ui (t, 0);
       return;
@@ -2933,7 +2951,8 @@ mpz_sqrtrem (mpz_t s, mpz_t r, const mpz_t u)
   if (u->_mp_size == 0)
     {
       mpz_set_ui (s, 0);
-      mpz_set_ui (r, 0);
+      if (r)
+	mpz_set_ui (r, 0);
       return;
     }
 
@@ -3101,6 +3120,14 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
   mpz_swap (r, tr);
   mpz_clear (tr);
   mpz_clear (base);
+}
+
+void mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
+{
+  mpz_t e;
+  mpz_init_set_ui (e, elimb);
+  mpz_powm (r, b, e, m);
+  mpz_clear (e);
 }
 
 
