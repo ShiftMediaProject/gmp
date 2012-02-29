@@ -420,3 +420,4 @@ clean-mini-gmp:
 	fi
 
 clean-local: clean-mini-gmp
+distclean-local: clean-mini-gmp
