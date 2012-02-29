@@ -1,3 +1,7 @@
+2012-02-29  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (std::numeric_limits): New partial specialization.
+
 2012-02-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-reuse.c: New test case, based on

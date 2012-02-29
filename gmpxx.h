@@ -24,6 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <iosfwd>
 
 #include <cstring>  /* for strlen */
+#include <limits>  /* numeric_limits */
 #include <utility>
 #include <string>
 #include <stdexcept>
@@ -3226,6 +3227,119 @@ public:
   __gmp_expr<mpf_t, __gmp_urandomb_value> get_f(mp_bitcnt_t prec = 0)
   { return __gmp_expr<mpf_t, __gmp_urandomb_value>(state, prec); }
 };
+
+
+/**************** Specialize std::numeric_limits ****************/
+
+namespace std {
+  template <> class numeric_limits<mpz_class>
+  {
+    static const bool is_specialized = true;
+    static mpz_class min() { return mpz_class(); }
+    static mpz_class max() { return mpz_class(); }
+    static mpz_class lowest() { return mpz_class(); }
+    static const int digits = 0;
+    static const int digits10 = 0;
+    static const int max_digits10 = 0;
+    static const bool is_signed = true;
+    static const bool is_integer = true;
+    static const bool is_exact = true;
+    static const int radix = 2;
+    static mpz_class epsilon() { return mpz_class(); }
+    static mpz_class round_error() { return mpz_class(); }
+    static const int min_exponent = 0;
+    static const int min_exponent10 = 0;
+    static const int max_exponent = 0;
+    static const int max_exponent10 = 0;
+    static const bool has_infinity = false;
+    static const bool has_quiet_NaN = false;
+    static const bool has_signaling_NaN = false;
+    static const float_denorm_style has_denorm = denorm_absent;
+    static const bool has_denorm_loss = false;
+    static mpz_class infinity() { return mpz_class(); }
+    static mpz_class quiet_NaN() { return mpz_class(); }
+    static mpz_class signaling_NaN() { return mpz_class(); }
+    static mpz_class denorm_min() { return mpz_class(); }
+    static const bool is_iec559 = false;
+    static const bool is_bounded = false;
+    static const bool is_modulo = false;
+    static const bool traps = false;
+    static const bool tinyness_before = false;
+    static const float_round_style round_style = round_toward_zero;
+  };
+
+  template <> class numeric_limits<mpq_class>
+  {
+    static const bool is_specialized = true;
+    static mpq_class min() { return mpq_class(); }
+    static mpq_class max() { return mpq_class(); }
+    static mpq_class lowest() { return mpq_class(); }
+    static const int digits = 0;
+    static const int digits10 = 0;
+    static const int max_digits10 = 0;
+    static const bool is_signed = true;
+    static const bool is_integer = false;
+    static const bool is_exact = true;
+    static const int radix = 2;
+    static mpq_class epsilon() { return mpq_class(); }
+    static mpq_class round_error() { return mpq_class(); }
+    static const int min_exponent = 0;
+    static const int min_exponent10 = 0;
+    static const int max_exponent = 0;
+    static const int max_exponent10 = 0;
+    static const bool has_infinity = false;
+    static const bool has_quiet_NaN = false;
+    static const bool has_signaling_NaN = false;
+    static const float_denorm_style has_denorm = denorm_absent;
+    static const bool has_denorm_loss = false;
+    static mpq_class infinity() { return mpq_class(); }
+    static mpq_class quiet_NaN() { return mpq_class(); }
+    static mpq_class signaling_NaN() { return mpq_class(); }
+    static mpq_class denorm_min() { return mpq_class(); }
+    static const bool is_iec559 = false;
+    static const bool is_bounded = false;
+    static const bool is_modulo = false;
+    static const bool traps = false;
+    static const bool tinyness_before = false;
+    static const float_round_style round_style = round_toward_zero;
+  };
+
+  template <> class numeric_limits<mpf_class>
+  {
+    static const bool is_specialized = true;
+    static mpf_class min() { return mpf_class(); }
+    static mpf_class max() { return mpf_class(); }
+    static mpf_class lowest() { return mpf_class(); }
+    static const int digits = 0;
+    static const int digits10 = 0;
+    static const int max_digits10 = 0;
+    static const bool is_signed = true;
+    static const bool is_integer = false;
+    static const bool is_exact = false;
+    static const int radix = 2;
+    static mpf_class epsilon() { return mpf_class(); }
+    static mpf_class round_error() { return mpf_class(); }
+    static const int min_exponent = 0;
+    static const int min_exponent10 = 0;
+    static const int max_exponent = 0;
+    static const int max_exponent10 = 0;
+    static const bool has_infinity = false;
+    static const bool has_quiet_NaN = false;
+    static const bool has_signaling_NaN = false;
+    static const float_denorm_style has_denorm = denorm_absent;
+    static const bool has_denorm_loss = false;
+    static mpf_class infinity() { return mpf_class(); }
+    static mpf_class quiet_NaN() { return mpf_class(); }
+    static mpf_class signaling_NaN() { return mpf_class(); }
+    static mpf_class denorm_min() { return mpf_class(); }
+    static const bool is_iec559 = false;
+    static const bool is_bounded = false;
+    static const bool is_modulo = false;
+    static const bool traps = false;
+    static const bool tinyness_before = false;
+    static const float_round_style round_style = round_indeterminate;
+  };
+}
 
 
 /**************** #undef all private macros ****************/
