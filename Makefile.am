@@ -398,14 +398,25 @@ dist-hook:
 #		| grep -q "^# *$(VERSION) *$(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE) *$(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE) *$(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)"
 #	test -z "`sed -n 's/^# *[0-9]*\.[0-9]*\.[0-9]* *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\).*/A\1\nB\2\nC\3/p' $(srcdir)/Makefile.am | grep -v 'A6:3:3\|B3:5:0\|C4:7:1' | sort | uniq -d`"
 
+.PHONY: check-mini-gmp clean-mini-gmp
+
 check-mini-gmp:
 	abs_srcdir="`cd $(srcdir) && pwd`" ; \
 	$(MKDIR_P) mini-gmp/tests \
 	&& cd mini-gmp/tests \
-	&& make -f "$$abs_srcdir/mini-gmp/tests/Makefile" \
+	&& $(MAKE) -f "$$abs_srcdir/mini-gmp/tests/Makefile" \
 		VPATH="$$abs_srcdir/mini-gmp/tests" \
 		srcdir="$$abs_srcdir/mini-gmp/tests" \
 		MINI_GMP_DIR="$$abs_srcdir/mini-gmp" \
 		LDFLAGS="-L../../.libs" \
 		LIBS="-lgmp -lm" \
 		CC="$(CC_FOR_BUILD)" EXTRA_CFLAGS="-g" check
+
+clean-mini-gmp:
+	if [ -d mini-gmp/tests ] ; then \
+	  abs_srcdir="`cd $(srcdir) && pwd`" ; \
+	  cd mini-gmp/tests \
+	  && $(MAKE) -f "$$abs_srcdir/mini-gmp/tests/Makefile" clean ; \
+	fi
+
+clean-local: clean-mini-gmp
