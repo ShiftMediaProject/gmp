@@ -1,3 +1,7 @@
+2012-03-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-invert.c: Small range correction.
+
 2012-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mullo_basecase.asm: New file.

@@ -69,7 +69,7 @@ main (int argc, char **argv)
 	{
 	  MPZ_CHECK_FORMAT (ainv);
 
-	  if (mpz_cmp_ui (ainv, 0) <= 0 || mpz_cmpabs (ainv, m) > 0)
+	  if (mpz_cmp_ui (ainv, 0) <= 0 || mpz_cmpabs (ainv, m) >= 0)
 	    {
 	      fprintf (stderr, "ERROR in test %d\n", test);
 	      gmp_fprintf (stderr, "Inverse out of range.\n");
