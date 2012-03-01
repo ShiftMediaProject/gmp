@@ -23,20 +23,20 @@ include(`../config.m4')
 
 
 C	     cycles/limb	     cycles/limb	      good
-C          16-byte aligned         16-byte unaligned	     for cpu
+C          16-byte aligned         16-byte unaligned	    for cpu?
 C AMD K8,K9	 ?			 ?
-C AMD K10	 1.8			 1.8			Y
-C AMD bd1	 1.82			 1.82			Y
+C AMD K10	 1.68  (1.45)		 1.75  (1.49)		Y
+C AMD bd1	 1.82  (1.75)		 1.82  (1.75)		Y
 C AMD bobcat	 4			 4
-C Intel P4	 3			 3			Y
-C Intel core2	 2.05			 2.55
-C Intel NHM	 2.05			 2.09
-C Intel SBR	 1.55			 1.55			Y
+C Intel P4	 3     (2.7)		 3     (2.7)		Y
+C Intel core2	 2.05  (1.67)		 2.55  (1.75)
+C Intel NHM	 2.05  (1.75)		 2.09  (2)
+C Intel SBR	 1.5   (1.3125)		 1.5   (1.4375)		Y
 C Intel atom	 ?			 ?
-C VIA nano	 2.55			 2.55			Y
+C VIA nano	 2.25  (2)		 2.5   (2)		Y
 
 C We try to do as many 16-byte operations as possible.  The top-most and
-C bottom-most writes might need 8-byte operations.  We can always write using
+C bottom-most writes might need 8-byte operations.  We always write using
 C 16-byte operations, we read with both 8-byte and 16-byte operations.
 
 C There are two inner-loops, one for when rp = ap (mod 16) and one when this is
@@ -128,8 +128,17 @@ L(atop):movdqa	(ap,n,8), %xmm0		C xmm0 = B*ap[n-1] + ap[n-2]
 	por	%xmm1, %xmm0
 	movdqa	%xmm0, (rp,n,8)
 L(aent):sub	$2, n
+	jbe	L(aend)
+	movdqa	(ap,n,8), %xmm0		C xmm0 = B*ap[n-1] + ap[n-2]
+	movq	-8(ap,n,8), %xmm1	C xmm1 = ap[n-3]
+	punpcklqdq  %xmm0, %xmm1	C xmm1 = B*ap[n-2] + ap[n-3]
+	psllq	%xmm4, %xmm0
+	psrlq	%xmm5, %xmm1
+	por	%xmm1, %xmm0
+	movdqa	%xmm0, (rp,n,8)
+	sub	$2, n
 	ja	L(atop)
-
+L(aend):
 	jne	L(end8)
 
 	movdqa	(ap), %xmm0

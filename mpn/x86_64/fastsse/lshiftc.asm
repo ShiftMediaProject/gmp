@@ -23,20 +23,20 @@ include(`../config.m4')
 
 
 C	     cycles/limb	     cycles/limb	      good
-C          16-byte aligned         16-byte unaligned	     for cpu
+C          16-byte aligned         16-byte unaligned	    for cpu?
 C AMD K8,K9	 ?			 ?
-C AMD K10	 1.85			 1.9			Y
-C AMD bd1	 1.82			 1.82			Y
+C AMD K10	 1.85  (1.635)		 1.9   (1.67)		Y
+C AMD bd1	 1.82  (1.75)		 1.82  (1.75)		Y
 C AMD bobcat	 4.5			 4.5
-C Intel P4	 3.6			 3.6			Y
-C Intel core2	 2.05			 2.55
-C Intel NHM	 2.05			 2.6
-C Intel SBR	 1.55			 2			Y
+C Intel P4	 3.6   (3.125)		 3.6   (3.125)		Y
+C Intel core2	 2.05  (1.67)		 2.55  (1.75)
+C Intel NHM	 2.05  (1.875)		 2.6   (2.25)
+C Intel SBR	 1.55  (1.44)		 2     (1.57)		Y
 C Intel atom	 ?			 ?
-C VIA nano	 2.55			 2.55			Y
+C VIA nano	 2.5   (2.5)		 2.5   (2.5)		Y
 
 C We try to do as many 16-byte operations as possible.  The top-most and
-C bottom-most writes might need 8-byte operations.  We can always write using
+C bottom-most writes might need 8-byte operations.  We always write using
 C 16-byte operations, we read with both 8-byte and 16-byte operations.
 
 C There are two inner-loops, one for when rp = ap (mod 16) and one when this is
