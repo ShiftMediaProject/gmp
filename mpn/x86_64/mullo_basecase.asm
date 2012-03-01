@@ -51,10 +51,14 @@ define(`w1',	`%r15')
 define(`w2',	`%rbp')
 define(`w3',	`%r10')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(mpn_mullo_basecase)
+	DOS64_ENTRY(4)
 	cmp	$4, n
 	jge	L(gen)
 	mov	(up), %rax		C u0
@@ -81,6 +85,7 @@ C	.quad	L(3m4)			C 11
 
 L(1):	imul	%r8, %rax
 	mov	%rax, (rp)
+	DOS64_EXIT()
 	ret
 
 L(2):	mov	8(vp_param), %r11
@@ -91,6 +96,7 @@ L(2):	mov	8(vp_param), %r11
 	lea	(%r11, %rdx), %rax
 	add	%r8, %rax
 	mov	%rax, 8(rp)
+	DOS64_EXIT()
 	ret
 
 L(3):	mov	8(vp_param), %r9	C v1
@@ -115,6 +121,7 @@ L(3):	mov	8(vp_param), %r9	C v1
 	add	%rax, %r9
 	mov	%rcx, 8(rp)
 	mov	%r9, 16(rp)
+	DOS64_EXIT()
 	ret
 
 L(0m4):
@@ -408,5 +415,6 @@ L(ret):	pop	%r15
 	pop	%r13
 	pop	%rbp
 	pop	%rbx
+	DOS64_EXIT()
 	ret
 EPILOGUE()
