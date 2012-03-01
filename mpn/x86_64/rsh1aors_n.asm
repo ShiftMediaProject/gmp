@@ -32,13 +32,12 @@ C VIA nano	 3.25
 
 C TODO
 C  * Rewrite to use indexed addressing, like addlsh1.asm and sublsh1.asm.
-C  * Try to approach the cache bandwidth 1.5 c/l.  It should be possible.
 
 C INPUT PARAMETERS
-define(`rp',`%rdi')
-define(`up',`%rsi')
-define(`vp',`%rdx')
-define(`n',`%rcx')
+define(`rp', `%rdi')
+define(`up', `%rsi')
+define(`vp', `%rdx')
+define(`n',`  %rcx')
 
 ifdef(`OPERATION_rsh1add_n', `
 	define(ADDSUB,	      add)
@@ -58,7 +57,6 @@ ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
-
 	ALIGN(16)
 PROLOGUE(func_nc)
 	DOS64_ENTRY(4)
