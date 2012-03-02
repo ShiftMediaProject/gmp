@@ -44,7 +44,7 @@ hex_random_init (void)
       else
 	{
 	  seed = time(NULL) + getpid();
-          printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
+	  printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
 	}
     }
   else
@@ -94,7 +94,7 @@ hex_random_op (enum hex_random_op op,  unsigned long maxbits,
 
   abits = gmp_urandomb_ui (state, 32) % maxbits;
   bbits = gmp_urandomb_ui (state, 32) % maxbits;
-  
+
   mpz_rrandomb (a, state, abits);
   mpz_rrandomb (b, state, bbits);
 
@@ -156,7 +156,7 @@ hex_random_op (enum hex_random_op op,  unsigned long maxbits,
 
   mpz_clear (a);
   mpz_clear (b);
-  mpz_clear (r);  
+  mpz_clear (r);
 }
 
 void
@@ -182,7 +182,7 @@ hex_random_op4 (enum hex_random_op op, unsigned long maxbits,
       mpz_rrandomb (a, state, abits);
       mpz_rrandomb (b, state, bbits);
       mpz_rrandomb (c, state, cbits);
-      
+
       signs = gmp_urandomb_ui (state, 3);
       if (signs & 1)
 	mpz_neg (a, a);
@@ -255,8 +255,8 @@ hex_random_op4 (enum hex_random_op op, unsigned long maxbits,
 
   mpz_clear (a);
   mpz_clear (b);
-  mpz_clear (c);  
-  mpz_clear (d);  
+  mpz_clear (c);
+  mpz_clear (d);
 }
 
 void
@@ -272,7 +272,7 @@ hex_random_bit_op (enum hex_random_op op, unsigned long maxbits,
 
   abits = gmp_urandomb_ui (state, 32) % maxbits;
   bbits = gmp_urandomb_ui (state, 32) % (maxbits + 100);
-  
+
   mpz_rrandomb (a, state, abits);
 
   signs = gmp_urandomb_ui (state, 1);
@@ -313,7 +313,7 @@ hex_random_bit_op (enum hex_random_op op, unsigned long maxbits,
       break;
     case OP_TDIV_R_2:
       mpz_tdiv_r_2exp (r, a, bbits);
-      break;      
+      break;
     }
 
   gmp_asprintf (ap, "%Zx", a);
@@ -321,7 +321,7 @@ hex_random_bit_op (enum hex_random_op op, unsigned long maxbits,
   gmp_asprintf (rp, "%Zx", r);
 
   mpz_clear (a);
-  mpz_clear (r);  
+  mpz_clear (r);
 }
 
 void
@@ -336,7 +336,7 @@ hex_random_scan_op (enum hex_random_op op, unsigned long maxbits,
 
   abits = gmp_urandomb_ui (state, 32) % maxbits;
   bbits = gmp_urandomb_ui (state, 32) % (maxbits + 100);
-  
+
   mpz_rrandomb (a, state, abits);
 
   signs = gmp_urandomb_ui (state, 1);
@@ -372,7 +372,7 @@ hex_random_str_op (unsigned long maxbits,
   mpz_init (a);
 
   abits = gmp_urandomb_ui (state, 32) % maxbits;
-  
+
   mpz_rrandomb (a, state, abits);
 
   signs = gmp_urandomb_ui (state, 2);

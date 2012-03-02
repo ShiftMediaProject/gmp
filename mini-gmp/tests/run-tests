@@ -13,7 +13,7 @@ fi
 export srcdir
 
 # When used in make rules, we sometimes get the filenames VPATH
-# expanded, but usually not. 
+# expanded, but usually not.
 find_program () {
     case "$1" in
 	*/*)
@@ -48,14 +48,14 @@ test_program () {
   fi
   case "$?" in
       0)
-    	echo PASS: $testname
+	echo PASS: $testname
 	all=`expr $all + 1`
 	;;
       77)
-      	echo SKIP: $testname
+	echo SKIP: $testname
       ;;
       *)
-    	echo FAIL: $testname
+	echo FAIL: $testname
 	failed=`expr $failed + 1`
 	all=`expr $all + 1`
 	;;
@@ -74,7 +74,7 @@ do
     testflags='-v'
     ;;
   -*)
-    echo >&2 'Unknown option `'"$1'" 
+    echo >&2 'Unknown option `'"$1'"
     exit 1
     ;;
   *)
@@ -83,7 +83,7 @@ do
   esac
   shift
 done
-  
+
 if [ $# -eq 0 ] ; then
   for f in *-test; do test_program "./$f"; done
 else
@@ -105,4 +105,3 @@ if [ "x$debug" = xno ] ; then
 fi
 
 [ "$failed" -eq 0 ]
-

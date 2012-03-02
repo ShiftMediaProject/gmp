@@ -25,7 +25,7 @@ main (int argc, char **argv)
   hex_random_init ();
 
   mpz_init (a);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       mini_random_scan_op (OP_SCAN0, MAXBITS, a, &b, &ref);

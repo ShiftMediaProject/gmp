@@ -165,7 +165,7 @@ L(L2):	adc	$0, %r11
 	ADDSUB	%r9, %r10
 	adc	$0, %r11
 	mov	%r10, (rp,n,8)
-	add	$4, n 
+	add	$4, n
 	jnc	L(top)
 
 L(end):	mul	v0

@@ -20,7 +20,7 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, g, s;
-  
+
   hex_random_init ();
 
   mpz_init (a);

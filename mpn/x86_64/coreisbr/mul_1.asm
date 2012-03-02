@@ -21,16 +21,16 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 
-C AMD K10	 
-C AMD bd1	 
-C AMD bobcat	 
-C Intel P4	 
-C Intel core2	 
-C Intel NHM	 
-C Intel SBR	 
-C Intel atom	 
-C VIA nano	 
+C AMD K8,K9
+C AMD K10
+C AMD bd1
+C AMD bobcat
+C Intel P4
+C Intel core2
+C Intel NHM
+C Intel SBR
+C Intel atom
+C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.

@@ -53,7 +53,7 @@ main (int argc, char **argv)
 	      mpz_fdiv_q_2exp, mpz_fdiv_r_2exp,
 	      mpz_tdiv_q_2exp, mpz_tdiv_r_2exp
 	    };
-	  
+
 	  mini_random_bit_op (ops[j], MAXBITS, a, &b, ref);
 	  div[j] (res, a, b);
 	  if (mpz_cmp (ref, res))

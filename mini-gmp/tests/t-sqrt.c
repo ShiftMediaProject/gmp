@@ -36,9 +36,9 @@ sqrtrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r)
       mpz_clear (t);
       return 0;
     }
-  
+
   mpz_clear (t);
-  return 1;  
+  return 1;
 }
 
 int
@@ -46,13 +46,13 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t u, s, r;
-  
+
   hex_random_init ();
 
   mpz_init (u);
   mpz_init (s);
   mpz_init (r);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       mini_rrandomb (u, MAXBITS);

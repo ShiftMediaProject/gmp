@@ -656,12 +656,12 @@ mpz_check_format (const mpz_t x)
   if (n > x->_mp_alloc)
     {
       fprintf (stderr, "mpz_t size exceeds allocation!\n");
-      abort ();      
+      abort ();
     }
 
   if (n > 0 && x->_mp_d[n-1] == 0)
     {
       fprintf (stderr, "Unnormalized mpz_t!\n");
       abort ();
-    }  
+    }
 }

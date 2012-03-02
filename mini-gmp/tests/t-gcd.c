@@ -57,7 +57,7 @@ gcdext_valid_p (const mpz_t a, const mpz_t b,
       mpz_clear (tb);
       mpz_clear (r);
       return 0;
-    }    
+    }
   mpz_tdiv_qr (ta, r, a, g);
   if (mpz_sgn (r) != 0)
     goto fail;
@@ -89,7 +89,7 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, g, s, t;
-  
+
   hex_random_init ();
 
   mpz_init (a);
@@ -130,7 +130,7 @@ main (int argc, char **argv)
 	mpz_neg (a, a);
       if (flags & 2)
 	mpz_neg (b, b);
-      
+
       mpz_gcdext (g, s, t, a, b);
       if (!gcdext_valid_p (a, b, g, s, t))
 	{
