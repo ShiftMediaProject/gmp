@@ -26,7 +26,7 @@ main (int argc, char **argv)
   size_t bn, rn, arn;
 
   mpz_t a, b;
-  
+
   hex_random_init ();
 
   mpz_init (a);
@@ -52,7 +52,7 @@ main (int argc, char **argv)
 	    {
 	      fprintf (stderr, "mpz_sizeinbase failed:\n");
 	      dump ("a", a);
-	      fprintf (stderr, "r = %s\n", rp);	      
+	      fprintf (stderr, "r = %s\n", rp);
 	      fprintf (stderr, "  base %d, correct size %u, got %u\n",
 		       base, (unsigned) arn, (unsigned)bn);
 	      abort ();
@@ -82,7 +82,7 @@ main (int argc, char **argv)
 	      abort ();
 	    }
 	  free (ap);
-	  free (bp);	  
+	  free (bp);
 	}
     }
   mpz_clear (a);

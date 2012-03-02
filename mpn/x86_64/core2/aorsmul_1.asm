@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_addmul_1 and mpn_submul_1, optimized for "Core 2".
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009, 2011 Free Software
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009, 2011, 2012 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -24,7 +24,7 @@ C	     cycles/limb
 C AMD K8,K9	 4
 C AMD K10	 4
 C AMD bd1	 5.1
-C AMD bobcat	 
+C AMD bobcat
 C Intel P4	 ?
 C Intel core2	 4.3-4.5 (fluctuating)
 C Intel NHM	 5.0
@@ -40,12 +40,12 @@ define(`v0',	`%rcx')
 
 ifdef(`OPERATION_addmul_1',`
       define(`ADDSUB',        `add')
-      define(`func',  `mpn_addmul_1')
+      define(`func',     `mpn_addmul_1')
       define(`func_1c',  `mpn_addmul_1c')
 ')
 ifdef(`OPERATION_submul_1',`
       define(`ADDSUB',        `sub')
-      define(`func',  `mpn_submul_1')
+      define(`func',     `mpn_submul_1')
       define(`func_1c',  `mpn_submul_1c')
 ')
 
@@ -54,13 +54,12 @@ MULFUNC_PROLOGUE(mpn_addmul_1 mpn_addmul_1c mpn_submul_1 mpn_submul_1c)
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-	C For DOS, on the stack we have four saved registers, return
-	C address, space for four register arguments, and finally the
-	C carry input.
-	
+	C For DOS, on the stack we have four saved registers, return address,
+	C space for four register arguments, and finally the carry input.
+
 IFDOS(` define(`carry_in', `72(%rsp)')') dnl
 IFSTD(` define(`carry_in', `%r8')') dnl
-	
+
 ASM_START()
 	TEXT
 	ALIGN(16)

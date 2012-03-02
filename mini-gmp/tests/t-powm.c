@@ -20,7 +20,7 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t b, e, m, res, ref;
-  
+
   hex_random_init ();
 
   mpz_init (b);
@@ -28,7 +28,7 @@ main (int argc, char **argv)
   mpz_init (m);
   mpz_init (res);
   mpz_init (ref);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       mini_random_op4 (OP_POWM, MAXBITS, b, e, m, ref);

@@ -48,7 +48,7 @@ main (int argc, char **argv)
 	    {
 	      mpz_cdiv_qr_ui, mpz_fdiv_qr_ui, mpz_tdiv_qr_ui
 	    };
-	  
+
 	  mini_random_op4 (ops[j], MAXBITS, a, b, rq, rr);
 	  div[j] (q, r, a, b);
 	  if (mpz_cmp (r, rr) || mpz_cmp (q, rq))

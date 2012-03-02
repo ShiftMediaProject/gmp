@@ -9035,10 +9035,10 @@ $$\mathop{\rm L}(p,n) = \sum_{i>0}\left\lfloor{n\over p^i}\right\rfloor\bmod2
 
 @example
           ---
-           \    n                   
+           \    n
 L(p,n) =   /  [---] mod 2   <=  log (n) .
           ---  p^i                p
-          i>0    
+          i>0
 @end example
 @end ifnottex
 

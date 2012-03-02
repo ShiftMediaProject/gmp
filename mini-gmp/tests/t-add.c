@@ -19,14 +19,14 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, res, ref;
-  
+
   hex_random_init ();
 
   mpz_init (a);
   mpz_init (b);
   mpz_init (res);
   mpz_init (ref);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       mini_random_op (OP_ADD, MAXBITS, a, b, ref);
