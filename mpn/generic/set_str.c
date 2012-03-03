@@ -132,7 +132,7 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
   mp_size_t n;
   mp_ptr p, t;
   unsigned normalization_steps;
-  mp_limb_t big_base, big_base_inverted;
+  mp_limb_t big_base;
   int chars_per_limb;
   size_t digits_in_base;
   mp_size_t shift;
@@ -141,7 +141,6 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
 
   chars_per_limb = mp_bases[base].chars_per_limb;
   big_base = mp_bases[base].big_base;
-  big_base_inverted = mp_bases[base].big_base_inverted;
   count_leading_zeros (normalization_steps, big_base);
 
   p = powtab_mem_ptr;

@@ -1,5 +1,12 @@
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom42_mul.c: Remove unread variable.
+	* mpn/generic/set_str.c (mpn_set_str_compute_powtab): Likewise.
+	* mpn/generic/rootrem.c (mpn_rootrem_internal): Likewise.
+	* tests/refmpn.c (refmpn_mul): Likewise.
+	* mpn/generic/hgcd_appr.c (mpn_hgcd_appr): Propagate mask computation
+	into ASSERT, remove variable.
+
 	* gmp-h.in (__GMP_PROTO): Remove.
 	* Strip __GMP_PROTO usage from all files.
 	* Strip prototype parameter names from all files.

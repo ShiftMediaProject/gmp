@@ -1865,7 +1865,6 @@ refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 {
   mp_ptr tp;
   mp_size_t tn;
-  mp_limb_t cy;
 
   if (vn < TOOM3_THRESHOLD)
     {
@@ -1908,7 +1907,7 @@ refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 	refmpn_mul (wp + vn, up + vn, un - vn, vp, vn);
 
       MPN_COPY (wp, tp, vn);
-      cy = refmpn_add (wp + vn, wp + vn, un, tp + vn, vn);
+      ASSERT_NOCARRY (refmpn_add (wp + vn, wp + vn, un, tp + vn, vn));
     }
   else
     {

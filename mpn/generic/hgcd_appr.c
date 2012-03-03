@@ -53,13 +53,11 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	       struct hgcd_matrix *M, mp_ptr tp)
 {
   mp_size_t s;
-  mp_limb_t mask;
   int success = 0;
 
   ASSERT (n > 0);
-  mask = ap[n-1] | bp[n-1];
 
-  ASSERT (mask > 0);
+  ASSERT ((ap[n-1] | bp[n-1]) != 0);
 
   if (n <= 2)
     /* Implies s = n. A fairly uninteresting case but exercised by the

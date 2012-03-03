@@ -61,7 +61,7 @@ mpn_toom42_mul (mp_ptr pp,
   mp_size_t n, s, t;
   int vm1_neg;
   mp_limb_t cy, vinf0;
-  mp_ptr a0_a2, a1_a3;
+  mp_ptr a0_a2;
   mp_ptr as1, asm1, as2;
   mp_ptr bs1, bsm1, bs2;
   TMP_DECL;
@@ -92,7 +92,6 @@ mpn_toom42_mul (mp_ptr pp,
   bs2 = TMP_SALLOC_LIMBS (n + 1);
 
   a0_a2 = pp;
-  a1_a3 = pp + n + 1;
 
   /* Compute as1 and asm1.  */
   vm1_neg = mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0_a2) & 1;
