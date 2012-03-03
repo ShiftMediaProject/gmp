@@ -28,7 +28,6 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_size_t op1_size, op2_size;
   mp_ptr res_ptr;
   mp_size_t res_size, res_alloc;
-  mp_size_t i;
   TMP_DECL;
 
   TMP_MARK;

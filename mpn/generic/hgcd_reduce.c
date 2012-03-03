@@ -101,8 +101,6 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
 
   if (mn[0][1] == 0)
     {
-      mp_size_t qn;
-
       /* A unchanged, M = (1, 0; q, 1) */
       ASSERT (mn[0][0] == 1);
       ASSERT (M->p[0][0][0] == 1);

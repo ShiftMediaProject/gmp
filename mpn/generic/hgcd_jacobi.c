@@ -78,8 +78,6 @@ hgcd_jacobi_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
   struct hgcd_matrix1 M1;
   mp_limb_t mask;
   mp_limb_t ah, al, bh, bl;
-  mp_size_t an, bn, qn;
-  int col;
 
   ASSERT (n > s);
 

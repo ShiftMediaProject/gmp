@@ -64,9 +64,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
   mp_size_t qn;
   mp_size_t in;
   mp_limb_t cy, c0;
-  int k;
   mp_size_t tn, wn;
-  mp_size_t i;
 
   qn = nn - dn;
 

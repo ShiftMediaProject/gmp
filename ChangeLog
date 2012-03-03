@@ -1,5 +1,12 @@
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/hgcd_step.c (mpn_hgcd_step): Remove unused variables.
+	* mpn/generic/hgcd_jacobi.c (hgcd_jacobi_step): Likewise.
+	* mpn/generic/hgcd_reduce.c (hgcd_matrix_apply): Likewise.
+	* mpn/generic/mu_bdiv_qr.c: Likewise.
+	* mpz/jacobi.c: Likewise.
+	* mpz/mod.c: Likewise.
+
 	* mpn/generic/toom42_mul.c: Remove unread variable.
 	* mpn/generic/set_str.c (mpn_set_str_compute_powtab): Likewise.
 	* mpn/generic/rootrem.c (mpn_rootrem_internal): Likewise.

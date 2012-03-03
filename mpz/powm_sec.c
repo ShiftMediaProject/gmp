@@ -46,7 +46,6 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
   es = SIZ(e);
   if (UNLIKELY (es <= 0))
     {
-      mpz_t new_b;
       if (es == 0)
 	{
 	  /* b^0 mod m,  b is anything and m is non-zero.

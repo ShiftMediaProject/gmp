@@ -48,12 +48,11 @@ int
 mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
   mp_srcptr  asrcp, bsrcp;
-  mp_size_t  asize, bsize, n, itch;
+  mp_size_t  asize, bsize;
   mp_limb_t  alow, blow;
-  mp_ptr     ap, bp, scratch;
+  mp_ptr     ap, bp;
   unsigned   btwos;
   int        result_bit1;
-  unsigned   bits;
   int        res;
   TMP_DECL;
 
