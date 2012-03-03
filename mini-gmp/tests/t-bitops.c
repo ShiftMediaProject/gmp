@@ -27,7 +27,7 @@ main (int argc, char **argv)
   mpz_init (a);
   mpz_init (res);
   mpz_init (ref);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       mini_random_bit_op (OP_SETBIT, MAXBITS, a, &b, ref);
@@ -48,7 +48,7 @@ main (int argc, char **argv)
 	  dump ("res", a);
 	  fprintf (stderr, "b: %lu\n", b);
 	  abort ();
-	}	
+	}
       mini_random_bit_op (OP_CLRBIT, MAXBITS, a, &b, ref);
       mpz_set (res, a);
       mpz_clrbit (res, b);
@@ -67,7 +67,7 @@ main (int argc, char **argv)
 	  dump ("res", a);
 	  fprintf (stderr, "b: %lu\n", b);
 	  abort ();
-	} 
+	}
       mini_random_bit_op (OP_COMBIT, MAXBITS, a, &b, ref);
       mpz_set (res, a);
       mpz_combit (res, b);
@@ -86,7 +86,7 @@ main (int argc, char **argv)
 	  dump ("res", a);
 	  fprintf (stderr, "b: %lu\n", b);
 	  abort ();
-	} 
+	}
     }
   mpz_clear (a);
   mpz_clear (res);
