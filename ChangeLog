@@ -1,5 +1,8 @@
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/k8/gmp-mparam.h: New file.
+	* mpn/x86_64/k10/gmp-mparam.h: New file.
+
 	* mpn/generic/hgcd_step.c (mpn_hgcd_step): Remove unused variables.
 	* mpn/generic/hgcd_jacobi.c (hgcd_jacobi_step): Likewise.
 	* mpn/generic/hgcd_reduce.c (hgcd_matrix_apply): Likewise.
