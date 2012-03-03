@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* dir==1 for ceil, dir==-1 for floor */
 
-static void __gmpz_cfdiv_q_2exp __GMP_PROTO ((REGPARM_3_1 (mpz_ptr, mpz_srcptr, mp_bitcnt_t, int))) REGPARM_ATTR (1);
+static void __gmpz_cfdiv_q_2exp (REGPARM_3_1 (mpz_ptr, mpz_srcptr, mp_bitcnt_t, int)) REGPARM_ATTR (1);
 #define cfdiv_q_2exp(w,u,cnt,dir)  __gmpz_cfdiv_q_2exp (REGPARM_3_1 (w,u,cnt,dir))
 
 REGPARM_ATTR (1) static void

@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static int isprime __GMP_PROTO ((unsigned long int));
+static int isprime (unsigned long int);
 
 
 /* MPN_MOD_OR_MODEXACT_1_ODD can be used instead of mpn_mod_1 for the trial

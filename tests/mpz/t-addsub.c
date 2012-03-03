@@ -25,8 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 #include "tests.h"
 
-void debug_mp __GMP_PROTO ((mpz_t, int));
-void dump_abort __GMP_PROTO ((int, const char *, mpz_t, mpz_t));
+void debug_mp (mpz_t, int);
+void dump_abort (int, const char *, mpz_t, mpz_t);
 
 int
 main (int argc, char **argv)

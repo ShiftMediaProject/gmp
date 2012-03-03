@@ -63,7 +63,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 int   option_libc_scanf = 0;
 
-typedef int (*fun_t) __GMP_PROTO ((const char *, const char *, void *, void *));
+typedef int (*fun_t) (const char *, const char *, void *, void *);
 
 
 /* This problem was seen on powerpc7450-apple-darwin7.0.0, sscanf returns 0

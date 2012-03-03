@@ -60,11 +60,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if TUNE_PROGRAM_BUILD && !HAVE_NATIVE_mpn_mod_1_1p
 /* Duplicates declaratinos in tune/speed.h */
-mp_limb_t mpn_mod_1_1p_1 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
-mp_limb_t mpn_mod_1_1p_2 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+mp_limb_t mpn_mod_1_1p_1 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
+mp_limb_t mpn_mod_1_1p_2 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
 
-void mpn_mod_1_1p_cps_1 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
-void mpn_mod_1_1p_cps_2 __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+void mpn_mod_1_1p_cps_1 (mp_limb_t [4], mp_limb_t);
+void mpn_mod_1_1p_cps_2 (mp_limb_t [4], mp_limb_t);
 
 #undef mpn_mod_1_1p
 #define mpn_mod_1_1p(ap, n, b, pre)			     \

@@ -109,21 +109,21 @@ struct expr
 
 typedef struct expr *expr_t;
 
-void cleanup_and_exit __GMP_PROTO ((int));
+void cleanup_and_exit (int);
 
-char *skipspace __GMP_PROTO ((char *));
-void makeexp __GMP_PROTO ((expr_t *, enum op_t, expr_t, expr_t));
-void free_expr __GMP_PROTO ((expr_t));
-char *expr __GMP_PROTO ((char *, expr_t *));
-char *term __GMP_PROTO ((char *, expr_t *));
-char *power __GMP_PROTO ((char *, expr_t *));
-char *factor __GMP_PROTO ((char *, expr_t *));
-int match __GMP_PROTO ((char *, char *));
-int matchp __GMP_PROTO ((char *, char *));
-int cputime __GMP_PROTO ((void));
+char *skipspace (char *);
+void makeexp (expr_t *, enum op_t, expr_t, expr_t);
+void free_expr (expr_t);
+char *expr (char *, expr_t *);
+char *term (char *, expr_t *);
+char *power (char *, expr_t *);
+char *factor (char *, expr_t *);
+int match (char *, char *);
+int matchp (char *, char *);
+int cputime (void);
 
-void mpz_eval_expr __GMP_PROTO ((mpz_ptr, expr_t));
-void mpz_eval_mod_expr __GMP_PROTO ((mpz_ptr, expr_t, mpz_ptr));
+void mpz_eval_expr (mpz_ptr, expr_t);
+void mpz_eval_mod_expr (mpz_ptr, expr_t, mpz_ptr);
 
 char *error;
 int flag_print = 1;

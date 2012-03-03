@@ -370,12 +370,9 @@ analyze_dat (int final)
 /* Measuring for recompiled mpn/generic/divrem_1.c, mpn/generic/mod_1.c
  * and mpz/fac_ui.c */
 
-mp_limb_t mpn_divrem_1_tune
-  __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
-mp_limb_t mpn_mod_1_tune
-   __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
-void mpz_fac_ui_tune
-   __GMP_PROTO ((mpz_ptr, unsigned long));
+mp_limb_t mpn_divrem_1_tune (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
+mp_limb_t mpn_mod_1_tune (mp_srcptr, mp_size_t, mp_limb_t);
+void mpz_fac_ui_tune (mpz_ptr, unsigned long);
 
 double
 speed_mpn_mod_1_tune (struct speed_params *s)
@@ -1968,7 +1965,7 @@ tune_powm_sec (void)
   param.stop_factor = 2.0;
 
 
-double (*tuned_speed_mpn_divrem_1) __GMP_PROTO ((struct speed_params *));
+double (*tuned_speed_mpn_divrem_1) (struct speed_params *);
 
 void
 tune_divrem_1 (void)

@@ -25,8 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void debug_mp __GMP_PROTO ((mpz_t));
-unsigned long int mpz_refremove __GMP_PROTO ((mpz_t, const mpz_t, const mpz_t));
+void debug_mp (mpz_t);
+unsigned long int mpz_refremove (mpz_t, const mpz_t, const mpz_t);
 
 int
 main (int argc, char **argv)

@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* fat_entry.asm */
-long __gmpn_cpuid __GMP_PROTO ((char dst[12], int id));
+long __gmpn_cpuid (char [12], int);
 
 
 #if WANT_FAKE_CPUID

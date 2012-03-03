@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static void gmp_rrandomb __GMP_PROTO ((mp_ptr, gmp_randstate_t, mp_bitcnt_t));
+static void gmp_rrandomb (mp_ptr, gmp_randstate_t, mp_bitcnt_t);
 
 void
 mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, mp_bitcnt_t nbits)

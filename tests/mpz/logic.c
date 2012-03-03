@@ -24,8 +24,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort __GMP_PROTO (());
-void debug_mp __GMP_PROTO ((mpz_t, int));
+void dump_abort (void);
+void debug_mp (mpz_t, int);
 
 int
 main (int argc, char **argv)

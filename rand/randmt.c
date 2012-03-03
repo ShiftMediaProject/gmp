@@ -350,7 +350,7 @@ __gmp_randclear_mt (gmp_randstate_t rstate)
 		      ALLOC (rstate->_mp_seed) * BYTES_PER_MP_LIMB);
 }
 
-void __gmp_randiset_mt __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
+void __gmp_randiset_mt (gmp_randstate_ptr, gmp_randstate_srcptr);
 
 static const gmp_randfnptr_t Mersenne_Twister_Generator_Noseed = {
   NULL,

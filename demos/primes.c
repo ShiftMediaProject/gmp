@@ -61,9 +61,9 @@ struct primes
 struct primes *primes;
 unsigned long n_primes;
 
-void find_primes __GMP_PROTO ((unsigned char *, mpz_t, unsigned long, mpz_t));
-void sieve_region __GMP_PROTO ((unsigned char *, mpz_t, unsigned long));
-void make_primelist __GMP_PROTO ((unsigned long));
+void find_primes (unsigned char *, mpz_t, unsigned long, mpz_t);
+void sieve_region ((unsigned char *, mpz_t, unsigned long);
+void make_primelist (unsigned long);
 
 int flag_print = 1;
 int flag_count = 0;

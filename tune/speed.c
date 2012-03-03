@@ -288,11 +288,6 @@ const struct routine_t {
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
   { "mpn_gcd",           speed_mpn_gcd                    },
-#if 0
-  { "mpn_gcd_binary",    speed_mpn_gcd_binary             },
-  { "mpn_gcd_accel",     speed_mpn_gcd_accel              },
-  { "find_a",            speed_find_a,        FLAG_NODATA },
-#endif
 
   { "mpn_gcdext",            speed_mpn_gcdext            },
   { "mpn_gcdext_single",     speed_mpn_gcdext_single     },

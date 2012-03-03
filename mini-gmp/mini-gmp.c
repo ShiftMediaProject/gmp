@@ -3134,7 +3134,8 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
   mpz_clear (base);
 }
 
-void mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
+void
+mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
   mpz_init_set_ui (e, elimb);

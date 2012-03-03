@@ -64,11 +64,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HAVE_NATIVE_mpn_add_n_sub_n 1
 #endif
 
-static mp_limb_t mpn_mul_fft_internal
-__GMP_PROTO ((mp_ptr, mp_size_t, int, mp_ptr *, mp_ptr *,
-	      mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_size_t, int **, mp_ptr, int));
-static void mpn_mul_fft_decompose
-__GMP_PROTO ((mp_ptr, mp_ptr *, int, int, mp_srcptr, mp_size_t, int, int, mp_ptr));
+static mp_limb_t mpn_mul_fft_internal (mp_ptr, mp_size_t, int, mp_ptr *,
+				       mp_ptr *, mp_ptr, mp_ptr, mp_size_t,
+				       mp_size_t, mp_size_t, int **, mp_ptr, int);
+static void mpn_mul_fft_decompose (mp_ptr, mp_ptr *, int, int, mp_srcptr,
+				   mp_size_t, int, int, mp_ptr);
 
 
 /* Find the best k to use for a mod 2^(m*GMP_NUMB_BITS)+1 FFT for m >= n.

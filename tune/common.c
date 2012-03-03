@@ -122,8 +122,7 @@ double_cmp_ptr (const double *p, const double *q)
    s->r, -1.0 should be returned.  See the various base routines below.  */
 
 double
-speed_measure (double (*fun) __GMP_PROTO ((struct speed_params *s)),
-	       struct speed_params *s)
+speed_measure (double (*fun) (struct speed_params *s), struct speed_params *s)
 {
 #define TOLERANCE    1.01  /* 1% */
   const int max_zeros = 10;

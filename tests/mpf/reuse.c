@@ -50,9 +50,9 @@ main (void)
 #define EXPO 32
 #endif
 
-void dump_abort __GMP_PROTO ((const char *, mpf_t, mpf_t));
+void dump_abort (const char *, mpf_t, mpf_t);
 
-typedef void (*dss_func) __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+typedef void (*dss_func) (mpf_ptr, mpf_srcptr, mpf_srcptr);
 
 dss_func dss_funcs[] =
 {
@@ -64,7 +64,7 @@ const char *dss_func_names[] =
   "mpf_div", "mpf_add", "mpf_mul", "mpf_sub",
 };
 
-typedef void (*dsi_func) __GMP_PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
+typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
 
 dsi_func dsi_funcs[] =
 {
@@ -78,7 +78,7 @@ const char *dsi_func_names[] =
   "mpf_mul_2exp", "mpf_div_2exp"
 };
 
-typedef void (*dis_func) __GMP_PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
+typedef void (*dis_func) (mpf_ptr, unsigned long int, mpf_srcptr);
 
 dis_func dis_funcs[] =
 {
@@ -203,9 +203,9 @@ dump_abort (const char *name, mpf_t res1, mpf_t res2)
 }
 
 #if 0
-void mpf_abs		__GMP_PROTO ((mpf_ptr, mpf_srcptr));
-void mpf_sqrt		__GMP_PROTO ((mpf_ptr, mpf_srcptr));
-void mpf_neg		__GMP_PROTO ((mpf_ptr, mpf_srcptr));
+void mpf_abs		(mpf_ptr, mpf_srcptr);
+void mpf_sqrt		(mpf_ptr, mpf_srcptr);
+void mpf_neg		(mpf_ptr, mpf_srcptr);
 #endif
 
 #endif /* ! DLL_EXPORT */

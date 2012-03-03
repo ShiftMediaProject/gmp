@@ -26,9 +26,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 #include "tests.h"
 
-void debug_mp __GMP_PROTO ((mpz_t));
-static void refmpz_mul __GMP_PROTO ((mpz_t, const mpz_t, const mpz_t));
-void dump_abort __GMP_PROTO ((int, const char *, mpz_t, mpz_t, mpz_t, mpz_t));
+void debug_mp (mpz_t);
+static void refmpz_mul (mpz_t, const mpz_t, const mpz_t);
+void dump_abort (int, const char *, mpz_t, mpz_t, mpz_t, mpz_t);
 
 #define FFT_MIN_BITSIZE 100000
 

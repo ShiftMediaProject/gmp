@@ -471,7 +471,7 @@ cycles_works_p (void)
    * all linux systems. */
 #ifdef SIGILL
   {
-    RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
+    RETSIGTYPE (*old_handler) (int);
     unsigned  cycles[2];
 
     old_handler = signal (SIGILL, cycles_works_handler);
@@ -832,7 +832,7 @@ int
 mftb_works_p (void)
 {
   unsigned   a[2];
-  RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
+  RETSIGTYPE (*old_handler) (int);
   double     cycletime;
 
   /* suppress a warning about a[] unused */

@@ -77,13 +77,13 @@ mp_limb_t mpn_sub_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_sub_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 mp_limb_t mpn_sub (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
-mp_limb_t mpn_mul_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b);
-mp_limb_t mpn_addmul_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b);
-mp_limb_t mpn_submul_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b);
+mp_limb_t mpn_mul_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
+mp_limb_t mpn_addmul_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
+mp_limb_t mpn_submul_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 
-mp_limb_t mpn_mul (mp_ptr rp, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn);
-void mpn_mul_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n);
-void mpn_sqr (mp_ptr rp, mp_srcptr ap, mp_size_t n);
+mp_limb_t mpn_mul (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+void mpn_mul_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+void mpn_sqr (mp_ptr, mp_srcptr, mp_size_t);
 
 mp_limb_t mpn_lshift (mp_ptr, mp_srcptr, mp_size_t, unsigned int);
 mp_limb_t mpn_rshift (mp_ptr, mp_srcptr, mp_size_t, unsigned int);
@@ -141,7 +141,7 @@ void mpz_cdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 void mpz_fdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 void mpz_tdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 
-void mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d);
+void mpz_divexact (mpz_t, const mpz_t, const mpz_t);
 
 int mpz_divisible_p (const mpz_t, const mpz_t);
 
@@ -158,7 +158,7 @@ unsigned long mpz_cdiv_ui (const mpz_t, unsigned long);
 unsigned long mpz_fdiv_ui (const mpz_t, unsigned long);
 unsigned long mpz_tdiv_ui (const mpz_t, unsigned long);
 
-void mpz_divexact_ui (mpz_t q, const mpz_t n, unsigned long d);
+void mpz_divexact_ui (mpz_t, const mpz_t, unsigned long);
 
 int mpz_divisible_ui_p (const mpz_t, unsigned long);
 

@@ -50,8 +50,8 @@ struct {
 int  ncall;
 
 
-void __cyg_profile_func_enter __GMP_PROTO ((void *this_fn, void *call_site))
-     __attribute__ ((no_instrument_function));
+void __cyg_profile_func_enter (void *, void *)
+  __attribute__ ((no_instrument_function));
 
 void
 __cyg_profile_func_enter (void *this_fn, void *call_site)
@@ -74,8 +74,8 @@ __cyg_profile_func_enter (void *this_fn, void *call_site)
   ncall++;
 }
 
-void __cyg_profile_func_exit __GMP_PROTO ((void *this_fn, void *call_site))
-     __attribute__ ((no_instrument_function));
+void __cyg_profile_func_exit (void *, void *)
+  __attribute__ ((no_instrument_function));
 
 void
 __cyg_profile_func_exit  (void *this_fn, void *call_site)

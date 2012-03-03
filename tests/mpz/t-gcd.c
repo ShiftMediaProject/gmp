@@ -25,10 +25,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void one_test __GMP_PROTO ((mpz_t, mpz_t, mpz_t, int));
-void debug_mp __GMP_PROTO ((mpz_t, int));
+void one_test (mpz_t, mpz_t, mpz_t, int);
+void debug_mp (mpz_t, int);
 
-static int gcdext_valid_p __GMP_PROTO ((const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s));
+static int gcdext_valid_p (const mpz_t, const mpz_t, const mpz_t, const mpz_t);
 
 void
 check_data (void)
