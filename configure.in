@@ -1054,7 +1054,7 @@ case $host in
 	    # asm macros to be right of course.)
 	    #
 	    # gcc64 was an early port of gcc to 64-bit mode, but should be
-	    # obsolete before too long.	 We prefer plain gcc when it knows
+	    # obsolete before too long.  We prefer plain gcc when it knows
 	    # 64-bits.
 	    #
 	    abilist="mode64 mode32 $abilist"
@@ -3602,7 +3602,7 @@ AC_MSG_NOTICE([summary of build options:
   Shared libraries:  ${enable_shared}
 ])
 
-if test x$cross_compiling = xyes ; then	
+if test x$cross_compiling = xyes ; then
    case "$host" in
      *-*-mingw* | *-*-cygwin)
      if test x$ABI = x64 ; then
