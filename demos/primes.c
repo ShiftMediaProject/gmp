@@ -62,7 +62,7 @@ struct primes *primes;
 unsigned long n_primes;
 
 void find_primes (unsigned char *, mpz_t, unsigned long, mpz_t);
-void sieve_region ((unsigned char *, mpz_t, unsigned long);
+void sieve_region (unsigned char *, mpz_t, unsigned long);
 void make_primelist (unsigned long);
 
 int flag_print = 1;
