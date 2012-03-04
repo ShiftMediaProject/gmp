@@ -2,6 +2,7 @@
 
 	* mpz/invert.c: Remove mod 0 branch.
 	* tests/mpz/t-invert.c: Avoid testing mod 0.
+	* doc/gmp.texi (mpz_invert): Specify mod 0 is not handled.
 
 	* gmp-h.in (__gmp_signed): Remove.
 	(__GMP_HAVE_TOKEN_PASTE, __GMP_HAVE_CONST): Remove.
