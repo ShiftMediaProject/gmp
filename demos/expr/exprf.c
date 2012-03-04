@@ -106,8 +106,8 @@ mpf_expr (va_alist)
 #if HAVE_STDARG
   va_start (ap, e);
 #else
-  mpf_ptr           res;
-  int               base;
+  mpf_ptr     res;
+  int         base;
   const char  *e;
   va_start (ap);
   res  = va_arg (ap, mpf_ptr);

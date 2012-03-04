@@ -83,7 +83,7 @@ typedef void (*mpexpr_fun_set_si_t) (mpX_srcptr, long);
 
 struct mpexpr_control_t {
   const struct mpexpr_operator_t  *op;
-  int                                   argcount;
+  int                             argcount;
 };
 
 #define MPEXPR_VARIABLES  26
@@ -91,36 +91,35 @@ struct mpexpr_control_t {
 struct mpexpr_parse_t {
   const struct mpexpr_operator_t  *table;
 
-  mpX_ptr                               res;
-  int                                   base;
-  unsigned long                         prec;
+  mpX_ptr                         res;
+  int                             base;
+  unsigned long                   prec;
   const char                      *e;
-  size_t                                elen;
-  mpX_srcptr                            *var;
-  int                                   error_code;
+  size_t                          elen;
+  mpX_srcptr                      *var;
+  int                             error_code;
 
-  int                                   token;
+  int                             token;
   const struct mpexpr_operator_t  *token_op;
 
-  union mpX_t                           *data_stack;
-  int                                   data_top;
-  int                                   data_alloc;
-  int                                   data_inited;
+  union mpX_t                     *data_stack;
+  int                             data_top;
+  int                             data_alloc;
+  int                             data_inited;
 
-  struct mpexpr_control_t               *control_stack;
-  int                                   control_top;
-  int                                   control_alloc;
+  struct mpexpr_control_t         *control_stack;
+  int                             control_top;
+  int                             control_alloc;
 
-
-  mpexpr_fun_0ary_t                     mpX_clear;
-  mpexpr_fun_i_unary_t                  mpX_ulong_p;
-  mpexpr_fun_get_ui_t                   mpX_get_ui;
-  mpexpr_fun_unary_ui_t                 mpX_init;
-  mpexpr_fun_number_t                   mpX_number;
-  mpexpr_fun_unary_t                    mpX_set;
-  mpexpr_fun_unary_t                    mpX_set_or_swap;
-  mpexpr_fun_set_si_t                   mpX_set_si;
-  mpexpr_fun_swap_t                     mpX_swap;
+  mpexpr_fun_0ary_t               mpX_clear;
+  mpexpr_fun_i_unary_t            mpX_ulong_p;
+  mpexpr_fun_get_ui_t             mpX_get_ui;
+  mpexpr_fun_unary_ui_t           mpX_init;
+  mpexpr_fun_number_t             mpX_number;
+  mpexpr_fun_unary_t              mpX_set;
+  mpexpr_fun_unary_t              mpX_set_or_swap;
+  mpexpr_fun_set_si_t             mpX_set_si;
+  mpexpr_fun_swap_t               mpX_swap;
 };
 
 

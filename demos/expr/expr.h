@@ -101,15 +101,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 typedef void (*mpexpr_fun_t) (void);
 
 struct mpexpr_operator_t {
-  const char  *name;
-  mpexpr_fun_t      fun;
-  int               type;
-  int               precedence;
+  const char   *name;
+  mpexpr_fun_t fun;
+  int          type;
+  int          precedence;
 };
 
 
 int mpf_expr_a (const struct mpexpr_operator_t *, mpf_ptr, int,
-		unsigned long,const char *, size_t, mpf_srcptr [26]);
+		unsigned long, const char *, size_t, mpf_srcptr [26]);
 int mpf_expr (mpf_ptr, int, const char *, ...);
 
 int mpq_expr_a (const struct mpexpr_operator_t *, mpq_ptr,

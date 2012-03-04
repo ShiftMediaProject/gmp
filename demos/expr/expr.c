@@ -278,7 +278,7 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
    a reference through CP.  */
 #define CONTROL_PUSH(opptr,args)                        \
   do {                                                  \
-    const struct mpexpr_operator_t *op = opptr;   \
+    const struct mpexpr_operator_t *op = opptr;		\
     struct mpexpr_control_t *cp;                        \
     CONTROL_SPACE ();                                   \
     p->control_top++;                                   \

@@ -190,8 +190,8 @@ mpz_expr (va_alist)
 #if HAVE_STDARG
   va_start (ap, e);
 #else
-  mpz_ptr           res;
-  int               base;
+  mpz_ptr     res;
+  int         base;
   const char  *e;
   va_start (ap);
   res  = va_arg (ap, mpz_ptr);

@@ -139,8 +139,8 @@ mpq_expr (va_alist)
 #if HAVE_STDARG
   va_start (ap, e);
 #else
-  mpq_ptr           res;
-  int               base;
+  mpq_ptr     res;
+  int         base;
   const char  *e;
   va_start (ap);
   res  = va_arg (ap, mpq_ptr);
