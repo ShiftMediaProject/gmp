@@ -93,19 +93,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
   || defined (_MSC_VER)                                 \
   || defined (_WIN32)
-#define __GMP_HAVE_CONST        1
 #define __GMP_HAVE_PROTOTYPES   1
 #else
-#define __GMP_HAVE_CONST        0
 #define __GMP_HAVE_PROTOTYPES   0
 #endif
 
 
-#if __GMP_HAVE_CONST
 #define __gmp_const   const
-#else
-#define __gmp_const
-#endif
 
 
 /* __GMP_DECLSPEC supports Windows DLL versions of libgmp, and is empty in

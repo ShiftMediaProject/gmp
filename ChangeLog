@@ -3,8 +3,9 @@
 	* mpz/invert.c: Remove mod 0 branch.
 	* tests/mpz/t-invert.c: Avoid testing mod 0.
 
-	* gmp-h.in (__gmp_signed, __GMP_HAVE_TOKEN_PASTE): Remove.
-	* gmp-impl.h: Strip __GMP_HAVE_TOKEN_PASTE usage.
+	* gmp-h.in (__gmp_signed): Remove.
+	(__GMP_HAVE_TOKEN_PASTE, __GMP_HAVE_CONST): Remove.
+	* gmp-impl.h: Strip __GMP_HAVE_TOKEN_PASTE and __GMP_HAVE_CONST.
 
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 

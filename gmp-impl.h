@@ -231,13 +231,6 @@ typedef struct {mp_limb_t inv32;} gmp_pi1_t;
 typedef struct {mp_limb_t inv21, inv32, inv53;} gmp_pi2_t;
 
 
-/* const and signed must match __gmp_const and __gmp_signed, so follow the
-   decision made for those in gmp.h.    */
-#if ! __GMP_HAVE_CONST
-#define const   /* empty */
-#define signed  /* empty */
-#endif
-
 /* "const" basically means a function does nothing but examine its arguments
    and give a return value, it doesn't read or write any memory (neither
    global nor pointed to by arguments), and has no other side-effects.  This
