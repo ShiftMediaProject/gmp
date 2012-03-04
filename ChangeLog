@@ -8,6 +8,8 @@
 	(__GMP_HAVE_TOKEN_PASTE, __GMP_HAVE_CONST): Remove.
 	* gmp-impl.h: Strip __GMP_HAVE_TOKEN_PASTE and __GMP_HAVE_CONST.
 
+	* tests/mpz/t-powm.c (allsizes_seen): Require unsigned*.
+
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/k8/gmp-mparam.h: New file.

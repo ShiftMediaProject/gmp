@@ -33,7 +33,7 @@ void debug_mp (mpz_t, int);
 /* Check that all sizes up to just above MUL_TOOM22_THRESHOLD have been tested
    a few times.  FIXME: If SIZEM is set too low, this will never happen.  */
 int
-allsizes_seen (int *allsizes)
+allsizes_seen (unsigned int *allsizes)
 {
   mp_size_t i;
 
