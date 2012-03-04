@@ -53,8 +53,10 @@ main (int argc, char **argv)
 
       mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (a, rands, mpz_get_ui (bs));
-      mpz_urandomb (bs, rands, size_range);
-      mpz_rrandomb (m, rands, mpz_get_ui (bs));
+      do {
+	mpz_urandomb (bs, rands, size_range);
+	mpz_rrandomb (m, rands, mpz_get_ui (bs));
+      } while (mpz_sgn (m) == 0);
 
       mpz_urandomb (bs, rands, 8);
       bsi = mpz_get_ui (bs);

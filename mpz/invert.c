@@ -2,8 +2,8 @@
    If X has an inverse, return non-zero and store inverse in INVERSE,
    otherwise, return 0 and put garbage in INVERSE.
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2005 Free Software Foundation,
-Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2005, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,8 +34,8 @@ mpz_invert (mpz_ptr inverse, mpz_srcptr x, mpz_srcptr n)
   nsize = ABSIZ (n);
 
   /* No inverse exists if the leftside operand is 0.  Likewise, no
-     inverse exists if the mod operand is 1 or 0.  */
-  if (xsize == 0 || nsize == 0 || (nsize == 1 && (PTR (n))[0] == 1))
+     inverse exists if the mod operand is 1.  */
+  if (xsize == 0 || (nsize == 1 && (PTR (n))[0] == 1))
     return 0;
 
   size = MAX (xsize, nsize) + 1;
