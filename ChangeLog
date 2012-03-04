@@ -3,6 +3,8 @@
 	* mpz/invert.c: Remove mod 0 branch.
 	* tests/mpz/t-invert.c: Avoid testing mod 0.
 
+	* gmp-h.in (__gmp_signed): Remove.
+
 2012-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/k8/gmp-mparam.h: New file.

@@ -105,10 +105,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if __GMP_HAVE_CONST
 #define __gmp_const   const
-#define __gmp_signed  signed
 #else
 #define __gmp_const
-#define __gmp_signed
 #endif
 
 
