@@ -53,7 +53,7 @@ union mpX_t {
 };
 
 typedef union mpX_t *mpX_ptr;
-typedef __gmp_const union mpX_t *mpX_srcptr;
+typedef const union mpX_t *mpX_srcptr;
 
 typedef void (*mpexpr_fun_one_t) (mpX_ptr);
 typedef unsigned long (*mpexpr_fun_ui_one_t) (mpX_ptr);
@@ -76,31 +76,31 @@ typedef void (*mpexpr_fun_ternary_ui_t) (mpX_ptr, mpX_srcptr, mpX_srcptr, unsign
 typedef int (*mpexpr_fun_i_ternary_t) (mpX_srcptr, mpX_srcptr, mpX_srcptr);
 typedef int (*mpexpr_fun_i_ternary_ui_t) (mpX_srcptr, mpX_srcptr, unsigned long);
 
-typedef size_t (*mpexpr_fun_number_t) (mpX_ptr, __gmp_const char *str, size_t len, int base);
+typedef size_t (*mpexpr_fun_number_t) (mpX_ptr, const char *str, size_t len, int base);
 typedef void (*mpexpr_fun_swap_t) (mpX_ptr, mpX_ptr);
 typedef unsigned long (*mpexpr_fun_get_ui_t) (mpX_srcptr);
 typedef void (*mpexpr_fun_set_si_t) (mpX_srcptr, long);
 
 struct mpexpr_control_t {
-  __gmp_const struct mpexpr_operator_t  *op;
+  const struct mpexpr_operator_t  *op;
   int                                   argcount;
 };
 
 #define MPEXPR_VARIABLES  26
 
 struct mpexpr_parse_t {
-  __gmp_const struct mpexpr_operator_t  *table;
+  const struct mpexpr_operator_t  *table;
 
   mpX_ptr                               res;
   int                                   base;
   unsigned long                         prec;
-  __gmp_const char                      *e;
+  const char                      *e;
   size_t                                elen;
   mpX_srcptr                            *var;
   int                                   error_code;
 
   int                                   token;
-  __gmp_const struct mpexpr_operator_t  *token_op;
+  const struct mpexpr_operator_t  *token_op;
 
   union mpX_t                           *data_stack;
   int                                   data_top;
@@ -126,4 +126,4 @@ struct mpexpr_parse_t {
 
 int mpexpr_evaluate (struct mpexpr_parse_t *p);
 int mpexpr_va_to_var (void *var[], va_list ap);
-size_t mpexpr_mpz_number (mpz_ptr res, __gmp_const char *e, size_t elen, int base);
+size_t mpexpr_mpz_number (mpz_ptr res, const char *e, size_t elen, int base);

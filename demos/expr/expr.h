@@ -101,23 +101,23 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 typedef void (*mpexpr_fun_t) (void);
 
 struct mpexpr_operator_t {
-  __gmp_const char  *name;
+  const char  *name;
   mpexpr_fun_t      fun;
   int               type;
   int               precedence;
 };
 
 
-int mpf_expr_a (__gmp_const struct mpexpr_operator_t *, mpf_ptr, int,
-		unsigned long,__gmp_const char *, size_t, mpf_srcptr [26]);
-int mpf_expr (mpf_ptr, int, __gmp_const char *, ...);
+int mpf_expr_a (const struct mpexpr_operator_t *, mpf_ptr, int,
+		unsigned long,const char *, size_t, mpf_srcptr [26]);
+int mpf_expr (mpf_ptr, int, const char *, ...);
 
-int mpq_expr_a (__gmp_const struct mpexpr_operator_t *, mpq_ptr,
-		int, __gmp_const char *, size_t, mpq_srcptr [26]);
-int mpq_expr (mpq_ptr, int, __gmp_const char *, ...);
+int mpq_expr_a (const struct mpexpr_operator_t *, mpq_ptr,
+		int, const char *, size_t, mpq_srcptr [26]);
+int mpq_expr (mpq_ptr, int, const char *, ...);
 
-int mpz_expr_a (__gmp_const struct mpexpr_operator_t *, mpz_ptr, int,
-		__gmp_const char *, size_t, mpz_srcptr [26]);
-int mpz_expr (mpz_ptr, int, __gmp_const char *, ...);
+int mpz_expr_a (const struct mpexpr_operator_t *, mpz_ptr, int,
+		const char *, size_t, mpz_srcptr [26]);
+int mpz_expr (mpz_ptr, int, const char *, ...);
 
 #endif

@@ -4,9 +4,10 @@
 	* tests/mpz/t-invert.c: Avoid testing mod 0.
 	* doc/gmp.texi (mpz_invert): Specify mod 0 is not handled.
 
-	* gmp-h.in (__gmp_signed): Remove.
+	* gmp-h.in (__gmp_signed, __gmp_const): Remove.
 	(__GMP_HAVE_TOKEN_PASTE, __GMP_HAVE_CONST): Remove.
 	* gmp-impl.h: Strip __GMP_HAVE_TOKEN_PASTE and __GMP_HAVE_CONST.
+	* demos/expr/: Strip __gmp_const usage from all files.
 
 	* tests/mpz/t-powm.c (allsizes_seen): Require unsigned*.
 

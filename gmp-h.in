@@ -99,9 +99,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 
-#define __gmp_const   const
-
-
 /* __GMP_DECLSPEC supports Windows DLL versions of libgmp, and is empty in
    all other circumstances.
 
@@ -204,7 +201,7 @@ typedef __mpz_struct MP_INT;    /* gmp 1 source compatibility */
 typedef __mpz_struct mpz_t[1];
 
 typedef mp_limb_t *		mp_ptr;
-typedef __gmp_const mp_limb_t *	mp_srcptr;
+typedef const mp_limb_t *	mp_srcptr;
 #if defined (_CRAY) && ! defined (_CRAYMPP)
 /* plain `int' is much faster (48 bits) */
 #define __GMP_MP_SIZE_T_INT     1
@@ -261,11 +258,11 @@ typedef __gmp_randstate_struct gmp_randstate_t[1];
 
 /* Types for function declarations in gmp files.  */
 /* ??? Should not pollute user name space with these ??? */
-typedef __gmp_const __mpz_struct *mpz_srcptr;
+typedef const __mpz_struct *mpz_srcptr;
 typedef __mpz_struct *mpz_ptr;
-typedef __gmp_const __mpf_struct *mpf_srcptr;
+typedef const __mpf_struct *mpf_srcptr;
 typedef __mpf_struct *mpf_ptr;
-typedef __gmp_const __mpq_struct *mpq_srcptr;
+typedef const __mpq_struct *mpq_srcptr;
 typedef __mpq_struct *mpq_ptr;
 
 
@@ -528,13 +525,13 @@ __GMP_DECLSPEC void mp_get_memory_functions (void *(**) (size_t),
                                       void (**) (void *, size_t)) __GMP_NOTHROW;
 
 #define mp_bits_per_limb __gmp_bits_per_limb
-__GMP_DECLSPEC extern __gmp_const int mp_bits_per_limb;
+__GMP_DECLSPEC extern const int mp_bits_per_limb;
 
 #define gmp_errno __gmp_errno
 __GMP_DECLSPEC extern int gmp_errno;
 
 #define gmp_version __gmp_version
-__GMP_DECLSPEC extern __gmp_const char * __gmp_const gmp_version;
+__GMP_DECLSPEC extern const char * const gmp_version;
 
 
 /**************** Random number routines.  ****************/
@@ -556,7 +553,7 @@ __GMP_DECLSPEC int gmp_randinit_lc_2exp_size (gmp_randstate_t, mp_bitcnt_t);
 __GMP_DECLSPEC void gmp_randinit_mt (gmp_randstate_t);
 
 #define gmp_randinit_set __gmp_randinit_set
-__GMP_DECLSPEC void gmp_randinit_set (gmp_randstate_t, __gmp_const __gmp_randstate_struct *);
+__GMP_DECLSPEC void gmp_randinit_set (gmp_randstate_t, const __gmp_randstate_struct *);
 
 #define gmp_randseed __gmp_randseed
 __GMP_DECLSPEC void gmp_randseed (gmp_randstate_t, mpz_srcptr);
@@ -577,55 +574,55 @@ __GMP_DECLSPEC unsigned long gmp_urandomm_ui (gmp_randstate_t, unsigned long);
 /**************** Formatted output routines.  ****************/
 
 #define gmp_asprintf __gmp_asprintf
-__GMP_DECLSPEC int gmp_asprintf (char **, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_asprintf (char **, const char *, ...);
 
 #define gmp_fprintf __gmp_fprintf
 #ifdef _GMP_H_HAVE_FILE
-__GMP_DECLSPEC int gmp_fprintf (FILE *, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_fprintf (FILE *, const char *, ...);
 #endif
 
 #define gmp_obstack_printf __gmp_obstack_printf
 #if defined (_GMP_H_HAVE_OBSTACK)
-__GMP_DECLSPEC int gmp_obstack_printf (struct obstack *, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_obstack_printf (struct obstack *, const char *, ...);
 #endif
 
 #define gmp_obstack_vprintf __gmp_obstack_vprintf
 #if defined (_GMP_H_HAVE_OBSTACK) && defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_obstack_vprintf (struct obstack *, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_obstack_vprintf (struct obstack *, const char *, va_list);
 #endif
 
 #define gmp_printf __gmp_printf
-__GMP_DECLSPEC int gmp_printf (__gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_printf (const char *, ...);
 
 #define gmp_snprintf __gmp_snprintf
-__GMP_DECLSPEC int gmp_snprintf (char *, size_t, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_snprintf (char *, size_t, const char *, ...);
 
 #define gmp_sprintf __gmp_sprintf
-__GMP_DECLSPEC int gmp_sprintf (char *, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_sprintf (char *, const char *, ...);
 
 #define gmp_vasprintf __gmp_vasprintf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vasprintf (char **, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vasprintf (char **, const char *, va_list);
 #endif
 
 #define gmp_vfprintf __gmp_vfprintf
 #if defined (_GMP_H_HAVE_FILE) && defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vfprintf (FILE *, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vfprintf (FILE *, const char *, va_list);
 #endif
 
 #define gmp_vprintf __gmp_vprintf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vprintf (__gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vprintf (const char *, va_list);
 #endif
 
 #define gmp_vsnprintf __gmp_vsnprintf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vsnprintf (char *, size_t, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vsnprintf (char *, size_t, const char *, va_list);
 #endif
 
 #define gmp_vsprintf __gmp_vsprintf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vsprintf (char *, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vsprintf (char *, const char *, va_list);
 #endif
 
 
@@ -633,28 +630,28 @@ __GMP_DECLSPEC int gmp_vsprintf (char *, __gmp_const char *, va_list);
 
 #define gmp_fscanf __gmp_fscanf
 #ifdef _GMP_H_HAVE_FILE
-__GMP_DECLSPEC int gmp_fscanf (FILE *, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_fscanf (FILE *, const char *, ...);
 #endif
 
 #define gmp_scanf __gmp_scanf
-__GMP_DECLSPEC int gmp_scanf (__gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_scanf (const char *, ...);
 
 #define gmp_sscanf __gmp_sscanf
-__GMP_DECLSPEC int gmp_sscanf (__gmp_const char *, __gmp_const char *, ...);
+__GMP_DECLSPEC int gmp_sscanf (const char *, const char *, ...);
 
 #define gmp_vfscanf __gmp_vfscanf
 #if defined (_GMP_H_HAVE_FILE) && defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vfscanf (FILE *, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vfscanf (FILE *, const char *, va_list);
 #endif
 
 #define gmp_vscanf __gmp_vscanf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vscanf (__gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vscanf (const char *, va_list);
 #endif
 
 #define gmp_vsscanf __gmp_vsscanf
 #if defined (_GMP_H_HAVE_VA_LIST)
-__GMP_DECLSPEC int gmp_vsscanf (__gmp_const char *, __gmp_const char *, va_list);
+__GMP_DECLSPEC int gmp_vsscanf (const char *, const char *, va_list);
 #endif
 
 
@@ -884,7 +881,7 @@ __GMP_DECLSPEC mp_limb_t mpz_getlimbn (mpz_srcptr, mp_size_t) __GMP_NOTHROW __GM
 __GMP_DECLSPEC mp_bitcnt_t mpz_hamdist (mpz_srcptr, mpz_srcptr) __GMP_NOTHROW __GMP_ATTRIBUTE_PURE;
 
 #define mpz_import __gmpz_import
-__GMP_DECLSPEC void mpz_import (mpz_ptr, size_t, int, size_t, int, size_t, __gmp_const void *);
+__GMP_DECLSPEC void mpz_import (mpz_ptr, size_t, int, size_t, int, size_t, const void *);
 
 #define mpz_init __gmpz_init
 __GMP_DECLSPEC void mpz_init (mpz_ptr);
@@ -905,7 +902,7 @@ __GMP_DECLSPEC void mpz_init_set_d (mpz_ptr, double);
 __GMP_DECLSPEC void mpz_init_set_si (mpz_ptr, signed long int);
 
 #define mpz_init_set_str __gmpz_init_set_str
-__GMP_DECLSPEC int mpz_init_set_str (mpz_ptr, __gmp_const char *, int);
+__GMP_DECLSPEC int mpz_init_set_str (mpz_ptr, const char *, int);
 
 #define mpz_init_set_ui __gmpz_init_set_ui
 __GMP_DECLSPEC void mpz_init_set_ui (mpz_ptr, unsigned long int);
@@ -1068,7 +1065,7 @@ __GMP_DECLSPEC void mpz_set_q (mpz_ptr, mpq_srcptr);
 __GMP_DECLSPEC void mpz_set_si (mpz_ptr, signed long int);
 
 #define mpz_set_str __gmpz_set_str
-__GMP_DECLSPEC int mpz_set_str (mpz_ptr, __gmp_const char *, int);
+__GMP_DECLSPEC int mpz_set_str (mpz_ptr, const char *, int);
 
 #define mpz_set_ui __gmpz_set_ui
 __GMP_DECLSPEC void mpz_set_ui (mpz_ptr, unsigned long int);
@@ -1250,7 +1247,7 @@ __GMP_DECLSPEC void mpq_set_num (mpq_ptr, mpz_srcptr);
 __GMP_DECLSPEC void mpq_set_si (mpq_ptr, signed long int, unsigned long int);
 
 #define mpq_set_str __gmpq_set_str
-__GMP_DECLSPEC int mpq_set_str (mpq_ptr, __gmp_const char *, int);
+__GMP_DECLSPEC int mpq_set_str (mpq_ptr, const char *, int);
 
 #define mpq_set_ui __gmpq_set_ui
 __GMP_DECLSPEC void mpq_set_ui (mpq_ptr, unsigned long int, unsigned long int);
@@ -1372,7 +1369,7 @@ __GMP_DECLSPEC void mpf_init_set_d (mpf_ptr, double);
 __GMP_DECLSPEC void mpf_init_set_si (mpf_ptr, signed long int);
 
 #define mpf_init_set_str __gmpf_init_set_str
-__GMP_DECLSPEC int mpf_init_set_str (mpf_ptr, __gmp_const char *, int);
+__GMP_DECLSPEC int mpf_init_set_str (mpf_ptr, const char *, int);
 
 #define mpf_init_set_ui __gmpf_init_set_ui
 __GMP_DECLSPEC void mpf_init_set_ui (mpf_ptr, unsigned long int);
@@ -1433,7 +1430,7 @@ __GMP_DECLSPEC void mpf_set_q (mpf_ptr, mpq_srcptr);
 __GMP_DECLSPEC void mpf_set_si (mpf_ptr, signed long int);
 
 #define mpf_set_str __gmpf_set_str
-__GMP_DECLSPEC int mpf_set_str (mpf_ptr, __gmp_const char *, int);
+__GMP_DECLSPEC int mpf_set_str (mpf_ptr, const char *, int);
 
 #define mpf_set_ui __gmpf_set_ui
 __GMP_DECLSPEC void mpf_set_ui (mpf_ptr, unsigned long int);
@@ -1596,7 +1593,7 @@ __GMP_DECLSPEC mp_bitcnt_t mpn_scan0 (mp_srcptr, mp_bitcnt_t) __GMP_ATTRIBUTE_PU
 __GMP_DECLSPEC mp_bitcnt_t mpn_scan1 (mp_srcptr, mp_bitcnt_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_set_str __MPN(set_str)
-__GMP_DECLSPEC mp_size_t mpn_set_str (mp_ptr, __gmp_const unsigned char *, size_t, int);
+__GMP_DECLSPEC mp_size_t mpn_set_str (mp_ptr, const unsigned char *, size_t, int);
 
 #define mpn_sqrtrem __MPN(sqrtrem)
 __GMP_DECLSPEC mp_size_t mpn_sqrtrem (mp_ptr, mp_ptr, mp_srcptr, mp_size_t);

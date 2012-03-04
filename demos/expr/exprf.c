@@ -34,7 +34,7 @@ e_mpf_sgn (mpf_srcptr x)
 }
 
 
-static __gmp_const struct mpexpr_operator_t  _mpf_expr_standard_table[] = {
+static const struct mpexpr_operator_t  _mpf_expr_standard_table[] = {
 
   { "**",  (mpexpr_fun_t) mpf_pow_ui,
     MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,                   220 },
@@ -88,13 +88,13 @@ static __gmp_const struct mpexpr_operator_t  _mpf_expr_standard_table[] = {
   { NULL }
 };
 
-__gmp_const struct mpexpr_operator_t * __gmp_const mpf_expr_standard_table
+const struct mpexpr_operator_t * const mpf_expr_standard_table
 = _mpf_expr_standard_table;
 
 
 int
 #if HAVE_STDARG
-mpf_expr (mpf_ptr res, int base, __gmp_const char *e, ...)
+mpf_expr (mpf_ptr res, int base, const char *e, ...)
 #else
 mpf_expr (va_alist)
      va_dcl
@@ -108,11 +108,11 @@ mpf_expr (va_alist)
 #else
   mpf_ptr           res;
   int               base;
-  __gmp_const char  *e;
+  const char  *e;
   va_start (ap);
   res  = va_arg (ap, mpf_ptr);
   base = va_arg (ap, int);
-  e    = va_arg (ap, __gmp_const char *);
+  e    = va_arg (ap, const char *);
 #endif
 
   TRACE (printf ("mpf_expr(): base %d, %s\n", base, e));
