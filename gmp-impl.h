@@ -3731,17 +3731,9 @@ __GMP_DECLSPEC void __gmp_invalid_operation (void) ATTRIBUTE_NORETURN;
 #define SQRT_OF_NEGATIVE  __gmp_sqrt_of_negative ()
 
 #if defined _LONG_LONG_LIMB
-#if __GMP_HAVE_TOKEN_PASTE
 #define CNST_LIMB(C) ((mp_limb_t) C##LL)
-#else
-#define CNST_LIMB(C) ((mp_limb_t) C/**/LL)
-#endif
 #else /* not _LONG_LONG_LIMB */
-#if __GMP_HAVE_TOKEN_PASTE
 #define CNST_LIMB(C) ((mp_limb_t) C##L)
-#else
-#define CNST_LIMB(C) ((mp_limb_t) C/**/L)
-#endif
 #endif /* _LONG_LONG_LIMB */
 
 /* Stuff used by mpn/generic/perfsqr.c and mpz/prime_p.c */
