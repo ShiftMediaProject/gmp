@@ -1,3 +1,8 @@
+2012-03-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bobcat/mul_1.asm: New file.
+	* mpn/x86_64/bobcat/aorsmul_1.asm: New file.
+
 2012-03-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/invert.c: Remove mod 0 branch.
