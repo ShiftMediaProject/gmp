@@ -808,8 +808,8 @@ main ()
 	case 16:		/* K10 */
 	  cpu_64bit = 1, modelstr = "k10";
 	  break;
-	case 17:		/* AMD Internal, assume future K10 */
-	  cpu_64bit = 1, modelstr = "k10";
+	case 17:		/* Hybrid k8/k10, claim k8 */
+	  cpu_64bit = 1, modelstr = "k8";
 	  break;
 	case 18:		/* Llano, uses K10 core */
 	  cpu_64bit = 1, modelstr = "k10";

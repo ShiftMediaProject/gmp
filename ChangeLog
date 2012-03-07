@@ -1,5 +1,7 @@
 2012-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Handle AMD 11h correctly.
+
 	* tune/tuneup.c (tune_redc): Better handle situation where redc_2 is
 	never faster.
 
