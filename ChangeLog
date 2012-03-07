@@ -1,5 +1,7 @@
 2012-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (x86_64 fat_path): List recently added AMD directories.
+
 	* mpn/x86_64/bobcat/copyi.asm: New file.
 	* mpn/x86_64/bobcat/copyd.asm: New file.
 
