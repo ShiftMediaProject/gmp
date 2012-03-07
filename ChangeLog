@@ -1,5 +1,8 @@
 2012-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/bobcat/copyi.asm: New file.
+	* mpn/x86_64/bobcat/copyd.asm: New file.
+
 	* config.guess: Handle AMD 11h correctly.
 
 	* tune/tuneup.c (tune_redc): Better handle situation where redc_2 is
