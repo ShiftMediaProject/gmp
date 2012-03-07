@@ -43,11 +43,11 @@ void tests_end (void);
 
 void tests_memory_start (void);
 void tests_memory_end (void);
-void *tests_allocate (size_t size);
-void *tests_reallocate (void *ptr, size_t old_size, size_t new_size);
-void tests_free (void *ptr, size_t size);
-void tests_free_nosize (void *ptr);
-int tests_memory_valid (void *ptr);
+void *tests_allocate (size_t);
+void *tests_reallocate (void *, size_t, size_t);
+void tests_free (void *, size_t);
+void tests_free_nosize (void *);
+int tests_memory_valid (void *);
 
 void tests_rand_start (void);
 void tests_rand_end (void);
@@ -94,7 +94,7 @@ int calling_conventions_check (void);
 
 extern int mp_trace_base;
 void mp_limb_trace (const char *, mp_limb_t);
-void mpn_trace (const char *name, mp_srcptr ptr, mp_size_t size);
+void mpn_trace (const char *, mp_srcptr, mp_size_t);
 void mpn_tracea (const char *, const mp_ptr *, int, mp_size_t);
 void mpn_tracen (const char *, int, mp_srcptr, mp_size_t);
 void mpn_trace_file (const char *, mp_srcptr, mp_size_t);
@@ -152,7 +152,7 @@ mp_limb_t ref_subc_limb (mp_limb_t *, mp_limb_t, mp_limb_t);
 
 
 void refmpf_add (mpf_ptr, mpf_srcptr, mpf_srcptr);
-void refmpf_add_ulp (mpf_ptr f);
+void refmpf_add_ulp (mpf_ptr );
 void refmpf_fill (mpf_ptr, mp_size_t, mp_limb_t);
 void refmpf_normalize (mpf_ptr);
 void refmpf_set_prec_limbs (mpf_ptr, unsigned long);
