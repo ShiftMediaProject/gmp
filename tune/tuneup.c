@@ -1715,6 +1715,7 @@ tune_redc (void)
     param.min_is_always = 1;
     param.max_size = TUNE_REDC_2_MAX;
     param.noprint = 1;
+    param.stop_factor = 1.5;
     one (&redc_1_to_redc_2_threshold, &param);
   }
   {
@@ -1726,17 +1727,24 @@ tune_redc (void)
     param.noprint = 1;
     one (&redc_2_to_redc_n_threshold, &param);
   }
-  if (redc_1_to_redc_2_threshold >= TUNE_REDC_2_MAX - 1)
+  if (redc_1_to_redc_2_threshold >= redc_2_to_redc_n_threshold)
     {
-      /* Disable REDC_2.  This is not supposed to happen.  */
-      print_define ("REDC_1_TO_REDC_2_THRESHOLD", REDC_2_TO_REDC_N_THRESHOLD);
-      print_define_remark ("REDC_2_TO_REDC_N_THRESHOLD", 0, "anomaly: never REDC_2");
+      redc_2_to_redc_n_threshold = 0;	/* disable redc_2 */
+
+      /* Never use redc2, measure redc_1 -> redc_n cutoff, store result as
+	 REDC_1_TO_REDC_2_THRESHOLD.  */
+      {
+	static struct param_t  param;
+	param.name = "REDC_1_TO_REDC_2_THRESHOLD";
+	param.function = speed_mpn_redc_1;
+	param.function2 = speed_mpn_redc_n;
+	param.min_size = 16;
+	param.noprint = 1;
+	one (&redc_1_to_redc_2_threshold, &param);
+      }
     }
-  else
-    {
-      print_define ("REDC_1_TO_REDC_2_THRESHOLD", REDC_1_TO_REDC_2_THRESHOLD);
-      print_define ("REDC_2_TO_REDC_N_THRESHOLD", REDC_2_TO_REDC_N_THRESHOLD);
-    }
+  print_define ("REDC_1_TO_REDC_2_THRESHOLD", REDC_1_TO_REDC_2_THRESHOLD);
+  print_define ("REDC_2_TO_REDC_N_THRESHOLD", REDC_2_TO_REDC_N_THRESHOLD);
 #else
   {
     static struct param_t  param;
