@@ -1,3 +1,7 @@
+2012-03-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/addmul_2.asm: Port to DOS64.
+
 2012-02-29  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Ignore partial C++11 support in g++-4.6.
