@@ -40,8 +40,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 // Use C++11 features
 #ifndef __GMPXX_USE_CXX11
-#if (__cplusplus >= 201103L) \
-    || (__GMP_GNUC_PREREQ(4, 6) && defined __GXX_EXPERIMENTAL_CXX0X__)
+#if __cplusplus >= 201103L
 #define __GMPXX_USE_CXX11 1
 #else
 #define __GMPXX_USE_CXX11 0
@@ -1980,6 +1979,27 @@ public:
 typedef __gmp_expr<mpf_t, mpf_t> mpf_class;
 
 
+
+/**************** User-defined literals ****************/
+
+#if __GMPXX_USE_CXX11
+inline mpz_class operator"" _mpz(const char* s)
+{
+  return mpz_class(s);
+}
+
+inline mpq_class operator"" _mpq(const char* s)
+{
+  mpq_class q;
+  q.get_num() = s;
+  return q;
+}
+
+inline mpf_class operator"" _mpf(const char* s)
+{
+  return mpf_class(s);
+}
+#endif
 
 /**************** I/O operators ****************/
 

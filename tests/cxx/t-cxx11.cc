@@ -34,11 +34,10 @@ void check_noexcept ()
   mpz_class z1, z2;
   mpq_class q1, q2;
   mpf_class f1, f2;
-  // gcc 4.6 is missing noexcept on std::move
-  static_assert(noexcept(z1 = static_cast<mpz_class&&>(z2)), "sorry");
-  static_assert(noexcept(q1 = static_cast<mpq_class&&>(q2)), "sorry");
-  static_assert(noexcept(f1 = static_cast<mpf_class&&>(f2)), "sorry");
-  static_assert(noexcept(q1 = static_cast<mpz_class&&>(z1)), "sorry");
+  static_assert(noexcept(z1 = std::move(z2)), "sorry");
+  static_assert(noexcept(q1 = std::move(q2)), "sorry");
+  static_assert(noexcept(f1 = std::move(f2)), "sorry");
+  static_assert(noexcept(q1 = std::move(z1)), "sorry");
 }
 
 void check_common_type ()
@@ -158,6 +157,17 @@ void check_move_assign ()
   }
 }
 
+void check_user_defined_literal ()
+{
+  ASSERT_ALWAYS (123_mpz % 5 == 3);
+  ASSERT_ALWAYS (-11_mpq / 22 == -.5);
+  ASSERT_ALWAYS (112.5e-1_mpf * 4 == 45);
+  {
+    mpz_class ref ( "123456789abcdef0123456789abcdef0123", 16);
+    ASSERT_ALWAYS (0x123456789abcdef0123456789abcdef0123_mpz == ref);
+  }
+}
+
 int
 main (void)
 {
@@ -173,6 +183,7 @@ main (void)
   check_move_assign<mpf_class>();
   check_move_init<mpz_class,mpq_class>();
   check_move_assign<mpz_class,mpq_class>();
+  check_user_defined_literal();
 
   tests_end();
   return 0;

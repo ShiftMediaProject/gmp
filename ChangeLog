@@ -1,3 +1,12 @@
+2012-02-29  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h: Ignore partial C++11 support in g++-4.6.
+	* tests/cxx/t-cxx11.cc: Likewise.
+
+	* gmpxx.h (operator""): New functions.
+	* tests/cxx/t-cxx11.cc: Test the above.
+	* doc/gmp.texi: Document the above.
+
 2012-03-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* acinclude.m4 (GMP_H_ANSI): Remove.
