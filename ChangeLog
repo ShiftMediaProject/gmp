@@ -1,5 +1,8 @@
 2012-03-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Recognise "bulldozer".
+	(__gmpn_cpuvec_init): Overhaul to match configure.in.
+
 	* configure.in: Adjust bulldozer path_64.
 
 2012-03-07  Torbjorn Granlund  <tege@gmplib.org>

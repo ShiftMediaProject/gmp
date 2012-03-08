@@ -7,7 +7,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2009, 2011 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2009, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -69,6 +69,7 @@ static struct {
   { "k8",         "AuthenticAMD", MAKE_FMS (15, 0) },
   { "k10",        "AuthenticAMD", MAKE_FMS (16, 0) },
   { "bobcat",     "AuthenticAMD", MAKE_FMS (20, 1) },
+  { "bulldozer",  "AuthenticAMD", MAKE_FMS (21, 1) },
 
   { "nano",       "CentaurHauls", MAKE_FMS (6, 15) },
 };
@@ -270,6 +271,7 @@ __gmpn_cpuvec_init (void)
 	    case 0x2a:		/* SB */
 	    case 0x2d:		/* SBC-EP */
 	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
 	      break;
 	    }
@@ -289,9 +291,26 @@ __gmpn_cpuvec_init (void)
 	  abort ();
 
 	case 15:		/* k8 */
-	case 16:		/* k10 */
-	  /* CPUVEC_SETUP_athlon */
+	case 17:		/* "fam 11h", mix of k8 and k10 */
+	case 19:
+	case 22:
+	case 23:
+	  CPUVEC_SETUP_k8;
 	  break;
+	case 16:		/* k10 */
+	case 18:		/* k10 (llano) */
+	  CPUVEC_SETUP_k8;
+	  CPUVEC_SETUP_k10;
+	  break;
+	case 20:		/* bobcat */
+	  CPUVEC_SETUP_k8;
+	  CPUVEC_SETUP_k10;
+	  CPUVEC_SETUP_bobcat;
+	  break;
+	case 21:		/* bulldozer */
+	  CPUVEC_SETUP_k8;
+	  CPUVEC_SETUP_k10;
+	  CPUVEC_SETUP_bd1;
 	}
     }
   else if (strcmp (vendor_string, "CentaurHauls") == 0)
