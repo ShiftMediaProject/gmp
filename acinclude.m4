@@ -3599,28 +3599,6 @@ fi
 ])
 
 
-dnl  GMP_H_ANSI
-dnl  ----------
-dnl  Check whether gmp.h recognises the compiler as ANSI capable.
-
-AC_DEFUN([GMP_H_ANSI],
-[AC_REQUIRE([AC_PROG_CC_STDC])
-case $ac_cv_prog_cc_stdc in
-  no)
-    ;;
-  *)
-    AC_TRY_COMPILE(
-GMP_INCLUDE_GMP_H
-[#if ! __GMP_HAVE_PROTOTYPES
-die die die
-#endif
-],,,
-    [AC_MSG_WARN([gmp.h doesnt recognise compiler as ANSI, prototypes and "const" will be unavailable])])
-    ;;
-esac
-])
-
-
 dnl  GMP_H_EXTERN_INLINE
 dnl  -------------------
 dnl  If the compiler has an "inline" of some sort, check whether the

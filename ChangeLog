@@ -1,3 +1,9 @@
+2012-03-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* acinclude.m4 (GMP_H_ANSI): Remove.
+	* configure.in: Don't use GMP_H_ANSI.
+	* gmp-h.in (__GMP_HAVE_PROTOTYPES): Remove.
+
 2012-03-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Recognise "bulldozer".

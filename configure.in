@@ -2096,7 +2096,6 @@ AC_SUBST(DEFN_LONG_LONG_LIMB)
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
-GMP_H_ANSI
 
 
 # The C compiler on the build system, and associated tests.

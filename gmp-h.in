@@ -61,44 +61,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 
-/* __STDC__ - some ANSI compilers define this only to 0, hence the use of
-       "defined" and not "__STDC__-0".  In particular Sun workshop C 5.0
-       sets __STDC__ to 0, but requires "##" for token pasting.
-
-   _AIX - gnu ansidecl.h asserts that all known AIX compilers are ANSI but
-       don't always define __STDC__.
-
-   __DECC - current versions of DEC C (5.9 for instance) for alpha are ANSI,
-       but don't define __STDC__ in their default mode.  Don't know if old
-       versions might have been K&R, but let's not worry about that unless
-       someone is still using one.
-
-   _mips - gnu ansidecl.h says the RISC/OS MIPS compiler is ANSI in SVR4
-       mode, but doesn't define __STDC__.
-
-   _MSC_VER - Microsoft C is ANSI, but __STDC__ is undefined unless the /Za
-       option is given (in which case it's 1).
-
-   _WIN32 - tested for by gnu ansidecl.h, no doubt on the assumption that
-      all w32 compilers are ansi.
-
-   Note: This same set of tests is used by gen-psqr.c and
-   demos/expr/expr-impl.h, so if anything needs adding, then be sure to
-   update those too.  */
-
-#if  defined (__STDC__)                                 \
-  || defined (__cplusplus)                              \
-  || defined (_AIX)                                     \
-  || defined (__DECC)                                   \
-  || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
-  || defined (_MSC_VER)                                 \
-  || defined (_WIN32)
-#define __GMP_HAVE_PROTOTYPES   1
-#else
-#define __GMP_HAVE_PROTOTYPES   0
-#endif
-
-
 /* __GMP_DECLSPEC supports Windows DLL versions of libgmp, and is empty in
    all other circumstances.
 
