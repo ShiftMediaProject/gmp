@@ -34,7 +34,8 @@ you lose
 /* For testing purposes, define our own mpn_addmul_2 if there is none already
    available.  */
 #ifndef HAVE_NATIVE_mpn_addmul_2
-mp_limb_t
+#undef mpn_addmul_2
+static mp_limb_t
 mpn_addmul_2 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_srcptr vp)
 {
   rp[n] = mpn_addmul_1 (rp, up, n, vp[0]);
