@@ -1,3 +1,33 @@
+2012-03-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (fat_functions): Add addlsh1_n, addlsh2_n, addmul_2,
+	mullo_basecase, redc_1, redc_2, sublsh1_n.
+
+	* gmp-impl.h (struct cpuvec_t): Add fields for new fat functions.
+	* gmp-impl.h: Adjust corresponding declarations.
+
+	* mpn/generic/redc_2.c (mpn_addmul_2): Make static.
+
+	* mpn/x86_64/fat/fat_entry.asm (FAT_INIT): Expand before fat_init to
+	reduce branch offsets.  Pass plain 0,1,3... in %al since we'd else run
+	out of 8-bit range.
+
+	* mpn/x86_64/fat/fat_entry.asm (fat_init): Scale passed index value.
+	* mpn/x86/fat/fat_entry.asm (fat_init): Use movzbl for expanding index
+	value.
+
+	* mpn/x86_64/x86_64-defs.m4 (CPUVEC_FUNCS_LIST): Add new fat functions.
+	* mpn/x86/x86-defs.m4 (CPUVEC_FUNCS_LIST): Likewise.
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec): Likewise.
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec): Likewise.
+
+	* mpn/x86_64/fat/redc_2.c: New file.
+	* mpn/x86/fat/mullo_basecase.c: New file.
+	* mpn/x86/fat/redc_1.c: New file.
+	* mpn/x86/fat/redc_2.c: New file.
+
+	* tests/mpn/t-fat.c: Test mullo_basecase.
+
 2012-03-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/addmul_2.asm: Port to DOS64.
