@@ -58,7 +58,10 @@ dnl  order they appear in that structure.
 
 define(CPUVEC_FUNCS_LIST,
 ``add_n',
+`addlsh1_n',
+`addlsh2_n',
 `addmul_1',
+`addmul_2',
 `bdiv_dbm1c',
 `com',
 `copyd',
@@ -79,11 +82,15 @@ define(CPUVEC_FUNCS_LIST,
 `modexact_1c_odd',
 `mul_1',
 `mul_basecase',
+`mullo_basecase',
 `preinv_divrem_1',
 `preinv_mod_1',
+`redc_1',
+`redc_2',
 `rshift',
 `sqr_basecase',
 `sub_n',
+`sublsh1_n',
 `submul_1'')
 
 

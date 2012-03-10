@@ -118,7 +118,7 @@ EPILOGUE()
 L(fat_init):
 	C al	__gmpn_cpuvec byte offset
 
-	movsbl	%al, %eax
+	movzbl	%al, %eax
 	pushl	%eax
 
 ifdef(`PIC',`

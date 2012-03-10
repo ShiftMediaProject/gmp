@@ -1,6 +1,6 @@
 /* Test fat binary setups.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -205,6 +205,15 @@ check_functions (void)
       mpn_mul_basecase (wp, xp, (mp_size_t) 1, yp, (mp_size_t) 1);
       ASSERT_ALWAYS (wp[0] == 35);
       ASSERT_ALWAYS (wp[1] == 0);
+    }
+
+  memcpy (&__gmpn_cpuvec, &initial_cpuvec, sizeof (__gmpn_cpuvec));
+  for (i = 0; i < 2; i++)
+    {
+      xp[0] = 5;
+      yp[0] = 7;
+      mpn_mullo_basecase (wp, xp, yp, (mp_size_t) 1);
+      ASSERT_ALWAYS (wp[0] == 35);
     }
 
 #if HAVE_NATIVE_mpn_preinv_divrem_1 && GMP_NAIL_BITS == 0

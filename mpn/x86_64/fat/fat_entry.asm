@@ -132,6 +132,15 @@ m4_assert_numargs(2)
 EPILOGUE()
 ')
 
+dnl  FAT_INIT for each CPUVEC_FUNCS_LIST
+dnl
+
+define(`CPUVEC_offset',0)
+foreach(i,
+`FAT_INIT(MPN(i`'_init),CPUVEC_offset)
+define(`CPUVEC_offset',eval(CPUVEC_offset + 1))',
+CPUVEC_FUNCS_LIST)
+
 L(fat_init):
 	C al	__gmpn_cpuvec byte offset
 
@@ -153,20 +162,10 @@ IFSTD(`	pop	%rsi	')
 IFSTD(`	pop	%rdi	')
 ifdef(`PIC_OR_DARWIN',`
 	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %r10)
-	jmp	*(%r10,%rax)
+	jmp	*(%r10,%rax,8)
 ',`dnl non-PIC
-	jmp	*GSYM_PREFIX`'__gmpn_cpuvec(%rax)
+	jmp	*GSYM_PREFIX`'__gmpn_cpuvec(,%rax,8)
 ')
-
-dnl  FAT_INIT for each CPUVEC_FUNCS_LIST
-dnl
-
-define(`CPUVEC_offset',0)
-foreach(i,
-`FAT_INIT(MPN(i`'_init),CPUVEC_offset)
-define(`CPUVEC_offset',eval(CPUVEC_offset + 8))',
-CPUVEC_FUNCS_LIST)
-
 
 
 C long __gmpn_cpuid (char dst[12], int id);

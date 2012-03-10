@@ -128,7 +128,10 @@ typedef DECL_preinv_mod_1    ((*preinv_mod_1_t));
 
 struct cpuvec_t __gmpn_cpuvec = {
   __MPN(add_n_init),
+  0,
+  0,
   __MPN(addmul_1_init),
+  0,
   __MPN(bdiv_dbm1c_init),
   __MPN(com_init),
   __MPN(copyd_init),
@@ -149,11 +152,15 @@ struct cpuvec_t __gmpn_cpuvec = {
   __MPN(modexact_1c_odd_init),
   __MPN(mul_1_init),
   __MPN(mul_basecase_init),
+  __MPN(mullo_basecase_init),
   __MPN(preinv_divrem_1_init),
   __MPN(preinv_mod_1_init),
+  __MPN(redc_1_init),
+  __MPN(redc_2_init),
   __MPN(rshift_init),
   __MPN(sqr_basecase_init),
   __MPN(sub_n_init),
+  0,
   __MPN(submul_1_init),
   0
 };
@@ -283,7 +290,15 @@ __gmpn_cpuvec_init (void)
               CPUVEC_SETUP_k7;
               CPUVEC_SETUP_k7_mmx;
               break;
-            case 15:
+            case 15:		/* k8 */
+            case 16:		/* k10 */
+            case 17:		/* "fam 11h", mix of k8 and k10 */
+            case 18:		/* k10 (llano) */
+            case 19:
+            case 20:		/* bobcat */
+            case 21:		/* bulldozer */
+            case 22:
+            case 23:
               TRACE (printf ("  x86_64\n"));
               goto athlon;
             }

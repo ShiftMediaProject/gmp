@@ -4,7 +4,7 @@ dnl  Process this file with autoconf to produce a configure script.
 define(GMP_COPYRIGHT,[[
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+2007, 2008, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1916,6 +1916,12 @@ case $host in
       gcc_cflags_cpu=""
       gcc_cflags_arch=""
 
+      fat_functions="add_n addmul_1 bdiv_dbm1c com copyd copyi dive_1 divrem_1
+		     gcd_1 lshift lshiftc mod_1 mod_1_1 mod_1_1_cps mod_1_2
+		     mod_1_2_cps mod_1_4 mod_1_4_cps mod_34lsub1 mode1o mul_1
+		     mul_basecase mullo_basecase pre_divrem_1 pre_mod_1 redc_1
+		     redc_2 rshift sqr_basecase sub_n submul_1"
+
       if test "$abi" = 32; then
 	extra_functions="$extra_functions fat fat_entry"
 	path="x86/fat x86"
@@ -1932,14 +1938,9 @@ case $host in
 	extra_functions_64="$extra_functions_64 fat fat_entry"
 	path_64="x86_64/fat x86_64"
 	fat_path="x86_64 x86_64/fat x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/atom x86_64/nano"
+	fat_functions="$fat_functions addmul_2 addlsh1_n addlsh2_n sublsh1_n"
       fi
 
-      fat_functions="add_n addmul_1 bdiv_dbm1c com copyd copyi
-		     dive_1 divrem_1 gcd_1 lshift lshiftc mod_1
-		     mod_1_1 mod_1_1_cps mod_1_2 mod_1_2_cps mod_1_4 mod_1_4_cps
-		     mod_34lsub1 mode1o
-		     mul_1 mul_basecase pre_divrem_1 pre_mod_1 rshift
-		     sqr_basecase sub_n submul_1"
       fat_thresholds="MUL_TOOM22_THRESHOLD MUL_TOOM33_THRESHOLD
 		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD
 		      BMOD_1_TO_MOD_1_THRESHOLD"
@@ -3605,9 +3606,9 @@ if test x$cross_compiling = xyes ; then
    case "$host" in
      *-*-mingw* | *-*-cygwin)
      if test x$ABI = x64 ; then
-     	AC_MSG_NOTICE([If wine64 is installed, use make check TESTS_ENVIRONMENT=wine64.])
+	AC_MSG_NOTICE([If wine64 is installed, use make check TESTS_ENVIRONMENT=wine64.])
      else
-     	AC_MSG_NOTICE([If wine is installed, use make check TESTS_ENVIRONMENT=wine.])
+	AC_MSG_NOTICE([If wine is installed, use make check TESTS_ENVIRONMENT=wine.])
      fi
      ;;
    esac

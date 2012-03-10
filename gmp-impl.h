@@ -58,8 +58,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    they're not called directly.  */
 #define DECL_add_n(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t)
+#define DECL_addlsh1_n(name) \
+  DECL_add_n (name)
+#define DECL_addlsh2_n(name) \
+  DECL_add_n (name)
 #define DECL_addmul_1(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t)
+#define DECL_addmul_2(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #define DECL_bdiv_dbm1c(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)
 #define DECL_com(name) \
@@ -102,15 +108,23 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   DECL_addmul_1 (name)
 #define DECL_mul_basecase(name) \
   __GMP_DECLSPEC void name (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)
+#define DECL_mullo_basecase(name) \
+  __GMP_DECLSPEC void name (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t)
 #define DECL_preinv_divrem_1(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int)
 #define DECL_preinv_mod_1(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)
+#define DECL_redc_1(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t)
+#define DECL_redc_2(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #define DECL_rshift(name) \
   DECL_lshift (name)
 #define DECL_sqr_basecase(name) \
   __GMP_DECLSPEC void name (mp_ptr, mp_srcptr, mp_size_t)
 #define DECL_sub_n(name) \
+  DECL_add_n (name)
+#define DECL_sublsh1_n(name) \
   DECL_add_n (name)
 #define DECL_submul_1(name) \
   DECL_addmul_1 (name)
@@ -787,8 +801,10 @@ __GMP_DECLSPEC void    mpz_n_pow_ui (mpz_ptr, mp_srcptr, mp_size_t, unsigned lon
 #define mpn_addmul_1c __MPN(addmul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_1c (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t);
 
+#ifndef mpn_addmul_2  /* if not done with cpuvec in a fat binary */
 #define mpn_addmul_2 __MPN(addmul_2)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_2 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr);
+#endif
 
 #define mpn_addmul_3 __MPN(addmul_3)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_3 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr);
@@ -814,8 +830,10 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 
 /* mpn_addlsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+2*{b,n}, and
    returns the carry out (0, 1 or 2). Use _ip1 when a=c. */
+#ifndef mpn_addlsh1_n  /* if not done with cpuvec in a fat binary */
 #define mpn_addlsh1_n __MPN(addlsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh1_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+#endif
 #define mpn_addlsh1_nc __MPN(addlsh1_nc)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh1_nc (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t);
 #if HAVE_NATIVE_mpn_addlsh1_n && ! HAVE_NATIVE_mpn_addlsh1_n_ip1
@@ -833,10 +851,12 @@ __GMP_DECLSPEC mp_limb_t mpn_addlsh1_n_ip1 (mp_ptr, mp_srcptr, mp_size_t);
 __GMP_DECLSPEC mp_limb_t mpn_addlsh1_nc_ip1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 #endif
 
+#ifndef mpn_addlsh2_n  /* if not done with cpuvec in a fat binary */
 /* mpn_addlsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+4*{b,n}, and
    returns the carry out (0, ..., 4). Use _ip1 when a=c. */
 #define mpn_addlsh2_n __MPN(addlsh2_n)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh2_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+#endif
 #define mpn_addlsh2_nc __MPN(addlsh2_nc)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh2_nc (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t);
 #if HAVE_NATIVE_mpn_addlsh2_n && ! HAVE_NATIVE_mpn_addlsh2_n_ip1
@@ -875,10 +895,12 @@ __GMP_DECLSPEC mp_limb_t mpn_addlsh_nc (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
 __GMP_DECLSPEC mp_limb_t mpn_addlsh_nc_ip1 (mp_ptr, mp_srcptr, mp_size_t, unsigned int, mp_limb_t);
 #endif
 
+#ifndef mpn_sublsh1_n  /* if not done with cpuvec in a fat binary */
 /* mpn_sublsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-2*{b,n}, and
    returns the borrow out (0, 1 or 2). Use _ip1 when a=c. */
 #define mpn_sublsh1_n __MPN(sublsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh1_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+#endif
 #define mpn_sublsh1_nc __MPN(sublsh1_nc)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh1_nc (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t);
 #if HAVE_NATIVE_mpn_sublsh1_n && ! HAVE_NATIVE_mpn_sublsh1_n_ip1
@@ -1056,8 +1078,10 @@ __GMP_DECLSPEC void mpn_mul_basecase (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, m
 #define mpn_mullo_n __MPN(mullo_n)
 __GMP_DECLSPEC void mpn_mullo_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 
+#ifndef mpn_mullo_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_mullo_basecase __MPN(mullo_basecase)
 __GMP_DECLSPEC void mpn_mullo_basecase (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+#endif
 
 #define mpn_sqr __MPN(sqr)
 __GMP_DECLSPEC void mpn_sqr (mp_ptr, mp_srcptr, mp_size_t);
@@ -1079,11 +1103,16 @@ __GMP_DECLSPEC void mpn_mulmid (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size
 #define mpn_submul_1c __MPN(submul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_submul_1c (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t);
 
+#ifndef mpn_redc_1  /* if not done with cpuvec in a fat binary */
 #define mpn_redc_1 __MPN(redc_1)
 __GMP_DECLSPEC mp_limb_t mpn_redc_1 (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
+#endif
 
+#ifndef mpn_redc_2  /* if not done with cpuvec in a fat binary */
 #define mpn_redc_2 __MPN(redc_2)
 __GMP_DECLSPEC mp_limb_t mpn_redc_2 (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr);
+#endif
+
 #define mpn_redc_n __MPN(redc_n)
 __GMP_DECLSPEC void mpn_redc_n (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr);
 
@@ -4444,7 +4473,10 @@ __GMP_DECLSPEC int __gmp_doscan (const struct gmp_doscan_funs_t *, void *, const
    in mpn/x86/x86-defs.m4.  Be sure to update that when changing here.  */
 struct cpuvec_t {
   DECL_add_n           ((*add_n));
+  DECL_addlsh1_n       ((*addlsh1_n));
+  DECL_addlsh2_n       ((*addlsh2_n));
   DECL_addmul_1        ((*addmul_1));
+  DECL_addmul_2        ((*addmul_2));
   DECL_bdiv_dbm1c      ((*bdiv_dbm1c));
   DECL_com             ((*com));
   DECL_copyd           ((*copyd));
@@ -4465,11 +4497,15 @@ struct cpuvec_t {
   DECL_modexact_1c_odd ((*modexact_1c_odd));
   DECL_mul_1           ((*mul_1));
   DECL_mul_basecase    ((*mul_basecase));
+  DECL_mullo_basecase  ((*mullo_basecase));
   DECL_preinv_divrem_1 ((*preinv_divrem_1));
   DECL_preinv_mod_1    ((*preinv_mod_1));
+  DECL_redc_1          ((*redc_1));
+  DECL_redc_2          ((*redc_2));
   DECL_rshift          ((*rshift));
   DECL_sqr_basecase    ((*sqr_basecase));
   DECL_sub_n           ((*sub_n));
+  DECL_sublsh1_n       ((*sublsh1_n));
   DECL_submul_1        ((*submul_1));
   int                  initialized;
   mp_size_t            mul_toom22_threshold;
