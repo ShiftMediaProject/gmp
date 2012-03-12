@@ -1,5 +1,9 @@
 2012-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/core2/gcd_1.asm: New file.
+	* mpn/x86_64/k10/gcd_1.asm: New file, grabbing core2 asm file.
+	* mpn/x86_64/bd1/gcd_1.asm: Likewise.
+
 	* mpn/x86_64/bobcat/sqr_basecase.asm: New file.
 	* mpn/x86_64/bobcat/mul_basecase.asm: Minor tuning.
 
