@@ -34,9 +34,9 @@ C VIA nano	 5.63
 
 C This mul_basecase is based on mul_1 and addmul_1, since these both run at the
 C multiply insn bandwidth, without any apparent loop branch exit pipeline
-C replays experienced on K8.  The structure is unusual: it falls into mul_1
-C without in the same way for all counts, then it splits into 4 different
-C wind-down blocks and 4 separate addmul_1 loops.
+C replays experienced on K8.  The structure is unusual: it falls into mul_1 in
+C the same way for all n, then it splits into 4 different wind-down blocks and
+C 4 separate addmul_1 loops.
 C
 C We have not tried using the same addmul_1 loops with a switch into feed-in
 C code, as we do in other basecase implementations.  Doing that could save
@@ -45,11 +45,11 @@ C substantial code volume, but would also probably add some overhead.
 C TODO
 C  * Tune un < 3 code.
 C  * Fix slowdown for un=vn=3 (67->71) compared to default code.
-C  * This is 1266 bytes, compared to 1099 bytes for default code.  Consider
+C  * This is 1263 bytes, compared to 1099 bytes for default code.  Consider
 C    combining addmul loops like that code.  Tolerable slowdown?
-C  * Lots of space could instead be saved by replacing the "switch" code by
-C    gradual jump out from mul_1 winddown code, perhaps with no added overhead.
-C  * Is ALIGN(16) really necessary?  It adds about 40 bytes of padding.
+C  * Lots of space could be saved by replacing the "switch" code by gradual
+C    jumps out from mul_1 winddown code, perhaps with no added overhead.
+C  * Are the ALIGN(16) really necessary?  They add about 25 bytes of padding.
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
@@ -139,7 +139,7 @@ L(ge3):	push	%rbx
 	lea	-24(up,un_param,8), up
 	xor	R32(un), R32(un)
 	mov	$2, R32(n)
-	sub	un_param,un
+	sub	un_param, un
 	sub	un_param, n
 
 	mul	v0
@@ -246,8 +246,7 @@ L(al3):	mov	16(up,n,8), %rax
 	adc	$0, w3
 	add	w2, X(-8(rp,n,8),16(rp))
 	adc	$0, w3
-	mov	w3, %rax
-	mov	%rax, X((rp,n,8),24(rp))
+	mov	w3, X((rp,n,8),24(rp))
 	jmp	L(to3)
 
 
@@ -327,8 +326,7 @@ L(al2):	mov	24(up,n,8), %rax
 	adc	$0, w3
 	add	w2, X(-8(rp,n,8),16(rp))
 	adc	$0, w3
-	mov	w3, %rax
-	mov	%rax, X((rp,n,8),24(rp))
+	mov	w3, X((rp,n,8),24(rp))
 	jmp	L(to2)
 
 
@@ -400,8 +398,7 @@ L(al1):	mov	(up,n,8), %rax
 	adc	$0, w3
 	add	w2, X(-8(rp,n,8),16(rp))
 	adc	$0, w3
-	mov	w3, %rax
-	mov	%rax, X((rp,n,8),24(rp))
+	mov	w3, X((rp,n,8),24(rp))
 	jmp	L(to1)
 
 
@@ -466,8 +463,7 @@ L(al0):	mov	8(up,n,8), %rax
 	adc	$0, w3
 	add	w2, X(-8(rp,n,8),16(rp))
 	adc	$0, w3
-	mov	w3, %rax
-	mov	%rax, X((rp,n,8),24(rp))
+	mov	w3, X((rp,n,8),24(rp))
 	jmp	L(to0)
 
 

@@ -1,6 +1,7 @@
 2012-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bobcat/sqr_basecase.asm: New file.
+	* mpn/x86_64/bobcat/mul_basecase.asm: Minor tuning.
 
 2012-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
