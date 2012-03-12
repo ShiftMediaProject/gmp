@@ -17,4 +17,10 @@ dnl  License for more details.
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-include(`x86_64/core2/gcd_1.asm')
+include(`../config.m4')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
+MULFUNC_PROLOGUE(mpn_gcd_1)
+include_mpn(`x86_64/core2/gcd_1.asm')
