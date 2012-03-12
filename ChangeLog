@@ -1,3 +1,7 @@
+2012-03-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bobcat/sqr_basecase.asm: New file.
+
 2012-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (fat_functions): Add addlsh1_n, addlsh2_n, addmul_2,
