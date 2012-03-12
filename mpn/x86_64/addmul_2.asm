@@ -171,4 +171,3 @@ L(end):	xor	R32(w1), R32(w1)
 	DOS64_EXIT()
 	ret
 EPILOGUE()
-
