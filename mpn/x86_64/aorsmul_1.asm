@@ -77,7 +77,7 @@ IFDOS(``mov	%rdx, %rsi	'')
 
 	mov	(up), %rax		C read first u limb early
 	push	%rbx
-IFSTD(`	mov	n_param, %rbx   ')	C move away n  from rdx, mul uses it
+IFSTD(`	mov	n_param, %rbx   ')	C move away n from rdx, mul uses it
 IFDOS(`	mov	n, %rbx         ')
 	mul	vl
 IFSTD(`	mov	%rbx, n         ')
