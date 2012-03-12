@@ -3,8 +3,8 @@ dnl  AMD64 mpn_gcd_1 -- mpn by 1 gcd.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,21 +24,22 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C K8: 6.75 cycles/bit (approx)  1x1 gcd
-C     10.0 cycles/limb          Nx1 reduction (modexact_1_odd)
+C	     cycles/bit (approx)
+C AMD K8,K9	 6.75
+C AMD K10	 6.75
+C AMD bd1	 7.75
+C AMD bobcat	 7.5
+C Intel P4	18
+C Intel core2	 9
+C Intel NHM	 9
+C Intel SBR	10
+C Intel atom	10.5
+C VIA nano	 8.5
 
-
-dnl  Reduce using x%y if x is more than DIV_THRESHOLD bits bigger than y,
-dnl  where x is the larger of the two.  See tune/README for more.
-dnl
-dnl  div at 80 cycles compared to the gcd at about 7 cycles/bitpair
-dnl  suggests 80/7*2=23
-
-deflit(DIV_THRESHOLD, 23)
+C Numbers measured with: speed -CD -s1-64 mpn_gcd_1
 
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
-
 
 deflit(MAXSHIFT, 6)
 deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
@@ -50,13 +51,11 @@ forloop(i,1,MASK,
 ')
 END_OBJECT(ctz_table)
 
-C mp_limb_t mpn_gcd_1 (mp_srcptr up, mp_size_t n, mp_limb_t vlimb);
-
 
 C INPUT PARAMETERS
 define(`up',    `%rdi')
 define(`n',     `%rsi')
-define(`vlimb', `%rdx')
+define(`v0',    `%rdx')
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
