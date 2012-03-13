@@ -28,16 +28,18 @@ C	     cycles/bit (approx)
 C AMD K8,K9	 8.5
 C AMD K10	 5
 C AMD bd1	 5
-C AMD bobcat	11
-C Intel P4	24 
-C Intel core2	 5.5
-C Intel NHM	 6
-C Intel SBR	 6
+C AMD bobcat	10
+C Intel P4	18 
+C Intel core2	 4.3
+C Intel NHM	 5
+C Intel SBR	 5
 C Intel atom	17
-C VIA nano	 6.5
-
+C VIA nano	 5.3
 C Numbers measured with: speed -CD -s1-64 mpn_gcd_1
 
+C TODO
+C  * Optimise inner-loop for specific CPUs.  The code relies too much on OoO
+C    execution.
 
 C INPUT PARAMETERS
 define(`up',    `%rdi')
@@ -93,27 +95,26 @@ L(reduced):
 	pop	%rdx
 	pop	%r8
 
-	test	%rax, %rax
+	bsf	%rax, %rcx
 
-	mov	%rax, %rcx
+	test	%rax, %rax
 	jnz	L(mid)
 
-	mov	%rdx, %rax
 	jmp	L(done)
 
-	ALIGN(16)		C			K10	C2	NHM	SBR
-L(top):	cmovc	%r10, %rax	C if x-y carried	0,7	0,6	0,7	0
-	cmovc	%rcx, %rdx	C use x,y-x		0	1	1	1
-L(mid):	bsf	%rax, %rcx	C			1	2	2	2
-	mov	%rdx, %r10	C			1	3	3	3
-	shr	R8(%rcx), %rax	C			5	4	5	5
-	mov	%rax, %rcx	C			6	5	6	7
-	sub	%rax, %r10	C			6	5	6	7
-	sub	%rdx, %rax	C			6	5	6	7
+	ALIGN(16)		C		K10	BD	C2	NHM	SBR
+L(top):	cmovc	%r10, %rax	C if x-y < 0	0,6	0,5	0,6	0,5	0,6
+	cmovc	%r9, %rdx	C use x,y-x	0	0	2	1	1
+	bsf	%r10, %rcx	C		0	0	0	0	0
+L(mid):	mov	%rdx, %r10	C		1	1	4	3	3
+	shr	R8(%rcx), %rax	C		4	3	2	3	3
+	mov	%rax, %r9	C		5	4	3	4	5
+	sub	%rax, %r10	C		5	4	5	4	5
+	sub	%rdx, %rax	C		5	4	4	4	5
 	jnz	L(top)		C
 
-	mov	%rcx, %rax
 L(done):
+	mov	%rdx, %rax
 	mov	%r8, %rcx
 	shl	R8(%rcx), %rax
 	DOS64_EXIT()

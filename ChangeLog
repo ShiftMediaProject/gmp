@@ -2,6 +2,8 @@
 
 	* mpn/x86_64/core2/gcd_1.asm: Add hack to support fat builds.
 
+	* mpn/x86_64/core2/gcd_1.asm: Shorten critical path.
+
 2012-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/gcd_1.asm: New file.
