@@ -56,9 +56,6 @@ ifdef(`OPERATION_submul_1',`
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
 ASM_START()
-PROLOGUE(func_nc)
-EPILOGUE()
-
 PROLOGUE(func)
 	std	r31, -8(r1)
 	rldicl.	r0, n, 0,62	C r0 = n & 3, set cr0
