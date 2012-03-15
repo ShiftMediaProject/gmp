@@ -1,5 +1,7 @@
 2012-03-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/nano/gcd_1.asm: New file, grabbing core2 asm file.
+
 	* mpn/x86_64/core2/gcd_1.asm: Speed up loop code, simplify non-loop
 	code.
 
