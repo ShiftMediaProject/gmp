@@ -25,23 +25,22 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 6.75
-C AMD K10	 6.75
-C AMD bd1	 7.75
-C AMD bobcat	 7.5
-C Intel P4	18
-C Intel core2	 9
-C Intel NHM	 9
-C Intel SBR	10
-C Intel atom	10.5
-C VIA nano	 8.5
-
-C Numbers measured with: speed -CD -s1-64 mpn_gcd_1
+C AMD K8,K9	 5.21                 (4.95)
+C AMD K10	 5.15                 (5.00)
+C AMD bd1	 5.42                 (5.14)
+C AMD bobcat	 6.71                 (6.56)
+C Intel P4	13.5                 (12.75)
+C Intel core2	 6.20                 (6.16)
+C Intel NHM	 6.49                 (6.25)
+C Intel SBR	 7.75                 (7.57)
+C Intel atom	 8.77                 (8.54)
+C VIA nano	 6.60                 (6.20)
+C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
 
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
-deflit(MAXSHIFT, 6)
+deflit(MAXSHIFT, 7)
 deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
 DEF_OBJECT(ctz_table,64)
@@ -51,6 +50,9 @@ forloop(i,1,MASK,
 ')
 END_OBJECT(ctz_table)
 
+C Threshold of when to call bmod when U is one limbs.  Should be about
+C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
+define(`BMOD_THRES_LOG2', 8)
 
 C INPUT PARAMETERS
 define(`up',    `%rdi')
@@ -65,31 +67,45 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_1)
 	DOS64_ENTRY(3)
-	mov	(%rdi), %r8		C src low limb
-	or	%rdx, %r8		C x | y
+	mov	(up), %rax		C src low limb
+	or	v0, %rax		C x | y
 	mov	$-1, R32(%rcx)
 
 L(twos):
 	inc	R32(%rcx)
-	shr	%r8
+	shr	%rax
 	jnc	L(twos)
 
-	shr	R8(%rcx), %rdx
-	mov	R32(%rcx), R32(%r8)	C common twos
+	shr	R8(%rcx), v0
+	mov	R32(%rcx), R32(%rax)	C common twos
 
 L(divide_strip_y):
-	shr	%rdx
+	shr	v0
 	jnc	L(divide_strip_y)
-	adc	%rdx, %rdx
+	adc	v0, v0
 
-	push	%r8
-	push	%rdx
+	push	%rax
+	push	v0
 	sub	$8, %rsp		C maintain ABI required rsp alignment
+
+	cmp	$1, n
+	jnz	L(reduce_nby1)
+
+C Both U and V are single limbs, reduce with bmod if there are many more bits
+C in u0 than in v0.
+	mov	(up), %r8
+	mov	%r8, %rax
+	shr	$BMOD_THRES_LOG2, %r8
+	cmp	%r8, v0
+	ja	L(reduced)
+	jmp	L(bmod)
+
+L(reduce_nby1):
 
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
-	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %rsi
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
 	CALL(	mpn_mod_1)
 	jmp	L(reduced)
@@ -99,43 +115,34 @@ L(reduced):
 
 	add	$8, %rsp
 	pop	%rdx
-	pop	%r8
 
+	LEA(	ctz_table, %rsi)
 	test	%rax, %rax
-
 	mov	%rax, %rcx
-	LEA(	ctz_table, %r9)
-	jnz	L(strip_x_top)
+	jnz	L(mid)
+	jmp	L(end)
 
+	ALIGN(16)			C               K8    BC    P4    NHM   SBR
+L(top):	cmovc	%rcx, %rax		C if x-y < 0	0
+	cmovc	%rdi, %rdx		C use x,y-x	0
+L(mid):	and	$MASK, R32(%rcx)	C		0
+	movzbl	(%rsi,%rcx), R32(%rcx)	C		1
+	jz	L(shift_alot)		C		1
+	shr	R8(%rcx), %rax		C		3
+	mov	%rax, %rdi		C		4
+	mov	%rdx, %rcx		C		3
+	sub	%rax, %rcx		C		4
+	sub	%rdx, %rax		C		4
+	jnz	L(top)			C		5
+
+L(end):	pop	%rcx
 	mov	%rdx, %rax
-	jmp	L(done)
-
-	ALIGN(16)
-L(top):
-	cmovc	%r10, %rcx		C if x-y gave carry, use x,y-x	0
-	cmovc	%rax, %rdx		C				0
-
-L(strip_x_top):
-	mov	%rcx, %rax		C				1
-	and	$MASK, R32(%rcx)	C				1
-
-	movzbl	(%r9,%rcx), R32(%rcx)	C use this insn form to placate Oracle
-
-	shr	R8(%rcx), %rax		C				4
-	cmp	$MAXSHIFT, R8(%rcx)	C				4
-
-	mov	%rax, %rcx		C				5
-	mov	%rdx, %r10		C				5
-	je	L(strip_x_top)		C				5
-
-	sub	%rax, %r10		C				6
-	sub	%rdx, %rcx		C				6
-	jnz	L(top)			C				6
-
-L(done):
-	mov	%r8, %rcx
 	shl	R8(%rcx), %rax
 	DOS64_EXIT()
 	ret
 
+L(shift_alot):
+	shr	$MAXSHIFT, %rax
+	mov	%rax, %rcx
+	jmp	L(mid)
 EPILOGUE()

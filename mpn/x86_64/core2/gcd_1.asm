@@ -25,20 +25,24 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 9.79
-C AMD K10	 5.34
-C AMD bd1	 ?
-C AMD bobcat	11.3
-C Intel P4	20.8
-C Intel core2	 5.09
-C Intel NHM	 6.27
-C Intel SBR	 5.30
-C Intel atom	19.6
-C VIA nano	 6.75
-C Numbers measured with: speed -c -s64 mpn_gcd_1
+C AMD K8,K9	 8.50
+C AMD K10	 4.30
+C AMD bd1	 5.00
+C AMD bobcat	10.0
+C Intel P4	18.6
+C Intel core2	 3.83
+C Intel NHM	 5.17
+C Intel SBR	 4.69
+C Intel atom	17.0
+C VIA nano	 5.44
+C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
 
 C TODO
 C  * Optimise inner-loop for specific CPUs.
+
+C Threshold of when to call bmod when U is one limbs.  Should be about
+C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
+define(`BMOD_THRES_LOG2', 6)
 
 C INPUT PARAMETERS
 define(`up',    `%rdi')
@@ -62,21 +66,35 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_1)
 	DOS64_ENTRY(3)
-	mov	(%rdi), %r8		C src low limb
-	or	%rdx, %r8		C x | y
-	bsf	%r8, %r8		C common twos
+	mov	(up), %rax	C U low limb
+	or	v0, %rax
+	bsf	%rax, %rax	C min(ctz(u0),ctz(v0))
 
-	bsf	%rdx, %rcx
-	shr	R8(%rcx), %rdx
+	bsf	v0, %rcx
+	shr	R8(%rcx), v0
 
-	push	%r8			C preserve common twos over call
-	push	%rdx			C preserve v0 argument over call
-	sub	$8, %rsp		C maintain ABI required rsp alignment
+	push	%rax		C preserve common twos over call
+	push	v0		C preserve v0 argument over call
+	sub	$8, %rsp	C maintain ABI required rsp alignment
+
+	cmp	$1, n
+	jnz	L(reduce_nby1)
+
+C Both U and V are single limbs, reduce with bmod if there are many more bits
+C in u0 than in v0.
+	mov	(up), %r8
+	mov	%r8, %rax
+	shr	$BMOD_THRES_LOG2, %r8
+	cmp	%r8, v0
+	ja	L(reduced)
+	jmp	L(bmod)
+
+L(reduce_nby1):
 
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
-	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, %rsi
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
 	CALL(	mpn_mod_1)
 	jmp	L(reduced)
@@ -86,14 +104,11 @@ L(reduced):
 
 	add	$8, %rsp
 	pop	%rdx
-	pop	%r8
 
 	bsf	%rax, %rcx
 	test	%rax, %rax
 	jnz	L(mid)
 	jmp	L(end)
-
-C FIXME: 1st sub to rdx would shorten path
 
 	ALIGN(16)		C               K10   BD    C2    NHM   SBR
 L(top):	cmovc	%r10, %rax	C if x-y < 0    0,3   0,3   0,6   0,5   0,5
@@ -106,8 +121,8 @@ L(mid):	shr	R8(%rcx), %rax	C               1,7   1,6   2,8   2,8   2,8
 	sub	%rdx, %rax	C               2     2     4     3     4
 	jnz	L(top)		C
 
-L(end):	mov	%rdx, %rax
-	mov	%r8, %rcx
+L(end):	pop	%rcx
+	mov	%rdx, %rax
 	shl	R8(%rcx), %rax
 	DOS64_EXIT()
 	ret
