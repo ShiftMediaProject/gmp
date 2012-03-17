@@ -37,7 +37,6 @@ C Intel atom	 8.77                 (8.54)
 C VIA nano	 6.60                 (6.20)
 C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
 
-
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
 deflit(MAXSHIFT, 7)
@@ -50,7 +49,7 @@ forloop(i,1,MASK,
 ')
 END_OBJECT(ctz_table)
 
-C Threshold of when to call bmod when U is one limbs.  Should be about
+C Threshold of when to call bmod when U is one limb.  Should be about
 C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
 define(`BMOD_THRES_LOG2', 8)
 
@@ -67,7 +66,7 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_1)
 	DOS64_ENTRY(3)
-	mov	(up), %rax		C src low limb
+	mov	(up), %rax		C U low limb
 	or	v0, %rax		C x | y
 	mov	$-1, R32(%rcx)
 
@@ -91,8 +90,7 @@ L(divide_strip_y):
 	cmp	$1, n
 	jnz	L(reduce_nby1)
 
-C Both U and V are single limbs, reduce with bmod if there are many more bits
-C in u0 than in v0.
+C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	mov	(up), %r8
 	mov	%r8, %rax
 	shr	$BMOD_THRES_LOG2, %r8
@@ -101,15 +99,17 @@ C in u0 than in v0.
 	jmp	L(bmod)
 
 L(reduce_nby1):
-
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
+	jl	L(bmod)
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
-	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
-	jl	L(bmod)
 	CALL(	mpn_mod_1)
 	jmp	L(reduced)
 L(bmod):
+IFDOS(`	mov	%rdx, %r8	')
+IFDOS(`	mov	%rsi, %rdx	')
+IFDOS(`	mov	%rdi, %rcx	')
 	CALL(	mpn_modexact_1_odd)
 L(reduced):
 
