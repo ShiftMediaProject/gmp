@@ -1,7 +1,6 @@
-dnl  x86 mpn_gcd_1 optimised for AMD K7.
+dnl  x86 mpn_gcd_1 optimised for processors with fast BSF.
 
-dnl  Contributed to the GNU project by by Kevin Ryde.  Rehacked by Torbjorn
-dnl  Granlund.
+dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked by Torbjorn Granlund.
 
 dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012 Free Software
 dnl  Foundation, Inc.
@@ -25,45 +24,38 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K7	 5.31
-C AMD K8,K9	 5.33
-C AMD K10	 5.30
+C AMD K7	 7.80
+C AMD K8,K9	 7.79
+C AMD K10	 4.08
 C AMD bd1	 ?
-C AMD bobcat	 7.02
-C Intel P4-2	10.1
-C Intel P4-3/4	10.0
-C Intel P6/13	 5.88
-C Intel core2	 6.26
-C Intel NHM	 6.83
-C Intel SBR	 8.50
-C Intel atom	 8.90
-C VIA nano	 ?
+C AMD bobcat	 7.82
+C Intel P4-2	14.9
+C Intel P4-3/4	14.0
+C Intel P6/13	 5.09
+C Intel core2	 4.22
+C Intel NHM	 5.00
+C Intel SBR	 5.00
+C Intel atom	17.1
+C VIA nano	?
 C Numbers measured with: speed -CD -s16-32 -t16 mpn_gcd_1
-
-C TODO
-C  * Tune overhead, this takes 2-3 cycles more than old code when v0 is tiny.
-C  * Stream things better through registers, avoiding some copying.
-
-C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
-
-deflit(MAXSHIFT, 6)
-deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
-
-DEF_OBJECT(ctz_table,64)
-	.byte	MAXSHIFT
-forloop(i,1,MASK,
-`	.byte	m4_count_trailing_zeros(i)
-')
-END_OBJECT(ctz_table)
 
 C Threshold of when to call bmod when U is one limb.  Should be about
 C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
-define(`DIV_THRES_LOG2', 7)
+define(`BMOD_THRES_LOG2', 6)
 
 
 define(`up',    `%edi')
 define(`n',     `%esi')
 define(`v0',    `%edx')
+
+
+C Undo some configure cleverness.
+C The problem is that C only defines the '1c' variant, and that configure
+C therefore considers modexact_1c to be the base function.  It then adds a
+C special fat rule for mpn_modexact_1_odd, messing up things when a cpudep
+C gcd_1 exists without a corresponding cpudep mode1o.
+ifdef(`WANT_FAT_BINARY', `
+  define(`mpn_modexact_1_odd', `MPN_PREFIX`modexact_1_odd_x86_64'')')
 
 
 ASM_START()
@@ -77,25 +69,15 @@ PROLOGUE(mpn_gcd_1)
 	mov	16(%esp), n
 	mov	20(%esp), v0
 
-	mov	(up), %eax		C U low limb
-	or	v0, %eax		C x | y
-	mov	$-1, %ecx
+	mov	(up), %eax	C U low limb
+	or	v0, %eax
+	bsf	%eax, %eax	C min(ctz(u0),ctz(v0))
 
-L(twos):
-	inc	%ecx
-	shr	%eax
-	jnc	L(twos)
-
+	bsf	v0, %ecx
 	shr	%cl, v0
-	mov	%ecx, %eax		C common twos
 
-L(divide_strip_y):
-	shr	v0
-	jnc	L(divide_strip_y)
-	adc	v0, v0
-
-	push	%eax
-	push	v0
+	push	%eax		C preserve common twos over call
+	push	v0		C preserve v0 argument over call
 
 	cmp	$1, n
 	jnz	L(reduce_nby1)
@@ -103,22 +85,17 @@ L(divide_strip_y):
 C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	mov	(up), %ecx
 	mov	%ecx, %eax
-	shr	$DIV_THRES_LOG2, %ecx
+	shr	$BMOD_THRES_LOG2, %ecx
 	cmp	%ecx, v0
 	ja	L(reduced)
-
-	mov	v0, %esi
-	xor	%edx, %edx
-	div	%esi
-	mov	%edx, %eax
-	jmp	L(reduced)
+	jmp	L(bmod)
 
 L(reduce_nby1):
-	push	v0			C param 3
-	push	n			C param 2
-	push	up			C param 1
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
+	push	v0		C param 3
+	push	n		C param 2
+	push	up		C param 1
 ifdef(`PIC',`
 	call	GSYM_PREFIX`'mpn_mod_1@PLT
 ',`
@@ -126,44 +103,40 @@ ifdef(`PIC',`
 ')
 	jmp	L(called)
 L(bmod):
+	push	v0		C param 3
+	push	n		C param 2
+	push	up		C param 1
 ifdef(`PIC',`
 	call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
 ',`
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
 ')
 L(called):
-	add	$12, %esp		C deallocate params
+	add	$12, %esp	C deallocate params
 L(reduced):
 	pop	%edx
 
-	LEA(	ctz_table, %esi)
-	test	%eax, %eax
-	mov	%eax, %ecx
+	bsf	%eax, %ecx
+C	test	%eax, %eax	C FIXME: does this lower latency?
 	jnz	L(mid)
 	jmp	L(end)
 
-	ALIGN(16)			C               K8    BC    P4    NHM   SBR
-L(top):	cmovc(	%ecx, %eax)		C if x-y < 0	0
-	cmovc(	%edi, %edx)		C use x,y-x	0
-L(mid):	and	$MASK, %ecx		C		0
-	movzbl	(%esi,%ecx), %ecx	C		1
-	jz	L(shift_alot)		C		1
-	shr	%cl, %eax		C		3
-	mov	%eax, %edi		C		4
-	mov	%edx, %ecx		C		3
-	sub	%eax, %ecx		C		4
-	sub	%edx, %eax		C		4
-	jnz	L(top)			C		5
+	ALIGN(16)		C               K10   BD    C2    NHM   SBR
+L(top):	cmovc(	%esi, %eax)	C if x-y < 0    0,3   0,3   0,6   0,5   0,5
+	cmovc(	%edi, %edx)	C use x,y-x     0,3   0,3   2,8   1,7   1,7
+L(mid):	shr	%cl, %eax	C               1,7   1,6   2,8   2,8   2,8
+	mov	%edx, %esi	C               1     1     4     3     3
+	sub	%eax, %esi	C               2     2     5     4     4
+	bsf	%esi, %ecx	C               3     3     6     5     5
+	mov	%eax, %edi	C               2     2     3     3     4
+	sub	%edx, %eax	C               2     2     4     3     4
+	jnz	L(top)		C
 
 L(end):	pop	%ecx
 	mov	%edx, %eax
 	shl	%cl, %eax
+
 	pop	%esi
 	pop	%edi
 	ret
-
-L(shift_alot):
-	shr	$MAXSHIFT, %eax
-	mov	%eax, %ecx
-	jmp	L(mid)
 EPILOGUE()

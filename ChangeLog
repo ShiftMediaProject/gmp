@@ -1,5 +1,8 @@
 2012-03-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/k7/gcd_1.asm: Rewrite.
+	* mpn/x86/p6/gcd_1.asm: New file.
+
 	* mpn/x86_64/core2/gcd_1.asm: Conditionally suppress reduction calls.
 	* mpn/x86_64/gcd_1.asm: Rewrite.
 
