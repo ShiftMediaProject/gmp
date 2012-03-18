@@ -2050,6 +2050,7 @@ __GMP_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
 /* This version gives a well-defined value for zero. */
 #define COUNT_LEADING_ZEROS_0 (W_TYPE_SIZE - 1)
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#define COUNT_LEADING_ZEROS_SLOW
 #endif
 
 /* clz_tab needed by mpn/x86/pentium/mod_1.asm in a fat binary */
@@ -2062,9 +2063,9 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
 #endif
 
 #if !defined (count_trailing_zeros)
-/* Define count_trailing_zeros using count_leading_zeros.  The latter might be
-   defined in asm, but if it is not, the C version above is good enough.  */
-#define count_trailing_zeros(count, x) \
+#if !defined (COUNT_LEADING_ZEROS_SLOW)
+/* Define count_trailing_zeros using an asm count_leading_zeros.  */
+#define count_trailing_zeros(count, x)					\
   do {									\
     UWtype __ctz_x = (x);						\
     UWtype __ctz_c;							\
@@ -2072,6 +2073,30 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
     count_leading_zeros (__ctz_c, __ctz_x & -__ctz_x);			\
     (count) = W_TYPE_SIZE - 1 - __ctz_c;				\
   } while (0)
+#else
+/* Define count_trailing_zeros in plain C, assuming small counts are common.
+   We use clz_tab without ado, since the C count_leading_zeros above will have
+   pulled it in.  */
+#define count_trailing_zeros(count, x)					\
+  do {									\
+    UWtype __ctz_x = (x);						\
+    int __ctz_c;							\
+									\
+    if (LIKELY ((__ctz_x & 0x7f) != 0))					\
+      (count) = __clz_tab[__ctz_x & -__ctz_x] - 2;			\
+    else								\
+      {									\
+	for (__ctz_c = 5; __ctz_c <= W_TYPE_SIZE; __ctz_c += 7)		\
+	  {								\
+	    __ctz_x >>= 7;						\
+	    if (LIKELY ((__ctz_x & 0x7f) != 0))				\
+	      break;							\
+	  }								\
+									\
+	(count) = __ctz_c + __clz_tab[__ctz_x & -__ctz_x];		\
+      }									\
+  } while (0)
+#endif
 #endif
 
 #ifndef UDIV_NEEDS_NORMALIZATION

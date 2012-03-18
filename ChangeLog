@@ -1,5 +1,8 @@
 2012-03-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (count_trailing_zeros): Write better pure C default
+	variant.
+
 	* mpn/x86/p6/gcd_1.asm: Remove forgotten x86_64 reference.
 
 	* mpn/x86/p6/gmp-mparam.h: Update, to get BMOD_1_TO_MOD_1_THRESHOLD
