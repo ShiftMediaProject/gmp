@@ -1,3 +1,8 @@
+2012-03-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/p6/gmp-mparam.h: Update, to get BMOD_1_TO_MOD_1_THRESHOLD
+	defined for fat binaries.
+
 2012-03-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/gcd_1.asm: Rewrite.
