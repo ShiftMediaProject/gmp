@@ -49,15 +49,6 @@ define(`n',     `%esi')
 define(`v0',    `%edx')
 
 
-C Undo some configure cleverness.
-C The problem is that C only defines the '1c' variant, and that configure
-C therefore considers modexact_1c to be the base function.  It then adds a
-C special fat rule for mpn_modexact_1_odd, messing up things when a cpudep
-C gcd_1 exists without a corresponding cpudep mode1o.
-ifdef(`WANT_FAT_BINARY', `
-  define(`mpn_modexact_1_odd', `MPN_PREFIX`modexact_1_odd_x86_64'')')
-
-
 ASM_START()
 	TEXT
 	ALIGN(16)
