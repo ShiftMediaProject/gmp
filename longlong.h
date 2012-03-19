@@ -51,14 +51,6 @@ along with this file.  If not, see http://www.gnu.org/licenses/.  */
 #define __MPN(x) __##x
 #endif
 
-#ifndef _PROTO
-#if (__STDC__-0) || defined (__cplusplus)
-#define _PROTO(x) x
-#else
-#define _PROTO(x) ()
-#endif
-#endif
-
 /* Define auxiliary asm macros.
 
    1) umul_ppmm(high_prod, low_prod, multiplier, multiplicand) multiplies two
@@ -258,9 +250,9 @@ along with this file.  If not, see http://www.gnu.org/licenses/.  */
 
 #if ! defined (count_leading_zeros) && ! defined (LONGLONG_STANDALONE)
 #if HAVE_ATTRIBUTE_CONST
-long __MPN(count_leading_zeros) _PROTO ((UDItype)) __attribute__ ((const));
+long __MPN(count_leading_zeros) (UDItype) __attribute__ ((const));
 #else
-long __MPN(count_leading_zeros) _PROTO ((UDItype));
+long __MPN(count_leading_zeros) (UDItype);
 #endif
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
@@ -272,7 +264,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
-long __MPN(count_leading_zeros) _PROTO ((UDItype));
+long __MPN(count_leading_zeros) (UDItype);
 #define count_leading_zeros(count, x) \
   ((count) = _leadz ((UWtype) (x)))
 #if defined (_CRAYIEEE)		/* I.e., Cray T90/ieee, T3D, and T3E */
@@ -509,7 +501,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
     (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
+extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
 #endif
@@ -1700,7 +1692,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
+extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #ifndef UDIV_TIME
 #define UDIV_TIME 140
 #endif
@@ -1826,7 +1818,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    hppa. */
 
 #define mpn_umul_ppmm  __MPN(umul_ppmm)
-extern UWtype mpn_umul_ppmm _PROTO ((UWtype *, UWtype, UWtype));
+extern UWtype mpn_umul_ppmm (UWtype *, UWtype, UWtype);
 
 #if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm  \
   && ! defined (LONGLONG_STANDALONE)
@@ -1839,7 +1831,7 @@ extern UWtype mpn_umul_ppmm _PROTO ((UWtype *, UWtype, UWtype));
 #endif
 
 #define mpn_umul_ppmm_r  __MPN(umul_ppmm_r)
-extern UWtype mpn_umul_ppmm_r _PROTO ((UWtype, UWtype, UWtype *));
+extern UWtype mpn_umul_ppmm_r (UWtype, UWtype, UWtype *);
 
 #if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm_r	\
   && ! defined (LONGLONG_STANDALONE)
@@ -1852,7 +1844,7 @@ extern UWtype mpn_umul_ppmm_r _PROTO ((UWtype, UWtype, UWtype *));
 #endif
 
 #define mpn_udiv_qrnnd  __MPN(udiv_qrnnd)
-extern UWtype mpn_udiv_qrnnd _PROTO ((UWtype *, UWtype, UWtype, UWtype));
+extern UWtype mpn_udiv_qrnnd (UWtype *, UWtype, UWtype, UWtype);
 
 #if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd	\
   && ! defined (LONGLONG_STANDALONE)
@@ -1866,7 +1858,7 @@ extern UWtype mpn_udiv_qrnnd _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 
 #define mpn_udiv_qrnnd_r  __MPN(udiv_qrnnd_r)
-extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
+extern UWtype mpn_udiv_qrnnd_r (UWtype, UWtype, UWtype, UWtype *);
 
 #if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd_r	\
   && ! defined (LONGLONG_STANDALONE)

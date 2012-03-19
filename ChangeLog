@@ -3,6 +3,8 @@
 	* mpz/oddfac_1.c: Improve ASSERTs.
 	* gen-fac_ui.c: Generate more constants (possible mini-mpz_root). 
 
+	* longlong.h (_PROTO): Remove.
+
 2012-03-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (count_trailing_zeros): Write better pure C default
