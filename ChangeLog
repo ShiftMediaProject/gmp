@@ -1,3 +1,8 @@
+2012-03-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/x86-defs.m4 (CALL, PIC_WITH_EBX): New macros.
+	* mpn/x86/darwin.m4: Likewise.
+
 2012-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/oddfac_1.c: Improve ASSERTs.

@@ -66,4 +66,13 @@ define(`load_eip', `')		dnl updated in LEA
 define(`darwin_bd', `')		dnl updated in LEA
 
 
+dnl  Usage: CALL(funcname)
+dnl
+
+define(`CALL',
+m4_assert_numargs(1)
+`call	GSYM_PREFIX`'$1')
+
+undefine(`PIC_WITH_EBX')
+
 divert`'dnl

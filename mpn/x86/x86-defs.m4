@@ -971,4 +971,17 @@ define(`END_OBJECT',
 m4_assert_numargs(1)
 `	SIZE(`$1',.-`$1')')
 
+dnl  Usage: CALL(funcname)
+dnl
+
+define(`CALL',
+m4_assert_numargs(1)
+`ifdef(`PIC',
+  `call	GSYM_PREFIX`'$1@PLT',
+  `call	GSYM_PREFIX`'$1')')
+
+ifdef(`PIC',
+`define(`PIC_WITH_EBX')',
+`undefine(`PIC_WITH_EBX')')
+
 divert`'dnl
