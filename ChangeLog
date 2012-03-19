@@ -1,6 +1,7 @@
 2012-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/oddfac_1.c: Improve ASSERTs.
+	* gen-fac_ui.c: Generate more constants (possible mini-mpz_root). 
 
 2012-03-18  Torbjorn Granlund  <tege@gmplib.org>
 

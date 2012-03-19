@@ -23,21 +23,37 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "bootstrap.c"
 
 
-/* sets x=y*(y+2)*(y+4)*....*(y+2*(z-1))	*/
+/* x=floor(y^(1/z)) */
 void
-odd_products (mpz_t x, mpz_t y, int z)
+mpz_root (mpz_t x, mpz_t y, unsigned long z)
 {
-  mpz_t t;
+  mpz_t t, u, v;
 
-  mpz_init_set (t, y);
-  mpz_set_ui (x, 1);
-  for (; z != 0; z--)
+  if (mpz_cmp_ui (y, 1) <= 0)
     {
-      mpz_mul (x, x, t);
-      mpz_add_ui (t, t, 2);
+      mpz_set (x, y);
+      return;
     }
+  mpz_init (t);
+  mpz_init (v);
+  mpz_init_set_ui (u, 1);
+  mpz_mul_2exp (u, u, mpz_sizeinbase (y, 2) / z + 1);
+  do
+    {
+      mpz_pow_ui (t, u, z - 1);
+      mpz_tdiv_q (t, y, t);
+      mpz_mul_ui (v, u, z - 1);
+      mpz_add (t, t, v);
+      mpz_tdiv_q_ui (t, t, z);
+      if (mpz_cmp (t, u) >= 0)
+	break;
+      mpz_set (u, t);
+    }
+  while (1);
+  mpz_set (x, u);
+  mpz_clear (u);
+  mpz_clear (v);
   mpz_clear (t);
-  return;
 }
 
 /* returns 0 on success		*/
@@ -58,9 +74,9 @@ gen_consts (int numb, int nail, int limb)
   printf
     ("/* This table is 0!,1!,2!,3!,...,n! where n! has <= GMP_NUMB_BITS bits */\n");
   printf
-    ("#define ONE_LIMB_FACTORIAL_TABLE CNST_LIMB(0x1),CNST_LIMB(0x1),CNST_LIMB(0x2");
-  mpz_init_set_ui (x, 2);
-  for (b = 3;; b++)
+    ("#define ONE_LIMB_FACTORIAL_TABLE CNST_LIMB(0x1),CNST_LIMB(0x1");
+  mpz_init_set_ui (x, 1);
+  for (b = 2;; b++)
     {
       mpz_mul_ui (x, x, b);	/* so b!=a       */
       if (mpz_sizeinbase (x, 2) > numb)
@@ -97,6 +113,23 @@ gen_consts (int numb, int nail, int limb)
     {
       mpz_mul_ui (x, x, b);
       if (mpz_sizeinbase (x, 2) > numb)
+	break;
+      printf ("),CNST_LIMB(0x");
+      mpz_out_str (stdout, 16, x);
+    }
+  printf (")\n");
+
+  printf
+    ("\n/* This table x_1, x_2,... contains values s.t. x_n^n has <= GMP_NUMB_BITS bits */\n");
+  printf
+    ("#define NTH_ROOT_NUMB_MASK_TABLE (GMP_NUMB_MASK");
+  for (b = 2;b <= 8; b++)
+    {
+      mpz_set_ui (x, 1);
+      mpz_mul_2exp (x, x, numb);
+      mpz_sub_ui (x, x, 1);
+      mpz_root (x, x, b);
+      if (mpz_sizeinbase (x, 2) < 4)
 	break;
       printf ("),CNST_LIMB(0x");
       mpz_out_str (stdout, 16, x);
@@ -174,7 +207,7 @@ main (int argc, char *argv[])
   limb_bits = atoi (argv[1]);
   nail_bits = atoi (argv[2]);
   numb_bits = limb_bits - nail_bits;
-  if (limb_bits < 0 || nail_bits < 0 || numb_bits < 0)
+  if (limb_bits < 2 || nail_bits < 0 || numb_bits < 1)
     {
       fprintf (stderr, "Invalid limb/nail bits %d,%d\n", limb_bits,
 	       nail_bits);
