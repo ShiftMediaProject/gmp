@@ -1,3 +1,7 @@
+2012-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/oddfac_1.c: Improve ASSERTs.
+
 2012-03-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (count_trailing_zeros): Write better pure C default

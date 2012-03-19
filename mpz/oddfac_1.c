@@ -499,7 +499,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
   static const mp_limb_t tablef[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
 
-  ASSERT (flag == 0 || (n >= numberof (tablef) && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
+  ASSERT (flag == 0 || (flag == 1 && n >= numberof (tablef) && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
   if (n < numberof (tablef))
     {
@@ -594,7 +594,6 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	  MPZ_TMP_INIT (mswing, size);
 	  /* Put the sieve on the second half, it will be overwritten by the last mswing. */
 	  sieve = PTR (mswing) + size / 2 + 1;
-	  ASSERT ((SIZ (mswing) = 0) || ALLOC (mswing) == size);
 
 	  size = (bitwise_primesieve (sieve, n - 1) + 1) / log_n_max (n) + 1;
 
