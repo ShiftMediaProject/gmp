@@ -114,25 +114,26 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	jmp	L(reduced)
 
 L(reduce_nby1):
+ifdef(`PIC_WITH_EBX',`
+	push	%ebx
+	call	L(movl_eip_to_ebx)
+	add	$_GLOBAL_OFFSET_TABLE_, %ebx
+')
 	push	v0			C param 3
 	push	n			C param 2
 	push	up			C param 1
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
-ifdef(`PIC',`
-	call	GSYM_PREFIX`'mpn_mod_1@PLT
-',`
-	call	GSYM_PREFIX`'mpn_mod_1
-')
+	CALL(	mpn_mod_1)
 	jmp	L(called)
 L(bmod):
-ifdef(`PIC',`
-	call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
-',`
-	call	GSYM_PREFIX`'mpn_modexact_1_odd
-')
+	CALL(	mpn_modexact_1_odd)
+
 L(called):
 	add	$12, %esp		C deallocate params
+ifdef(`PIC_WITH_EBX',`
+	pop	%ebx
+')
 L(reduced):
 	pop	%edx
 
@@ -166,4 +167,10 @@ L(shift_alot):
 	shr	$MAXSHIFT, %eax
 	mov	%eax, %ecx
 	jmp	L(mid)
+
+ifdef(`PIC_WITH_EBX',`
+L(movl_eip_to_ebx):
+	mov	(%esp), %ebx
+	ret
+')
 EPILOGUE()
