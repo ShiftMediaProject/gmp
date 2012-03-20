@@ -1,3 +1,11 @@
+2012-03-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (x86 fat_path): Add many missing directories.
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Rewrite.
+	(fake_cpuid_table): Add many more CPUs.
+
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Minor spacing cleanup.
+
 2012-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/x86-defs.m4 (CALL, PIC_WITH_EBX): New macros.
