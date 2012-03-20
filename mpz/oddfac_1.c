@@ -465,17 +465,10 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
 static unsigned
 log_n_max (mp_limb_t n)
 {
+  static const mp_limb_t table[] = { NTH_ROOT_NUMB_MASK_TABLE };
   unsigned log;
 
-  if (n < CNST_LIMB(1) << (GMP_NUMB_BITS/8))
-    log = 8;
-  else
-    {
-      mp_limb_t max, cur;
-      log = 1;
-      max = GMP_NUMB_MAX / n;
-      for (cur = n; cur <= max; cur *= n) log++;
-    }
+  for (log = numberof (table); n > table[log - 1]; log--);
 
   return log;
 }
