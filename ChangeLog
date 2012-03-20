@@ -1,3 +1,8 @@
+2012-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mp_clz_tab.c: Add __clz_tab[128].
+	* longlong.h (count_trailing_zeros): Use it in pure C variant.
+
 2012-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (x86 fat_path): Add many missing directories.

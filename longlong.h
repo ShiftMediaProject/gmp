@@ -2051,7 +2051,7 @@ __GMP_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 
 #ifdef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
-extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
+extern const unsigned char __GMP_DECLSPEC __clz_tab[129];
 #endif
 
 #if !defined (count_trailing_zeros)
@@ -2074,14 +2074,14 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
     UWtype __ctz_x = (x);						\
     int __ctz_c;							\
 									\
-    if (LIKELY ((__ctz_x & 0x7f) != 0))					\
+    if (LIKELY ((__ctz_x & 0xff) != 0))					\
       (count) = __clz_tab[__ctz_x & -__ctz_x] - 2;			\
     else								\
       {									\
-	for (__ctz_c = 5; __ctz_c <= W_TYPE_SIZE; __ctz_c += 7)		\
+	for (__ctz_c = 8 - 2; __ctz_c < W_TYPE_SIZE - 2; __ctz_c += 8)	\
 	  {								\
-	    __ctz_x >>= 7;						\
-	    if (LIKELY ((__ctz_x & 0x7f) != 0))				\
+	    __ctz_x >>= 8;						\
+	    if (LIKELY ((__ctz_x & 0xff) != 0))				\
 	      break;							\
 	  }								\
 									\
