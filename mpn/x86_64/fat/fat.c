@@ -297,24 +297,27 @@ __gmpn_cpuvec_init (void)
 	case 6:
 	  abort ();
 
-	case 15:		/* k8 */
-	case 17:		/* "fam 11h", mix of k8 and k10 */
-	case 19:
-	case 22:
-	case 23:
+	case 0x0f:		/* k8 */
+	case 0x11:		/* "fam 11h", mix of k8 and k10 */
+	case 0x13:
+	case 0x16:
+	case 0x17:
 	  CPUVEC_SETUP_k8;
 	  break;
-	case 16:		/* k10 */
-	case 18:		/* k10 (llano) */
+
+	case 0x10:		/* k10 */
+	case 0x12:		/* k10 (llano) */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  break;
-	case 20:		/* bobcat */
+
+	case 0x14:		/* bobcat */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bobcat;
 	  break;
-	case 21:		/* bulldozer */
+
+	case 0x15:		/* bulldozer */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bd1;
