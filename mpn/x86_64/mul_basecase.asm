@@ -100,7 +100,13 @@ L(mul_1):
 	cmp	$2, R32(w0)
 	jc	L(mul_1_prologue_1)
 	jz	L(mul_1_prologue_2)
-	jmp	L(mul_1_prologue_3)
+
+L(mul_1_prologue_3):
+	add	$-1, n
+	lea	L(addmul_outer_3)(%rip), outer_addr
+	mov	%rax, w3
+	mov	%rdx, w0
+	jmp	L(mul_1_entry_3)
 
 L(mul_1_prologue_0):
 	mov	%rax, w2
@@ -131,13 +137,6 @@ L(mul_1_prologue_2):
 	xor	R32(w2), R32(w2)
 	xor	R32(w3), R32(w3)
 	jmp	L(mul_1_entry_2)
-
-L(mul_1_prologue_3):
-	add	$-1, n
-	lea	L(addmul_outer_3)(%rip), outer_addr
-	mov	%rax, w3
-	mov	%rdx, w0
-	jmp	L(mul_1_entry_3)
 
 
 	C this loop is 10 c/loop = 2.5 c/l on K8, for all up/rp alignments

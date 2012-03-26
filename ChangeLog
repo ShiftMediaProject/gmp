@@ -1,6 +1,7 @@
 2012-03-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86_64/gcd_1.asm: Reduce latency.
+	* mpn/x86_64/mul_basecase.asm: Save one jump.
 
 2012-03-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
