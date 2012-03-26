@@ -67,8 +67,8 @@ ASM_START()
 PROLOGUE(mpn_gcd_1)
 	DOS64_ENTRY(3)
 	mov	(up), %rax		C U low limb
-	or	v0, %rax		C x | y
 	mov	$-1, R32(%rcx)
+	or	v0, %rax		C x | y
 
 L(twos):
 	inc	R32(%rcx)
@@ -76,16 +76,12 @@ L(twos):
 	jnc	L(twos)
 
 	shr	R8(%rcx), v0
-	mov	R32(%rcx), R32(%rax)	C common twos
+	push	%rcx			C common twos
 
 L(divide_strip_y):
 	shr	v0
 	jnc	L(divide_strip_y)
 	adc	v0, v0
-
-	push	%rax
-	push	v0
-	sub	$8, %rsp		C maintain ABI required rsp alignment
 
 	cmp	$1, n
 	jnz	L(reduce_nby1)
@@ -95,10 +91,31 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	mov	%r8, %rax
 	shr	$BMOD_THRES_LOG2, %r8
 	cmp	%r8, v0
-	ja	L(reduced)
-	jmp	L(bmod)
+	ja	L(noreduce)
+	push	v0
+	sub	$8, %rsp		C maintain ABI required rsp alignment
+
+L(bmod):
+IFDOS(`	mov	%rdx, %r8	')
+IFDOS(`	mov	%rsi, %rdx	')
+IFDOS(`	mov	%rdi, %rcx	')
+	CALL(	mpn_modexact_1_odd)
+
+L(reduced):
+	add	$8, %rsp
+	pop	%rdx
+
+L(noreduce):
+	LEA(	ctz_table, %rsi)
+	test	%rax, %rax
+	mov	%rax, %rcx
+	jnz	L(mid)
+	jmp	L(end)
 
 L(reduce_nby1):
+	push	v0
+	sub	$8, %rsp		C maintain ABI required rsp alignment
+
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
 IFDOS(`	mov	%rdx, %r8	')
@@ -106,21 +123,6 @@ IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
 	CALL(	mpn_mod_1)
 	jmp	L(reduced)
-L(bmod):
-IFDOS(`	mov	%rdx, %r8	')
-IFDOS(`	mov	%rsi, %rdx	')
-IFDOS(`	mov	%rdi, %rcx	')
-	CALL(	mpn_modexact_1_odd)
-L(reduced):
-
-	add	$8, %rsp
-	pop	%rdx
-
-	LEA(	ctz_table, %rsi)
-	test	%rax, %rax
-	mov	%rax, %rcx
-	jnz	L(mid)
-	jmp	L(end)
 
 	ALIGN(16)			C               K8    BC    P4    NHM   SBR
 L(top):	cmovc	%rcx, %rax		C if x-y < 0	0
