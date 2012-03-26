@@ -27,20 +27,23 @@ mpz_init_set_ui (mpz_ptr dest, unsigned long int val)
 {
   mp_size_t size;
 
-  ALLOC (dest) = 1;
-  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-
-  PTR (dest)[0] = val & GMP_NUMB_MASK;
-  size = val != 0;
-
 #if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (val > GMP_NUMB_MAX)
     {
-      MPZ_REALLOC (dest, 2);
+      ALLOC (dest) = 2;
+      PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB*2);
       PTR (dest)[1] = val >> GMP_NUMB_BITS;
       size = 2;
     }
+  else
 #endif
+    {
+      ALLOC (dest) = 1;
+      PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+
+      size = val != 0;
+    }
+  PTR (dest)[0] = val & GMP_NUMB_MASK;
 
   SIZ (dest) = size;
 }
