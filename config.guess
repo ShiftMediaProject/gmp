@@ -777,7 +777,7 @@ main ()
 	  else if (model == 0x27)	cpu_64bit = 1, modelstr = "atom";  /* Saltwell */
 	  else if (model == 0x2a)	cpu_64bit = 1, modelstr = "coreisbr"; /* SB */
 	  else if (model == 0x2c)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Gulftown */
-	  else if (model == 0x2d)	cpu_64bit = 1, modelstr = "coreisrb"; /* SBC-EP */
+	  else if (model == 0x2d)	cpu_64bit = 1, modelstr = "coreisbr"; /* SBC-EP */
 	  else if (model == 0x2e)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
 	  else if (model == 0x2f)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
 	  else cpu_64bit = 1, modelstr = "corei"; /* default */
