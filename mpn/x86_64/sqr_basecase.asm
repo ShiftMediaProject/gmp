@@ -83,19 +83,22 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_sqr_basecase)
 	DOS64_ENTRY(3)
+	mov	R32(n_param), R32(%rcx)
+	mov	R32(n_param), R32(n)		C free original n register (rdx)
+
 	add	$-40, %rsp
+
+	and	$3, R32(%rcx)
+	cmp	$4, R32(n_param)
+	lea	4(%rcx), %r8
+
 	mov	%rbx, 32(%rsp)
 	mov	%rbp, 24(%rsp)
 	mov	%r12, 16(%rsp)
 	mov	%r13, 8(%rsp)
 	mov	%r14, (%rsp)
 
-	mov	R32(n_param), R32(n)		C free original n register (rdx)
-	mov	R32(n_param), R32(%rcx)
-	and	$3, R32(%rcx)
-	lea	4(%rcx), %rbx
-	cmp	$4, R32(n_param)
-	cmovg	%rbx, %rcx
+	cmovg	%r8, %rcx
 	lea	L(jmptab)(%rip), %rax
 	jmp	*(%rax,%rcx,8)
 	JUMPTABSECT
@@ -113,89 +116,90 @@ L(jmptab):
 
 L(1):	mov	(up), %rax
 	mul	%rax
+	add	$40, %rsp
 	mov	%rax, (rp)
 	mov	%rdx, 8(rp)
-	add	$32, %rsp
-	pop	%rbx
 	DOS64_EXIT()
 	ret
 
 L(2):	mov	(up), %rax
+	mov	%rax, %r8
 	mul	%rax
+	mov	8(up), %r11
 	mov	%rax, (rp)
+	mov	%r11, %rax
 	mov	%rdx, %r9
-	mov	8(up), %rax
 	mul	%rax
+	add	$40, %rsp
 	mov	%rax, %r10
+	mov	%r11, %rax
 	mov	%rdx, %r11
-	mov	8(up), %rax
-	mov	(up), %rbx
-	mul	%rbx
+	mul	%r8
+	xor	%r8, %r8
 	add	%rax, %r9
 	adc	%rdx, %r10
-	adc	$0, %r11
+	adc	%r8, %r11
 	add	%rax, %r9
 	mov	%r9, 8(rp)
 	adc	%rdx, %r10
 	mov	%r10, 16(rp)
-	adc	$0, %r11
+	adc	%r8, %r11
 	mov	%r11, 24(rp)
-	add	$32, %rsp
-	pop	%rbx
 	DOS64_EXIT()
 	ret
 
 L(3):	mov	(up), %rax
+	mov	%rax, %r10
 	mul	%rax
+	mov	8(up), %r11
 	mov	%rax, (rp)
+	mov	%r11, %rax
 	mov	%rdx, 8(rp)
-	mov	8(up), %rax
 	mul	%rax
+	mov	16(up), %rcx
 	mov	%rax, 16(rp)
+	mov	%rcx, %rax
 	mov	%rdx, 24(rp)
-	mov	16(up), %rax
 	mul	%rax
 	mov	%rax, 32(rp)
 	mov	%rdx, 40(rp)
 
-	mov	(up), %rbx
-	mov	8(up), %rax
-	mul	%rbx
+	mov	%r11, %rax
+	mul	%r10
 	mov	%rax, %r8
+	mov	%rcx, %rax
 	mov	%rdx, %r9
-	mov	16(up), %rax
-	mul	%rbx
-	xor	R32(%r10), R32(%r10)
+	mul	%r10
+	xor	%r10, %r10
 	add	%rax, %r9
+	mov	%r11, %rax
+	mov	%r10, %r11
 	adc	%rdx, %r10
 
-	mov	8(up), %rbx
-	mov	16(up), %rax
-	mul	%rbx
-	xor	R32(%r11), R32(%r11)
+	mul	%rcx
+	add	$40, %rsp
 	add	%rax, %r10
-	adc	%rdx, %r11
+	adc	%r11, %rdx
 	add	%r8, %r8
 	adc	%r9, %r9
 	adc	%r10, %r10
+	adc	%rdx, %rdx
 	adc	%r11, %r11
-	mov	$0, R32(%rbx)
-	adc	%rbx, %rbx
 	add	%r8, 8(rp)
 	adc	%r9, 16(rp)
 	adc	%r10, 24(rp)
-	adc	%r11, 32(rp)
-	adc	%rbx, 40(rp)
-	add	$32, %rsp
-	pop	%rbx
+	adc	%rdx, 32(rp)
+	adc	%r11, 40(rp)
 	DOS64_EXIT()
 	ret
 
 L(4):	mov	(up), %rax
+	mov	%rax, %r11
 	mul	%rax
+	mov	8(up), %rbx
 	mov	%rax, (rp)
+	mov	%rbx, %rax
 	mov	%rdx, 8(rp)
-	mov	8(up), %rax
 	mul	%rax
 	mov	%rax, 16(rp)
 	mov	%rdx, 24(rp)
@@ -206,61 +210,56 @@ L(4):	mov	(up), %rax
 	mov	24(up), %rax
 	mul	%rax
 	mov	%rax, 48(rp)
+	mov	%rbx, %rax
 	mov	%rdx, 56(rp)
 
-	mov	(up), %rbx
-	mov	8(up), %rax
-	mul	%rbx
+	mul	%r11
+	add	$32, %rsp
 	mov	%rax, %r8
 	mov	%rdx, %r9
 	mov	16(up), %rax
-	mul	%rbx
-	xor	R32(%r10), R32(%r10)
+	mul	%r11
+	xor	%r10, %r10
 	add	%rax, %r9
 	adc	%rdx, %r10
 	mov	24(up), %rax
-	mul	%rbx
-	xor	R32(%r11), R32(%r11)
+	mul	%r11
+	xor	%r11, %r11
 	add	%rax, %r10
 	adc	%rdx, %r11
-	mov	8(up), %rbx
 	mov	16(up), %rax
 	mul	%rbx
-	xor	R32(%r12), R32(%r12)
+	xor	%rcx, %rcx
 	add	%rax, %r10
 	adc	%rdx, %r11
-	adc	$0, %r12
+	adc	$0, %rcx
 	mov	24(up), %rax
 	mul	%rbx
+	pop	%rbx
 	add	%rax, %r11
-	adc	%rdx, %r12
-	mov	16(up), %rbx
+	adc	%rdx, %rcx
+	mov	16(up), %rdx
 	mov	24(up), %rax
-	mul	%rbx
-	xor	R32(%rbp), R32(%rbp)
-	add	%rax, %r12
-	adc	%rdx, %rbp
+	mul	%rdx
+	add	%rax, %rcx
+	adc	$0, %rdx
 
 	add	%r8, %r8
 	adc	%r9, %r9
 	adc	%r10, %r10
 	adc	%r11, %r11
-	adc	%r12, %r12
-	mov	$0, R32(%rbx)
-	adc	%rbp, %rbp
+	adc	%rcx, %rcx
+	mov	$0, R32(%rax)
+	adc	%rdx, %rdx
 
-	adc	%rbx, %rbx
+	adc	%rax, %rax
 	add	%r8, 8(rp)
 	adc	%r9, 16(rp)
 	adc	%r10, 24(rp)
 	adc	%r11, 32(rp)
-	adc	%r12, 40(rp)
-	adc	%rbp, 48(rp)
-	adc	%rbx, 56(rp)
-	add	$16, %rsp
-	pop	%r12
-	pop	%rbp
-	pop	%rbx
+	adc	%rcx, 40(rp)
+	adc	%rdx, 48(rp)
+	adc	%rax, 56(rp)
 	DOS64_EXIT()
 	ret
 

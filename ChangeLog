@@ -1,3 +1,7 @@
+2012-03-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/x86_64/sqr_basecase.asm: Speed-up for small cases.
+
 2012-03-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/gcd_1.asm: New file.
