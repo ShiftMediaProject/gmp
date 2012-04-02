@@ -1,3 +1,7 @@
+2012-04-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/oddfac_1.c: Initalize size for ASSERT.
+
 2012-04-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (_GMP_H_HAVE_FILE): Test also __STDIO_LOADED (for VMS).
