@@ -1,3 +1,7 @@
+2012-04-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (doprnt_format_t, etc): Remove bogus __GMP_DECLSPECs.
+
 2012-03-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86_64/sqr_basecase.asm: Speed-up for small cases.

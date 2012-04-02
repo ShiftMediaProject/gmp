@@ -4284,10 +4284,10 @@ struct doprnt_params_t {
 
 #if _GMP_H_HAVE_VA_LIST
 
-__GMP_DECLSPEC typedef int (*doprnt_format_t) (void *, const char *, va_list);
-__GMP_DECLSPEC typedef int (*doprnt_memory_t) (void *, const char *, size_t);
-__GMP_DECLSPEC typedef int (*doprnt_reps_t)   (void *, int, int);
-__GMP_DECLSPEC typedef int (*doprnt_final_t)  (void *);
+typedef int (*doprnt_format_t) (void *, const char *, va_list);
+typedef int (*doprnt_memory_t) (void *, const char *, size_t);
+typedef int (*doprnt_reps_t)   (void *, int, int);
+typedef int (*doprnt_final_t)  (void *);
 
 struct doprnt_funs_t {
   doprnt_format_t  format;
