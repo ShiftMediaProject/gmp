@@ -1,3 +1,7 @@
+2012-04-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/aorrlsh_n.asm: Make it actually work for DOS64.
+
 2012-04-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/oddfac_1.c: Initalize size for ASSERT.

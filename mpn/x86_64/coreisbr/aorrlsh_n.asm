@@ -4,7 +4,7 @@ dnl  Optimised for Sandy Bridge.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -70,6 +70,7 @@ ASM_START()
 	ALIGN(32)
 PROLOGUE(func_n)
 	DOS64_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
 	push	%rbx
 	xor	R32(%rbx), R32(%rbx)	C clear CF save register
 L(ent):	push	%rbp
@@ -194,7 +195,8 @@ IFRSB(	neg	%rax)
 EPILOGUE()
 PROLOGUE(func_nc)
 	DOS64_ENTRY(4)
-IFDOS(`	mov	56(%rsp), %r8	')
+IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
+IFDOS(`	mov	64(%rsp), %r9	')	C cy
 	push	%rbx
 	neg	cy
 	sbb	R32(%rbx), R32(%rbx)	C initialise CF save register
