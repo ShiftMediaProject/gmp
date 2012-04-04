@@ -1,5 +1,7 @@
 2012-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (ARM count_leading_zeros): Enable for more arch versions.
+
 	* mpn/x86_64/gcd_1.asm: Make room for DOS64 regparm shadow area.
 	* mpn/x86_64/core2/gcd_1.asm: Likewise.
 
