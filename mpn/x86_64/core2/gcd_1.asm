@@ -53,6 +53,9 @@ define(`v0',    `%rdx')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
+IFDOS(`define(`STACK_ALLOC', 40)')
+IFSTD(`define(`STACK_ALLOC', 8)')
+
 C Undo some configure cleverness.
 C The problem is that C only defines the '1c' variant, and that configure
 C therefore considers modexact_1c to be the base function.  It then adds a
@@ -76,7 +79,7 @@ PROLOGUE(mpn_gcd_1)
 
 	push	%rax		C preserve common twos over call
 	push	v0		C preserve v0 argument over call
-	sub	$8, %rsp	C maintain ABI required rsp alignment
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 
 	cmp	$1, n
 	jnz	L(reduce_nby1)
@@ -104,7 +107,7 @@ IFDOS(`	mov	%rdi, %rcx	')
 	CALL(	mpn_modexact_1_odd)
 L(reduced):
 
-	add	$8, %rsp
+	add	$STACK_ALLOC, %rsp
 	pop	%rdx
 
 	bsf	%rax, %rcx

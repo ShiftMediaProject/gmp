@@ -61,6 +61,9 @@ define(`v0',    `%rdx')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
+IFDOS(`define(`STACK_ALLOC', 40)')
+IFSTD(`define(`STACK_ALLOC', 8)')
+
 ASM_START()
 	TEXT
 	ALIGN(16)
@@ -93,7 +96,7 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	cmp	%r8, v0
 	ja	L(noreduce)
 	push	v0
-	sub	$8, %rsp		C maintain ABI required rsp alignment
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 
 L(bmod):
 IFDOS(`	mov	%rdx, %r8	')
@@ -102,7 +105,7 @@ IFDOS(`	mov	%rdi, %rcx	')
 	CALL(	mpn_modexact_1_odd)
 
 L(reduced):
-	add	$8, %rsp
+	add	$STACK_ALLOC, %rsp
 	pop	%rdx
 
 L(noreduce):
@@ -114,7 +117,7 @@ L(noreduce):
 
 L(reduce_nby1):
 	push	v0
-	sub	$8, %rsp		C maintain ABI required rsp alignment
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
