@@ -507,14 +507,13 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 /* This is a bizarre test, but GCC doesn't define useful common symbol. */
 #if defined (__ARM_ARCH_5__)  || defined (__ARM_ARCH_5T__) || \
-    defined (__ARM_ARCH_5E__) || defined (__ARM_ARCH_5T__) || \
+    defined (__ARM_ARCH_5E__) || defined (__ARM_ARCH_5TE__)|| \
     defined (__ARM_ARCH_6__)  || defined (__ARM_ARCH_6J__) || \
     defined (__ARM_ARCH_6K__) || defined (__ARM_ARCH_6Z__) || \
     defined (__ARM_ARCH_6ZK__)|| defined (__ARM_ARCH_6T2__)|| \
     defined (__ARM_ARCH_6M__) || defined (__ARM_ARCH_7__)  || \
     defined (__ARM_ARCH_7A__) || defined (__ARM_ARCH_7R__) || \
-    defined (__ARM_ARCH_7M__) || defined (__ARM_ARCH_7EM__)|| \
-    defined (__ARM_ARCH_7M__)
+    defined (__ARM_ARCH_7M__) || defined (__ARM_ARCH_7EM__)
 #define count_leading_zeros(count, x) \
   __asm__ ("clz\t%0, %1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
