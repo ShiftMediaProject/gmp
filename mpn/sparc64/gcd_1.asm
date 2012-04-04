@@ -25,7 +25,7 @@ include(`../config.m4')
 
 
 C		  cycles/bit (approx)
-C UltraSPARC 1&2:      ?
+C UltraSPARC 1&2:      5.1
 C UltraSPARC 3:        5.0
 C UltraSPARC T1:      12.8
 C Numbers measured with: speed -CD -s32-64 -t32 mpn_gcd_1
