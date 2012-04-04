@@ -1,5 +1,8 @@
 2012-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/powerpc64/p7/popcount.asm: New file.
+	* mpn/powerpc64/p7/hamdist.asm: New file.
+
 	* longlong.h (ARM count_leading_zeros): Enable for more arch versions.
 
 	* mpn/x86_64/gcd_1.asm: Make room for DOS64 regparm shadow area.
