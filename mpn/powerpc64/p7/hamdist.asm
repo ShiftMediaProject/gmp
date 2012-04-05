@@ -36,7 +36,9 @@ PROLOGUE(mpn_hamdist)
 	std	r31, -8(r1)
 
 	addi	r0, n, 1
-	srdi	r0, r0, 1
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r0, r0, 63,33',	C ...branch count
+`	srdi	r0, r0, 1')	C ...for ctr
 	mtctr	r0
 
 	andi.	r0, n, 1

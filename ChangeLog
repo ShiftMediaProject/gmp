@@ -1,3 +1,8 @@
+2012-04-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/p7/popcount.asm: Properly extend arg n for mode32.
+	* mpn/powerpc64/p7/hamdist.asm: Likewise.
+
 2012-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p7/popcount.asm: New file.
