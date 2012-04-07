@@ -1,3 +1,7 @@
+2012-04-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/gcd_1.asm: Rewrite inner loop to use ctz table.
+
 2012-04-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p7/popcount.asm: Properly extend arg n for mode32.
