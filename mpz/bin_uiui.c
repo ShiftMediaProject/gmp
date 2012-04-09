@@ -431,7 +431,7 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     k = MIN (k, n-k);
     if (n < GMP_NUMB_BITS)
       mpz_bc_bin_uiui (r, n, k);
-    else if (k < 25)
+    else if (k < MAX_K)
       mpz_smallk_bin_uiui (r, n, k);
     else
       mpz_bdiv_bin_uiui (r, n, k);
