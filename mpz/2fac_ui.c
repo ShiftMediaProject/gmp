@@ -55,10 +55,9 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
   if ((n & 1) == 0) { /* n is even, n = 2k, (2k)!! = k! 2^k */
     mp_limb_t count;
 
-    popc_limb (count, n);
-    count = n - count;
-    n >>= 1;
-    mpz_oddfac_1 (x, n, 0);
+    popc_limb (count, n);	/* popc(n) == popc(k) */
+    count = n - count;		/* n - popc(n) == k + k - popc(k) */
+    mpz_oddfac_1 (x, n >> 1, 0);
     mpz_mul_2exp (x, x, count);
   } else { /* n is odd */
     static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };

@@ -4,6 +4,7 @@
 	* mini-gmp/mini-gmp.c (mpz_root): New, support negative operands.
 	* mini-gmp/mini-gmp.h (mpz_root): define.
 	(mpz_out_str): Test also __STDIO_LOADED (for VMS).
+	* mpz/2fac_ui.c: Cosmetic change.
 
 2012-04-05  Torbjorn Granlund  <tege@gmplib.org>
 
