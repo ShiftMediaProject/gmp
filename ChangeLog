@@ -1,6 +1,9 @@
 2012-04-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp.h (mpz_out_str): Test also __STDIO_LOADED (for VMS).
+	* gen-fac_ui.c (mpz_root): Remove.
+	* mini-gmp/mini-gmp.c (mpz_root): New, support negative operands.
+	* mini-gmp/mini-gmp.h (mpz_root): define.
+	(mpz_out_str): Test also __STDIO_LOADED (for VMS).
 
 2012-04-05  Torbjorn Granlund  <tege@gmplib.org>
 

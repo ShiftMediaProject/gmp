@@ -2938,7 +2938,7 @@ mpz_invert (mpz_t r, const mpz_t u, const mpz_t m)
 }
 
 
-/* Higher level operations (sqrt and pow) */
+/* Higher level operations (sqrt, pow and root) */
 
 /* Compute s = floor(sqrt(u)) and r = u - s^2. Allows r == NULL */
 void
@@ -3141,6 +3141,48 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
   mpz_init_set_ui (e, elimb);
   mpz_powm (r, b, e, m);
   mpz_clear (e);
+}
+
+/* x=floor(y^(1/z)) */
+void
+mpz_root (mpz_t x, const mpz_t y, unsigned long z)
+{
+  mpz_t t, u, v, ty;
+
+  if (y->_mp_size < 0 && (z & 1) == 0)
+    gmp_die ("mpz_root: Negative argument, with even root.");
+  if (z == 0)
+    gmp_die ("mpz_root: Zeroth root.");
+
+  if (mpz_cmp_ui (y, 1) <= 0) {
+    mpz_set (x, y);
+    return;
+  }
+
+  ty->_mp_size = GMP_ABS (y->_mp_size);
+  ty->_mp_d = y->_mp_d;
+
+  mpz_init (t);
+  mpz_init (v);
+  mpz_init (u);
+  mpz_setbit (t, mpz_sizeinbase (ty, 2) / z + 1);
+
+  do {
+    mpz_set (u, t);
+    mpz_pow_ui (t, u, z - 1);
+    mpz_tdiv_q (t, ty, t);
+    mpz_mul_ui (v, u, z - 1);
+    mpz_add (t, t, v);
+    mpz_tdiv_q_ui (t, t, z);
+  } while (mpz_cmp (t, u) < 0);
+
+  if (y->_mp_size < 0)
+    mpz_neg (x, u);
+  else
+    mpz_set (x, u);
+  mpz_clear (u);
+  mpz_clear (v);
+  mpz_clear (t);
 }
 
 

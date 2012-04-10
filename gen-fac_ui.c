@@ -23,39 +23,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "bootstrap.c"
 
 
-/* x=floor(y^(1/z)) */
-void
-mpz_root (mpz_t x, mpz_t y, unsigned long z)
-{
-  mpz_t t, u, v;
-
-  if (mpz_cmp_ui (y, 1) <= 0)
-    {
-      mpz_set (x, y);
-      return;
-    }
-  mpz_init (t);
-  mpz_init (v);
-  mpz_init_set_ui (u, 1);
-  mpz_mul_2exp (u, u, mpz_sizeinbase (y, 2) / z + 1);
-  do
-    {
-      mpz_pow_ui (t, u, z - 1);
-      mpz_tdiv_q (t, y, t);
-      mpz_mul_ui (v, u, z - 1);
-      mpz_add (t, t, v);
-      mpz_tdiv_q_ui (t, t, z);
-      if (mpz_cmp (t, u) >= 0)
-	break;
-      mpz_set (u, t);
-    }
-  while (1);
-  mpz_set (x, u);
-  mpz_clear (u);
-  mpz_clear (v);
-  mpz_clear (t);
-}
-
 /* returns 0 on success		*/
 int
 gen_consts (int numb, int nail, int limb)
