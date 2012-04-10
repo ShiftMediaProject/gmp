@@ -230,7 +230,8 @@ int mpz_set_str (mpz_t, const char *, int);
   || defined (__STDIO__)              /* Apple MPW MrC */       \
   || defined (_MSL_STDIO_H)           /* Metrowerks */          \
   || defined (_STDIO_H_INCLUDED)      /* QNX4 */		\
-  || defined (_ISO_STDIO_ISO_H)       /* Sun C++ */
+  || defined (_ISO_STDIO_ISO_H)       /* Sun C++ */		\
+  || defined (__STDIO_LOADED)         /* VMS */
 size_t mpz_out_str (FILE *, int, const mpz_t);
 #endif
 
