@@ -3,7 +3,7 @@
 	* mini-gmp/mini-gmp.h (mpz_root, mpz_rootrem): define (correctly).
 	* mini-gmp/mini-gmp.c (mpz_rootrem): Extended code from _root.
 	(mpz_root): Use mpz_rootrem.
-	
+
 	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): add t-root.
 	* mini-gmp/tests/t-root.c: New file
 	* mini-gmp/tests/t-reuse.c: Enable root{,rem} tests.
@@ -15,6 +15,10 @@
 	* mini-gmp/mini-gmp.h (mpz_root): define.
 	(mpz_out_str): Test also __STDIO_LOADED (for VMS).
 	* mpz/2fac_ui.c: Cosmetic change.
+
+2012-04-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/gcd_1.asm: Rewrite inner loop to use ctz table.
 
 2012-04-05  Torbjorn Granlund  <tege@gmplib.org>
 
