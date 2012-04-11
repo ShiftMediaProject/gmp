@@ -1956,6 +1956,8 @@ mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
   tp[un] = cy;
 
   t->_mp_size = un + (cy > 0);
+  if (u->_mp_size < 0)
+    t->_mp_size = - t->_mp_size;
 
   mpz_swap (r, t);
   mpz_clear (t);
@@ -3143,12 +3145,12 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
   mpz_clear (e);
 }
 
-/* x=floor(y^(1/z)), r=y-x^z */
+/* x=trunc(y^(1/z)), r=y-x^z */
 void
 mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
 {
   int sgn;
-  mpz_t t, u, v, ty;
+  mpz_t t, u, v;
 
   sgn = y->_mp_size < 0;
   if (sgn && (z & 1) == 0)
@@ -3156,38 +3158,34 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   if (z == 0)
     gmp_die ("mpz_rootrem: Zeroth root.");
 
-  if (mpz_cmp_ui (y, 1) <= 0) {
+  if (mpz_cmpabs_ui (y, 1) <= 0) {
     mpz_set (x, y);
     if (r)
       r->_mp_size = 0;
     return;
   }
 
-  ty->_mp_size = GMP_ABS (y->_mp_size);
-  ty->_mp_d = y->_mp_d;
-
   mpz_init (t);
   mpz_init (v);
   mpz_init (u);
-  mpz_setbit (t, mpz_sizeinbase (ty, 2) / z + 1);
+  mpz_setbit (t, mpz_sizeinbase (y, 2) / z + 1);
+  if (sgn)
+    mpz_neg (t,t);
 
   do {
     mpz_set (u, t);
     mpz_pow_ui (t, u, z - 1);
-    mpz_tdiv_q (t, ty, t);
+    mpz_tdiv_q (t, y, t);
     mpz_mul_ui (v, u, z - 1);
     mpz_add (t, t, v);
     mpz_tdiv_q_ui (t, t, z);
-  } while (mpz_cmp (t, u) < 0);
+  } while (mpz_cmpabs (t, u) < 0);
 
   if (r) {
     mpz_pow_ui (t, u, z);
     mpz_sub (r, y, t);
   }
-  if (sgn)
-    mpz_neg (x, u);
-  else
-    mpz_set (x, u);
+  mpz_set (x, u);
   mpz_clear (u);
   mpz_clear (v);
   mpz_clear (t);

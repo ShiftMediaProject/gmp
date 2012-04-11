@@ -29,7 +29,10 @@ rootrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r, unsigned long z)
       mpz_clear (t);
       return 0;
     }
-  mpz_add_ui (t, s, 1);
+  if (mpz_sgn (s) > 0)
+    mpz_add_ui (t, s, 1);
+  else
+    mpz_sub_ui (t, s, 1);
   mpz_pow_ui (t, t, z);
   if (mpz_cmpabs (t, u) <= 0)
     {
@@ -58,8 +61,10 @@ main (int argc, char **argv)
   for (i = 0; i < COUNT; i++)
     {
       mini_rrandomb (u, MAXBITS);
-      mini_rrandomb (bs, 10);
+      mini_rrandomb (bs, 12);
       e = mpz_getlimbn (bs, 0) % mpz_sizeinbase (u, 2) + 2;
+      if ((e & 1) && (mpz_getlimbn (bs, 0) & (1L<<10)))
+	mpz_neg (u, u);
       mpz_rootrem (s, r, u, e);
 
       if (!rootrem_valid_p (u, s, r, e))

@@ -3,9 +3,10 @@
 	* mini-gmp/mini-gmp.h (mpz_root, mpz_rootrem): define (correctly).
 	* mini-gmp/mini-gmp.c (mpz_rootrem): Extended code from _root.
 	(mpz_root): Use mpz_rootrem.
+	(mpz_mul_ui): Correctly handle negative operands.
 
 	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): add t-root.
-	* mini-gmp/tests/t-root.c: New file
+	* mini-gmp/tests/t-root.c: New file.
 	* mini-gmp/tests/t-reuse.c: Enable root{,rem} tests.
 
 2012-04-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
