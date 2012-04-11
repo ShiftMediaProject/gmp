@@ -410,7 +410,7 @@ check-mini-gmp:
 		MINI_GMP_DIR="$$abs_srcdir/mini-gmp" \
 		LDFLAGS="-L../../.libs" \
 		LIBS="-lgmp -lm" \
-		CC="$(CC_FOR_BUILD)" EXTRA_CFLAGS="-g" check
+		CC="$(CC_FOR_BUILD)" EXTRA_CFLAGS="-g -I../.." check
 
 clean-mini-gmp:
 	if [ -d mini-gmp/tests ] ; then \

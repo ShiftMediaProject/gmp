@@ -1,3 +1,8 @@
+2012-04-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* Makefile.am (check-mini-gmp): Pass -I../.. in EXTRA_CFLAGS, to
+	locate gmp.h.
+
 2012-04-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.h (mpz_root, mpz_rootrem): define (correctly).
