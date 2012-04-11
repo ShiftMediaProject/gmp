@@ -3143,19 +3143,23 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
   mpz_clear (e);
 }
 
-/* x=floor(y^(1/z)) */
+/* x=floor(y^(1/z)), r=y-x^z */
 void
-mpz_root (mpz_t x, const mpz_t y, unsigned long z)
+mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
 {
+  int sgn;
   mpz_t t, u, v, ty;
 
-  if (y->_mp_size < 0 && (z & 1) == 0)
-    gmp_die ("mpz_root: Negative argument, with even root.");
+  sgn = y->_mp_size < 0;
+  if (sgn && (z & 1) == 0)
+    gmp_die ("mpz_rootrem: Negative argument, with even root.");
   if (z == 0)
-    gmp_die ("mpz_root: Zeroth root.");
+    gmp_die ("mpz_rootrem: Zeroth root.");
 
   if (mpz_cmp_ui (y, 1) <= 0) {
     mpz_set (x, y);
+    if (r)
+      r->_mp_size = 0;
     return;
   }
 
@@ -3176,13 +3180,31 @@ mpz_root (mpz_t x, const mpz_t y, unsigned long z)
     mpz_tdiv_q_ui (t, t, z);
   } while (mpz_cmp (t, u) < 0);
 
-  if (y->_mp_size < 0)
+  if (r) {
+    mpz_pow_ui (t, u, z);
+    mpz_sub (r, y, t);
+  }
+  if (sgn)
     mpz_neg (x, u);
   else
     mpz_set (x, u);
   mpz_clear (u);
   mpz_clear (v);
   mpz_clear (t);
+}
+
+int
+mpz_root (mpz_t x, const mpz_t y, unsigned long z)
+{
+  int res;
+  mpz_t r;
+
+  mpz_init (r);
+  mpz_rootrem (x, r, y, z);
+  res = r->_mp_size == 0;
+  mpz_clear (r);
+
+  return res;
 }
 
 

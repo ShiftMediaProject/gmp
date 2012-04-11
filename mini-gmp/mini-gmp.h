@@ -177,7 +177,8 @@ void mpz_ui_pow_ui (mpz_t, unsigned long, unsigned long);
 void mpz_powm (mpz_t, const mpz_t, const mpz_t, const mpz_t);
 void mpz_powm_ui (mpz_t, const mpz_t, unsigned long, const mpz_t);
 
-void mpz_root (mpz_t, const mpz_t, unsigned long);
+void mpz_rootrem (mpz_t, mpz_t, const mpz_t, unsigned long);
+int mpz_root (mpz_t, const mpz_t, unsigned long);
 
 int mpz_tstbit (const mpz_t, mp_bitcnt_t);
 void mpz_setbit (mpz_t, mp_bitcnt_t);

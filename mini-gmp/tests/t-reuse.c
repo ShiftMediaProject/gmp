@@ -361,7 +361,7 @@ main (int argc, char **argv)
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
 	    FAIL2 (mpz_sqrtrem, in1, NULL, NULL);
 	}
-#if 0
+
       if (mpz_sgn (in1) >= 0)
 	{
 	  mpz_root (ref1, in1, in2i % 0x1000 + 1);
@@ -394,7 +394,7 @@ main (int argc, char **argv)
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
 	    FAIL2 (mpz_rootrem, in1, in2, NULL);
 	}
-#endif
+
       if (pass < reps / 2)	/* run fewer tests since gcdext lots of time */
 	{
 	  mpz_gcdext (ref1, ref2, ref3, in1, in2);
