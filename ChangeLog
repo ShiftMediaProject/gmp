@@ -14,6 +14,8 @@
 	* mini-gmp/tests/t-root.c: New file.
 	* mini-gmp/tests/t-reuse.c: Enable root{,rem} tests.
 
+	* gen-fac_ui.c: Clean-up.
+
 2012-04-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gen-fac_ui.c (mpz_root): Remove.
