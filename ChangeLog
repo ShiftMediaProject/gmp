@@ -1,3 +1,17 @@
+2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.
+	* mpn/x86_64/fastsse/rshift-movdqu2.asm: New file.
+	* mpn/x86_64/fastsse/lshiftc-movdqu2.asm: New file.
+	* mpn/x86_64/coreisbr/lshift.asm: New file.
+	* mpn/x86_64/coreisbr/rshift.asm: New file.
+	* mpn/x86_64/coreisbr/lshiftc.asm: New file.
+	* mpn/x86_64/k10/lshift.asm: New file.
+	* mpn/x86_64/k10/rshift.asm: New file.
+	* mpn/x86_64/k10/lshiftc.asm: New file.
+
+	* mpn/x86_64/fastsse/lshift.asm: Simplify to very basic form.
+
 2012-04-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): Pass -I../.. in EXTRA_CFLAGS, to
