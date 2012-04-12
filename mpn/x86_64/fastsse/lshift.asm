@@ -36,15 +36,14 @@ C Intel atom	 ?			 ?
 C VIA nano	 2.25  (2)		 2.5   (2)		Y
 
 C We try to do as many 16-byte operations as possible.  The top-most and
-C bottom-most writes might need 8-byte operations.  We always write using
-C 16-byte operations, we read with both 8-byte and 16-byte operations.
+C bottom-most writes might need 8-byte operations.
 
 C There are two inner-loops, one for when rp = ap (mod 16) and one when this is
 C not true.  The aligned case reads 16+8 bytes, the unaligned case reads
 C 16+8+X bytes, where X is 8 or 16 depending on how punpcklqdq is implemented.
 
 C This is not yet great code:
-C   (1) The unaligned case makes too many reads.
+C   (1) The unaligned case makes many reads.
 C   (2) We should do some unrolling, at least 2-way.
 C With 2-way unrolling but no scheduling we reach 1.5 c/l on K10 and 2 c/l on
 C Nano.
@@ -57,7 +56,7 @@ define(`cnt', `%rcx')
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_lshift)
 	movd	R32(%rcx), %xmm4
 	mov	$64, R32(%rax)
@@ -94,9 +93,9 @@ C *****************************************************************************
 C Handle the case when ap != rp (mod 16).
 
 	ALIGN(16)
-L(utop):movq	(ap,n,8), %xmm1
+L(utop):movdqa	-8(ap,n,8), %xmm0
+	movq	(ap,n,8), %xmm1
 	punpcklqdq  8(ap,n,8), %xmm1
-	movdqa	-8(ap,n,8), %xmm0
 	psllq	%xmm4, %xmm1
 	psrlq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
@@ -127,25 +126,16 @@ L(atop):movdqa	(ap,n,8), %xmm0		C xmm0 = B*ap[n-1] + ap[n-2]
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
 	movdqa	%xmm0, (rp,n,8)
-L(aent):sub	$2, n
-	jbe	L(aend)
-	movdqa	(ap,n,8), %xmm0		C xmm0 = B*ap[n-1] + ap[n-2]
-	movq	-8(ap,n,8), %xmm1	C xmm1 = ap[n-3]
-	punpcklqdq  %xmm0, %xmm1	C xmm1 = B*ap[n-2] + ap[n-3]
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, (rp,n,8)
+L(aent):
 	sub	$2, n
 	ja	L(atop)
-L(aend):
 	jne	L(end8)
 
-	movdqa	(ap), %xmm0
-	pxor	%xmm1, %xmm1
-	punpcklqdq  %xmm0, %xmm1
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
+	movdqa	(ap), %xmm1
+	pxor	%xmm0, %xmm0
+	punpcklqdq  %xmm1, %xmm0
+	psllq	%xmm4, %xmm1
+	psrlq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
 	movdqa	%xmm0, (rp)
 	ret
