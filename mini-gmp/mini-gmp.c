@@ -3206,6 +3206,39 @@ mpz_root (mpz_t x, const mpz_t y, unsigned long z)
 }
 
 
+/* Combinatorics */
+
+void
+mpz_fac_ui (mpz_t x, unsigned long n)
+{
+  if (n < 2) {
+    mpz_set_ui (x, 1);
+    return;
+  }
+  mpz_set_ui (x, n);
+  for (;--n > 1;)
+    mpz_mul_ui (x, x, n);
+}
+
+void
+mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
+{
+  mpz_t t;
+
+  if (k > n) {
+    r->_mp_size = 0;
+    return;
+  }
+  mpz_fac_ui (r, n);
+  mpz_init (t);
+  mpz_fac_ui (t, k);
+  mpz_divexact (r, r, t);
+  mpz_fac_ui (t, n - k);
+  mpz_divexact (r, r, t);
+  mpz_clear (t);
+}
+
+
 /* Logical operations and bit manipulation. */
 
 /* Numbers are treated as if represented in two's complement (and

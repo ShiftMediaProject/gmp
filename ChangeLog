@@ -3,6 +3,10 @@
 	* mpz/bin_uiui.c: Rewrite.
 	* gen-fac_ui.c: Generate new constants for bin_uiui.
 
+	* mini-gmp/mini-gmp.h (mpz_fac_ui, mpz_bin_uiui): New definitions.
+	* mini-gmp/mini-gmp.c (mpz_fac_ui, mpz_bin_uiui): Trivial
+	implementation.
+
 2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.

@@ -22,36 +22,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "bootstrap.c"
 
-void
-mpz_fac_ui (mpz_t x, unsigned long n)
-{
-  if (n < 2) {
-    mpz_set_ui (x, 1);
-    return;
-  }
-  mpz_set_ui (x, n);
-  for (;--n > 1;)
-    mpz_mul_ui (x, x, n);
-}
-
-void
-mpz_bin_uiui (mpz_t r, unsigned long int n, unsigned long int k)
-{
-  mpz_t t;
-
-  if (k > n) {
-    r->_mp_size = 0;
-    return;
-  }
-  mpz_fac_ui (r, n);
-  mpz_init (t);
-  mpz_fac_ui (t, k);
-  mpz_divexact (r, r, t);
-  mpz_fac_ui (t, n - k);
-  mpz_divexact (r, r, t);
-  mpz_clear (t);
-}
-
 int
 mpz_remove_twos (mpz_t x)
 {
