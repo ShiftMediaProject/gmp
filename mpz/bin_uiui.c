@@ -437,12 +437,14 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   SIZ(r) = rn;
 }
 
+/* WARNING: it assumes that n fits in a limb! */
 void
 mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
   if (UNLIKELY (n < k)) {
     SIZ (r) = 0;
   } else {
+    ASSERT (n <= GMP_NUMB_MAX);
     /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller. */
     k = MIN (k, n - k);
     if (k < 2) {
