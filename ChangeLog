@@ -1,3 +1,8 @@
+2012-04-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/bin_uiui.c: Rewrite.
+	* gen-fac_ui.c: Generate new constants for bin_uiui.
+
 2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.
@@ -27,8 +32,6 @@
 	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): add t-root.
 	* mini-gmp/tests/t-root.c: New file.
 	* mini-gmp/tests/t-reuse.c: Enable root{,rem} tests.
-
-	* gen-fac_ui.c: Clean-up.
 
 2012-04-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
