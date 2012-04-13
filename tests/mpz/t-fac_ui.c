@@ -83,6 +83,18 @@ main (int argc, char *argv[])
       mpz_mul_ui (f, f, n+1);  /* (n+1)! = n! * (n+1) */
     }
 
+  n = 1048573; /* a prime */
+  if (n > MP_LIMB_T_MAX)
+    n = 65521; /* a smaller prime :-) */
+  mpz_fac_ui (f, n - 1);
+  m = mpz_fdiv_ui (f, n);
+  if ( m != n - 1)
+    {
+      printf ("mpz_fac_ui(%lu) wrong\n", n - 1);
+      printf ("  Wilson's theorem not verified: got %lu, expected %lu.\n",m ,n - 1);
+      abort ();
+    }
+
   mpz_clear (df[0]);
   mpz_clear (df[1]);
   mpz_clear (f);
