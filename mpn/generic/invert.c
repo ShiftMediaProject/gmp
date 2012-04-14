@@ -23,10 +23,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-/* FIXME: Remove NULL and TMP_*, as soon as all the callers properly
-   allocate and pass the scratch to the function. */
-#include <stdlib.h>		/* for NULL */
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -46,9 +42,6 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     TMP_DECL;
 
     TMP_MARK;
-    if (scratch == NULL)
-      scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (n));
-
     if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD))
       {
 	/* Maximum scratch needed by this branch: 2*n */

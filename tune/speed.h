@@ -1865,9 +1865,9 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 #define SPEED_ROUTINE_MPN_MUPI_DIV_QR(function,itchfn)			\
   {									\
     unsigned   i;							\
-    mp_ptr     dp, tp, qp, rp, ip, scratch;				\
+    mp_ptr     dp, tp, qp, rp, ip, scratch, tmp;			\
     double     t;							\
-    mp_size_t size1, itch;						\
+    mp_size_t  size1, itch;						\
     TMP_DECL;								\
 									\
     size1 = (s->r == 0 ? 2 * s->size : s->r);				\
@@ -1894,7 +1894,8 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
     tp[size1 - 1] = dp[s->size-1] - 1;					\
 									\
-    mpn_invert (ip, dp, s->size, NULL);					\
+    tmp = TMP_ALLOC_LIMBS (mpn_invert_itch (s->size));			\
+    mpn_invert (ip, dp, s->size, tmp);					\
 									\
     speed_operand_dst (s, qp, size1 - s->size);				\
     speed_operand_dst (s, rp, s->size);					\
