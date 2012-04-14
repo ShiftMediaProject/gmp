@@ -337,18 +337,9 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   ASSERT (rn < alloc);
 
-  mpn_pi1_bdiv_q_1 (rp, rp, rn, fac[k], facinv[k - 2], 0);
+  mpn_pi1_bdiv_q_1 (rp, rp, rn, fac[k], facinv[k - 2],
+		    fac2cnt[k / 2 - 1] - i2cnt);
   rn -= rp[rn - 1] == 0;		/* normalisation */
-
-  /* We will now have some accumulated excess factors of 2, since the mulN
-     functions only suppress factors conservatively.  Since both n and in
-     particular k are limited, we have < GMP_NUMB_BITS factors. */
-  cnt = fac2cnt[k / 2 - 1] - i2cnt;
-  if (cnt != 0)
-    {
-      mpn_rshift (rp, rp, rn, cnt);
-      rn -= rp[rn - 1] == 0;		/* normalisation */
-    }
 
   SIZ(r) = rn;
 }
@@ -363,7 +354,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 */
 
 static mp_limb_t
-bc_bin_uiui (unsigned long int n, unsigned long int k)
+bc_bin_uiui (unsigned int n, unsigned int k)
 {
   return (fac[n] * facinv[k - 2] * facinv[n - k - 2])
     << (fac2cnt[n / 2 - 1] - fac2cnt[k / 2 - 1] - fac2cnt[(n-k) / 2 - 1]);
@@ -394,7 +385,6 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mp_ptr rp;
   mp_size_t rn;
   unsigned long int hk;
-  mp_bitcnt_t cnt;
 
   hk = k >> 1;
 
@@ -404,9 +394,14 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     mpz_smallkdc_bin_uiui (r, n, hk);
   k -= hk;
   n -= hk;
-  if (n <= ODD_FACTORIAL_EXTTABLE_LIMIT)
-    mpz_mul_ui (r, r, bc_bin_uiui (n, k));
-  else {
+  if (n <= ODD_FACTORIAL_EXTTABLE_LIMIT) {
+    mp_limb_t cy;
+    rn = SIZ (r);
+    rp = MPZ_REALLOC (r, rn + 1);
+    cy = mpn_mul_1 (rp, rp, rn, bc_bin_uiui (n, k));
+    rp [rn] = cy;
+    rn += cy != 0;
+  } else {
     mp_limb_t buffer[ODD_CENTRAL_BINOMIAL_TABLE_LIMIT + 3];
     mpz_t t;
 
@@ -417,22 +412,14 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     else
       mpz_smallkdc_bin_uiui (t, n, k);
     mpz_mul (r, r, t);
+    rp = PTR (r);
+    rn = SIZ (r);
   }
 
-  rp = PTR (r);
-  rn = SIZ (r);
-
   mpn_pi1_bdiv_q_1 (rp, rp, rn, bin2kk[k - ODD_CENTRAL_BINOMIAL_OFFSET],
-		    bin2kkinv[k - ODD_CENTRAL_BINOMIAL_OFFSET], 0);
+		    bin2kkinv[k - ODD_CENTRAL_BINOMIAL_OFFSET],
+		    fac2bin[k - ODD_CENTRAL_BINOMIAL_OFFSET] - (k != hk));
   rn -= rp[rn - 1] == 0;		/* normalisation */
-
-  /* We will now have some accumulated excess factors of 2. */
-  cnt = fac2bin[k - ODD_CENTRAL_BINOMIAL_OFFSET] - (k != hk);
-  if (LIKELY (cnt != 0))
-    {
-      mpn_rshift (rp, rp, rn, cnt);
-      rn -= rp[rn - 1] == 0;		/* normalisation */
-    }
 
   SIZ(r) = rn;
 }
