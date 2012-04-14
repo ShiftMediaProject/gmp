@@ -23,6 +23,8 @@
 	* tests/mpn/t-toom8-sqr.c: New file.	
 	* tests/mpn/Makefile.am (check_PROGRAMS): Add new tests.
 
+	* mpn/generic/toom62_mul.c: Use add_n, sub_n, when possible.
+	
 2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.

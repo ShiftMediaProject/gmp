@@ -211,14 +211,14 @@ mpn_toom62_mul (mp_ptr pp,
 	    }
 	  else
 	    {
-	      ASSERT_NOCARRY (mpn_sub (bsm2, bsm1, n, b1, n));
+	      ASSERT_NOCARRY (mpn_sub_n (bsm2, bsm1, b1, n));
 	    }
 	  bsm2[n] = 0;
 	}
     }
 
-  /* Compute bsh, recycling bs1 and bsm1. bsh=bs1+b0;  */
-  mpn_add (bsh, bs1, n + 1, b0, n);
+  /* Compute bsh, recycling bs1. bsh=bs1+b0;  */
+  bsh[n] = bs1[n] + mpn_add_n (bsh, bs1, b0, n);
 
   ASSERT (as1[n] <= 5);
   ASSERT (bs1[n] <= 1);
