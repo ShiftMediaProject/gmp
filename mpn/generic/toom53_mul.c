@@ -197,7 +197,7 @@ mpn_toom53_mul (mp_ptr pp,
   mpn_add_n (bs2, bs2, gp, n+1);
 #endif
 
-  /* Compute bsh = 4 b0 + 2 b1 + b0 = 2*(2*b0 + b1)+b0.  */
+  /* Compute bsh = 4 b0 + 2 b1 + b2 = 2*(2*b0 + b1)+b2.  */
 #if HAVE_NATIVE_mpn_addlsh1_n
   cy = mpn_addlsh1_n (bsh, b1, b0, n);
   if (t < n)
