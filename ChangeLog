@@ -13,6 +13,8 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUPI_DIV_QR): Allocate scratch
 	space for mpn_invert.
 	
+	* mpz/mul_i.h: Small clean-up.
+
 2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.
