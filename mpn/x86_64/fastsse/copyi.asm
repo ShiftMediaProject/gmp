@@ -22,15 +22,15 @@ include(`../config.m4')
 
 C	    cycles/limb		  good for cpu?
 C AMD K8,K9
-C AMD K10	 0.85			Y
-C AMD bd1	 0.8			Y
+C AMD K10	 0.85	 1.64		Y/N
+C AMD bd1	 1.4	 1.4		Y
 C AMD bobcat
-C Intel P4	 2.28			Y
-C Intel core2	 1
-C Intel NHM	 0.5			Y
-C Intel SBR	 0.5			Y
+C Intel P4	 2.3	 2.3		Y
+C Intel core2	 1.0	 1.0
+C Intel NHM	 0.5	 0.67		Y
+C Intel SBR	 0.5	 0.75		Y
 C Intel atom
-C VIA nano	 1.1			Y
+C VIA nano	 1.16	 5.16		Y/N
 
 C We try to do as many 16-byte operations as possible.  The top-most and
 C bottom-most writes might need 8-byte operations.  We can always write using
@@ -50,14 +50,16 @@ define(`n',  `%rdx')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
+dnl define(`movdqu', lddqu)
+
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_copyi)
 	DOS64_ENTRY(3)
 
-	test	n, n
-	jz	L(don)
+	cmp	$3, n
+	jc	L(bc)
 
 	test	$8, R8(rp)		C is rp 16-byte aligned?
 	jz	L(ali)			C jump if rp aligned
@@ -117,12 +119,35 @@ L(sma):	test	$8, R8(n)
 	lea	16(up), up
 	movdqa	%xmm0, (rp)
 	lea	16(rp), rp
+	ALIGN(16)
 1:
-	test	$1, R8(n)
-	jz	1f
+L(end):	bt	$0, n
+	jnc	1f
 	mov	(up), %r8
 	mov	%r8, (rp)
 1:
-L(don):	DOS64_EXIT()
+	DOS64_EXIT()
+	ret
+
+C Basecase code.  Needed for good small operands speed, not for
+C correctness as the above code is currently written.
+
+L(bc):	sub	$2, n
+	jc	L(end)
+	ALIGN(16)
+1:	mov	(up), %rax
+	mov	8(up), %rcx
+	lea	16(up), up
+	mov	%rax, (rp)
+	mov	%rcx, 8(rp)
+	lea	16(rp), rp
+	sub	$2, n
+	jnc	1b
+
+	bt	$0, n
+	jnc	L(ret)
+	mov	(up), %rax
+	mov	%rax, (rp)
+L(ret):	DOS64_EXIT()
 	ret
 EPILOGUE()
