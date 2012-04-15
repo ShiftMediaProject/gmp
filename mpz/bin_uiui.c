@@ -339,7 +339,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   mpn_pi1_bdiv_q_1 (rp, rp, rn, fac[k], facinv[k - 2],
 		    fac2cnt[k / 2 - 1] - i2cnt);
-  rn -= rp[rn - 1] == 0;		/* normalisation */
+  MPN_NORMALIZE_NOT_ZERO (rp, rn);
 
   SIZ(r) = rn;
 }
@@ -419,7 +419,7 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mpn_pi1_bdiv_q_1 (rp, rp, rn, bin2kk[k - ODD_CENTRAL_BINOMIAL_OFFSET],
 		    bin2kkinv[k - ODD_CENTRAL_BINOMIAL_OFFSET],
 		    fac2bin[k - ODD_CENTRAL_BINOMIAL_OFFSET] - (k != hk));
-  rn -= rp[rn - 1] == 0;		/* normalisation */
+  MPN_NORMALIZE_NOT_ZERO (rp, rn);
 
   SIZ(r) = rn;
 }
