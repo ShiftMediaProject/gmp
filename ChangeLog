@@ -1,3 +1,8 @@
+2012-04-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/copyd-palignr.asm: New file.
+	* mpn/x86_64/fastsse/copyi-palignr.asm: New file.
+
 2012-04-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/bin_uiui.c: Rewrite (some parts are Torbjorn's).
@@ -12,7 +17,7 @@
 	* mpn/generic/invert.c: Remove support for scratch == NULL.
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUPI_DIV_QR): Allocate scratch
 	space for mpn_invert.
-	
+
 	* mpz/mul_i.h: Small clean-up.
 
 	* tests/mpn/toom-sqr-shared.h: New file.
@@ -20,11 +25,11 @@
 	* tests/mpn/t-toom3-sqr.c: New file.
 	* tests/mpn/t-toom4-sqr.c: New file.
 	* tests/mpn/t-toom6-sqr.c: New file.
-	* tests/mpn/t-toom8-sqr.c: New file.	
+	* tests/mpn/t-toom8-sqr.c: New file.
 	* tests/mpn/Makefile.am (EXTRA_DIST): Add toom-sqr-shared.h .
 
 	* mpn/generic/toom62_mul.c: Use add_n, sub_n, when possible.
-	
+
 2012-04-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: New file.
@@ -137,7 +142,7 @@
 
 2012-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* gen-fac_ui.c: Generate more constants (possible mini-mpz_root). 
+	* gen-fac_ui.c: Generate more constants (possible mini-mpz_root).
 	* mpz/oddfac_1.c: Improve ASSERTs.
 	(log_n_max): Use precomputed table.
 
