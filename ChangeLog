@@ -1,3 +1,7 @@
+2012-04-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-bin.c: Add more tests on small values.
+
 2012-04-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/copyd-palignr.asm: New file.
