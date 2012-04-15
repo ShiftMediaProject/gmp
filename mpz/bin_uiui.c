@@ -198,9 +198,10 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   /* FIXME: This allocation might be insufficient, but is usually way too
      large.  */
-  alloc = SOME_THRESHOLD + MAX (3 * maxn / 2, SOME_THRESHOLD);
+  alloc = SOME_THRESHOLD - 1 + MAX (3 * maxn / 2, SOME_THRESHOLD);
+  alloc = MIN (alloc, k) + 1;
   np = TMP_ALLOC_LIMBS (alloc);
-  kp = TMP_ALLOC_LIMBS (alloc);
+  kp = TMP_ALLOC_LIMBS (SOME_THRESHOLD + 1);
 
   MAXFACS (nmax, n);
   nmax = MIN (nmax, M);
@@ -232,7 +233,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       t = k - j + 1;
       kmax = MIN (kmax, t);
 
-      while (kmax != 0 && kn <  SOME_THRESHOLD)
+      while (kmax != 0 && kn < SOME_THRESHOLD)
 	{
 	  jjj = mulfunc[kmax] (j);
 	  j += kmax;				/* number of factors used */

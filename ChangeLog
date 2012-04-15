@@ -1,6 +1,7 @@
 2012-04-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/t-bin.c: Add more tests on small values.
+	* mpz/bin_uiui.c (mpz_bdiv_bin_uiui): Smaller temporary areas.
 
 2012-04-15  Torbjorn Granlund  <tege@gmplib.org>
 
