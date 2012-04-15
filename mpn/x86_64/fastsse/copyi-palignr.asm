@@ -28,11 +28,11 @@ C AMD K10	 0.85		 illop				Y/N
 C AMD bd1	 1.39		 1.45				Y/N
 C AMD bobcat	 1.97		 8.17		1.5/1.5		N
 C Intel P4	 2.26		 illop				Y/N
-C Intel core2	 0.52		 0.78		0.52/0.76	Y
+C Intel core2	 0.52		 0.80		opt/0.74	Y
 C Intel NHM	 0.52		 0.64		opt/opt		Y
 C Intel SBR	 0.51		 0.54		opt/0.51	Y
 C Intel atom	 1.16		 1.66		opt/opt		Y
-C VIA nano	 1.11		 1.10		opt/opt		Y
+C VIA nano	 1.09		 1.10		opt/opt		Y
 
 C We use only 16-byte operations, except for unaligned top-most and bottom-most
 C limbs.  We use the SSSE3 palignr instruction when rp - up = 8 (mod 16).  That
@@ -46,9 +46,6 @@ C INPUT PARAMETERS
 define(`rp', `%rdi')
 define(`up', `%rsi')
 define(`n',  `%rdx')
-
-dnl ABI_SUPPORT(DOS64)		C pointless decl since file is for grabbing
-ABI_SUPPORT(STD64)		C pointless decl since file is for grabbing
 
 C There are three instructions for loading an aligned 128-bit quantity.  We use
 C movaps, since it has the shortest coding.
@@ -122,14 +119,15 @@ L(uent):sub	$16, n
 
 	movdqa	120(up), %xmm3
 	movdqa	104(up), %xmm2
+	sub	$16, n
 	jmp	L(um)
 
 	ALIGN(16)
 L(utop):movdqa	120(up), %xmm3
+	sub	$16, n
 	movdqa	104(up), %xmm2
 	movdqa	%xmm0, -128(rp)
 L(um):	palignr	$8, %xmm2, %xmm3
-	sub	$16, n
 	movdqa	88(up), %xmm1
 	movdqa	%xmm3, 112(rp)
 	palignr	$8, %xmm1, %xmm2

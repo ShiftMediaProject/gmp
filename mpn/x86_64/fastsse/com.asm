@@ -2,6 +2,8 @@ dnl  AMD64 mpn_com optimised for CPUs with fast SSE.
 
 dnl  Copyright 2003, 2005, 2007, 2011, 2012 Free Software Foundation, Inc.
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  This file is part of the GNU MP Library.
 
 dnl  The GNU MP Library is free software; you can redistribute it and/or modify
@@ -19,18 +21,18 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
-C	    cycles/limb		  good for cpu?
-C AMD K8,K9
-C AMD K10	 0.85			Y
-C AMD bd1	 0.92			Y
-C AMD bobcat
-C Intel P4	 2.28			Y
-C Intel core2	 1
-C Intel NHM	 0.5			Y
-C Intel SBR	 0.5			Y
-C Intel atom
-C VIA nano	 1.1			Y
+C	     cycles/limb     cycles/limb     cycles/limb      good
+C              aligned	      unaligned	      best seen	     for cpu?
+C AMD K8,K9	 2.0		 2.0				N
+C AMD K10	 0.85		 1.3				Y/N
+C AMD bd1	 1.40		 1.40				Y
+C AMD bobcat	 3.1		 3.1				N
+C Intel P4	 2.28		 illop				Y
+C Intel core2	 1.02		 1.02				N
+C Intel NHM	 0.53		 0.68				Y
+C Intel SBR	 0.51		 0.75				Y
+C Intel atom	 3.68		 3.68				N
+C VIA nano	 1.17		 5.09				Y/N
 
 C We try to do as many 16-byte operations as possible.  The top-most and
 C bottom-most writes might need 8-byte operations.  We can always write using
