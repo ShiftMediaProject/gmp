@@ -2,6 +2,12 @@
 
 	* mpn/x86_64/fastsse/copyd-palignr.asm: New file.
 	* mpn/x86_64/fastsse/copyi-palignr.asm: New file.
+	* mpn/x86_64/core2/copyd.asm: New file.
+	* mpn/x86_64/core2/copyi.asm: New file.
+	* mpn/x86_64/nano/copyd.asm: New file.
+	* mpn/x86_64/nano/copyi.asm: New file.
+	* mpn/x86_64/atom/copyd.asm: New file.
+	* mpn/x86_64/atom/copyi.asm: New file.
 
 2012-04-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
