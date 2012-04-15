@@ -28,7 +28,7 @@ C AMD K10	 0.85		 illop				Y/N
 C AMD bd1	 1.39		 1.40				Y
 C AMD bobcat	 1.97		 8.35		1.5/1.5		N
 C Intel P4	 2.26		 illop				Y/N
-C Intel core2	 0.52		0.68-0.80	0.52/0.68	Y
+C Intel core2	 0.52		0.68-0.80	opt/0.68	Y
 C Intel NHM	 0.52		 0.64		opt/opt		Y
 C Intel SBR	 0.51		 0.54		opt/0.51	Y
 C Intel atom	 1.16		 1.66		opt/opt		Y
@@ -44,9 +44,6 @@ C INPUT PARAMETERS
 define(`rp', `%rdi')
 define(`up', `%rsi')
 define(`n',  `%rdx')
-
-dnl ABI_SUPPORT(DOS64)		C pointless decl since file is for grabbing
-ABI_SUPPORT(STD64)		C pointless decl since file is for grabbing
 
 C There are three instructions for loading an aligned 128-bit quantity.  We use
 C movaps, since it has the shortest coding.
