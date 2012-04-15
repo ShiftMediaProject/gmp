@@ -21,7 +21,7 @@
 	* tests/mpn/t-toom4-sqr.c: New file.
 	* tests/mpn/t-toom6-sqr.c: New file.
 	* tests/mpn/t-toom8-sqr.c: New file.	
-	* tests/mpn/Makefile.am (check_PROGRAMS): Add new tests.
+	* tests/mpn/Makefile.am (EXTRA_DIST): Add toom-sqr-shared.h .
 
 	* mpn/generic/toom62_mul.c: Use add_n, sub_n, when possible.
 	
