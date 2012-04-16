@@ -180,6 +180,17 @@ static const unsigned long ftab[] =
   } while (0)
 #endif
 
+/* Entry i contains (i!/2^t) where t is chosen such that the parenthesis
+   is an odd integer. */
+static const mp_limb_t fac[] = { ONE_LIMB_ODD_FACTORIAL_TABLE, ONE_LIMB_ODD_FACTORIAL_EXTTABLE };
+
+/* Entry i contains (i!/2^t)^(-1) where t is chosen such that the parenthesis
+   is an odd integer. */
+static const mp_limb_t facinv[] = { ONE_LIMB_ODD_FACTORIAL_INVERSES_TABLE };
+
+/* Entry i contains 2i-popc(2i). */
+static const unsigned char fac2cnt[] = { TABLE_2N_MINUS_POPC_2N };
+
 static void
 mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
@@ -192,6 +203,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mp_size_t maxn;
   TMP_DECL;
 
+  ASSERT (k > ODD_FACTORIAL_TABLE_LIMIT);
   TMP_MARK;
 
   maxn = 1 + n / GMP_NUMB_BITS;    /* absolutely largest result size (limbs) */
@@ -204,30 +216,25 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   kp = TMP_ALLOC_LIMBS (SOME_THRESHOLD + 1);
 
   MAXFACS (nmax, n);
-  nmax = MIN (nmax, M);
+  ASSERT (nmax <= M);
   MAXFACS (kmax, k);
-  kmax = MIN (kmax, M);
+  ASSERT (kmax <= M);
+  ASSERT (k >= M);
 
-  j = 1;
   i = n - k + 1;
-
-  nmax = MIN (nmax, k);
-  kmax = MIN (kmax, k);
 
   np[0] = 1; nn = 1;
 
   i2cnt = 0;				/* total low zeros in dividend */
-  j2cnt = 0;				/* total low zeros in divisor */
+  j2cnt = fac2cnt[ODD_FACTORIAL_TABLE_LIMIT / 2 - 1];
+					/* total low zeros in divisor */
 
-  while (kmax != 0)
+  numfac = 1;
+  j = ODD_FACTORIAL_TABLE_LIMIT + 1;
+  jjj = fac[ODD_FACTORIAL_TABLE_LIMIT];
+
+  while (1)
     {
-      numfac = j;
-
-      jjj = mulfunc[kmax] (j);
-      j += kmax;				/* number of factors used */
-      count_trailing_zeros (cnt, jjj);		/* count low zeros */
-      jjj >>= cnt;				/* remove remaining low zeros */
-      j2cnt += tcnttab[kmax] + cnt;		/* update low zeros count */
       kp[0] = jjj;				/* store new factors */
       kn = 1;
       t = k - j + 1;
@@ -268,6 +275,16 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       nn += (np[nn - 1] >= kp[kn - 1]);
       nn -= kn;
       mpn_sbpi1_bdiv_q (np, np, nn, kp, MIN(kn,nn), -dinv);
+
+      if (kmax == 0)
+	break;
+      numfac = j;
+
+      jjj = mulfunc[kmax] (j);
+      j += kmax;				/* number of factors used */
+      count_trailing_zeros (cnt, jjj);		/* count low zeros */
+      jjj >>= cnt;				/* remove remaining low zeros */
+      j2cnt += tcnttab[kmax] + cnt;		/* update low zeros count */
     }
 
   /* Put back the right number of factors of 2.  */
@@ -287,17 +304,6 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   MPN_COPY (PTR(r), np, nn);
   TMP_FREE;
 }
-
-/* Entry i contains (i!/2^t) where t is chosen such that the parenthesis
-   is an odd integer. */
-static const mp_limb_t fac[] = { ONE_LIMB_ODD_FACTORIAL_TABLE, ONE_LIMB_ODD_FACTORIAL_EXTTABLE };
-
-/* Entry i contains (i!/2^t)^(-1) where t is chosen such that the parenthesis
-   is an odd integer. */
-static const mp_limb_t facinv[] = { ONE_LIMB_ODD_FACTORIAL_INVERSES_TABLE };
-
-/* Entry i contains 2i-popc(2i). */
-static const unsigned char fac2cnt[] = { TABLE_2N_MINUS_POPC_2N };
 
 static void
 mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
@@ -446,7 +452,7 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     else if (BIN_UIUI_ENABLE_SMALLDC &&
 	     k <= (BIN_UIUI_RECURSIVE_SMALLDC ? ODD_CENTRAL_BINOMIAL_TABLE_LIMIT : ODD_FACTORIAL_TABLE_LIMIT)* 2)
       mpz_smallkdc_bin_uiui (r, n, k);
-    else
+    else /* k > ODD_FACTORIAL_TABLE_LIMIT */
       mpz_bdiv_bin_uiui (r, n, k);
   }
 }
