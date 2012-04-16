@@ -239,8 +239,4 @@ L(end):	bt	$0, R32(n)
 	mov	%r9, 16(rp)
 1:	DOS64_EXIT()
 	ret
-
-palignr($7, %xmm8, %xmm9)
-palignr($7, %xmm0, %xmm9)
-palignr($7, %xmm8, %xmm1)
 EPILOGUE()
