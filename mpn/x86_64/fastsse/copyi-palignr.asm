@@ -127,28 +127,28 @@ L(utop):movdqa	120(up), %xmm3
 	sub	$16, n
 	movdqa	104(up), %xmm2
 	movdqa	%xmm0, -128(rp)
-L(um):	palignr	$8, %xmm2, %xmm3
+L(um):	palignr($8, %xmm2, %xmm3)
 	movdqa	88(up), %xmm1
 	movdqa	%xmm3, 112(rp)
-	palignr	$8, %xmm1, %xmm2
+	palignr($8, %xmm1, %xmm2)
 	movdqa	72(up), %xmm0
 	movdqa	%xmm2, 96(rp)
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	56(up), %xmm3
 	movdqa	%xmm1, 80(rp)
-	palignr	$8, %xmm3, %xmm0
+	palignr($8, %xmm3, %xmm0)
 	movdqa	40(up), %xmm2
 	movdqa	%xmm0, 64(rp)
-	palignr	$8, %xmm2, %xmm3
+	palignr($8, %xmm2, %xmm3)
 	movdqa	24(up), %xmm1
 	movdqa	%xmm3, 48(rp)
-	palignr	$8, %xmm1, %xmm2
+	palignr($8, %xmm1, %xmm2)
 	movdqa	8(up), %xmm0
 	movdqa	%xmm2, 32(rp)
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	-8(up), %xmm3
 	movdqa	%xmm1, 16(rp)
-	palignr	$8, %xmm3, %xmm0
+	palignr($8, %xmm3, %xmm0)
 	lea	128(up), up
 	lea	128(rp), rp
 	jnc	L(utop)
@@ -159,16 +159,16 @@ L(uend):bt	$3, R32(n)
 	jnc	1f
 	movdqa	56(up), %xmm3
 	movdqa	40(up), %xmm2
-	palignr	$8, %xmm2, %xmm3
+	palignr($8, %xmm2, %xmm3)
 	movdqa	24(up), %xmm1
 	movdqa	%xmm3, 48(rp)
-	palignr	$8, %xmm1, %xmm2
+	palignr($8, %xmm1, %xmm2)
 	movdqa	8(up), %xmm0
 	movdqa	%xmm2, 32(rp)
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	-8(up), %xmm3
 	movdqa	%xmm1, 16(rp)
-	palignr	$8, %xmm3, %xmm0
+	palignr($8, %xmm3, %xmm0)
 	lea	64(up), up
 	movdqa	%xmm0, (rp)
 	lea	64(rp), rp
@@ -177,10 +177,10 @@ L(uend):bt	$3, R32(n)
 	jnc	1f
 	movdqa	24(up), %xmm1
 	movdqa	8(up), %xmm0
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	-8(up), %xmm3
 	movdqa	%xmm1, 16(rp)
-	palignr	$8, %xmm3, %xmm0
+	palignr($8, %xmm3, %xmm0)
 	lea	32(up), up
 	movdqa	%xmm0, (rp)
 	lea	32(rp), rp
@@ -189,7 +189,7 @@ L(uend):bt	$3, R32(n)
 	jnc	1f
 	movdqa	8(up), %xmm0
 	movdqa	-8(up), %xmm3
-	palignr	$8, %xmm3, %xmm0
+	palignr($8, %xmm3, %xmm0)
 	lea	16(up), up
 	movdqa	%xmm0, (rp)
 	lea	16(rp), rp
@@ -239,4 +239,8 @@ L(end):	bt	$0, R32(n)
 	mov	%r9, 16(rp)
 1:	DOS64_EXIT()
 	ret
+
+palignr($7, %xmm8, %xmm9)
+palignr($7, %xmm0, %xmm9)
+palignr($7, %xmm8, %xmm1)
 EPILOGUE()

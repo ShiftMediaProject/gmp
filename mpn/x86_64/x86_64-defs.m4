@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009, 2011
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009, 2011, 2012
 dnl  Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
@@ -209,6 +209,63 @@ dnl  This can save reloc entries and improve shlib sharing as well as
 dnl  application startup times
 
 define(`PROTECT',  `.protected $1')
+
+
+dnl  Usage: x86_lookup(target, key,value, key,value, ...)
+dnl
+dnl  Look for `target' among the `key' parameters.
+dnl
+dnl  x86_lookup expands to the corresponding `value', or generates an error
+dnl  if `target' isn't found.
+
+define(x86_lookup,
+m4_assert_numargs_range(1,999)
+`ifelse(eval($#<3),1,
+`m4_error(`unrecognised part of x86 instruction: $1
+')',
+`ifelse(`$1',`$2', `$3',
+`x86_lookup(`$1',shift(shift(shift($@))))')')')
+
+
+dnl  Usage: x86_opcode_regxmm(reg)
+dnl
+dnl  Validate the given xmm register, and return its number, 0 to 7.
+
+define(x86_opcode_regxmm,
+m4_assert_numargs(1)
+`x86_lookup(`$1',x86_opcode_regxmm_list)')
+
+define(x86_opcode_regxmm_list,
+``%xmm0',0,
+`%xmm1',1,
+`%xmm2',2,
+`%xmm3',3,
+`%xmm4',4,
+`%xmm5',5,
+`%xmm6',6,
+`%xmm7',7,
+`%xmm8',8,
+`%xmm9',9,
+`%xmm10',10,
+`%xmm11',11,
+`%xmm12',12,
+`%xmm13',13,
+`%xmm14',14,
+`%xmm15',15')
+
+dnl  Usage: palignr($imm,%srcreg,%dstreg)
+dnl
+dnl  Emit a palignr instruction, using a .byte sequence, since obsolete but
+dnl  still distributed versions of gas don't know SSSE3 instructions.
+
+define(`palignr',
+m4_assert_numargs(3)
+`.byte	0x66,dnl
+ifelse(eval(x86_opcode_regxmm($3) >= 8 || x86_opcode_regxmm($2) >= 8),1,
+       `eval(0x40+x86_opcode_regxmm($3)/8*4+x86_opcode_regxmm($2)/8),')dnl
+0x0f,0x3a,0x0f,dnl
+eval(0xc0+x86_opcode_regxmm($3)%8*8+x86_opcode_regxmm($2)%8),dnl
+substr($1,1)')
 
 
 divert`'dnl

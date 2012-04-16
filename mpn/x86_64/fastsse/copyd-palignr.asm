@@ -125,28 +125,28 @@ L(uent):sub	$16, n
 	ALIGN(16)
 L(utop):sub	$16, n
 	movdqa	-16(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
 	movdqa	-32(up), %xmm2
-	palignr	$8, %xmm2, %xmm1
+	palignr($8, %xmm2, %xmm1)
 	movdqa	%xmm1, -24(rp)
 	movdqa	-48(up), %xmm3
-	palignr	$8, %xmm3, %xmm2
+	palignr($8, %xmm3, %xmm2)
 	movdqa	%xmm2, -40(rp)
 	movdqa	-64(up), %xmm0
-	palignr	$8, %xmm0, %xmm3
+	palignr($8, %xmm0, %xmm3)
 	movdqa	%xmm3, -56(rp)
 	movdqa	-80(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -72(rp)
 	movdqa	-96(up), %xmm2
-	palignr	$8, %xmm2, %xmm1
+	palignr($8, %xmm2, %xmm1)
 	movdqa	%xmm1, -88(rp)
 	movdqa	-112(up), %xmm3
-	palignr	$8, %xmm3, %xmm2
+	palignr($8, %xmm3, %xmm2)
 	movdqa	%xmm2, -104(rp)
 	movdqa	-128(up), %xmm0
-	palignr	$8, %xmm0, %xmm3
+	palignr($8, %xmm0, %xmm3)
 	movdqa	%xmm3, -120(rp)
 	lea	-128(up), up
 	lea	-128(rp), rp
@@ -155,16 +155,16 @@ L(utop):sub	$16, n
 L(uend):bt	$3, R32(n)
 	jnc	1f
 	movdqa	-16(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
 	movdqa	-32(up), %xmm0
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	%xmm1, -24(rp)
 	movdqa	-48(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -40(rp)
 	movdqa	-64(up), %xmm0
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	%xmm1, -56(rp)
 	lea	-64(up), up
 	lea	-64(rp), rp
@@ -172,10 +172,10 @@ L(uend):bt	$3, R32(n)
 1:	bt	$2, R32(n)
 	jnc	1f
 	movdqa	-16(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
 	movdqa	-32(up), %xmm0
-	palignr	$8, %xmm0, %xmm1
+	palignr($8, %xmm0, %xmm1)
 	movdqa	%xmm1, -24(rp)
 	lea	-32(up), up
 	lea	-32(rp), rp
@@ -183,7 +183,7 @@ L(uend):bt	$3, R32(n)
 1:	bt	$1, R32(n)
 	jnc	1f
 	movdqa	-16(up), %xmm1
-	palignr	$8, %xmm1, %xmm0
+	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
 	lea	-16(up), up
 	lea	-16(rp), rp
