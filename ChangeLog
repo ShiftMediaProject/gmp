@@ -1,5 +1,8 @@
 2012-04-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/fastsse/lshift-movdqu2.asm: Add DOS entry/exit sequences.
+	* mpn/x86_64/fastsse/rshift-movdqu2.asm: Likewise.
+
 	* mpn/x86_64/x86_64-defs.m4 (palignr): New macro.
 	* mpn/x86_64/fastsse/copyd-palignr.asm: Use palignr macro.
 	* mpn/x86_64/fastsse/copyi-palignr.asm: Likewise.
