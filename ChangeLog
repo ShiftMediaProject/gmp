@@ -1,3 +1,8 @@
+2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/copyd.asm: Rewrite.
+	* mpn/x86_64/copyi.asm: Rewrite.
+
 2012-04-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fastsse/lshift-movdqu2.asm: Add DOS entry/exit sequences.
