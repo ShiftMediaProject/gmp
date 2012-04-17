@@ -1,5 +1,8 @@
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/fastsse/lshiftc-movdqu2.asm: Adhere to DOS64 register
+	partitioning rules.
+
 	* mpn/x86_64/fastsse/copyi-palignr.asm: Implement temporary workaround
 	to overlap issue.
 

@@ -66,7 +66,7 @@ PROLOGUE(mpn_lshiftc)
 	mov	-8(ap,n,8), %rax
 	shr	R8(%rcx), %rax
 
-	pcmpeqb	%xmm7, %xmm7		C set to 111...111
+	pcmpeqb	%xmm3, %xmm3		C set to 111...111
 
 	cmp	$3, n
 	jle	L(bc)
@@ -81,7 +81,7 @@ C Do one initial limb in order to make rp aligned
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movq	%xmm0, -8(rp,n,8)
 	dec	n
 
@@ -108,7 +108,7 @@ L(top):	movdqu	40(ap,n,8), %xmm1
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movdqa	%xmm0, 48(rp,n,8)
 L(i70):
 	movdqu	24(ap,n,8), %xmm1
@@ -116,7 +116,7 @@ L(i70):
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movdqa	%xmm0, 32(rp,n,8)
 L(i56):
 	movdqu	8(ap,n,8), %xmm1
@@ -124,7 +124,7 @@ L(i56):
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movdqa	%xmm0, 16(rp,n,8)
 L(i34):
 	movdqu	-8(ap,n,8), %xmm1
@@ -132,7 +132,7 @@ L(i34):
 	psllq	%xmm4, %xmm0
 	psrlq	%xmm5, %xmm1
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movdqa	%xmm0, (rp,n,8)
 	sub	$8, n
 	jg	L(top)
@@ -146,7 +146,7 @@ L(end):	bt	$0, R32(n)
 	psllq	%xmm4, %xmm1
 	psrlq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movdqa	%xmm0, (rp)
 	DOS64_EXIT()
 	ret
@@ -161,7 +161,7 @@ L(bc):	dec	R32(n)
 	psllq	%xmm4, %xmm1
 	psrlq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movq	%xmm0, (rp,n,8)
 	sub	$2, R32(n)
 	jl	L(end8)
@@ -170,12 +170,12 @@ L(bc):	dec	R32(n)
 	psllq	%xmm4, %xmm1
 	psrlq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movq	%xmm0, 8(rp)
 
 L(end8):movq	(ap), %xmm0
 	psllq	%xmm4, %xmm0
-	pxor	%xmm7, %xmm0
+	pxor	%xmm3, %xmm0
 	movq	%xmm0, (rp)
 	DOS64_EXIT()
 	ret
