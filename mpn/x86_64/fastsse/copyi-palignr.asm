@@ -25,13 +25,13 @@ C	     cycles/limb     cycles/limb     cycles/limb      good
 C              aligned	      unaligned	      best seen	     for cpu?
 C AMD K8,K9	 2.0		 illop		1.0/1.0		N
 C AMD K10	 0.85		 illop				Y/N
-C AMD bd1	 1.39		 1.45				Y/N
-C AMD bobcat	 1.97		 8.17		1.5/1.5		N
+C AMD bd1	 1.39		 ? 1.45				Y/N
+C AMD bobcat	 1.97		 ? 8.17		1.5/1.5		N
 C Intel P4	 2.26		 illop				Y/N
-C Intel core2	 0.52		 0.80		opt/0.74	Y
-C Intel NHM	 0.52		 0.64		opt/opt		Y
-C Intel SBR	 0.51		 0.54		opt/0.51	Y
-C Intel atom	 1.16		 1.66		opt/opt		Y
+C Intel core2	 0.52		 0.82		opt/0.74	Y
+C Intel NHM	 0.52		 0.65		opt/opt		Y
+C Intel SBR	 0.51		 0.55		opt/0.51	Y
+C Intel atom	 1.16		 1.70		opt/opt		Y
 C VIA nano	 1.09		 1.10		opt/opt		Y
 
 C We use only 16-byte operations, except for unaligned top-most and bottom-most
@@ -114,20 +114,30 @@ L(am):	sub	$8, n
 1:	DOS64_EXIT()
 	ret
 
-L(uent):sub	$16, n
+L(uent):
+C Code handling up - rp = 8 (mod 16)
+
+C FIXME: The code below only handles overlap if it is close to complete, or
+C quite separate: up-rp < 5 or up-up > 15 limbs
+	lea	-40(up), %rax		C 40 = 5 * GMP_LIMB_BYTES
+	sub	rp, %rax
+	cmp	$80, %rax		C 80 = (15-5) * GMP_LIMB_BYTES
+	jbe	L(bc)			C deflect to plain loop
+
+	sub	$16, n
 	jc	L(uend)
 
 	movdqa	120(up), %xmm3
-	movdqa	104(up), %xmm2
+
 	sub	$16, n
 	jmp	L(um)
 
 	ALIGN(16)
 L(utop):movdqa	120(up), %xmm3
-	sub	$16, n
-	movdqa	104(up), %xmm2
 	movdqa	%xmm0, -128(rp)
-L(um):	palignr($8, %xmm2, %xmm3)
+	sub	$16, n
+L(um):	movdqa	104(up), %xmm2
+	palignr($8, %xmm2, %xmm3)
 	movdqa	88(up), %xmm1
 	movdqa	%xmm3, 112(rp)
 	palignr($8, %xmm1, %xmm2)
@@ -218,11 +228,11 @@ L(top):	mov	(up), %r8
 	lea	32(up), up
 	mov	%r8, -24(rp)
 	mov	%r9, -16(rp)
-ifelse(eval(COPYI_SSE_THRESHOLD >= 8),1,
+ifelse(eval(1 || COPYI_SSE_THRESHOLD >= 8),1,
 `	sub	$4, R32(n)')
 	mov	%r10, -8(rp)
 	mov	%r11, (rp)
-ifelse(eval(COPYI_SSE_THRESHOLD >= 8),1,
+ifelse(eval(1 || COPYI_SSE_THRESHOLD >= 8),1,
 `	jnc	L(top)')
 
 L(end):	bt	$0, R32(n)
