@@ -346,6 +346,9 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   mpn_pi1_bdiv_q_1 (rp, rp, rn, fac[k], facinv[k - 2],
 		    fac2cnt[k / 2 - 1] - i2cnt);
+  /* A two-fold, branch-free normalisation is possible :*/
+  /* rn -= rp[rn - 1] == 0; */
+  /* rn -= rp[rn - 1] == 0; */
   MPN_NORMALIZE_NOT_ZERO (rp, rn);
 
   SIZ(r) = rn;
@@ -426,17 +429,27 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mpn_pi1_bdiv_q_1 (rp, rp, rn, bin2kk[k - ODD_CENTRAL_BINOMIAL_OFFSET],
 		    bin2kkinv[k - ODD_CENTRAL_BINOMIAL_OFFSET],
 		    fac2bin[k - ODD_CENTRAL_BINOMIAL_OFFSET] - (k != hk));
+  /* A two-fold, branch-free normalisation is possible :*/
+  /* rn -= rp[rn - 1] == 0; */
+  /* rn -= rp[rn - 1] == 0; */
   MPN_NORMALIZE_NOT_ZERO (rp, rn);
 
   SIZ(r) = rn;
 }
 
-/* WARNING: it assumes that n fits in a limb! */
 void
 mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
   if (UNLIKELY (n < k)) {
     SIZ (r) = 0;
+#if BITS_PER_ULONG > GMP_NUMB_BITS
+  } else if (UNLIKELY (n > GMP_NUMB_MAX)) {
+    mpz_t tmp;
+
+    mpz_init_set_ui (tmp, n);
+    mpz_bin_ui (r, tmp, k);
+    mpz_clear (tmp);
+#endif
   } else {
     ASSERT (n <= GMP_NUMB_MAX);
     /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller. */

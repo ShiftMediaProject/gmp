@@ -1,3 +1,7 @@
+2012-04-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/bin_uiui.c: Support small limbs (fallback on bin_ui).
+
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/copyd.asm: Rewrite.
