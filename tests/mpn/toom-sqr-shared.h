@@ -26,18 +26,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 /* Main file is expected to define mpn_toomN_mul, mpn_toomN_sqr_itch,
- * MIN_AN and then include this file. */
-
-/* Sizes are up to 2^SIZE_LOG limbs */
-#ifndef SIZE_LOG
-#define SIZE_LOG 10
-#endif
+ * MIN_AN, MAX_AN and then include this file. */
 
 #ifndef COUNT
 #define COUNT 500
 #endif
-
-#define MAX_AN (1L << SIZE_LOG)
 
 int
 main (int argc, char **argv)
@@ -69,6 +62,7 @@ main (int argc, char **argv)
   scratch
     = 1+TMP_ALLOC_LIMBS (mpn_toomN_sqr_itch (MAX_AN) + 2);
 
+  if (MAX_AN >= MIN_AN)
   for (test = 0; test < count; test++)
     {
       unsigned size_min;
@@ -77,15 +71,8 @@ main (int argc, char **argv)
       mp_size_t itch;
       mp_limb_t p_before, p_after, s_before, s_after;
 
-      for (size_min = 1; (1L << size_min) < MIN_AN; size_min++)
-	;
-
-      /* We generate an in the MIN_AN <= an <= (1 << size_range). */
-      size_range = size_min
-	+ gmp_urandomm_ui (rands, SIZE_LOG + 1 - size_min);
-
       an = MIN_AN
-	+ gmp_urandomm_ui (rands, (1L << size_range) + 1 - MIN_AN);
+	+ gmp_urandomm_ui (rands, MAX_AN - MIN_AN);
 
       mpn_random2 (ap, an);
       mpn_random2 (pp-1, an * 2 + 2);

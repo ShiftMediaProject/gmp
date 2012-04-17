@@ -2,6 +2,14 @@
 
 	* mpz/bin_uiui.c: Support small limbs (fallback on bin_ui).
 
+	* tests/mpn/toom-sqr-shared.h: Use a restricted range.
+	* tests/mpn/t-toom2-sqr.c: Specify correct range.
+	* tests/mpn/t-toom3-sqr.c: Likewise.
+	* tests/mpn/t-toom4-sqr.c: Likewise.
+	* tests/mpn/t-toom6-sqr.c: Likewise.
+	* tests/mpn/t-toom8-sqr.c: Likewise, but extended.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-toom?-sqr tests.
+
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/copyd.asm: Rewrite.
