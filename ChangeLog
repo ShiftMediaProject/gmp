@@ -1,5 +1,8 @@
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreisbr/aorsmul_1.asm: Fix some DOS64 issues.
+	* mpn/x86_64/coreisbr/mul_1.asm: Likewise.
+
 	* mpn/x86_64/fastsse/lshiftc-movdqu2.asm: Adhere to DOS64 register
 	partitioning rules.
 

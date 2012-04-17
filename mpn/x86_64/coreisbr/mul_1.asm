@@ -66,9 +66,9 @@ IFDOS(``push	%rdi		'')
 IFDOS(``mov	%rdx, %rsi	'')
 
 	mov	(up), %rax
-IFSTD(`	mov	R32(n_param), R32(%r10) ')
-IFDOS(`	mov	R32(n), R32(%r10)       ')
-IFSTD(`	mov	R32(n_param), R32(n)    ')
+IFSTD(`	mov	R32(n_param), R32(%r10)	')
+IFDOS(`	mov	n, %r10			')
+IFSTD(`	mov	R32(n_param), R32(n)	')
 
 	lea	(up,n_param,8), up
 	lea	-8(rp,n_param,8), rp
@@ -138,5 +138,7 @@ L(end):	add	%rax, %r9
 	adc	$0, %rax
 	mov	%r9, (rp)
 
+IFDOS(``pop	%rdi		'')
+IFDOS(``pop	%rsi		'')
 	ret
 EPILOGUE()

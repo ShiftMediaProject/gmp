@@ -77,9 +77,9 @@ IFDOS(``mov	%rdx, %rsi	'')
 
 	mov	(up), %rax
 	push	%rbx
-IFSTD(`	mov	R32(n_param), R32(%rdx) ')
-IFDOS(`	mov	R32(n), R32(%rdx)       ')
-IFSTD(`	mov	R32(n_param), R32(n)    ')
+IFSTD(`	mov	R32(n_param), R32(%rdx)	')
+IFDOS(`	mov	n, %rdx			')
+IFSTD(`	mov	R32(n_param), R32(n)	')
 
 	lea	-8(up,n,8), up
 	and	$3, R32(%rdx)
@@ -177,5 +177,7 @@ L(end):	mul	v0
 	mov	%r8, (rp)
 
 	pop	%rbx
+IFDOS(``pop	%rdi		'')
+IFDOS(``pop	%rsi		'')
 	ret
 EPILOGUE()
