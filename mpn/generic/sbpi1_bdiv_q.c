@@ -66,9 +66,9 @@ mpn_sbpi1_bdiv_q (mp_ptr qp,
       q = dinv * np[0];
       cy = mpn_addmul_1 (np, dp, dn, q);
       mpn_add_1 (np + dn, np + dn, i, cy);
+      ASSERT (np[0] == 0);
       qp[0] = ~q;
       qp++;
-      ASSERT (np[0] == 0);
       np++;
     }
 
@@ -76,9 +76,9 @@ mpn_sbpi1_bdiv_q (mp_ptr qp,
     {
       q = dinv * np[0];
       mpn_addmul_1 (np, dp, i, q);
+      ASSERT (np[0] == 0);
       qp[0] = ~q;
       qp++;
-      ASSERT (np[0] == 0);
       np++;
     }
 
