@@ -35,12 +35,11 @@
 	* mpn/x86_64/fastsse/lshiftc-movdqu2.asm: Likewise.
 
 	* mpn/x86_64/x86_64-defs.m4 (palignr): New macro.
-	* mpn/x86_64/fastsse/copyd-palignr.asm: Use palignr macro.
-	* mpn/x86_64/fastsse/copyi-palignr.asm: Likewise.
-
 	(x86_opcode_regxmm, x86_opcode_regxmm_list): New, made from x86 mmx
 	counterparts.
 	(x86_lookup): Copy from x86/x86-defs.m4.
+	* mpn/x86_64/fastsse/copyd-palignr.asm: Use palignr macro.
+	* mpn/x86_64/fastsse/copyi-palignr.asm: Likewise.
 
 2012-04-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
