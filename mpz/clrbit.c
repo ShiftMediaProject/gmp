@@ -1,6 +1,7 @@
 /* mpz_clrbit -- clear a specified bit.
 
-Copyright 1991, 1993, 1994, 1995, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001, 2002, 2012 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,7 +35,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	{
 	  mp_limb_t  dlimb;
 	  dlimb = dp[limb_index];
-	  dlimb &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+	  dlimb &= ~(CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS));
 	  dp[limb_index] = dlimb;
 
 	  if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
@@ -69,7 +70,7 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
       if (limb_index > zero_bound)
 	{
 	  if (limb_index < dsize)
-	    dp[limb_index] |= (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
+	    dp[limb_index] |= CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
 	  else
 	    {
 	      /* Ugh.  The bit should be cleared outside of the end of the
@@ -77,14 +78,14 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	      dp = MPZ_REALLOC (d, limb_index + 1);
 
 	      MPN_ZERO (dp + dsize, limb_index - dsize);
-	      dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
+	      dp[limb_index] = CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
 	      SIZ (d) = -(limb_index + 1);
 	    }
 	}
       else if (limb_index == zero_bound)
 	{
 	  dp[limb_index] = ((((dp[limb_index] - 1)
-			      | ((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS))) + 1)
+			      | (CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS))) + 1)
 			    & GMP_NUMB_MASK);
 	  if (dp[limb_index] == 0)
 	    {
