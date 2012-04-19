@@ -83,6 +83,11 @@ check_data (void)
 
   } data[] = {
 
+    /* strict equality mod 0 */
+    { "0", "0", "0", 1 },
+    { "11", "11", "0", 1 },
+    { "3", "11", "0", 0 },
+
     /* anything congruent mod 1 */
     { "0", "0", "1", 1 },
     { "1", "0", "1", 1 },
@@ -146,11 +151,11 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      mpz_errandomb (a, rands, 8*GMP_LIMB_BITS);
+      mpz_errandomb (a, rands, 100*GMP_LIMB_BITS);
       MPZ_CHECK_FORMAT (a);
-      mpz_errandomb (c, rands, 8*GMP_LIMB_BITS);
+      mpz_errandomb (c, rands, 100*GMP_LIMB_BITS);
       MPZ_CHECK_FORMAT (c);
-      mpz_errandomb_nonzero (d, rands, 8*GMP_LIMB_BITS);
+      mpz_errandomb_nonzero (d, rands, 100*GMP_LIMB_BITS);
 
       mpz_negrandom (a, rands);
       MPZ_CHECK_FORMAT (a);
