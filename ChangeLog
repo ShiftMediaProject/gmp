@@ -13,9 +13,9 @@
 	* mpz/Makefile.am (libmpz_la_SOURCES): Add mpz/primorial_ui.c
 	* Makefile.am (MPZ_OBJECTS): Add mpz/primorial_ui$U.lo
 	* gmp-h.in (mpz_primorial_ui): Declare.
-
 	* tests/mpz/t-primorial_ui.c: New test for the new function.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-primorial_ui.
+	* doc/gmp.texi: Short documentation for the new function.
 
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
