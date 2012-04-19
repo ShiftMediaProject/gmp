@@ -1,6 +1,6 @@
 /* Test mpz_remove.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2009 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2009, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -47,12 +47,7 @@ main (int argc, char **argv)
   if (argc == 2)
     reps = atoi (argv[1]);
 
-  mpz_init (bs);
-  mpz_init (t);
-  mpz_init (dest);
-  mpz_init (refdest);
-  mpz_init (dividend);
-  mpz_init (divisor);
+  mpz_inits (bs, t, dest, refdest, dividend, divisor, NULL);
 
   for (i = 0; i < reps; i++)
     {
@@ -91,6 +86,8 @@ main (int argc, char **argv)
 	  abort ();
 	}
     }
+
+  mpz_clears (bs, t, dest, refdest, dividend, divisor, NULL);
 
   tests_end ();
   exit (0);
