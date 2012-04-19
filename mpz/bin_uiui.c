@@ -524,7 +524,7 @@ static mp_size_t
 primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 
 /*********************************************************/
-/* Section binomial: fast binomial implementations       */
+/* Section binomial: fast binomial implementation        */
 /*********************************************************/
 
 #define COUNT_A_PRIME(P, N, K, PR, MAX_PR, VEC, I)	\

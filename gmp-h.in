@@ -752,6 +752,9 @@ __GMP_DECLSPEC void mpz_fac_ui (mpz_ptr, unsigned long int);
 #define mpz_2fac_ui __gmpz_2fac_ui
 __GMP_DECLSPEC void mpz_2fac_ui (mpz_ptr, unsigned long int);
 
+#define mpz_primorial_ui __gmpz_primorial_ui
+__GMP_DECLSPEC void mpz_primorial_ui (mpz_ptr, unsigned long int);
+
 #define mpz_fdiv_q __gmpz_fdiv_q
 __GMP_DECLSPEC void mpz_fdiv_q (mpz_ptr, mpz_srcptr, mpz_srcptr);
 
