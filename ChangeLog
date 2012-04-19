@@ -5,6 +5,9 @@
 	* Makefile.am (libgmp_la_SOURCES): Add primesieve.c .
 	* gmp-impl.h (gmp_primesieve): Declare.
 
+	* mpz/bin_uiui.c (mpz_goetgheluck_bin_uiui): New, factor-based
+	implementation.
+
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/aorsmul_1.asm: Fix some DOS64 issues.

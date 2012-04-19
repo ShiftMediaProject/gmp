@@ -2,7 +2,7 @@
 
 Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
-Copyright 2011, 2012 Free Software Foundation, Inc.
+Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,12 +25,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "fac_ui.h"
 
+#ifndef BIN_GOETGHELUCK_THRESHOLD
+#define BIN_GOETGHELUCK_THRESHOLD  1000
+#endif
 #ifndef BIN_UIUI_ENABLE_SMALLDC
-#define BIN_UIUI_ENABLE_SMALLDC (1)
+#define BIN_UIUI_ENABLE_SMALLDC    1
 #endif
 #ifndef BIN_UIUI_RECURSIVE_SMALLDC
 #define BIN_UIUI_RECURSIVE_SMALLDC (GMP_NUMB_BITS > 32)
 #endif
+
 /* Algorithm:
 
    Accumulate chunks of factors first limb-by-limb (using one of mul0-mul8)
@@ -437,6 +441,228 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   SIZ(r) = rn;
 }
 
+/* mpz_goetgheluck_bin_uiui(RESULT, N, K) -- Set RESULT to binomial(N,K).
+ *
+ * Contributed to the GNU project by Marco Bodrato.
+ *
+ * Implementation of the algorithm by P. Goetgheluck, "Computing
+ * Binomial Coefficients", The American Mathematical Monthly, Vol. 94,
+ * No. 4 (April 1987), pp. 360-365.
+ *
+ * Acknowledgment: Peter Luschny did spot the slowness of the previous
+ * code and suggested the reference.
+ */
+
+/* TODO: Remove duplicated constants / macros / static functions...
+ */
+
+/*************************************************************/
+/* Section macros: common macros, for swing/fac/bin (&sieve) */
+/*************************************************************/
+
+#define FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I)			\
+  if ((PR) > (MAX_PR)) {					\
+    (VEC)[(I)++] = (PR);					\
+    (PR) = 1;							\
+  }
+
+#define FACTOR_LIST_STORE(P, PR, MAX_PR, VEC, I)		\
+  do {								\
+    if ((PR) > (MAX_PR)) {					\
+      (VEC)[(I)++] = (PR);					\
+      (PR) = (P);						\
+    } else							\
+      (PR) *= (P);						\
+  } while (0)
+
+#define LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)			\
+    __max_i = (end);						\
+								\
+    do {							\
+      ++__i;							\
+      if (((sieve)[__index] & __mask) == 0)			\
+	{							\
+	  (prime) = id_to_n(__i)
+
+#define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
+  do {								\
+    mp_limb_t __mask, __index, __max_i, __i;			\
+								\
+    __i = (start)-(off);					\
+    __index = __i / GMP_LIMB_BITS;				\
+    __mask = CNST_LIMB(1) << (__i % GMP_LIMB_BITS);		\
+    __i += (off);						\
+								\
+    LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)
+
+#define LOOP_ON_SIEVE_STOP					\
+	}							\
+      __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
+      __index += __mask & 1;					\
+    }  while (__i <= __max_i)					\
+
+#define LOOP_ON_SIEVE_END					\
+    LOOP_ON_SIEVE_STOP;						\
+  } while (0)
+
+/*********************************************************/
+/* Section sieve: sieving functions and tools for primes */
+/*********************************************************/
+
+static mp_limb_t
+bit_to_n (mp_limb_t bit) { return (bit*3+4)|1; }
+
+/* id_to_n (x) = bit_to_n (x-1) = (id*3+1)|1*/
+static mp_limb_t
+id_to_n  (mp_limb_t id)  { return id*3+1+(id&1); }
+
+/* n_to_bit (n) = ((n-1)&(-CNST_LIMB(2)))/3U-1 */
+static mp_limb_t
+n_to_bit (mp_limb_t n) { return ((n-5)|1)/3U; }
+
+static mp_size_t
+primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
+
+/*********************************************************/
+/* Section binomial: fast binomial implementations       */
+/*********************************************************/
+
+#define COUNT_A_PRIME(P, N, K, PR, MAX_PR, VEC, I)	\
+  do {							\
+    mp_limb_t __a, __b, __prime, __ma,__mb;		\
+    __prime = (P);					\
+    __a = (N); __b = (K); __mb = 0;			\
+    FACTOR_LIST_APPEND(PR, MAX_PR, VEC, I);		\
+    do {						\
+      __mb += __b % __prime; __b /= __prime;		\
+      __ma = __a % __prime; __a /= __prime;		\
+      if (__ma < __mb) {				\
+        __mb = 1; (PR) *= __prime;			\
+      } else  __mb = 0;					\
+    } while (__a >= __prime);				\
+  } while (0)
+
+#define SH_COUNT_A_PRIME(P, N, K, PR, MAX_PR, VEC, I)	\
+  do {							\
+    mp_limb_t __prime;					\
+    __prime = (P);					\
+    if (((N) % __prime) < ((K) % __prime)) {		\
+      FACTOR_LIST_STORE (__prime, PR, MAX_PR, VEC, I);	\
+    }							\
+  } while (0)
+
+/* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
+static unsigned
+log_n_max (mp_limb_t n)
+{
+  static const mp_limb_t table[] = { NTH_ROOT_NUMB_MASK_TABLE };
+  unsigned log;
+
+  for (log = numberof (table); n > table[log - 1]; log--);
+
+  return log;
+}
+
+/* Returns an approximation of the sqare root of x.  *
+ * It gives: x <= limb_apprsqrt (x) ^ 2 < x * 9/4    */
+static mp_limb_t
+limb_apprsqrt (mp_limb_t x)
+{
+  int s;
+
+  ASSERT (x > 2);
+  count_leading_zeros (s, x - 1);
+  s = GMP_LIMB_BITS - 1 - s;
+  return (CNST_LIMB(1) << (s >> 1)) + (CNST_LIMB(1) << ((s - 1) >> 1));
+}
+
+static void
+mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
+{
+  mp_limb_t *sieve, *factors, count;
+  TMP_DECL;
+
+  ASSERT (k >= 4);
+  ASSERT (n >= 8);
+
+  TMP_MARK;
+  sieve = TMP_ALLOC_LIMBS (primesieve_size (n));
+
+  count = gmp_primesieve (sieve, n) + 1;
+  factors = TMP_ALLOC_LIMBS (count / log_n_max (n) + 1);
+
+  mp_limb_t prod, max_prod, j;
+  j = 0;
+
+  prod = 1;
+  max_prod = GMP_NUMB_MAX / n;
+
+  /* Handle primes = 2, 3 separately. */
+  COUNT_A_PRIME (2, n, k, prod, max_prod, factors, j);
+  COUNT_A_PRIME (3, n, k, prod, max_prod, factors, j);
+
+  if (n >= 10) /* Accumulate prime factors from 5 to n/2 */
+    {
+      mp_limb_t s;
+
+      if (n > 24) {
+	mp_limb_t prime;
+	s = limb_apprsqrt(n);
+	s = n_to_bit (s);
+	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
+	COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
+	LOOP_ON_SIEVE_END;
+	s++;
+      } else
+	s = 0;
+
+      ASSERT (max_prod <= GMP_NUMB_MAX / 2);
+      max_prod <<= 1;
+      ASSERT (bit_to_n (s) * bit_to_n (s) > n);
+      ASSERT (s <= n_to_bit (n >> 1));
+      {
+	mp_limb_t prime;
+
+	LOOP_ON_SIEVE_BEGIN (prime, s, n_to_bit (n >> 1), 0,sieve);
+	SH_COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
+	LOOP_ON_SIEVE_END;
+      }
+      max_prod >>= 1;
+    }
+
+  /* Store primes from (n-k)+1 to n */
+  if (n_to_bit (n - k) < n_to_bit (n))
+    {
+      mp_limb_t prime;
+      LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n - k) + 1, n_to_bit (n), 0,sieve);
+      FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
+      LOOP_ON_SIEVE_END;
+    }
+
+  if (j != 0)
+    {
+      factors[j++] = prod;
+      mpz_prodlimbs (r, factors, j);
+    }
+  else
+    {
+      PTR (r)[0] = prod;
+      SIZ (r) = 1;
+    }
+  TMP_FREE;
+}
+
+#undef COUNT_A_PRIME
+#undef SH_COUNT_A_PRIME
+#undef LOOP_ON_SIEVE_END
+#undef LOOP_ON_SIEVE_STOP
+#undef LOOP_ON_SIEVE_BEGIN
+#undef LOOP_ON_SIEVE_CONTINUE
+
+/*********************************************************/
+/* End of implementation of Goetgheluck's algorithm      */
+/*********************************************************/
+
 void
 mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
@@ -465,7 +691,10 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     else if (BIN_UIUI_ENABLE_SMALLDC &&
 	     k <= (BIN_UIUI_RECURSIVE_SMALLDC ? ODD_CENTRAL_BINOMIAL_TABLE_LIMIT : ODD_FACTORIAL_TABLE_LIMIT)* 2)
       mpz_smallkdc_bin_uiui (r, n, k);
-    else /* k > ODD_FACTORIAL_TABLE_LIMIT */
+    else if (ABOVE_THRESHOLD (k, BIN_GOETGHELUCK_THRESHOLD) &&
+	     k > (n >> 4)) /* k > ODD_FACTORIAL_TABLE_LIMIT */
+      mpz_goetgheluck_bin_uiui (r, n, k);
+    else
       mpz_bdiv_bin_uiui (r, n, k);
   }
 }
