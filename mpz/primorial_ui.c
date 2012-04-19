@@ -141,7 +141,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 
 	max_prod = GMP_NUMB_MAX / n;
 
-	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit(numberof (table)), n_to_bit (n), 0,sieve);
+	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit(numberof (table)), n_to_bit (n), 0, sieve);
 	FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
 	LOOP_ON_SIEVE_END;
       }
