@@ -33,7 +33,7 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
     {
       if (limb_index < dsize)
 	{
-	  dp[limb_index] |= (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
+	  dp[limb_index] |= CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
 	  SIZ (d) = dsize;
 	}
       else
@@ -42,7 +42,7 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	     number.  We have to increase the size of the number.  */
 	  dp = MPZ_REALLOC (d, limb_index + 1);
 	  MPN_ZERO (dp + dsize, limb_index - dsize);
-	  dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
+	  dp[limb_index] = CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
 	  SIZ (d) = limb_index + 1;
 	}
     }
@@ -69,7 +69,7 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	    {
 	      mp_limb_t	 dlimb;
 	      dlimb = dp[limb_index];
-	      dlimb &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+	      dlimb &= ~(CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS));
 	      dp[limb_index] = dlimb;
 
 	      if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
@@ -85,29 +85,13 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
       else if (limb_index == zero_bound)
 	{
 	  dp[limb_index] = ((dp[limb_index] - 1)
-			    & ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS))) + 1;
-	  if (dp[limb_index] == 0)
-	    {
-	      mp_size_t i;
-	      for (i = limb_index + 1; i < dsize; i++)
-		{
-		  dp[i] += 1;
-		  if (dp[i] != 0)
-		    goto fin;
-		}
-	      /* We got carry all way out beyond the end of D.  Increase
-		 its size (and allocation if necessary).  */
-	      dsize++;
-	      dp = MPZ_REALLOC (d, dsize);
-	      dp[i] = 1;
-	      SIZ (d) = -dsize;
-	    fin:;
-	    }
+			    & ~(CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS))) + 1;
+	  ASSERT (dp[limb_index] != 0);
 	}
       else
 	{
 	  mpn_decr_u (dp + limb_index,
-		     (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+		     CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS));
 	  dsize -= dp[dsize - 1] == 0;
 	  SIZ (d) = -dsize;
 	}
