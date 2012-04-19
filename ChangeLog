@@ -1,3 +1,19 @@
+2012-04-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-remove.
+
+	* tests/mpz/t-remove.c: Clear out mpz variables.
+
+	* tests/mpz/t-cong.c (check_random): Use much larger numbers.
+	(check_data): Check congruences mod 0.
+
+	* tests/mpz/t-divis.c: Test divisibility by zero.
+
+	* tests/mpz/reuse.c: Test mpz_mod.
+
+	* mpz/setbit.c: Remove dead code.  Use CNST_LIMB.
+	* mpz/clrbit.c: Use CNST_LIMB.
+
 2012-04-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* primesieve.c: New file, with functions from mpz/oddfac_1.c .
