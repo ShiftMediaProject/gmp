@@ -7,6 +7,7 @@
 
 	* mpz/bin_uiui.c (mpz_goetgheluck_bin_uiui): New, factor-based
 	implementation.
+	* tests/mpz/t-bin.c: Extend tests, to cover _goetgheluck.
 
 2012-04-17  Torbjorn Granlund  <tege@gmplib.org>
 

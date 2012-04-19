@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 /* Default number of generated tests. */
-#define COUNT 400
+#define COUNT 700
 
 void
 try_mpz_bin_ui (mpz_srcptr want, mpz_srcptr n, unsigned long k)
@@ -182,14 +182,14 @@ randomwalk (int count)
 
   for (tests = 1; tests < count; tests++)
     {
-      r = gmp_urandomm_ui (rands, 30) + 1;
-      for (i = r & 3; i > 0; i--)
+      r = gmp_urandomm_ui (rands, 62) + 1;
+      for (i = r & 7; i > 0; i--)
 	{
 	  n++; k++;
 	  mpz_mul_ui (want, want, n);
 	  mpz_fdiv_q_ui (want, want, k);
 	}
-      for (i = r >> 2; i > 0; i--)
+      for (i = r >> 3; i > 0; i--)
 	{
 	  n++;
 	  mpz_mul_ui (want, want, n);
@@ -259,7 +259,7 @@ main (int argc, char **argv)
   tests_start ();
 
   samples ();
-  smallexaustive (count >> 3);
+  smallexaustive (count >> 4);
   twos (count >> 1);
   randomwalk (count - (count >> 1));
 
