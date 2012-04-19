@@ -70,18 +70,18 @@ mpz_xinvert (mpz_ptr r, mpz_srcptr a, mpz_srcptr b)
 dss_func dss_funcs[] =
 {
   mpz_add, mpz_sub, mpz_mul,
-  mpz_cdiv_q, mpz_cdiv_r, mpz_fdiv_q, mpz_fdiv_r, mpz_tdiv_q, mpz_tdiv_r,
+  mpz_cdiv_q, mpz_cdiv_r, mpz_fdiv_q, mpz_fdiv_r, mpz_tdiv_q, mpz_tdiv_r, mpz_mod,
   mpz_xinvert,
   mpz_gcd, mpz_lcm, mpz_and, mpz_ior, mpz_xor
 };
 const char *dss_func_names[] =
 {
   "mpz_add", "mpz_sub", "mpz_mul",
-  "mpz_cdiv_q", "mpz_cdiv_r", "mpz_fdiv_q", "mpz_fdiv_r", "mpz_tdiv_q", "mpz_tdiv_r",
+  "mpz_cdiv_q", "mpz_cdiv_r", "mpz_fdiv_q", "mpz_fdiv_r", "mpz_tdiv_q", "mpz_tdiv_r", "mpz_mod",
   "mpz_xinvert",
   "mpz_gcd", "mpz_lcm", "mpz_and", "mpz_ior", "mpz_xor"
 };
-char dss_func_division[] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
+char dss_func_division[] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
 
 dsi_func dsi_funcs[] =
 {
