@@ -1922,6 +1922,9 @@ __GMP_DECLSPEC void gmp_init_primesieve (gmp_primesieve_t *);
 #define gmp_nextprime __gmp_nextprime
 __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
+#define gmp_primesieve __gmp_primesieve
+__GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
+
 
 #ifndef MUL_TOOM22_THRESHOLD
 #define MUL_TOOM22_THRESHOLD             30
