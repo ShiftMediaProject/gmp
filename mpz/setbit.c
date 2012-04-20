@@ -27,23 +27,24 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
   mp_size_t dsize = SIZ (d);
   mp_ptr dp = PTR (d);
   mp_size_t limb_index;
+  mp_limb_t mask;
 
   limb_index = bit_index / GMP_NUMB_BITS;
+  mask = CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
   if (dsize >= 0)
     {
       if (limb_index < dsize)
 	{
-	  dp[limb_index] |= CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
-	  SIZ (d) = dsize;
+	  dp[limb_index] |= mask;
 	}
       else
 	{
 	  /* Ugh.  The bit should be set outside of the end of the
 	     number.  We have to increase the size of the number.  */
 	  dp = MPZ_REALLOC (d, limb_index + 1);
-	  MPN_ZERO (dp + dsize, limb_index - dsize);
-	  dp[limb_index] = CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS);
 	  SIZ (d) = limb_index + 1;
+	  MPN_ZERO (dp + dsize, limb_index - dsize);
+	  dp[limb_index] = mask;
 	}
     }
   else
@@ -58,18 +59,17 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
       dsize = -dsize;
 
       /* No upper bound on this loop, we're sure there's a non-zero limb
-	 sooner ot later.  */
-      for (zero_bound = 0; ; zero_bound++)
-	if (dp[zero_bound] != 0)
-	  break;
+	 sooner or later.  */
+      zero_bound = 0;
+      while (dp[zero_bound] == 0)
+	zero_bound++;
 
       if (limb_index > zero_bound)
 	{
 	  if (limb_index < dsize)
 	    {
 	      mp_limb_t	 dlimb;
-	      dlimb = dp[limb_index];
-	      dlimb &= ~(CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS));
+	      dlimb = dp[limb_index] & ~mask;
 	      dp[limb_index] = dlimb;
 
 	      if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
@@ -84,14 +84,12 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_index)
 	}
       else if (limb_index == zero_bound)
 	{
-	  dp[limb_index] = ((dp[limb_index] - 1)
-			    & ~(CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS))) + 1;
+	  dp[limb_index] = ((dp[limb_index] - 1) & ~mask) + 1;
 	  ASSERT (dp[limb_index] != 0);
 	}
       else
 	{
-	  mpn_decr_u (dp + limb_index,
-		     CNST_LIMB(1) << (bit_index % GMP_NUMB_BITS));
+	  MPN_DECR_U (dp + limb_index, dsize - limb_index, mask);
 	  dsize -= dp[dsize - 1] == 0;
 	  SIZ (d) = -dsize;
 	}
