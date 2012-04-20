@@ -580,6 +580,7 @@ static void
 mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
   mp_limb_t *sieve, *factors, count;
+  mp_limb_t prod, max_prod, j;
   TMP_DECL;
 
   ASSERT (k >= 4);
@@ -591,7 +592,6 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   count = gmp_primesieve (sieve, n) + 1;
   factors = TMP_ALLOC_LIMBS (count / log_n_max (n) + 1);
 
-  mp_limb_t prod, max_prod, j;
   j = 0;
 
   prod = 1;

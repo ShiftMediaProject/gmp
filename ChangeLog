@@ -9,6 +9,8 @@
 	* mpn/generic/binvert.c (LOG2C): Remove.
 	* mpn/generic/invertappr.c (LOG2C): Remove.
 
+	* mpz/bin_uiui.c (mpz_goetgheluck_bin_uiui): Move declarations.
+
 2012-04-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-remove.
