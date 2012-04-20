@@ -9,7 +9,8 @@
 	* mpn/generic/binvert.c (LOG2C): Remove.
 	* mpn/generic/invertappr.c (LOG2C): Remove.
 
-	* mpz/bin_uiui.c (mpz_goetgheluck_bin_uiui): Move declarations.
+	* mpz/bin_uiui.c (mpz_goetgheluck_bin_uiui): Move declarations,
+	and assume that n and k are not small.
 
 2012-04-19  Torbjorn Granlund  <tege@gmplib.org>
 

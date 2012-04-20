@@ -583,8 +583,8 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mp_limb_t prod, max_prod, j;
   TMP_DECL;
 
-  ASSERT (k >= 4);
-  ASSERT (n >= 8);
+  ASSERT (BIN_GOETGHELUCK_THRESHOLD >= 13);
+  ASSERT (n >= 25);
 
   TMP_MARK;
   sieve = TMP_ALLOC_LIMBS (primesieve_size (n));
@@ -601,11 +601,11 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   COUNT_A_PRIME (2, n, k, prod, max_prod, factors, j);
   COUNT_A_PRIME (3, n, k, prod, max_prod, factors, j);
 
-  if (n >= 10) /* Accumulate prime factors from 5 to n/2 */
+  /* Accumulate prime factors from 5 to n/2 */
     {
       mp_limb_t s;
 
-      if (n > 24) {
+      {
 	mp_limb_t prime;
 	s = limb_apprsqrt(n);
 	s = n_to_bit (s);
@@ -613,8 +613,7 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
 	LOOP_ON_SIEVE_END;
 	s++;
-      } else
-	s = 0;
+      }
 
       ASSERT (max_prod <= GMP_NUMB_MAX / 2);
       max_prod <<= 1;
@@ -631,7 +630,7 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     }
 
   /* Store primes from (n-k)+1 to n */
-  if (n_to_bit (n - k) < n_to_bit (n))
+  ASSERT (n_to_bit (n - k) < n_to_bit (n));
     {
       mp_limb_t prime;
       LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n - k) + 1, n_to_bit (n), 0,sieve);
@@ -639,7 +638,7 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       LOOP_ON_SIEVE_END;
     }
 
-  if (j != 0)
+  if (LIKELY (j != 0))
     {
       factors[j++] = prod;
       mpz_prodlimbs (r, factors, j);
