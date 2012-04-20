@@ -86,12 +86,12 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_idx)
 	  dp[limb_idx] = ((((dp[limb_idx] - 1) | mask) + 1) & GMP_NUMB_MASK);
 	  if (dp[limb_idx] == 0)
 	    {
-	      /* Increment at dsize + 1.  Extend the number with a zero limb
+	      /* Increment at limb_idx + 1.  Extend the number with a zero limb
 		 for simplicity.  */
 	      dp = MPZ_REALLOC (d, dsize + 1);
 	      dp[dsize] = 0;
-	      mpn_incr_u (dp + limb_idx + 1, 1);
-	      dsize += dp[dsize] != 0;
+	      MPN_INCR_U (dp + limb_idx + 1, dsize - limb_idx, 1);
+	      dsize += dp[dsize];
 
 	      SIZ (d) = -dsize;
 	    fin:;
