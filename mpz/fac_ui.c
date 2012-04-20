@@ -90,6 +90,5 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
     }
 }
 
-#undef LOG2C
 #undef FACTORS_PER_LIMB
 #undef FACTOR_LIST_STORE

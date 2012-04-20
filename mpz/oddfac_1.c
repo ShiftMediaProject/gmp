@@ -426,6 +426,5 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
     }
 }
 
-#undef LOG2C
 #undef FACTORS_PER_LIMB
 #undef FACTOR_LIST_STORE
