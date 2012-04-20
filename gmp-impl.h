@@ -528,6 +528,13 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
    return true though, so avoid that.  */
 #define POW2_P(n)  (((n) & ((n) - 1)) == 0)
 
+/* This is intended for constant THRESHOLDs only, where the compiler
+   can completely fold the result.  */
+#define LOG2C(n) \
+ (((n) >=    0x1) + ((n) >=    0x2) + ((n) >=    0x4) + ((n) >=    0x8) + \
+  ((n) >=   0x10) + ((n) >=   0x20) + ((n) >=   0x40) + ((n) >=   0x80) + \
+  ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
+  ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
 
 /* The "short" defines are a bit different because shorts are promoted to
    ints by ~ or >> etc.

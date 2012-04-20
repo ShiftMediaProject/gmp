@@ -24,14 +24,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "fac_ui.h"
 
-/* This is intended for constant THRESHOLDs only, where the compiler
-   can completely fold the result.  */
-#define LOG2C(n) \
- (((n) >=    0x1) + ((n) >=    0x2) + ((n) >=    0x4) + ((n) >=    0x8) + \
-  ((n) >=   0x10) + ((n) >=   0x20) + ((n) >=   0x40) + ((n) >=   0x80) + \
-  ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
-  ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
-
 #define FACTOR_LIST_STORE(P, PR, MAX_PR, VEC, I)		\
   do {								\
     if ((PR) > (MAX_PR)) {					\
