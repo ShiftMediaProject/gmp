@@ -43,8 +43,8 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_idx)
 	  if (UNLIKELY (dlimb == 0 && limb_idx == dsize-1))
 	    {
 	      /* high limb became zero, must normalize */
-	      MPN_NORMALIZE (dp, dsize);
-	      SIZ (d) = dsize;
+	      MPN_NORMALIZE (dp, limb_idx);
+	      SIZ (d) = limb_idx;
 	    }
 	}
       else
