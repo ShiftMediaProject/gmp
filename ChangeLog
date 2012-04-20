@@ -1,5 +1,8 @@
 2012-04-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpq/io.c: New file.
+	* tests/mpq/Makefile.am: Run it.
+
 	* mpz/clrbit.c: Simplify along the lines of setbit.c.
 
 2012-04-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
