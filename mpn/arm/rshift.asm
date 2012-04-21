@@ -1,6 +1,8 @@
-dnl  ARM mpn_copyd.
+dnl  ARM mpn_rshift.
 
-dnl  Copyright 2003, 2012 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
+dnl  Copyright 1997, 2000, 2001, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,39 +25,50 @@ C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 1.5
+C Cortex-A9	 3.5
 C Cortex-A15	 ?
 
-define(`rp', `r0')
-define(`up', `r1')
-define(`n',  `r2')
+define(`rp',  `r0')
+define(`up',  `r1')
+define(`n',   `r2')
+define(`cnt', `r3')
+define(`tnc', `r5')
 
 ASM_START()
-PROLOGUE(mpn_copyd)
-	mov	r12, n, lsl #2
-	sub	r12, r12, #4
-	add	rp, rp, r12			C make rp point at last limb
-	add	up, up, r12			C make up point at last limb
+PROLOGUE(mpn_rshift)
+	push	{r4, r5, r6, r7, r8}
+	ldr	r4, [up]
+	rsb	tnc, cnt, #32
 
+	lsr	r7, r4, cnt
 	tst	n, #1
-	beq	L(skip1)
-	ldr	r3, [up], #-4
-	str	r3, [rp], #-4
-L(skip1):
-	tst	n, #2
-	beq	L(skip2)
-	ldmda	up!, { r3, r12 }		C load 2 limbs
-	stmda	rp!, { r3, r12 }		C store 2 limbs
-L(skip2):
-	bics	n, n, #3
-	beq	L(rtn)
-	stmfd	sp!, { r7, r8, r9 }		C save regs on stack
+	beq	L(evn)			C n even
 
-L(top):	ldmda	up!, { r3, r8, r9, r12 }	C load 4 limbs
-	subs	n, n, #4
-	stmda	rp!, { r3, r8, r9, r12 }	C store 4 limbs
-	bne	L(top)
+L(odd):	subs	n, n, #2
+	bcc	L(1)			C n = 1
+	ldr	r8, [up, #4]!
+	b	L(mid)
 
-	ldmfd	sp!, { r7, r8, r9 }		C restore regs from stack
-L(rtn):	bx	lr
+L(evn):	ldr	r6, [up, #4]!
+	subs	n, n, #2
+	beq	L(end)
+
+L(top):	ldr	r8, [up, #4]!
+	orr	r7, r7, r6, lsl tnc
+	str	r7, [rp], #4
+	lsr	r7, r6, cnt
+L(mid):	ldr	r6, [up, #4]!
+	orr	r7, r7, r8, lsl tnc
+	str	r7, [rp], #4
+	lsr	r7, r8, cnt
+	subs	n, n, #2
+	bgt	L(top)
+
+L(end):	orr	r7, r7, r6, lsl tnc
+	str	r7, [rp], #4
+	lsr	r7, r6, cnt
+L(1):	str	r7, [rp], #4
+	lsl	r0, r4, tnc
+	pop	{r4, r5, r6, r7, r8}
+	bx	lr
 EPILOGUE()

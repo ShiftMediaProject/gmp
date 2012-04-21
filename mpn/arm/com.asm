@@ -1,4 +1,4 @@
-dnl  ARM mpn_copyd.
+dnl  ARM mpn_com.
 
 dnl  Copyright 2003, 2012 Free Software Foundation, Inc.
 
@@ -23,7 +23,7 @@ C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 1.5
+C Cortex-A9	 2.0
 C Cortex-A15	 ?
 
 define(`rp', `r0')
@@ -31,29 +31,31 @@ define(`up', `r1')
 define(`n',  `r2')
 
 ASM_START()
-PROLOGUE(mpn_copyd)
-	mov	r12, n, lsl #2
-	sub	r12, r12, #4
-	add	rp, rp, r12			C make rp point at last limb
-	add	up, up, r12			C make up point at last limb
-
+PROLOGUE(mpn_com)
 	tst	n, #1
 	beq	L(skip1)
-	ldr	r3, [up], #-4
-	str	r3, [rp], #-4
+	ldr	r3, [up], #4
+	mvn	r3, r3
+	str	r3, [rp], #4
 L(skip1):
 	tst	n, #2
 	beq	L(skip2)
-	ldmda	up!, { r3, r12 }		C load 2 limbs
-	stmda	rp!, { r3, r12 }		C store 2 limbs
+	ldmia	up!, { r3, r12 }		C load 2 limbs
+	mvn	r3, r3
+	mvn	r12, r12
+	stmia	rp!, { r3, r12 }		C store 2 limbs
 L(skip2):
 	bics	n, n, #3
 	beq	L(rtn)
 	stmfd	sp!, { r7, r8, r9 }		C save regs on stack
 
-L(top):	ldmda	up!, { r3, r8, r9, r12 }	C load 4 limbs
+L(top):	ldmia	up!, { r3, r8, r9, r12 }	C load 4 limbs
 	subs	n, n, #4
-	stmda	rp!, { r3, r8, r9, r12 }	C store 4 limbs
+	mvn	r3, r3
+	mvn	r8, r8
+	mvn	r9, r9
+	mvn	r12, r12
+	stmia	rp!, { r3, r8, r9, r12 }	C store 4 limbs
 	bne	L(top)
 
 	ldmfd	sp!, { r7, r8, r9 }		C restore regs from stack

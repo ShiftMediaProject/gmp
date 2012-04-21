@@ -1,7 +1,6 @@
-dnl  ARM mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
-dnl  result from a second limb vector.
+dnl  ARM mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 1998, 2000, 2001, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2003, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,29 +19,48 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C            cycles/limb
+C	     cycles/limb
 C StrongARM:  7.75-9.75  (dependent on vl value)
-C XScale:        8-9     (dependent on vl value, estimated)
+C XScale	 ?
+C Cortex-A8	 ?
+C Cortex-A9	 5.57
+C Cortex-A15	 ?
 
-define(`rp',`r0')
-define(`up',`r1')
-define(`n',`r2')
-define(`vl',`r3')
-define(`rl',`r12')
-define(`ul',`r6')
-define(`r',`lr')
+define(`rp', `r0')
+define(`up', `r1')
+define(`n',  `r2')
+define(`vl', `r3')
+define(`rl', `r12')
+define(`ul', `r6')
+define(`r',  `lr')
 
+ifdef(`OPERATION_addmul_1', `
+  define(`ADDSUB',	adds)
+  define(`ADDSUBC',	adcs)
+  define(`CLRRCY',	`mov	$1, #0
+			adds	r0, r0, #0')
+  define(`RETVAL',	`adc	r0, r4, #0')
+  define(`func',	mpn_addmul_1)')
+ifdef(`OPERATION_submul_1', `
+  define(`ADDSUB',	subs)
+  define(`ADDSUBC',	sbcs)
+  define(`CLRRCY',	`subs	$1, r0, r0')
+  define(`RETVAL',	`sbc	r0, r0, r0
+			sub	r0, $1, r0')
+  define(`func',	mpn_submul_1)')
+
+MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
 ASM_START()
-PROLOGUE(mpn_submul_1)
+PROLOGUE(func)
 	stmfd	sp!, { r4-r6, lr }
-	subs	r4, r0, r0		C clear r4, set cy
+	CLRRCY(	r4)
 	tst	n, #1
 	beq	L(skip1)
 	ldr	ul, [up], #4
 	ldr	rl, [rp, #0]
 	umull	r5, r4, ul, vl
-	subs	r, rl, r5
+	ADDSUB	r, rl, r5
 	str	r, [rp], #4
 L(skip1):
 	tst	n, #2
@@ -52,16 +70,16 @@ L(skip1):
 	mov	r5, #0
 	umlal	r4, r5, ul, vl
 	ldr	ul, [up], #4
-	sbcs	r, rl, r4
+	ADDSUBC	r, rl, r4
 	ldr	rl, [rp, #4]
 	mov	r4, #0
 	umlal	r5, r4, ul, vl
 	str	r, [rp], #4
-	sbcs	r, rl, r5
+	ADDSUBC	r, rl, r5
 	str	r, [rp], #4
 L(skip2):
 	bics	r, n, #3
-	beq	L(return)
+	beq	L(rtn)
 
 	ldr	ul, [up], #4
 	ldr	rl, [rp, #0]
@@ -69,39 +87,37 @@ L(skip2):
 	umlal	r4, r5, ul, vl
 	b	L(in)
 
-L(loop):
-	ldr	ul, [up], #4
-	sbcs	r, rl, r5
+L(top):	ldr	ul, [up], #4
+	ADDSUBC	r, rl, r5
 	ldr	rl, [rp, #4]
 	mov	r5, #0
 	umlal	r4, r5, ul, vl
 	str	r, [rp], #4
 L(in):	ldr	ul, [up], #4
-	sbcs	r, rl, r4
+	ADDSUBC	r, rl, r4
 	ldr	rl, [rp, #4]
 	mov	r4, #0
 	umlal	r5, r4, ul, vl
 	str	r, [rp], #4
 	ldr	ul, [up], #4
-	sbcs	r, rl, r5
+	ADDSUBC	r, rl, r5
 	ldr	rl, [rp, #4]
 	mov	r5, #0
 	umlal	r4, r5, ul, vl
 	str	r, [rp], #4
 	ldr	ul, [up], #4
-	sbcs	r, rl, r4
+	ADDSUBC	r, rl, r4
 	ldr	rl, [rp, #4]
 	mov	r4, #0
 	umlal	r5, r4, ul, vl
 	str	r, [rp], #4
 	sub	n, n, #4
 	bics	r, n, #3
-	bne	L(loop)
+	bne	L(top)
 
-	sbcs	r, rl, r5
-	str	r, [rp], #4
-L(return):
-	sbc	r0, r0, r0
-	sub	r0, r4, r0
+	ADDSUBC	r, rl, r5
+	str	r, [rp]
+
+L(rtn):	RETVAL(	r4)
 	ldmfd	sp!, { r4-r6, pc }
-EPILOGUE(mpn_submul_1)
+EPILOGUE()

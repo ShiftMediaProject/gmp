@@ -1,3 +1,21 @@
+2012-04-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/mul_1.asm: Cleanup.
+	* mpn/arm/copyi.asm: Cleanup, assume allocate-on-write cache.
+	* mpn/arm/copyd.asm: Likewise.
+
+	* mpn/arm/add_n.asm: Delete.
+	* mpn/arm/sub_n.asm: Delete.
+	* mpn/arm/aors_n.asm: New file, made from old files.
+
+	* mpn/arm/addmul_1.asm: Delete.
+	* mpn/arm/submul_1.asm: Delete.
+	* mpn/arm/aorsmul_1.asm: New file, made from old files.
+
+	* mpn/arm/com.asm: New file.
+	* mpn/arm/lshift.asm: New file.
+	* mpn/arm/rshift.asm: New file.
+
 2012-04-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpq/io.c: New file.
