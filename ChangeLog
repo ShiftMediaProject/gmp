@@ -1,5 +1,8 @@
 2012-04-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configfsf.guess: Update to current FSF version.
+	* configfsf.sub: Likewise.
+
 	* mpn/arm/bdiv_dbm1c.asm: New file.
 
 	* mpn/arm/v6/mul_1.asm: New file.
