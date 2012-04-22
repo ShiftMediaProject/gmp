@@ -23,8 +23,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#include "fac_ui.h"
-
 #ifndef BIN_GOETGHELUCK_THRESHOLD
 #define BIN_GOETGHELUCK_THRESHOLD  1000
 #endif

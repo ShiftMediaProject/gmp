@@ -28,8 +28,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#include "fac_ui.h"
-
 /* TODO:
    - split this file in smaller parts with functions that can be recycled for different computations.
  */
@@ -288,9 +286,9 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
   static const mp_limb_t tablef[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
 
-  ASSERT (flag == 0 || (flag == 1 && n >= numberof (tablef) && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
+  ASSERT (flag == 0 || (flag == 1 && n > ODD_FACTORIAL_TABLE_LIMIT && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
-  if (n < numberof (tablef))
+  if (n <= ODD_FACTORIAL_TABLE_LIMIT)
     {
       PTR (x)[0] = tablef[n];
       SIZ (x) = 1;

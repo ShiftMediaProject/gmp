@@ -313,14 +313,14 @@ install-data-hook:
 
 EXTRA_DIST += bootstrap.c
 
-fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
-	./gen-fac_ui $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fac_ui.h || (rm -f fac_ui.h; exit 1)
-BUILT_SOURCES += fac_ui.h
+fac_table.h: gen-fac$(EXEEXT_FOR_BUILD)
+	./gen-fac $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fac_table.h || (rm -f fac_table.h; exit 1)
+BUILT_SOURCES += fac_table.h
 
-gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c bootstrap.c
-	$(CC_FOR_BUILD) `test -f 'gen-fac_ui$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
-DISTCLEANFILES += gen-fac_ui$(EXEEXT_FOR_BUILD)
-EXTRA_DIST += gen-fac_ui.c
+gen-fac$(EXEEXT_FOR_BUILD): gen-fac$(U_FOR_BUILD).c bootstrap.c
+	$(CC_FOR_BUILD) `test -f 'gen-fac$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fac$(U_FOR_BUILD).c -o gen-fac$(EXEEXT_FOR_BUILD)
+DISTCLEANFILES += gen-fac$(EXEEXT_FOR_BUILD)
+EXTRA_DIST += gen-fac.c
 
 
 fib_table.h: gen-fib$(EXEEXT_FOR_BUILD)

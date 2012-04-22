@@ -24,7 +24,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* TODO: Remove duplicated constants / macros / static functions...
  */
-#include "fac_ui.h"
 
 /*************************************************************/
 /* Section macros: common macros, for swing/fac/bin (&sieve) */

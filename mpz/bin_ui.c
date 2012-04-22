@@ -46,7 +46,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
   mp_limb_t  kacc;
   mp_size_t  negate;
 
-  if (mpz_sgn (n) < 0)
+  if (SIZ (n) < 0)
     {
       /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
       mpz_init (ni);
@@ -60,7 +60,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	 (no test for this under the n<0 case, since -n+k-1 >= k there) */
       if (mpz_cmp_ui (n, k) < 0)
 	{
-	  mpz_set_ui (r, 0L);
+	  SIZ (r) = 0;
 	  return;
 	}
 
@@ -72,7 +72,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 
   /* Now wanting bin(ni+k,k), with ni positive, and "negate" is the sign (0
      for positive, 1 for negative). */
-  mpz_set_ui (r, 1L);
+  SIZ (r) = 1; PTR (r)[0] = 1;
 
   /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller.  In this case it's
      whether ni+k-k < k meaning ni<k, and if so change to denominator ni+k-k
@@ -108,19 +108,18 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
       mpz_add_ui (ni, ni, 1L);
       mpz_mul (nacc, nacc, ni);
       umul_ppmm (k1, k0, kacc, i << GMP_NAIL_BITS);
-      k0 >>= GMP_NAIL_BITS;
       if (k1 != 0)
 	{
 	  /* Accumulator overflow.  Perform bignum step.  */
 	  mpz_mul (r, r, nacc);
-	  mpz_set_ui (nacc, 1L);
+	  SIZ (nacc) = 1; PTR (nacc)[0] = 1;
 	  DIVIDE ();
 	  kacc = i;
 	}
       else
 	{
 	  /* Save new products in accumulators to keep accumulating.  */
-	  kacc = k0;
+	  kacc = k0 >> GMP_NAIL_BITS;
 	}
     }
 

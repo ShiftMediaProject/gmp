@@ -23,8 +23,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#include "fac_ui.h"
-
 #define FACTOR_LIST_STORE(P, PR, MAX_PR, VEC, I)		\
   do {								\
     if ((PR) > (MAX_PR)) {					\

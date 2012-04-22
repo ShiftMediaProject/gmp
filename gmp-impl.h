@@ -133,6 +133,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "config.h"
 #include "gmp-mparam.h"
 #include "fib_table.h"
+#include "fac_table.h"
 #include "mp_bases.h"
 #if WANT_FAT_BINARY
 #include "fat.h"

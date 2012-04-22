@@ -1,3 +1,11 @@
+2012-04-22 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gen-fac.c: Renamed, was gen-fac_ui.c .
+	* Makefile.am: Renamed gen-fac.c and fac_table.h .
+	* gmp-impl.h: #include "fac_table.h".
+	* mpz/oddfac_1.c: Use generated constant.
+	* mpz/bin_ui.c: Small optimisations.
+
 2012-04-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/mul_1.asm: Cleanup.
