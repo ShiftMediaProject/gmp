@@ -570,14 +570,15 @@ case $host in
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     case $host_cpu in
       armv5*)
+	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
       armv6*)
-	path="arm/v6 arm"
+	path="arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
       armv7*) # FIXME: plain v7 is thumb-only, should we match more strictly?
-	path="arm/v7 arm/v6 arm"
+	path="arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
       *)
@@ -2347,13 +2348,12 @@ Use "--disable-static --enable-shared" to build just a DLL.])
     #
     if test "$enable_shared" = yes; then
       GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined -Wl,--export-all-symbols"
-      LIBGMP_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmp-3.dll.def"
-      LIBGMPXX_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmpxx-3.dll.def"
       LIBGMP_DLL=1
     fi
     ;;
 esac
 
+AM_CONDITIONAL(LIBGMP_DLL, test $LIBGMP_DLL = 1)
 
 # Ensure that $CONFIG_SHELL is available for AC_LIBTOOL_SYS_MAX_CMD_LEN.
 # It's often set already by _LT_AC_PROG_ECHO_BACKSLASH or
