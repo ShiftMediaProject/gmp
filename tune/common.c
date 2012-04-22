@@ -1954,6 +1954,40 @@ speed_mpz_bin_uiui (struct speed_params *s)
   return t;
 }
 
+/* If r==0, calculate binomial(2^size,size),
+   otherwise calculate binomial(2^size,r). */
+
+double
+speed_mpz_bin_ui (struct speed_params *s)
+{
+  mpz_t          w, x;
+  unsigned long  k;
+  unsigned  i;
+  double    t;
+
+  mpz_init (w);
+  mpz_init_set_ui (x, 0);
+
+  mpz_setbit (x, s->size);
+
+  if (s->r != 0)
+    k = s->r;
+  else
+    k = s->size;
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      mpz_bin_ui (w, x, k);
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (w);
+  mpz_clear (x);
+  return t;
+}
 
 /* The multiplies are successively dependent so the latency is measured, not
    the issue rate.  There's only 10 per loop so the code doesn't get too big

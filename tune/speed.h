@@ -358,6 +358,7 @@ double speed_mpq_init_clear (struct speed_params *);
 
 double speed_mpz_add (struct speed_params *);
 double speed_mpz_bin_uiui (struct speed_params *);
+double speed_mpz_bin_ui (struct speed_params *);
 double speed_mpz_fac_ui (struct speed_params *);
 double speed_mpz_fib_ui (struct speed_params *);
 double speed_mpz_fib2_ui (struct speed_params *);
