@@ -1,5 +1,7 @@
 2012-04-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Recognise ARM sub-architectures.
+
 	* configfsf.guess: Update to current FSF version.
 	* configfsf.sub: Likewise.
 
