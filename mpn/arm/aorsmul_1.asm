@@ -20,10 +20,10 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C StrongARM:  7.75-9.75  (dependent on vl value)
+C StrongARM:     ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 5.57
+C Cortex-A9	 5.25
 C Cortex-A15	 ?
 
 define(`rp', `r0')
@@ -78,7 +78,7 @@ L(skip1):
 	ADDSUBC	r, rl, r5
 	str	r, [rp], #4
 L(skip2):
-	bics	r, n, #3
+	bics	n, n, #3
 	beq	L(rtn)
 
 	ldr	ul, [up], #4
@@ -110,9 +110,9 @@ L(in):	ldr	ul, [up], #4
 	ldr	rl, [rp, #4]
 	mov	r4, #0
 	umlal	r5, r4, ul, vl
-	str	r, [rp], #4
 	sub	n, n, #4
-	bics	r, n, #3
+	tst	n, n
+	str	r, [rp], #4
 	bne	L(top)
 
 	ADDSUBC	r, rl, r5

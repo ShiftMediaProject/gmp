@@ -1,3 +1,7 @@
+2012-04-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/aorsmul_1.asm: Tweak loop control for a 6% speed increase.
+
 2012-04-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Recognise ARM sub-architectures.
