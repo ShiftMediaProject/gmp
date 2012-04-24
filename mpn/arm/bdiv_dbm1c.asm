@@ -40,16 +40,16 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_bdiv_dbm1c)
-	push	{r4, r5, r6, r7, r8, r9}
+	push	{r4, r5, r6, r7, r8}
 	ldr	r4, [up], #4
-	ldr	r5, [sp, #24]
-	ands	r9, n, #3
+	ldr	r5, [sp, #20]
+	ands	r12, n, #3
 	beq	L(fi0)
-	cmp	r9, #2
+	cmp	r12, #2
 	bcc	L(fi1)
 	beq	L(fi2)
 
-L(fi3):	umull	r8, r9, r4, bd
+L(fi3):	umull	r8, r12, r4, bd
 	ldr	r4, [up], #4
 	b	L(lo3)
 
@@ -58,7 +58,7 @@ L(fi0):	umull	r6, r7, r4, bd
 	b	L(lo0)
 
 L(fi1):	subs	n, n, #1
-	umull	r8, r9, r4, bd
+	umull	r8, r12, r4, bd
 	bls	L(wd1)
 	ldr	r4, [up], #4
 	b	L(lo1)
@@ -75,8 +75,8 @@ L(lo1):	umull	r6, r7, r4, bd
 	ldr	r4, [up], #4
 	subs	r5, r5, r8
 	str	r5, [qp], #4
-	sbc	r5, r5, r9
-L(lo0):	umull	r8, r9, r4, bd
+	sbc	r5, r5, r12
+L(lo0):	umull	r8, r12, r4, bd
 	ldr	r4, [up], #4
 	subs	r5, r5, r6
 	str	r5, [qp], #4
@@ -85,9 +85,9 @@ L(lo3):	umull	r6, r7, r4, bd
 	ldr	r4, [up], #4
 	subs	r5, r5, r8
 	str	r5, [qp], #4
-	sbc	r5, r5, r9
+	sbc	r5, r5, r12
 L(lo2):	subs	n, n, #4
-	umull	r8, r9, r4, bd
+	umull	r8, r12, r4, bd
 	bhi	L(top)
 
 L(wd2):	subs	r5, r5, r6
@@ -95,7 +95,7 @@ L(wd2):	subs	r5, r5, r6
 	sbc	r5, r5, r7
 L(wd1):	subs	r5, r5, r8
 	str	r5, [qp]
-	sbc	r0, r5, r9
-	pop	{r4, r5, r6, r7, r8, r9}
+	sbc	r0, r5, r12
+	pop	{r4, r5, r6, r7, r8}
 	bx	lr
 EPILOGUE()

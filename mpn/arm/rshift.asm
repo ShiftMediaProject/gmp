@@ -32,11 +32,11 @@ define(`rp',  `r0')
 define(`up',  `r1')
 define(`n',   `r2')
 define(`cnt', `r3')
-define(`tnc', `r5')
+define(`tnc', `r12')
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	push	{r4, r5, r6, r7, r8}
+	push	{r4, r6, r7, r8}
 	ldr	r4, [up]
 	rsb	tnc, cnt, #32
 
@@ -69,6 +69,6 @@ L(end):	orr	r7, r7, r6, lsl tnc
 	lsr	r7, r6, cnt
 L(1):	str	r7, [rp], #4
 	lsl	r0, r4, tnc
-	pop	{r4, r5, r6, r7, r8}
-	bx	lr
+	pop	{r4, r6, r7, r8}
+	bx	r14
 EPILOGUE()

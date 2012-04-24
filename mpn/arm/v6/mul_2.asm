@@ -30,7 +30,7 @@ C Cortex-A15	 ?
 
 C TODO
 C  * This is a trivial edit of the addmul_2 code.  Check for simplifications,
-C    and posible speedups to 2.0 c/l.
+C    and possible speedups to 2.0 c/l.
 
 define(`rp',`r0')
 define(`up',`r1')
