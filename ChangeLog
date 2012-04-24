@@ -1,6 +1,7 @@
 2012-04-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v6/addmul_2.asm: New file.
+	* mpn/arm/v6/mul_2.asm: New file.
 
 2012-04-23  Torbjorn Granlund  <tege@gmplib.org>
 
