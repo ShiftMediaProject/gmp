@@ -30,6 +30,7 @@ C TODO
 C  * Micro-optimise feed-in code.
 C  * Optimise for n=1,2 by delaying register saving.
 C  * Try using ldm/stm.
+C  * Performance degenerates to 4.49 c/l for some alignments.
 
 define(`rp',`r0')
 define(`up',`r1')
