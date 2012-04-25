@@ -27,6 +27,10 @@
 	* mpz/oddfac_1.c: Use generated constant.
 	* mpz/bin_ui.c: Small optimisations.
 
+	* tune/common.c (speed_mpz_bin_ui): New function.
+	* tune/speed.h: Declare it.
+	* tune/speed.c: Use it.
+
 2012-04-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/mul_1.asm: Cleanup.
