@@ -174,7 +174,7 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
   mp_limb_t prod, max_prod;
   mp_size_t j;
 
-  ASSERT (n >= 15);
+  ASSERT (n >= 26);
 
   j = 0;
   prod  = -(n & 1);
@@ -187,10 +187,10 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
   SWING_A_PRIME (3, n, prod, max_prod, factors, j);
 
   /* Swing primes from 5 to n/3 */
-  if (1 || n > 5*3) {
+  {
     mp_limb_t s;
 
-    if (1 || n >= 5*5) {
+    {
       mp_limb_t prime;
 
       s = limb_apprsqrt(n);
@@ -200,21 +200,19 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
       SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
       LOOP_ON_SIEVE_END;
       s++;
-    } else
-      s = n_to_bit (5);
+    }
 
     ASSERT (max_prod <= GMP_NUMB_MAX / 3);
-    max_prod *= 3;
     ASSERT (bit_to_n (s) * bit_to_n (s) > n);
     ASSERT (s <= n_to_bit (n / 3));
     {
       mp_limb_t prime;
+      mp_limb_t l_max_prod = max_prod * 3;
 
       LOOP_ON_SIEVE_BEGIN (prime, s, n_to_bit (n/3), 0, sieve);
-      SH_SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
+      SH_SWING_A_PRIME (prime, n, prod, l_max_prod, factors, j);
       LOOP_ON_SIEVE_END;
     }
-    max_prod /= 3;
   }
 
   /* Store primes from (n+1)/2 to n */
@@ -225,7 +223,7 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
     LOOP_ON_SIEVE_END;
   }
 
-  if (j != 0)
+  if (LIKELY (j != 0))
     {
       factors[j++] = prod;
       mpz_prodlimbs (x, factors, j);
