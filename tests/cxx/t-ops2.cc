@@ -1,6 +1,6 @@
 /* Test mp*_class operators and functions.
 
-Copyright 2011 Free Software Foundation, Inc.
+Copyright 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -140,6 +140,7 @@ void checkqf (){
   CHECK_ALL(T,5.,2,-); CHECK_MPZ(T,5.,2,-);
   CHECK_ALL(T,5.,2,*); CHECK_MPZ(T,5.,2,*);
   CHECK_ALL(T,5.,2,/); CHECK_MPZ(T,5.,2,/);
+  CHECK_ALL(T,0.,2,/);
   CHECK_ALL_SIGNS(T,11.,3,+);
   CHECK_ALL_SIGNS(T,11.,3,-);
   CHECK_ALL_SIGNS(T,11.,3,*);
