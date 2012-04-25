@@ -368,8 +368,9 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 static mp_limb_t
 bc_bin_uiui (unsigned int n, unsigned int k)
 {
-  return (fac[n] * facinv[k - 2] * facinv[n - k - 2])
-    << (fac2cnt[n / 2 - 1] - fac2cnt[k / 2 - 1] - fac2cnt[(n-k) / 2 - 1]);
+  return ((fac[n] * facinv[k - 2] * facinv[n - k - 2])
+    << (fac2cnt[n / 2 - 1] - fac2cnt[k / 2 - 1] - fac2cnt[(n-k) / 2 - 1]))
+    & GMP_NUMB_MASK;
 }
 
 /* Algorithm:
