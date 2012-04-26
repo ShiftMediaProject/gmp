@@ -685,7 +685,7 @@ check_squares_zi (void)
   for (i = 0; i < 50; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 10 + 2;
+      size_range = mpz_get_ui (bs) % 10 + i/8 + 2;
 
       mpz_urandomb (bs, rands, size_range);
       an = mpz_get_ui (bs);
