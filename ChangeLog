@@ -1,5 +1,8 @@
 2012-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/mode1o.asm: New file.
+	* mpn/arm/v6/mode1o.asm: New file.
+
 	* mpn/arm/arm-defs.m4 (LEA): New define.
 	* mpn/arm/invert_limb.asm: Use LEA.
 
