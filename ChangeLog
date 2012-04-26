@@ -1,3 +1,10 @@
+2012-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/bin_uiui.c (bc_bin_uiui): Nail support.
+	* tests/cxx/t-ops2.cc: Test 0/3.
+	* oddfac_1.c: assume n > 26.
+	* tests/mpz/t-jac.c (mpn_jacobi_n): Enlarge tested sizes.
+
 2012-04-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v6/addmul_2.asm: New file.
