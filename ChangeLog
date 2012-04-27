@@ -1,5 +1,7 @@
 2012-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Search arm/v6t2 for arm7.
+
 	* mpn/arm/v5/gcd_1.asm: New file.
 	* mpn/arm/v6t2/gcd_1.asm: New file.
 
