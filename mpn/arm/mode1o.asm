@@ -42,9 +42,9 @@ PROLOGUE(mpn_modexact_1c_odd)
 
 	ldr	r5, [up], #4		C up[0]
 
-	ubfx	r12, d, #1, #7
-	ldrb	r4, [r4, r12]
-	smulbb	r12, r4, r4
+	and	r12, d, #254
+	ldrb	r4, [r4, r12, lsr #1]
+	mul	r12, r4, r4
 	mul	r12, d, r12
 	rsb	r12, r12, r4, asl #1
 	mul	r4, r12, r12
@@ -59,12 +59,12 @@ L(top):	sbcs	cy, r5, cy
 	sub	n, n, #1
 	mul	r12, r4, cy
 	tst	n, n
-	umull	r12, cy, r12, d
+	umull	r12, cy, d, r12
 	bne	L(top)
 
 L(end):	sbcs	cy, r5, cy
 	mul	r12, r4, cy
-	umull	r12, r0, r12, d
+	umull	r12, r0, d, r12
 	addcc	r0, r0, #1
 
 	ldmfd	sp!, {r4, r5}
