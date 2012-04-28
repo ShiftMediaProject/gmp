@@ -30,7 +30,6 @@ C TODO
 C  * Micro-optimise feed-in code.
 C  * Optimise for n=1,2 by delaying register saving.
 C  * Try using ldm/stm.
-C  * Performance degenerates to 4.49 c/l for some alignments.
 
 define(`rp',`r0')
 define(`up',`r1')
@@ -39,82 +38,62 @@ define(`v0',`r3')
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
-	stmfd	sp!, { r4, r5, r6, r7, r8 }
+	stmfd	sp!, { r4, r5, r6, r7 }
 
-	ands	r12, n, #3
+	ands	r6, n, #3
+	mov	r12, #0
 	beq	L(fi0)
-	cmp	r12, #2
+	cmp	r6, #2
 	bcc	L(fi1)
 	beq	L(fi2)
 
 L(fi3):	ldr	r4, [up], #4
-	ldr	r12, [rp, #0]
+	ldr	r6, [rp, #0]
 	ldr	r5, [up], #4
-	ldr	r6, [rp, #4]
-	mov	r8, #0
-	umaal	r8, r12, r4, v0
 	b	L(lo3)
 
 L(fi0):	ldr	r5, [up], #4
-	ldr	r8, [rp, #0]
+	ldr	r7, [rp], #4
 	ldr	r4, [up], #4
-	ldr	r12, [rp, #4]
-	mov	r7, #0
-	umaal	r7, r8, r5, v0
-	add	rp, rp, #4
 	b	L(lo0)
 
 L(fi1):	ldr	r4, [up], #4
-	ldr	r7, [rp, #0]
+	ldr	r6, [rp], #8
 	subs	n, n, #1
-	mov	r6, #0
 	beq	L(1)
 	ldr	r5, [up], #4
-	ldr	r8, [rp, #4]
-	umaal	r6, r7, r4, v0
-	add	rp, rp, #8
 	b	L(lo1)
 
 L(fi2):	ldr	r5, [up], #4
-	ldr	r6, [rp, #0]
+	ldr	r7, [rp], #12
 	ldr	r4, [up], #4
-	ldr	r7, [rp, #4]
-	mov	r12, #0
-	umaal	r12, r6, r5, v0
-	subs	n, n, #2
-	add	rp, rp, #12
-	beq	L(end)
+	b	L(lo2)
 
 	ALIGN(16)
-L(top):	ldr	r5, [up], #4
-	ldr	r8, [rp, #-4]
-	umaal	r6, r7, r4, v0
-	str	r12, [rp, #-12]
-L(lo1):	ldr	r4, [up], #4
-	ldr	r12, [rp, #0]
-	umaal	r7, r8, r5, v0
+L(top):	ldr	r6, [rp, #-8]
+	ldr	r5, [up], #4
+	str	r7, [rp, #-12]
+L(lo1):	umaal	r6, r12, r4, v0
+	ldr	r7, [rp, #-4]
+	ldr	r4, [up], #4
 	str	r6, [rp, #-8]
-L(lo0):	ldr	r5, [up], #4
-	ldr	r6, [rp, #4]
-	umaal	r8, r12, r4, v0
+L(lo0):	umaal	r7, r12, r5, v0
+	ldr	r6, [rp, #0]
+	ldr	r5, [up], #4
 	str	r7, [rp, #-4]
-L(lo3):	ldr	r4, [up], #4
-	ldr	r7, [rp, #8]
-	umaal	r12, r6, r5, v0
-	str	r8, [rp], #16
+L(lo3):	umaal	r6, r12, r4, v0
+	ldr	r7, [rp, #4]
+	ldr	r4, [up], #4
+	str	r6, [rp], #16
+L(lo2):	umaal	r7, r12, r5, v0
 	subs	n, n, #4
 	bhi	L(top)
 
-L(end):	umaal	r6, r7, r4, v0
-	str	r12, [rp, #-12]
+	ldr	r6, [rp, #-8]
+	str	r7, [rp, #-12]
+L(1):	umaal	r6, r12, r4, v0
 	str	r6, [rp, #-8]
-	mov	r0, r7
-	ldmfd	sp!, { r4, r5, r6, r7, r8 }
-	bx	lr
-
-L(1):	umaal	r6, r7, r4, v0
-	str	r6, [rp, #0]
-	mov	r0, r7
-	ldmfd	sp!, { r4, r5, r6, r7, r8 }
+	mov	r0, r12
+	ldmfd	sp!, { r4, r5, r6, r7 }
 	bx	lr
 EPILOGUE()
