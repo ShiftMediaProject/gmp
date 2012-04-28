@@ -1,4 +1,4 @@
-dnl  ARM mpn_add_n and mpn_sub_n
+dnl  ARM v6t2 mpn_divrem_1 and mpn_preinv_divrem_1.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
@@ -31,7 +31,6 @@ C Cortex-A15	 ?
 C TODO
 C  * Optimise inner-loops better, they could likely run a cycle or two faster.
 C  * Decrease register usage, streamline non-loop code.
-
 
 define(`qp_arg',  `r0')
 define(`fn',      `r1')
