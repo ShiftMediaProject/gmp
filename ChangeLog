@@ -1,5 +1,10 @@
 2012-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/thumb/add_n.asm: New file.
+	* mpn/thumb/sub_n.asm: New file.
+	* mpn/thumb/add_n.s: Remove broken code.
+	* mpn/thumb/sub_n.s: Likewise.
+
 	* mpn/arm/v6/addmul_1.asm: Rewrite for stable speed, smaller size.
 	* mpn/arm/v6/mul_1.asm: Likewise.
 
