@@ -25,7 +25,7 @@ C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 2.75
+C Cortex-A9	 2.5	slightly fluctuating
 C Cortex-A15	 ?
 
 define(`rp', `r0')
@@ -85,11 +85,11 @@ L(skip2):
 L(top):	ldmia	up!, { r4, r5, r6, r7 }
 	ldmia	vp!, { r8, r9, r12, lr }
 	ADDSUBC	r4, r4, r8
+	sub	n, n, #4
 	ADDSUBC	r5, r5, r9
 	ADDSUBC	r6, r6, r12
 	ADDSUBC	r7, r7, lr
 	stmia	rp!, { r4, r5, r6, r7 }
-	sub	n, n, #4
 	teq	n, #0
 	bne	L(top)
 
