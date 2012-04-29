@@ -1,5 +1,7 @@
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/mod_34lsub1.asm: New file.
+
 	* mpn/arm/v6t2/divrem_1.asm: New file.
 
 2012-04-28  Torbjorn Granlund  <tege@gmplib.org>
