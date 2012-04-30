@@ -89,7 +89,7 @@ mpz_mfac_uiui (mpz_ptr x, unsigned long n, unsigned long m)
       max_prod = GMP_NUMB_MAX / n;
 
       TMP_MARK;
-      factors = TMP_SALLOC_LIMBS (sn / log_n_max (n) + 1);
+      factors = TMP_ALLOC_LIMBS (sn / log_n_max (n) + 2);
 
       for (; n > m; n -= m)
 	FACTOR_LIST_STORE (n, prod, max_prod, factors, j);
