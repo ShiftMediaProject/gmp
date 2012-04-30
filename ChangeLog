@@ -1,3 +1,8 @@
+2012-05-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v5/gcd_1.asm: Hack for undefined BMOD_1_TO_MOD_1_THRESHOLD.
+	* mpn/arm/v6t2/gcd_1.asm: Likewise.
+
 2012-04-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v6/sqr_basecase.asm: New file.

@@ -43,6 +43,9 @@ define(`up',    `r0')
 define(`n',     `r1')
 define(`v0',    `r2')
 
+ifdef(`BMOD_1_TO_MOD_1_THRESHOLD',,
+  `define(`BMOD_1_TO_MOD_1_THRESHOLD',0xffffffff)')
+
 ASM_START()
 	TEXT
 	ALIGN(16)
