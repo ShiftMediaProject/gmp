@@ -282,13 +282,11 @@ log_n_max (mp_limb_t n)
 void
 mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
-  static const mp_limb_t tablef[] = { ONE_LIMB_ODD_FACTORIAL_TABLE };
-
   ASSERT (flag == 0 || (flag == 1 && n > ODD_FACTORIAL_TABLE_LIMIT && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
   if (n <= ODD_FACTORIAL_TABLE_LIMIT)
     {
-      PTR (x)[0] = tablef[n];
+      PTR (x)[0] = __gmp_oddfac_table[n];
       SIZ (x) = 1;
     }
   else
@@ -300,7 +298,6 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 
       s = 0;
       {
-	static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
 	mp_limb_t tn;
 
 #if TUNE_PROGRAM_BUILD
@@ -311,7 +308,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	for (tn = n; ABOVE_THRESHOLD (tn, FAC_DSC_THRESHOLD); s++)
 	  tn >>= 1;
 
-	if (tn >= numberof (tabled) * 2 + 1) {
+	if (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1) {
 	  mp_limb_t prod, max_prod, i;
 	  mp_size_t j;
 	  TMP_SDECL;
@@ -330,26 +327,25 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 #endif
 
 	  do {
-	    i = numberof (tabled) * 2 + 1;
-	    factors[j++] = tabled[numberof (tabled) - 1];
+	    i = ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 2;
+	    factors[j++] = ODD_DOUBLEFACTORIAL_TABLE_MAX;
 	    do {
 	      FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
 	      i += 2;
 	    } while (i <= tn);
 	    max_prod <<= 1;
 	    tn >>= 1;
-	  } while (tn >= numberof (tabled) * 2 + 1);
+	  } while (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1);
 
 	  factors[j++] = prod;
-	  ASSERT (numberof (tablef) > numberof (tabled));
-	  factors[j++] = tabled[(tn - 1) >> 1];
-	  factors[j++] = tablef[tn >> 1];
+	  factors[j++] = __gmp_odd2fac_table[(tn - 1) >> 1];
+	  factors[j++] = __gmp_oddfac_table[tn >> 1];
 	  mpz_prodlimbs (x, factors, j);
 
 	  TMP_SFREE;
 	} else {
 	  MPZ_REALLOC (x, 2);
-	  umul_ppmm (PTR (x)[1], PTR (x)[0], tabled[(tn - 1) >> 1], tablef[tn >> 1]);
+	  umul_ppmm (PTR (x)[1], PTR (x)[0], __gmp_odd2fac_table[(tn - 1) >> 1], __gmp_oddfac_table[tn >> 1]);
 	  SIZ (x) = 2;
 	}
       }

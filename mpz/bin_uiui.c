@@ -182,10 +182,6 @@ static const unsigned long ftab[] =
   } while (0)
 #endif
 
-/* Entry i contains (i!/2^t) where t is chosen such that the parenthesis
-   is an odd integer. */
-static const mp_limb_t fac[] = { ONE_LIMB_ODD_FACTORIAL_TABLE, ONE_LIMB_ODD_FACTORIAL_EXTTABLE };
-
 /* Entry i contains (i!/2^t)^(-1) where t is chosen such that the parenthesis
    is an odd integer. */
 static const mp_limb_t facinv[] = { ONE_LIMB_ODD_FACTORIAL_INVERSES_TABLE };
@@ -233,7 +229,8 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   numfac = 1;
   j = ODD_FACTORIAL_TABLE_LIMIT + 1;
-  jjj = fac[ODD_FACTORIAL_TABLE_LIMIT];
+  jjj = ODD_FACTORIAL_TABLE_MAX;
+  ASSERT (__gmp_oddfac_table[ODD_FACTORIAL_TABLE_LIMIT] == ODD_FACTORIAL_TABLE_MAX);
 
   while (1)
     {
@@ -346,7 +343,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   ASSERT (rn < alloc);
 
-  mpn_pi1_bdiv_q_1 (rp, rp, rn, fac[k], facinv[k - 2],
+  mpn_pi1_bdiv_q_1 (rp, rp, rn, __gmp_oddfac_table[k], facinv[k - 2],
 		    fac2cnt[k / 2 - 1] - i2cnt);
   /* A two-fold, branch-free normalisation is possible :*/
   /* rn -= rp[rn - 1] == 0; */
@@ -368,7 +365,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 static mp_limb_t
 bc_bin_uiui (unsigned int n, unsigned int k)
 {
-  return ((fac[n] * facinv[k - 2] * facinv[n - k - 2])
+  return ((__gmp_oddfac_table[n] * facinv[k - 2] * facinv[n - k - 2])
     << (fac2cnt[n / 2 - 1] - fac2cnt[k / 2 - 1] - fac2cnt[(n-k) / 2 - 1]))
     & GMP_NUMB_MASK;
 }

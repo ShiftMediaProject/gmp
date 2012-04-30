@@ -35,7 +35,7 @@ mpz_remove_twos (mpz_t x)
 int
 gen_consts (int numb, int nail, int limb)
 {
-  mpz_t x, mask, y;
+  mpz_t x, mask, y, last;
   unsigned long a, b;
   unsigned long ofl, ofe;
 
@@ -54,6 +54,7 @@ gen_consts (int numb, int nail, int limb)
   printf
     ("#define ONE_LIMB_FACTORIAL_TABLE CNST_LIMB(0x1),CNST_LIMB(0x1");
   mpz_init_set_ui (x, 1);
+  mpz_init (last);
   for (b = 2;; b++)
     {
       mpz_mul_ui (x, x, b);	/* so b!=a       */
@@ -74,12 +75,17 @@ gen_consts (int numb, int nail, int limb)
   for (b = 3;; b++)
     {
       for (a = b; (a & 1) == 0; a >>= 1);
+      mpz_set (last, x);
       mpz_mul_ui (x, x, a);
       if (mpz_sizeinbase (x, 2) > numb)
 	break;
       printf ("),CNST_LIMB(0x");
       mpz_out_str (stdout, 16, x);
     }
+  printf (")\n");
+  printf
+    ("#define ODD_FACTORIAL_TABLE_MAX CNST_LIMB(0x");
+  mpz_out_str (stdout, 16, last);
   printf (")\n");
 
   ofl = b - 1;
@@ -124,6 +130,7 @@ gen_consts (int numb, int nail, int limb)
   mpz_set_ui (x, 1);
   for (b = 3;; b+=2)
     {
+      mpz_set (last, x);
       mpz_mul_ui (x, x, b);
       if (mpz_sizeinbase (x, 2) > numb)
 	break;
@@ -131,6 +138,13 @@ gen_consts (int numb, int nail, int limb)
       mpz_out_str (stdout, 16, x);
     }
   printf (")\n");
+  printf
+    ("#define ODD_DOUBLEFACTORIAL_TABLE_MAX CNST_LIMB(0x");
+  mpz_out_str (stdout, 16, last);
+  printf (")\n");
+
+  printf
+    ("#define ODD_DOUBLEFACTORIAL_TABLE_LIMIT (%lu)\n", b - 2);
 
   printf
     ("\n/* This table x_1, x_2,... contains values s.t. x_n^n has <= GMP_NUMB_BITS bits */\n");

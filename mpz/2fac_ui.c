@@ -50,10 +50,8 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
     mpz_oddfac_1 (x, n >> 1, 0);
     mpz_mul_2exp (x, x, count);
   } else { /* n is odd */
-    static const mp_limb_t tabled[] = { ONE_LIMB_ODD_DOUBLEFACTORIAL_TABLE };
-
-    if (n < 2 * numberof (tabled)) {
-	PTR (x)[0] = tabled[n >> 1];
+    if (n <= ODD_DOUBLEFACTORIAL_TABLE_LIMIT) {
+	PTR (x)[0] = __gmp_odd2fac_table[n >> 1];
 	SIZ (x) = 1;
     } else if (BELOW_THRESHOLD (n, FAC_2DSC_THRESHOLD)) { /* odd basecase, */
       mp_limb_t *factors, prod, max_prod, j;
@@ -63,12 +61,12 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
       TMP_SMARK;
       factors = TMP_SALLOC_LIMBS (1 + n / (2 * FACTORS_PER_LIMB));
 
-      factors[0] = tabled[numberof (tabled) - 1];
+      factors[0] = ODD_DOUBLEFACTORIAL_TABLE_MAX;
       j = 1;
       prod = n;
 
       max_prod = GMP_NUMB_MAX / FAC_2DSC_THRESHOLD;
-      while ((n -= 2) >= numberof (tabled) * 2 + 1)
+      while ((n -= 2) > ODD_DOUBLEFACTORIAL_TABLE_LIMIT)
 	FACTOR_LIST_STORE (n, prod, max_prod, factors, j);
 
       factors[j++] = prod;

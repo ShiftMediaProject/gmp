@@ -1,3 +1,13 @@
+2012-04-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/comb_tables.c: New file.
+	* configure.in: Add it.
+	* gen-fac.c: Define table limits.
+	* gmp-impl.h (__gmp_oddfac_table, __gmp_odd2fac_table): Declare.
+	* mpz/2fac_ui.c: Use shared tables.
+	* mpz/bin_uiui.c: Likewise.
+	* mpz/oddfac_1.c: Likewise.
+
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aors_n.asm: Tune for more stable performance.

@@ -1915,6 +1915,9 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
 __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define FIB_TABLE(n)  (__gmp_fib_table[(n)+1])
 
+extern const mp_limb_t __gmp_oddfac_table[];
+extern const mp_limb_t __gmp_odd2fac_table[];
+
 #define SIEVESIZE 512		/* FIXME: Allow gmp_init_primesieve to choose */
 typedef struct
 {
