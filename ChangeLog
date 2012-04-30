@@ -3,10 +3,12 @@
 	* mpn/generic/comb_tables.c: New file.
 	* configure.in: Add it.
 	* gen-fac.c: Define table limits.
-	* gmp-impl.h (__gmp_oddfac_table, __gmp_odd2fac_table): Declare.
+	* gmp-impl.h: Declare tables.
+	(log_n_max): New static function.
 	* mpz/2fac_ui.c: Use shared tables.
 	* mpz/bin_uiui.c: Likewise.
 	* mpz/oddfac_1.c: Likewise.
+	* mpz/primorial_ui.c: Likewise.
 
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
