@@ -20,6 +20,8 @@
 
 	* doc/gmp.texi: Document mpz_mfac_uiui, collapsing with other factorial functions.
 
+	* tests/mpz/t-lcm.c: Test zero too.
+
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aors_n.asm: Tune for more stable performance.

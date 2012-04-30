@@ -111,6 +111,13 @@ check_primes (void)
   mpz_init (x);
   mpz_init (y);
 
+  /* Check zeros. */
+  mpz_set_ui (want, 0);
+  mpz_set_ui (x, 1);
+  check_all (want, want, want);
+  check_all (want, want, x);
+  check_all (want, x, want);
+
   /* New prime each time. */
   mpz_set_ui (want, 1L);
   for (i = 0; i < numberof (prime); i++)
