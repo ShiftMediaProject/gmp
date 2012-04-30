@@ -22,6 +22,8 @@
 
 	* tests/mpz/t-lcm.c: Test zero too.
 
+	* mpz/prodlimbs.c: Simplify threshold (should be tuned, not guessed).
+
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aors_n.asm: Tune for more stable performance.

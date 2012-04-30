@@ -33,7 +33,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* FIXME: should be tuned */
 #ifndef RECURSIVE_PROD_THRESHOLD
-#define RECURSIVE_PROD_THRESHOLD (MUL_TOOM22_THRESHOLD|(MUL_TOOM22_THRESHOLD<<1))
+#define RECURSIVE_PROD_THRESHOLD (MUL_TOOM22_THRESHOLD)
 #endif
 
 /* Computes the product of the j>1 limbs pointed by factors, puts the
