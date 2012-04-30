@@ -547,18 +547,6 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
     }							\
   } while (0)
 
-/* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
-static unsigned
-log_n_max (mp_limb_t n)
-{
-  static const mp_limb_t table[] = { NTH_ROOT_NUMB_MASK_TABLE };
-  unsigned log;
-
-  for (log = numberof (table); n > table[log - 1]; log--);
-
-  return log;
-}
-
 /* Returns an approximation of the sqare root of x.  *
  * It gives: x <= limb_apprsqrt (x) ^ 2 < x * 9/4    */
 static mp_limb_t

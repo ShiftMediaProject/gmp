@@ -90,18 +90,6 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 /* Section primorial: implementation                     */
 /*********************************************************/
 
-/* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
-static unsigned
-log_n_max (mp_limb_t n)
-{
-  static const mp_limb_t table[] = { NTH_ROOT_NUMB_MASK_TABLE };
-  unsigned log;
-
-  for (log = numberof (table); n > table[log - 1]; log--);
-
-  return log;
-}
-
 void
 mpz_primorial_ui (mpz_ptr x, unsigned long n)
 {

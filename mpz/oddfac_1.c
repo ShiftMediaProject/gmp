@@ -253,18 +253,6 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
 #define FACTORS_PER_LIMB (GMP_NUMB_BITS / (LOG2C(FAC_DSC_THRESHOLD-1)+1))
 #endif
 
-/* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
-static unsigned
-log_n_max (mp_limb_t n)
-{
-  static const mp_limb_t table[] = { NTH_ROOT_NUMB_MASK_TABLE };
-  unsigned log;
-
-  for (log = numberof (table); n > table[log - 1]; log--);
-
-  return log;
-}
-
 /* mpz_oddfac_1 computes the odd part of the factorial of the
    parameter n.  I.e. n! = x 2^a, where x is the returned value: an
    odd positive integer.

@@ -153,8 +153,6 @@ gen_consts (int numb, int nail, int limb)
   for (b = 2;b <= 8; b++)
     {
       mpz_root (x, mask, b);
-      if (mpz_sizeinbase (x, 2) < 4)
-	break;
       printf ("),CNST_LIMB(0x");
       mpz_out_str (stdout, 16, x);
     }

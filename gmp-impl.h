@@ -1918,6 +1918,16 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 extern const mp_limb_t __gmp_oddfac_table[];
 extern const mp_limb_t __gmp_odd2fac_table[];
 extern const unsigned char __gmp_fac2cnt_table[];
+extern const mp_limb_t __gmp_limbroots_table[];
+
+/* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
+static unsigned
+log_n_max (mp_limb_t n)
+{
+  unsigned log;
+  for (log = 8; n > __gmp_limbroots_table[log - 1]; log--);
+  return log;
+}
 
 #define SIEVESIZE 512		/* FIXME: Allow gmp_init_primesieve to choose */
 typedef struct
