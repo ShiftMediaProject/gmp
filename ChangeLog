@@ -18,6 +18,8 @@
 	* tests/mpz/t-mfac_uiui.c: New file.
 	* tests/mpz/Makefile.am: Run it.
 
+	* doc/gmp.texi: Document mpz_mfac_uiui.
+
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aors_n.asm: Tune for more stable performance.

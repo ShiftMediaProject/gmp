@@ -3641,6 +3641,12 @@ Set @var{rop} to @var{op}!, the factorial of @var{op}.
 Set @var{rop} to @var{op}!!, the double-factorial of @var{op}.
 @end deftypefun
 
+@deftypefun void mpz_mfac_uiui (mpz_t @var{rop}, unsigned long int @var{n}, unsigned long int @var{m})
+@cindex Factorial functions
+Set @var{rop} to @m{n!^{(m)}, @var{n}!^(@var{m})}, the @var{m}-multi-factorial
+of @var{n}.
+@end deftypefun
+
 @deftypefun void mpz_primorial_ui (mpz_t @var{rop}, unsigned long int @var{op})
 @cindex Factorial functions
 Set @var{rop} to the primorial of @var{op}, i.e. the product of all positive
