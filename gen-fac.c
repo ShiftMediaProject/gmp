@@ -178,18 +178,23 @@ gen_consts (int numb, int nail, int limb)
     }
   printf (")\n");
 
+  ofe = (ofe / 16 + 1) * 16;
+
   printf
     ("\n/* This table contains 1i-popc(2i) for small i */\n");
   printf
     ("\n/* It begins with 2-1=1 (N=1) */\n");
   printf
     ("#define TABLE_2N_MINUS_POPC_2N 1");
-  for (b = 4;b <= ofe + 1; b+=2)
+  for (b = 4; b <= ofe; b += 2)
     {
       mpz_set_ui (x, b);
       printf (",%lu",b - mpz_popcount (x));
     }
   printf ("\n");
+  printf
+    ("#define TABLE_LIMIT_2N_MINUS_POPC_2N %i\n", ofe + 1);
+
 
   ofl = (ofl + 1) / 2;
   printf

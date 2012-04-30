@@ -58,7 +58,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    would make it both reasonably accurate and fast.  (We could use a table
    stored into a limb, perhaps.)  The table should take the removed factors of
    2 into account (those done on-the-fly in mulN).
-*/
+
+   (3) The first time in the loop we compute the odd part of a
+   factorial in kp, we might use oddfac_1 for this task.
+ */
 
 /* This threshold determines how large divisor to accumulate before we call
    bdiv.  Perhaps we should never call bdiv, and accumulate all we are told,
@@ -186,9 +189,6 @@ static const unsigned long ftab[] =
    is an odd integer. */
 static const mp_limb_t facinv[] = { ONE_LIMB_ODD_FACTORIAL_INVERSES_TABLE };
 
-/* Entry i contains 2i-popc(2i). */
-static const unsigned char fac2cnt[] = { TABLE_2N_MINUS_POPC_2N };
-
 static void
 mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
@@ -224,7 +224,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   np[0] = 1; nn = 1;
 
   i2cnt = 0;				/* total low zeros in dividend */
-  j2cnt = fac2cnt[ODD_FACTORIAL_TABLE_LIMIT / 2 - 1];
+  j2cnt = __gmp_fac2cnt_table[ODD_FACTORIAL_TABLE_LIMIT / 2 - 1];
 					/* total low zeros in divisor */
 
   numfac = 1;
@@ -344,7 +344,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   ASSERT (rn < alloc);
 
   mpn_pi1_bdiv_q_1 (rp, rp, rn, __gmp_oddfac_table[k], facinv[k - 2],
-		    fac2cnt[k / 2 - 1] - i2cnt);
+		    __gmp_fac2cnt_table[k / 2 - 1] - i2cnt);
   /* A two-fold, branch-free normalisation is possible :*/
   /* rn -= rp[rn - 1] == 0; */
   /* rn -= rp[rn - 1] == 0; */
@@ -366,7 +366,7 @@ static mp_limb_t
 bc_bin_uiui (unsigned int n, unsigned int k)
 {
   return ((__gmp_oddfac_table[n] * facinv[k - 2] * facinv[n - k - 2])
-    << (fac2cnt[n / 2 - 1] - fac2cnt[k / 2 - 1] - fac2cnt[(n-k) / 2 - 1]))
+    << (__gmp_fac2cnt_table[n / 2 - 1] - __gmp_fac2cnt_table[k / 2 - 1] - __gmp_fac2cnt_table[(n-k) / 2 - 1]))
     & GMP_NUMB_MASK;
 }
 
@@ -588,13 +588,17 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   count = gmp_primesieve (sieve, n) + 1;
   factors = TMP_ALLOC_LIMBS (count / log_n_max (n) + 1);
 
-  j = 0;
-
-  prod = 1;
   max_prod = GMP_NUMB_MAX / n;
 
   /* Handle primes = 2, 3 separately. */
-  COUNT_A_PRIME (2, n, k, prod, max_prod, factors, j);
+  popc_limb (count, n - k);
+  popc_limb (j, k);
+  count += j;
+  popc_limb (j, n);
+  count -= j;
+  prod = CNST_LIMB(1) << count;
+
+  j = 0;
   COUNT_A_PRIME (3, n, k, prod, max_prod, factors, j);
 
   /* Accumulate prime factors from 5 to n/2 */

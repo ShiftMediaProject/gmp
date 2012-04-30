@@ -45,8 +45,13 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
   if ((n & 1) == 0) { /* n is even, n = 2k, (2k)!! = k! 2^k */
     mp_limb_t count;
 
-    popc_limb (count, n);	/* popc(n) == popc(k) */
-    count = n - count;		/* n - popc(n) == k + k - popc(k) */
+    if (n <= TABLE_LIMIT_2N_MINUS_POPC_2N)
+      count = __gmp_fac2cnt_table[n / 2 - 1];
+    else
+      {
+	popc_limb (count, n);	/* popc(n) == popc(k) */
+	count = n - count;		/* n - popc(n) == k + k - popc(k) */
+      }
     mpz_oddfac_1 (x, n >> 1, 0);
     mpz_mul_2exp (x, x, count);
   } else { /* n is odd */

@@ -83,8 +83,14 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
     {
       mp_limb_t count;
       mpz_oddfac_1 (x, n, 0);
-      popc_limb (count, n);
-      mpz_mul_2exp (x, x, n - count);
+      if (n <= TABLE_LIMIT_2N_MINUS_POPC_2N)
+	count = __gmp_fac2cnt_table[n / 2 - 1];
+      else
+	{
+	  popc_limb (count, n);
+	  count = n - count;
+	}
+      mpz_mul_2exp (x, x, count);
     }
 }
 

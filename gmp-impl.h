@@ -1917,6 +1917,7 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 
 extern const mp_limb_t __gmp_oddfac_table[];
 extern const mp_limb_t __gmp_odd2fac_table[];
+extern const unsigned char __gmp_fac2cnt_table[];
 
 #define SIEVESIZE 512		/* FIXME: Allow gmp_init_primesieve to choose */
 typedef struct
