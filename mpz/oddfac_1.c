@@ -282,6 +282,7 @@ log_n_max (mp_limb_t n)
 void
 mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
+  ASSERT (n <= GMP_NUMB_MAX);
   ASSERT (flag == 0 || (flag == 1 && n > ODD_FACTORIAL_TABLE_LIMIT && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
   if (n <= ODD_FACTORIAL_TABLE_LIMIT)
@@ -289,16 +290,23 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
       PTR (x)[0] = __gmp_oddfac_table[n];
       SIZ (x) = 1;
     }
+  else if (n <= ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1)
+    {
+      MPZ_REALLOC (x, 2);
+      umul_ppmm (PTR (x)[1], PTR (x)[0], __gmp_odd2fac_table[(n - 1) >> 1], __gmp_oddfac_table[n >> 1]);
+      SIZ (x) = 2;
+    }
   else
     {
       unsigned s;
       mp_ptr   factors;
 
-      ASSERT (n <= GMP_NUMB_MAX);
-
       s = 0;
       {
 	mp_limb_t tn;
+	mp_limb_t prod, max_prod, i;
+	mp_size_t j;
+	TMP_SDECL;
 
 #if TUNE_PROGRAM_BUILD
 	ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
@@ -308,46 +316,36 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	for (tn = n; ABOVE_THRESHOLD (tn, FAC_DSC_THRESHOLD); s++)
 	  tn >>= 1;
 
-	if (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1) {
-	  mp_limb_t prod, max_prod, i;
-	  mp_size_t j;
-	  TMP_SDECL;
+	j = 0;
 
-	  j = 0;
+	TMP_SMARK;
+	factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
+	ASSERT (tn >= FACTORS_PER_LIMB);
 
-	  TMP_SMARK;
-	  factors = TMP_SALLOC_LIMBS (1 + tn / FACTORS_PER_LIMB);
-	  ASSERT (tn >= FACTORS_PER_LIMB);
-
-	  prod = 1;
+	prod = 1;
 #if TUNE_PROGRAM_BUILD
-	  max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
+	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD_LIMIT;
 #else
-	  max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
+	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
 #endif
 
+	do {
+	  i = ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 2;
+	  factors[j++] = ODD_DOUBLEFACTORIAL_TABLE_MAX;
 	  do {
-	    i = ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 2;
-	    factors[j++] = ODD_DOUBLEFACTORIAL_TABLE_MAX;
-	    do {
-	      FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
-	      i += 2;
-	    } while (i <= tn);
-	    max_prod <<= 1;
-	    tn >>= 1;
-	  } while (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1);
+	    FACTOR_LIST_STORE (i, prod, max_prod, factors, j);
+	    i += 2;
+	  } while (i <= tn);
+	  max_prod <<= 1;
+	  tn >>= 1;
+	} while (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1);
 
-	  factors[j++] = prod;
-	  factors[j++] = __gmp_odd2fac_table[(tn - 1) >> 1];
-	  factors[j++] = __gmp_oddfac_table[tn >> 1];
-	  mpz_prodlimbs (x, factors, j);
+	factors[j++] = prod;
+	factors[j++] = __gmp_odd2fac_table[(tn - 1) >> 1];
+	factors[j++] = __gmp_oddfac_table[tn >> 1];
+	mpz_prodlimbs (x, factors, j);
 
-	  TMP_SFREE;
-	} else {
-	  MPZ_REALLOC (x, 2);
-	  umul_ppmm (PTR (x)[1], PTR (x)[0], __gmp_odd2fac_table[(tn - 1) >> 1], __gmp_oddfac_table[tn >> 1]);
-	  SIZ (x) = 2;
-	}
+	TMP_SFREE;
       }
 
       if (s != 0)
