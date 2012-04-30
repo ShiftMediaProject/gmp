@@ -10,6 +10,14 @@
 	* mpz/oddfac_1.c: Likewise.
 	* mpz/primorial_ui.c: Likewise.
 
+	* mpz/mfac_uiui.c: New file.
+	* Makefile.am: Compile it.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add mpz_mfac_uiui.c 
+	* gmp-h.in (mpz_mfac_uiui): Declare.
+
+	* tests/mpz/t-mfac_uiui.c: New file.
+	* tests/mpz/Makefile.am: Run it.
+
 2012-04-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aors_n.asm: Tune for more stable performance.
@@ -29,14 +37,6 @@
 
 	* mpn/arm/v6/addmul_1.asm: Rewrite for stable speed, smaller size.
 	* mpn/arm/v6/mul_1.asm: Likewise.
-
-	* mpz/mfac_uiui.c: New file.
-	* Makefile.am: Compile it.
-	* mpz/Makefile.am (libmpz_la_SOURCES): Add mpz_mfac_uiui.c 
-	* gmp-h.in (mpz_mfac_uiui): Declare.
-
-	* tests/mpz/t-mfac_uiui.c: New file.
-	* tests/mpz/Makefile.am: Run it.
 
 2012-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
