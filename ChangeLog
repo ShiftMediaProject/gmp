@@ -1,3 +1,7 @@
+2012-04-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v6/sqr_basecase.asm: New file.
+
 2012-04-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/comb_tables.c: New file.
