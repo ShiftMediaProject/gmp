@@ -1,5 +1,7 @@
 2012-05-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/2fac_ui.c: Fix assumed typo.
+
 	* mpn/arm/v6/gmp-mparam.h: New file.
 
 	* mpn/arm/v5/gcd_1.asm: Hack for undefined BMOD_1_TO_MOD_1_THRESHOLD.
