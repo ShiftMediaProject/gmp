@@ -1,5 +1,7 @@
 2012-05-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Put arm dirs in path in proper prio order.
+
 	* mpn/arm/logops_n.asm: New file.
 
 	* mpz/2fac_ui.c: Fix assumed typo.

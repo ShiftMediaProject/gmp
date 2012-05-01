@@ -578,7 +578,7 @@ case $host in
 	gcc_cflags_arch="-march=armv6"
 	;;
       armv7*) # FIXME: plain v7 is thumb-only, should we match more strictly?
-	path="arm/v6 arm/v6t2 arm/v5 arm"
+	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
       *)
