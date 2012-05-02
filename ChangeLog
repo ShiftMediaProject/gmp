@@ -1,5 +1,7 @@
 2012-05-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/logops_n.asm: Work around register clobbering issue.
+
 	* mpn/arm/aorscnd_n.asm: New file.
 
 2012-05-01  Torbjorn Granlund  <tege@gmplib.org>

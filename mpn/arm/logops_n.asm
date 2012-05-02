@@ -29,7 +29,9 @@ C Cortex-A8	 ?			 ?
 C Cortex-A9	2.5-2.72		2.75-3
 C Cortex-A15	 ?			 ?
 
-C TODO: It seems that 2.25 c/l and 2.75 c/l is possible for A9.
+C TODO
+C  * It seems that 2.25 c/l and 2.75 c/l is possible for A9.
+C  * Debug popping issue, see comment below.
 
 define(`rp', `r0')
 define(`up', `r1')
@@ -92,7 +94,7 @@ L(skip1):
 L(skip2):
 	bics	n, n, #3
 	beq	L(rtn)
-	push	{ r5, r6, r7 }
+	push	{ r4, r5, r6, r7 }
 
 	ldmia	vp!, { r8, r9, r10, r12 }
 	b	L(mid)
@@ -118,8 +120,7 @@ L(mid):	sub	n, n, #4
 	POSTOP(	r7)
 	stmia	rp!, { r4, r5, r6, r7 }
 
-	pop	{ r4, r5, r6, r7, r8, r9, r10 }
-	bx	lr
+	pop	{ r4, r5, r6, r7 }	C popping r8-r10 here strangely fails
 
 L(rtn):	pop	{ r8, r9, r10 }
 	bx	r14
