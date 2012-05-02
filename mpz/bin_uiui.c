@@ -169,7 +169,7 @@ static const unsigned char tcnttab[] = {0,0,1,1,3,3,4,4,7};
 static const unsigned long ftab[] =
 #if GMP_NUMB_BITS == 64
   /* 1 to 8 factors per iteration */
-  {0xfffffffffffffffful,0x100000000ul,0x32cbfe,0x16a0b,0x24c4,0xa16,0x34b,0x1b2 /*,0xdf,0x8d */};
+  {CNST_LIMB(0xffffffffffffffff),CNST_LIMB(0x100000000),0x32cbfe,0x16a0b,0x24c4,0xa16,0x34b,0x1b2 /*,0xdf,0x8d */};
 #endif
 #if GMP_NUMB_BITS == 32
   /* 1 to 7 factors per iteration */

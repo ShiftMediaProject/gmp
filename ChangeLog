@@ -1,3 +1,7 @@
+2012-05-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/bin_uiui.c: Make use of CNST_LIMB.
+
 2012-05-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/mfac_uiui.c: Support limb != ui.
