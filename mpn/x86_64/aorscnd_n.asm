@@ -22,6 +22,8 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 2.25
 C AMD K10	 2
+C AMD bd1	 3.55
+C AMD bobcat	 2.5
 C Intel P4	13
 C Intel core2	 2.9
 C Intel NHM	 2.9

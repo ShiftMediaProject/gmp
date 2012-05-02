@@ -24,7 +24,7 @@ C                   cycles/limb
 C POWER3/PPC630          ?
 C POWER4/PPC970          2.25
 C POWER5                 ?
-C POWER6                 ?
+C POWER6                 3
 C POWER7                 ?
 
 C INPUT PARAMETERS
