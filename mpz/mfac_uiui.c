@@ -54,7 +54,8 @@ mpz_mfac_uiui (mpz_ptr x, unsigned long n, unsigned long m)
     mp_limb_t g, sn;
     mpz_t     t;
 
-    g = mpn_gcd_1 (&n, 1, m);
+    sn = n;
+    g = mpn_gcd_1 (&sn, 1, m);
     if (g != 1) { n/=g; m/=g; }
 
     if (m <= 2) { /* fac or 2fac */
@@ -63,18 +64,22 @@ mpz_mfac_uiui (mpz_ptr x, unsigned long n, unsigned long m)
 	  mpz_init (t);
 	  mpz_fac_ui (t, n);
 	  sn = n;
-	} else if (g == 2) {
-	  mpz_2fac_ui (x, n << 1);
-	  g = 1;
-	} else
-	  mpz_fac_ui (x, n);
+	} else {
+	  if (g == 2)
+	    mpz_2fac_ui (x, n << 1);
+	  else
+	    mpz_fac_ui (x, n);
+	  return;
+	}
       } else { /* m == 2 */
 	if (g != 1) {
 	  mpz_init (t);
 	  mpz_2fac_ui (t, n);
 	  sn = n / 2 + 1;
-	} else
+	} else {
 	  mpz_2fac_ui (x, n);
+	  return;
+	}
       }
     } else { /* m >= 3, gcd(n,m) = 1 */
       mp_limb_t *factors;
