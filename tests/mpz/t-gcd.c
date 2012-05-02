@@ -130,7 +130,7 @@ main (int argc, char **argv)
   mpz_init (t);
 
   /* Testcase to exercise the u0 == u1 case in mpn_gcdext_lehmer_n. */
-  mpz_set_ui (op2, GMP_NUMB_MAX);
+  mpz_set_ui (op2, GMP_NUMB_MAX); /* FIXME: Huge limb doesn't always fit */
   mpz_mul_2exp (op1, op2, 100);
   mpz_add (op1, op1, op2);
   mpz_mul_ui (op2, op2, 2);
