@@ -47,14 +47,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    * Choose window size without looping.  (Superoptimize or think(tm).)
 
-   * Call new division functions, not mpn_tdiv_qr.
+   * Call side-channel silent division function for converting to REDC residue.
+
+   * REDC_1_TO_REDC_2_THRESHOLD might actually represent the cutoff between
+     redc_1 and redc_n.  On such systems, we will switch to redc_2 causing
+     slowdown.
 */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-
-#define WANT_CACHE_SECURITY 1
 
 #undef MPN_REDC_1_SEC
 #define MPN_REDC_1_SEC(rp, up, mp, n, invm)				\
@@ -63,6 +65,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     cy = mpn_redc_1 (rp, up, mp, n, invm);				\
     mpn_subcnd_n (rp, rp, mp, n, cy);					\
   } while (0)
+
+#undef MPN_REDC_2_SEC
+#define MPN_REDC_2_SEC(rp, up, mp, n, mip)				\
+  do {									\
+    mp_limb_t cy;							\
+    cy = mpn_redc_2 (rp, up, mp, n, mip);				\
+    mpn_subcnd_n (rp, rp, mp, n, cy);					\
+  } while (0)
+
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+#define WANT_REDC_2 1
+#endif
 
 /* Define our own mpn squaring function.  We do this since we cannot use a
    native mpn_sqr_basecase over TUNE_SQR_TOOM2_MAX, or a non-native one over
@@ -236,7 +250,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	      mp_srcptr ep, mp_size_t en,
 	      mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
-  mp_limb_t minv;
+  mp_limb_t ip[2], *mip;
   int cnt;
   mp_bitcnt_t ebi;
   int windowsize, this_windowsize;
@@ -253,8 +267,25 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   windowsize = win_size (ebi);
 
-  binvert_limb (minv, mp[0]);
-  minv = -minv;
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+    {
+      mip = ip;
+      binvert_limb (mip[0], mp[0]);
+      mip[0] = -mip[0];
+    }
+  else
+    {
+      mip = ip;
+      mpn_binvert (mip, mp, 2, tp);
+      mip[0] = -mip[0]; mip[1] = ~mip[1];
+    }
+#else
+  mip = ip;
+  binvert_limb (mip[0], mp[0]);
+  mip[0] = -mip[0];
+#endif
+
 
   pp = tp;
   tp += (n << windowsize);	/* put tp after power table */
@@ -281,7 +312,14 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       mpn_mul_basecase (tp, this_pp, n, pp + n, n);
       this_pp += n;
-      MPN_REDC_1_SEC (this_pp, tp, mp, n, minv);
+#if WANT_REDC_2
+      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+	MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
+      else
+	MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
+#else
+      MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
+#endif
     }
 
   expbits = getbits (ep, ebi, windowsize);
@@ -290,47 +328,81 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   else
     ebi -= windowsize;
 
-#if WANT_CACHE_SECURITY
   mpn_tabselect (rp, pp, n, 1 << windowsize, expbits);
-#else
-  MPN_COPY (rp, pp + n * expbits, n);
-#endif
 
   /* Main exponentiation loop.  */
   /* scratch: |   n   |   n   | ...  |                    |     3n-4n     |  */
   /*          | pp[0] | pp[1] | ...  | pp[2^windowsize-1] |  loop scratch |  */
-  while (ebi != 0)
-    {
-      expbits = getbits (ep, ebi, windowsize);
-      this_windowsize = windowsize;
-      if (ebi < windowsize)
-	{
-	  this_windowsize -= windowsize - ebi;
-	  ebi = 0;
-	}
-      else
-	ebi -= windowsize;
 
-      do
-	{
-	  mpn_local_sqr (tp, rp, n, tp + 2 * n);
-	  MPN_REDC_1_SEC (rp, tp, mp, n, minv);
-	  this_windowsize--;
-	}
-      while (this_windowsize != 0);
-
-#if WANT_CACHE_SECURITY
-      mpn_tabselect (tp + 2*n, pp, n, 1 << windowsize, expbits);
-      mpn_mul_basecase (tp, rp, n, tp + 2*n, n);
-#else
-      mpn_mul_basecase (tp, rp, n, pp + n * expbits, n);
-#endif
-      MPN_REDC_1_SEC (rp, tp, mp, n, minv);
+#define INNERLOOP							\
+  while (ebi != 0)							\
+    {									\
+      expbits = getbits (ep, ebi, windowsize);				\
+      this_windowsize = windowsize;					\
+      if (ebi < windowsize)						\
+	{								\
+	  this_windowsize -= windowsize - ebi;				\
+	  ebi = 0;							\
+	}								\
+      else								\
+	ebi -= windowsize;						\
+									\
+      do								\
+	{								\
+	  mpn_local_sqr (tp, rp, n, tp + 2 * n);			\
+	  MPN_REDUCE (rp, tp, mp, n, mip);				\
+	  this_windowsize--;						\
+	}								\
+      while (this_windowsize != 0);					\
+									\
+      mpn_tabselect (tp + 2*n, pp, n, 1 << windowsize, expbits);	\
+      mpn_mul_basecase (tp, rp, n, tp + 2*n, n);			\
+									\
+      MPN_REDUCE (rp, tp, mp, n, mip);					\
     }
+
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1_SEC (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+  else
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_2_SEC (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+#else
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1_SEC (rp, tp, mp, n, mip[0])
+  INNERLOOP;
+#endif
 
   MPN_COPY (tp, rp, n);
   MPN_ZERO (tp + n, n);
-  MPN_REDC_1_SEC (rp, tp, mp, n, minv);
+
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+    MPN_REDC_1_SEC (rp, tp, mp, n, mip[0]);
+  else
+    MPN_REDC_2_SEC (rp, tp, mp, n, mip);
+#else
+  MPN_REDC_1_SEC (rp, tp, mp, n, mip[0]);
+#endif
   cnd = mpn_sub_n (tp, rp, mp, n);	/* we need just retval */
   mpn_subcnd_n (rp, rp, mp, n, !cnd);
 }

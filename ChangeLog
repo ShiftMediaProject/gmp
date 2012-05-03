@@ -1,3 +1,9 @@
+2012-05-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm_sec.c: Use redc_2.
+	(INNERLOOP): Use this mechanism, like plain powm.c.
+	(WANT_CACHE_SECURITY): Remove, feature now unconditional.
+
 2012-05-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/bin_uiui.c: Make use of CNST_LIMB.
