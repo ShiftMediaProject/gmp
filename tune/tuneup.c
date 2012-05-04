@@ -2746,11 +2746,6 @@ all (void)
   tune_sqrmod_bnm1 ();
   printf("\n");
 
-#if 1
-  tune_powm_sec ();
-  printf("\n");
-#endif
-
   tune_fft_mul ();
   printf("\n");
 
@@ -2774,6 +2769,9 @@ all (void)
 
   tune_mu_div ();
   tune_mu_bdiv ();
+  printf("\n");
+
+  tune_powm_sec ();
   printf("\n");
 
   tune_matrix22_mul ();

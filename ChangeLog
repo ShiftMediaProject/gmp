@@ -1,3 +1,7 @@
+2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c: Measure POWM_SEC_TABLE after the REDC thresholds.
+
 2012-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm_sec.c: Use redc_2.
