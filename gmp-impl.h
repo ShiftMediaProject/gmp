@@ -2214,11 +2214,11 @@ struct fft_table_nk
 #endif
 
 #ifndef FAC_ODD_THRESHOLD
-#define FAC_ODD_THRESHOLD   100
+#define FAC_ODD_THRESHOLD    35
 #endif
 
 #ifndef FAC_DSC_THRESHOLD
-#define FAC_DSC_THRESHOLD   300
+#define FAC_DSC_THRESHOLD   400
 #endif
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.

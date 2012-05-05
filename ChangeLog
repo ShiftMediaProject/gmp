@@ -2,6 +2,7 @@
 
 	* mpn/generic/invert.c: Mark a branch UNLIKELY.
 	* tune/tuneup.c (tune_fac_u): Update DSC_THRESHOLD minimum.
+	* gmp-impl.h (FAC_???_THRESHOLD): Update default values. 
 
 2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
