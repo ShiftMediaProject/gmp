@@ -44,7 +44,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=          a2 *         b2  # A(inf)*B(inf)
 */
 
-#if TUNE_PROGRAM_BUILD
+#if TUNE_PROGRAM_BUILD || WANT_FAT_BINARY
 #define MAYBE_mul_basecase 1
 #define MAYBE_mul_toom33   1
 #else

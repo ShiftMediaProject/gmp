@@ -38,7 +38,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=      a1 ^2  # A(inf)^2
 */
 
-#if TUNE_PROGRAM_BUILD
+#if TUNE_PROGRAM_BUILD || WANT_FAT_BINARY
 #define MAYBE_sqr_toom2   1
 #else
 #define MAYBE_sqr_toom2							\

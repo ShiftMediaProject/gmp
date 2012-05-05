@@ -6,6 +6,9 @@
 	(ABOVE_THRESHOLD): New definition with __builtin_constant_p.
 
 	* mpn/generic/toom22_mul.c: Disable MAYBE_ if WANT_FAT_BINARY.
+	* mpn/generic/toom33_mul.c: Likewise.
+	* mpn/generic/toom2_sqr.c: Likewise.
+	* mpn/generic/toom3_sqr.c: Likewise.
 
 2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
