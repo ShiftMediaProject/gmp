@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc.
+Copyright (C) 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -67,7 +67,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) );
       e = mpn_ni_invertappr (ip, dp, n, scratch);
 
-      if (e) { /* Assume the error can only be "0" (no error) or "1". */
+      if (UNLIKELY (e)) { /* Assume the error can only be "0" (no error) or "1". */
 	/* Code to detect and correct the "off by one" approximation. */
 	mpn_mul_n (scratch, ip, dp, n);
 	ASSERT_NOCARRY (mpn_add_n (scratch + n, scratch + n, dp, n));

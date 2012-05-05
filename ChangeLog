@@ -1,3 +1,7 @@
+2012-05-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invert.c: Mark a branch UNLIKELY.
+
 2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c: Measure POWM_SEC_TABLE after the REDC thresholds.
