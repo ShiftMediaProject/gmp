@@ -1256,10 +1256,17 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
    be compile-time constants, so the compiler should be able to eliminate
    the code for the unwanted algorithm.  */
 
+#if ! defined (__GNUC__) || __GNUC__ < 2
 #define ABOVE_THRESHOLD(size,thresh)					\
   ((thresh) == 0							\
    || ((thresh) != MP_SIZE_T_MAX					\
        && (size) >= (thresh)))
+#else
+#define ABOVE_THRESHOLD(size,thresh)					\
+  ((__builtin_constant_p (thresh) && (thresh) == 0)			\
+   || (!(__builtin_constant_p (thresh) && (thresh) == MP_SIZE_T_MAX)	\
+       && (size) >= (thresh)))
+#endif
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
 #define MPN_TOOM22_MUL_MINSIZE    4
