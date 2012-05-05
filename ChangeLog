@@ -1,6 +1,7 @@
 2012-05-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Mark a branch UNLIKELY.
+	* tune/tuneup.c (tune_fac_u): Update DSC_THRESHOLD minimum.
 
 2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
