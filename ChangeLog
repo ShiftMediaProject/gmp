@@ -5,6 +5,8 @@
 	* gmp-impl.h (FAC_???_THRESHOLD): Update default values.
 	(ABOVE_THRESHOLD): New definition with __builtin_constant_p.
 
+	* mpn/generic/toom22_mul.c: Disable MAYBE_ if WANT_FAT_BINARY.
+
 2012-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c: Measure POWM_SEC_TABLE after the REDC thresholds.
