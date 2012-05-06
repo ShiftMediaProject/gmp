@@ -1,5 +1,8 @@
 2012-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mini-gmp/mini-gmp.c: Put untested functions under
+	ENABLE_UNTESTED_FUNCTIONS.
+
 	* mpn/arm/v6/sqr_basecase.asm: Simplify n=4 code.
 
 2012-05-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
