@@ -465,7 +465,7 @@ L(3):	push	{r4-r11}
 	adcs	r4, r4, r12
 	adcs	r5, r5, r7
 	adc	r6, r6, #0
-	stm	rp, {r1, r2,r3,r4,r5,r6}
+	stm	rp, {r1,r2,r3,r4,r5,r6}
 	pop	{r4-r11}
 	bx	r14
 
@@ -475,7 +475,7 @@ L(4):	push	{r4-r11, r14}
 	umull	r3, r4, r10, r10
 	umull	r5, r6, r11, r11
 	umull	r7, r8, r12, r12
-	stm	rp, {r1,r2,r3,r4,r5,r6,r7,r8}
+	stm	rp, {r1,r2,r3,r4,r5,r6,r7}
 	umull	r1, r2, r9, r10
 	mov	r3, #0
 	umlal	r2, r3, r9, r11
@@ -492,8 +492,7 @@ L(4):	push	{r4-r11, r14}
 	adcs	r4, r4, r4
 	adcs	r5, r5, r5
 	adcs	r6, r6, r6
-	mov	r7, #0
-	adc	r7, r7, #0
+	adc	r7, r8, #0
 	add	rp, rp, #4
 	ldm	rp, {r8,r9,r10,r11,r12,r14}
 	adds	r1, r1, r8
@@ -502,10 +501,7 @@ L(4):	push	{r4-r11, r14}
 	adcs	r4, r4, r11
 	adcs	r5, r5, r12
 	adcs	r6, r6, r14
-	stm	rp, {r1,r2,r3,r4,r5,r6}
-	ldr	r1, [rp, #24]
-	adcs	r7, r7, r1
-	str	r7, [rp, #24]
-	pop	{r4-r11, r14}
-	bx	r14
+	adc	r7, r7, #0
+	stm	rp, {r1,r2,r3,r4,r5,r6,r7}
+	pop	{r4-r11, pc}
 EPILOGUE()
