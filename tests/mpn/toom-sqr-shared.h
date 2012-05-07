@@ -62,7 +62,7 @@ main (int argc, char **argv)
   scratch
     = 1+TMP_ALLOC_LIMBS (mpn_toomN_sqr_itch (MAX_AN) + 2);
 
-  if (MAX_AN >= MIN_AN)
+  if (MAX_AN > MIN_AN)
   for (test = 0; test < count; test++)
     {
       unsigned size_min;

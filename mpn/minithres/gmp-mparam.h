@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM22_THRESHOLD                 8
 #define MUL_TOOM33_THRESHOLD                20
 #define MUL_TOOM44_THRESHOLD                24
-#define MUL_TOOM6H_THRESHOLD               200 /* FIXME */
+#define MUL_TOOM6H_THRESHOLD                70 /* FIXME */
 #define MUL_TOOM8H_THRESHOLD                86
 
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD      50 /* FIXME */
@@ -47,7 +47,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM2_THRESHOLD                  8
 #define SQR_TOOM3_THRESHOLD                 20
 #define SQR_TOOM4_THRESHOLD                 24
-#define SQR_TOOM6H_THRESHOLD               200 /* FIXME */
+#define SQR_TOOM6H_THRESHOLD                70 /* FIXME */
 #define SQR_TOOM8H_THRESHOLD                86
 
 #define MULMOD_BNM1_THRESHOLD            10
@@ -95,4 +95,4 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SET_STR_PRECOMPUTE_THRESHOLD       100
 
 #define FAC_ODD_THRESHOLD                    0  /* always */
-#define FAC_DSC_THRESHOLD                   25
+#define FAC_DSC_THRESHOLD                   26
