@@ -3,6 +3,8 @@
 	* mpn/minithres/gmp-mparam.h: Updated TOOM6 and FAC_DSC.
 	* tests/mpn/toom-sqr-shared.h: Don't test if no range.
 
+	* mpz/oddfac_1.c: Add ASSERTs to warn about small threshold.
+
 2012-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mini-gmp/mini-gmp.c: Put untested functions under

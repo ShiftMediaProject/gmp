@@ -298,6 +298,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 
 #if TUNE_PROGRAM_BUILD
 	ASSERT (FAC_DSC_THRESHOLD_LIMIT >= FAC_DSC_THRESHOLD);
+	ASSERT (FAC_DSC_THRESHOLD >= 2 * (ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 2));
 #endif
 
 	/* Compute the number of recursive steps for the DSC algorithm. */
@@ -317,6 +318,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	max_prod = GMP_NUMB_MAX / FAC_DSC_THRESHOLD;
 #endif
 
+	ASSERT (tn > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1);
 	do {
 	  i = ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 2;
 	  factors[j++] = ODD_DOUBLEFACTORIAL_TABLE_MAX;
