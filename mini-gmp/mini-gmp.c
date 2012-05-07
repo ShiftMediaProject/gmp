@@ -21,21 +21,16 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-/* NOTE: All functions in this file which are not declared in mini-gmp.h are
-   internal, and are not intended to be compatible neither with GMP nor with
-   future versions of mini-gmp. */
+/* NOTE: All functions in this file which are not declared in
+   mini-gmp.h are internal, and are not intended to be compatible
+   neither with GMP nor with future versions of mini-gmp. */
 
 /* Much of the material copied from GMP files, including: gmp-impl.h,
    longlong.h, mpn/generic/add_n.c, mpn/generic/addmul_1.c,
-   mpn/generic/lshift.c, mpn/generic/mul_1.c, mpn/generic/mul_basecase.c,
-   mpn/generic/rshift.c, mpn/generic/sbpi1_div_qr.c, mpn/generic/sub_n.c,
+   mpn/generic/lshift.c, mpn/generic/mul_1.c,
+   mpn/generic/mul_basecase.c, mpn/generic/rshift.c,
+   mpn/generic/sbpi1_div_qr.c, mpn/generic/sub_n.c,
    mpn/generic/submul_1.c. */
-
-/* CAUTION: Many functions herein are not covered by the testsuite, or else
-   covered poorly, and are therefore not unlikely to have bugs or to be
-   miscompiled without detection.  To enable untested functions, define
-   ENABLE_UNTESTED_FUNCTIONS to 1.  Please contribute better testing of
-   mini-gmp!  */
 
 #include <assert.h>
 #include <ctype.h>
@@ -574,13 +569,11 @@ mpn_mul (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
   return rp[un - 1];
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpn_mul_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
 {
   mpn_mul (rp, ap, n, bp, n);
 }
-#endif
 
 void
 mpn_sqr (mp_ptr rp, mp_srcptr ap, mp_size_t n)
@@ -1187,7 +1180,6 @@ mpn_get_str_other (unsigned char *sp,
   return sn;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 size_t
 mpn_get_str (unsigned char *sp, int base, mp_ptr up, mp_size_t un)
 {
@@ -1207,9 +1199,7 @@ mpn_get_str (unsigned char *sp, int base, mp_ptr up, mp_size_t un)
       return mpn_get_str_other (sp, base, &info, up, un);
     }
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 static mp_size_t
 mpn_set_str_bits (mp_ptr rp, const unsigned char *sp, size_t sn,
 		  unsigned bits)
@@ -1240,9 +1230,7 @@ mpn_set_str_bits (mp_ptr rp, const unsigned char *sp, size_t sn,
   rn = mpn_normalized_size (rp, rn);
   return rn;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 static mp_size_t
 mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
 		   mp_limb_t b, const struct mpn_base_info *info)
@@ -1279,9 +1267,7 @@ mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
 
   return rn;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 mp_size_t
 mpn_set_str (mp_ptr rp, const unsigned char *sp, size_t sn, int base)
 {
@@ -1301,7 +1287,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *sp, size_t sn, int base)
       return mpn_set_str_other (rp, sp, sn, base, &info);
     }
 }
-#endif
+
 
 /* MPZ interface */
 void
@@ -1400,14 +1386,12 @@ mpz_set (mpz_t r, const mpz_t x)
     }
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_init_set_si (mpz_t r, signed long int x)
 {
   mpz_init (r);
   mpz_set_si (r, x);
 }
-#endif
 
 void
 mpz_init_set_ui (mpz_t r, unsigned long int x)
@@ -1423,7 +1407,6 @@ mpz_init_set (mpz_t r, const mpz_t x)
   mpz_set (r, x);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_fits_slong_p (const mpz_t u)
 {
@@ -1438,9 +1421,7 @@ mpz_fits_slong_p (const mpz_t u)
   else
     return 0;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_fits_ulong_p (const mpz_t u)
 {
@@ -1448,9 +1429,7 @@ mpz_fits_ulong_p (const mpz_t u)
 
   return us == 0 || us == 1;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 long int
 mpz_get_si (const mpz_t u)
 {
@@ -1463,25 +1442,19 @@ mpz_get_si (const mpz_t u)
   else
     return 0;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long int
 mpz_get_ui (const mpz_t u)
 {
   return u->_mp_size == 0 ? 0 : u->_mp_d[0];
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 size_t
 mpz_size (const mpz_t u)
 {
   return GMP_ABS (u->_mp_size);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 mp_limb_t
 mpz_getlimbn (const mpz_t u, mp_size_t n)
 {
@@ -1490,10 +1463,8 @@ mpz_getlimbn (const mpz_t u, mp_size_t n)
   else
     return 0;
 }
-#endif
 
 
-#if ENABLE_UNTESTED_FUNCTIONS
 /* Conversions and comparison to double. */
 void
 mpz_set_d (mpz_t r, double x)
@@ -1548,18 +1519,14 @@ mpz_set_d (mpz_t r, double x)
 
   r->_mp_size = sign ? - rn : rn;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_init_set_d (mpz_t r, double x)
 {
   mpz_init (r);
   mpz_set_d (r, x);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 double
 mpz_get_d (const mpz_t u)
 {
@@ -1581,9 +1548,7 @@ mpz_get_d (const mpz_t u)
 
   return x;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_cmp_d (const mpz_t x, double d)
 {
@@ -1643,7 +1608,6 @@ mpz_cmp_d (const mpz_t x, double d)
   else
     return 0;
 }
-#endif
 
 
 /* MPN comparisons and the like. */
@@ -1857,7 +1821,6 @@ mpz_sub_ui (mpz_t r, const mpz_t a, unsigned long b)
     r->_mp_size = mpz_abs_sub_ui (r, a, b);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_ui_sub (mpz_t r, unsigned long a, const mpz_t b)
 {
@@ -1866,7 +1829,6 @@ mpz_ui_sub (mpz_t r, unsigned long a, const mpz_t b)
   else
     r->_mp_size = -mpz_abs_sub_ui (r, b, a);
 }
-#endif
 
 static mp_size_t
 mpz_abs_add (mpz_t r, const mpz_t a, const mpz_t b)
@@ -1942,7 +1904,6 @@ mpz_sub (mpz_t r, const mpz_t a, const mpz_t b)
 
 
 /* MPZ multiplication */
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 {
@@ -1971,8 +1932,6 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
   mpz_swap (r, t);
   mpz_clear (t);
 }
-#endif
-
 
 void
 mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
@@ -2192,21 +2151,17 @@ mpz_div_qr (mpz_t q, mpz_t r,
     }
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_cdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (q, r, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_fdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (q, r, n, d, DIV_FLOOR);
 }
-#endif
 
 void
 mpz_tdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
@@ -2214,21 +2169,17 @@ mpz_tdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
   mpz_div_qr (q, r, n, d, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_cdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (q, NULL, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_fdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (q, NULL, n, d, DIV_FLOOR);
 }
-#endif
 
 void
 mpz_tdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
@@ -2236,21 +2187,17 @@ mpz_tdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
   mpz_div_qr (q, NULL, n, d, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_cdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (NULL, r, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_fdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 {
   mpz_div_qr (NULL, r, n, d, DIV_FLOOR);
 }
-#endif
 
 void
 mpz_tdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
@@ -2400,21 +2347,17 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
   r->_mp_size = us < 0 ? -rn : rn;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_cdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
   mpz_div_q_2exp (r, u, cnt, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_fdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
   mpz_div_q_2exp (r, u, cnt, DIV_FLOOR);
 }
-#endif
 
 void
 mpz_tdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
@@ -2422,21 +2365,17 @@ mpz_tdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
   mpz_div_q_2exp (r, u, cnt, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_cdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
   mpz_div_r_2exp (r, u, cnt, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_fdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
   mpz_div_r_2exp (r, u, cnt, DIV_FLOOR);
 }
-#endif
 
 void
 mpz_tdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
@@ -2450,13 +2389,11 @@ mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)
   gmp_assert_nocarry (mpz_div_qr (q, NULL, n, d, DIV_TRUNC));
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_divisible_p (const mpz_t n, const mpz_t d)
 {
   return mpz_div_qr (NULL, NULL, n, d, DIV_TRUNC) == 0;
 }
-#endif
 
 static unsigned long
 mpz_div_qr_ui (mpz_t q, mpz_t r,
@@ -2514,21 +2451,17 @@ mpz_div_qr_ui (mpz_t q, mpz_t r,
   return rl;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_cdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (q, r, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_fdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (q, r, n, d, DIV_FLOOR);
 }
-#endif
 
 unsigned long
 mpz_tdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
@@ -2536,21 +2469,17 @@ mpz_tdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
   return mpz_div_qr_ui (q, r, n, d, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_cdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (q, NULL, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_fdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (q, NULL, n, d, DIV_FLOOR);
 }
-#endif
 
 unsigned long
 mpz_tdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
@@ -2558,43 +2487,33 @@ mpz_tdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
   return mpz_div_qr_ui (q, NULL, n, d, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_cdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, r, n, d, DIV_CEIL);
 }
-#endif
-
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_fdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, r, n, d, DIV_FLOOR);
 }
-#endif
-
 unsigned long
 mpz_tdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, r, n, d, DIV_TRUNC);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_cdiv_ui (const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, NULL, n, d, DIV_CEIL);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_fdiv_ui (const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, NULL, n, d, DIV_FLOOR);
 }
-#endif
 
 unsigned long
 mpz_tdiv_ui (const mpz_t n, unsigned long d)
@@ -2608,17 +2527,14 @@ mpz_divexact_ui (mpz_t q, const mpz_t n, unsigned long d)
   gmp_assert_nocarry (mpz_div_qr_ui (q, NULL, n, d, DIV_TRUNC));
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_divisible_ui_p (const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, NULL, n, d, DIV_TRUNC) == 0;
 }
-#endif
 
 
 /* GCD */
-#if ENABLE_UNTESTED_FUNCTIONS
 static mp_limb_t
 mpn_gcd_11 (mp_limb_t u, mp_limb_t v)
 {
@@ -2661,9 +2577,7 @@ mpn_gcd_11 (mp_limb_t u, mp_limb_t v)
     }
   return u << shift;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 unsigned long
 mpz_gcd_ui (mpz_t g, const mpz_t u, unsigned long v)
 {
@@ -2686,7 +2600,6 @@ mpz_gcd_ui (mpz_t g, const mpz_t u, unsigned long v)
 
   return v;
 }
-#endif
 
 static mp_bitcnt_t
 mpz_make_odd (mpz_t r, const mpz_t u)
@@ -2717,7 +2630,6 @@ mpz_make_odd (mpz_t r, const mpz_t u)
   return i * GMP_LIMB_BITS + shift;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_gcd (mpz_t g, const mpz_t u, const mpz_t v)
 {
@@ -2778,7 +2690,6 @@ mpz_gcd (mpz_t g, const mpz_t u, const mpz_t v)
   mpz_clear (tv);
   mpz_mul_2exp (g, g, gz);
 }
-#endif
 
 void
 mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
@@ -2960,7 +2871,6 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
   mpz_clear (t1);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_lcm (mpz_t r, const mpz_t u, const mpz_t v)
 {
@@ -2981,9 +2891,7 @@ mpz_lcm (mpz_t r, const mpz_t u, const mpz_t v)
   mpz_clear (g);
   mpz_abs (r, r);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_lcm_ui (mpz_t r, const mpz_t u, unsigned long v)
 {
@@ -2998,7 +2906,6 @@ mpz_lcm_ui (mpz_t r, const mpz_t u, unsigned long v)
 
   mpz_abs (r, r);
 }
-#endif
 
 int
 mpz_invert (mpz_t r, const mpz_t u, const mpz_t m)
@@ -3127,7 +3034,6 @@ mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
   mpz_clear (b);
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
 {
@@ -3229,9 +3135,7 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
   mpz_clear (tr);
   mpz_clear (base);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
@@ -3240,7 +3144,6 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
   mpz_powm (r, b, e, m);
   mpz_clear (e);
 }
-#endif
 
 /* x=trunc(y^(1/z)), r=y-x^z */
 void
@@ -3467,7 +3370,6 @@ mpz_setbit (mpz_t d, mp_bitcnt_t bit_index)
     }
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_clrbit (mpz_t d, mp_bitcnt_t bit_index)
 {
@@ -3479,9 +3381,7 @@ mpz_clrbit (mpz_t d, mp_bitcnt_t bit_index)
 	mpz_abs_add_bit (d, bit_index);
     }
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_combit (mpz_t d, mp_bitcnt_t bit_index)
 {
@@ -3490,16 +3390,13 @@ mpz_combit (mpz_t d, mp_bitcnt_t bit_index)
   else
     mpz_abs_add_bit (d, bit_index);
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_com (mpz_t r, const mpz_t u)
 {
   mpz_neg (r, u);
   mpz_sub_ui (r, r, 1);
 }
-#endif
 
 void
 mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
@@ -3571,7 +3468,6 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
   r->_mp_size = rx ? -rn : rn;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
 {
@@ -3642,9 +3538,7 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
 
   r->_mp_size = rx ? -rn : rn;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
 {
@@ -3711,7 +3605,6 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
 
   r->_mp_size = rx ? -un : un;
 }
-#endif
 
 static unsigned
 gmp_popcount_limb (mp_limb_t x)
@@ -3747,7 +3640,6 @@ mpz_popcount (const mpz_t u)
   return c;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 mp_bitcnt_t
 mpz_hamdist (const mpz_t u, const mpz_t v)
 {
@@ -3801,9 +3693,7 @@ mpz_hamdist (const mpz_t u, const mpz_t v)
 
   return c;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 mp_bitcnt_t
 mpz_scan1 (const mpz_t u, mp_bitcnt_t starting_bit)
 {
@@ -3853,9 +3743,7 @@ mpz_scan1 (const mpz_t u, mp_bitcnt_t starting_bit)
   gmp_ctz (cnt, limb);
   return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 mp_bitcnt_t
 mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
 {
@@ -3902,7 +3790,7 @@ mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
   gmp_ctz (cnt, ~limb);
   return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
 }
-#endif
+
 
 /* MPZ base conversion. */
 
@@ -4020,7 +3908,6 @@ mpz_get_str (char *sp, int base, const mpz_t u)
   return sp;
 }
 
-#if ENABLE_UNTESTED_FUNCTIONS
 int
 mpz_set_str (mpz_t r, const char *sp, int base)
 {
@@ -4122,7 +4009,6 @@ mpz_set_str (mpz_t r, const char *sp, int base)
 
   return 0;
 }
-#endif
 
 size_t
 mpz_out_str (FILE *stream, int base, const mpz_t x)
@@ -4138,7 +4024,6 @@ mpz_out_str (FILE *stream, int base, const mpz_t x)
 }
 
 
-#if ENABLE_UNTESTED_FUNCTIONS
 static int
 gmp_detect_endian (void)
 {
@@ -4151,10 +4036,8 @@ gmp_detect_endian (void)
     /* Big endian */
     return 1;
 }
-#endif
 
 /* Import and export. Does not support nails. */
-#if ENABLE_UNTESTED_FUNCTIONS
 void
 mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
 	    size_t nails, const void *src)
@@ -4219,9 +4102,7 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
 
   r->_mp_size = rn;
 }
-#endif
 
-#if ENABLE_UNTESTED_FUNCTIONS
 void *
 mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
 	    size_t nails, const mpz_t u)
@@ -4295,4 +4176,3 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
 
   return r;
 }
-#endif
