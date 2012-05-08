@@ -75,7 +75,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define INV_APPR_THRESHOLD                   4
 
 #define BINV_NEWTON_THRESHOLD                6
-#define REDC_1_TO_REDC_N_THRESHOLD           4
+#define REDC_1_TO_REDC_N_THRESHOLD           9
 
 #define MU_DIV_QR_THRESHOLD                  8
 #define MU_DIVAPPR_Q_THRESHOLD               8

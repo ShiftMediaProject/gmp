@@ -1,3 +1,8 @@
+2012-05-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/minithres/gmp-mparam.h (REDC_1_TO_REDC_N_THRESHOLD): Up to 9, for
+	coherency with ASSERT in mpn/generic/redc_n.c.
+
 2012-05-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/minithres/gmp-mparam.h: Updated TOOM6 and FAC_DSC.
