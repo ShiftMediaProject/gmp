@@ -83,10 +83,8 @@ mul1 (mp_limb_t m)
 static mp_limb_t
 mul2 (mp_limb_t m)
 {
-  /* THINK: (m + 0) * (m + 1) >> 1 does overflow if (m + 0) * (m + 1)
-     does.  The shift does not give any advantage. We should shift
-     _before_ multiplying: (m | 1) * ((m + 1) >> 1) ... */
-  mp_limb_t m01 = (m + 0) * (m + 1);
+  /* We need to shift before multiplying, to avoid an overflow. */
+  mp_limb_t m01 = (m | 1) * ((m + 1) >> 1);
   return m01;
 }
 
@@ -152,7 +150,7 @@ static const mulfunc_t mulfunc[] = {0,mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8};
 #define M (numberof(mulfunc)-1)
 
 /* Number of factors-of-2 removed by the corresponding mulN functon.  */
-static const unsigned char tcnttab[] = {0,0,0,1,2,2,4,4,6};
+static const unsigned char tcnttab[] = {0,0,1,1,2,2,4,4,6};
 
 #if 1
 /* This variant is inaccurate but share the code with other functions.  */

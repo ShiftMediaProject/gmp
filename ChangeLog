@@ -4,7 +4,7 @@
 
 	* mpn/generic/sqrtrem.c (invsqrttab): Reduce size removing common byte.
 
-	* mpz/bin_uiui.c (mul2, mul3, mul4, mul8): Remove unneeded shifts.
+	* mpz/bin_uiui.c (mul3, mul4, mul8): Remove unneeded shifts.
 	(MAXFACS): Redefine, using the shared (safer) log_n_max.
 
 2012-05-08  Torbjorn Granlund  <tege@gmplib.org>
