@@ -3108,14 +3108,14 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
       mpz_swap (u, t);			/* u = x */
       mpz_tdiv_q (t, y, u);		/* t = y/x */
       mpz_add (t, t, u);		/* t = y/x + x */
-      mpz_tdiv_q_2exp (t, t, 1);	/* x' = (y/x + x)/2 */
+      mpz_tdiv_q_2exp (t, t, 1);	/* x'= (y/x + x)/2 */
     } while (mpz_cmpabs (t, u) < 0);	/* |x'| < |x| */
   else /* z != 2 */ {
     mpz_t v;
 
     mpz_init (v);
     if (sgn)
-      mpz_neg (t,t);
+      mpz_neg (t, t);
 
     do {
       mpz_swap (u, t);			/* u = x */
@@ -3123,7 +3123,7 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
       mpz_tdiv_q (t, y, t);		/* t = y/x^(z-1) */
       mpz_mul_ui (v, u, z - 1);		/* v = x*(z-1) */
       mpz_add (t, t, v);		/* t = y/x^(z-1) + x*(z-1) */
-      mpz_tdiv_q_ui (t, t, z);		/* x' = (y/x^(z-1) + x*(z-1))/z */
+      mpz_tdiv_q_ui (t, t, z);		/* x'=(y/x^(z-1) + x*(z-1))/z */
     } while (mpz_cmpabs (t, u) < 0);	/* |x'| < |x| */
 
     mpz_clear (v);
