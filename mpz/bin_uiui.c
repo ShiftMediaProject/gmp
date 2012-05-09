@@ -83,7 +83,10 @@ mul1 (mp_limb_t m)
 static mp_limb_t
 mul2 (mp_limb_t m)
 {
-  mp_limb_t m01 = (m + 0) * (m + 1) >> 1;
+  /* THINK: (m + 0) * (m + 1) >> 1 does overflow if (m + 0) * (m + 1)
+     does.  The shift does not give any advantage. We should shift
+     _before_ multiplying: (m | 1) * ((m + 1) >> 1) ... */
+  mp_limb_t m01 = (m + 0) * (m + 1);
   return m01;
 }
 
@@ -100,7 +103,7 @@ mul4 (mp_limb_t m)
 {
   mp_limb_t m01 = (m + 0) * (m + 1) >> 1;
   mp_limb_t m23 = (m + 2) * (m + 3) >> 1;
-  return m01 * m23 >> 1;
+  return m01 * m23;
 }
 
 static mp_limb_t
@@ -108,7 +111,7 @@ mul5 (mp_limb_t m)
 {
   mp_limb_t m012 = (m + 0) * (m + 1) * (m + 2) >> 1;
   mp_limb_t m34 = (m + 3) * (m + 4) >> 1;
-  return m012 * m34 >> 1;
+  return m012 * m34;
 }
 
 static mp_limb_t
@@ -140,7 +143,7 @@ mul8 (mp_limb_t m)
   mp_limb_t m67 = (m + 6) * (m + 7);
   mp_limb_t m0123 = m01 * m23 >> 3;
   mp_limb_t m4567 = m45 * m67 >> 3;
-  return m0123 * m4567 >> 1;
+  return m0123 * m4567;
 }
 
 typedef mp_limb_t (* mulfunc_t) (mp_limb_t);
@@ -149,23 +152,18 @@ static const mulfunc_t mulfunc[] = {0,mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8};
 #define M (numberof(mulfunc)-1)
 
 /* Number of factors-of-2 removed by the corresponding mulN functon.  */
-static const unsigned char tcnttab[] = {0,0,1,1,3,3,4,4,7};
+static const unsigned char tcnttab[] = {0,0,0,1,2,2,4,4,6};
 
-/* Rough computation of how many factors we can multiply together without
-   spilling a limb.  */
-#if 0
-/* This variant is inaccurate and relies on an expensive division.  */
+#if 1
+/* This variant is inaccurate but share the code with other functions.  */
 #define MAXFACS(max,l)							\
   do {									\
-    int __cnt, __logb;							\
-    count_leading_zeros (__cnt, (mp_limb_t) (l));			\
-    __logb = GMP_LIMB_BITS - __cnt;					\
-    (max) = (GMP_NUMB_BITS + 1) / __logb; /* FIXME: remove division */	\
+    (max) = log_n_max (l);						\
   } while (0)
 #else
 
-/* This variant is exact but uses a loop.  It takes the 2 removal of mulN into
- account.  */
+/* This variant is exact(?) but uses a loop.  It takes the 2 removal
+ of mulN into account.  */
 static const unsigned long ftab[] =
 #if GMP_NUMB_BITS == 64
   /* 1 to 8 factors per iteration */
