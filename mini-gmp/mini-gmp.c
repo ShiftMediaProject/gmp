@@ -2942,72 +2942,6 @@ mpz_invert (mpz_t r, const mpz_t u, const mpz_t m)
 
 /* Higher level operations (sqrt, pow and root) */
 
-/* Compute s = floor(sqrt(u)) and r = u - s^2. Allows r == NULL */
-void
-mpz_sqrtrem (mpz_t s, mpz_t r, const mpz_t u)
-{
-  mpz_t x, t, dx, q;
-
-  if (u->_mp_size < 0)
-    gmp_die ("mpz_sqrtrem: Negative argument.");
-  if (u->_mp_size == 0)
-    {
-      mpz_set_ui (s, 0);
-      if (r)
-	mpz_set_ui (r, 0);
-      return;
-    }
-
-  mpz_init (x);
-  mpz_init (t);
-  mpz_init (dx);
-  mpz_init (q);
-
-  /* Make x > sqrt(a). This will be invariant through the loop. */
-  mpz_setbit (x, (mpz_sizeinbase (u, 2) + 1) / 2);
-
-  for (;;)
-    {
-      /* Compute x^2 - u */
-      mpz_mul (t, x, x);
-      mpz_sub (t, t, u);
-      assert (t->_mp_size > 0);
-
-      mpz_mul_2exp (dx, x, 1);
-      mpz_tdiv_q (q, t, dx);
-      if (q->_mp_size == 0)
-	break;
-      mpz_sub (x, x, q);
-      assert (x->_mp_size > 0);
-    }
-  /* We have 0 < u - x^2 < 2x, which implies that sqrt(a) < x < 1 +
-     sqrt(1+a), and x-1 = floor(sqrt(a)). Then r = a - (x-1)^2 = 2x -
-     1 - t. */
-  mpz_sub_ui (x, x, 1);
-  assert (x->_mp_size > 0);
-
-  if (r)
-    {
-      mpz_sub_ui (dx, dx, 1);
-      mpz_sub (t, dx, t);
-      assert (t->_mp_size >= 0);
-
-      mpz_swap (t, r);
-    }
-  mpz_swap (s, x);
-
-  mpz_clear (x);
-  mpz_clear (t);
-  mpz_clear (dx);
-  mpz_clear (q);
-}
-
-void
-mpz_sqrt (mpz_t s, const mpz_t u)
-{
-  mpz_sqrtrem (s, NULL, u);
-}
-
 void
 mpz_pow_ui (mpz_t r, const mpz_t b, unsigned long e)
 {
@@ -3150,7 +3084,7 @@ void
 mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
 {
   int sgn;
-  mpz_t t, u, v;
+  mpz_t t, u;
 
   sgn = y->_mp_size < 0;
   if (sgn && (z & 1) == 0)
@@ -3166,28 +3100,41 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   }
 
   mpz_init (t);
-  mpz_init (v);
   mpz_init (u);
   mpz_setbit (t, mpz_sizeinbase (y, 2) / z + 1);
-  if (sgn)
-    mpz_neg (t,t);
 
-  do {
-    mpz_set (u, t);
-    mpz_pow_ui (t, u, z - 1);
-    mpz_tdiv_q (t, y, t);
-    mpz_mul_ui (v, u, z - 1);
-    mpz_add (t, t, v);
-    mpz_tdiv_q_ui (t, t, z);
-  } while (mpz_cmpabs (t, u) < 0);
+  if (z == 2) /* simplify sqrt loop: z-1 == 1 */    
+    do {
+      mpz_swap (u, t);			/* u = x */
+      mpz_tdiv_q (t, y, u);		/* t = y/x */
+      mpz_add (t, t, u);		/* t = y/x + x */
+      mpz_tdiv_q_2exp (t, t, 1);	/* x' = (y/x + x)/2 */
+    } while (mpz_cmpabs (t, u) < 0);	/* |x'| < |x| */
+  else /* z != 2 */ {
+    mpz_t v;
+
+    mpz_init (v);
+    if (sgn)
+      mpz_neg (t,t);
+
+    do {
+      mpz_swap (u, t);			/* u = x */
+      mpz_pow_ui (t, u, z - 1);		/* t = x^(z-1) */
+      mpz_tdiv_q (t, y, t);		/* t = y/x^(z-1) */
+      mpz_mul_ui (v, u, z - 1);		/* v = x*(z-1) */
+      mpz_add (t, t, v);		/* t = y/x^(z-1) + x*(z-1) */
+      mpz_tdiv_q_ui (t, t, z);		/* x' = (y/x^(z-1) + x*(z-1))/z */
+    } while (mpz_cmpabs (t, u) < 0);	/* |x'| < |x| */
+
+    mpz_clear (v);
+  }
 
   if (r) {
     mpz_pow_ui (t, u, z);
     mpz_sub (r, y, t);
   }
-  mpz_set (x, u);
+  mpz_swap (x, u);
   mpz_clear (u);
-  mpz_clear (v);
   mpz_clear (t);
 }
 
@@ -3203,6 +3150,19 @@ mpz_root (mpz_t x, const mpz_t y, unsigned long z)
   mpz_clear (r);
 
   return res;
+}
+
+/* Compute s = floor(sqrt(u)) and r = u - s^2. Allows r == NULL */
+void
+mpz_sqrtrem (mpz_t s, mpz_t r, const mpz_t u)
+{
+  mpz_rootrem (s, r, u, 2);
+}
+
+void
+mpz_sqrt (mpz_t s, const mpz_t u)
+{
+  mpz_rootrem (s, NULL, u, 2);
 }
 
 
