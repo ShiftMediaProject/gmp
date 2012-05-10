@@ -146,11 +146,11 @@ mul8 (mp_limb_t m)
 
 typedef mp_limb_t (* mulfunc_t) (mp_limb_t);
 
-static const mulfunc_t mulfunc[] = {0,mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8};
-#define M (numberof(mulfunc)-1)
+static const mulfunc_t mulfunc[] = {mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8};
+#define M (numberof(mulfunc))
 
 /* Number of factors-of-2 removed by the corresponding mulN functon.  */
-static const unsigned char tcnttab[] = {0,0,1,1,2,2,4,4,6};
+static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6};
 
 #if 1
 /* This variant is inaccurate but share the code with other functions.  */
@@ -237,11 +237,11 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
       while (kmax != 0 && kn < SOME_THRESHOLD)
 	{
-	  jjj = mulfunc[kmax] (j);
+	  jjj = mulfunc[kmax - 1] (j);
 	  j += kmax;				/* number of factors used */
 	  count_trailing_zeros (cnt, jjj);	/* count low zeros */
 	  jjj >>= cnt;				/* remove remaining low zeros */
-	  j2cnt += tcnttab[kmax] + cnt;		/* update low zeros count */
+	  j2cnt += tcnttab[kmax - 1] + cnt;	/* update low zeros count */
 	  cy = mpn_mul_1 (kp, kp, kn, jjj);	/* accumulate new factors */
 	  kp[kn] = cy;
 	  kn += cy != 0;
@@ -253,11 +253,11 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       while (numfac != 0)
 	{
 	  nmaxnow = MIN (nmax, numfac);
-	  iii = mulfunc[nmaxnow] (i);
+	  iii = mulfunc[nmaxnow - 1] (i);
 	  i += nmaxnow;				/* number of factors used */
 	  count_trailing_zeros (cnt, iii);	/* count low zeros */
 	  iii >>= cnt;				/* remove remaining low zeros */
-	  i2cnt += tcnttab[nmaxnow] + cnt;	/* update low zeros count */
+	  i2cnt += tcnttab[nmaxnow - 1] + cnt;	/* update low zeros count */
 	  cy = mpn_mul_1 (np, np, nn, iii);	/* accumulate new factors */
 	  np[nn] = cy;
 	  nn += cy != 0;
@@ -275,11 +275,11 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	break;
       numfac = j;
 
-      jjj = mulfunc[kmax] (j);
+      jjj = mulfunc[kmax - 1] (j);
       j += kmax;				/* number of factors used */
       count_trailing_zeros (cnt, jjj);		/* count low zeros */
       jjj >>= cnt;				/* remove remaining low zeros */
-      j2cnt += tcnttab[kmax] + cnt;		/* update low zeros count */
+      j2cnt += tcnttab[kmax - 1] + cnt;		/* update low zeros count */
     }
 
   /* Put back the right number of factors of 2.  */
@@ -320,17 +320,17 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   i = n - k + 1;
 
   nmax = MIN (nmax, k);
-  rp[0] = mulfunc[nmax] (i);
+  rp[0] = mulfunc[nmax - 1] (i);
   rn = 1;
   i += nmax;				/* number of factors used */
-  i2cnt = tcnttab[nmax];		/* low zeros count */
+  i2cnt = tcnttab[nmax - 1];		/* low zeros count */
   numfac = k - nmax;
   while (numfac != 0)
     {
       nmax = MIN (nmax, numfac);
-      iii = mulfunc[nmax] (i);
+      iii = mulfunc[nmax - 1] (i);
       i += nmax;			/* number of factors used */
-      i2cnt += tcnttab[nmax];		/* update low zeros count */
+      i2cnt += tcnttab[nmax - 1];	/* update low zeros count */
       cy = mpn_mul_1 (rp, rp, rn, iii);	/* accumulate new factors */
       rp[rn] = cy;
       rn += cy != 0;
