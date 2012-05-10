@@ -68,6 +68,7 @@ mpn_toom3_sqr (mp_ptr pp,
 	       mp_srcptr ap, mp_size_t an,
 	       mp_ptr scratch)
 {
+  const int __gmpn_cpuvec_initialized = 1;
   mp_size_t n, s;
   mp_limb_t cy, vinf0;
   mp_ptr gp;

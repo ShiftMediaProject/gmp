@@ -79,6 +79,7 @@ mpn_toom33_mul (mp_ptr pp,
 		mp_srcptr bp, mp_size_t bn,
 		mp_ptr scratch)
 {
+  const int __gmpn_cpuvec_initialized = 1;
   mp_size_t n, s, t;
   int vm1_neg;
   mp_limb_t cy, vinf0;

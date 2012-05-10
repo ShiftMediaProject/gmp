@@ -59,6 +59,7 @@ mpn_toom2_sqr (mp_ptr pp,
 	       mp_srcptr ap, mp_size_t an,
 	       mp_ptr scratch)
 {
+  const int __gmpn_cpuvec_initialized = 1;
   mp_size_t n, s;
   mp_limb_t cy, cy2;
   mp_ptr asm1;
