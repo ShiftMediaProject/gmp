@@ -1,3 +1,15 @@
+2012-05-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (__gmpn_cpuvec_initialized): Was __gmpn_cpuvec.initialized
+	* mpn/x86/fat/fat.c: Use separated _initialized variable.
+	* mpn/x86_64/fat/fat.c: Likewise.
+	* tests/mpn/t-fat.c: Likewise.
+
+	* mpn/generic/toom2_sqr.c: Override global __gmpn_cpuvec_initialized.
+	* mpn/generic/toom22_mul.c: Likewise.
+	* mpn/generic/toom3_sqr.c: Likewise.
+	* mpn/generic/toom33_mul.c: Likewise.
+
 2012-05-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c: merge mpz_rootrem and mpz_sqrtrem.
