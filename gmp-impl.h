@@ -4539,7 +4539,6 @@ struct cpuvec_t {
   DECL_sub_n           ((*sub_n));
   DECL_sublsh1_n       ((*sublsh1_n));
   DECL_submul_1        ((*submul_1));
-  int                  initialized;
   mp_size_t            mul_toom22_threshold;
   mp_size_t            mul_toom33_threshold;
   mp_size_t            sqr_toom2_threshold;
@@ -4547,6 +4546,7 @@ struct cpuvec_t {
   mp_size_t            bmod_1_to_mod_1_threshold;
 };
 __GMP_DECLSPEC extern struct cpuvec_t __gmpn_cpuvec;
+__GMP_DECLSPEC extern int __gmpn_cpuvec_initialized;
 #endif /* x86 fat binary */
 
 __GMP_DECLSPEC void __gmpn_cpuvec_init (void);
@@ -4554,7 +4554,7 @@ __GMP_DECLSPEC void __gmpn_cpuvec_init (void);
 /* Get a threshold "field" from __gmpn_cpuvec, running __gmpn_cpuvec_init()
    if that hasn't yet been done (to establish the right values).  */
 #define CPUVEC_THRESHOLD(field)						      \
-  ((LIKELY (__gmpn_cpuvec.initialized) ? 0 : (__gmpn_cpuvec_init (), 0)),     \
+  ((LIKELY (__gmpn_cpuvec_initialized) ? 0 : (__gmpn_cpuvec_init (), 0)),     \
    __gmpn_cpuvec.field)
 
 

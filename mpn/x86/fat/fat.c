@@ -176,6 +176,7 @@ struct cpuvec_t __gmpn_cpuvec = {
   0
 };
 
+int __gmpn_cpuvec_initialized = 0;
 
 /* The following setups start with generic x86, then overwrite with
    specifics for a chip, and higher versions of that chip.
@@ -454,5 +455,5 @@ __gmpn_cpuvec_init (void)
 
   /* Set this once the threshold fields are ready.
      Use volatile to prevent it getting moved.  */
-  ((volatile struct cpuvec_t *) &__gmpn_cpuvec)->initialized = 1;
+  *((volatile int *) &__gmpn_cpuvec_initialized) = 1;
 }

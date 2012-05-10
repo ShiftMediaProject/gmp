@@ -66,7 +66,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* dummies when not a fat binary */
 #if ! WANT_FAT_BINARY
 struct cpuvec_t {
-  int  initialized;
+  int  dummy;
 };
 struct cpuvec_t __gmpn_cpuvec;
 #define ITERATE_FAT_THRESHOLDS()  do { } while (0)
@@ -285,10 +285,11 @@ check_thresholds (void)
 {
 #define ITERATE(name,field)                                             \
   do {                                                                  \
+    __gmpn_cpuvec_initialized = 0;					\
     memcpy (&__gmpn_cpuvec, &initial_cpuvec, sizeof (__gmpn_cpuvec));   \
     ASSERT_ALWAYS (name != 0);                                          \
     ASSERT_ALWAYS (name == __gmpn_cpuvec.field);                        \
-    ASSERT_ALWAYS (__gmpn_cpuvec.initialized);                          \
+    ASSERT_ALWAYS (__gmpn_cpuvec_initialized);                          \
   } while (0)
 
   ITERATE_FAT_THRESHOLDS ();
