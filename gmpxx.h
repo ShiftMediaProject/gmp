@@ -1563,6 +1563,10 @@ public:
   // bool fits_double_p() const { return mpz_fits_double_p(mp); }
   // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(mp); }
 
+#if __GMPXX_USE_CXX11
+  explicit operator bool() const { return mp->_mp_size != 0; }
+#endif
+
   // member operators
   __GMP_DECLARE_COMPOUND_OPERATOR(operator+=)
   __GMP_DECLARE_COMPOUND_OPERATOR(operator-=)
@@ -1754,6 +1758,10 @@ public:
   mpz_ptr get_den_mpz_t() { return mpq_denref(mp); }
 
   double get_d() const { return mpq_get_d(mp); }
+
+#if __GMPXX_USE_CXX11
+  explicit operator bool() const { return mpq_numref(mp)->_mp_size != 0; }
+#endif
 
   // compound assignments
   __GMP_DECLARE_COMPOUND_OPERATOR(operator+=)
@@ -1962,6 +1970,10 @@ public:
   // bool fits_float_p() const { return mpf_fits_float_p(mp); }
   // bool fits_double_p() const { return mpf_fits_double_p(mp); }
   // bool fits_ldouble_p() const { return mpf_fits_ldouble_p(mp); }
+
+#if __GMPXX_USE_CXX11
+  explicit operator bool() const { return mp->_mp_size != 0; }
+#endif
 
   // compound assignments
   __GMP_DECLARE_COMPOUND_OPERATOR(operator+=)

@@ -1,3 +1,8 @@
+2012-05-11  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (explicit operator bool): New functions.
+	* tests/cxx/t-cxx11.cc: Test the above.
+
 2012-05-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (__gmpn_cpuvec_initialized): Was __gmpn_cpuvec.initialized

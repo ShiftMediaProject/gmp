@@ -1,6 +1,6 @@
 /* Test C++11 features
 
-Copyright 2011 Free Software Foundation, Inc.
+Copyright 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -168,6 +168,32 @@ void check_user_defined_literal ()
   }
 }
 
+// Check for explicit conversion to bool
+void implicit_bool(bool);
+int implicit_bool(...);
+
+void check_bool_conversion ()
+{
+  const mpz_class zn = -2;
+  const mpq_class qn = -2;
+  const mpf_class fn = -2;
+  const mpz_class z0 =  0;
+  const mpq_class q0 =  0;
+  const mpf_class f0 =  0;
+  const mpz_class zp = +2;
+  const mpq_class qp = +2;
+  const mpf_class fp = +2;
+  if (zn && qn && fn && zp && qp && fp && !z0 && !q0 && !f0)
+    {
+      if (z0 || q0 || f0) ASSERT_ALWAYS(false);
+    }
+  else ASSERT_ALWAYS(false);
+  decltype(implicit_bool(zn)) zi = 1;
+  decltype(implicit_bool(qn)) qi = 1;
+  decltype(implicit_bool(fn)) fi = 1;
+  (void)(zi+qi+fi);
+}
+
 int
 main (void)
 {
@@ -184,6 +210,7 @@ main (void)
   check_move_init<mpz_class,mpq_class>();
   check_move_assign<mpz_class,mpq_class>();
   check_user_defined_literal();
+  check_bool_conversion();
 
   tests_end();
   return 0;
