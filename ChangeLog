@@ -1,3 +1,7 @@
+2012-05-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v5/mod_1_2.asm: New file.
+
 2012-05-11  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (explicit operator bool): New functions.
