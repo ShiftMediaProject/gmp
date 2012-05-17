@@ -41,7 +41,7 @@ check_data (void)
 #else
     { ULONG_MAX,     2, { ULONG_MAX & GMP_NUMB_MASK,
                           ULONG_MAX >> GMP_NUMB_BITS } },
-    { LONG_HIGHBIT,  2, { 0,
+    { ULONG_HIGHBIT, 2, { 0,
                           ULONG_HIGHBIT >> GMP_NUMB_BITS } },
 #endif
   };

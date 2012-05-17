@@ -3,6 +3,8 @@
 	* mpf/pow_ui.c: Simplify.
 	* tests/mpf/reuse.c (dsi_func): Exercise pow_ui.
 
+	* tests/mpf/t-set_ui.c (check_data): LONG_HIGHBIT -> ULONG_HIGHBIT.
+
 2012-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpf/t-eq.c (check_random): New function, meat from old main().
