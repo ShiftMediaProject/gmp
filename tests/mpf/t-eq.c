@@ -59,13 +59,13 @@ check_data (void)
 
     { { 0, 1, { 8 } },             { 0, 1, { 4 } },    0, 0 },
 
-    { { 0, 2, { 0, 3 } },             { 0, 1, { 3 } },    1000, 1 },
+    { { 0, 2, { 0, 3 } },          { 0, 1, { 3 } }, 1000, 1 },
   };
 
   mpf_t  x, y;
   int got, got_swapped;
-  mp_trace_base = 16;
   int i;
+  mp_trace_base = 16;
 
   for (i = 0; i < numberof (data); i++)
     {
