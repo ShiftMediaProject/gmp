@@ -1,3 +1,7 @@
+2012-05-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpf/reuse.c (dsi_func): Exercise pow_ui.
+
 2012-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpf/t-eq.c (check_random): New function, meat from old main().

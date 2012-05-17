@@ -69,13 +69,13 @@ typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
 dsi_func dsi_funcs[] =
 {
   mpf_div_ui, mpf_add_ui, mpf_mul_ui, mpf_sub_ui,
-  mpf_mul_2exp, mpf_div_2exp
+  mpf_mul_2exp, mpf_div_2exp, mpf_pow_ui
 };
 
 const char *dsi_func_names[] =
 {
   "mpf_div_ui", "mpf_add_ui", "mpf_mul_ui", "mpf_sub_ui",
-  "mpf_mul_2exp", "mpf_div_2exp"
+  "mpf_mul_2exp", "mpf_div_2exp", "mpf_pow_ui"
 };
 
 typedef void (*dis_func) (mpf_ptr, unsigned long int, mpf_srcptr);
