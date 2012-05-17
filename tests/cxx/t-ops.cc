@@ -494,6 +494,7 @@ check_mpq (void)
     mpq_class a(1, 3), b(3, 4);
     mpq_class c;
     c = a * b; ASSERT_ALWAYS(c == 0.25);
+    c = b * b; ASSERT_ALWAYS(c == 0.5625);
   }
 
   // operator/

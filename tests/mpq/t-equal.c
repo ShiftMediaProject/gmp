@@ -125,6 +125,9 @@ check_various (void)
   SET4 (x, 1,1,2,3,4, 3,88,5,6,7);
   SET4 (y, 4,1,2,3,4, 3,99,5,6,7);
   check_all (x, y, 0);
+  SET4 (x, 4,1,2,3,4, 3,88,5,6,7);
+  SET4 (y, 4,1,2,3,4, 2,99,5,6,7);
+  check_all (x, y, 0);
 
   mpq_clear (x);
   mpq_clear (y);

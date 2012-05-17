@@ -58,11 +58,13 @@ check_random (long reps)
 
   for (test = 0; test < reps; test++)
     {
-      mpz_urandomb (z, rands, PRECBITS);
+      mpz_urandomb (z, rands, PRECBITS + 1);
       precbits = mpz_get_ui (z) + 1;
       mpz_urandomb (z, rands, precbits);
       mpz_setbit (z, precbits  - 1);	/* make sure msb is set */
       mpf_set_z (a, z);
+      if (precbits & 1)
+	mpf_neg (a, a);
       mpz_urandomb (z, rands, PRECBITS);
       mpf_div_2exp (a, a, mpz_get_ui (z) + 1);
       mpz_urandomb (z, rands, PRECBITS);

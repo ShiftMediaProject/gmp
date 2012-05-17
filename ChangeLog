@@ -6,6 +6,9 @@
 	* tests/mpf/t-set_ui.c (check_data): LONG_HIGHBIT -> ULONG_HIGHBIT.
 	* tests/mpf/t-set.c (check_random): New check, both set and init_set.
 
+	* tests/cxx/t-ops.cc (check_mpq): Check squaring.
+	* tests/mpq/t-equal.c (check_various): Check different den-size.
+	
 2012-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpf/t-eq.c (check_random): New function, meat from old main().
