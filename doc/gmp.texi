@@ -4390,7 +4390,7 @@ Return @math{+1} if @math{@var{op} > 0}, 0 if @math{@var{op} = 0}, and
 @math{-1} if @math{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its
-arguments multiple times.
+argument multiple times.
 @end deftypefn
 
 @deftypefun int mpq_equal (mpq_t @var{op1}, mpq_t @var{op2})
