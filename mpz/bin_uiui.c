@@ -501,8 +501,10 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 /* Section sieve: sieving functions and tools for primes */
 /*********************************************************/
 
+#if WANT_ASSERT
 static mp_limb_t
 bit_to_n (mp_limb_t bit) { return (bit*3+4)|1; }
+#endif
 
 /* id_to_n (x) = bit_to_n (x-1) = (id*3+1)|1*/
 static mp_limb_t
