@@ -40,7 +40,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULLO_MUL_N_THRESHOLD MUL_FFT_THRESHOLD
 #endif
 
-#if TUNE_PROGRAM_BUILD
+#if TUNE_PROGRAM_BUILD || WANT_FAT_BINARY
 #define MAYBE_range_basecase 1
 #define MAYBE_range_toom22   1
 #else
