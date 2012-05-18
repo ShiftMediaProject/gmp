@@ -49,7 +49,7 @@ check_one (mpz_t root1, mpz_t x2, unsigned long nth, int i)
   mpz_add (temp2, temp, rem2);
 
   /* Is power of result > argument?  */
-  if (mpz_cmp (root1, root2) != 0 || mpz_cmp (x2, temp2) != 0 || mpz_cmp (temp, x2) > 0)
+  if (mpz_cmp (root1, root2) != 0 || mpz_cmp (x2, temp2) != 0 || mpz_cmpabs (temp, x2) > 0)
     {
       fprintf (stderr, "ERROR after test %d\n", i);
       debug_mp (x2, 10);
@@ -68,7 +68,7 @@ check_one (mpz_t root1, mpz_t x2, unsigned long nth, int i)
       abort ();
     }
 
-  if (nth <= 10000)		/* skip too expensive test */
+  if (nth <= 10000 && mpz_sgn(x2) > 0)		/* skip too expensive test */
     {
       mpz_add_ui (temp2, root1, 1L);
       mpz_pow_ui (temp2, temp2, nth);
@@ -150,6 +150,13 @@ main (int argc, char **argv)
 	}
 
       check_one (root1, x2, nth, i);
+
+      if (((nth & 1) != 0) && ((bsi & 2) != 0))
+	{
+	  mpz_neg (x2, x2);
+	  mpz_neg (root1, root1);
+	  check_one (root1, x2, nth, i);
+	}
     }
 
   mpz_clear (bs);
