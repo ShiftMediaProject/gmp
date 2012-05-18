@@ -102,10 +102,8 @@ main (int argc, char *argv[])
 {
   long reps = 10000;
 
-  if (argc == 2)
-    reps = strtol (argv[1], 0, 0);
-
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
 
   check_reuse ();
   check_random (reps);
