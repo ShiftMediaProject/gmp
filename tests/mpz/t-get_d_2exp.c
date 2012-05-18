@@ -25,6 +25,32 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 static void
+check_zero (void)
+{
+  mpz_t   z;
+  double  got, want;
+  long    got_exp, want_exp;
+
+  mpz_init_set_ui (z, 0);
+
+  want = 0.0;
+  want_exp = 0;
+  got = mpz_get_d_2exp (&got_exp, z);
+  if (got != want || got_exp != want_exp)
+    {
+      printf    ("mpz_get_d_2exp wrong on zero\n");
+      mpz_trace ("   z    ", z);
+      d_trace   ("   want ", want);
+      d_trace   ("   got  ", got);
+      printf    ("   want exp %ld\n", want_exp);
+      printf    ("   got exp  %ld\n", got_exp);
+      abort();
+    }
+
+  mpz_clear (z);
+}
+
+static void
 check_onebit (void)
 {
   static const unsigned long data[] = {
@@ -187,6 +213,7 @@ main (void)
   tests_start ();
   mp_trace_base = -16;
 
+  check_zero ();
   check_onebit ();
   check_round ();
   check_rand ();

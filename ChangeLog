@@ -11,6 +11,10 @@
 
 	* mpn/generic/mullo_n.c: Disable MAYBE_ if WANT_FAT_BINARY.
 	* mpz/cmpabs_d.c: Remove an unused branch.
+
+	* tests/mpz/t-get_d_2exp.c (check_zero): New check.
+	* tests/mpz/t-inp_str.c: A few more cases.
+	* tests/mpz/t-cmp_d.c: More bases and symbols, a few cases.
 	
 2012-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
