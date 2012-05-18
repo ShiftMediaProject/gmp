@@ -10,6 +10,7 @@
 	* tests/mpq/t-equal.c (check_various): Check different den-size.
 
 	* mpn/generic/mullo_n.c: Disable MAYBE_ if WANT_FAT_BINARY.
+	* mpz/cmpabs_d.c: Remove an unused branch.
 	
 2012-05-16  Torbjorn Granlund  <tege@gmplib.org>
 

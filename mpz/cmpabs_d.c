@@ -62,7 +62,7 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
   if (d == 0.0)
     return (zsize != 0);
   if (zsize == 0)
-    return (d != 0 ? -1 : 0);
+    return -1; /* d != 0 */
 
   /* 2. Ignore signs. */
   zsize = ABS(zsize);
