@@ -1,3 +1,8 @@
+2012-05-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-gcd.c: Generate larger operands for better gcd code
+	coverage; distribute size exponentially.
+
 2012-05-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/pow_ui.c: Simplify.
