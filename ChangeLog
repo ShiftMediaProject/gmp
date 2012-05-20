@@ -1,3 +1,7 @@
+2012-05-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-gcd.c: Rewrite.
+
 2012-05-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-gcd.c: Generate larger operands for better gcd code
