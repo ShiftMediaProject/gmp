@@ -378,7 +378,7 @@ mpn_toom_interpolate_16pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5, mp_ptr r
   mpn_divexact_by255x188513325(r7, r7, n3p1);
 
   mpn_submul_1 (r5, r7, n3p1, 12567555); /* can be negative */
-  /* A division by 2835x64 followsi. Warning: the operand can be negative! */
+  /* A division by 2835x64 follows. Warning: the operand can be negative! */
   mpn_divexact_by2835x64(r5, r5, n3p1);
   if ((r5[n3] & (GMP_NUMB_MAX << (GMP_NUMB_BITS-7))) != 0)
     r5[n3] |= (GMP_NUMB_MAX << (GMP_NUMB_BITS-6));
