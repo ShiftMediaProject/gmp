@@ -240,10 +240,10 @@ debug_mp (mpz_t x, int base)
 void
 one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
 {
-
+  /*
   printf ("%d %d %d\n", SIZ (op1), SIZ (op2), ref != NULL ? SIZ (ref) : 0);
   fflush (stdout);
-
+  */
 
   /*
   fprintf (stderr, "op1=");  debug_mp (op1, -16);
