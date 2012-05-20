@@ -104,7 +104,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
-  int reps = 100;
+  int reps = 200;
 
   tests_start ();
   TESTS_REPS (reps, argv, argc);
