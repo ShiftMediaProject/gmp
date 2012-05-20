@@ -210,7 +210,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   embankment = w0[w0n - 1] - 1;
   w0[w0n - 1] = 1;
   if (LIKELY (w0n > n)) {
-    if ( LIKELY(cy4 > cy6) )
+    if (cy4 > cy6)
       MPN_INCR_U (pp + 4 * n, w0n + n, cy4 - cy6);
     else
       MPN_DECR_U (pp + 4 * n, w0n + n, cy6 - cy4);
