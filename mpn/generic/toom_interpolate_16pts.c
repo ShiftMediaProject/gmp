@@ -395,7 +395,7 @@ mpn_toom_interpolate_16pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5, mp_ptr r
   DO_mpn_addlsh_n (r6, r5, n3p1, 8, wsi); /* can give a carry */
   DO_mpn_sublsh_n (r6, r5, n3p1, 4, wsi); /* can be negative */
 #endif
-  /* A division by 255x4 followsi. Warning: the operand can be negative! */
+  /* A division by 255x4 follows. Warning: the operand can be negative! */
   mpn_divexact_by255x4(r6, r6, n3p1);
   if ((r6[n3] & (GMP_NUMB_MAX << (GMP_NUMB_BITS-3))) != 0)
     r6[n3] |= (GMP_NUMB_MAX << (GMP_NUMB_BITS-2));
