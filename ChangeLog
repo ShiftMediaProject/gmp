@@ -1,3 +1,8 @@
+2012-05-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/sqrt.c: Simplify.
+	* mpz/sqrtrem.c: Likewise.
+
 2012-05-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom8_sqr.c: Reduce branches for recursion.

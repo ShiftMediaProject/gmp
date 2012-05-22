@@ -1,7 +1,7 @@
 /* mpz_sqrt(root, u) --  Set ROOT to floor(sqrt(U)).
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,8 +27,6 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 {
   mp_size_t op_size, root_size;
   mp_ptr root_ptr, op_ptr;
-  mp_ptr free_me = NULL;
-  mp_size_t free_me_size;
   TMP_DECL;
 
   TMP_MARK;
@@ -49,16 +47,13 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 
   if (ALLOC (root) < root_size)
     {
-      if (root_ptr == op_ptr)
-	{
-	  free_me = root_ptr;
-	  free_me_size = ALLOC (root);
-	}
-      else
-	(*__gmp_free_func) (root_ptr, ALLOC (root) * BYTES_PER_MP_LIMB);
+      /* From size relations, we can tell ROOT != OP.  */
+      ASSERT (root_ptr != op_ptr);
+
+      __GMP_FREE_FUNC_LIMBS (root_ptr, ALLOC (root));
 
       ALLOC (root) = root_size;
-      root_ptr = (mp_ptr) (*__gmp_allocate_func) (root_size * BYTES_PER_MP_LIMB);
+      root_ptr = __GMP_ALLOCATE_FUNC_LIMBS (root_size);
       PTR (root) = root_ptr;
     }
   else
@@ -77,8 +72,5 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
   mpn_sqrtrem (root_ptr, NULL, op_ptr, op_size);
 
   SIZ (root) = root_size;
-
-  if (free_me != NULL)
-    (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
   TMP_FREE;
 }
