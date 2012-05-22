@@ -1,6 +1,6 @@
 2012-05-22  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpz/sqrt.c: Simplify.
+	* mpz/sqrt.c: Allocate less for overlapping operands, simplify.
 	* mpz/sqrtrem.c: Likewise.
 
 2012-05-21 Marco Bodrato <bodrato@mail.dm.unipi.it>

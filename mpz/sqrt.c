@@ -27,9 +27,7 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 {
   mp_size_t op_size, root_size;
   mp_ptr root_ptr, op_ptr;
-  TMP_DECL;
 
-  TMP_MARK;
   op_size = SIZ (op);
   if (op_size <= 0)
     {
@@ -41,6 +39,7 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 
   /* The size of the root is accurate after this simple calculation.  */
   root_size = (op_size + 1) / 2;
+  SIZ (root) = root_size;
 
   root_ptr = PTR (root);
   op_ptr = PTR (op);
@@ -50,27 +49,29 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
       /* From size relations, we can tell ROOT != OP.  */
       ASSERT (root_ptr != op_ptr);
 
-      __GMP_FREE_FUNC_LIMBS (root_ptr, ALLOC (root));
-
+      root_ptr = __GMP_REALLOCATE_FUNC_LIMBS (root_ptr, ALLOC (root), root_size);
       ALLOC (root) = root_size;
-      root_ptr = __GMP_ALLOCATE_FUNC_LIMBS (root_size);
       PTR (root) = root_ptr;
     }
   else
     {
-      /* Make OP not overlap with ROOT.  */
       if (root_ptr == op_ptr)
 	{
-	  /* ROOT and OP are identical.  Allocate temporary space for OP.  */
-	  op_ptr = TMP_ALLOC_LIMBS (op_size);
-	  /* Copy to the temporary space.  Hack: Avoid temporary variable
-	     by using ROOT_PTR.  */
-	  MPN_COPY (op_ptr, root_ptr, op_size);
+	  /* Allocate temp space for the root, which we then copy to the
+	     shared OP/ROOT variable.  */
+	  mp_ptr p;
+	  TMP_DECL;
+	  TMP_MARK;
+
+	  p = TMP_ALLOC_LIMBS (root_size);
+	  mpn_sqrtrem (p, NULL, root_ptr, op_size);
+
+	  MPN_COPY (root_ptr, p, root_size);
+
+	  TMP_FREE;
+	  return;
 	}
     }
 
   mpn_sqrtrem (root_ptr, NULL, op_ptr, op_size);
-
-  SIZ (root) = root_size;
-  TMP_FREE;
 }
