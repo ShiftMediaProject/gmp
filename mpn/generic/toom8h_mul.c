@@ -117,11 +117,10 @@ mpn_toom8h_mul   (mp_ptr pp,
   /* Can not handle too small operands */
   ASSERT (bn >= 86);
   /* Can not handle too much unbalancement */
-  ASSERT (an*4 <= bn*13);
-  ASSERT (GMP_NUMB_BITS > 12*3 || an*4 <= bn*12);
-  ASSERT (GMP_NUMB_BITS > 11*3 || an*5 <= bn*11);
-  ASSERT (GMP_NUMB_BITS > 10*3 || an*6 <= bn*10);
-  ASSERT (GMP_NUMB_BITS >  9*3 || an*7 <= bn* 9);
+  ASSERT (an <= bn*4);
+  ASSERT (GMP_NUMB_BITS > 11*3 || an*4 <= bn*11);
+  ASSERT (GMP_NUMB_BITS > 10*3 || an*1 <= bn* 2);
+  ASSERT (GMP_NUMB_BITS >  9*3 || an*2 <= bn* 3);
 
   /* Limit num/den is a rational number between
      (16/15)^(log(6)/log(2*6-1)) and (16/15)^(log(8)/log(2*8-1))             */

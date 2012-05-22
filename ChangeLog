@@ -3,6 +3,8 @@
 	* mpn/generic/toom8_sqr.c: Reduce branches for recursion.
 	* mpn/generic/toom8h_mul.c: Likewise.
 
+	* tests/mpn/t-toom8h.c: Don't use GMP_NUMB_BITS when undefined.
+
 2012-05-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-gcd.c: Rewrite.
