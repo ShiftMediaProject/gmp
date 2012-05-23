@@ -28,7 +28,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
   mp_bitcnt_t pwr;
   int p;
 
-  if (mpz_cmp_ui (f, 1) <= 0)
+  if (UNLIKELY (mpz_cmpabs_ui (f, 1) <= 0))
     DIVIDE_BY_ZERO;
 
   if (SIZ (src) == 0)

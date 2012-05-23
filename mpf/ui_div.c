@@ -38,8 +38,6 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 
   vsize = v->_mp_size;
   sign_quotient = vsize;
-  vsize = ABS (vsize);
-  prec = r->_mp_prec;
 
   if (UNLIKELY (vsize == 0))
     DIVIDE_BY_ZERO;
@@ -50,6 +48,9 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
       r->_mp_exp = 0;
       return;
     }
+
+  vsize = ABS (vsize);
+  prec = r->_mp_prec;
 
   TMP_MARK;
   rexp = 1 - v->_mp_exp + 1;

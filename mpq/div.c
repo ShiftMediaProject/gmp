@@ -34,13 +34,12 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
   mp_size_t alloc;
   TMP_DECL;
 
-  op1_num_size = ABSIZ(NUM(op1));
-  op1_den_size =   SIZ(DEN(op1));
   op2_num_size = ABSIZ(NUM(op2));
-  op2_den_size =   SIZ(DEN(op2));
 
-  if (op2_num_size == 0)
+  if (UNLIKELY (op2_num_size == 0))
     DIVIDE_BY_ZERO;
+
+  op1_num_size = ABSIZ(NUM(op1));
 
   if (op1_num_size == 0)
     {
@@ -51,6 +50,9 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
       SIZ(DEN(quot)) = 1;
       return;
     }
+
+  op2_den_size =   SIZ(DEN(op2));
+  op1_den_size =   SIZ(DEN(op1));
 
   TMP_MARK;
 

@@ -59,7 +59,7 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
   TMP_DECL;
 
   usize = u->_mp_size;
-  if (usize <= 0)
+  if (UNLIKELY (usize <= 0))
     {
       if (usize < 0)
         SQRT_OF_NEGATIVE;

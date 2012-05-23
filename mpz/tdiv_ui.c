@@ -29,7 +29,7 @@ mpz_tdiv_ui (mpz_srcptr dividend, unsigned long int divisor)
   mp_ptr np;
   mp_limb_t rl;
 
-  if (divisor == 0)
+  if (UNLIKELY (divisor == 0))
     DIVIDE_BY_ZERO;
 
   ns = SIZ(dividend);

@@ -26,7 +26,7 @@ mpz_divexact_ui (mpz_ptr dst, mpz_srcptr src, unsigned long divisor)
   mp_size_t  size, abs_size;
   mp_ptr     dst_ptr;
 
-  if (divisor == 0)
+  if (UNLIKELY (divisor == 0))
     DIVIDE_BY_ZERO;
 
   /* For nails don't try to be clever if d is bigger than a limb, just fake

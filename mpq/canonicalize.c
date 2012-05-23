@@ -28,7 +28,7 @@ mpq_canonicalize (MP_RAT *op)
   mpz_t gcd;
   TMP_DECL;
 
-  if (SIZ(DEN(op)) == 0)
+  if (UNLIKELY (SIZ(DEN(op)) == 0))
     DIVIDE_BY_ZERO;
 
   TMP_MARK;

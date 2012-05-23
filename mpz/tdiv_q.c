@@ -36,7 +36,7 @@ mpz_tdiv_q (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
   dl = ABS (ds);
   ql = nl - dl + 1;
 
-  if (dl == 0)
+  if (UNLIKELY (dl == 0))
     DIVIDE_BY_ZERO;
 
   if (ql <= 0)

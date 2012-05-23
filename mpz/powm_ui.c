@@ -51,7 +51,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 
   mp = PTR(m);
   mn = ABSIZ(m);
-  if (mn == 0)
+  if (UNLIKELY (mn == 0))
     DIVIDE_BY_ZERO;
 
   if (el == 0)

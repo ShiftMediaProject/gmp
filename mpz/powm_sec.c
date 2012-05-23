@@ -35,12 +35,10 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
   TMP_DECL;
 
   n = ABSIZ(m);
-  if (n == 0)
-    DIVIDE_BY_ZERO;
 
   mp = PTR(m);
 
-  if (mp[0] % 2 == 0)
+  if (UNLIKELY ((n == 0) || (mp[0] % 2 == 0)))
     DIVIDE_BY_ZERO;
 
   es = SIZ(e);

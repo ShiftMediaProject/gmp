@@ -37,7 +37,7 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
   TMP_DECL;
 
   size = ABSIZ (n);
-  if (size == 0)
+  if (UNLIKELY (size == 0))
     DIVIDE_BY_ZERO;
 
   nlast = &PTR (n)[size - 1];

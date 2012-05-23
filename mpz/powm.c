@@ -59,7 +59,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
   TMP_DECL;
 
   n = ABSIZ(m);
-  if (n == 0)
+  if (UNLIKELY (n == 0))
     DIVIDE_BY_ZERO;
 
   mp = PTR(m);
@@ -82,7 +82,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 #if HANDLE_NEGATIVE_EXPONENT
       MPZ_TMP_INIT (new_b, n + 1);
 
-      if (! mpz_invert (new_b, b, m))
+      if (UNLIKELY (! mpz_invert (new_b, b, m)))
 	DIVIDE_BY_ZERO;
       b = new_b;
       es = -es;

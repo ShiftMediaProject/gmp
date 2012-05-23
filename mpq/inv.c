@@ -27,7 +27,7 @@ mpq_inv (MP_RAT *dest, const MP_RAT *src)
   mp_size_t num_size = SIZ(NUM(src));
   mp_size_t den_size = SIZ(DEN(src));
 
-  if (num_size == 0)
+  if (UNLIKELY (num_size == 0))
     DIVIDE_BY_ZERO;
 
   if (num_size < 0)

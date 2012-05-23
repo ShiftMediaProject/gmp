@@ -3,6 +3,8 @@
 	* mpz/sqrt.c: Further simplify.
 	* mpz/sqrtrem.c: Likewise.
 
+	* Mark failing branches with UNLIKELY. Many files affected.
+
 2012-05-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/sqrt.c: Allocate less for overlapping operands, simplify.

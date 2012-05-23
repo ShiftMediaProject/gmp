@@ -55,12 +55,8 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
 
   usize = SIZ(u);
   vsize = SIZ(v);
-  sign_quotient = usize ^ vsize;
-  usize = ABS (usize);
-  vsize = ABS (vsize);
-  prec = PREC(r);
 
-  if (vsize == 0)
+  if (UNLIKELY (vsize == 0))
     DIVIDE_BY_ZERO;
 
   if (usize == 0)
@@ -69,6 +65,11 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       EXP(r) = 0;
       return;
     }
+
+  sign_quotient = usize ^ vsize;
+  usize = ABS (usize);
+  vsize = ABS (vsize);
+  prec = PREC(r);
 
   TMP_MARK;
   rexp = EXP(u) - EXP(v) + 1;
