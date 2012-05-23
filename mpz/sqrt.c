@@ -29,7 +29,7 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
   mp_ptr root_ptr, op_ptr;
 
   op_size = SIZ (op);
-  if (op_size <= 0)
+  if (UNLIKELY (op_size <= 0))
     {
       if (op_size < 0)
 	SQRT_OF_NEGATIVE;
@@ -41,37 +41,26 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
   root_size = (op_size + 1) / 2;
   SIZ (root) = root_size;
 
-  root_ptr = PTR (root);
   op_ptr = PTR (op);
 
-  if (ALLOC (root) < root_size)
+  if (root == op)
     {
-      /* From size relations, we can tell ROOT != OP.  */
-      ASSERT (root_ptr != op_ptr);
+      /* Allocate temp space for the root, which we then copy to the
+	 shared OP/ROOT variable.  */
+      TMP_DECL;
+      TMP_MARK;
 
-      root_ptr = __GMP_REALLOCATE_FUNC_LIMBS (root_ptr, ALLOC (root), root_size);
-      ALLOC (root) = root_size;
-      PTR (root) = root_ptr;
+      root_ptr = TMP_ALLOC_LIMBS (root_size);
+      mpn_sqrtrem (root_ptr, NULL, op_ptr, op_size);
+
+      MPN_COPY (op_ptr, root_ptr, root_size);
+
+      TMP_FREE;
     }
   else
     {
-      if (root_ptr == op_ptr)
-	{
-	  /* Allocate temp space for the root, which we then copy to the
-	     shared OP/ROOT variable.  */
-	  mp_ptr p;
-	  TMP_DECL;
-	  TMP_MARK;
+      root_ptr = MPZ_REALLOC (root, root_size);
 
-	  p = TMP_ALLOC_LIMBS (root_size);
-	  mpn_sqrtrem (p, NULL, root_ptr, op_size);
-
-	  MPN_COPY (root_ptr, p, root_size);
-
-	  TMP_FREE;
-	  return;
-	}
+      mpn_sqrtrem (root_ptr, NULL, op_ptr, op_size);
     }
-
-  mpn_sqrtrem (root_ptr, NULL, op_ptr, op_size);
 }
