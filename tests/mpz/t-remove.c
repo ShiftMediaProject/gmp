@@ -47,24 +47,7 @@ main (int argc, char **argv)
   if (argc == 2)
     reps = atoi (argv[1]);
 
-  mpz_inits (bs, t, refdest, dividend, NULL);
-
-  mpz_init_set_si (dest, -3);
-  mpz_init_set_ui (divisor, 3);
-  pwr = mpz_remove (dest, dividend, divisor);
-
-  /* Perhaps we shouldn't check pwr... */
-  if (pwr != 0 || mpz_cmp_ui (dest, 0) != 0)
-    {
-      fprintf (stderr, "ERROR with zero test\n");
-      fprintf (stderr, "refpower = %lu\n", 0);
-      fprintf (stderr, "   power = %lu\n", pwr);
-      fprintf (stderr, "    op1 = "); debug_mp (dividend);
-      fprintf (stderr, "    op2 = "); debug_mp (divisor);
-      fprintf (stderr, "refdest = 0\n");
-      fprintf (stderr, "   dest = "); debug_mp (dest);
-      abort ();
-    }
+  mpz_inits (bs, t, dest, refdest, dividend, divisor, NULL);
 
   for (i = 0; i < reps; i++)
     {

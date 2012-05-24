@@ -5,7 +5,7 @@
 2012-05-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/remove.c: Support negative divisor.
-	* tests/mpz/t-remove.c: Test zero dividend and negative divisor.
+	* tests/mpz/t-remove.c: Test negative divisor.
 
 2012-05-23  Torbjorn Granlund  <tege@gmplib.org>
 
