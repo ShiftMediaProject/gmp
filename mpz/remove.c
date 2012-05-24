@@ -31,18 +31,19 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
   if (UNLIKELY (mpz_cmpabs_ui (f, 1) <= 0))
     DIVIDE_BY_ZERO;
 
-  if (SIZ (src) == 0)
+  if (UNLIKELY (SIZ (src) == 0))
     {
-      if (src != dest)
-	mpz_set (dest, src);
+      SIZ (dest) = 0;
       return 0;
     }
 
-  if (mpz_cmp_ui (f, 2) == 0)
+  if (mpz_cmpabs_ui (f, 2) == 0)
     {
       mp_bitcnt_t s0;
       s0 = mpz_scan1 (src, 0);
       mpz_div_2exp (dest, src, s0);
+      if (s0 & (SIZ (f) < 0)) /*((s0 % 2 == 1) && (SIZ (f) < 0))*/
+	mpz_neg (dest, dest);
       return s0;
     }
 
