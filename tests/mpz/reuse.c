@@ -679,7 +679,8 @@ main (int argc, char **argv)
   mpz_clear (res3);
   mpz_clear (t);
 
-  printf ("\r");
+  if (isatty (fileno (stdout)))
+    printf ("\r");
 
   tests_end ();
   exit (0);
