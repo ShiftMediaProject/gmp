@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001, 2002, 2005 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2005, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -406,7 +406,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
       /* Go from high to low over the bits of e, starting with i pointing at
 	 the bit below the highest 1 (which will mean i==-1 if e==1).  */
-      count_leading_zeros (cnt, e);
+      count_leading_zeros (cnt, (mp_limb_t) e);
       i = GMP_LIMB_BITS - cnt - 2;
 
 #if HAVE_NATIVE_mpn_mul_2

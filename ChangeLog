@@ -1,3 +1,7 @@
+2012-05-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/n_pow_ui.c: Cast non-limb count_leading_zeros argument.
+
 2012-05-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/remove.c: Support negative divisor.
