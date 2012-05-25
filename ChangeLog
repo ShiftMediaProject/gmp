@@ -1,3 +1,7 @@
+2012-05-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/tests/t-div.c: Test all _qr, _q, _r variants.
+
 2012-05-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/n_pow_ui.c: Cast non-limb count_leading_zeros argument.
