@@ -5,7 +5,7 @@
 	* mini-gmp/mini-gmp.c (mpz_mod, mpz_mod_ui): New functions.
 	* mini-gmp/mini-gmp.h (mpz_mod, mpz_mod_ui): Prototypes.
 
-	* mpz/scan1.c: Simplify.
+	* mpz/scan1.c: Simplify, and add a shortcut for scan1(z, 0).
 
 2012-05-24  Torbjorn Granlund  <tege@gmplib.org>
 

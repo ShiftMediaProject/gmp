@@ -44,6 +44,10 @@ mpz_scan1 (mpz_srcptr u, mp_bitcnt_t starting_bit) __GMP_NOTHROW
   if (starting_limb >= abs_size)
     return (size >= 0 ? ~(mp_bitcnt_t) 0 : starting_bit);
 
+  /* This is an important case, where sign is not relevant! */
+  if (starting_bit == 0)
+    goto short_cut;
+
   limb = *p;
 
   if (size >= 0)
