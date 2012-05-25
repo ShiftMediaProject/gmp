@@ -5,6 +5,8 @@
 	* mini-gmp/mini-gmp.c (mpz_mod, mpz_mod_ui): New functions.
 	* mini-gmp/mini-gmp.h (mpz_mod, mpz_mod_ui): Prototypes.
 
+	* mpz/scan1.c: Simplify.
+
 2012-05-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/n_pow_ui.c: Cast non-limb count_leading_zeros argument.
