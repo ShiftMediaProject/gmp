@@ -2205,6 +2205,15 @@ mpz_tdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
   mpz_div_qr (NULL, r, n, d, DIV_TRUNC);
 }
 
+void
+mpz_mod (mpz_t r, const mpz_t n, const mpz_t d)
+{
+  if (d->_mp_size >= 0) 
+    mpz_div_qr (NULL, r, n, d, DIV_FLOOR);
+  else
+    mpz_div_qr (NULL, r, n, d, DIV_CEIL);
+}
+
 static void
 mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bit_index,
 		enum mpz_div_round_mode mode)
@@ -2519,6 +2528,12 @@ unsigned long
 mpz_tdiv_ui (const mpz_t n, unsigned long d)
 {
   return mpz_div_qr_ui (NULL, NULL, n, d, DIV_TRUNC);
+}
+
+unsigned long
+mpz_mod_ui (mpz_t r, const mpz_t n, unsigned long d)
+{
+  return mpz_div_qr_ui (NULL, r, n, d, DIV_FLOOR);
 }
 
 void

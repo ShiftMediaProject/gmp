@@ -141,6 +141,8 @@ void mpz_cdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 void mpz_fdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 void mpz_tdiv_r_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
 
+void mpz_mod (mpz_t, const mpz_t, const mpz_t);
+
 void mpz_divexact (mpz_t, const mpz_t, const mpz_t);
 
 int mpz_divisible_p (const mpz_t, const mpz_t);
@@ -157,6 +159,8 @@ unsigned long mpz_tdiv_r_ui (mpz_t, const mpz_t, unsigned long);
 unsigned long mpz_cdiv_ui (const mpz_t, unsigned long);
 unsigned long mpz_fdiv_ui (const mpz_t, unsigned long);
 unsigned long mpz_tdiv_ui (const mpz_t, unsigned long);
+
+unsigned long mpz_mod_ui (mpz_t, const mpz_t, unsigned long);
 
 void mpz_divexact_ui (mpz_t, const mpz_t, unsigned long);
 
