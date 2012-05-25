@@ -1,6 +1,7 @@
 2012-05-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-div.c: Test all _qr, _q, _r variants.
+	* mini-gmp/tests/t-lcm.c: Test the _ui variant.
 
 	* mini-gmp/mini-gmp.c (mpz_mod, mpz_mod_ui): New functions.
 	* mini-gmp/mini-gmp.h (mpz_mod, mpz_mod_ui): Prototypes.

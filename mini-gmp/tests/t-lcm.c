@@ -41,6 +41,20 @@ main (int argc, char **argv)
 	  dump ("ref", s);
 	  abort ();
 	}
+      if (mpz_fits_ulong_p (b))
+	{
+	  mpz_set_si (g, 0);
+	  mpz_lcm_ui (g, a, mpz_get_ui (b));
+	  if (mpz_cmp (g, s))
+	    {
+	      fprintf (stderr, "mpz_lcm_ui failed:\n");
+	      dump ("a", a);
+	      dump ("b", b);
+	      dump ("r", g);
+	      dump ("ref", s);
+	      abort ();
+	    }
+	}
     }
 
   mpz_clear (a);
