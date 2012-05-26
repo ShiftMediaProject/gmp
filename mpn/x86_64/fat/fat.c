@@ -204,6 +204,11 @@ __gmpn_cpuvec_init (void)
   family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
   model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
 
+  /* Check extended feature flags */
+  __gmpn_cpuid (dummy_string, 0x80000001);
+  if ((dummy_string[4 + 29 / 8] & (1 << (29 - 3 * 8))) == 0)
+    abort (); /* longmode-capable-bit turned off! */
+
   /*********************************************************/
   /*** WARNING: keep this list in sync with config.guess ***/
   /*********************************************************/
@@ -211,30 +216,9 @@ __gmpn_cpuvec_init (void)
     {
       switch (family)
 	{
-	case 4:
-	case 5:
-	  abort ();		/* 32-bit processors */
-
 	case 6:
 	  switch (model)
 	    {
-	    case 0x00:
-	    case 0x01:
-	    case 0x02:
-	    case 0x03:
-	    case 0x04:
-	    case 0x05:
-	    case 0x06:
-	    case 0x07:
-	    case 0x08:
-	    case 0x09:		/* Banias */
-	    case 0x0a:
-	    case 0x0b:
-	    case 0x0c:
-	    case 0x0d:		/* Dothan */
-	    case 0x0e:		/* Yonah */
-	      abort ();		/* 32-bit processors */
-
 	    case 0x0f:		/* Conroe Merom Kentsfield Allendale */
 	    case 0x10:
 	    case 0x11:
@@ -294,10 +278,6 @@ __gmpn_cpuvec_init (void)
     {
       switch (family)
 	{
-	case 5:
-	case 6:
-	  abort ();
-
 	case 0x0f:		/* k8 */
 	case 0x11:		/* "fam 11h", mix of k8 and k10 */
 	case 0x13:
@@ -328,14 +308,9 @@ __gmpn_cpuvec_init (void)
     {
       switch (family)
 	{
-	case 5:
-	  abort ();		/* 32-bit processors */
-
 	case 6:
-	  if (model < 15)
-	    abort ();		/* 32-bit processors */
-
-	  CPUVEC_SETUP_nano;
+	  if (model >= 15)
+	    CPUVEC_SETUP_nano;
 	  break;
 	}
     }
