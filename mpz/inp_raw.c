@@ -1,6 +1,6 @@
 /* mpz_inp_raw -- read an mpz_t in raw format.
 
-Copyright 2001, 2002, 2005 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2005, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -86,8 +86,7 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
 
   if (abs_xsize != 0)
     {
-      MPZ_REALLOC (x, abs_xsize);
-      xp = PTR(x);
+      xp = MPZ_REALLOC (x, abs_xsize);
 
       /* Get limb boundaries right in the read, for the benefit of the
 	 non-nails case.  */

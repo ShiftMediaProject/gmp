@@ -1,6 +1,6 @@
 /* mpz_import -- set mpz from word data.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -47,8 +47,7 @@ mpz_import (mpz_ptr z, size_t count, int order,
   ASSERT (nail <= 8*size);
 
   zsize = (count * (8*size - nail) + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
-  MPZ_REALLOC (z, zsize);
-  zp = PTR(z);
+  zp = MPZ_REALLOC (z, zsize);
 
   if (endian == 0)
     endian = HOST_ENDIAN;

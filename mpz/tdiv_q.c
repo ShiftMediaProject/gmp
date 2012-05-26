@@ -1,7 +1,7 @@
 /* mpz_tdiv_q -- divide two integers and produce a quotient.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2010 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2010, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,10 +45,9 @@ mpz_tdiv_q (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
       return;
     }
 
-  MPZ_REALLOC (quot, ql);
+  qp = MPZ_REALLOC (quot, ql);
 
   TMP_MARK;
-  qp = PTR (quot);
   np = PTR (num);
   dp = PTR (den);
 

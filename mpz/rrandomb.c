@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Meant for testing of other MP routines.
 
-Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,12 +28,13 @@ void
 mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, mp_bitcnt_t nbits)
 {
   mp_size_t nl;
+  mp_ptr xp;
 
   nl = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
   if (nbits != 0)
     {
-      MPZ_REALLOC (x, nl);
-      gmp_rrandomb (PTR(x), rstate, nbits);
+      xp = MPZ_REALLOC (x, nl);
+      gmp_rrandomb (xp, rstate, nbits);
     }
 
   SIZ(x) = nl;

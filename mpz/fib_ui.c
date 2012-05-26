@@ -1,6 +1,6 @@
 /* mpz_fib_ui -- calculate Fibonacci numbers.
 
-Copyright 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2005, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,8 +61,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
 
   n2 = n/2;
   xalloc = MPN_FIB2_SIZE (n2) + 1;
-  MPZ_REALLOC (fn, 2*xalloc+1);
-  fp = PTR (fn);
+  fp = MPZ_REALLOC (fn, 2*xalloc+1);
 
   TMP_MARK;
   TMP_ALLOC_LIMBS_2 (xp,xalloc, yp,xalloc);

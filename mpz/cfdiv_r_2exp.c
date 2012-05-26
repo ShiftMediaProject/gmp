@@ -1,6 +1,6 @@
 /* mpz_cdiv_r_2exp, mpz_fdiv_r_2exp -- remainder from mpz divided by 2^n.
 
-Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2004, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -67,8 +67,7 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
       else
 	{
 	  i = MIN (abs_usize, limb_cnt+1);
-	  MPZ_REALLOC (w, i);
-	  wp = PTR(w);
+	  wp = MPZ_REALLOC (w, i);
 	  MPN_COPY (wp, up, i);
 
 	  /* if smaller than limb_cnt then only the copy is needed */
@@ -103,9 +102,8 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
     negate:
       /* twos complement negation to get 2**cnt-u */
 
-      MPZ_REALLOC (w, limb_cnt+1);
+      wp = MPZ_REALLOC (w, limb_cnt+1);
       up = PTR(u);
-      wp = PTR(w);
 
       /* Ones complement */
       i = MIN (abs_usize, limb_cnt+1);

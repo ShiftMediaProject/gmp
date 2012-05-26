@@ -1,6 +1,6 @@
 /* mpz_add, mpz_sub -- add or subtract integers.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2011 Free Software
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2011, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -62,12 +62,11 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
 
   /* If not space for w (and possible carry), increase space.  */
   wsize = abs_usize + 1;
-  MPZ_REALLOC (w, wsize);
+  wp = MPZ_REALLOC (w, wsize);
 
   /* These must be after realloc (u or v may be the same as w).  */
   up = PTR(u);
   vp = PTR(v);
-  wp = PTR(w);
 
   if ((usize ^ vsize) < 0)
     {

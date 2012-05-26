@@ -1,6 +1,6 @@
 /* mpz_addmul, mpz_submul -- add or subtract multiple.
 
-Copyright 2001, 2004, 2005 Free Software Foundation, Inc.
+Copyright 2001, 2004, 2005, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -76,8 +76,7 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
   wsize = ABS(wsize_signed);
 
   tsize = xsize + ysize;
-  MPZ_REALLOC (w, MAX (wsize, tsize) + 1);
-  wp = PTR(w);
+  wp = MPZ_REALLOC (w, MAX (wsize, tsize) + 1);
 
   if (wsize_signed == 0)
     {

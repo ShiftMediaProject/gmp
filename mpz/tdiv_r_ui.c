@@ -1,8 +1,8 @@
 /* mpz_tdiv_r_ui(rem, dividend, divisor_limb)
    -- Set REM to DIVDEND mod DIVISOR_LIMB.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 2001, 2002, 2004, 2005 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 2001, 2002, 2004, 2005, 2012 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -57,8 +57,7 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 	  return rl;
 	}
 
-      MPZ_REALLOC (rem, 2);
-      rp = PTR(rem);
+      rp = MPZ_REALLOC (rem, 2);
 
       TMP_MARK;
       dp[0] = divisor & GMP_NUMB_MASK;

@@ -3,8 +3,8 @@
    always fit into the return type, the negative of the true remainder is
    returned.
 
-Copyright 1994, 1995, 1996, 2001, 2002, 2004, 2005 Free Software Foundation,
-Inc.
+Copyright 1994, 1995, 1996, 2001, 2002, 2004, 2005, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -51,8 +51,7 @@ mpz_cdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
       mp_size_t rn;
       TMP_DECL;
 
-      MPZ_REALLOC (rem, 2);
-      rp = PTR(rem);
+      rp = MPZ_REALLOC (rem, 2);
 
       if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
 	{
