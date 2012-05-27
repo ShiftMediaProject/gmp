@@ -1,4 +1,4 @@
-/* x86 fat binary initializers.
+/* x86_64 fat binary initializers.
 
    Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
    Torbjorn Granlund (port to x86_64)
