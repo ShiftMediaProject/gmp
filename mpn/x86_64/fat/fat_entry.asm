@@ -170,7 +170,7 @@ ifdef(`PIC_OR_DARWIN',`
 
 C long __gmpn_cpuid (char dst[12], int id);
 C
-C This is called only once, so just something simple and compact is fine.
+C This is called only 3 times, so just something simple and compact is fine.
 
 
 define(`rp',  `%rdi')
