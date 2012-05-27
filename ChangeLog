@@ -8,6 +8,8 @@
 
 	* mpn/x86_64/fat/fat.c: abort iff longmode-capable-bit is turned off.
 
+	* mpn/generic/toom8h_mul.c: mark UNLIKELY branches.
+
 2012-05-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz: Use MPZ_REALLOC return value when possible.

@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2009, 2010 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -168,8 +168,8 @@ mpn_toom8h_mul   (mp_ptr pp,
       t = bn - q * n;
 
       if(half) { /* Recover from badly chosen splitting */
-	if (s<1) {p--; s+=n; half=0;}
-	else if (t<1) {q--; t+=n; half=0;}
+	if (UNLIKELY (s<1)) {p--; s+=n; half=0;}
+	else if (UNLIKELY (t<1)) {q--; t+=n; half=0;}
       }
     }
 #undef LIMIT_numerator
@@ -241,7 +241,7 @@ mpn_toom8h_mul   (mp_ptr pp,
 
   /* $\pm1$ */
   sign = mpn_toom_eval_pm1 (v2, v0, p, ap, n, s,    pp);
-  if (q == 3)
+  if (GMP_NUMB_BITS > 12*3 && UNLIKELY (q == 3))
     sign ^= mpn_toom_eval_dgr3_pm1 (v3, v1, bp, n, t,    pp);
   else
     sign ^= mpn_toom_eval_pm1 (v3, v1, q, bp, n, t,    pp);
