@@ -1,3 +1,9 @@
+2012-05-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Add new x86 CPUs.
+	* mpn/x86/fat/fat.c: Likewise.
+	* mpn/x86_64/fat/fat.c: Likewise.
+
 2012-05-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/x86_64/fat/fat.c: abort iff longmode-capable-bit is turned off.

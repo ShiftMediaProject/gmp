@@ -234,9 +234,10 @@ __gmpn_cpuvec_init (void)
 	      CPUVEC_SETUP_core2;
 	      break;
 
-	    case 0x1c:		/* Silverthorne */
-	    case 0x26:		/* Lincroft */
-	    case 0x27:		/* Saltwell */
+	    case 0x1c:		/* Atom Silverthorne */
+	    case 0x26:		/* Atom Lincroft */
+	    case 0x27:		/* Atom Saltwell? */
+	    case 0x36:		/* Atom Cedarview/Saltwell */
 	      CPUVEC_SETUP_atom;
 	      break;
 
@@ -262,6 +263,8 @@ __gmpn_cpuvec_init (void)
 
 	    case 0x2a:		/* SB */
 	    case 0x2d:		/* SBC-EP */
+	    case 0x3a:		/* IBR */
+	    case 0x3c:		/* Haswell */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;

@@ -3,8 +3,8 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2011 Free Software
-# Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2011, 2012 Free
+# Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -780,6 +780,9 @@ main ()
 	  else if (model == 0x2d)	cpu_64bit = 1, modelstr = "coreisbr"; /* SBC-EP */
 	  else if (model == 0x2e)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
 	  else if (model == 0x2f)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
+	  else if (model == 0x3a)	cpu_64bit = 1, modelstr = "coreisbr"; /* IBR */
+	  else if (model == 0x3c)	cpu_64bit = 1, modelstr = "coreisbr"; /* Haswell */
+	  else if (model == 0x36)	cpu_64bit = 1, modelstr = "atom";  /* Cedarview/Saltwell */
 	  else cpu_64bit = 1, modelstr = "corei"; /* default */
 	  break;
 	case 15:
