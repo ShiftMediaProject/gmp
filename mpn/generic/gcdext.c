@@ -85,10 +85,10 @@ hgcd_mul_matrix_vector (struct hgcd_matrix *M,
   return n;
 }
 
-#define COMPUTE_V_ITCH(n) (2*(n) + 1)
+#define COMPUTE_V_ITCH(n) (2*(n))
 
 /* Computes |v| = |(g - u a)| / b, where u may be positive or
-   negative, and v is of the opposite sign. a, b are of size n, u and
+   negative, and v is of the opposite sign. max(a, b) is of size n, u and
    v at most size n, and v must have space for n+1 limbs. */
 static mp_size_t
 compute_v (mp_ptr vp,
@@ -108,9 +108,11 @@ compute_v (mp_ptr vp,
 
   size = ABS (usize);
   ASSERT (size <= n);
+  ASSERT (up[size-1] > 0);
 
   an = n;
   MPN_NORMALIZE (ap, an);
+  ASSERT (gn <= an);
 
   if (an >= size)
     mpn_mul (tp, ap, an, up, size);
@@ -118,9 +120,6 @@ compute_v (mp_ptr vp,
     mpn_mul (tp, up, size, ap, an);
 
   size += an;
-  size -= tp[size - 1] == 0;
-
-  ASSERT (gn <= size);
 
   if (usize > 0)
     {
@@ -132,11 +131,11 @@ compute_v (mp_ptr vp,
 	return 0;
     }
   else
-    { /* usize < 0 */
-      /* |v| = v = (c - u a) / b = (c + |u| a) / b */
-      mp_limb_t cy = mpn_add (tp, tp, size, gp, gn);
-      if (cy)
-	tp[size++] = cy;
+    { /* |v| = v = (g - u a) / b = (g + |u| a) / b. Since g <= a,
+	 (g + |u| a) always fits in (|usize| + an) limbs. */
+      
+      ASSERT_NOCARRY (mpn_add (tp, tp, size, gp, gn));
+      size -= (tp[size - 1] == 0);
     }
 
   /* Now divide t / b. There must be no remainder */
@@ -170,7 +169,7 @@ compute_v (mp_ptr vp,
    For the lehmer call after the loop, Let T denote
    GCDEXT_DC_THRESHOLD. For the gcdext_lehmer call, we need T each for
    u, a and b, and 4T+3 scratch space. Next, for compute_v, we need T
-   for u, T+1 for v and 2T + 1 scratch space. In all, 7T + 3 is
+   for u, T+1 for v and 2T scratch space. In all, 7T + 3 is
    sufficient for both operations.
 
 */

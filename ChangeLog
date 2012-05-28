@@ -1,3 +1,9 @@
+2012-05-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext.c (compute_v): Simplified carry handling a
+	bit, reduced stated scratch need from 2n+1 to 2n. Also comment and
+	ASSERT improvements.
+
 2012-05-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Add new x86 CPUs.
