@@ -241,7 +241,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	  vl = MPN_EXTRACT_NUMB (shift, vp[n-2], vp[n-3]);
 	}
 
-      /* Try an mpn_nhgcd2 step */
+      /* Try an mpn_hgcd2 step */
       if (mpn_hgcd2 (uh, ul, vh, vl, &M))
 	{
 	  n = mpn_matrix22_mul1_inverse_vector (&M, tp, up, vp, n);
