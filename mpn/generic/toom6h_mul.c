@@ -92,41 +92,50 @@ mpn_toom6h_mul   (mp_ptr pp,
 
   /***************************** decomposition *******************************/
 
-  ASSERT( an >= bn);
+  ASSERT (an >= bn);
   /* Can not handle too much unbalancement */
-  ASSERT( bn >= 42 );
+  ASSERT (bn >= 42);
   /* Can not handle too much unbalancement */
-  ASSERT((an*3 <  bn * 8) || ( bn >= 46 && an*6 <  bn * 17 ));
+  ASSERT ((an*3 <  bn * 8) || (bn >= 46 && an * 6 <  bn * 17));
 
   /* Limit num/den is a rational number between
      (12/11)^(log(4)/log(2*4-1)) and (12/11)^(log(6)/log(2*6-1))             */
 #define LIMIT_numerator (18)
 #define LIMIT_denominat (17)
 
-  if( an * LIMIT_denominat < LIMIT_numerator * bn ) /* is 6*... < 6*... */
-    { p = q = 6; }
-  else if( an * 5 * LIMIT_numerator < LIMIT_denominat * 7 * bn )
-    { p = 7; q = 6; }
-  else if( an * 5 * LIMIT_denominat < LIMIT_numerator * 7 * bn )
-    { p = 7; q = 5; }
-  else if( an * LIMIT_numerator < LIMIT_denominat * 2 * bn )  /* is 4*... < 8*... */
-    { p = 8; q = 5; }
-  else if( an * LIMIT_denominat < LIMIT_numerator * 2 * bn )  /* is 4*... < 8*... */
-    { p = 8; q = 4; }
-  else
-    { p = 9; q = 4; }
+  if (LIKELY (an * LIMIT_denominat < LIMIT_numerator * bn)) /* is 6*... < 6*... */
+    {
+      n = 1 + (an - 1) / (size_t) 6;
+      p = q = 5;
+      half = 0;
 
-  half = (p ^ q) & 1;
-  n = 1 + (q * an >= p * bn ? (an - 1) / (size_t) p : (bn - 1) / (size_t) q);
-  p--; q--;
+      s = an - 5 * n;
+      t = bn - 5 * n;
+    }
+  else {
+    if (an * 5 * LIMIT_numerator < LIMIT_denominat * 7 * bn)
+      { p = 7; q = 6; }
+    else if (an * 5 * LIMIT_denominat < LIMIT_numerator * 7 * bn)
+      { p = 7; q = 5; }
+    else if (an * LIMIT_numerator < LIMIT_denominat * 2 * bn)  /* is 4*... < 8*... */
+      { p = 8; q = 5; }
+    else if (an * LIMIT_denominat < LIMIT_numerator * 2 * bn)  /* is 4*... < 8*... */
+      { p = 8; q = 4; }
+    else
+      { p = 9; q = 4; }
 
-  s = an - p * n;
-  t = bn - q * n;
+    half = (p ^ q) & 1;
+    n = 1 + (q * an >= p * bn ? (an - 1) / (size_t) p : (bn - 1) / (size_t) q);
+    p--; q--;
 
-  /* With LIMIT = 16/15, the following recover is needed only if bn<=73*/
-  if (half) { /* Recover from badly chosen splitting */
-    if (s<1) {p--; s+=n; half=0;}
-    else if (t<1) {q--; t+=n; half=0;}
+    s = an - p * n;
+    t = bn - q * n;
+
+    /* With LIMIT = 16/15, the following recover is needed only if bn<=73*/
+    if (half) { /* Recover from badly chosen splitting */
+      if (UNLIKELY (s<1)) {p--; s+=n; half=0;}
+      else if (UNLIKELY (t<1)) {q--; t+=n; half=0;}
+    }
   }
 #undef LIMIT_numerator
 #undef LIMIT_denominat
@@ -166,7 +175,7 @@ mpn_toom6h_mul   (mp_ptr pp,
 
   /* $\pm1$ */
   sign = mpn_toom_eval_pm1 (v2, v0, p, ap, n, s,    pp);
-  if (q == 3)
+  if (UNLIKELY (q == 3))
     sign ^= mpn_toom_eval_dgr3_pm1 (v3, v1, bp, n, t,    pp);
   else
     sign ^= mpn_toom_eval_pm1 (v3, v1, q, bp, n, t,    pp);
@@ -205,8 +214,8 @@ mpn_toom6h_mul   (mp_ptr pp,
   TOOM6H_MUL_N_REC(pp, ap, bp, n, wsi);
 
   /* Infinity */
-  if( half != 0) {
-    if(s>t) {
+  if (UNLIKELY (half != 0)) {
+    if (s > t) {
       TOOM6H_MUL_REC(r0, ap + p * n, s, bp + q * n, t, wsi);
     } else {
       TOOM6H_MUL_REC(r0, bp + q * n, t, ap + p * n, s, wsi);

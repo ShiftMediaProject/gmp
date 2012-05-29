@@ -2,6 +2,8 @@
 
 	* mpz/remove.c: Optimise branches.
 
+	* mpn/generic/toom6h_mul.c: less branches in the LIKELY balanced path.
+
 2012-05-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v5/mod_1_1.asm: New file.
