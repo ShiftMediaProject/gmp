@@ -1,6 +1,6 @@
 /* mpz_remove -- divide out a factor and return its multiplicity.
 
-Copyright 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001, 2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,45 +23,64 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 mp_bitcnt_t
 mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
 {
-  mpz_t fpow[GMP_LIMB_BITS];		/* Really MP_SIZE_T_BITS */
-  mpz_t x, rem;
   mp_bitcnt_t pwr;
-  int p;
+  mp_srcptr fp;
+  mp_size_t sn, fn, afn;
+  mp_limb_t fp0;
 
-  if (UNLIKELY (mpz_cmpabs_ui (f, 1) <= 0))
-    DIVIDE_BY_ZERO;
+  sn = SIZ (src);
+  fn = SIZ (f);
+  fp = PTR (f);
+  afn = ABS (fn);
+  fp0 = fp[0];
 
-  if (UNLIKELY (SIZ (src) == 0))
-    {
-      SIZ (dest) = 0;
-      return 0;
-    }
+  if (UNLIKELY ((afn <= (fp0 == 1)) /* mpz_cmpabs_ui (f, 1) <= 0 */
+		| (sn == 0))) {
+    /*  f = 0 or f = +- 1 or src = 0 */
+    if (afn == 0)
+      DIVIDE_BY_ZERO;
+    mpz_set (dest, src);
+    return 0;
+  }
 
-  if (mpz_cmpabs_ui (f, 2) == 0)
-    {
-      mp_bitcnt_t s0;
-      s0 = mpz_scan1 (src, 0);
-      mpz_div_2exp (dest, src, s0);
-      if (s0 & (SIZ (f) < 0)) /*((s0 % 2 == 1) && (SIZ (f) < 0))*/
-	mpz_neg (dest, dest);
-      return s0;
-    }
+#if 0
+  if ((fp0 & 1) == 1) { /* f is odd */
+    mp_ptr dp;
+    mp_size_t dn;
 
-  /* We could perhaps compute mpz_scan1(src,0)/mpz_scan1(f,0).  It is an
-     upper bound of the result we're seeking.  We could also shift down the
-     operands so that they become odd, to make intermediate values smaller.  */
+    dn = ABS (sn);
+    dp = MPZ_REALLOC (dest, dn);
 
-  mpz_init (rem);
-  mpz_init (x);
+    pwr = mpn_remove (dp, &dn, PTR(src), dn, fp, afn, ~(mp_bitcnt_t) 0);
 
-  pwr = 0;
-  mpz_init (fpow[0]);
-  mpz_set (fpow[0], f);
-  mpz_set (dest, src);
+    SIZ (dest) = ((pwr & (fn < 0)) ^ (sn < 0)) ? -dn : dn;
+  } else
+#endif
+  if (afn == (fp0 == 2)) { /* mpz_cmpabs_ui (f, 2) == 0 */
+    pwr = mpz_scan1 (src, 0);
+    mpz_div_2exp (dest, src, pwr);
+    if (pwr & (SIZ (f) < 0)) /*((pwr % 2 == 1) && (SIZ (f) < 0))*/
+      mpz_neg (dest, dest);
+  } else { /* f != +-2 */
 
-  /* Divide by f, f^2, ..., f^(2^k) until we get a remainder for f^(2^k).  */
-  for (p = 0;; p++)
-    {
+    mpz_t fpow[GMP_LIMB_BITS];		/* Really MP_SIZE_T_BITS */
+    mpz_t x, rem;
+    int p;
+
+    /* We could perhaps compute mpz_scan1(src,0)/mpz_scan1(f,0).  It is an
+       upper bound of the result we're seeking.  We could also shift down the
+       operands so that they become odd, to make intermediate values smaller.  */
+
+    mpz_init (rem);
+    mpz_init (x);
+
+    pwr = 0;
+    mpz_init (fpow[0]);
+    mpz_set (fpow[0], f);
+    mpz_set (dest, src);
+
+    /* Divide by f, f^2, ..., f^(2^k) until we get a remainder for f^(2^k).  */
+    for (p = 0;; p++) {
       mpz_tdiv_qr (x, rem, dest, fpow[p]);
       if (SIZ (rem) != 0)
 	break;
@@ -70,14 +89,13 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
       mpz_set (dest, x);
     }
 
-  pwr = (1L << p) - 1;
+    pwr = (1L << p) - 1;
 
-  mpz_clear (fpow[p]);
+    mpz_clear (fpow[p]);
 
-  /* Divide by f^(2^(k-1)), f^(2^(k-2)), ..., f for all divisors that give a
-     zero remainder.  */
-  while (--p >= 0)
-    {
+    /* Divide by f^(2^(k-1)), f^(2^(k-2)), ..., f for all divisors that give a
+       zero remainder.  */
+    while (--p >= 0) {
       mpz_tdiv_qr (x, rem, dest, fpow[p]);
       if (SIZ (rem) == 0)
 	{
@@ -87,7 +105,9 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
       mpz_clear (fpow[p]);
     }
 
-  mpz_clear (x);
-  mpz_clear (rem);
+    mpz_clear (x);
+    mpz_clear (rem);
+  }
+
   return pwr;
 }
