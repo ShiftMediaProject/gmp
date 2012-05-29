@@ -206,7 +206,7 @@ __gmpn_cpuvec_init (void)
 
   /* Check extended feature flags */
   __gmpn_cpuid (dummy_string, 0x80000001);
-  if ((dummy_string[4 + 29 / 8] & (1 << (29 - 3 * 8))) == 0)
+  if ((dummy_string[4 + 29 / 8] & (1 << (29 % 8))) == 0)
     abort (); /* longmode-capable-bit turned off! */
 
   /*********************************************************/
