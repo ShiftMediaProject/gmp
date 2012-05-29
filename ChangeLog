@@ -1,3 +1,7 @@
+2012-05-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v5/mod_1_1.asm: New file.
+
 2012-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (compute_v): Simplified carry handling a
