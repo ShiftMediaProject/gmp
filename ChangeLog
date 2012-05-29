@@ -1,3 +1,7 @@
+2012-05-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/remove.c: Optimise branches.
+
 2012-05-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v5/mod_1_1.asm: New file.
