@@ -3,6 +3,7 @@
 	* mpz/remove.c: Optimise branches.
 
 	* mpn/generic/toom6h_mul.c: less branches in the LIKELY balanced path.
+	* mpn/generic/toom8h_mul.c: Likewise.
 
 2012-05-29  Torbjorn Granlund  <tege@gmplib.org>
 

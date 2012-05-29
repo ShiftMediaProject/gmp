@@ -132,8 +132,8 @@ mpn_toom8h_mul   (mp_ptr pp,
       half = 0;
       n = 1 + ((an - 1)>>3);
       p = q = 7;
-      s = an - p * n;
-      t = bn - q * n;
+      s = an - 7 * n;
+      t = bn - 7 * n;
     }
   else
     {
@@ -152,7 +152,7 @@ mpn_toom8h_mul   (mp_ptr pp,
       else if (GMP_NUMB_BITS <= 11*3 ||
 	       an * 4 < 9 * bn)
 	{ p =11; q = 5; }
-      else if (an *(LIMIT_numerator/3) < LIMIT_denominat * bn )  /* is 4*... <12*... */
+      else if (an *(LIMIT_numerator/3) < LIMIT_denominat * bn)  /* is 4*... <12*... */
 	{ p =12; q = 5; }
       else if (GMP_NUMB_BITS <= 12*3 ||
 	       an * 9 < 28 * bn )  /* is 4*... <12*... */
@@ -266,8 +266,8 @@ mpn_toom8h_mul   (mp_ptr pp,
   TOOM8H_MUL_N_REC(pp, ap, bp, 0, pp, ap, bp, n, wsi);
 
   /* Infinity */
-  if( half != 0) {
-    if(s>t) {
+  if (UNLIKELY (half != 0)) {
+    if (s > t) {
       TOOM8H_MUL_REC(r0, ap + p * n, s, bp + q * n, t, wsi);
     } else {
       TOOM8H_MUL_REC(r0, bp + q * n, t, ap + p * n, s, wsi);
