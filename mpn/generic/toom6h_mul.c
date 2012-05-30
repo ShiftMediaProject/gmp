@@ -54,7 +54,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	&& BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD)) {			\
       mpn_mul_basecase (p, a, n, b, n);					\
       if (f)								\
-	mpn_mul_basecase (p, a, n, b, n);				\
+	mpn_mul_basecase (p2, a2, n, b2, n);				\
     } else if (MAYBE_mul_toom22						\
 	       && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD)) {		\
       mpn_toom22_mul (p, a, n, b, n, ws);				\
