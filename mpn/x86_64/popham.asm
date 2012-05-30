@@ -70,8 +70,8 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
- POP(`	DOS64_ENTRY(2)		')
- HAM(`	DOS64_ENTRY(3)		')
+ POP(`	FUNC_ENTRY(2)		')
+ HAM(`	FUNC_ENTRY(3)		')
 	push	%r12
 	push	%r13
  HAM(`	push	%r14		')
@@ -161,6 +161,6 @@ L(end):
  HAM(`	pop	%r14		')
 	pop	%r13
 	pop	%r12
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

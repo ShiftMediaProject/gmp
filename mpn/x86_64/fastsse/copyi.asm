@@ -56,7 +56,7 @@ ASM_START()
 	TEXT
 	ALIGN(64)
 PROLOGUE(mpn_copyi)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 
 	cmp	$3, n
 	jc	L(bc)
@@ -126,7 +126,7 @@ L(end):	bt	$0, n
 	mov	(up), %r8
 	mov	%r8, (rp)
 1:
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 C Basecase code.  Needed for good small operands speed, not for
@@ -148,6 +148,6 @@ L(bc):	sub	$2, n
 	jnc	L(ret)
 	mov	(up), %rax
 	mov	%rax, (rp)
-L(ret):	DOS64_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()

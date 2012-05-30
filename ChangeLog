@@ -1,3 +1,8 @@
+2012-05-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64 (FUNC_ENTRY): New name for DOS64_ENTRY.
+	* mpn/x86_64 (FUNC_EXIT): New name for DOS64_EXIT.
+
 2012-05-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/remove.c: Optimise branches.

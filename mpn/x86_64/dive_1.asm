@@ -46,7 +46,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_divexact_1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 
 	mov	%rcx, %rax
@@ -135,14 +135,14 @@ L(ent):	imul	%r10, %rax		C			6
 	imul	%r10, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(one):	shr	R8(%rcx), %rax
 	imul	%r10, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 EPILOGUE()

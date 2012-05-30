@@ -177,7 +177,7 @@ define(`rp',  `%rdi')
 define(`idx', `%rsi')
 
 PROLOGUE(__gmpn_cpuid)
-	DOS64_ENTRY(2)
+	FUNC_ENTRY(2)
 	mov	%rbx, %r8
 	mov	R32(idx), R32(%rax)
 	cpuid
@@ -185,6 +185,6 @@ PROLOGUE(__gmpn_cpuid)
 	mov	%edx, 4(rp)
 	mov	%ecx, 8(rp)
 	mov	%r8, %rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

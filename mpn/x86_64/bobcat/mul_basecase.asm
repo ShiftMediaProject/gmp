@@ -78,7 +78,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_basecase)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
 
 	mov	(up), %rax
@@ -91,7 +91,7 @@ IFDOS(`	mov	56(%rsp), %r8d	')
 	mul	v0			C u0 x v0
 	mov	%rax, (rp)
 	mov	%rdx, 8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(u2):	mul	v0			C u0 x v0
@@ -106,7 +106,7 @@ L(u2):	mul	v0			C u0 x v0
 	jnz	L(u2v2)
 	mov	w0, 8(rp)
 	mov	w1, 16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(u2v2):mov	8(vp), v0
@@ -124,7 +124,7 @@ L(u2v2):mov	8(vp), v0
 	adc	$0, %rdx
 	mov	%rax, 16(rp)
 	mov	%rdx, 24(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 
@@ -471,6 +471,6 @@ L(ret):	pop	%r13
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -42,7 +42,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	mov	(up), %rax
 	movd	R32(%rcx), %mm4
 	neg	R32(%rcx)			C put lsh count in cl
@@ -153,6 +153,6 @@ L(ast):	movq	(up), %mm2
 	psrlq	%mm4, %mm2
 	movq	%mm2, (rp)
 	emms
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

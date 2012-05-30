@@ -43,7 +43,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_lshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	cmp	$1, R8(%rcx)
 	jne	L(gen)
 
@@ -87,7 +87,7 @@ L(t1):	mov	(up), %r8
 	dec	R32(%rax)
 	jne	L(n00)
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(e1):	test	R32(%rax), R32(%rax)	C clear cy
 L(n00):	mov	(up), %r8
@@ -96,7 +96,7 @@ L(n00):	mov	(up), %r8
 	adc	%r8, %r8
 	mov	%r8, (rp)
 L(ret):	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(n01):	dec	R32(%rax)
 	mov	8(up), %r9
@@ -106,7 +106,7 @@ L(n01):	dec	R32(%rax)
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(n10):	mov	16(up), %r10
 	adc	%r8, %r8
@@ -116,7 +116,7 @@ L(n10):	mov	16(up), %r10
 	mov	%r9, 8(rp)
 	mov	%r10, 16(rp)
 	adc	$-1, R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(gen):	neg	R32(%rcx)		C put rsh count in cl
@@ -230,6 +230,6 @@ L(end):
 L(ast):	mov	(up), %r10
 	shl	R8(%rcx), %r10
 	mov	%r10, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

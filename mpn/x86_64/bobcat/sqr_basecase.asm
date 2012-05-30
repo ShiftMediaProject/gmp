@@ -75,7 +75,7 @@ ASM_START()
 	TEXT
 	ALIGN(64)
 PROLOGUE(mpn_sqr_basecase)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 
 	mov	(up), %rax
 
@@ -85,7 +85,7 @@ PROLOGUE(mpn_sqr_basecase)
 	mul	%rax
 	mov	%rax, (rp)
 	mov	%rdx, 8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(ge2):	mov	(up), v0
@@ -114,7 +114,7 @@ L(ge2):	mov	(up), v0
 	adc	$0, %rdx
 	mov	%rax, 16(rp)
 	mov	%rdx, 24(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(g2):	cmp	$3, R32(un_param)
@@ -159,7 +159,7 @@ L(g2):	cmp	$3, R32(un_param)
 	adc	w2, 24(rp)
 	adc	w3, 32(rp)
 	adc	v0, 40(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(g3):	push	%rbx
@@ -550,6 +550,6 @@ L(esd):	add	%rbx, w0
 
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -82,7 +82,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_sqr_basecase)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 	mov	R32(n_param), R32(%rcx)
 	mov	R32(n_param), R32(n)		C free original n register (rdx)
 
@@ -119,7 +119,7 @@ L(1):	mov	(up), %rax
 	add	$40, %rsp
 	mov	%rax, (rp)
 	mov	%rdx, 8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(2):	mov	(up), %rax
@@ -145,7 +145,7 @@ L(2):	mov	(up), %rax
 	mov	%r10, 16(rp)
 	adc	%r8, %r11
 	mov	%r11, 24(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(3):	mov	(up), %rax
@@ -190,7 +190,7 @@ L(3):	mov	(up), %rax
 	adc	%r10, 24(rp)
 	adc	%rdx, 32(rp)
 	adc	%r11, 40(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(4):	mov	(up), %rax
@@ -260,7 +260,7 @@ L(4):	mov	(up), %rax
 	adc	%rcx, 40(rp)
 	adc	%rdx, 48(rp)
 	adc	%rax, 56(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 
@@ -785,6 +785,6 @@ L(d1):	mov	%r11, 24(rp,j,8)
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

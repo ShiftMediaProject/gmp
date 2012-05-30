@@ -56,7 +56,7 @@ ASM_START()
 	TEXT
 	ALIGN(64)
 PROLOGUE(mpn_rshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	movd	R32(%rcx), %xmm4
 	mov	$64, R32(%rax)
 	sub	R32(%rcx), R32(%rax)
@@ -143,13 +143,13 @@ L(end):	bt	$0, R32(n)
 	psllq	%xmm5, %xmm0
 	por	%xmm1, %xmm0
 	movdqa	%xmm0, -16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(e1):	movq	-8(ap), %xmm0
 	psrlq	%xmm4, %xmm0
 	movq	%xmm0, -8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 C Basecase
@@ -159,7 +159,7 @@ L(bc):	dec	R32(n)
 	movq	(ap), %xmm0
 	psrlq	%xmm4, %xmm0
 	movq	%xmm0, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 1:	movq	(ap), %xmm1
@@ -173,7 +173,7 @@ L(bc):	dec	R32(n)
 	movq	8(ap), %xmm0
 	psrlq	%xmm4, %xmm0
 	movq	%xmm0, 8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 1:	movq	8(ap), %xmm1
@@ -185,6 +185,6 @@ L(bc):	dec	R32(n)
 	movq	16(ap), %xmm0
 	psrlq	%xmm4, %xmm0
 	movq	%xmm0, 16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

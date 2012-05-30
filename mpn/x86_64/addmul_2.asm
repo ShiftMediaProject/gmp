@@ -57,7 +57,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_addmul_2)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	mov	n_param, n
 	push	%rbx
 	push	%rbp
@@ -168,6 +168,6 @@ L(end):	xor	R32(w1), R32(w1)
 
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -44,7 +44,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_rshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	mov	R32(%rdx), R32(%rax)
 	and	$3, R32(%rax)
 	jne	L(nb00)
@@ -74,7 +74,7 @@ L(b01):	mov	(up), %r9
 	jmp	L(01)
 L(le1):	shr	R8(cnt), %r9
 	mov	%r9, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(nb01):C n = 2, 6, 10, ...
@@ -93,7 +93,7 @@ L(le2):	shrd	R8(cnt), %r9, %r8
 	mov	%r8, (rp)
 	shr	R8(cnt), %r9
 	mov	%r9, 8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 	ALIGN(16)
@@ -131,6 +131,6 @@ L(end):	shrd	R8(cnt), %r8, %r11
 	mov	%r8, 8(rp)
 	shr	R8(cnt), %r9
 	mov	%r9, 16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

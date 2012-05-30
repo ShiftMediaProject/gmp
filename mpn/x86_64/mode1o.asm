@@ -70,12 +70,12 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 	mov	$0, R32(%rcx)
 IFDOS(`	jmp	L(ent)		')
 
 PROLOGUE(mpn_modexact_1c_odd)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 L(ent):
 	C rdi	src
 	C rsi	size
@@ -165,7 +165,7 @@ L(one):
 	mul	%r8			C climb = high (q * d)
 
 	lea	(%rcx,%rdx), %rax	C climb+cbit
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 EPILOGUE(mpn_modexact_1c_odd)

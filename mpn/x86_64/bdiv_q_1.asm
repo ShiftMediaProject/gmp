@@ -48,7 +48,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_bdiv_q_1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 
 	mov	%rcx, %rax
@@ -95,7 +95,7 @@ L(evn):	bsf	%rax, %rcx
 EPILOGUE()
 
 PROLOGUE(mpn_pi1_bdiv_q_1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 IFDOS(`	mov	64(%rsp), %r9	')
 	push	%rbx
@@ -151,13 +151,13 @@ L(ent):	imul	%r8, %rax
 	imul	%r8, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(one):	shr	R8(%rcx), %rax
 	imul	%r8, %rax
 	mov	%rax, (%rdi)
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

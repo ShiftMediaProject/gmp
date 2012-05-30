@@ -54,7 +54,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_copyd)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 
 	test	n, n
 	jz	L(don)
@@ -129,6 +129,6 @@ L(sma):	test	$8, R8(n)
 	mov	8(up), %r8
 	mov	%r8, 8(rp)
 1:
-L(don):	DOS64_EXIT()
+L(don):	FUNC_EXIT()
 	ret
 EPILOGUE()

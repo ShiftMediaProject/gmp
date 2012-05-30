@@ -47,7 +47,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbp
 	mov	cy, %rax
@@ -66,7 +66,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(func_n)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbp
 	xor	R32(%rbp), R32(%rbp)	C limb carry
 	mov	(vp), %r8
@@ -157,6 +157,6 @@ L(end):	shr	$RSH, %rbp
 	ADCSBB	$0, %rbp
 	mov	%rbp, %rax
 	pop	%rbp
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -48,7 +48,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_rshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	shr	R32(n)
 	mov	(up), %rax
 	jnc	L(evn)
@@ -60,7 +60,7 @@ PROLOGUE(mpn_rshift)
 	test	n, n
 	jnz	L(gt1)
 	mov	%r11, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(gt1):	mov	8(up), %r8
@@ -105,6 +105,6 @@ L(end):	shr	R8(cnt), %r10
 	shr	R8(cnt), %r11
 	mov	%r9, 8(rp)
 	mov	%r11, 16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

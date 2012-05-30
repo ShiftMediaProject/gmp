@@ -74,7 +74,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1_1p)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbp
 	push	%rbx
 	mov	%rdx, b
@@ -167,7 +167,7 @@ L(ok):	shr	R8(%rcx), %rax
 
 	pop	%rbx
 	pop	%rbp
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(fix):	sub	b, %rax
 	jmp	L(ok)
@@ -175,7 +175,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1_1p_cps)
-	DOS64_ENTRY(2)
+	FUNC_ENTRY(2)
 	push	%rbp
 	bsr	%rsi, %rcx
 	push	%rbx
@@ -218,7 +218,7 @@ L(z):
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 ASM_END()

@@ -81,7 +81,7 @@ ifdef(`VARIANT_1',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	movq	(vp), %r8
 	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
@@ -120,7 +120,7 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	DOS64_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()
 ')
@@ -129,7 +129,7 @@ ifdef(`VARIANT_2',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	movq	(vp), %r8
 	notq	%r8
 	movl	R32(%rcx), R32(%rax)
@@ -173,7 +173,7 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	DOS64_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()
 ')
@@ -182,7 +182,7 @@ ifdef(`VARIANT_3',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	movq	(vp), %r8
 	movl	R32(%rcx), R32(%rax)
 	leaq	(vp,n,8), vp
@@ -227,7 +227,7 @@ L(e10):	movq	24(vp,n,8), %r9
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	L(oop)
-L(ret):	DOS64_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()
 ')

@@ -25,13 +25,13 @@ define(`LEA',`
 define(`JUMPTABSECT', `RODATA')
 
 
-dnl  Usage: DOS64_ENTRY(nregparmas)
-dnl  Usage: DOS64_EXIT()
+dnl  Usage: FUNC_ENTRY(nregparmas)
+dnl  Usage: FUNC_EXIT()
 
-dnl  DOS64_ENTRY and DOS64_EXIT provide an easy path for adoption of standard
+dnl  FUNC_ENTRY and FUNC_EXIT provide an easy path for adoption of standard
 dnl  ABI assembly to the DOS64 ABI.
 
-define(`DOS64_ENTRY',
+define(`FUNC_ENTRY',
 	`push	%rdi
 	push	%rsi
 	mov	%rcx, %rdi
@@ -43,7 +43,7 @@ ifelse(eval($1>=4),1,`dnl
 	mov	%r9, %rcx
 ')')')')
 
-define(`DOS64_EXIT',
+define(`FUNC_EXIT',
 	`pop	%rsi
 	pop	%rdi')
 

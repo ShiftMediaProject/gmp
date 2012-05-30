@@ -45,7 +45,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 	push	%r12
 	push	%rbp
@@ -185,7 +185,7 @@ L(1):	mov	%r11, 8(rp)
 	pop	%r12
 	pop	%rbx
 	emms
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(c3):	mov	$1, R8(%rax)
 	jmp	L(rc3)

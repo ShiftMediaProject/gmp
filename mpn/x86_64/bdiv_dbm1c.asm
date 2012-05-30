@@ -48,7 +48,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_bdiv_dbm1c)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	mov	(up), %rax
 	mov	n_param, n
@@ -90,6 +90,6 @@ L(lo1):	sub	%rax, %r8
 	jnz	L(top)
 
 	mov	%r8, %rax
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

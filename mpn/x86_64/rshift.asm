@@ -43,7 +43,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	neg	R32(%rcx)		C put rsh count in cl
 	mov	(up), %rax
 	shl	R8(%rcx), %rax		C function return value
@@ -160,6 +160,6 @@ L(end):
 L(ast):	mov	(up), %r10
 	shr	R8(%rcx), %r10
 	mov	%r10, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

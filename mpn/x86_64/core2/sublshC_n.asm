@@ -40,7 +40,7 @@ ASM_START()
 	TEXT
 	ALIGN(8)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 	push	%r12
 
@@ -142,6 +142,6 @@ L(end):	shr	$RSH, %r11
 	pop	%rbx
 	sub	R32(%r11), R32(%rax)
 	neg	R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

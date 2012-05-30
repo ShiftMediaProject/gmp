@@ -67,7 +67,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_preinv_divrem_1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 IFDOS(`	mov	64(%rsp), %r9	')
 	xor	R32(%rax), R32(%rax)
@@ -90,7 +90,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_divrem_1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	xor	R32(%rax), R32(%rax)
 	push	%r13
@@ -222,6 +222,6 @@ L(ret):	pop	%rbx
 	pop	%rbp
 	pop	%r12
 	pop	%r13
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

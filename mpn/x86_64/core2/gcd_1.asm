@@ -69,7 +69,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_gcd_1)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 	mov	(up), %rax	C U low limb
 	or	v0, %rax
 	bsf	%rax, %rax	C min(ctz(u0),ctz(v0))
@@ -129,6 +129,6 @@ L(mid):	shr	R8(%rcx), %rax	C               1,7   1,6   2,8   2,8   2,8
 L(end):	pop	%rcx
 	mov	%rdx, %rax
 	shl	R8(%rcx), %rax
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

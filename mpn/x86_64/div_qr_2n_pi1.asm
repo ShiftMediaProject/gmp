@@ -52,7 +52,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_div_qr_2n_pi1)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 IFDOS(`	mov	64(%rsp), %r9	')
 IFDOS(`define(`di_param', `72(%rsp)')')
@@ -131,7 +131,7 @@ L(end):
 	pop	%r13
 	pop	%r14
 	pop	%r15
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(fix):	C Unlikely update. u2 >= d1

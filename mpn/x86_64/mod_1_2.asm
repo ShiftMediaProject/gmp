@@ -38,7 +38,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_2p)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%r14
 	test	$1, R8(%rsi)
 	mov	%rdx, %r14
@@ -149,7 +149,7 @@ L(1):	xor	R32(%rcx), R32(%rcx)
 	pop	%r12
 	pop	%r13
 	pop	%r14
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 L(one):
 	mov	(%rdi), %r8
@@ -160,7 +160,7 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_2p_cps)
-	DOS64_ENTRY(2)
+	FUNC_ENTRY(2)
 	push	%rbp
 	bsr	%rsi, %rcx
 	push	%rbx
@@ -222,6 +222,6 @@ ifdef(`SHLD_SLOW',`
 	pop	%r12
 	pop	%rbx
 	pop	%rbp
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

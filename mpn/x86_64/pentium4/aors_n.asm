@@ -55,12 +55,12 @@ MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 ASM_START()
 	TEXT
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	xor	%r8, %r8
 IFDOS(`	jmp	L(ent)		')
 EPILOGUE()
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 L(ent):	push	%rbx
 	push	%r12
@@ -180,6 +180,6 @@ L(1):	mov	%r11, 8(rp)
 L(ret):	mov	R32(%rbx), R32(%rax)
 	pop	%r12
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

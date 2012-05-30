@@ -44,7 +44,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_lshift)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	lea	-8(rp,n,8), rp
 	lea	-8(up,n,8), up
 
@@ -76,7 +76,7 @@ L(b01):	mov	(up), %r9
 	jmp	L(01)
 L(le1):	shl	R8(cnt), %r9
 	mov	%r9, (rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(nb01):C n = 2, 6, 10, ...
@@ -95,7 +95,7 @@ L(le2):	shld	R8(cnt), %r9, %r8
 	mov	%r8, (rp)
 	shl	R8(cnt), %r9
 	mov	%r9, -8(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 	ALIGN(16)			C performance critical!
@@ -133,6 +133,6 @@ L(end):	shld	R8(cnt), %r8, %r11
 	mov	%r8, -8(rp)
 	shl	R8(cnt), %r9
 	mov	%r9, -16(rp)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

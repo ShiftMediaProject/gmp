@@ -57,7 +57,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_tabselect)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%rbx
 	push	%rbp
@@ -110,6 +110,6 @@ L(outer_end):
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -62,7 +62,7 @@ ASM_START()
         TEXT
         ALIGN(16)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%r12
 	push	%rbp
@@ -201,6 +201,6 @@ L(cj1):	mov	%r9, 8(rp,n,8)
 	pop	%rbx
 	pop	%rbp
 	pop	%r12
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

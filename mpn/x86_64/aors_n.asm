@@ -58,7 +58,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	mov	R32(n), R32(%rax)
 	shr	$2, n
@@ -74,7 +74,7 @@ IFDOS(`	mov	56(%rsp), %r8	')
 EPILOGUE()
 	ALIGN(16)
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	mov	R32(n), R32(%rax)
 	shr	$2, n
 	and	$3, R32(%rax)
@@ -91,7 +91,7 @@ L(lt4):	dec	R32(%rax)
 	ADCSBB	(vp), %r8
 	mov	%r8, (rp)
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(2):	dec	R32(%rax)
@@ -102,7 +102,7 @@ L(2):	dec	R32(%rax)
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 L(3):	mov	16(up), %r10
@@ -113,7 +113,7 @@ L(3):	mov	16(up), %r10
 	mov	%r9, 8(rp)
 	mov	%r10, 16(rp)
 	setc	R8(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 	ALIGN(16)
@@ -151,6 +151,6 @@ L(end):	lea	32(up), up
 	dec	R32(%rax)
 	jnz	L(lt4)
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

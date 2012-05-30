@@ -60,7 +60,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_2)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
@@ -176,6 +176,6 @@ L(m22):	mul	v1
 
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

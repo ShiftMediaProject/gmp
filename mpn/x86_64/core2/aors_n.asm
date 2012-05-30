@@ -55,13 +55,13 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	jmp	L(start)
 EPILOGUE()
 
 PROLOGUE(func)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	xor	%r8, %r8
 L(start):
 	mov	(up), %r10
@@ -100,7 +100,7 @@ L(end):	ADCSBB	%r11, %r10
 	mov	%r10, 8(rp)
 	mov	R32(%rcx), R32(%rax)	C clear eax, ecx contains 0
 	adc	R32(%rax), R32(%rax)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 
 	ALIGN(16)

@@ -46,7 +46,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_popcount)
-	DOS64_ENTRY(2)
+	FUNC_ENTRY(2)
 
 ifelse(1,1,`
 	lea	(up,n,8), up
@@ -122,6 +122,6 @@ C 1 = n mod 8
 
 	add	$8, n
 	js	L(top)
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

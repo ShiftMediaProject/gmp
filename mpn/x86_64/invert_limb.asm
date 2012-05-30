@@ -42,7 +42,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)		C			Kn	C2	Ci
-	DOS64_ENTRY(1)
+	FUNC_ENTRY(1)
 	mov	%rdi, %rax		C			 0	 0	 0
 	shr	$55, %rax		C			 1	 1	 1
 ifdef(`PIC',`
@@ -98,7 +98,7 @@ ifdef(`DARWIN',`
 	adc	%rdi, %rdx
 	sub	%rdx, %rax
 
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 ASM_END()

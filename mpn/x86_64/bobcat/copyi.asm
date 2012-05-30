@@ -47,7 +47,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_copyi)
-	DOS64_ENTRY(3)
+	FUNC_ENTRY(3)
 	lea	-32(up,n,8), up
 	lea	-32(rp,n,8), rp
 	neg	n
@@ -78,6 +78,6 @@ L(end):	cmp	$4, R32(n)
 	mov	16(up,n,8), %r8
 	mov	%r8, 16(rp,n,8)
 
-L(ret):	DOS64_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()

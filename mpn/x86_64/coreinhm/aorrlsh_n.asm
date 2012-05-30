@@ -69,7 +69,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(func_n)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
 	push	%rbx
 	xor	R32(%rbx), R32(%rbx)	C clear CF save register
@@ -175,11 +175,11 @@ L(wd1):	shrd	%cl, %r8, %r11
 IFRSB(	neg	%rax)
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 PROLOGUE(func_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')	C cnt
 IFDOS(`	mov	64(%rsp), %r9	')	C cy
 	push	%rbx

@@ -49,7 +49,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)
-	DOS64_ENTRY(2)
+	FUNC_ENTRY(2)
 
 	mov	$0x0000FFFFFFFFFFFF, %r11
 
@@ -73,7 +73,7 @@ PROLOGUE(mpn_mod_34lsub1)
 
 	shl	$16, %rdx		C src[1] low
 	add	%rdx, %rax
-L(one):	DOS64_EXIT()
+L(one):	FUNC_EXIT()
 	ret
 
 
@@ -184,6 +184,6 @@ L(0):	add	%r9, %rax
 	add	%rdx, %rax		C apply 2mod3 high
 	add	%rdi, %rax		C apply 2mod3 low
 
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

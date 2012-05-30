@@ -49,7 +49,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_sublsh1_n)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbp
 	push	%r15
 	xor	R32(%rbp), R32(%rbp)
@@ -214,11 +214,11 @@ L(rtn):
 
 	pop	%r15
 	pop	%rbp
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 PROLOGUE(mpn_sublsh1_nc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8	')
 	push	%rbp
 	push	%r15

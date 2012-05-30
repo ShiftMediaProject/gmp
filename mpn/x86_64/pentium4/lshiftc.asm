@@ -42,7 +42,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_lshiftc)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	mov	-8(up,n,8), %rax
 	pcmpeqd	%mm6, %mm6		C 0xffff...fff
 	movd	R32(%rcx), %mm4
@@ -162,6 +162,6 @@ L(ast):	movq	(up), %mm2
 	pxor	%mm6, %mm2
 	movq	%mm2, (rp)
 	emms
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

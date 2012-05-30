@@ -63,7 +63,7 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_n)
-	DOS64_ENTRY(4)
+	FUNC_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
@@ -175,6 +175,6 @@ ifdef(`OPERATION_rsblsh2_n',`
 
 	pop	%rbp
 	pop	%rbx
-	DOS64_EXIT()
+	FUNC_EXIT()
 	ret
 EPILOGUE()

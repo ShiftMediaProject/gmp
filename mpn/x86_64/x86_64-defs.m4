@@ -191,8 +191,8 @@ define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
 dnl  These macros are defined just for DOS64, where they provide calling
 dnl  sequence glue code.
 
-define(`DOS64_ENTRY',`')
-define(`DOS64_EXIT',`')
+define(`FUNC_ENTRY',`')
+define(`FUNC_EXIT',`')
 
 
 dnl  Target ABI macros.
