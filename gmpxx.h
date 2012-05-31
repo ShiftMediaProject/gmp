@@ -1641,7 +1641,14 @@ public:
   explicit __gmp_expr(const char *s, int base = 0)
   {
     mpq_init (mp);
-    if (mpq_set_str(mp, s, base) != 0)
+    // If s is the literal 0, we meant to call another constructor.
+    // If s just happens to evaluate to 0, we would crash, so whatever.
+    if (s == 0)
+      {
+	// Don't turn mpq_class(0,0) into 0
+	mpz_set_si(mpq_denref(mp), base);
+      }
+    else if (mpq_set_str(mp, s, base) != 0)
       {
         mpq_clear (mp);
         throw std::invalid_argument ("mpq_set_str");

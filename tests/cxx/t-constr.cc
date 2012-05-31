@@ -320,6 +320,7 @@ check_mpq (void)
     const char *a = "FFFF";
     int base = 16;
     mpq_class b(a, base); ASSERT_ALWAYS(b == 65535u);
+    mpq_class c(0, 1); ASSERT_ALWAYS(c == 0);
   }
 
   // mpq_class(const std::string &)
