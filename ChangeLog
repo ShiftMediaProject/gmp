@@ -15,6 +15,8 @@
 	* tests/mpn/t-bdiv.c: Test also mpn_bdiv_qr.
 	* mpn/generic/bdiv_qr.c: Add an ASSERT.
 
+	* mpn/generic/remove.c: Add a zero limb to use bdiv_qr...
+
 2012-05-31  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (mpq_class::mpq_class): Handle mpq_class(0,1).

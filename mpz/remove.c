@@ -51,7 +51,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
     dn = ABS (sn);
     dp = MPZ_REALLOC (dest, dn);
 
-    pwr = mpn_remove (dp, &dn, PTR(src), dn, fp, afn, ~(mp_bitcnt_t) 0);
+    pwr = mpn_remove (dp, &dn, PTR(src), dn, PTR(f), afn, ~(mp_bitcnt_t) 0);
 
     SIZ (dest) = ((pwr & (fn < 0)) ^ (sn < 0)) ? -dn : dn;
   } else

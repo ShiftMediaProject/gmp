@@ -68,8 +68,8 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
   TMP_MARK;
 
   tp = TMP_ALLOC_LIMBS ((un + vn) / 2); /* remainder */
-  qp = TMP_ALLOC_LIMBS (un);		/* quotient, alternating */
-  qp2 = TMP_ALLOC_LIMBS (un);		/* quotient, alternating */
+  qp = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
+  qp2 = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
   np = TMP_ALLOC_LIMBS (un + LOG);	/* powers of V */
   pp = vp;
   pn = vn;
@@ -77,7 +77,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
   /* FIXME: This allocation need indicate a flaw in the current itch mechanism:
      Which operands not greater than un,un will incur the worst itch?  We need
      a parallel foo_maxitch set of functions.  */
-  scratch_out = TMP_ALLOC_LIMBS (mpn_bdiv_qr_itch (un, un >> 1));
+  scratch_out = TMP_ALLOC_LIMBS (mpn_bdiv_qr_itch (un + 1, (un + 1) >> 1));
 
   MPN_COPY (qp, up, un);
   qn = un;
@@ -85,7 +85,8 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
   npowers = 0;
   while (qn >= pn)
     {
-      mpn_bdiv_qr (qp2, tp, qp, qn, pp, pn, scratch_out);
+      qp[qn] = 0;
+      mpn_bdiv_qr (qp2, tp, qp, qn + 1, pp, pn, scratch_out);
       if (!mpn_zero_p (tp, pn))
 	break;			/* could not divide by V^npowers */
 
@@ -115,6 +116,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   for (i = npowers - 1; i >= 0; i--)
     {
+      qp[qn] = 0;
       pp = pwpsp[i];
       pn = pwpsn[i];
       if (qn < pn)
@@ -123,7 +125,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       if (pwr + ((mp_bitcnt_t) 1 << i) > cap)
 	continue;		/* V^i would bring us past cap */
 
-      mpn_bdiv_qr (qp2, tp, qp, qn, pp, pn, scratch_out);
+      mpn_bdiv_qr (qp2, tp, qp, qn + 1, pp, pn, scratch_out);
       if (!mpn_zero_p (tp, pn))
 	continue;		/* could not divide by V^i */
 
