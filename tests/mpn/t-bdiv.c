@@ -296,6 +296,27 @@ main (int argc, char **argv)
 	  check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_dcpi1_bdiv_q");
 	}
 
+      if (nn > dn)
+	{
+	  /* Test mpn_bdiv_qr */
+	  itch = mpn_bdiv_qr_itch (nn, dn);
+	  if (itch + 1 > alloc)
+	    {
+	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	      alloc = itch + 1;
+	    }
+	  scratch[itch] = ran;
+	  MPN_ZERO (qp, nn - dn);
+	  MPN_ZERO (rp, dn);
+	  rp[dn] = rran1;
+	  rh = mpn_bdiv_qr (qp, rp, np, nn, dp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	  ASSERT_ALWAYS (rp[-1] == rran0);  ASSERT_ALWAYS (rp[dn] == rran1);
+
+	  check_one (qp, rp, rh, np, nn, dp, dn, "mpn_bdiv_qr");
+	}
+
       if (nn - dn < 2 || dn < 2)
 	continue;
 
