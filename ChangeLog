@@ -1,5 +1,7 @@
 2012-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/io.c: Use a wider range of bases.
+
 	* tests/mpz/t-cong.c (check_random): Rewrite random generation for
 	exponentially distributed operand sizes.
 

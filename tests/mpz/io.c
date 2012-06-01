@@ -1,6 +1,6 @@
 /* Test conversion and I/O using mpz_out_str and mpz_inp_str.
 
-Copyright 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,7 +45,7 @@ main (int argc, char **argv)
   int i;
   int reps = 10000;
   FILE *fp;
-  int base;
+  int base, base_out;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
@@ -79,12 +79,17 @@ main (int argc, char **argv)
 
       mpz_urandomb (bs, rands, 16);
       bsi = mpz_get_ui (bs);
-      base = bsi % 36 + 1;
+      base = bsi % 62 + 1;
       if (base == 1)
 	base = 0;
 
+      if (i % 2 == 0 && base <= 36)
+	base_out = -base;
+      else
+	base_out = base;
+
       rewind (fp);
-      if (mpz_out_str (fp, base, op1) == 0
+      if (mpz_out_str (fp, base_out, op1) == 0
 	  || putc (' ', fp) == EOF
 	  || fflush (fp) != 0)
 	{
