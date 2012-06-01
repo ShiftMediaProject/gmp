@@ -138,7 +138,7 @@ check_random (int argc, char *argv[])
   mpz_t   a, c, d, ra, rc;
   int     i;
   int     want;
-  int     reps = 20000;
+  int     reps = 10000;
   mpz_t bs;
   unsigned long size_range, size;
 
@@ -156,11 +156,14 @@ check_random (int argc, char *argv[])
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 14 + 1; /* 0..16384 bit operands */
+      size_range = mpz_get_ui (bs) % 16 + 1; /* 0..65536 bit operands */
 
       mpz_urandomb (bs, rands, size_range);
       size = mpz_get_ui (bs);
       mpz_rrandomb (a, rands, size);
+
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 16 + 1; /* 0..65536 bit operands */
 
       mpz_urandomb (bs, rands, size_range);
       size = mpz_get_ui (bs);
@@ -168,6 +171,9 @@ check_random (int argc, char *argv[])
 
       do
 	{
+	  mpz_urandomb (bs, rands, 32);
+	  size_range = mpz_get_ui (bs) % 16 + 1; /* 0..65536 bit operands */
+
 	  mpz_urandomb (bs, rands, size_range);
 	  size = mpz_get_ui (bs);
 	  mpz_rrandomb (d, rands, size);
