@@ -1,6 +1,6 @@
 /* mpq_abs -- absolute value of a rational.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,14 +31,14 @@ mpq_abs (mpq_ptr dst, mpq_srcptr src)
   if (dst != src)
     {
       mp_size_t  den_size = SIZ(DEN(src));
+      mp_ptr dp;
 
-      MPZ_REALLOC (mpq_numref(dst), num_abs_size);
-      MPZ_REALLOC (mpq_denref(dst), den_size);
+      dp = MPZ_REALLOC (NUM(dst), num_abs_size);
+      MPN_COPY (dp, PTR(NUM(src)), num_abs_size);
 
-      MPN_COPY (PTR(NUM(dst)), PTR(NUM(src)), num_abs_size);
-      MPN_COPY (PTR(DEN(dst)), PTR(DEN(src)), den_size);
-
+      dp = MPZ_REALLOC (DEN(dst), den_size);
       SIZ(DEN(dst)) = den_size;
+      MPN_COPY (dp, PTR(DEN(src)), den_size);
     }
 
   SIZ(NUM(dst)) = num_abs_size;

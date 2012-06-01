@@ -1,3 +1,7 @@
+2012-06-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpq: Use more macros and MPZ_REALLOC return value when possible.
+
 2012-05-31  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (mpq_class::mpq_class): Handle mpq_class(0,1).

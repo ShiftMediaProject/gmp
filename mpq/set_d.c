@@ -1,6 +1,6 @@
 /* mpq_set_d(mpq_t q, double d) -- Set q to d without rounding.
 
-Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2000, 2002, 2003, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -98,8 +98,7 @@ mpq_set_d (mpq_ptr dest, double d)
 #endif
       dn += nn + 1;
       ASSERT_ALWAYS (dn > 0);
-      MPZ_REALLOC (DEN(dest), dn);
-      dp = PTR(DEN(dest));
+      dp = MPZ_REALLOC (DEN(dest), dn);
       MPN_ZERO (dp, dn - 1);
       dp[dn - 1] = 1;
       count_trailing_zeros (c, np[0] | dp[0]);
@@ -116,8 +115,7 @@ mpq_set_d (mpq_ptr dest, double d)
   else
     {
       nn = exp;
-      MPZ_REALLOC (NUM(dest), nn);
-      np = PTR(NUM(dest));
+      np = MPZ_REALLOC (NUM(dest), nn);
       switch (nn)
         {
 	default:

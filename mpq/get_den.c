@@ -1,6 +1,6 @@
 /* mpq_get_den(den,rat_src) -- Set DEN to the denominator of RAT_SRC.
 
-Copyright 1991, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2001, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,12 +21,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpq_get_den (MP_INT *den, const MP_RAT *src)
+mpq_get_den (mpz_ptr den, mpq_srcptr src)
 {
   mp_size_t size = SIZ(DEN(src));
+  mp_ptr dp;
 
-  MPZ_REALLOC (den, size);
-
-  MPN_COPY (PTR(den), PTR(DEN(src)), size);
+  dp = MPZ_REALLOC (den, size);
   SIZ(den) = size;
+  MPN_COPY (dp, PTR(DEN(src)), size);
 }
