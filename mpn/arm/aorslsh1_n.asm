@@ -26,7 +26,7 @@ C	     cycles/limb     cycles/limb
 C StrongARM	 ?		 ?
 C XScale	 ?		 ?
 C Cortex-A8	 ?		 ?
-C Cortex-A9	 3.17		 3.7
+C Cortex-A9	 3.12		 3.7
 C Cortex-A15	 ?		 ?
 
 C TODO
@@ -46,7 +46,7 @@ ifdef(`OPERATION_addlsh1_n', `
   define(`SETCY',	`cmp	$1, #1')
   define(`RETVAL',	`adc	r0, $1, #2')
   define(`SAVECY',	`sbc	$1, $2, #0')
-  define(`RESTCY',	`adds	$1, $1, #1')
+  define(`RESTCY',	`cmn	$1, #1')
   define(`REVCY',	`')
   define(`INICYR',	`mov	$1, #0')
   define(`r10r11',	`r11')
@@ -58,10 +58,10 @@ ifdef(`OPERATION_sublsh1_n', `
   define(`SETCY',	`rsbs	$1, $1, #0')
   define(`RETVAL',	`adc	r0, $1, #1')
   define(`SAVECY',	`sbc	$1, $1, $1')
-  define(`RESTCY',	`adds	$1, $1, #1')
+  define(`RESTCY',	`cmn	$1, #1')
   define(`REVCY',	`sbc	$1, $1, $1
-			adds	$1, $1, #1')
-  define(`INICYR',	`mov	$1, #-1')
+			cmn	$1, #1')
+  define(`INICYR',	`mvn	$1, #0')
   define(`r10r11',	`r10')
   define(`func',	mpn_sublsh1_n)
   define(`func_nc',	mpn_sublsh1_nc)')
@@ -88,8 +88,8 @@ L(top):	RESTCY(	r14)
 	ADDSUBC	r5, r5, r9
 	ADDSUBC	r6, r6, r10
 	ldmia	vp!, {r8, r9, r10}
-	REVCY(r14)
 	stmia	rp!, {r4, r5, r6}
+	REVCY(r14)
 	adcs	r8, r8, r8
 	adcs	r9, r9, r9
 	adcs	r10, r10, r10
@@ -102,8 +102,8 @@ L(top):	RESTCY(	r14)
 	ADDSUBC	r5, r5, r9
 	ADDSUBC	r6, r6, r10
 	ldmia	vp!, {r8, r9, r10}
-	REVCY(r12)
 	stmia	rp!, {r4, r5, r6}
+	REVCY(r12)
 L(mid):	adcs	r8, r8, r8
 	adcs	r9, r9, r9
 	adcs	r10, r10, r10

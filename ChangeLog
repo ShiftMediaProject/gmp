@@ -1,5 +1,8 @@
 2012-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/aorslsh1_n.asm: Use cmp/cmn instead of subs/adds in more
+	places.
+
 	* mpz/get_str.c: Don't strip leading zeros since current mpn_get_str
 	won't generate any.  Misc streamlining.
 	* mpz/out_str.c: Analogous changes.
