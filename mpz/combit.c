@@ -24,10 +24,10 @@ void
 mpz_combit (mpz_ptr d, mp_bitcnt_t bit_index)
 {
   mp_size_t dsize = ABSIZ(d);
-  mp_ptr dp = LIMBS(d);
+  mp_ptr dp = PTR(d);
 
   mp_size_t limb_index = bit_index / GMP_NUMB_BITS;
-  mp_limb_t bit = ((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+  mp_limb_t bit = (CNST_LIMB (1) << (bit_index % GMP_NUMB_BITS));
 
   if (limb_index >= dsize)
     {

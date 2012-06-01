@@ -2,6 +2,9 @@
 
 	* mpq: Use more macros and MPZ_REALLOC return value when possible.
 
+	* gmp-impl.h (LIMBS): Removed, was an alias for PTR.
+	* mpz/combit.c: Use PTR and CNST_LIMB.
+	
 2012-05-31  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (mpq_class::mpq_class): Handle mpq_class(0,1).
