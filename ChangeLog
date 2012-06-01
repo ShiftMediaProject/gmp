@@ -13,6 +13,7 @@
 	* mpz/combit.c: Use PTR and CNST_LIMB.
 
 	* tests/mpn/t-bdiv.c: Test also mpn_bdiv_qr.
+	* mpn/generic/bdiv_qr.c: Add an ASSERT.
 
 2012-05-31  Marc Glisse  <marc.glisse@inria.fr>
 

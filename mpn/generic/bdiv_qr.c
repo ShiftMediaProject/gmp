@@ -40,6 +40,7 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
   mp_limb_t di;
   mp_limb_t rh;
 
+  ASSERT (nn > dn);
   if (BELOW_THRESHOLD (dn, DC_BDIV_QR_THRESHOLD) ||
       BELOW_THRESHOLD (nn - dn, DC_BDIV_QR_THRESHOLD))
     {
