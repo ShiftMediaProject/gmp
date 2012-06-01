@@ -1,6 +1,6 @@
 /* test mpz_congruent_p and mpz_congruent_ui_p
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,38 +34,38 @@ check_one (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d, int want)
     {
       got = (mpz_congruent_p (a, c, d) != 0);
       if (want != got)
-        {
-          printf ("mpz_congruent_p wrong\n");
-          printf ("   expected %d got %d\n", want, got);
-          mpz_trace ("   a", a);
-          mpz_trace ("   c", c);
-          mpz_trace ("   d", d);
-          mp_trace_base = -16;
-          mpz_trace ("   a", a);
-          mpz_trace ("   c", c);
-          mpz_trace ("   d", d);
-          abort ();
-        }
+	{
+	  printf ("mpz_congruent_p wrong\n");
+	  printf ("   expected %d got %d\n", want, got);
+	  mpz_trace ("	 a", a);
+	  mpz_trace ("	 c", c);
+	  mpz_trace ("	 d", d);
+	  mp_trace_base = -16;
+	  mpz_trace ("	 a", a);
+	  mpz_trace ("	 c", c);
+	  mpz_trace ("	 d", d);
+	  abort ();
+	}
 
       if (mpz_fits_ulong_p (c) && mpz_fits_ulong_p (d))
-        {
-          unsigned long  uc = mpz_get_ui (c);
-          unsigned long  ud = mpz_get_ui (d);
-          got = (mpz_congruent_ui_p (a, uc, ud) != 0);
-          if (want != got)
-            {
-              printf    ("mpz_congruent_ui_p wrong\n");
-              printf    ("   expected %d got %d\n", want, got);
-              mpz_trace ("   a", a);
-              printf    ("   c=%lu\n", uc);
-              printf    ("   d=%lu\n", ud);
-              mp_trace_base = -16;
-              mpz_trace ("   a", a);
-              printf    ("   c=0x%lX\n", uc);
-              printf    ("   d=0x%lX\n", ud);
-              abort ();
-            }
-        }
+	{
+	  unsigned long	 uc = mpz_get_ui (c);
+	  unsigned long	 ud = mpz_get_ui (d);
+	  got = (mpz_congruent_ui_p (a, uc, ud) != 0);
+	  if (want != got)
+	    {
+	      printf	("mpz_congruent_ui_p wrong\n");
+	      printf	("   expected %d got %d\n", want, got);
+	      mpz_trace ("   a", a);
+	      printf	("   c=%lu\n", uc);
+	      printf	("   d=%lu\n", ud);
+	      mp_trace_base = -16;
+	      mpz_trace ("   a", a);
+	      printf	("   c=0x%lX\n", uc);
+	      printf	("   d=0x%lX\n", ud);
+	      abort ();
+	    }
+	}
 
       MPZ_SRCPTR_SWAP (a, c);
     }
@@ -138,10 +138,14 @@ check_random (int argc, char *argv[])
   mpz_t   a, c, d, ra, rc;
   int     i;
   int     want;
-  int     reps = 50000;
+  int     reps = 20000;
+  mpz_t bs;
+  unsigned long size_range, size;
 
   if (argc >= 2)
     reps = atoi (argv[1]);
+
+  mpz_init (bs);
 
   mpz_init (a);
   mpz_init (c);
@@ -151,11 +155,24 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      mpz_errandomb (a, rands, 100*GMP_LIMB_BITS);
-      MPZ_CHECK_FORMAT (a);
-      mpz_errandomb (c, rands, 100*GMP_LIMB_BITS);
-      MPZ_CHECK_FORMAT (c);
-      mpz_errandomb_nonzero (d, rands, 100*GMP_LIMB_BITS);
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 14 + 1; /* 0..16384 bit operands */
+
+      mpz_urandomb (bs, rands, size_range);
+      size = mpz_get_ui (bs);
+      mpz_rrandomb (a, rands, size);
+
+      mpz_urandomb (bs, rands, size_range);
+      size = mpz_get_ui (bs);
+      mpz_rrandomb (c, rands, size);
+
+      do
+	{
+	  mpz_urandomb (bs, rands, size_range);
+	  size = mpz_get_ui (bs);
+	  mpz_rrandomb (d, rands, size);
+	}
+      while (SIZ(d) == 0);
 
       mpz_negrandom (a, rands);
       MPZ_CHECK_FORMAT (a);
@@ -176,10 +193,12 @@ check_random (int argc, char *argv[])
 
       if (! mpz_pow2abs_p (d))
         {
-          refmpz_combit (a, urandom() % (8*GMP_LIMB_BITS));
-          check_one (a, c, d, 0);
+	  refmpz_combit (a, urandom() % (8*GMP_LIMB_BITS));
+	  check_one (a, c, d, 0);
         }
     }
+
+  mpz_clear (bs);
 
   mpz_clear (a);
   mpz_clear (c);
