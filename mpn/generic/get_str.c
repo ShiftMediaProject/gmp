@@ -350,7 +350,8 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 
 
 /* There are no leading zeros on the digits generated at str, but that's not
-   currently a documented feature.  */
+   currently a documented feature.  The current mpz_out_str and mpz_get_str
+   rely on it.  */
 
 size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
