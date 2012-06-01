@@ -1,8 +1,8 @@
 /* mpz_out_str(stream, base, integer) -- Output to STREAM the multi prec.
    integer INTEGER in base BASE.
 
-Copyright 1991, 1993, 1994, 1996, 2001, 2005, 2011 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2001, 2005, 2011, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,12 +61,6 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
-  if (x_size == 0)
-    {
-      fputc ('0', stream);
-      return ferror (stream) ? 0 : 1;
-    }
-
   written = 0;
 
   if (x_size < 0)
@@ -82,21 +76,16 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
   str_size += 3;
   str = (unsigned char *) TMP_ALLOC (str_size);
 
-  /* Move the number to convert into temporary space, since mpn_get_str
-     clobbers its argument + needs one extra high limb....  */
-  xp = TMP_ALLOC_LIMBS (x_size + 1);
-  MPN_COPY (xp, PTR (x), x_size);
+  xp = PTR (x);
+  if (! POW2_P (base))
+    {
+      xp = TMP_ALLOC_LIMBS (x_size);
+      MPN_COPY (xp, PTR (x), x_size);
+    }
 
   str_size = mpn_get_str (str, base, xp, x_size);
 
-  /* mpn_get_str might make some leading zeros.  Skip them.  */
-  while (*str == 0)
-    {
-      str_size--;
-      str++;
-    }
-
-  /* Translate to printable chars.  */
+  /* Convert result to printable chars.  */
   for (i = 0; i < str_size; i++)
     str[i] = num_to_text[str[i]];
   str[str_size] = 0;

@@ -4,7 +4,7 @@
    result.  If STRING is not NULL, the caller must ensure enough space is
    available to store the result.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2005 Free Software
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2005, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -32,7 +32,6 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
 {
   mp_ptr xp;
   mp_size_t x_size = SIZ (x);
-  char *str;
   char *return_str;
   size_t str_size;
   size_t alloc_size = 0;
@@ -83,26 +82,16 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   xp = PTR (x);
   if (! POW2_P (base))
     {
-      xp = TMP_ALLOC_LIMBS (x_size + 1);  /* +1 in case x_size==0 */
+      xp = TMP_ALLOC_LIMBS (x_size);
       MPN_COPY (xp, PTR (x), x_size);
     }
 
   str_size = mpn_get_str ((unsigned char *) res_str, base, xp, x_size);
   ASSERT (alloc_size == 0 || str_size <= alloc_size - (SIZ(x) < 0));
 
-  /* might have a leading zero, skip it */
-  str = res_str;
-  if (*res_str == 0 && str_size != 1)
-    {
-      str_size--;
-      str++;
-      ASSERT (*str != 0);  /* at most one leading zero */
-    }
-
-  /* Convert result to printable chars, and move down if there was a leading
-     zero.  */
+  /* Convert result to printable chars.  */
   for (i = 0; i < str_size; i++)
-    res_str[i] = num_to_text[(int) str[i]];
+    res_str[i] = num_to_text[(int) res_str[i]];
   res_str[str_size] = 0;
 
   TMP_FREE;

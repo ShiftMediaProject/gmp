@@ -1,5 +1,9 @@
 2012-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/get_str.c: Don't strip leading zeros since current mpn_get_str
+	won't generate any.  Misc streamlining.
+	* mpz/out_str.c: Analogous changes.
+
 	* tests/mpz/io.c: Use a wider range of bases.
 
 	* tests/mpz/t-cong.c (check_random): Rewrite random generation for
