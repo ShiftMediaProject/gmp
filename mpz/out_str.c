@@ -79,7 +79,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
   xp = PTR (x);
   if (! POW2_P (base))
     {
-      xp = TMP_ALLOC_LIMBS (x_size);
+      xp = TMP_ALLOC_LIMBS (x_size | 1);  /* |1 in case x_size==0 */
       MPN_COPY (xp, PTR (x), x_size);
     }
 
