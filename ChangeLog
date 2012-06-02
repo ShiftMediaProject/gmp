@@ -1,3 +1,7 @@
+2012-06-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/lshiftc.asm: New file.
+
 2012-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/aorslsh1_n.asm: Use cmp/cmn instead of subs/adds in more
