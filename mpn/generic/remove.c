@@ -7,7 +7,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -116,7 +116,6 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   for (i = npowers - 1; i >= 0; i--)
     {
-      qp[qn] = 0;
       pp = pwpsp[i];
       pn = pwpsn[i];
       if (qn < pn)
@@ -125,6 +124,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       if (pwr + ((mp_bitcnt_t) 1 << i) > cap)
 	continue;		/* V^i would bring us past cap */
 
+      qp[qn] = 0;
       mpn_bdiv_qr (qp2, tp, qp, qn + 1, pp, pn, scratch_out);
       if (!mpn_zero_p (tp, pn))
 	continue;		/* could not divide by V^i */
