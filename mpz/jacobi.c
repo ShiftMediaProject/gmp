@@ -131,7 +131,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 	 + btwos > 0, in which case A is always odd
 
 	 + asize == bsize == 1, in which case this code path is never
-   	   taken. */
+	   taken. */
 
       count_trailing_zeros (btwos, blow);
       blow >>= btwos;

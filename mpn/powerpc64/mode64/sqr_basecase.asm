@@ -673,7 +673,7 @@ define(`climb',	`r0')
 
 	rldicl.	r0, n, 0,62		C r0 = n & 3, set cr0
 	cmpdi	cr6, r0, 2
-	addi	n, n, 2	 		C compute count...
+	addi	n, n, 2			C compute count...
 	srdi	n, n, 2			C ...for ctr
 	mtctr	n			C put loop count into ctr
 	beq	cr0, L(xb0)

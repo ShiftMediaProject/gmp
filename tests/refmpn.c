@@ -624,7 +624,7 @@ refmpn_subcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_lim
   {                                                                     \
     mp_size_t  i;                                                       \
     mp_limb_t carry2;							\
-    									\
+									\
     ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
     ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
     ASSERT (! refmpn_overlap_p (rp, size, yp, size));			\
@@ -640,7 +640,7 @@ refmpn_subcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_lim
     ASSERT_MPN (yp, size);						\
 									\
     ep[0] = ep[1] = CNST_LIMB(0);					\
-    									\
+									\
     for (i = 0; i < size; i++)                                          \
       {									\
 	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\
@@ -674,7 +674,7 @@ refmpn_sub_err1_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
   {                                                                     \
     mp_size_t  i;                                                       \
     mp_limb_t carry2;							\
-    									\
+									\
     ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
     ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
     ASSERT (! refmpn_overlap_p (rp, size, y1p, size));			\
@@ -694,7 +694,7 @@ refmpn_sub_err1_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
 									\
     ep[0] = ep[1] = CNST_LIMB(0);					\
     ep[2] = ep[3] = CNST_LIMB(0);					\
-    									\
+									\
     for (i = 0; i < size; i++)                                          \
       {									\
 	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\
@@ -731,7 +731,7 @@ refmpn_sub_err2_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
   {                                                                     \
     mp_size_t  i;                                                       \
     mp_limb_t carry2;							\
-    									\
+									\
     ASSERT (refmpn_overlap_fullonly_p (rp, s1p, size));			\
     ASSERT (refmpn_overlap_fullonly_p (rp, s2p, size));			\
     ASSERT (! refmpn_overlap_p (rp, size, y1p, size));			\
@@ -755,7 +755,7 @@ refmpn_sub_err2_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p,
     ep[0] = ep[1] = CNST_LIMB(0);					\
     ep[2] = ep[3] = CNST_LIMB(0);					\
     ep[4] = ep[5] = CNST_LIMB(0);					\
-    									\
+									\
     for (i = 0; i < size; i++)                                          \
       {									\
 	carry = operation (&rp[i], s1p[i], s2p[i], carry);		\

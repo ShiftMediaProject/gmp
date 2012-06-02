@@ -112,7 +112,7 @@ L(oop):
 	shr	$RSH, %ecx
 	mov	4(vp), %eax
 	shr	%edx
-	lea 	8(vp), vp
+	lea	8(vp), vp
 	M4_inst	(up), %ebp
 	lea	(%ecx,%eax,M), %edx
 	mov	%ebp, (rp)

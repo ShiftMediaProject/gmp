@@ -2691,24 +2691,24 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     unsigned i;								\
     double t;								\
     TMP_DECL;								\
-    									\
+									\
     if (s->size < 2)							\
       return -1;							\
-    									\
+									\
     TMP_MARK;								\
-    									\
+									\
     SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);		\
     SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);		\
-    									\
+									\
     s->xp[s->size - 1] |= 1;						\
     s->yp[s->size - 1] |= 1;						\
-    									\
+									\
     hgcd_init_itch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);		\
     hgcd_itch = itchfunc (s->size);					\
-    									\
+									\
     SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_itch, s->align_wp);		\
     SPEED_TMP_ALLOC_LIMBS (wp, hgcd_itch, s->align_wp);			\
-    									\
+									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, s->yp, s->size);				\
     speed_operand_dst (s, ap, s->size + 1);				\
@@ -2716,7 +2716,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_operand_dst (s, wp, hgcd_itch);				\
     speed_operand_dst (s, tmp1, hgcd_init_itch);			\
     speed_cache_fill (s);						\
-    									\
+									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
@@ -2742,24 +2742,24 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     unsigned i;								\
     double t;								\
     TMP_DECL;								\
-    									\
+									\
     if (s->size < 2)							\
       return -1;							\
-    									\
+									\
     TMP_MARK;								\
-    									\
+									\
     SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);		\
     SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);		\
-    									\
+									\
     s->xp[s->size - 1] |= 1;						\
     s->yp[s->size - 1] |= 1;						\
-    									\
+									\
     hgcd_init_itch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);		\
     hgcd_step_itch = itchfunc (s->size, p);				\
-    									\
+									\
     SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_itch, s->align_wp);		\
     SPEED_TMP_ALLOC_LIMBS (wp, hgcd_step_itch, s->align_wp);			\
-    									\
+									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, s->yp, s->size);				\
     speed_operand_dst (s, ap, s->size + 1);				\
@@ -2767,7 +2767,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_operand_dst (s, wp, hgcd_step_itch);				\
     speed_operand_dst (s, tmp1, hgcd_init_itch);			\
     speed_cache_fill (s);						\
-    									\
+									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\

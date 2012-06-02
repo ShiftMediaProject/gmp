@@ -33,7 +33,7 @@ EXTERN(approx_tab)
 ASM_START()
 PROLOGUE(mpn_invert_limb)
 	rlwinm	r6, r3, 11, 22, 30	C extract bits 30..22 to pos 2^1
-	srwi	r10, r3, 11 		C extract bits 31..11
+	srwi	r10, r3, 11		C extract bits 31..11
 	LEA(	r9, approx_tab)		C N.B. clobbers r0 for ELF and Darwin
 	lhzx	r9, r9, r6		C w2
 	addi	r0, r10, 1

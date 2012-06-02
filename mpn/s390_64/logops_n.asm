@@ -83,7 +83,7 @@ ifdef(`VARIANT_1',`
 	ltgr	%r1, %r1		C < 256 bytes to copy?
 	je	L(1)
 
-L(tp): 	LOGOPC	0(256, rp), 0(vp)
+L(tp):	LOGOPC	0(256, rp), 0(vp)
 	la	rp, 256(rp)
 	la	vp, 256(vp)
 	brctg	%r1, L(tp)

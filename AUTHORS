@@ -51,11 +51,11 @@ Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			mullo_n.c, invert.c, invertappr.c.
 
 David Harvey		mpn/generic/add_err1_n.c, add_err2_n.c,
-      			add_err3_n.c, sub_err1_n.c, sub_err2_n.c,
-      			sub_err3_n.c, mulmid_basecase.c, mulmid_n.c,
-      			toom42_mulmid.c,
+			add_err3_n.c, sub_err1_n.c, sub_err2_n.c,
+			sub_err3_n.c, mulmid_basecase.c, mulmid_n.c,
+			toom42_mulmid.c,
 			mpn/x86_64/mul_basecase.asm, aors_err1_n.asm,
-      			aors_err2_n.asm, aors_err3_n.asm,
+			aors_err2_n.asm, aors_err3_n.asm,
 			mulmid_basecase.asm,
 			mpn/x86_64/core2/aors_err1_n.asm.
 

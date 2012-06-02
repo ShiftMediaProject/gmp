@@ -102,8 +102,8 @@ struct {
 {
   /* Don't change order here without changing the code in main(). */
   { mpz_add_ui,         "mpz_add_ui",	     0 },
-  { mpz_mul_ui,	     	"mpz_mul_ui",	     0 },
-  { mpz_sub_ui,	     	"mpz_sub_ui",	     0 },
+  { mpz_mul_ui,		"mpz_mul_ui",	     0 },
+  { mpz_sub_ui,		"mpz_sub_ui",	     0 },
   { mpz_fdiv_q_2exp,    "mpz_fdiv_q_2exp",   0x1000 },
   { mpz_fdiv_r_2exp,    "mpz_fdiv_r_2exp",   0x1000 },
   { mpz_cdiv_q_2exp,    "mpz_cdiv_q_2exp",   0x1000 },
@@ -111,7 +111,7 @@ struct {
   { mpz_tdiv_q_2exp,    "mpz_tdiv_q_2exp",   0x1000 },
   { mpz_tdiv_r_2exp,    "mpz_tdiv_r_2exp",   0x1000 },
   { mpz_mul_2exp,	"mpz_mul_2exp",      0x100 },
-  { mpz_pow_ui,	     	"mpz_pow_ui",        0x10 }
+  { mpz_pow_ui,		"mpz_pow_ui",        0x10 }
 };
 
 struct {

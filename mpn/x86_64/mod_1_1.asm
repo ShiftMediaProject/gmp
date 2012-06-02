@@ -111,8 +111,8 @@ L(top):	and	B2modb, r2
 	add	%rax, r0
 	mov	r2, %rax
 	adc	%rdx, %rax
-	sbb 	r2, r2
-	sub 	$1, n
+	sbb	r2, r2
+	sub	$1, n
 	jnc	L(top)
 
 L(reduce_three):

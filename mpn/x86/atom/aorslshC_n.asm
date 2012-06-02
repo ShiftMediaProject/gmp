@@ -120,7 +120,7 @@ L(oop):
 	shr	$RSH, %eax
 	mov	4(up), %ecx
 	add	%edx, %edx
-	lea 	8(up), up
+	lea	8(up), up
 	M4_inst	%ebp, (rp)
 	lea	(%eax,%ecx,M), %eax
 
@@ -208,12 +208,12 @@ L(oop2):
 	mov	%edx, (rp)
 L(enteven2):
 	mov	4(%ebx), %edx
-	lea 	8(%ebx), %ebx
+	lea	8(%ebx), %ebx
 	M4_inst	%eax, %edx
 	mov	%edx, 4(rp)
 	sbb	%edx, %edx
 	shr	$RSH, %ecx
-	lea 	8(rp), rp
+	lea	8(rp), rp
 L(entry2):
 	mov	(up), %eax
 	decl	GPARAM_SIZE

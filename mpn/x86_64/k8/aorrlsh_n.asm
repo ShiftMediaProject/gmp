@@ -59,8 +59,8 @@ ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 ASM_START()
-        TEXT
-        ALIGN(16)
+	TEXT
+	ALIGN(16)
 PROLOGUE(func)
 	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
@@ -83,7 +83,7 @@ IFDOS(`	mov	56(%rsp), %r8d	')
 	mov	$1, R32(%r8)
 	shl	R8(%rcx), %r8
 
-	mul	%r8	   		C initial multiply
+	mul	%r8			C initial multiply
 
 	and	$3, R32(%r9)
 	jz	L(b0)

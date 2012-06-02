@@ -314,9 +314,9 @@ extern "C" {
 
 
 /* Usage: TMP_DECL;
-          TMP_MARK;
-          ptr = TMP_ALLOC (bytes);
-          TMP_FREE;
+	  TMP_MARK;
+	  ptr = TMP_ALLOC (bytes);
+	  TMP_FREE;
 
    Small allocations should use TMP_SALLOC, big allocations should use
    TMP_BALLOC.  Allocations that might be small or big should use TMP_ALLOC.
@@ -1820,11 +1820,11 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
    std/repe/scasl/cld and cld/repe/scasl (the latter would be for stripping
    low zeros).
 
-                std   cld
-           P5    18    16
-           P6    46    38
-           K6    36    13
-           K7    21    20
+		std   cld
+	   P5    18    16
+	   P6    46    38
+	   K6    36    13
+	   K7    21    20
 */
 #ifndef MPN_NORMALIZE
 #define MPN_NORMALIZE(DST, NLIMBS) \
@@ -2166,7 +2166,7 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
    where FFT_FIRST_K+1 should be used, the second FFT_FIRST_K+2,
    etc.  See mpn_fft_best_k(). */
 #ifndef MUL_FFT_TABLE
-#define MUL_FFT_TABLE                           			\
+#define MUL_FFT_TABLE							\
   { MUL_TOOM33_THRESHOLD * 4,   /* k=5 */				\
     MUL_TOOM33_THRESHOLD * 8,   /* k=6 */				\
     MUL_TOOM33_THRESHOLD * 16,  /* k=7 */				\
@@ -2176,7 +2176,7 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
     0 }
 #endif
 #ifndef SQR_FFT_TABLE
-#define SQR_FFT_TABLE                           			\
+#define SQR_FFT_TABLE							\
   { SQR_TOOM3_THRESHOLD * 4,   /* k=5 */				\
     SQR_TOOM3_THRESHOLD * 8,   /* k=6 */				\
     SQR_TOOM3_THRESHOLD * 16,  /* k=7 */				\
@@ -2941,7 +2941,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb (mp_limb_t) ATTRIBUTE_CONST;
     _p += _t1;								\
     if (_p < _t1)							\
       {									\
-        _v--;								\
+	_v--;								\
 	if (UNLIKELY (_p >= (d1)))					\
 	  {								\
 	    if (_p > (d1) || _t0 >= (d0))				\
@@ -3221,17 +3221,17 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 									\
     if ((a) <= (d))							\
       {									\
-        /* small a is reasonably likely */				\
-        (r) = (d) - (a);						\
+	/* small a is reasonably likely */				\
+	(r) = (d) - (a);						\
       }									\
     else								\
       {									\
-        unsigned   __twos;						\
-        mp_limb_t  __dnorm;						\
-        count_leading_zeros (__twos, d);				\
-        __twos -= GMP_NAIL_BITS;					\
-        __dnorm = (d) << __twos;					\
-        (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);		\
+	unsigned   __twos;						\
+	mp_limb_t  __dnorm;						\
+	count_leading_zeros (__twos, d);				\
+	__twos -= GMP_NAIL_BITS;					\
+	__dnorm = (d) << __twos;					\
+	(r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);		\
       }									\
 									\
     ASSERT_LIMB (r);							\
@@ -3304,8 +3304,8 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
     int  __p = 0;							\
     do									\
       {									\
-        __p ^= 0x96696996L >> (__n & 0x1F);				\
-        __n >>= 5;							\
+	__p ^= 0x96696996L >> (__n & 0x1F);				\
+	__n >>= 5;							\
       }									\
     while (__n != 0);							\
 									\
@@ -3378,7 +3378,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 
 #if ! defined (BSWAP_LIMB)
 #if GMP_LIMB_BITS == 8
-#define BSWAP_LIMB(dst, src)            				\
+#define BSWAP_LIMB(dst, src)				\
   do { (dst) = (src); } while (0)
 #endif
 #if GMP_LIMB_BITS == 16
@@ -4888,11 +4888,11 @@ extern mp_size_t			set_str_precompute_threshold;
 
 #undef  FAC_ODD_THRESHOLD
 #define FAC_ODD_THRESHOLD		fac_odd_threshold
-extern  mp_size_t     			fac_odd_threshold;
+extern  mp_size_t			fac_odd_threshold;
 
 #undef  FAC_DSC_THRESHOLD
 #define FAC_DSC_THRESHOLD		fac_dsc_threshold
-extern  mp_size_t 			fac_dsc_threshold;
+extern  mp_size_t			fac_dsc_threshold;
 
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS

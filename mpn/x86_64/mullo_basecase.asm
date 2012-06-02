@@ -90,7 +90,7 @@ L(1):	imul	%r8, %rax
 
 L(2):	mov	8(vp_param), %r11
 	imul	%rax, %r11		C u0 x v1
-	mul	%r8  			C u0 x v0
+	mul	%r8			C u0 x v0
 	mov	%rax, (rp)
 	imul	8(up), %r8		C u1 x v0
 	lea	(%r11, %rdx), %rax
@@ -117,7 +117,7 @@ L(3):	mov	8(vp_param), %r9	C v1
 	add	%rax, %rcx
 	adc	%rdx, %r9
 	mov	%r11, %rax
-	imul	(up), %rax 		C u0 x v2 -> r2
+	imul	(up), %rax		C u0 x v2 -> r2
 	add	%rax, %r9
 	mov	%rcx, 8(rp)
 	mov	%r9, 16(rp)
