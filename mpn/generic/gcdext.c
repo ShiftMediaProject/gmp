@@ -384,6 +384,26 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  ASSERT (un < ualloc);
 	}
     }
+  /* We have A = ... a + ... b
+	     B =  u0 a +  u1 b
+
+	     a = u1  A + ... B
+	     b = -u0 A + ... B
+
+     with bounds
+
+       |u0|, |u1| <= B / min(a, b)
+
+     We always have u1 > 0, and u0 == 0 is possible only if u1 == 1,
+     in which case the only reduction done so far is a = A - k B for
+     some k.
+	 
+     Compute g = u a + v b = (u u1 - v u0) A + (...) B
+     Here, u, v are bounded by
+
+       |u| <= b,
+       |v| <= a
+  */
 
   ASSERT ( (ap[n-1] | bp[n-1]) > 0);
 
@@ -415,10 +435,9 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       TMP_FREE;
       return n;
     }
-  else if (mpn_zero_p (u0, un))
+  else if (UNLIKELY (u0[0] == 0) && un == 1)
     {
       mp_size_t gn;
-      ASSERT (un == 1);
       ASSERT (u1[0] == 1);
 
       /* g = u a + v b = (u u1 - v u0) A + (...) B = u A + (...) B */
@@ -429,23 +448,6 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
     }
   else
     {
-      /* We have A = ... a + ... b
-		 B =  u0 a +  u1 b
-
-		 a = u1  A + ... B
-		 b = -u0 A + ... B
-
-	 with bounds
-
-	   |u0|, |u1| <= B / min(a, b)
-
-	 Compute g = u a + v b = (u u1 - v u0) A + (...) B
-	 Here, u, v are bounded by
-
-	 |u| <= b,
-	 |v| <= a
-      */
-
       mp_size_t u0n;
       mp_size_t u1n;
       mp_size_t lehmer_un;
@@ -465,6 +467,8 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
       u0n = un;
       MPN_NORMALIZE (u0, u0n);
+      ASSERT (u0n > 0);
+
       if (lehmer_un == 0)
 	{
 	  /* u == 0  ==>  v = g / b == 1  ==> g = - u0 A + (...) B */
@@ -490,25 +494,12 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
       u1n = un;
       MPN_NORMALIZE (u1, u1n);
-
-      /* It's possible that u0 = 1, u1 = 0 */
-      if (u1n == 0)
-	{
-	  ASSERT (un == 1);
-	  ASSERT (u0[0] == 1);
-
-	  /* u1 == 0 ==> u u1 + v u0 = v */
-	  MPN_COPY (up, lehmer_vp, lehmer_vn);
-	  *usizep = negate ? lehmer_vn : - lehmer_vn;
-
-	  TMP_FREE;
-	  return gn;
-	}
+      ASSERT (u1n > 0);
 
       ASSERT (lehmer_un + u1n <= ualloc);
       ASSERT (lehmer_vn + u0n <= ualloc);
 
-      /* Now u0, u1, u are non-zero. We may still have v == 0 */
+      /* We may still have v == 0 */
 
       /* Compute u u0 */
       if (lehmer_un <= u1n)
