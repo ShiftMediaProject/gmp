@@ -1,3 +1,7 @@
+2012-06-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/aix.m4 (ASM_START): Claim machine type "any".
+
 2012-06-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (mpn_gcdext): Deleted code for handling
