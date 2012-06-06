@@ -21,10 +21,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
-// #undef mpn_sublsh_n
-// #define mpn_sublsh_n(rp,up,vp,n,c)					\
-//    (((rp) == (up)) ? mpn_submul_1 (rp, vp, n, CNST_LIMB(1) << (c))	\
-//      : MPN(mpn_sublsh_n)(rp,up,vp,n,c))
+#if 0
+#undef mpn_sublsh_n
+#define mpn_sublsh_n(rp,up,vp,n,c)					\
+  (((rp) == (up)) ? mpn_submul_1 (rp, vp, n, CNST_LIMB(1) << (c))	\
+   : MPN(mpn_sublsh_n)(rp,up,vp,n,c))
+#endif
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
