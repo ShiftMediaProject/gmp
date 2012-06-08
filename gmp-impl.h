@@ -129,7 +129,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DECL_submul_1(name) \
   DECL_addmul_1 (name)
 
-#if ! __GMP_WITHIN_CONFIGURE
+#if ! defined (__GMP_WITHIN_CONFIGURE)
 #include "config.h"
 #include "gmp-mparam.h"
 #include "fib_table.h"

@@ -1,3 +1,7 @@
+2012-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (__GMP_WITHIN_CONFIGURE): Use the same #if as in gmp-h.in.
+
 2012-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/aix.m4 (ASM_START): Claim machine type "any".
