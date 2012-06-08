@@ -1322,8 +1322,7 @@ mpz_clear (mpz_t r)
 static void *
 mpz_realloc (mpz_t r, mp_size_t size)
 {
-  if (size < 1)
-    size = 1;
+  size = GMP_MAX (size, 1);
 
   r->_mp_d = gmp_xrealloc_limbs (r->_mp_d, size);
   r->_mp_alloc = size;

@@ -8,6 +8,8 @@
 	* mpz/oddfac_1.c: Likewise.
 	* mpz/prodlimbs.c: Likewise.
 
+	* mini-gmp/mini-gmp.c (mpz_realloc): remove a branch.
+
 2012-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/aix.m4 (ASM_START): Claim machine type "any".
