@@ -1840,9 +1840,9 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
 #ifndef MPN_NORMALIZE_NOT_ZERO
 #define MPN_NORMALIZE_NOT_ZERO(DST, NLIMBS)				\
   do {									\
-    ASSERT ((NLIMBS) >= 1);						\
     while (1)								\
       {									\
+	ASSERT ((NLIMBS) >= 1);						\
 	if ((DST)[(NLIMBS) - 1] != 0)					\
 	  break;							\
 	(NLIMBS)--;							\
