@@ -294,9 +294,9 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
   nn -= np[nn - 1] == 0;	/* normalisation */
 
-  MPZ_REALLOC (r, nn);
+  kp = MPZ_NEWALLOC (r, nn);
   SIZ(r) = nn;
-  MPN_COPY (PTR(r), np, nn);
+  MPN_COPY (kp, np, nn);
   TMP_FREE;
 }
 
@@ -312,7 +312,7 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   count_leading_zeros (cnt, (mp_limb_t) n);
   cnt = GMP_LIMB_BITS - cnt;
   alloc = cnt * k / GMP_NUMB_BITS + 3;	/* FIXME: ensure rounding is enough. */
-  rp = MPZ_REALLOC (r, alloc);
+  rp = MPZ_NEWALLOC (r, alloc);
 
   MAXFACS (nmax, n);
   nmax = MIN (nmax, M);
@@ -411,8 +411,8 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     mp_limb_t buffer[ODD_CENTRAL_BINOMIAL_TABLE_LIMIT + 3];
     mpz_t t;
 
-    t->_mp_alloc = ODD_CENTRAL_BINOMIAL_TABLE_LIMIT + 3;
-    t->_mp_d = buffer;
+    ALLOC (t) = ODD_CENTRAL_BINOMIAL_TABLE_LIMIT + 3;
+    PTR (t) = buffer;
     if ((! BIN_UIUI_RECURSIVE_SMALLDC) || k <= ODD_FACTORIAL_TABLE_LIMIT)
       mpz_smallk_bin_uiui (t, n, k);
     else

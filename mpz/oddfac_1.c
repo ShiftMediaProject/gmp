@@ -284,8 +284,10 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
     }
   else if (n <= ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1)
     {
-      MPZ_REALLOC (x, 2);
-      umul_ppmm (PTR (x)[1], PTR (x)[0], __gmp_odd2fac_table[(n - 1) >> 1], __gmp_oddfac_table[n >> 1]);
+      mp_ptr   px;
+
+      px = MPZ_NEWALLOC (x, 2);
+      umul_ppmm (px[1], px[0], __gmp_odd2fac_table[(n - 1) >> 1], __gmp_oddfac_table[n >> 1]);
       SIZ (x) = 2;
     }
   else
@@ -375,7 +377,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 
 	  factors = TMP_ALLOC_LIMBS (size);
 	  do {
-	    mp_ptr    square;
+	    mp_ptr    square, px;
 	    mp_size_t nx, ns;
 	    mp_limb_t cy;
 	    TMP_DECL;
@@ -398,9 +400,9 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	    }
 	    ns = SIZ (mswing);
 	    nx = size + ns;
-	    MPZ_REALLOC (x, nx);
+	    px = MPZ_NEWALLOC (x, nx);
 	    ASSERT (ns <= size);
-	    cy = mpn_mul (PTR(x), square, size, PTR(mswing), ns); /* n!= n$ * floor(n/2)!^2 */
+	    cy = mpn_mul (px, square, size, PTR(mswing), ns); /* n!= n$ * floor(n/2)!^2 */
 
 	    TMP_FREE;
 	    SIZ(x) = nx - (cy == 0);

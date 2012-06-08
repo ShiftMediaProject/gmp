@@ -27,7 +27,7 @@ mpq_get_num (mpz_ptr num, mpq_srcptr src)
   mp_size_t abs_size = ABS (size);
   mp_ptr dp;
 
-  dp = MPZ_REALLOC (num, abs_size);
+  dp = MPZ_NEWALLOC (num, abs_size);
   SIZ(num) = size;
 
   MPN_COPY (dp, PTR(NUM(src)), abs_size);

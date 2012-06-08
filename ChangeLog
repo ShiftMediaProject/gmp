@@ -2,6 +2,11 @@
 
 	* gmp-impl.h (__GMP_WITHIN_CONFIGURE): Use the same #if as in gmp-h.in.
 	(MPN_NORMALIZE_NOT_ZERO): Tighter ASSERT.
+	(MPZ_NEWALLOC): New macro.
+	* mpq: Use the new macro when possible.
+	* mpz/bin_uiui.c: Likewise.
+	* mpz/oddfac_1.c: Likewise.
+	* mpz/prodlimbs.c: Likewise.
 
 2012-06-04  Torbjorn Granlund  <tege@gmplib.org>
 

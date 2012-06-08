@@ -66,7 +66,7 @@ mpz_prodlimbs (mpz_ptr x, mp_ptr factors, mp_size_t j)
 	size += cy != 0;
       };
 
-    prod = MPZ_REALLOC (x, size + 1);
+    prod = MPZ_NEWALLOC (x, size + 1);
 
     cy = mpn_mul_1 (prod, factors, size, factors[i]);
     prod[size] = cy;
@@ -86,7 +86,7 @@ mpz_prodlimbs (mpz_ptr x, mp_ptr factors, mp_size_t j)
     j = mpz_prodlimbs (x2, factors + i, j);
     i = mpz_prodlimbs (x1, factors, i);
     size = i + j;
-    prod = MPZ_REALLOC (x, size);
+    prod = MPZ_NEWALLOC (x, size);
     if (i >= j)
       cy = mpn_mul (prod, PTR(x1), i, PTR(x2), j);
     else

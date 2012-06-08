@@ -28,7 +28,7 @@ mpq_set_den (mpq_ptr dest, mpz_srcptr den)
   mp_size_t abs_size = ABS (size);
   mp_ptr dp;
 
-  dp = MPZ_REALLOC (DEN(dest), abs_size);
+  dp = MPZ_NEWALLOC (DEN(dest), abs_size);
 
   SIZ(DEN(dest)) = size;
   MPN_COPY (dp, PTR(den), abs_size);

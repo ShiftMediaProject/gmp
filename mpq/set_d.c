@@ -71,7 +71,7 @@ mpq_set_d (mpq_ptr dest, double d)
 	}
 
       dn = -exp;
-      np = MPZ_REALLOC (NUM(dest), 3);
+      np = MPZ_NEWALLOC (NUM(dest), 3);
 #if LIMBS_PER_DOUBLE == 4
       if ((tp[0] | tp[1] | tp[2]) == 0)
 	np[0] = tp[3], nn = 1;
@@ -98,7 +98,7 @@ mpq_set_d (mpq_ptr dest, double d)
 #endif
       dn += nn + 1;
       ASSERT_ALWAYS (dn > 0);
-      dp = MPZ_REALLOC (DEN(dest), dn);
+      dp = MPZ_NEWALLOC (DEN(dest), dn);
       MPN_ZERO (dp, dn - 1);
       dp[dn - 1] = 1;
       count_trailing_zeros (c, np[0] | dp[0]);
@@ -115,7 +115,7 @@ mpq_set_d (mpq_ptr dest, double d)
   else
     {
       nn = exp;
-      np = MPZ_REALLOC (NUM(dest), nn);
+      np = MPZ_NEWALLOC (NUM(dest), nn);
       switch (nn)
         {
 	default:

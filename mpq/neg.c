@@ -34,11 +34,11 @@ mpq_neg (mpq_ptr dst, mpq_srcptr src)
       mp_ptr dp;
 
       size = ABS(num_size);
-      dp = MPZ_REALLOC (NUM(dst), size);
+      dp = MPZ_NEWALLOC (NUM(dst), size);
       MPN_COPY (dp, PTR(NUM(src)), size);
 
       size = SIZ(DEN(src));
-      dp = MPZ_REALLOC (DEN(dst), size);
+      dp = MPZ_NEWALLOC (DEN(dst), size);
       SIZ(DEN(dst)) = size;
       MPN_COPY (dp, PTR(DEN(src)), size);
     }

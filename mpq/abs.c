@@ -33,10 +33,10 @@ mpq_abs (mpq_ptr dst, mpq_srcptr src)
       mp_size_t  den_size = SIZ(DEN(src));
       mp_ptr dp;
 
-      dp = MPZ_REALLOC (NUM(dst), num_abs_size);
+      dp = MPZ_NEWALLOC (NUM(dst), num_abs_size);
       MPN_COPY (dp, PTR(NUM(src)), num_abs_size);
 
-      dp = MPZ_REALLOC (DEN(dst), den_size);
+      dp = MPZ_NEWALLOC (DEN(dst), den_size);
       SIZ(DEN(dst)) = den_size;
       MPN_COPY (dp, PTR(DEN(src)), den_size);
     }

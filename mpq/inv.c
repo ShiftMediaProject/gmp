@@ -51,10 +51,10 @@ mpq_inv (mpq_ptr dest, mpq_srcptr src)
       mp_ptr dp;
 
       den_size = ABS (den_size);
-      dp = MPZ_REALLOC (NUM(dest), den_size);
+      dp = MPZ_NEWALLOC (NUM(dest), den_size);
       MPN_COPY (dp, PTR(DEN(src)), den_size);
 
-      dp = MPZ_REALLOC (DEN(dest), num_size);
+      dp = MPZ_NEWALLOC (DEN(dest), num_size);
       MPN_COPY (dp, PTR(NUM(src)), num_size);
     }
 }

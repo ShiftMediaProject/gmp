@@ -1880,10 +1880,25 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
     __x->_mp_d = TMP_ALLOC_LIMBS (NLIMBS);				\
   } while (0)
 
+#if WANT_ASSERT
+static void *
+_mpz_newalloc (mpz_ptr z, mp_size_t n)
+{
+  void * res = _mpz_realloc(z,n);
+  /* If we are checking the code, force a random change to limbs. */
+  ((mp_ptr) res)[0] = ~ ((mp_ptr) res)[ALLOC (z) - 1];
+  return res;
+}
+#else
+#define _mpz_newalloc _mpz_realloc
+#endif
 /* Realloc for an mpz_t WHAT if it has less than NEEDED limbs.  */
 #define MPZ_REALLOC(z,n) (UNLIKELY ((n) > ALLOC(z))			\
 			  ? (mp_ptr) _mpz_realloc(z,n)			\
 			  : PTR(z))
+#define MPZ_NEWALLOC(z,n) (UNLIKELY ((n) > ALLOC(z))			\
+			   ? (mp_ptr) _mpz_newalloc(z,n)		\
+			   : PTR(z))
 
 #define MPZ_EQUAL_1_P(z)  (SIZ(z)==1 && PTR(z)[0] == 1)
 

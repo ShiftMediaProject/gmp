@@ -29,12 +29,12 @@ mpq_set (mpq_ptr dest, mpq_srcptr src)
 
   num_size = SIZ(NUM(src));
   abs_num_size = ABS (num_size);
-  dp = MPZ_REALLOC (NUM(dest), abs_num_size);
+  dp = MPZ_NEWALLOC (NUM(dest), abs_num_size);
   SIZ(NUM(dest)) = num_size;
   MPN_COPY (dp, PTR(NUM(src)), abs_num_size);
 
   den_size = SIZ(DEN(src));
-  dp = MPZ_REALLOC (DEN(dest), den_size);
+  dp = MPZ_NEWALLOC (DEN(dest), den_size);
   SIZ(DEN(dest)) = den_size;
   MPN_COPY (dp, PTR(DEN(src)), den_size);
 }
