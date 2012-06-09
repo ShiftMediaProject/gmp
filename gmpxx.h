@@ -1292,6 +1292,7 @@ struct __gmp_resolve_expr<mpz_t>
 {
   typedef mpz_t value_type;
   typedef mpz_ptr ptr_type;
+  typedef mpz_srcptr srcptr_type;
 };
 
 template <>
@@ -1299,6 +1300,7 @@ struct __gmp_resolve_expr<mpq_t>
 {
   typedef mpq_t value_type;
   typedef mpq_ptr ptr_type;
+  typedef mpq_srcptr srcptr_type;
 };
 
 template <>
@@ -1306,6 +1308,7 @@ struct __gmp_resolve_expr<mpf_t>
 {
   typedef mpf_t value_type;
   typedef mpf_ptr ptr_type;
+  typedef mpf_srcptr srcptr_type;
 };
 
 template <>
@@ -2128,9 +2131,32 @@ inline void __gmp_set_expr(mpf_ptr f, const mpf_class &g)
 template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<mpf_t, T> &expr)
 {
-  expr.eval(f, mpf_get_prec(f));
+  expr.eval(f);
 }
 
+
+/* Temporary objects */
+
+template <class T>
+class __gmp_temp
+{
+  __gmp_expr<T, T> val;
+  public:
+  template<class U, class V>
+  __gmp_temp(U const& u, V) : val (u) {}
+  typename __gmp_resolve_expr<T>::srcptr_type
+  __get_mp() const { return val.__get_mp(); }
+};
+
+template <>
+class __gmp_temp <mpf_t>
+{
+  mpf_class val;
+  public:
+  template<class U>
+  __gmp_temp(U const& u, mpf_ptr res) : val (u, mpf_get_prec(res)) {}
+  mpf_srcptr __get_mp() const { return val.__get_mp(); }
+};
 
 /**************** Specializations of __gmp_expr ****************/
 /* The eval() method of __gmp_expr<T, U> evaluates the corresponding
@@ -2160,8 +2186,7 @@ private:
   __gmp_unary_expr<val_type, Op> expr;
 public:
   explicit __gmp_expr(const val_type &val) : expr(val) { }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t = 0) const
+  void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { Op::eval(p, expr.val.__get_mp()); }
   const val_type & get_val() const { return expr.val; }
   mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
@@ -2181,9 +2206,6 @@ public:
   explicit __gmp_expr(const val_type &val) : expr(val) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { expr.val.eval(p); Op::eval(p, p); }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  { expr.val.eval(p, prec); Op::eval(p, p); }
   const val_type & get_val() const { return expr.val; }
   mp_bitcnt_t get_prec() const { return expr.val.get_prec(); }
 };
@@ -2213,8 +2235,7 @@ private:
 public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t = 0) const
+  void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { Op::eval(p, expr.val1.__get_mp(), expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2240,8 +2261,7 @@ private:
 public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t = 0) const
+  void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { Op::eval(p, expr.val1.__get_mp(), expr.val2); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2259,8 +2279,7 @@ private:
 public:
   __gmp_expr(const val1_type &val1, const val2_type &val2)
     : expr(val1, val2) { }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t = 0) const
+  void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { Op::eval(p, expr.val1, expr.val2.__get_mp()); }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2291,15 +2310,9 @@ public:
     }
     else
     {
-      __gmp_expr<T, T> temp(expr.val2);
+      __gmp_temp<T> temp(expr.val2, p);
       Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
     }
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp(expr.val2, prec);
-    Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2332,15 +2345,9 @@ public:
     }
     else
     {
-      __gmp_expr<T, T> temp(expr.val1);
+      __gmp_temp<T> temp(expr.val1, p);
       Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
     }
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp(expr.val1, prec);
-    Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2373,15 +2380,9 @@ public:
     }
     else
     {
-      __gmp_expr<T, T> temp(expr.val2);
+      __gmp_temp<T> temp(expr.val2, p);
       Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
     }
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp(expr.val2, prec);
-    Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2414,15 +2415,9 @@ public:
     }
     else
     {
-      __gmp_expr<T, T> temp(expr.val1);
+      __gmp_temp<T> temp(expr.val1, p);
       Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
     }
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp(expr.val1, prec);
-    Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2453,12 +2448,6 @@ public:
     expr.val1.eval(p);
     Op::eval(p, p, expr.val2);
   }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    expr.val1.eval(p, prec);
-    Op::eval(p, p, expr.val2);
-  }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
   mp_bitcnt_t get_prec() const { return expr.val1.get_prec(); }
@@ -2478,12 +2467,6 @@ public:
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
     expr.val2.eval(p);
-    Op::eval(p, expr.val1, p);
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    expr.val2.eval(p, prec);
     Op::eval(p, expr.val1, p);
   }
   const val1_type & get_val1() const { return expr.val1; }
@@ -2508,15 +2491,9 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp2(expr.val2);
+    __gmp_temp<T> temp2(expr.val2, p);
     expr.val1.eval(p);
     Op::eval(p, p, temp2.__get_mp());
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
-    Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2542,15 +2519,9 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp1(expr.val1);
+    __gmp_temp<T> temp1(expr.val1, p);
     expr.val2.eval(p);
     Op::eval(p, temp1.__get_mp(), p);
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
-    Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -2576,15 +2547,9 @@ public:
     : expr(val1, val2) { }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   {
-    __gmp_expr<T, T> temp2(expr.val2);
+    __gmp_temp<T> temp2(expr.val2, p);
     expr.val1.eval(p);
     Op::eval(p, p, temp2.__get_mp());
-  }
-  void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    mp_bitcnt_t prec) const
-  {
-    __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
-    Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   const val1_type & get_val1() const { return expr.val1; }
   const val2_type & get_val2() const { return expr.val2; }
@@ -3192,8 +3157,11 @@ private:
   mp_bitcnt_t bits;
 public:
   __gmp_expr(gmp_randstate_t s, mp_bitcnt_t l) : state(s), bits(l) { }
-  void eval(mpf_ptr f, mp_bitcnt_t prec) const
-  { __gmp_rand_function::eval(f, state, (bits>0) ? get_prec() : prec); }
+  void eval(mpf_ptr f) const
+  {
+    __gmp_rand_function::eval(f, state,
+	(bits>0) ? bits : mpf_get_prec(f));
+  }
   mp_bitcnt_t get_prec() const
   {
     if (bits == 0)

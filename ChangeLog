@@ -1,3 +1,12 @@
+2012-06-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_resolve_expr::srcptr_type): New typedef.
+	(__gmp_temp): Wrapper for mp*_class, the constructor copies the
+	precision of its second argument for mpf_t.
+	(__gmp_expr::eval(p, prec)): Remove.
+	(__gmp_expr::eval(p)): Use __gmp_temp.
+	(__gmp_set_expr): Never pass prec to eval().
+
 2012-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (__GMP_WITHIN_CONFIGURE): Use the same #if as in gmp-h.in.
