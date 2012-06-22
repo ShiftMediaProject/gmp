@@ -1,3 +1,7 @@
+2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (numeric_limits): Make content public.
+
 2012-06-09  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_resolve_expr::srcptr_type): New typedef.

@@ -3241,6 +3241,7 @@ public:
 namespace std {
   template <> class numeric_limits<mpz_class>
   {
+  public:
     static const bool is_specialized = true;
     static mpz_class min() { return mpz_class(); }
     static mpz_class max() { return mpz_class(); }
@@ -3277,6 +3278,7 @@ namespace std {
 
   template <> class numeric_limits<mpq_class>
   {
+  public:
     static const bool is_specialized = true;
     static mpq_class min() { return mpq_class(); }
     static mpq_class max() { return mpq_class(); }
@@ -3313,6 +3315,7 @@ namespace std {
 
   template <> class numeric_limits<mpf_class>
   {
+  public:
     static const bool is_specialized = true;
     static mpf_class min() { return mpf_class(); }
     static mpf_class max() { return mpf_class(); }
