@@ -1,6 +1,9 @@
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (numeric_limits): Make content public.
+	(cxx/limits.cc): New file, proper declarations.
+	(Makefile.am): List new file.
+	(cxx/Makefile.am): Likewise.
 
 2012-06-09  Marc Glisse  <marc.glisse@inria.fr>
 

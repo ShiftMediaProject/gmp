@@ -232,7 +232,7 @@ RANDOM_OBJECTS =							\
 # no $U for C++ files
 CXX_OBJECTS =								\
   cxx/isfuns.lo cxx/ismpf.lo cxx/ismpq.lo cxx/ismpz.lo cxx/ismpznw.lo	\
-  cxx/osdoprnti.lo cxx/osfuns.lo					\
+  cxx/limits.lo cxx/osdoprnti.lo cxx/osfuns.lo				\
   cxx/osmpf.lo cxx/osmpq.lo cxx/osmpz.lo
 
 # In libtool 1.5 it doesn't work to build libgmp.la from the convenience
