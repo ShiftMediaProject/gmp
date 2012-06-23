@@ -370,6 +370,18 @@ check_mpf (void)
   }
 }
 
+// std::numeric_limits
+void
+check_limits (void)
+{
+  // Check that the content is not private.
+  ASSERT_ALWAYS ( std::numeric_limits<mpz_class>::is_integer);
+  ASSERT_ALWAYS (!std::numeric_limits<mpf_class>::is_integer);
+
+  // Check that symbols are emitted.
+  ASSERT_ALWAYS (&std::numeric_limits<mpz_class>::is_integer
+	      != &std::numeric_limits<mpq_class>::is_integer);
+}
 
 int
 main (void)
@@ -379,6 +391,7 @@ main (void)
   check_mpz();
   check_mpq();
   check_mpf();
+  check_limits();
 
   tests_end();
   return 0;
