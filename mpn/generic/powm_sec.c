@@ -251,7 +251,6 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	      mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
   mp_limb_t ip[2], *mip;
-  int cnt;
   mp_bitcnt_t ebi;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
@@ -262,8 +261,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   ASSERT (en > 1 || (en == 1 && ep[0] > 0));
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
 
-  count_leading_zeros (cnt, ep[en - 1]);
-  ebi = (mp_bitcnt_t) en * GMP_LIMB_BITS - cnt;
+  MPN_SIZEINBASE_2EXP(ebi, ep, en, 1);
 
   windowsize = win_size (ebi);
 

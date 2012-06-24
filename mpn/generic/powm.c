@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+Copyright 2007, 2008, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -173,8 +173,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   TMP_MARK;
 
-  count_leading_zeros (cnt, ep[en - 1]);
-  ebi = (mp_bitcnt_t) en * GMP_LIMB_BITS - cnt;
+  MPN_SIZEINBASE_2EXP(ebi, ep, en, 1);
 
 #if 0
   if (bn < n)
