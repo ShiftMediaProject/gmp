@@ -2085,7 +2085,11 @@ if test $found_compiler = yes; then
   #
                     eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi1\"
   test -n "$tmp" || eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi2\"
-  CALLING_CONVENTIONS_OBJS="$tmp"
+  if test "$enable_assembly" = "yes"; then
+     CALLING_CONVENTIONS_OBJS="$tmp"
+  else
+     CALLING_CONVENTIONS_OBJS=""
+  fi
 
   if test -n "$CALLING_CONVENTIONS_OBJS"; then
     AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,

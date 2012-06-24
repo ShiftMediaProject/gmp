@@ -1,3 +1,8 @@
+2012-06-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.in (CALLING_CONVENTIONS_OBJS): Disable any use of
+	assembly code whit the --disable-assembly option.
+
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (numeric_limits): Make content public.
