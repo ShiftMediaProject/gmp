@@ -2,6 +2,8 @@
 
 	* configure.in (CALLING_CONVENTIONS_OBJS): Disable any use of
 	assembly code whit the --disable-assembly option.
+	* mpz/oddfac_1.c: Use the ASSERT_CODE macro.
+	* gen-trialdivtab.c (mpz_log2): Use mpz_sizeinbase (., 2).
 
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
