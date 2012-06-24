@@ -8,6 +8,12 @@
 	* gmp-impl.h (MPN_SIZEINBASE_16): Replace with MPN_SIZEINBASE_2EXP
 	from mpz/export.c .
 	* mpz/export.c (MPN_SIZEINBASE_2EXP): Removed.
+	* mpn/generic/sizeinbase.c: Use MPN_SIZEINBASE.
+
+	* mpz/nextprime.c: Use MPN_SIZEINBASE_2EXP to count bits.
+	* mpn/generic/perfpow.c: Likewise.
+	* mpn/generic/rootrem.c: Likewise.
+	* mpz/get_d_2exp.c: Likewise.
 
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 

@@ -8,7 +8,7 @@
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
    GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2002, 2005, 2009, 2010, 2011 Free Software Foundation, Inc.
+Copyright 2002, 2005, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -125,7 +125,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   mp_limb_t save, save2, cy;
   unsigned long int unb; /* number of significant bits of {up,un} */
   unsigned long int xnb; /* number of significant bits of the result */
-  unsigned int cnt;
   unsigned long b, kk;
   unsigned long sizes[GMP_NUMB_BITS + 1];
   int ni, i;
@@ -147,8 +146,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
     }
   sp = rootp;
 
-  count_leading_zeros (cnt, up[un - 1]);
-  unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
+  MPN_SIZEINBASE_2EXP(unb, up, un, 1);
   /* unb is the number of bits of the input U */
 
   xnb = (unb - 1) / k + 1;	/* ceil (unb / k) */

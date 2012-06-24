@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Martin Boij.
 
-Copyright 2009, 2010 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,7 +40,7 @@ pow_equals (mp_srcptr np, mp_size_t nn,
 	    mp_ptr tp)
 {
   mp_limb_t *tp2;
-  mp_bitcnt_t y, z, count;
+  mp_bitcnt_t y, z;
   mp_size_t i, bn;
   int ans;
   mp_limb_t h, l;
@@ -69,8 +69,8 @@ pow_equals (mp_srcptr np, mp_size_t nn,
      the logarithm of {xp,xn}, rather than using the index of the MSB.
   */
 
-  count_leading_zeros (count, xp[xn - 1]);
-  y = xn * GMP_LIMB_BITS - count - 1;  /* msb_index (xp, xn) */
+  MPN_SIZEINBASE_2EXP(y, xp, xn, 1);
+  y -= 1;  /* msb_index (xp, xn) */
 
   umul_ppmm (h, l, k, y);
   h -= l == 0;  l--;	/* two-limb decrement */
@@ -482,8 +482,7 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
       while (factor != 0);
     }
 
-  count_leading_zeros (count, nc[ncn-1]);
-  count = GMP_LIMB_BITS * ncn - count;   /* log (nc) + 1 */
+  MPN_SIZEINBASE_2EXP(count, nc, ncn, 1);   /* log (nc) + 1 */
   d = (mp_limb_t) (count * logs[trial] + 1e-9) + 1;
   ans = perfpow (nc, ncn, d, g, count, neg);
 
