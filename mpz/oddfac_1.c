@@ -367,9 +367,9 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	  /* 2-multiswing(n) < 2^(n-1)*sqrt(n/pi) < 2^(n+GMP_NUMB_BITS);
 	     one more can be overwritten by mul, another for the sieve */
 	  MPZ_TMP_INIT (mswing, size);
-#if WANT_ASSERT
-	  SIZ(mswing) = 0; /* Initialize size, so that ASSERT can check it correctly. */
-#endif
+	  /* Initialize size, so that ASSERT can check it correctly. */
+	  ASSERT_CODE (SIZ (mswing) = 0);
+
 	  /* Put the sieve on the second half, it will be overwritten by the last mswing. */
 	  sieve = PTR (mswing) + size / 2 + 1;
 
