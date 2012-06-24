@@ -14,7 +14,7 @@
 	* mpn/generic/perfpow.c: Likewise.
 	* mpn/generic/rootrem.c: Likewise.
 	* mpz/get_d_2exp.c: Likewise.
-	* mpn/generic/powm_sec.c: Likewise, and partially nailify.
+	* mpn/generic/powm_sec.c: Likewise, nailify.
 	* mpn/generic/powlo.c: Likewise.
 	* mpn/generic/powm.c: Likewise.
 

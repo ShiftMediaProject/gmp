@@ -179,7 +179,7 @@ mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
 #endif
 
 #define getbit(p,bi) \
-  ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)
+  ((p[(bi - 1) / GMP_NUMB_BITS] >> (bi - 1) % GMP_NUMB_BITS) & 1)
 
 static inline mp_limb_t
 getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
@@ -195,10 +195,10 @@ getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
   else
     {
       bi -= nbits;			/* bit index of low bit to extract */
-      i = bi / GMP_LIMB_BITS;		/* word index of low bit to extract */
-      bi %= GMP_LIMB_BITS;		/* bit index in low word */
+      i = bi / GMP_NUMB_BITS;		/* word index of low bit to extract */
+      bi %= GMP_NUMB_BITS;		/* bit index in low word */
       r = p[i] >> bi;			/* extract (low) bits */
-      nbits_in_r = GMP_LIMB_BITS - bi;	/* number of bits now in r */
+      nbits_in_r = GMP_NUMB_BITS - bi;	/* number of bits now in r */
       if (nbits_in_r < nbits)		/* did we get enough bits? */
 	r += p[i + 1] << nbits_in_r;	/* prepend bits from higher word */
       return r & (((mp_limb_t ) 1 << nbits) - 1);
@@ -416,7 +416,7 @@ mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
      is 3n or 4n depending on if we use mpn_local_sqr or a native
      mpn_sqr_basecase.  We assume 4n always for now.) */
 
-  windowsize = win_size (en * GMP_LIMB_BITS); /* slight over-estimate of exp */
+  windowsize = win_size (en * GMP_NUMB_BITS); /* slight over-estimate of exp */
 
   /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
      the 2bn + n + 1 term is due to redcify's own usage.  */
