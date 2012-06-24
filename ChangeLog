@@ -5,6 +5,10 @@
 	* mpz/oddfac_1.c: Use the ASSERT_CODE macro.
 	* gen-trialdivtab.c (mpz_log2): Use mpz_sizeinbase (., 2).
 
+	* gmp-impl.h (MPN_SIZEINBASE_16): Replace with MPN_SIZEINBASE_2EXP
+	from mpz/export.c .
+	* mpz/export.c (MPN_SIZEINBASE_2EXP): Removed.
+
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (numeric_limits): Make content public.

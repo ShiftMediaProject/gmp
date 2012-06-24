@@ -2810,7 +2810,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 #define MPN_SIZEINBASE(result, ptr, size, base)				\
   do {									\
-    int	      __lb_base, __cnt;						\
+    int	   __lb_base, __cnt;						\
     size_t __totbits;							\
 									\
     ASSERT ((size) >= 0);						\
@@ -2838,25 +2838,17 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
       }									\
   } while (0)
 
-/* eliminate mp_bases lookups for base==16 */
-#define MPN_SIZEINBASE_16(result, ptr, size)				\
-  do {									\
-    int	      __cnt;							\
-    mp_size_t __totbits;						\
-									\
-    ASSERT ((size) >= 0);						\
-									\
-    /* Special case for X == 0.  */					\
-    if ((size) == 0)							\
-      (result) = 1;							\
-    else								\
-      {									\
-	/* Calculate the total number of significant bits of X.  */	\
-	count_leading_zeros (__cnt, (ptr)[(size)-1]);			\
-	__totbits = (size_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);\
-	(result) = (__totbits + 4 - 1) / 4;				\
-      }									\
+#define MPN_SIZEINBASE_2EXP(result, ptr, size, base2exp)			\
+  do {										\
+    int          __cnt;								\
+    mp_bitcnt_t  __totbits;							\
+    ASSERT ((size) > 0);							\
+    ASSERT ((ptr)[(size)-1] != 0);						\
+    count_leading_zeros (__cnt, (ptr)[(size)-1]);				\
+    __totbits = (mp_bitcnt_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);	\
+    (result) = (__totbits + (base2exp)-1) / (base2exp);				\
   } while (0)
+
 
 /* bit count to limb count, rounding up */
 #define BITS_TO_LIMBS(n)  (((n) + (GMP_NUMB_BITS - 1)) / GMP_NUMB_BITS)
