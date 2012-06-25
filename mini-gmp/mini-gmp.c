@@ -2232,12 +2232,11 @@ mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bit_index,
   qn = GMP_ABS (un) - limb_cnt;
   bit_index %= GMP_LIMB_BITS;
 
-  adjust = 0;
-  if ( (mode == DIV_FLOOR && un < 0) || (mode == DIV_CEIL && un > 0))
+  if (mode == ((un > 0) ? DIV_CEIL : DIV_FLOOR)) /* un != 0 here. */
     /* Note: Below, the final indexing at limb_cnt is valid because at
        that point we have qn > 0. */
-    adjust = (!mpn_zero_p (u->_mp_d, limb_cnt)
-	      || qn <= 0
+    adjust = (qn <= 0
+	      || !mpn_zero_p (u->_mp_d, limb_cnt)
 	      || (u->_mp_d[limb_cnt]
 		  & (((mp_limb_t) 1 << bit_index) - 1)));
   else
@@ -2294,7 +2293,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
     {
       /* Quotient (with truncation) is zero, and remainder is
 	 non-zero */
-      if ( (mode == DIV_FLOOR && us < 0) || (mode == DIV_CEIL && us > 0))
+      if (mode == ((us > 0) ? DIV_CEIL : DIV_FLOOR)) /* us != 0 here. */
 	{
 	  /* Have to negate and sign extend. */
 	  mp_size_t i;
@@ -2329,7 +2328,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 
       rp[rn-1] = u->_mp_d[rn-1] & mask;
 
-      if ( (mode == DIV_FLOOR && us < 0) || (mode == DIV_CEIL && us > 0))
+      if (mode == ((us > 0) ? DIV_CEIL : DIV_FLOOR)) /* us != 0 here. */
 	{
 	  /* If r != 0, compute 2^{bit_count} - r. */
 	  mp_size_t i;

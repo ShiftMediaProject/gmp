@@ -18,6 +18,9 @@
 	* mpn/generic/powlo.c: Likewise.
 	* mpn/generic/powm.c: Likewise.
 
+	* mini-gmp/mini-gmp.c (mpz_div_r_2exp, mpz_div_q_2exp): Improve
+	adjustment condition.
+
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (numeric_limits): Make content public.
