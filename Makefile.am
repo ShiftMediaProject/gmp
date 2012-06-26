@@ -67,6 +67,8 @@
 #        4.3.2    8:2:5    5:2:1   4:16:1
 #        5.0.0    9:0:6    6:0:2   4:20:1	Should have been 10:0:0
 #        5.0.1   10:1:0    6:1:2   4:21:1
+#        5.0.5   10:5:0    6:5:2   4:25:1
+#        5.1.0   11:0:1    7:0:3     -
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
