@@ -92,10 +92,6 @@ LIBGMPXX_LT_CURRENT =  6
 LIBGMPXX_LT_REVISION = 1
 LIBGMPXX_LT_AGE =      2
 
-LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 21
-LIBMP_LT_AGE =      1
-
 
 SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
 
@@ -401,7 +397,7 @@ dist-hook:
 		| xargs rm -rf
 	cp "$(srcdir)"/mini-gmp/tests/*.[ch] "$(distdir)/mini-gmp/tests"
 #	grep -F $(VERSION) $(srcdir)/Makefile.am \
-#		| grep -q "^# *$(VERSION) *$(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE) *$(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE) *$(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)"
+#		| grep -q "^# *$(VERSION) *$(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE) *$(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)"
 #	test -z "`sed -n 's/^# *[0-9]*\.[0-9]*\.[0-9]* *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\) *\([0-9]*:[0-9]*:[0-9]*\).*/A\1\nB\2\nC\3/p' $(srcdir)/Makefile.am | grep -v 'A6:3:3\|B3:5:0\|C4:7:1' | sort | uniq -d`"
 
 .PHONY: check-mini-gmp clean-mini-gmp

@@ -1,3 +1,7 @@
+2012-06-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Makefile.am (LIBMP_LT_*): Remove these.
+
 2012-06-26  Marc Glisse  <marc.glisse@inria.fr>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Update comment for 5.1.0.
