@@ -94,7 +94,6 @@ mpz_clrbit (mpz_ptr d, mp_bitcnt_t bit_idx)
 	      dsize += dp[dsize];
 
 	      SIZ (d) = -dsize;
-	    fin:;
 	    }
 	}
       else
