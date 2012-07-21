@@ -1,3 +1,8 @@
+2012-07-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc32/vmx/mod_34lsub1.asm: Fix r0 clobbering issue with
+	"large" code affecting elf+darwin PIC.
+
 2012-06-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBMP_LT_*): Remove these.
@@ -332,7 +337,7 @@
 
 	* mpz/mfac_uiui.c: New file.
 	* Makefile.am: Compile it.
-	* mpz/Makefile.am (libmpz_la_SOURCES): Add mpz_mfac_uiui.c 
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add mpz_mfac_uiui.c
 	* gmp-h.in (mpz_mfac_uiui): Declare.
 
 	* tests/mpz/t-mfac_uiui.c: New file.
@@ -961,7 +966,7 @@
 	* mpz/abs.c: Collapse MPZ_REALLOC(x,.) and PTR(x).
 	* mpz/aors_ui.h: Likewise.
 	* mpz/com.c: Likewise.
-        * mpz/neg.c: Likewise.
+	* mpz/neg.c: Likewise.
 
 	* mpz/invert.c: Reply "no-inverse" when modulus is zero.
 	* tests/mpz/t-invert.c: Add more checks.
