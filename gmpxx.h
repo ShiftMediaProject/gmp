@@ -32,7 +32,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <gmp.h>
 
 // wrapper for gcc's __builtin_constant_p
-#if defined (__GNUC__) && __GNUC__ >= 2
+// __builtin_constant_p has been in gcc since forever,
+// but g++-3.4 miscompiles it.
+#if __GMP_GNUC_PREREQ(4, 2)
 #define __GMPXX_CONSTANT(X) __builtin_constant_p(X)
 #else
 #define __GMPXX_CONSTANT(X) false

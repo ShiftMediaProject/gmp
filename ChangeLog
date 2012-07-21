@@ -1,3 +1,7 @@
+2012-07-21  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__GMPXX_CONSTANT): Disable for g++-3.4.
+
 2012-06-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBMP_LT_*): Remove these.
