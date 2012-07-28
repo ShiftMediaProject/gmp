@@ -1,4 +1,4 @@
-2012-02-18  Marc Glisse  <marc.glisse@inria.fr>
+2012-07-28  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): New partial specializations with builtin
 	types.
