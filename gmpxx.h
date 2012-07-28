@@ -1365,6 +1365,31 @@ namespace std {
   {
     typedef __gmp_expr<T, U> type;
   };
+
+#define __GMPXX_DECLARE_COMMON_TYPE(typ)	\
+  template <class T, class U>			\
+  struct common_type <__gmp_expr<T, U>, typ >	\
+  {						\
+    typedef __gmp_expr<T, T> type;		\
+  };						\
+						\
+  template <class T, class U>			\
+  struct common_type <typ, __gmp_expr<T, U> >	\
+  {						\
+    typedef __gmp_expr<T, T> type;		\
+  }
+
+  __GMPXX_DECLARE_COMMON_TYPE(signed char);
+  __GMPXX_DECLARE_COMMON_TYPE(unsigned char);
+  __GMPXX_DECLARE_COMMON_TYPE(signed int);
+  __GMPXX_DECLARE_COMMON_TYPE(unsigned int);
+  __GMPXX_DECLARE_COMMON_TYPE(signed short int);
+  __GMPXX_DECLARE_COMMON_TYPE(unsigned short int);
+  __GMPXX_DECLARE_COMMON_TYPE(signed long int);
+  __GMPXX_DECLARE_COMMON_TYPE(unsigned long int);
+  __GMPXX_DECLARE_COMMON_TYPE(float);
+  __GMPXX_DECLARE_COMMON_TYPE(double);
+#undef __GMPXX_DECLARE_COMMON_TYPE
 }
 #endif
 

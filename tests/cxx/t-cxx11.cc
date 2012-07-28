@@ -106,11 +106,10 @@ void check_common_type ()
   CHECK_COMMON_TYPE (decltype(-q), decltype(-q), decltype(-q));
   CHECK_COMMON_TYPE (decltype(-f), decltype(-f), decltype(-f));
 
-  /* Not yet supported
+  /* Painful */
   CHECK_COMMON_TYPE_BUILTIN (decltype(-z), mpz_class);
   CHECK_COMMON_TYPE_BUILTIN (decltype(-q), mpq_class);
   CHECK_COMMON_TYPE_BUILTIN (decltype(-f), mpf_class);
-  */
 }
 
 template<class T, class U = T>

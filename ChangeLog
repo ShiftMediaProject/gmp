@@ -1,3 +1,9 @@
+2012-02-18  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (std::common_type): New partial specializations with builtin
+	types.
+	* tests/cxx/t-cxx11.cc: Test it.
+
 2012-07-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc32/vmx/mod_34lsub1.asm: Fix r0 clobbering issue with
