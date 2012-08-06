@@ -5180,7 +5180,7 @@ This function requires that @var{s1n} is greater than or equal to
 @var{s2n}.
 @end deftypefun
 
-@deftypefun void mpn_neg (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
+@deftypefun mp_limb_t mpn_neg (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Perform the negation of @{@var{sp}, @var{n}@}, and write the result to
 @{@var{rp}, @var{n}@}.  Return carry-out.
 @end deftypefun
