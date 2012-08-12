@@ -2,6 +2,8 @@
 
 	* doc/gmp.texi (mpn_neg): Correctly document returned type.
 
+	* gmp-impl.h (_mpz_newalloc, log_n_max): mark with inline (spotted by Niels).
+
 2012-07-28  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): New partial specializations with builtin

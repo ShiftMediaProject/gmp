@@ -1881,7 +1881,7 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
   } while (0)
 
 #if WANT_ASSERT
-static void *
+static inline void *
 _mpz_newalloc (mpz_ptr z, mp_size_t n)
 {
   void * res = _mpz_realloc(z,n);
@@ -1942,7 +1942,7 @@ extern const unsigned char __gmp_fac2cnt_table[];
 extern const mp_limb_t __gmp_limbroots_table[];
 
 /* n^log <= GMP_NUMB_MAX, a limb can store log factors less than n */
-static unsigned
+static inline unsigned
 log_n_max (mp_limb_t n)
 {
   unsigned log;
