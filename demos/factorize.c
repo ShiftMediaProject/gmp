@@ -187,10 +187,6 @@ factor_using_pollard_rho (mpz_t n, unsigned long a, unsigned long p)
 	    }
 	  while (--k != 0);
 
-	  mpz_gcd (t1, P, n);
-	  if (mpz_cmp_ui (t1, 1) != 0)
-	    goto factor_found;
-
 	  mpz_set (x1, x);
 	  k = l;
 	  l = 2 * l;
@@ -233,20 +229,12 @@ factor_using_pollard_rho (mpz_t n, unsigned long a, unsigned long p)
 
       if (!mpz_probab_prime_p (t1, 25))
 	{
-	  do
-	    {
-	      mp_limb_t a_limb;
-	      mpn_random (&a_limb, (mp_size_t) 1);
-	      a = a_limb;
-	    }
-	  while (a == 0);
-
 	  if (flag_verbose > 0)
 	    {
 	      printf ("[composite factor--restarting pollard-rho] ");
 	      fflush (stdout);
 	    }
-	  factor_using_pollard_rho (t1, a, p);
+	  factor_using_pollard_rho (t1, a + 1, p);
 	}
       else
 	{
@@ -277,12 +265,7 @@ factor (mpz_t t, unsigned long p)
   if (mpz_sgn (t) == 0)
     return;
 
-  /* Set the trial division limit according the size of t.  */
-  division_limit = mpz_sizeinbase (t, 2);
-  if (division_limit > 1000)
-    division_limit = 1000 * 1000;
-  else
-    division_limit = division_limit * division_limit;
+  division_limit = 1500;
 
   if (p != 0)
     factor_using_division_2kp (t, division_limit / 10, p);

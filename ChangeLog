@@ -1,3 +1,7 @@
+2012-08-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* demos/factorize.c: Overhaul.
+
 2012-08-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (mpn_neg): Correctly document returned type.
