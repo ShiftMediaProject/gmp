@@ -1,3 +1,9 @@
+2012-09-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* demos/factorize.c: Rewrite no more current form.  Implement Lucas
+	prime proving, and make its use the default.
+	* demos/primes.h: New file.
+
 2012-08-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* demos/factorize.c: Overhaul.
