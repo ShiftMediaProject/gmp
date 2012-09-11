@@ -19,7 +19,7 @@
 
 
 SUBDIRS = calc expr
-EXTRA_DIST = perl
+EXTRA_DIST = perl primes.h
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
