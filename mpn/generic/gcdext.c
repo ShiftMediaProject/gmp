@@ -133,7 +133,7 @@ compute_v (mp_ptr vp,
   else
     { /* |v| = v = (g - u a) / b = (g + |u| a) / b. Since g <= a,
 	 (g + |u| a) always fits in (|usize| + an) limbs. */
-      
+
       ASSERT_NOCARRY (mpn_add (tp, tp, size, gp, gn));
       size -= (tp[size - 1] == 0);
     }
@@ -397,7 +397,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
      We always have u1 > 0, and u0 == 0 is possible only if u1 == 1,
      in which case the only reduction done so far is a = A - k B for
      some k.
-	 
+
      Compute g = u a + v b = (u u1 - v u0) A + (...) B
      Here, u, v are bounded by
 
