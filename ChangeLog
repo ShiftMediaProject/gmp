@@ -1,3 +1,7 @@
+2012-10-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/powm_ui.c (mpz_powm_ui): Deflect to mpz_powm for large exponent.
+
 2012-09-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* demos/factorize.c: Rewrite no more current form.  Implement Lucas
