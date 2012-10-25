@@ -1,3 +1,9 @@
+2012-10-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New functions.
+	(mpn_remove): Call mpn_bdiv_qr_wrap.
+	* mpz/remove.c: Enable suppressed mpn_remove call.
+
 2012-10-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/powm_ui.c (mpz_powm_ui): Deflect to mpz_powm for large exponent.
