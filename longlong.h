@@ -1283,37 +1283,37 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
+      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
+      __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else								\
-      __asm__ ("{a%I5|add%I5c} %1,%4,%5\n\t{ae|adde} %0,%2,%3"		\
+      __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"		\
 	     : "=r" (sh), "=&r" (sl)					\
 	     : "r" (ah), "r" (bh), "%r" (al), "rI" (bl));		\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (ah) && (ah) == 0)				\
-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfze|subfze} %0,%2"	\
+      __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"	\
 	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
     else if (__builtin_constant_p (ah) && (ah) == ~(USItype) 0)		\
-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfme|subfme} %0,%2"	\
+      __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"	\
 	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == 0)			\
-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{ame|addme} %0,%2"		\
+      __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"		\
 	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{aze|addze} %0,%2"		\
+      __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"		\
 	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
     else								\
-      __asm__ ("{sf%I4|subf%I4c} %1,%5,%4\n\t{sfe|subfe} %0,%3,%2"	\
+      __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"	\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		\
   } while (0)
 #define count_leading_zeros(count, x) \
-  __asm__ ("{cntlz|cntlzw} %0,%1" : "=r" (count) : "r" (x))
+  __asm__ ("cntlzw %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
 #if HAVE_HOST_CPU_FAMILY_powerpc
 #if __GMP_GNUC_PREREQ (4,4)
@@ -1361,13 +1361,13 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
+      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
+      __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else								\
-      __asm__ ("{a%I5|add%I5c} %1,%4,%5\n\t{ae|adde} %0,%2,%3"		\
+      __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"		\
 	     : "=r" (sh), "=&r" (sl)					\
 	     : "r" (ah), "r" (bh), "%r" (al), "rI" (bl));		\
   } while (0)
@@ -1377,36 +1377,36 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   do {									      \
     if (__builtin_constant_p (bl) && bl > -0x8000 && bl <= 0x8000) {	      \
 	if (__builtin_constant_p (ah) && (ah) == 0)			      \
-	  __asm__ ("{ai|addic} %1,%3,%4\n\t{sfze|subfze} %0,%2"		      \
+	  __asm__ ("addic %1,%3,%4\n\tsubfze %0,%2"		      \
 		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "*rI" (-bl)); \
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	      \
-	  __asm__ ("{ai|addic} %1,%3,%4\n\t{sfme|subfme} %0,%2"		      \
+	  __asm__ ("addic %1,%3,%4\n\tsubfme %0,%2"		      \
 		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "*rI" (-bl)); \
 	else if (__builtin_constant_p (bh) && (bh) == 0)		      \
-	  __asm__ ("{ai|addic} %1,%3,%4\n\t{ame|addme} %0,%2"		      \
+	  __asm__ ("addic %1,%3,%4\n\taddme %0,%2"		      \
 		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "*rI" (-bl)); \
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	      \
-	  __asm__ ("{ai|addic} %1,%3,%4\n\t{aze|addze} %0,%2"		      \
+	  __asm__ ("addic %1,%3,%4\n\taddze %0,%2"		      \
 		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "*rI" (-bl)); \
 	else								      \
-	  __asm__ ("{ai|addic} %1,%4,%5\n\t{sfe|subfe} %0,%3,%2"	      \
+	  __asm__ ("addic %1,%4,%5\n\tsubfe %0,%3,%2"	      \
 		   : "=r" (sh), "=&r" (sl)				      \
 		   : "r" (ah), "r" (bh), "rI" (al), "*rI" (-bl));	      \
       } else {								      \
 	if (__builtin_constant_p (ah) && (ah) == 0)			      \
-	  __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfze|subfze} %0,%2"	      \
+	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"	      \
 		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));  \
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	      \
-	  __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfme|subfme} %0,%2"	      \
+	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"	      \
 		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));  \
 	else if (__builtin_constant_p (bh) && (bh) == 0)		      \
-	  __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{ame|addme} %0,%2"	      \
+	  __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"	      \
 		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));  \
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	      \
-	  __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{aze|addze} %0,%2"	      \
+	  __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"	      \
 		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));  \
 	else								      \
-	  __asm__ ("{sf%I4|subf%I4c} %1,%5,%4\n\t{sfe|subfe} %0,%3,%2"	      \
+	  __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"	      \
 		   : "=r" (sh), "=&r" (sl)				      \
 		   : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		      \
       }									      \

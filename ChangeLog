@@ -1,5 +1,7 @@
 2012-10-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h: De-support old POWER asm syntax.
+
 	* tests/mpz/t-remove.c: Run more test, but use a tad smaller operands.
 
 	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New functions.
