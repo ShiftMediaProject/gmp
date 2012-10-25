@@ -1,5 +1,7 @@
 2012-10-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-remove.c: Run more test, but use a tad smaller operands.
+
 	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New functions.
 	(mpn_remove): Call mpn_bdiv_qr_wrap.
 	* mpz/remove.c: Enable suppressed mpn_remove call.

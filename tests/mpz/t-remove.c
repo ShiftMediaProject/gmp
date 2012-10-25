@@ -35,7 +35,7 @@ main (int argc, char **argv)
   mpz_t t, dest, refdest, dividend, divisor;
   mp_size_t dividend_size, divisor_size;
   int i;
-  int reps = 100;
+  int reps = 1000;
   unsigned long int pwr, refpwr;
   gmp_randstate_ptr rands;
   mpz_t bs;
@@ -52,7 +52,7 @@ main (int argc, char **argv)
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 18 + 2; /* 0..524288 bit operands */
+      size_range = mpz_get_ui (bs) % 17 + 2; /* 0..524288 bit operands */
 
       do
 	{
