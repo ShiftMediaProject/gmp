@@ -32,6 +32,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
        For s = 1, 2, 4, ..., s_max, compute the s least significant
        limbs of {xp,xn}^k. Stop if they don't match the s least
        significant limbs of {np,nn}.
+
+   FIXME: Low xn limbs can be expected to always match, if computed as
+   a mod B^{xn} root. So instead of using mpn_powlo, compute an
+   approximation of the most significant (normalized) limb of {xp,xn}
+   ^ k (and an error bound), and compare to {np, nn}. Or use an even
+   cruder approximation based on fix-point base 2 logarithm.
 */
 static int
 pow_equals (mp_srcptr np, mp_size_t nn,
@@ -105,6 +111,28 @@ pow_equals (mp_srcptr np, mp_size_t nn,
    Algorithm:
        Apply Hensel lifting repeatedly, each time
        doubling (approx.) the number of known bits in rp.
+
+   Uses the iteration
+
+     r' <-- k^{-1} ((k+1) r - r^{k+1} y) (mod 2^b)
+
+   FIXME: I think we get *exactly* doubled precision in each
+   iteration. Could be simplified to do precision book-keeping in
+   limbs rather than bits.   
+   
+   FIXME: Rewrite iteration as
+
+     r' <-- r - k^{-1} r (r^k y - 1)
+
+   and take advantage of the zero low part of r^k y - 1.
+
+   If we prefer to get y^{1/k} rather than y^{-1/k}, we could also
+   switch to the iteration
+
+     r' <-- r - k^{-1} r (r^k y^{k-1} - 1)
+
+   which converges to y^{1/n - 1}, and we then get y^{1/n} by a single
+   mullo.
 */
 static void
 binv_root (mp_ptr rp, mp_srcptr yp,
@@ -146,6 +174,16 @@ binv_root (mp_ptr rp, mp_srcptr yp,
 /*
    Computes rp such that rp^2 * yp = 1 (mod 2^{b+1}).
    Returns non-zero if such an integer rp exists.
+
+   Uses the iteration
+
+     r' <-- (3r - r^3 y) / 2
+
+   FIXME: Rewrite as
+
+     r' <-- r - r (r^2 y - 1) / 2
+
+   and take advantage of zero low part of r^2 y - 1.
 */
 static int
 binv_sqroot (mp_ptr rp, mp_srcptr yp,
@@ -274,6 +312,13 @@ perfpow (mp_srcptr np, mp_size_t nn,
   tp = TMP_ALLOC_LIMBS (5 * nn);	/* FIXME */
   MPN_ZERO (rp1, nn);
 
+  /* FIXME: It seems the inverse in yp is needed only to get
+     non-inverted roots. I.e., is_kth_power computes n^{1/2} as
+     (n^{-1})^{-1/2} and similarly for nth roots. It should be more
+     efficient to compute n^{1/2} as n * n^{-1/2}, with a mullo
+     instead of a binvert. And we can do something similar for kth
+     roots if we switch to an iteration converging to n^{1/k - 1}, and
+     we can then eliminate this binvert call. */
   mpn_binvert (yp, np, 1 + (b - 1) / GMP_LIMB_BITS, tp);
   if (b % GMP_LIMB_BITS)
     yp[(b - 1) / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
