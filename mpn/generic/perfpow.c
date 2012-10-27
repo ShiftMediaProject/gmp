@@ -118,8 +118,8 @@ pow_equals (mp_srcptr np, mp_size_t nn,
 
    FIXME: I think we get *exactly* doubled precision in each
    iteration. Could be simplified to do precision book-keeping in
-   limbs rather than bits.   
-   
+   limbs rather than bits.
+
    FIXME: Rewrite iteration as
 
      r' <-- r - k^{-1} r (r^k y - 1)
