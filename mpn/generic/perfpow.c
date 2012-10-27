@@ -106,33 +106,31 @@ pow_equals (mp_srcptr np, mp_size_t nn,
   return ans;
 }
 
-/*
-   Computes rp such that rp^k * yp = 1 (mod 2^b).
-   Algorithm:
-       Apply Hensel lifting repeatedly, each time
-       doubling (approx.) the number of known bits in rp.
+/* Compute r such that r^k * y = 1 (mod 2^b).
 
-   Uses the iteration
-
+   Iterates
      r' <-- k^{-1} ((k+1) r - r^{k+1} y) (mod 2^b)
+   using Hensel lifting, each time doubling the number of known bits in r.
 
-   FIXME: I think we get *exactly* doubled precision in each
-   iteration. Could be simplified to do precision book-keeping in
-   limbs rather than bits.
+   Works just for odd k.  Else the Hensel lifting degenerates.
 
-   FIXME: Rewrite iteration as
+   FIXME:
+     (1) Simplify to do precision book-keeping in limbs rather than bits.
 
-     r' <-- r - k^{-1} r (r^k y - 1)
+     (2) Rewrite iteration as
+	   r' <-- r - k^{-1} r (r^k y - 1)
+	 and take advantage of the zero low part of r^k y - 1.
 
-   and take advantage of the zero low part of r^k y - 1.
+     (3) Use wrap-around trick.
 
-   If we prefer to get y^{1/k} rather than y^{-1/k}, we could also
-   switch to the iteration
+     (4) Use a small table to get starting value.
+
+   If we prefer to get y^{1/k} rather than y^{-1/k}, we could also switch to
+   the iteration
 
      r' <-- r - k^{-1} r (r^k y^{k-1} - 1)
 
-   which converges to y^{1/n - 1}, and we then get y^{1/n} by a single
-   mullo.
+   which converges to y^{1/n - 1}, and we then get y^{1/n} by a single mullo.
 */
 static void
 binv_root (mp_ptr rp, mp_srcptr yp,
@@ -171,19 +169,25 @@ binv_root (mp_ptr rp, mp_srcptr yp,
   return;
 }
 
-/*
-   Computes rp such that rp^2 * yp = 1 (mod 2^{b+1}).
-   Returns non-zero if such an integer rp exists.
+/* Compute r such that r^2 * y = 1 (mod 2^{b+1}).
+   Return non-zero if such an integer r exists.
 
-   Uses the iteration
-
+   Iterates
      r' <-- (3r - r^3 y) / 2
+   using Hensel lifting.  Since we divide by two, the Hensel lifting is
+   somewhat degenerates.  Therefore, we lift from 2^b to 2^{b+1}-1.
 
-   FIXME: Rewrite as
+   FIXME:
+     (1) Simplify to do precision book-keeping in limbs rather than bits.
 
-     r' <-- r - r (r^2 y - 1) / 2
+     (2) Rewrite iteration as
+	   r' <-- r - r (r^2 y - 1) / 2
+	 and take advantage of zero low part of r^2 y - 1.
 
-   and take advantage of zero low part of r^2 y - 1.
+     (3) Use wrap-around trick.
+
+     (4) Use a small table to get starting value.
+
 */
 static int
 binv_sqroot (mp_ptr rp, mp_srcptr yp,
