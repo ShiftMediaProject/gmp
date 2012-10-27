@@ -1,3 +1,7 @@
+2012-10-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/remove.c: Get remainder allocation right.
+
 2012-10-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h: De-support old POWER asm syntax.

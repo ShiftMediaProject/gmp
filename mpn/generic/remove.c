@@ -86,7 +86,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   TMP_MARK;
 
-  tp = TMP_ALLOC_LIMBS ((un + vn) / 2); /* remainder */
+  tp = TMP_ALLOC_LIMBS ((un + 1 + vn) / 2); /* remainder */
   qp = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
   qp2 = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
   np = TMP_ALLOC_LIMBS (un + LOG);	/* powers of V */
