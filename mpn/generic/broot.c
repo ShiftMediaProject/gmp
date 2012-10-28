@@ -58,7 +58,7 @@ powlimb (mp_limb_t a, mp_limb_t e)
 static void
 mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 {
-  mp_size_t sizes[GMP_LIMB_BITS * 2];  
+  mp_size_t sizes[GMP_LIMB_BITS * 2];
   mp_ptr akm1, tp, rnp, ep, scratch;
   mp_limb_t a0, r0, km1, kinv;
   mp_size_t rn;
@@ -72,7 +72,7 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
   ASSERT (k >= 3);
 
   TMP_MARK;
-  
+
   akm1 = TMP_ALLOC_LIMBS (4*n);
   tp = akm1 + n;
 
@@ -89,8 +89,8 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 
   /* 4 bits: a^{1/k - 1} (mod 16):
 
-        a % 8
-        1 3 5 7   
+	a % 8
+	1 3 5 7
    k%4 +-------
      1 |1 1 1 1
      3 |1 9 9 1
@@ -119,7 +119,7 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
     }
 
   /* FIXME: Special case for two limb iteration. */
-  rnp = TMP_ALLOC_LIMBS (2*n);  
+  rnp = TMP_ALLOC_LIMBS (2*n);
   ep = rnp + n;
 
   /* FIXME: Possible to this on the fly with some bit fiddling. */
@@ -133,7 +133,7 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
       /* Compute x^k. What's the best way to handle the doubled
 	 precision? */
       MPN_ZERO (rp + rn, sizes[i] - rn);
-      mpn_powlo (rnp, rp, &k, 1, sizes[i], tp); 
+      mpn_powlo (rnp, rp, &k, 1, sizes[i], tp);
 
       /* Multiply by a^{k-1}. Can use wraparound; low part is
 	 000...01. */
@@ -180,5 +180,5 @@ mpn_broot (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
   mpn_broot_invm1 (tp, ap, n, k);
   mpn_mullo_n (rp, tp, ap, n);
 
-  TMP_FREE;  
+  TMP_FREE;
 }
