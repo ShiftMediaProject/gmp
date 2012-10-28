@@ -1,3 +1,7 @@
+2012-10-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-broot.c: Add a forgotten TMP_MARK.
+
 2012-10-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/broot.c (mpn_broot): New file and function.

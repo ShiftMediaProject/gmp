@@ -33,7 +33,9 @@ main (int argc, char **argv)
   int count = COUNT;
   unsigned i;
   TMP_DECL;
-  
+
+  TMP_MARK;
+
   if (argc > 1)
     {
       char *end;
@@ -44,7 +46,7 @@ main (int argc, char **argv)
 	  return 1;
 	}
     }
-  
+
   tests_start ();
   rands = RANDS;
 
