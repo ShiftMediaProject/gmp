@@ -1632,6 +1632,15 @@ __GMP_DECLSPEC mp_size_t mpn_rootrem (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_l
 #define mpn_broot __MPN(broot)
 __GMP_DECLSPEC void mpn_broot (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 
+#define mpn_brootinv __MPN(brootinv)
+__GMP_DECLSPEC void mpn_brootinv (mp_ptr, mp_srcptr, mp_bitcnt_t, mp_limb_t, mp_ptr);
+
+#define mpn_bsqrt __MPN(bsqrt)
+__GMP_DECLSPEC void mpn_bsqrt (mp_ptr, mp_srcptr, mp_bitcnt_t, mp_ptr);
+
+#define mpn_bsqrtinv __MPN(bsqrtinv)
+__GMP_DECLSPEC int mpn_bsqrtinv (mp_ptr, mp_srcptr, mp_bitcnt_t, mp_ptr);
+
 #if defined (_CRAY)
 #define MPN_COPY_INCR(dst, src, n)					\
   do {									\
