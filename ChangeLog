@@ -1,5 +1,13 @@
 2012-10-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (gmp_mpn_functions): Add new files.
+	* gmp-impl.h: Declare new functions.
+	* mpn/generic/perfpow.c: Overhaul.
+	(binv_root, binv_sqroot): Remove.
+	* mpn/generic/brootinv.c: New file, code from overhauled binv_root.
+	* mpn/generic/bsqrtinv.c: New file, code from overhauled binv_sqroot.
+	* mpn/generic/bsqrt.c: New file.
+
 	* tests/mpn/t-broot.c: Add a forgotten TMP_MARK.
 
 2012-10-28  Niels Möller  <nisse@lysator.liu.se>
