@@ -1,3 +1,11 @@
+2012-10-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/broot.c (mpn_broot): New file and function.
+	* configure.in (gmp_mpn_functions): Add broot.
+	* gmp-impl.h (mpn_broot): Declare.
+	* tests/mpn/t-broot.c: New testcase.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-broot.
+
 2012-10-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/remove.c: Get remainder allocation right.

@@ -2679,7 +2679,7 @@ gmp_mpn_functions="$extra_functions					   \
   sbpi1_bdiv_q sbpi1_bdiv_qr						   \
   dcpi1_bdiv_q dcpi1_bdiv_qr						   \
   mu_bdiv_q mu_bdiv_qr							   \
-  bdiv_q bdiv_qr							   \
+  bdiv_q bdiv_qr broot							   \
   divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo powm_sec		   \
   trialdiv remove							   \
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \

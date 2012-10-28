@@ -1629,6 +1629,8 @@ __GMP_DECLSPEC int     mpn_divisible_p (mp_srcptr, mp_size_t, mp_srcptr, mp_size
 #define   mpn_rootrem __MPN(rootrem)
 __GMP_DECLSPEC mp_size_t mpn_rootrem (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 
+#define mpn_broot __MPN(broot)
+__GMP_DECLSPEC void mpn_broot (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 
 #if defined (_CRAY)
 #define MPN_COPY_INCR(dst, src, n)					\
