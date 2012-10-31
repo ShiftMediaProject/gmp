@@ -867,6 +867,22 @@ speed_mpn_mu_bdiv_qr (struct speed_params *s)
 }
 
 double
+speed_mpn_broot (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BROOT (mpn_broot);
+}
+double
+speed_mpn_broot_invm1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BROOT (mpn_broot_invm1);
+}
+double
+speed_mpn_brootinv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BROOTINV (mpn_brootinv, 5*s->size);
+}
+
+double
 speed_mpn_binvert (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINVERT (mpn_binvert, mpn_binvert_itch);

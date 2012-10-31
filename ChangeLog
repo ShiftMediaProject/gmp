@@ -1,3 +1,17 @@
+2012-10-31  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.c (routine): Added mpn_broot, mpn_broot_invm1,
+	mpn_brootinv.
+
+	* tune/common.c (speed_mpn_broot, speed_mpn_broot_invm1)
+	(speed_mpn_brootinv): New functions.
+	* tune/speed.h (SPEED_ROUTINE_MPN_BROOT)
+	(SPEED_ROUTINE_MPN_BROOTINV): New macros.
+
+	* mpn/generic/broot.c (mpn_broot_invm1): Made non-static (mainly
+	for benchmarking).
+	* gmp-impl.h (mpn_broot_invm1): Declare it.
+
 2012-10-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (gmp_mpn_functions): Add new files.

@@ -55,7 +55,7 @@ powlimb (mp_limb_t a, mp_limb_t e)
 
      a^{k-1} r'^k = 1 (mod 2^{2m}),
  */
-static void
+void
 mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 {
   mp_size_t sizes[GMP_LIMB_BITS * 2];

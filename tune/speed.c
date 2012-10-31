@@ -370,6 +370,10 @@ const struct routine_t {
   { "mpn_sbpi1_bdiv_q",        speed_mpn_sbpi1_bdiv_q        },
   { "mpn_dcpi1_bdiv_q",        speed_mpn_dcpi1_bdiv_q        },
 
+  { "mpn_broot",               speed_mpn_broot,    FLAG_R },
+  { "mpn_broot_invm1",         speed_mpn_broot_invm1, FLAG_R },
+  { "mpn_brootinv",            speed_mpn_brootinv, FLAG_R },
+  
   { "mpn_get_str",          speed_mpn_get_str,     FLAG_R_OPTIONAL },
   { "mpn_set_str",          speed_mpn_set_str,     FLAG_R_OPTIONAL },
   { "mpn_set_str_basecase", speed_mpn_bc_set_str,  FLAG_R_OPTIONAL },

@@ -1632,6 +1632,9 @@ __GMP_DECLSPEC mp_size_t mpn_rootrem (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_l
 #define mpn_broot __MPN(broot)
 __GMP_DECLSPEC void mpn_broot (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
 
+#define mpn_broot_invm1 __MPN(broot_invm1)
+__GMP_DECLSPEC void mpn_broot_invm1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
+
 #define mpn_brootinv __MPN(brootinv)
 __GMP_DECLSPEC void mpn_brootinv (mp_ptr, mp_srcptr, mp_bitcnt_t, mp_limb_t, mp_ptr);
 

@@ -281,6 +281,9 @@ double speed_mpn_sbpi1_bdiv_q (struct speed_params *);
 double speed_mpn_dcpi1_bdiv_q (struct speed_params *);
 double speed_mpn_mu_bdiv_q (struct speed_params *);
 double speed_mpn_mu_bdiv_qr (struct speed_params *);
+double speed_mpn_broot (struct speed_params *);
+double speed_mpn_broot_invm1 (struct speed_params *);
+double speed_mpn_brootinv (struct speed_params *);
 double speed_mpn_invert (struct speed_params *);
 double speed_mpn_invertappr (struct speed_params *);
 double speed_mpn_ni_invertappr (struct speed_params *);
@@ -2074,6 +2077,42 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 									\
     TMP_FREE;								\
     return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_BROOT(function)	\
+  {						\
+    SPEED_RESTRICT_COND (s->r & 1);		\
+    s->xp[0] |= 1;				\
+    SPEED_ROUTINE_MPN_UNARY_1_CALL		\
+      ((*function) (wp, s->xp, s->size, s->r));	\
+  }
+
+#define SPEED_ROUTINE_MPN_BROOTINV(function, itch)	\
+  {							\
+    mp_ptr    wp, tp;					\
+    unsigned  i;					\
+    double    t;					\
+    TMP_DECL;						\
+    TMP_MARK;						\
+    SPEED_RESTRICT_COND (s->size >= 1);			\
+    SPEED_RESTRICT_COND (s->r & 1);			\
+    wp = TMP_ALLOC_LIMBS (s->size);			\
+    tp = TMP_ALLOC_LIMBS ( (itch));			\
+    s->xp[0] |= 1;					\
+							\
+    speed_operand_src (s, s->xp, s->size);		\
+    speed_operand_dst (s, wp, s->size);			\
+    speed_cache_fill (s);				\
+							\
+    speed_starttime ();					\
+    i = s->reps;					\
+    do							\
+      (*function) (wp, s->xp, s->size * GMP_NUMB_BITS, s->r, tp);	\
+    while (--i != 0);					\
+    t = speed_endtime ();				\
+							\
+    TMP_FREE;						\
+    return t;						\
   }
 
 #define SPEED_ROUTINE_MPN_INVERT(function,itchfn)			\
