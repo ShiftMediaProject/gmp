@@ -54,13 +54,20 @@ powlimb (mp_limb_t a, mp_limb_t e)
    then
 
      a^{k-1} r'^k = 1 (mod 2^{2m}),
+
+   Compute the update term as
+
+     r' = r - (a^{k-1} r^{k+1} - r) / k
+
+   where we still have cancelation of low limbs.
+
  */
 void
 mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 {
   mp_size_t sizes[GMP_LIMB_BITS * 2];
   mp_ptr akm1, tp, rnp, ep, scratch;
-  mp_limb_t a0, r0, km1, kinv;
+  mp_limb_t a0, r0, km1, kp1h, kinv;
   mp_size_t rn;
   unsigned i;
 
@@ -118,8 +125,11 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
       return;
     }
 
+  /* For odd k, (k+1)/2 = k/2+1, and the latter avoids overflow. */ 
+  kp1h = k/2 + 1;
+
   /* FIXME: Special case for two limb iteration. */
-  rnp = TMP_ALLOC_LIMBS (2*n);
+  rnp = TMP_ALLOC_LIMBS (2*n + 1);
   ep = rnp + n;
 
   /* FIXME: Possible to this on the fly with some bit fiddling. */
@@ -130,28 +140,20 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 
   while (i-- > 0)
     {
-      /* Compute x^k. What's the best way to handle the doubled
-	 precision? */
-      MPN_ZERO (rp + rn, sizes[i] - rn);
-      mpn_powlo (rnp, rp, &k, 1, sizes[i], tp);
+      /* Compute x^{k+1}. */
+      mpn_sqr (ep, rp, rn); /* For odd n, writes n+1 limbs in the
+			       final iteration.*/
+      mpn_powlo (rnp, ep, &kp1h, 1, sizes[i], tp);
 
-      /* Multiply by a^{k-1}. Can use wraparound; low part is
-	 000...01. */
+      /* Multiply by a^{k-1}. Can use wraparound; low part equals
+	 r. */
 
       mpn_mullo_n (ep, rnp, akm1, sizes[i]);
-      ASSERT (ep[0] == 1);
-      ASSERT (rn == 1 || mpn_zero_p (ep + 1, rn - 1));
+      ASSERT (mpn_cmp (ep, rp, rn) == 0);
 
       ASSERT (sizes[i] <= 2*rn);
-      mpn_pi1_bdiv_q_1 (ep, ep + rn, sizes[i] - rn, k, kinv, 0);
-
-      /* Multiply by x, plain mullo. */
-      mpn_mullo_n (rp + rn, ep, rp, sizes[i] - rn);
-
-      /* FIXME: Avoid negation, e.g., by using a bdiv_q_1 variant
-	 returning -q. */
+      mpn_pi1_bdiv_q_1 (rp + rn, ep + rn, sizes[i] - rn, k, kinv, 0);
       mpn_neg (rp + rn, rp + rn, sizes[i] - rn);
-
       rn = sizes[i];
     }
   TMP_FREE;

@@ -1,5 +1,8 @@
 2012-10-31  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/broot.c (mpn_broot_invm1): Avoid a mullo_n in the
+	loop, and do powering as a plain mpn_sqr followed by mpn_powlo.
+
 	* tune/speed.c (routine): Added mpn_broot, mpn_broot_invm1,
 	mpn_brootinv.
 
