@@ -1,5 +1,8 @@
 2012-11-01  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd2.c (mpn_hgcd2): Removed redundant loop exit
+	tests in the single-precision loop.
+
 	* mpz/combit.c (mpz_combit): Rewrite, optimizing for the common
 	case.
 

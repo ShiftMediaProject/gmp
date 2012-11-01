@@ -338,8 +338,6 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
   for (;;)
     {
       ASSERT (ah >= bh);
-      if (ah == bh)
-	break;
 
       ah -= bh;
       if (ah < (CNST_LIMB (1) << (GMP_LIMB_BITS / 2 + 1)))
@@ -369,8 +367,6 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
     subtract_a1:
       ASSERT (bh >= ah);
-      if (ah == bh)
-	break;
 
       bh -= ah;
       if (bh < (CNST_LIMB (1) << (GMP_LIMB_BITS / 2 + 1)))
