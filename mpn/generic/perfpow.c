@@ -142,8 +142,8 @@ is_kth_power (mp_ptr rp, mp_srcptr np,
   else
     {
       b = 1 + (f - 1) / k;
-      mpn_brootinv (rp, ip, b, k, tp);
       rn = 1 + (b - 1) / GMP_LIMB_BITS;
+      mpn_brootinv (rp, ip, rn, k, tp);
       if ((b % GMP_LIMB_BITS) != 0)
 	rp[rn - 1] &= (CNST_LIMB(1) << (b % GMP_LIMB_BITS)) - 1;
       MPN_NORMALIZE (rp, rn);

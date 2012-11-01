@@ -22,7 +22,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Compute r such that r^k * y = 1 (mod 2^b).
+/* Computes a^e (mod B). Uses right-to-left binary algorithm, since
+   typical use will have e small. */
+static mp_limb_t
+powlimb (mp_limb_t a, mp_limb_t e)
+{
+  mp_limb_t r = 1;
+  mp_limb_t s = a;
+
+  for (r = 1, s = a; e > 0; e >>= 1, s *= s)
+    if (e & 1)
+      r *= s;
+
+  return r;
+}
+
+/* Compute r such that r^k * y = 1 (mod B^n).
 
    Iterates
      r' <-- k^{-1} ((k+1) r - r^{k+1} y) (mod 2^b)
@@ -31,7 +46,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    Works just for odd k.  Else the Hensel lifting degenerates.
 
    FIXME:
-     (1) Simplify to do precision book-keeping in limbs rather than bits.
+   
+     (1) Make it work for k == GMP_LIMB_MAX (k+1 below overflows).
 
      (2) Rewrite iteration as
 	   r' <-- r - k^{-1} r (r^k y - 1)
@@ -41,25 +57,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
      (4) Use a small table to get starting value.
 
-   If we prefer to get y^{1/k} rather than y^{-1/k}, we could also switch to
-   the iteration
-
-     r' <-- r - k^{-1} r (r^k y^{k-1} - 1)
-
-   which converges to y^{1/n - 1}, and we then get y^{1/n} by a single mullo.
+   Scratch need: 5*bn, where bn = ceil (bnb / GMP_NUMB_BITS).
 */
+
 void
-mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_bitcnt_t bnb, mp_limb_t k, mp_ptr tp)
+mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_size_t bn, mp_limb_t k, mp_ptr tp)
 {
   mp_ptr tp2, tp3;
-  mp_limb_t kinv, k2;
-  mp_size_t bn, order[GMP_LIMB_BITS + 1];
+  mp_limb_t kinv, k2, r0, y0;
+  mp_size_t order[GMP_LIMB_BITS + 1];
   int i, d;
 
-  ASSERT (bnb > 0);
+  ASSERT (bn > 0);
   ASSERT ((k & 1) != 0);
-
-  bn = 1 + (bnb - 1) / GMP_LIMB_BITS;
 
   tp2 = tp + bn;
   tp3 = tp + 2 * bn;
@@ -67,11 +77,40 @@ mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_bitcnt_t bnb, mp_limb_t k, mp_ptr tp)
 
   binvert_limb (kinv, k);
 
-  d = 0;
-  for (; bnb != 1; bnb = (bnb + 1) >> 1)
-    order[d++] = 1 + (bnb - 1) / GMP_LIMB_BITS;
+  /* 4-bit initial approximation:
+        
+   y%16 | 1  3  5  7  9 11 13 15, 	
+    k%4 +-----------------------------
+     1  | 1 11 13  7  9  3  5 15
+     3  | 1  3  5  7  9 11 13 15
 
-  rp[0] = 1;
+  */
+  y0 = yp[0];
+  
+  r0 = y0 ^ (((y0 << 1) ^ (y0 << 2)) & ~(k << 2) & 8);		/* 4 bits */
+  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0x7f));		/* 8 bits */
+  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0xffff));	/* 16 bits */
+  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2));			/* 32 bits */
+#if GMP_NUMB_BITS > 32
+  {
+    unsigned prec = 32;
+    do
+      {
+	r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2));
+	prec *= 2;
+      }
+    while (prec < GMP_NUMB_BITS);
+  }
+#endif
+
+  rp[0] = r0;
+  if (bn == 1)
+    return;
+  
+  d = 0;
+  for (; bn > 1; bn = (bn + 1) >> 1)
+    order[d++] = bn;
+
   for (i = d - 1; i >= 0; i--)
     {
       bn = order[i];

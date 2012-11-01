@@ -81,7 +81,7 @@ main (int argc, char **argv)
 	  else
 	    k |= 1;
 	}
-      mpn_brootinv (rp, ap, n * GMP_NUMB_BITS, k, scratch);
+      mpn_brootinv (rp, ap, n, k, scratch);
       mpn_powlo (pp, rp, &k, 1, n, scratch);
       mpn_mullo_n (app, ap, pp, n);
       

@@ -2107,7 +2107,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_starttime ();					\
     i = s->reps;					\
     do							\
-      (*function) (wp, s->xp, s->size * GMP_NUMB_BITS, s->r, tp);	\
+      (*function) (wp, s->xp, s->size, s->r, tp);	\
     while (--i != 0);					\
     t = speed_endtime ();				\
 							\

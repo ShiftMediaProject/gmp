@@ -1,5 +1,13 @@
 2012-11-01  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/brootinv.c (mpn_brootinv): Input size in limbs
+	rather than bits. Use single-precision iterations for the first
+	limb.
+	* mpn/generic/perfpow.c (is_kth_power): Update mpn_brootinv call.
+	* tests/mpn/t-brootinv.c (main): Likewise.
+	* tune/speed.h (SPEED_ROUTINE_MPN_BROOTINV): Likewise.
+	* gmp-impl.h (mpn_brootinv): Updated prototype.
+
 	* mpn/generic/hgcd2.c (mpn_hgcd2): Removed redundant loop exit
 	tests in the single-precision loop.
 
