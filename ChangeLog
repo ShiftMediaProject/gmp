@@ -1,3 +1,7 @@
+2012-11-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/powm_ui.c: Rewrite.
+
 2012-11-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/brootinv.c (mpn_brootinv): Input size in limbs

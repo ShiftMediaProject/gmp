@@ -45,18 +45,53 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   b   e     m    b^e mod m
 */
 
-/* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
-   t is defined by (tp,mn).  */
 static void
-reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn)
+mod (mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, gmp_pi1_t *dinv, mp_ptr tp)
 {
   mp_ptr qp;
   TMP_DECL;
-
   TMP_MARK;
-  qp = TMP_ALLOC_LIMBS (an - mn + 1);
 
-  mpn_tdiv_qr (qp, tp, 0L, ap, an, mp, mn);
+  qp = tp;
+
+  if (dn == 1)
+    np[0] = mpn_divrem_1 (qp, (mp_size_t) 0, np, nn, dp[0]);
+  else if (dn == 2)
+    mpn_div_qr_2n_pi1 (qp, np, np, nn, dp[1], dp[0], dinv->inv32);
+  else if (BELOW_THRESHOLD (dn, DC_DIV_QR_THRESHOLD) ||
+	   BELOW_THRESHOLD (nn - dn, DC_DIV_QR_THRESHOLD))
+    mpn_sbpi1_div_qr (qp, np, nn, dp, dn, dinv->inv32);
+  else if (BELOW_THRESHOLD (dn, MUPI_DIV_QR_THRESHOLD) ||   /* fast condition */
+	   BELOW_THRESHOLD (nn, 2 * MU_DIV_QR_THRESHOLD) || /* fast condition */
+	   (double) (2 * (MU_DIV_QR_THRESHOLD - MUPI_DIV_QR_THRESHOLD)) * dn /* slow... */
+	   + (double) MUPI_DIV_QR_THRESHOLD * nn > (double) dn * nn)    /* ...condition */
+    {
+      mpn_dcpi1_div_qr (qp, np, nn, dp, dn, dinv);
+    }
+  else
+    {
+      mp_size_t itch = mpn_mu_div_qr_itch (nn, dn, 0);
+      mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
+      mpn_mu_div_qr (qp, np, np, nn, dp, dn, scratch);
+    }
+
+  TMP_FREE;
+}
+
+/* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
+   t is defined by (tp,mn).  */
+static void
+reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn, gmp_pi1_t *dinv)
+{
+  mp_ptr rp, scratch;
+  TMP_DECL;
+  TMP_MARK;
+
+  rp = TMP_ALLOC_LIMBS (an);
+  scratch = TMP_ALLOC_LIMBS (an - mn + 1);
+  MPN_COPY (rp, ap, an);
+  mod (rp, an, mp, mn, dinv, scratch);
+  MPN_COPY (tp, rp, mn);
 
   TMP_FREE;
 }
@@ -66,11 +101,12 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 {
   if (el < 20)
     {
-      mp_ptr xp, tp, qp, mp, bp;
+      mp_ptr xp, tp, mp, bp, scratch;
       mp_size_t xn, tn, mn, bn;
       int m_zero_cnt;
       int c;
       mp_limb_t e;
+      gmp_pi1_t dinv;
       TMP_DECL;
 
       mp = PTR(m);
@@ -80,8 +116,8 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 
       if (el == 0)
 	{
-	  /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
-	     depending on if MOD equals 1.  */
+	  /* Exponent is zero, result is 1 mod M, i.e., 1 or 0 depending on if
+	     M equals 1.  */
 	  SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
 	  PTR(r)[0] = 1;
 	  return;
@@ -100,6 +136,8 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  mp = new_mp;
 	}
 
+      invert_pi1 (dinv, mp[mn - 1], mp[mn - 2]);
+
       bn = ABSIZ(b);
       bp = PTR(b);
       if (bn > mn)
@@ -107,7 +145,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  /* Reduce possibly huge base.  Use a function call to reduce, since we
 	     don't want the quotient allocation to live until function return.  */
 	  mp_ptr new_bp = TMP_ALLOC_LIMBS (mn);
-	  reduce (new_bp, bp, bn, mp, mn);
+	  reduce (new_bp, bp, bn, mp, mn, &dinv);
 	  bp = new_bp;
 	  bn = mn;
 	  /* Canonicalize the base, since we are potentially going to multiply with
@@ -124,8 +162,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 
       tp = TMP_ALLOC_LIMBS (2 * mn + 1);
       xp = TMP_ALLOC_LIMBS (mn);
-
-      qp = TMP_ALLOC_LIMBS (mn + 1);
+      scratch = TMP_ALLOC_LIMBS (mn + 1);
 
       MPN_COPY (xp, bp, bn);
       xn = bn;
@@ -135,38 +172,22 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       e = (e << c) << 1;		/* shift the exp bits to the left, lose msb */
       c = GMP_LIMB_BITS - 1 - c;
 
-      /* Main loop. */
-
-      /* If m is already normalized (high bit of high limb set), and b is the
-	 same size, but a bigger value, and e==1, then there's no modular
-	 reductions done and we can end up with a result out of range at the
-	 end. */
       if (c == 0)
 	{
+	  /* If m is already normalized (high bit of high limb set), and b is
+	     the same size, but a bigger value, and e==1, then there's no
+	     modular reductions done and we can end up with a result out of
+	     range at the end. */
 	  if (xn == mn && mpn_cmp (xp, mp, mn) >= 0)
 	    mpn_sub_n (xp, xp, mp, mn);
-	  goto finishup;
 	}
-
-      while (c != 0)
+      else
 	{
-	  mpn_sqr (tp, xp, xn);
-	  tn = 2 * xn; tn -= tp[tn - 1] == 0;
-	  if (tn < mn)
+	  /* Main loop. */
+	  do
 	    {
-	      MPN_COPY (xp, tp, tn);
-	      xn = tn;
-	    }
-	  else
-	    {
-	      mpn_tdiv_qr (qp, xp, 0L, tp, tn, mp, mn);
-	      xn = mn;
-	    }
-
-	  if ((mp_limb_signed_t) e < 0)
-	    {
-	      mpn_mul (tp, xp, xn, bp, bn);
-	      tn = xn + bn; tn -= tp[tn - 1] == 0;
+	      mpn_sqr (tp, xp, xn);
+	      tn = 2 * xn; tn -= tp[tn - 1] == 0;
 	      if (tn < mn)
 		{
 		  MPN_COPY (xp, tp, tn);
@@ -174,17 +195,35 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 		}
 	      else
 		{
-		  mpn_tdiv_qr (qp, xp, 0L, tp, tn, mp, mn);
+		  mod (tp, tn, mp, mn, &dinv, scratch);
+		  MPN_COPY (xp, tp, mn);
 		  xn = mn;
 		}
+
+	      if ((mp_limb_signed_t) e < 0)
+		{
+		  mpn_mul (tp, xp, xn, bp, bn);
+		  tn = xn + bn; tn -= tp[tn - 1] == 0;
+		  if (tn < mn)
+		    {
+		      MPN_COPY (xp, tp, tn);
+		      xn = tn;
+		    }
+		  else
+		    {
+		      mod (tp, tn, mp, mn, &dinv, scratch);
+		      MPN_COPY (xp, tp, mn);
+		      xn = mn;
+		    }
+		}
+	      e <<= 1;
+	      c--;
 	    }
-	  e <<= 1;
-	  c--;
+	  while (c != 0);
 	}
 
-     finishup:
-      /* We shifted m left m_zero_cnt steps.  Adjust the result by reducing
-	 it with the original MOD.  */
+      /* We shifted m left m_zero_cnt steps.  Adjust the result by reducing it
+	 with the original M.  */
       if (m_zero_cnt != 0)
 	{
 	  mp_limb_t cy;
@@ -197,7 +236,8 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	    }
 	  else
 	    {
-	      mpn_tdiv_qr (qp, xp, 0L, tp, xn, mp, mn);
+	      mod (tp, xn, mp, mn, &dinv, scratch);
+	      MPN_COPY (xp, tp, mn);
 	      xn = mn;
 	    }
 	  mpn_rshift (xp, xp, xn, m_zero_cnt);
