@@ -1,3 +1,7 @@
+2012-11-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): Make static.
+
 2012-11-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/powm_ui.c: Rewrite.
@@ -68,7 +72,7 @@
 
 	* tests/mpz/t-remove.c: Run more test, but use a tad smaller operands.
 
-	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New functions.
+	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New function.
 	(mpn_remove): Call mpn_bdiv_qr_wrap.
 	* mpz/remove.c: Enable suppressed mpn_remove call.
 
@@ -118,7 +122,7 @@
 2012-06-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configure.in (CALLING_CONVENTIONS_OBJS): Disable any use of
-	assembly code whit the --disable-assembly option.
+	assembly code with the --disable-assembly option.
 	* mpz/oddfac_1.c: Use the ASSERT_CODE macro.
 	* gen-trialdivtab.c (mpz_log2): Use mpz_sizeinbase (., 2).
 

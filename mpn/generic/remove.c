@@ -51,7 +51,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    indicates a flaw in the current itch mechanism: Which operands not greater
    than un,un will incur the worst itch?  We need a parallel foo_maxitch set
    of functions.  */
-void
+static void
 mpn_bdiv_qr_wrap (mp_ptr qp, mp_ptr rp,
 		  mp_srcptr np, mp_size_t nn,
 		  mp_srcptr dp, mp_size_t dn)
@@ -115,7 +115,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       if (((mp_bitcnt_t) 2 << npowers) - 1 > cap)
 	break;
 
-      nn = 2 * pn - 1;		/* next power will be at least this many limbs */
+      nn = 2 * pn - 1;		/* next power will be at least this large */
       if (nn > qn)
 	break;			/* next power would be overlarge */
 
