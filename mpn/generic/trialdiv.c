@@ -82,12 +82,7 @@ mpn_trialdiv (mp_srcptr tp, mp_size_t tn, mp_size_t nprimes, int *where)
       ppp = gmp_primes_ptab[i].ppp;
       cps = gmp_primes_ptab[i].cps;
 
-#if __GNU_MP_VERSION == 4 && __GNU_MP_VERSION_MINOR < 4
-      if (tn < 4)
-	r = mpn_mod_1 (tp, tn, ppp); /* FIXME */
-      else
-#endif
-	r = mpn_mod_1s_4p (tp, tn, ppp << cps[1], cps);
+      r = mpn_mod_1s_4p (tp, tn, ppp << cps[1], cps);
 
       idx = gmp_primes_ptab[i].idx;
       np = gmp_primes_ptab[i].np;
