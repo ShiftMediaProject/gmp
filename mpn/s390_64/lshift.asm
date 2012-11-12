@@ -32,7 +32,7 @@ C    stmg is not faster.
 C  * One could assume more pipelining could approach 2.5 c/l, but we have not
 C    found any 8-way loop that runs better than the current 4-way loop.
 C  * Consider using the same feed-in code for 1 <= n <= 3 as for n mod 4,
-C    similrly to the x86_64 sqr_basecase feed-in.
+C    similarly to the x86_64 sqr_basecase feed-in.
 
 C INPUT PARAMETERS
 define(`rp',	`%r2')
