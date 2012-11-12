@@ -84,7 +84,7 @@ check_data (void)
 	  printf ("         0x"); mpz_out_str (stdout, 16, n); printf ("\n");
 	  printf ("   got   %lu\n", got);
 	  printf ("   want  %lu\n", data[i].want);
-	  abort();
+	  abort ();
 	}
     }
   mpz_clear (n);
@@ -147,7 +147,6 @@ check_random (void)
 	  printf ("         0x"); mpz_out_str (stdout, 16, arg); printf ("\n");
 	  printf ("   got   %lu\n", got);
 	  printf ("   want  %lu\n", ref);
-	  abort();
 	  abort ();
 	}
     }
