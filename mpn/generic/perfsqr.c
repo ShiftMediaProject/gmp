@@ -185,7 +185,7 @@ mpn_perfect_square_p (mp_srcptr up, mp_size_t usize)
   /* Check that we have even multiplicity of 2, and then check that the rest is
      a possible perfect square.  Leave disabled until we can determine this
      really is an improvement.  It it is, it could completely replace the
-     simple probe above, since this should through out more non-squares, but at
+     simple probe above, since this should throw out more non-squares, but at
      the expense of somewhat more cycles.  */
   {
     mp_limb_t lo;
