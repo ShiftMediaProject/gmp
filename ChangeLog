@@ -1,5 +1,8 @@
 2012-11-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h: Add ARM64 support.
+	* longlong.h: Add AVR support.
+
 	* mpn/powerpc64/mode64/divrem_1.asm: Tune, simplify.
 
 	* mpq/md_2exp.c: Use MPN_COPY_INCR, not MPN_COPY_DECR.

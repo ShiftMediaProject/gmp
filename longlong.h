@@ -259,6 +259,15 @@ long __MPN(count_leading_zeros) (UDItype);
 #endif /* clz using mpn */
 #endif /* __alpha */
 
+#if defined (__AVR) && W_TYPE_SIZE == 8
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    unsigned short __p = (unsigned short) (m0) * (m1);			\
+    (ph) = __p >> 8;							\
+    (pl) = __p;								\
+  } while (0)
+#endif /* AVR */
+
 #if defined (_CRAY) && W_TYPE_SIZE == 64
 #include <intrinsics.h>
 #define UDIV_PREINV_ALWAYS  1
@@ -519,6 +528,35 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define COUNT_LEADING_ZEROS_0 32
 #endif
 #endif /* __arm__ */
+
+#if defined (__aarch64__) && W_TYPE_SIZE == 64
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ ("adds\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "r" (ah), "rZ" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  do {									\
+    if (__builtin_constant_p (bl))					\
+      {									\
+	__asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+		 : "=r" (sh), "=&r" (sl)				\
+		 : "r" (ah), "r" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+      }									\
+    else /* only bh might be a constant */				\
+      __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rZ" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
+    } while (0)
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    __asm__ ("umulh\t%0, %1, %2" : "=r" (ph) : "r" (m0), "r" (m1));	\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#define count_leading_zeros(count, x) \
+  __asm__ ("clz\t%0, %1" : "=r" (count) : "r" (x))
+#define COUNT_LEADING_ZEROS_0 64
+#endif /* __aarch64__ */
 
 #if defined (__clipper__) && W_TYPE_SIZE == 32
 #define umul_ppmm(w1, w0, u, v) \
