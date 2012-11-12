@@ -52,9 +52,9 @@ mord_2exp (mpz_ptr ldst, mpz_ptr rdst, mpz_srcptr lsrc, mpz_srcptr rsrc,
 
   if ((plow & 1) || n == 0)
     {
-      /* need DECR when src==dst */
+      /* need INCR when src==dst */
       if (p != rdst_ptr)
-        MPN_COPY_DECR (rdst_ptr, p, len);
+        MPN_COPY_INCR (rdst_ptr, p, len);
     }
   else
     {

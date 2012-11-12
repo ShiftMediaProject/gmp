@@ -29,8 +29,69 @@ struct pair_t {
   const char     *den;
 };
 
+void
+check_random ()
+{
+  gmp_randstate_ptr rands;
+  mpz_t bs;
+  unsigned long arg_size, size_range;
+  mpq_t q, r;
+  int i;
+  mp_bitcnt_t shift;
+  int reps = 10000;
+
+  rands = RANDS;
+
+  mpz_init (bs);
+  mpq_init (q);
+  mpq_init (r);
+
+  for (i = 0; i < reps; i++)
+    {
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 11 + 2; /* 0..4096 bit operands */
+
+      mpz_urandomb (bs, rands, size_range);
+      arg_size = mpz_get_ui (bs);
+      mpz_rrandomb (mpq_numref (q), rands, arg_size);
+      do
+	{
+	  mpz_urandomb (bs, rands, size_range);
+	  arg_size = mpz_get_ui (bs);
+	  mpz_rrandomb (mpq_denref (q), rands, arg_size);
+	}
+      while (mpz_sgn (mpq_denref (q)) == 0);
+
+      /* We now have a random rational in q, albeit an unnormalised one.  The
+	 lack of normalisation should not matter here, so let's save the time a
+	 gcd would require.  */
+
+      mpz_urandomb (bs, rands, 32);
+      shift = mpz_get_ui (bs) % 4096;
+
+      mpq_mul_2exp (r, q, shift);
+
+      if (mpq_cmp (r, q) < 0)
+	{
+	  printf ("mpq_mul_2exp wrong on random\n");
+	  abort ();
+	}
+
+      mpq_div_2exp (r, r, shift);
+
+      if (mpq_cmp (r, q) != 0)
+	{
+	  printf ("mpq_mul_2exp or mpq_div_2exp wrong on random\n");
+	  abort ();
+	}
+    }
+  mpq_clear (q);
+  mpq_clear (r);
+  mpz_clear (bs);
+}
+
 int
-main (void)
+main (int argc, char **argv)
 {
   static const struct {
     struct pair_t  left;
@@ -172,6 +233,8 @@ main (void)
             }
         }
     }
+
+  check_random ();
 
   mpq_clear (sep);
   mpq_clear (got);

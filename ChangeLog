@@ -1,3 +1,8 @@
+2012-11-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpq/md_2exp.c: Use MPN_COPY_INCR, not MPN_COPY_DECR.
+	* tests/mpq/t-md_2exp.c (check_random): New function.
+
 2012-11-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): Make static.
