@@ -3494,9 +3494,10 @@ return 1 if @var{n} is probably prime (without being certain), or return 0 if
 @var{n} is definitely composite.
 
 This function does some trial divisions, then some Miller-Rabin probabilistic
-primality tests.  @var{reps} controls how many such tests are done, 5 to 10 is
-a reasonable number, more will reduce the chances of a composite being
-returned as ``probably prime''.
+primality tests.  The argument @var{reps} controls how many such tests are
+done; a higher value will reduce the chances of a composite being returned as
+``probably prime''.  25 is a reasonable number; a composite number will then be
+identified as a prime with a probability of less than @m{2^{-50}}.
 
 Miller-Rabin and similar tests can be more properly called compositeness
 tests.  Numbers which fail are known to be composite but those which pass
@@ -8343,9 +8344,10 @@ products must be done as a normal division, but there's still some single limb
 divisions saved.  When @math{d} is a single limb some simplifications arise,
 providing good speedups on a number of processors.
 
-@code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the @code{mpn_redc_X}
-functions differ subtly in how they return @math{r}, leading to some negations
-in the above formula, but all are essentially the same.
+The functions @code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the
+internal @code{mpn_redc_X} functions differ subtly in how they return @math{r},
+leading to some negations in the above formula, but all are essentially the
+same.
 
 @cindex Divisibility algorithm
 @cindex Congruence algorithm
