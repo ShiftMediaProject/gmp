@@ -94,10 +94,12 @@ FNAME (Q(mp_ptr qp)
       inv32 = dinv.inv32;
     }
 
+  /* We add nn + dn to tp here, not nn + 1 + dn, as expected.  This is since nn
+     here will have been incremented.  */
 #if OPERATION_sb_div_qr_sec
-  qh = mpn_sbpi1_div_qr_sec (qp, np2, nn, dp2, dn, inv32, tp + nn + dn + 1);
+  qh = mpn_sbpi1_div_qr_sec (qp, np2, nn, dp2, dn, inv32, tp + nn + dn);
 #else
-  mpn_sbpi1_div_r_sec (np2, nn, dp2, dn, inv32, tp + nn + dn + 1);
+  mpn_sbpi1_div_r_sec (np2, nn, dp2, dn, inv32, tp + nn + dn);
 #endif
 
   if (cnt == 0)
