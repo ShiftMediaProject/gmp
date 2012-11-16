@@ -1559,6 +1559,16 @@ __GMP_DECLSPEC mp_limb_t mpn_addcnd_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, 
 #define   mpn_subcnd_n __MPN(subcnd_n)
 __GMP_DECLSPEC mp_limb_t mpn_subcnd_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t);
 
+#define mpn_sb_div_qr_sec __MPN(sb_div_qr_sec)
+__GMP_DECLSPEC void mpn_sb_div_qr_sec (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sbpi1_div_qr_sec __MPN(sbpi1_div_qr_sec)
+__GMP_DECLSPEC mp_limb_t mpn_sbpi1_div_qr_sec (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
+#define mpn_sb_div_r_sec __MPN(sb_div_r_sec)
+__GMP_DECLSPEC void mpn_sb_div_r_sec (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sbpi1_div_r_sec __MPN(sbpi1_div_r_sec)
+__GMP_DECLSPEC void mpn_sbpi1_div_r_sec (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
+
+
 #ifndef DIVEXACT_BY3_METHOD
 #if GMP_NUMB_BITS % 2 == 0 && ! defined (HAVE_NATIVE_mpn_divexact_by3c)
 #define DIVEXACT_BY3_METHOD 0	/* default to using mpn_bdiv_dbm1c */
