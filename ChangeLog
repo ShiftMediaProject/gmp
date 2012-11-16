@@ -1,5 +1,7 @@
 2012-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm_sec.c (redcify): Use mpn_sb_div_r_sec.
+
 	* mpn/generic/sb_div_sec.c: New file.
 	* mpn/generic/sbpi1_div_sec.c: New file.
 	* configure.in (gmp_mpn_functions): Add new files.
