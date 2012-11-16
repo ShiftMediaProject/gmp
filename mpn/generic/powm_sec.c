@@ -232,13 +232,29 @@ win_size (mp_bitcnt_t eb)
 static void
 redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
+#if 0
   mp_ptr qp;
 
   qp = tp + un + n;		/* un + n - n + 1 = un + 1 limbs */
 
   MPN_ZERO (tp, n);
   MPN_COPY (tp + n, up, un);
+
   mpn_tdiv_qr (qp, rp, 0L, tp, un + n, mp, n);
+#else
+  /* FIXME: Use passed scratch space instead of allocating our own!  */
+  mp_ptr scratch;
+  TMP_DECL;
+  TMP_MARK;
+
+  MPN_ZERO (tp, n);
+  MPN_COPY (tp + n, up, un);
+
+  scratch = TMP_ALLOC_LIMBS ((un + n) + 2 * n + 2);
+  mpn_sb_div_r_sec (tp, un + n, mp, n, scratch);
+  MPN_COPY (rp, tp, n);
+  TMP_FREE;
+#endif
 }
 
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
