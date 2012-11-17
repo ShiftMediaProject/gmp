@@ -125,7 +125,7 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
       return;
     }
 
-  /* For odd k, (k+1)/2 = k/2+1, and the latter avoids overflow. */ 
+  /* For odd k, (k+1)/2 = k/2+1, and the latter avoids overflow. */
   kp1h = k/2 + 1;
 
   /* FIXME: Special case for two limb iteration. */

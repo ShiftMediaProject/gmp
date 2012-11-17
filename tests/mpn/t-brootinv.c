@@ -84,7 +84,7 @@ main (int argc, char **argv)
       mpn_brootinv (rp, ap, n, k, scratch);
       mpn_powlo (pp, rp, &k, 1, n, scratch);
       mpn_mullo_n (app, ap, pp, n);
-      
+
       if (app[0] != 1 || !mpn_zero_p (app+1, n-1))
 	{
 	  gmp_fprintf (stderr,

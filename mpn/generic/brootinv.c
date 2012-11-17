@@ -46,7 +46,7 @@ powlimb (mp_limb_t a, mp_limb_t e)
    Works just for odd k.  Else the Hensel lifting degenerates.
 
    FIXME:
-   
+
      (1) Make it work for k == GMP_LIMB_MAX (k+1 below overflows).
 
      (2) Rewrite iteration as
@@ -78,15 +78,15 @@ mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_size_t bn, mp_limb_t k, mp_ptr tp)
   binvert_limb (kinv, k);
 
   /* 4-bit initial approximation:
-        
-   y%16 | 1  3  5  7  9 11 13 15, 	
+
+   y%16 | 1  3  5  7  9 11 13 15,
     k%4 +-----------------------------
      1  | 1 11 13  7  9  3  5 15
      3  | 1  3  5  7  9 11 13 15
 
   */
   y0 = yp[0];
-  
+
   r0 = y0 ^ (((y0 << 1) ^ (y0 << 2)) & ~(k << 2) & 8);		/* 4 bits */
   r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0x7f));		/* 8 bits */
   r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0xffff));	/* 16 bits */
@@ -106,7 +106,7 @@ mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_size_t bn, mp_limb_t k, mp_ptr tp)
   rp[0] = r0;
   if (bn == 1)
     return;
-  
+
   d = 0;
   for (; bn > 1; bn = (bn + 1) >> 1)
     order[d++] = bn;

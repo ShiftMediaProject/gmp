@@ -107,8 +107,8 @@ gen_consts (int numb, int nail, int limb)
     {
       for (a = b; (a & 1) == 0; a >>= 1);
       if (a == b) {
-	mpz_divexact_ui (y, y, a/2+1); 
-	mpz_mul_ui (y, y, a); 
+	mpz_divexact_ui (y, y, a/2+1);
+	mpz_mul_ui (y, y, a);
       } else
 	mpz_mul_2exp (y, y, 1);
       if (mpz_sizeinbase (y, 2) > numb)

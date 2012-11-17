@@ -51,7 +51,7 @@ deflit(pc,r15)
 define(`lea_num',0)
 
 dnl  LEA(reg,gmp_symbol)
-dnl  
+dnl
 dnl  Load the address of gmp_symbol into a register.  The gmp_symbol must be
 dnl  either local or protected/hidden, since we assume it has a fixed distance
 dnl  from the point of use.

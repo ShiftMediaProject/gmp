@@ -112,7 +112,7 @@ extern FILE *yyin, *yyout;
  * int a single C statement (which needs a semi-colon terminator).  This
  * avoids problems with code like:
  *
- * 	if ( condition_holds )
+ *	if ( condition_holds )
  *		yyless( 5 );
  *	else
  *		do_something_else();

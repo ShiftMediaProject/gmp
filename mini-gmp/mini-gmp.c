@@ -2207,7 +2207,7 @@ mpz_tdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 void
 mpz_mod (mpz_t r, const mpz_t n, const mpz_t d)
 {
-  if (d->_mp_size >= 0) 
+  if (d->_mp_size >= 0)
     mpz_div_qr (NULL, r, n, d, DIV_FLOOR);
   else
     mpz_div_qr (NULL, r, n, d, DIV_CEIL);
@@ -3116,7 +3116,7 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   mpz_init (u);
   mpz_setbit (t, mpz_sizeinbase (y, 2) / z + 1);
 
-  if (z == 2) /* simplify sqrt loop: z-1 == 1 */    
+  if (z == 2) /* simplify sqrt loop: z-1 == 1 */
     do {
       mpz_swap (u, t);			/* u = x */
       mpz_tdiv_q (t, y, u);		/* t = y/x */

@@ -40,7 +40,7 @@ C and bottom-most writes might need 8-byte operations.
 C
 C This variant rely on fast load movdqu, and uses it even for aligned operands,
 C in order to avoid the need for two separate loops.
-C 
+C
 C TODO
 C  * Could 2-limb wind-down code be simplified?
 C  * Improve basecase code, using shld/shrd for SBR, discrete integer shifts

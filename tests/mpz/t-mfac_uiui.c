@@ -62,7 +62,7 @@ main (int argc, char *argv[])
   m2 = 0;
   for (n = 0; n <= limit;)
     {
-      mpz_mfac_uiui (res, n, MULTIFAC_WHEEL); 
+      mpz_mfac_uiui (res, n, MULTIFAC_WHEEL);
       MPZ_CHECK_FORMAT (res);
       if (mpz_cmp (ref[m], res) != 0)
         {
@@ -71,7 +71,7 @@ main (int argc, char *argv[])
           printf ("  want "); mpz_out_str (stdout, 10, ref[m]); printf("\n");
           abort ();
         }
-      mpz_mfac_uiui (res, n, MULTIFAC_WHEEL2); 
+      mpz_mfac_uiui (res, n, MULTIFAC_WHEEL2);
       MPZ_CHECK_FORMAT (res);
       if (mpz_cmp (ref2[m2], res) != 0)
         {
@@ -91,7 +91,7 @@ main (int argc, char *argv[])
       else n += step;
     }
   mpz_fac_ui (ref[0], n);
-  mpz_mfac_uiui (res, n, 1); 
+  mpz_mfac_uiui (res, n, 1);
   MPZ_CHECK_FORMAT (res);
   if (mpz_cmp (ref[0], res) != 0)
     {
@@ -102,7 +102,7 @@ main (int argc, char *argv[])
     }
 
   mpz_2fac_ui (ref[0], n);
-  mpz_mfac_uiui (res, n, 2); 
+  mpz_mfac_uiui (res, n, 2);
   MPZ_CHECK_FORMAT (res);
   if (mpz_cmp (ref[0], res) != 0)
     {
@@ -114,7 +114,7 @@ main (int argc, char *argv[])
 
   n++;
   mpz_2fac_ui (ref[0], n);
-  mpz_mfac_uiui (res, n, 2); 
+  mpz_mfac_uiui (res, n, 2);
   MPZ_CHECK_FORMAT (res);
   if (mpz_cmp (ref[0], res) != 0)
     {

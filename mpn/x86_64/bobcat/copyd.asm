@@ -21,7 +21,7 @@ include(`../config.m4')
 
 C	     cycles/limb
 C AMD K8,K9	 1
-C AMD K10	 1-2  (alignment fluctuations) 
+C AMD K10	 1-2  (alignment fluctuations)
 C AMD bd1	 ?
 C AMD bobcat	 1.5
 C Intel P4	 2.8

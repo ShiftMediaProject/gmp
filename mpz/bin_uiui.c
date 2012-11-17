@@ -375,7 +375,7 @@ bc_bin_uiui (unsigned int n, unsigned int k)
    (with inverses).
 */
 
-/* bin2kk[i - ODD_CENTRAL_BINOMIAL_OFFSET] = 
+/* bin2kk[i - ODD_CENTRAL_BINOMIAL_OFFSET] =
    binomial(i*2,i)/2^t (where t is chosen so that it is odd). */
 static const mp_limb_t bin2kk[] = { ONE_LIMB_ODD_CENTRAL_BINOMIAL_TABLE };
 
