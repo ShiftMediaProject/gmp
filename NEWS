@@ -1,8 +1,8 @@
 Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-2009, 2010 Free Software Foundation, Inc.
+2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 
-Verbatim copying and distribution of this entire article is permitted
-in any medium, provided this notice is preserved.
+Verbatim copying and distribution of this entire article is permitted in any
+medium, provided this notice is preserved.
 
 
 Changes between GMP version 5.0.* and 5.1.0
@@ -11,12 +11,127 @@ Changes between GMP version 5.0.* and 5.1.0
   * When reading a C++ number (like mpz_class) in an istream reaches the end
     of the stream, the eofbit is now set.
 
+  SPEEDUPS
+
+  FEATURES
+  * The mpz_powm_sec function now uses side-channel silent division for
+    converting into Montgomery residues.
+
   MISC
   * In C++, the conversions mpq_class->mpz_class, mpf_class->mpz_class and
     mpf_class->mpq_class are now explicit.
 
   * The ABIs under AIX are no longer called aix32 and aix64, but mode64 and 32.
     This is more consistent with other powerpc systems.
+
+
+Changes between GMP version 5.0.4 and 5.0.5
+
+  BUGS FIXED
+  * A bug causing AMD 11h processors to be treated like AMD 10h has been fixed.
+    The 11h processors do not correctly handle all 10h (aka K10) instructions,
+    and GMP's use of these instructions results in major miscomputations (not
+    as one would have hoped CPU traps of some 'illegal instruction' sort).
+
+  * A bug affecting recent Intel Sandy Bridge CPUs resulting in configuration
+    failures has been fixed.
+
+  SPEEDUPS
+  * None.
+
+  FEATURES
+  * A couple of tests added to the self-check suite.
+
+  MISC
+  * None.
+
+
+Changes between GMP version 5.0.3 and 5.0.4
+
+  BUGS FIXED
+  * Thresholds in mpn_powm_sec for both fat and non-fat builds are now used
+    safely, plugging a one-word buffer overrun introduced in the 5.0.3 release
+    (for non-fat) and a multi-word buffer overrun that existed since 5.0 (for
+    fat).  (We have not been able to provoke malign stack smashing in any of
+    the ~100 configurations explored by the GMP nightly builds, but the bug
+    should be assumed to be exploitable.)
+
+  * Two bugs in multiplication code causing incorrect computation with
+    extremely low probability have been fixed.
+
+  * A bug in the test suite causing buffer overruns during "make check",
+    sometimes leading to subsequent malloc crashes, has been fixed.
+
+  * Two bugs in the gcd code have been fixed.  They could lead to incorrect
+    results, but for uniformly distributed random operands, the likelihood for
+    that is infinitesimally small.  (There was also a third bug, but that was
+    an incorrect ASSERT, which furthermore was not enabled by default.)
+
+  * A bug affecting 32-bit PowerPC division has been fixed.  The bug caused
+    miscomputation for certain divisors in the range 2^32 ... 2^64-1 (about 1
+    in 2^30 of these).
+
+  SPEEDUPS
+  * None, except indirectly through recognition of new CPUs, and through better
+    tuning parameters.
+
+  FEATURES
+  * Some more tests added to the self-check suite.
+
+  * The AMD "Bulldozer" CPU is now recognised.
+
+  MISC
+  * None.
+
+
+Changes between GMP version 5.0.2 and 5.0.3
+
+  BUGS FIXED
+  * A few minor bugs related to portability fixed.
+
+  * A slight timing leak of the powm_sec functions have been sealed.  (This
+    leak could possibly be used to extract the most significant few bits of the
+    exponent.  "Few" here means at most 10.)
+
+  * The mpz_nextprime function now runs a safer number of pseudo-random prime
+    tests.
+
+  * A bug in division code possibly causing incorrect computation was fixed.
+
+  SPEEDUPS
+  * None, except indirectly through recognition of new CPUs, and through better
+    tuning parameters.
+
+  FEATURES
+  * New CPUs recognised.
+
+  * IBM S/390 are now supported in both 31/32-bit and 64-bit mode.  (We have
+    not been able to fully test this on any multilib machine, since IBM expired
+    our guest account a few days before our release.)
+
+  MISC
+  * None.
+
+
+Changes between GMP version 5.0.1 and 5.0.2
+
+  BUGS FIXED
+  * Many minor bugs related to portability fixed.
+
+  * The support for HPPA 2.0N now works, after an assembly bug fix.
+
+  * A test case type error has been fixed.  The symptom of this bug was
+    spurious 'make check' failures.
+
+  SPEEDUPS
+  * None, except indirectly through recognition of new CPUs.
+
+  FEATURES
+  * Fat builds are now supported for 64-bit x86 processors also under Darwin.
+
+  MISC
+  * None.
+
 
 Changes between GMP version 5.0.0 and 5.0.1
 
@@ -27,31 +142,29 @@ Changes between GMP version 5.0.0 and 5.0.1
     selection tables' sentinel was smaller than multiplied operands.
 
   * The solib numbers now reflect the removal of the documented but preliminary
-    mpn_bdivmod function; we correctly flag incompatibility with GMP 4.3.
-    GMP 5.0.0 has this wrong, and should perhaps be uninstalled to avoid
-    confusion.
+    mpn_bdivmod function; we correctly flag incompatibility with GMP 4.3.  GMP
+    5.0.0 has this wrong, and should perhaps be uninstalled to avoid confusion.
 
   SPEEDUPS
-  * Multiplication of large numbers has indirectly been sped up through
-    better FFT tuning and processor recognition.  Since many operations
-    depend on multiplication, there will be a general speedup.
+  * Multiplication of large numbers has indirectly been sped up through better
+    FFT tuning and processor recognition.  Since many operations depend on
+    multiplication, there will be a general speedup.
 
   FEATURES
   * More Core i3, i5 an Core i7 processor models are recognised.
 
-  * Fixes and workarounds for Mac OS quirks should make this GMP version
-    build using many of the different versions of "Xcode".
+  * Fixes and workarounds for Mac OS quirks should make this GMP version build
+    using many of the different versions of "Xcode".
 
   MISC
-  * The amount of scratch memory needed for multiplication of huge numbers
-    have been reduced substantially (but is still larger than in GMP 4.3.)
+  * The amount of scratch memory needed for multiplication of huge numbers has
+    been reduced substantially (but is still larger than in GMP 4.3.)
 
-  * Likewise, the amount of scratch memory needed for division of large
-    numbers have been reduced substantially.
+  * Likewise, the amount of scratch memory needed for division of large numbers
+    has been reduced substantially.
 
-  * The FFT tuning code of tune/tuneup.c has been completely rewritten,
-    and new, large FFT parameter selection tables are provided for many
-    machines.
+  * The FFT tuning code of tune/tuneup.c has been completely rewritten, and
+    new, large FFT parameter selection tables are provided for many machines.
 
   * Upgraded to the latest autoconf, automake, libtool.
 
