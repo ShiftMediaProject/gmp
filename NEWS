@@ -12,6 +12,16 @@ Changes between GMP version 5.0.* and 5.1.0
     of the stream, the eofbit is now set.
 
   SPEEDUPS
+  * The n-factorial and n-over-k functions have been rewritten for great
+    speedups for small and large operands.
+
+  * Major speedup for ARM, in particular ARM Cortex-A9, thanks to broad
+    assembly suport.
+
+  * The performance under M$ Windows' 64-bit ABI has been greatly improved
+    thanks to complete assembly support.
+
+  * Minor speed improvements of many functions and for many platforms.
 
   FEATURES
   * The mpz_powm_sec function now uses side-channel silent division for
