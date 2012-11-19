@@ -10366,7 +10366,7 @@ Jason Moxham rewrote @code{mpz_fac_ui}.
 Pedro Gimeno implemented the Mersenne Twister and made other random number
 improvements.
 
-Niels M@"oller wrote the sub-quadratic GCD and extended GCD code, the
+Niels M@"oller wrote the sub-quadratic GCD, extended GCD and jacobi code, the
 quadratic Hensel division code, and (with Torbj@"orn) the new divide and
 conquer division code for GMP 4.3.  Niels also helped implement the new Toom
 multiply code for GMP 4.3 and implemented helper functions to simplify Toom
@@ -10383,7 +10383,9 @@ also wrote the functions mpn_invert and mpn_invertappr.
 
 David Harvey suggested the internal function @code{mpn_bdiv_dbm1}, implementing
 division relevant to Toom multiplication.  He also worked on fast assembly
-sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
+sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}. He wrote
+the internal middle product functions @code{mpn_mulmid_basecase},
+@code{mpn_toom42_mulmid}, @code{mpn_mulmid_n} and related helper routines.
 
 Martin Boij wrote @code{mpn_perfect_power_p}.
 
