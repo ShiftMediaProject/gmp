@@ -15,8 +15,10 @@ Changes between GMP version 5.0.* and 5.1.0
   * The n-factorial and n-over-k functions have been rewritten for great
     speedups for small and large operands.
 
+  * New subquadratic algorithm for the Kronecker/Jacobi/Legendre symbol.
+  
   * Major speedup for ARM, in particular ARM Cortex-A9, thanks to broad
-    assembly suport.
+    assembly support.
 
   * The performance under M$ Windows' 64-bit ABI has been greatly improved
     thanks to complete assembly support.
@@ -30,6 +32,11 @@ Changes between GMP version 5.0.* and 5.1.0
   MISC
   * In C++, the conversions mpq_class->mpz_class, mpf_class->mpz_class and
     mpf_class->mpq_class are now explicit.
+
+  * Includes "mini-gmp", a small, portable, but less efficient,
+    implementation of a subset of GMP's mpn and mpz interfaces. Used
+    in GMP bootstrap, but it can also be bundled with applications as
+    a fallback when the real GMP library is unavailable.
 
   * The ABIs under AIX are no longer called aix32 and aix64, but mode64 and 32.
     This is more consistent with other powerpc systems.
