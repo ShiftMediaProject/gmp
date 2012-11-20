@@ -11,6 +11,8 @@ Changes between GMP version 5.0.* and 5.1.0
   * When reading a C++ number (like mpz_class) in an istream reaches the end
     of the stream, the eofbit is now set.
 
+  * Contains all fixes from release 5.0.5.
+
   SPEEDUPS
   * The n-factorial and n-over-k functions have been reimplemented for great
     speedups for small and large operands.
