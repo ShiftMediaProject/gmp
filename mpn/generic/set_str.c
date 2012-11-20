@@ -10,7 +10,7 @@
    GNU MP RELEASE.
 
 Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006, 2007,
-2008 Free Software Foundation, Inc.
+2008, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

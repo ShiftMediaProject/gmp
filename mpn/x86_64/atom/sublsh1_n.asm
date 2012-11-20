@@ -2,7 +2,7 @@ dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1) optimised for Intel Atom.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

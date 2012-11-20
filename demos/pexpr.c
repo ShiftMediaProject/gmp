@@ -1,7 +1,8 @@
 /* Program for computing integer expressions using the GNU Multiple Precision
    Arithmetic Library.
 
-Copyright 1997, 1999, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001, 2002, 2005, 2008, 2012 Free Software
+Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

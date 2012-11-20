@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_addmul_2 -- Multiply an n-limb vector with a 2-limb vector and
 dnl  add the result to a third limb vector.
 
-dnl  Copyright 2008, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

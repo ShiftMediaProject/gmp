@@ -1,6 +1,6 @@
 /* mpz_export -- create word data from mpz.
 
-Copyright 2002, 2003 Free Software Foundation, Inc.
+Copyright 2002, 2003, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

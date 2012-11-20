@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mod_34lsub1 -- remainder modulo 2^48-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2010, 2011 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007, 2010, 2011, 2012 Free
+dnl  Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

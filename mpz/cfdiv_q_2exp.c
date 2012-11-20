@@ -1,7 +1,7 @@
 /* mpz_cdiv_q_2exp, mpz_fdiv_q_2exp -- quotient from mpz divided by 2^n.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001, 2002, 2004 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001, 2002, 2004, 2012 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

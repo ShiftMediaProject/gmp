@@ -3,7 +3,7 @@ dnl  Core iN.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2008, 2010, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2010, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

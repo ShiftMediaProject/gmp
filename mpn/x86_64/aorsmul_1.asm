@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

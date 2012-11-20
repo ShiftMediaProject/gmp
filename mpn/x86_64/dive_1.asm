@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2011 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2011, 2012 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

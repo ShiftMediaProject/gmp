@@ -2,7 +2,7 @@
    Written by tege while on holiday in Rodupp, August 2001.
    Between 10 and 500 times faster than previous program.
 
-Copyright 2001, 2002, 2006 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2006, 2012 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

@@ -1,7 +1,7 @@
 dnl  ARM mpn_udiv_qrnnd -- divide a two limb dividend and a one limb divisor.
 dnl  Return quotient and store remainder through a supplied pointer.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

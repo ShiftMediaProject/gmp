@@ -1,7 +1,7 @@
 /* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003,
-2004, 2005, 2008, 2010 Free Software Foundation, Inc.
+2004, 2005, 2008, 2010, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

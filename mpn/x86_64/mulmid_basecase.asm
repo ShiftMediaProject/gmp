@@ -2,7 +2,7 @@ dnl  AMD64 mpn_mulmid_basecase
 
 dnl  Contributed by David Harvey.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1)
 
-dnl  Copyright 2003, 2005, 2006, 2007, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2007, 2011, 2012 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 

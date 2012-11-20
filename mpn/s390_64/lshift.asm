@@ -1,6 +1,6 @@
 dnl  S/390-64 mpn_lshift.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

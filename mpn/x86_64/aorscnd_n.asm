@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addcnd_n, mpn_subcnd_n
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

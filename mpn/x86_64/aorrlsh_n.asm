@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addlsh_n and mpn_rsblsh_n.  R = V2^k +- U.
 
-dnl  Copyright 2006, 2010, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2010, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_lshiftc -- mpn left shift with complement.
 
-dnl  Copyright 2003, 2005, 2006, 2009, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2009, 2011, 2012 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

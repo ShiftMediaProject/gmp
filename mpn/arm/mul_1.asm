@@ -2,7 +2,7 @@ dnl  ARM mpn_mul_1 -- Multiply a limb vector with a limb and store the result
 dnl  in a second limb vector.
 dnl  Contributed by Robert Harley.
 
-dnl  Copyright 1998, 2000, 2001, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2003, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -8,7 +8,7 @@
    INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR
    DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 1999, 2000, 2001, 2002, 2004, 2005, 2008, 2010 Free Software
+Copyright 1999, 2000, 2001, 2002, 2004, 2005, 2008, 2010, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

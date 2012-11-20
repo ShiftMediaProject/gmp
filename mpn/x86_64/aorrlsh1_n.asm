@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 
-dnl  Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2011 Free Software
+dnl  Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

@@ -1,6 +1,6 @@
 dnl  X86-64 mpn_add_n, mpn_sub_n, optimized for Intel Sandy Bridge.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010, 2011 Free Software
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010, 2011, 2012 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

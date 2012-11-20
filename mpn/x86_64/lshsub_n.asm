@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_lshsub_n.  R = 2^k(U - V).
 
-dnl  Copyright 2006, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* mpf_ceil, mpf_floor -- round an mpf to an integer.
 
-Copyright 2001, 2004 Free Software Foundation, Inc.
+Copyright 2001, 2004, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
