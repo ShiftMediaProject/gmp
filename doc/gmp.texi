@@ -10370,7 +10370,8 @@ Niels M@"oller wrote the sub-quadratic GCD, extended GCD and jacobi code, the
 quadratic Hensel division code, and (with Torbj@"orn) the new divide and
 conquer division code for GMP 4.3.  Niels also helped implement the new Toom
 multiply code for GMP 4.3 and implemented helper functions to simplify Toom
-evaluations for GMP 5.0.  He wrote the original version of mpn_mulmod_bnm1.
+evaluations for GMP 5.0.  He wrote the original version of mpn_mulmod_bnm1, and
+he is the main author of the mini-gmp package used for gmp bootstrapping.
 
 Alberto Zanoni and Marco Bodrato suggested the unbalanced multiply strategy,
 and found the optimal strategies for evaluation and interpolation in Toom
