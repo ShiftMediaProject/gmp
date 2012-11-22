@@ -30,6 +30,9 @@ Changes between GMP version 5.0.* and 5.1.0
   * Minor speed improvements of many functions and for many platforms.
 
   FEATURES
+  * New functions for multi-factorials, and primorial: mpz_2fac_ui,
+    mpz_mfac_uiui and mpz_primorial_ui.
+
   * The mpz_powm_sec function now uses side-channel silent division for
     converting into Montgomery residues.
 
