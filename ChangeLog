@@ -1,3 +1,8 @@
+2012-11-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/run-tests: Copied latest version from GNU Nettle.
+	Minor fix to the use of $EMULATOR, and proper copyright notice.
+
 2012-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm_sec.c (redcify): Use mpn_sb_div_r_sec.
