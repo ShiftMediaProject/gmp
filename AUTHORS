@@ -61,7 +61,9 @@ Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom8h_mul.c, toom8_sqr.c, toom_interpolate_16pts.c,
 			mulmod_bnm1.c, sqrmod_bnm1.c, nussbaumer_mul.c,
 			toom_eval_pm2.c, toom_eval_pm2rexp.c,
-			mullo_n.c, invert.c, invertappr.c.
+			mullo_n.c, invert.c, invertappr.c;
+			mpz/fac_ui.c, 2fac_ui.c, mfac_uiui.c, oddfac_1.c,
+			primorial_ui.c, prodlimbs.c, goetgheluck_bin_uiui.c.
 
 David Harvey		mpn/generic/add_err1_n.c, add_err2_n.c,
 			add_err3_n.c, sub_err1_n.c, sub_err2_n.c,

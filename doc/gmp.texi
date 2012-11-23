@@ -10380,7 +10380,8 @@ multiplication.
 Marco Bodrato helped implement the new Toom multiply code for GMP 4.3 and
 implemented most of the new Toom multiply and squaring code for 5.0.
 He is the main author of the current mpn_mulmod_bnm1 and mpn_mullo_n.  Marco
-also wrote the functions mpn_invert and mpn_invertappr.
+also wrote the functions mpn_invert and mpn_invertappr.  He is the author of
+the current mpz_bin and mpz_fac functions.
 
 David Harvey suggested the internal function @code{mpn_bdiv_dbm1}, implementing
 division relevant to Toom multiplication.  He also worked on fast assembly
