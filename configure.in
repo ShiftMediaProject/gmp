@@ -1406,10 +1406,16 @@ case $host in
 
 
   # VAX
+  vax*-*-*elf*)
+    # Use elf conventions (i.e., '%' register prefix, no global prefix)
+    #
+    GMP_INCLUDE_MPN(vax/elf.m4)
+    gcc_cflags="$gcc_cflags $fomit_frame_pointer"
+    path="vax"
+    extra_functions="udiv_w_sdiv"
+    ;;
   vax*-*-*)
-    # Currently gcc (version 3.0) on vax always uses a frame pointer
-    # (config/vax/vax.h FRAME_POINTER_REQUIRED=1), so -fomit-frame-pointer
-    # will be ignored.
+    # Default to aout conventions (i.e., no register prefix, '_' global prefix)
     #
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     path="vax"

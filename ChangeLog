@@ -1,3 +1,28 @@
+2012-11-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/get_d.c: Reinsert non-IEEE code.
+
+	* mpn/vax/add_n.asm: New file.
+	* mpn/vax/add_n.s: Remove.
+	* mpn/vax/addmul_1.asm: New file.
+	* mpn/vax/addmul_1.s: Remove.
+	* mpn/vax/lshift.asm: New file.
+	* mpn/vax/lshift.s: Remove.
+	* mpn/vax/mul_1.asm: New file.
+	* mpn/vax/mul_1.s: Remove.
+	* mpn/vax/rshift.asm: New file.
+	* mpn/vax/rshift.s: Remove.
+	* mpn/vax/sub_n.asm: New file.
+	* mpn/vax/sub_n.s: Remove.
+	* mpn/vax/submul_1.asm: New file.
+	* mpn/vax/submul_1.s: Remove.
+
+	* mpn/vax/elf.m4: New file.
+	* configure.in (vax*-*-*elf*): New case, grabbing vax/elf.m4.
+
+	* tests/mpn/t-get_d.c (check_onebit): Get vax bounds right.
+	(main): Switch off check_rand for vax.
+
 2012-11-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/run-tests: Copied latest version from GNU Nettle.
