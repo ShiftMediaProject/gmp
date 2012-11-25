@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2007, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -161,11 +161,92 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
       exp += GMP_NUMB_BITS * size;
     }
 
-  up += size;
-
 #if ! _GMP_IEEE_FLOATS
-you lose
+    {
+      /* Non-IEEE or strange limb size, do something generic. */
+
+      mp_size_t	     i;
+      mp_limb_t	     limb, bit;
+      int	     shift;
+      double	     base, factor, prev_factor, d, new_d, diff;
+
+      /* "limb" is "up[i]" the limb being examined, "bit" is a mask for the
+	 bit being examined, initially the highest non-zero bit.  */
+      i = size-1;
+      limb = up[i];
+      count_leading_zeros (shift, limb);
+      bit = GMP_LIMB_HIGHBIT >> shift;
+
+      /* relative to just under high non-zero bit */
+      exp -= (shift - GMP_NAIL_BITS) + 1;
+
+      /* Power up "factor" to 2^exp, being the value of the "bit" in "limb"
+	 being examined.  */
+      base = (exp >= 0 ? 2.0 : 0.5);
+      exp = ABS (exp);
+      factor = 1.0;
+      for (;;)
+	{
+	  if (exp & 1)
+	    {
+	      prev_factor = factor;
+	      factor *= base;
+	      FORCE_DOUBLE (factor);
+	      if (factor == 0.0)
+		return 0.0;	/* underflow */
+	      if (factor == prev_factor)
+		{
+		  d = factor;	  /* overflow, apparent infinity */
+		  goto generic_done;
+		}
+	    }
+	  exp >>= 1;
+	  if (exp == 0)
+	    break;
+	  base *= base;
+	}
+
+      /* Add a "factor" for each non-zero bit, working from high to low.
+	 Stop if any rounding occurs, hence implementing a truncation.
+
+	 Note no attention is paid to DBL_MANT_DIG, since the effective
+	 number of bits in the mantissa isn't constant when in denorm range.
+	 We also encountered an ARM system with apparently somewhat doubtful
+	 software floats where DBL_MANT_DIG claimed 53 bits but only 32
+	 actually worked.  */
+
+      d = factor;  /* high bit */
+      for (;;)
+	{
+	  factor *= 0.5;  /* next bit */
+	  bit >>= 1;
+	  if (bit == 0)
+	    {
+	      /* next limb, if any */
+	      i--;
+	      if (i < 0)
+		break;
+	      limb = up[i];
+	      bit = GMP_NUMB_HIGHBIT;
+	    }
+
+	  if (bit & limb)
+	    {
+	      new_d = d + factor;
+	      FORCE_DOUBLE (new_d);
+	      diff = new_d - d;
+	      if (diff != factor)
+		break;	 /* rounding occured, stop now */
+	      d = new_d;
+	    }
+	}
+
+    generic_done:
+      return (sign >= 0 ? d : -d);
+    }
 #endif
+
+  up += size;
 
 #if GMP_LIMB_BITS == 64
   mlo = up[-1];
