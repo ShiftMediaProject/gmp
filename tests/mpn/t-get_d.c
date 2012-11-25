@@ -71,7 +71,7 @@ check_onebit (void)
   };
 
   /* FIXME: It'd be better to base this on the float format. */
-#ifdef __vax
+#ifdef __vax__
   int     limit = 127;  /* vax fp numbers have limited range */
 #else
   int     limit = 511;
@@ -96,7 +96,7 @@ check_onebit (void)
           exp = exp_table[exp_i];
 
           want_bit = bit + exp;
-          if (want_bit > limit || want_bit < -limit)
+          if (want_bit >= limit || want_bit <= -limit)
             continue;
 
           want = 1.0;
@@ -495,7 +495,9 @@ main (void)
   check_ieee_denorm ();
   check_ieee_overflow ();
   check_0x81c25113 ();
+#if ! __vax__
   check_rand ();
+#endif
 
   tests_end ();
   exit (0);
