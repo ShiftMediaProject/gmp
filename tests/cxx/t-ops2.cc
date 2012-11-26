@@ -103,10 +103,10 @@ void checkz (){
   CHECK_ALL_SIGNS(mpz_class,17,2,%);
   CHECK(unsigned long,mpz_class,5,-2,/);
   CHECK(unsigned long,mpz_class,5,-2,%);
-  ASSERT_ALWAYS(7ul/mpz_class(1e100)==0);
-  ASSERT_ALWAYS(7ul%mpz_class(1e100)==7);
-  ASSERT_ALWAYS(7ul/mpz_class(-1e100)==0);
-  ASSERT_ALWAYS(7ul%mpz_class(-1e100)==7);
+  ASSERT_ALWAYS(7ul/mpz_class(1e35)==0);
+  ASSERT_ALWAYS(7ul%mpz_class(1e35)==7);
+  ASSERT_ALWAYS(7ul/mpz_class(-1e35)==0);
+  ASSERT_ALWAYS(7ul%mpz_class(-1e35)==7);
   CHECK_ALL_SIGNS_COMPARISONS(mpz_class,11,3);
   CHECK_ALL(mpz_class,6,3,&);
   CHECK_ALL(mpz_class,6,3,|);
