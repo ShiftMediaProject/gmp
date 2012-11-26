@@ -1,3 +1,8 @@
+2012-11-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/cxx/t-ops2.cc (checkz): Reduce huge numbers to avoid vax
+	overflow.
+
 2012-11-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/get_d.c: Reinsert non-IEEE code.
