@@ -2989,10 +2989,13 @@ Initialize @var{x}, with space for @var{n}-bit numbers, and set its value to 0.
 Calling this function instead of @code{mpz_init} or @code{mpz_inits} is never
 necessary; reallocation is handled automatically by GMP when needed.
 
-@var{n} is only the initial space, @var{x} will grow automatically in
-the normal way, if necessary, for subsequent values stored.  @code{mpz_init2}
-makes it possible to avoid such reallocations if a maximum size is known in
-advance.
+While @var{n} defines the initial space, @var{x} will grow automatically in the
+normal way, if necessary, for subsequent values stored.  @code{mpz_init2} makes
+it possible to avoid such reallocations if a maximum size is known in advance.
+
+In preparation for an operation, GMP often allocates one limb more than
+ultimately needed.  To make sure no GMP will not perform reallocation for
+@var{x}, you need to add the number of bits in @code{mp_limb_t} to @var{n}.
 @end deftypefun
 
 @deftypefun void mpz_clear (mpz_t @var{x})
