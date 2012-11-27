@@ -56,6 +56,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
   mp_ptr rp, tp;
   mp_srcptr bp, ep, mp;
   mp_size_t rn, bn, es, en, itch;
+  mpz_t new_b;			/* note: value lives long via 'b' */
   TMP_DECL;
 
   n = ABSIZ(m);
@@ -69,7 +70,6 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
   es = SIZ(e);
   if (UNLIKELY (es <= 0))
     {
-      mpz_t new_b;
       if (es == 0)
 	{
 	  /* b^0 mod m,  b is anything and m is non-zero.
