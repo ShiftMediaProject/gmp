@@ -1,3 +1,8 @@
+2012-11-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (arm*-*-*): Pass -marm to deal with compilers defaulting
+	to thumb code.
+
 2012-11-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/cxx/t-ops2.cc (checkz): Reduce huge numbers to avoid vax
