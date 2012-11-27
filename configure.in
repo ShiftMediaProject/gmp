@@ -566,6 +566,7 @@ case $host in
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch"
+    gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     case $host_cpu in
