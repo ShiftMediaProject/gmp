@@ -1,5 +1,7 @@
 2012-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/powm.c: Move new_b out since it lives on through b.
+
 	* configure.in (arm*-*-*): Pass -marm to deal with compilers defaulting
 	to thumb code.
 
