@@ -2994,7 +2994,7 @@ normal way, if necessary, for subsequent values stored.  @code{mpz_init2} makes
 it possible to avoid such reallocations if a maximum size is known in advance.
 
 In preparation for an operation, GMP often allocates one limb more than
-ultimately needed.  To make sure no GMP will not perform reallocation for
+ultimately needed.  To make sure GMP will not perform reallocation for
 @var{x}, you need to add the number of bits in @code{mp_limb_t} to @var{n}.
 @end deftypefun
 
