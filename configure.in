@@ -570,15 +570,17 @@ case $host in
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     case $host_cpu in
-      armv5*)
+      armsa1 | armv4*)
+	;;
+      armxscale | arm926 | arm946 | arm966 | arm1026 | armv5*)
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
-      armv6*)
+      arm11mpcore | arm1136 | arm1156 | arm1176 | armv6*)
 	path="arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
-      armv7*) # FIXME: plain v7 is thumb-only, should we match more strictly?
+      armcortexa5 | armcortexa8 | armcortexa9 | armcortexa15 | armv7a*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
