@@ -1,3 +1,8 @@
+2012-11-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (arm*-*-*): New compiler optional "tune".  Pass value for
+	selected processors.  Add more specific path components.
+
 2012-11-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Andoni Morales Alastruey:
