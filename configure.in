@@ -565,7 +565,7 @@ case $host in
 
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
-    gcc_cflags_optlist="arch"
+    gcc_cflags_optlist="arch tune"
     gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
@@ -576,11 +576,25 @@ case $host in
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
-      arm11mpcore | arm1136 | arm1156 | arm1176 | armv6*)
+      arm11mpcore | arm1136 | arm1176 | armv6*)
 	path="arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
-      armcortexa5 | armcortexa8 | armcortexa9 | armcortexa15 | armv7a*)
+      arm1156)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv6"
+	;;
+      armcortexa9)
+	path="arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a9"
+	;;
+      armcortexa15)
+	path="arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
+	;;
+      armcortexa5 | armcortexa8 | armv7a*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
