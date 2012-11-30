@@ -1,5 +1,7 @@
 2012-11-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gen-fac.c (gen_consts): Correct printf types.
+
 	* mpn/arm/v7a/cora15/gmp-mparam.h: New file.
 
 	* configure.in (arm*-*-*): New compiler optional "tune".  Pass value for

@@ -191,7 +191,7 @@ gen_consts (int numb, int nail, int limb)
     }
   printf ("\n");
   printf
-    ("#define TABLE_LIMIT_2N_MINUS_POPC_2N %i\n", ofe + 1);
+    ("#define TABLE_LIMIT_2N_MINUS_POPC_2N %lu\n", ofe + 1);
 
 
   ofl = (ofl + 1) / 2;
@@ -242,7 +242,7 @@ gen_consts (int numb, int nail, int limb)
   for (b = ofl; b <= ofe; b++)
     {
       mpz_bin_uiui (x, 2 * b, b);
-      printf ("%lu",mpz_remove_twos (x));
+      printf ("%d", mpz_remove_twos (x));
       if (b != ofe)
 	printf (",");
     }
