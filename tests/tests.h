@@ -424,7 +424,7 @@ istringstream : public std::istrstream {
   envval = getenv ("GMP_CHECK_REPFACTOR");				\
   if (envval != NULL)							\
     {									\
-      repfactor = strtod (envval, &end, 0);				\
+      repfactor = strtod (envval, &end);				\
       if (*end || repfactor <= 0)					\
 	{								\
 	  fprintf (stderr, "Invalid repfactor: %ld.\n", repfactor);	\
