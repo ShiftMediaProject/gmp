@@ -1,5 +1,7 @@
 2012-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/set_str.c (mpn_dc_set_str): Work around a valgrind issue.
+
 	* mpz/powm_ui.c: Don't assume >= 2 limbs in mod argument.
 
 	* tests/tests.h (TESTS_REPS): Handle float GMP_CHECK_REPFACTOR.

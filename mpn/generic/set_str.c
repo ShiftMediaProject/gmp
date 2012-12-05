@@ -238,7 +238,9 @@ mpn_dc_set_str (mp_ptr rp, const unsigned char *str, size_t str_len,
 
   if (hn == 0)
     {
-      MPN_ZERO (rp, powtab->n + sn);
+      /* Zero +1 limb here, to avoid reading an allocated but uninitialised
+	 limb in mpn_incr_u below.  */
+      MPN_ZERO (rp, powtab->n + sn + 1);
     }
   else
     {
