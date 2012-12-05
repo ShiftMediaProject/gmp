@@ -105,7 +105,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       mp_size_t xn, tn, mn, bn;
       int m_zero_cnt;
       int c;
-      mp_limb_t e;
+      mp_limb_t e, m2;
       gmp_pi1_t dinv;
       TMP_DECL;
 
@@ -136,7 +136,8 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  mp = new_mp;
 	}
 
-      invert_pi1 (dinv, mp[mn - 1], mp[mn - 2]);
+      m2 = mn == 1 ? 0 : mp[mn - 2];
+      invert_pi1 (dinv, mp[mn - 1], m2);
 
       bn = ABSIZ(b);
       bp = PTR(b);
