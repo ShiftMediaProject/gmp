@@ -1,3 +1,13 @@
+2012-12-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h: Refine cpp test for vax.
+	* tests/mpn/t-get_d.c: Likewise.
+	* tests/mpz/t-get_d.c: Likewise.
+	* tests/mpz/t-cmp_d.c: Likewise.
+	* tests/mpz/t-get_d.c: Likewise.
+	* tests/mpq/t-get_d.c: Likewise.
+	* tests/mpf/t-get_d.c: Likewise.
+
 2012-11-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gen-fac.c (gen_consts): Correct printf types.

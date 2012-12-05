@@ -164,7 +164,7 @@ check_low_z_one (void)
   mpz_init (x);
 
   /* FIXME: It'd be better to base this on the float format. */
-#ifdef __vax
+#if defined (__vax) || defined (__vax__)
 #define LIM 127			/* vax fp numbers have limited range */
 #else
 #define LIM 512

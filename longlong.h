@@ -1766,7 +1766,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	   __CLOBBER_CC)
 #endif
 
-#if defined (__vax__) && W_TYPE_SIZE == 32
+#if (defined (__vax) || defined (__vax__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addl2 %5,%1\n\tadwc %3,%0"					\
 	   : "=g" (sh), "=&g" (sl)					\
@@ -1806,7 +1806,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	     : "g" ((USItype) (x)));					\
   } while (0)
 #endif
-#endif /* __vax__ */
+#endif /* vax */
 
 #if defined (__z8000__) && W_TYPE_SIZE == 16
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \

@@ -22,7 +22,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "tests.h"
 
-#if defined (__vax__)
+#if defined (__vax) || defined (__vax__)
 #define LOW_BOUND 1e-38
 #define HIGH_BOUND 8e37
 #endif

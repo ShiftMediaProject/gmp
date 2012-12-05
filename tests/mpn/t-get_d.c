@@ -71,7 +71,7 @@ check_onebit (void)
   };
 
   /* FIXME: It'd be better to base this on the float format. */
-#ifdef __vax__
+#if defined (__vax) || defined (__vax__)
   int     limit = 127;  /* vax fp numbers have limited range */
 #else
   int     limit = 511;
@@ -495,7 +495,7 @@ main (void)
   check_ieee_denorm ();
   check_ieee_overflow ();
   check_0x81c25113 ();
-#if ! __vax__
+#if ! (defined (__vax) || defined (__vax__))
   check_rand ();
 #endif
 

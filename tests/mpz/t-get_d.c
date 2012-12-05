@@ -31,7 +31,7 @@ check_onebit (void)
   mpz_t   z;
   double  got, want;
   /* FIXME: It'd be better to base this on the float format. */
-#ifdef __vax
+#if defined (__vax) || defined (__vax__)
   int     limit = 127;  /* vax fp numbers have limited range */
 #else
   int     limit = 512;
