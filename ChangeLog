@@ -1,5 +1,7 @@
 2012-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/tests.h (TESTS_REPS): Handle float GMP_CHECK_REPFACTOR.
+
 	* longlong.h: Refine cpp test for vax.
 	* tests/mpn/t-get_d.c: Likewise.
 	* tests/mpz/t-get_d.c: Likewise.

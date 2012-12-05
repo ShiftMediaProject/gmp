@@ -407,7 +407,7 @@ istringstream : public std::istrstream {
 #define TESTS_REPS(count, argv, argc)					\
   do {									\
   char *envval, *end;							\
-  long repfactor;							\
+  double repfactor;							\
   int reps_nondefault = 0;						\
   if (argc > 1)								\
     {									\
@@ -424,7 +424,7 @@ istringstream : public std::istrstream {
   envval = getenv ("GMP_CHECK_REPFACTOR");				\
   if (envval != NULL)							\
     {									\
-      repfactor = strtol (envval, &end, 0);				\
+      repfactor = strtod (envval, &end, 0);				\
       if (*end || repfactor <= 0)					\
 	{								\
 	  fprintf (stderr, "Invalid repfactor: %ld.\n", repfactor);	\
