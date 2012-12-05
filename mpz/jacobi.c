@@ -65,14 +65,10 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   bsrcp = PTR(b);
   blow = bsrcp[0];
 
-  /* The MPN jacobi functions requies positive a and b, and b odd. So
+  /* The MPN jacobi functions require positive a and b, and b odd. So
      we must to handle the cases of a or b zero, then signs, and then
      the case of even b.
   */
-
-  if ( (((alow | blow) & 1) == 0))
-    /* Common factor of 2 ==> (a/b) = 0 */
-    return 0;
 
   if (bsize == 0)
     /* (a/0) = [ a = 1 or a = -1 ] */
@@ -81,6 +77,10 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   if (asize == 0)
     /* (0/b) = [ b = 1 or b = - 1 ] */
     return JACOBI_0LS (blow, bsize);
+
+  if ( (((alow | blow) & 1) == 0))
+    /* Common factor of 2 ==> (a/b) = 0 */
+    return 0;
 
   if (bsize < 0)
     {
