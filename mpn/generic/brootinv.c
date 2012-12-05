@@ -107,6 +107,11 @@ mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_size_t bn, mp_limb_t k, mp_ptr tp)
   if (bn == 1)
     return;
 
+  /* This initialization doesn't matter for the result (any garbage is
+     cancelled in the iteration), but proper initialization makes
+     valgrind happier. */
+  MPN_ZERO (rp+1, bn-1);
+
   d = 0;
   for (; bn > 1; bn = (bn + 1) >> 1)
     order[d++] = bn;

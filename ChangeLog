@@ -1,5 +1,8 @@
 2012-12-05  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/brootinv.c (mpn_brootinv): Make valgrind happier, at
+	the cost of a redundant MPN_ZERO.
+
 	* mpz/jacobi.c (mpz_jacobi): Check for asize == 0 or bsize == 0
 	before using the low limbs.
 
