@@ -90,7 +90,7 @@ main (int argc, char **argv)
   int i;
   int pass, reps = 100;
   mpq_t in1, in2, out1;
-  unsigned long int in1i, in2i;
+  unsigned long int randbits, in2i;
   mpq_t res1, res2, res3;
   gmp_randstate_ptr  rands;
 
@@ -110,20 +110,32 @@ main (int argc, char **argv)
 
   for (pass = 1; pass <= reps; pass++)
     {
-      in2i = urandom ();
+      randbits = urandom ();
 
+      if (randbits & 1)
+	{
+	  mpq_clear (in1);
+	  mpq_init (in1);
+	}
+      randbits >>= 1;
       mpz_errandomb (mpq_numref(in1), rands, 512L);
       mpz_errandomb_nonzero (mpq_denref(in1), rands, 512L);
-      if (in2i & 1)
+      if (randbits & 1)
 	mpz_neg (mpq_numref(in1),mpq_numref(in1));
-      in2i >>= 1;
+      randbits >>= 1;
       mpq_canonicalize (in1);
 
+      if (randbits & 1)
+	{
+	  mpq_clear (in2);
+	  mpq_init (in2);
+	}
+      randbits >>= 1;
       mpz_errandomb (mpq_numref(in2), rands, 512L);
       mpz_errandomb_nonzero (mpq_denref(in2), rands, 512L);
-      if (in2i & 1)
+      if (randbits & 1)
 	mpz_neg (mpq_numref(in2),mpq_numref(in2));
-      in2i >>= 1;
+      randbits >>= 1;
       mpq_canonicalize (in2);
 
       for (i = 0; i < sizeof (dss_funcs) / sizeof (dss_func); i++)
@@ -131,6 +143,13 @@ main (int argc, char **argv)
 	  /* Don't divide by 0.  */
 	  if (i == 0 && mpq_cmp_ui (in2, 0, 1) == 0)
 	    continue;
+
+	  if (randbits & 1)
+	    {
+	      mpq_clear (res1);
+	      mpq_init (res1);
+	    }
+	  randbits >>= 1;
 
 	  (dss_funcs[i]) (res1, in1, in2);
 
@@ -150,6 +169,12 @@ main (int argc, char **argv)
 
       for (i = 0; i < sizeof (ds_funcs) / sizeof (ds_func); i++)
 	{
+	  if (randbits & 1)
+	    {
+	      mpq_clear (res1);
+	      mpq_init (res1);
+	    }
+	  randbits >>= 1;
 	  (ds_funcs[i]) (res1, in1);
 
 	  mpq_set (out1, in1);
@@ -160,9 +185,16 @@ main (int argc, char **argv)
 	    dump_abort (ds_func_names[i], res1, res2);
 	}
 
-      in2i %= 65536;
+      in2i = urandom () % 65536;
       for (i = 0; i < sizeof (dsi_funcs) / sizeof (dsi_func); i++)
 	{
+	  if (randbits & 1)
+	    {
+	      mpq_clear (res1);
+	      mpq_init (res1);
+	    }
+	  randbits >>= 1;
+
 	  (dsi_funcs[i]) (res1, in1, in2i);
 
 	  mpq_set (out1, in1);
