@@ -5,6 +5,7 @@
 
 	* mpz/abs.c: Use NEWALLOC.
 	* mpz/neg.c: Likewise.
+	* mpz/com.c: Reduce branches.
 	
 2012-12-05  Niels Möller  <nisse@lysator.liu.se>
 

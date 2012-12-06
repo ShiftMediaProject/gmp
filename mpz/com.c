@@ -35,31 +35,27 @@ mpz_com (mpz_ptr dst, mpz_srcptr src)
 	 But this can be simplified using the identity -x = ~x + 1.
 	 So we're going to compute (~~x) + 1 = x + 1!  */
 
-      dst_ptr = MPZ_REALLOC (dst, size + 1);
-
-      src_ptr = PTR (src);
-
       if (UNLIKELY (size == 0))
 	{
 	  /* special case, as mpn_add_1 wants size!=0 */
-	  dst_ptr[0] = 1;
+	  PTR (dst)[0] = 1;
 	  SIZ (dst) = -1;
-	  return;
 	}
+      else
+	{
+	  mp_limb_t cy;
 
-      {
-	mp_limb_t cy;
+	  dst_ptr = MPZ_REALLOC (dst, size + 1);
 
-	cy = mpn_add_1 (dst_ptr, src_ptr, size, (mp_limb_t) 1);
-	if (cy)
-	  {
-	    dst_ptr[size] = cy;
-	    size++;
-	  }
+	  src_ptr = PTR (src);
+
+	  cy = mpn_add_1 (dst_ptr, src_ptr, size, (mp_limb_t) 1);
+	  dst_ptr[size] = cy;
+	  size += (cy != 0);
+
+	  /* Store a negative size, to indicate ones-extension.  */
+	  SIZ (dst) = -size;
       }
-
-      /* Store a negative size, to indicate ones-extension.  */
-      SIZ (dst) = -size;
     }
   else
     {
