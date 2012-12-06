@@ -33,7 +33,7 @@ mpz_abs (mpz_ptr w, mpz_srcptr u)
 
   if (u != w)
     {
-      wp = MPZ_REALLOC (w, size);
+      wp = MPZ_NEWALLOC (w, size);
 
       up = PTR (u);
 

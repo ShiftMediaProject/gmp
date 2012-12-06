@@ -25,7 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_neg (mpz_ptr w, mpz_srcptr u)
 {
-  mp_ptr wp, up;
+  mp_ptr wp;
+  mp_srcptr up;
   mp_size_t usize, size;
 
   usize = SIZ (u);
@@ -34,7 +35,7 @@ mpz_neg (mpz_ptr w, mpz_srcptr u)
     {
       size = ABS (usize);
 
-      wp = MPZ_REALLOC (w, size);
+      wp = MPZ_NEWALLOC (w, size);
 
       up = PTR (u);
 
