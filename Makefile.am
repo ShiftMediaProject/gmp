@@ -84,13 +84,13 @@
 # it's still good to get the shared library filename (like
 # libgmpxx.so.3.0.4) incrementing, to make it clear which GMP it's from.
 
-LIBGMP_LT_CURRENT =  10
-LIBGMP_LT_REVISION = 1
-LIBGMP_LT_AGE =      0
+LIBGMP_LT_CURRENT    = 11
+LIBGMP_LT_REVISION   = 0
+LIBGMP_LT_AGE        = 1
 
-LIBGMPXX_LT_CURRENT =  6
-LIBGMPXX_LT_REVISION = 1
-LIBGMPXX_LT_AGE =      2
+LIBGMPXX_LT_CURRENT  = 7
+LIBGMPXX_LT_REVISION = 0
+LIBGMPXX_LT_AGE      = 3
 
 
 SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
