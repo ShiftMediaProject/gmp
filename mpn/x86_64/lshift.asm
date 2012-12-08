@@ -49,7 +49,7 @@ PROLOGUE(mpn_lshift)
 	jne	L(gen)
 
 C For cnt=1 we want to work from lowest limb towards higher limbs.
-C Check for bad overlap (up=rp is OK!) up=1..rp+n-1 is bad.
+C Check for bad overlap (up=rp is OK!) up=rp+1..rp+n-1 is bad.
 C FIXME: this could surely be done more cleverly.
 
 	mov    rp, %rax
