@@ -24,7 +24,7 @@ C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 4.25
-C Cortex-A15	 ?
+C Cortex-A15	 2.5
 
 C TODO
 C  * Try using umlal or umaal.

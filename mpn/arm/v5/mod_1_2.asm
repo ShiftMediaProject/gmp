@@ -26,7 +26,7 @@ C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 4.25
-C Cortex-A15	 ?
+C Cortex-A15	 3
 
 define(`ap', `r0')
 define(`n',  `r1')

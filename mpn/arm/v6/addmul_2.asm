@@ -26,7 +26,7 @@ C StrongARM:	 -
 C XScale	 -
 C Cortex-A8	 ?
 C Cortex-A9	 2.38
-C Cortex-A15	 ?
+C Cortex-A15	 2.5
 
 C TODO
 C  * Consider using more registers for the r[] loads, allowing better load-use

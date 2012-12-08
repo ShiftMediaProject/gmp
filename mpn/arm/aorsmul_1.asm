@@ -24,7 +24,7 @@ C StrongARM:     ?
 C XScale	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 5.25
-C Cortex-A15	 ?
+C Cortex-A15	 4
 
 define(`rp', `r0')
 define(`up', `r1')
