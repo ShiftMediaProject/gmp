@@ -35,6 +35,7 @@ m4_pattern_allow(GMP_LIMB_BITS)
 m4_pattern_allow(GMP_MPARAM_H_SUGGEST)
 m4_pattern_allow(GMP_NAIL_BITS)
 m4_pattern_allow(GMP_NUMB_BITS)
+m4_pattern_allow(GMP_NONSTD_ABI)
 
 # If --target is not used then $target_alias is empty, but if say
 # "./configure athlon-pc-freebsd3.5" is used, then all three of
@@ -1682,7 +1683,7 @@ case $host in
 	    limb_64=longlong
 	    CALLING_CONVENTIONS_OBJS_64=""
 	    AC_DEFINE(HOST_DOS64,1,[Define to 1 for Windos/64])
-	    AC_SUBST(GMP_NONSTD_ABI,DOS64)
+	    AC_SUBST(GMP_NONSTD_ABI_64,DOS64)
 	    ;;
 	esac
 	;;
@@ -2065,7 +2066,7 @@ if test $found_compiler = yes; then
   CC="$cc"
   CFLAGS="$cflags"
   CPPFLAGS="$cppflags"
-
+  eval GMP_NONSTD_ABI=\"\$GMP_NONSTD_ABI_$ABI\"
 
   # Could easily have this in config.h too, if desired.
   ABI_nodots=`echo $ABI | sed 's/\./_/'`
