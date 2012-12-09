@@ -1,6 +1,10 @@
-2012-12-08  Torbjorn Granlund  <tege@gmplib.org>
+2012-12-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.0 released.
+
+	* configure.in: Make GMP_NONSTD_ABI ABI specific.
+
+2012-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
 	Bump version info.
@@ -190,7 +194,7 @@
 
 	* longlong.h: De-support old POWER asm syntax.
 
-	* tests/mpz/t-remove.c: Run more test, but use a tad smaller operands.
+	* tests/mpz/t-remove.c: Run more tests, but use a tad smaller operands.
 
 	* mpn/generic/remove.c (mpn_bdiv_qr_wrap): New function.
 	(mpn_remove): Call mpn_bdiv_qr_wrap.
