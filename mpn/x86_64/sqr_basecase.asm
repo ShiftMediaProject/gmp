@@ -99,19 +99,25 @@ PROLOGUE(mpn_sqr_basecase)
 	mov	%r14, (%rsp)
 
 	cmovg	%r8, %rcx
-	lea	L(jmptab)(%rip), %rax
+
+	lea	L(tab)(%rip), %rax
+ifdef(`PIC',
+`	movslq	(%rax,%rcx,4), %r10
+	add	%r10, %rax
+	jmp	*%rax
+',`
 	jmp	*(%rax,%rcx,8)
+')
 	JUMPTABSECT
 	ALIGN(8)
-L(jmptab):
-	.quad	L(4)
-	.quad	L(1)
-	.quad	L(2)
-	.quad	L(3)
-	.quad	L(0m4)
-	.quad	L(1m4)
-	.quad	L(2m4)
-	.quad	L(3m4)
+L(tab):	JMPENT(	L(4), L(tab))
+	JMPENT(	L(1), L(tab))
+	JMPENT(	L(2), L(tab))
+	JMPENT(	L(3), L(tab))
+	JMPENT(	L(0m4), L(tab))
+	JMPENT(	L(1m4), L(tab))
+	JMPENT(	L(2m4), L(tab))
+	JMPENT(	L(3m4), L(tab))
 	TEXT
 
 L(1):	mov	(up), %rax

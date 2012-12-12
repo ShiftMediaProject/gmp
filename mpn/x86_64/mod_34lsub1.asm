@@ -103,24 +103,27 @@ forloop(i,1,UNROLL-1,`dnl
 	jnc	L(top)
 
 L(end):
-C Handle 0-8 remaining limbs.  The switch code here is zany in an attempt to
-C fit the tiny envelope of code that triggers no Apple bugs
 	lea	L(tab)(%rip), %r8
+ifdef(`PIC',
+`	movslq	36(%r8,%rsi,4), %r10
+	add	%r10, %r8
+	jmp	*%r8
+',`
 	jmp	*72(%r8,%rsi,8)
-	
+')
 	JUMPTABSECT
 	ALIGN(8)
-L(tab):	.quad	L(0)
-	.quad	L(1)
-	.quad	L(2)
-	.quad	L(3)
-	.quad	L(4)
-	.quad	L(5)
-	.quad	L(6)
-	.quad	L(7)
-	.quad	L(8)
-
+L(tab):	JMPENT(	L(0), L(tab))
+	JMPENT(	L(1), L(tab))
+	JMPENT(	L(2), L(tab))
+	JMPENT(	L(3), L(tab))
+	JMPENT(	L(4), L(tab))
+	JMPENT(	L(5), L(tab))
+	JMPENT(	L(6), L(tab))
+	JMPENT(	L(7), L(tab))
+	JMPENT(	L(8), L(tab))
 	TEXT
+
 L(6):	add	(ap), %rax
 	adc	8(ap), %rcx
 	adc	16(ap), %rdx

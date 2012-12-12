@@ -24,6 +24,10 @@ define(`LEA',`
 
 define(`JUMPTABSECT', `RODATA')
 
+ifdef(`PIC',
+  `define(`JMPENT', `.long	$1-$2')',
+  `define(`JMPENT', `.quad	$1')')
+
 
 dnl  Usage: FUNC_ENTRY(nregparmas)
 dnl  Usage: FUNC_EXIT()

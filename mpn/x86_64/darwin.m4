@@ -32,8 +32,13 @@ dnl  Simply override the definition in x86_64-defs.m4.
 define(`CALL',`call	GSYM_PREFIX`'$1')
 
 
-define(`JUMPTABSECT', `DATA')
+define(`JUMPTABSECT', `RODATA')
 
+ifdef(`PIC',
+  `define(`JMPENT',
+	`.set	$1_tmp, $1-$2
+	.long	$1_tmp')',
+  `define(`JMPENT', `.quad	$1')')
 
 dnl  Target ABI macros.  For Darwin we override IFELF (and leave default for
 dnl  IFDOS and IFSTD).

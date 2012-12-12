@@ -64,23 +64,28 @@ PROLOGUE(mpn_mullo_basecase)
 	mov	(up), %rax		C u0
 	mov	(vp_param), %r8		C v0
 
-	lea	L(jmptab)(%rip), %r9
+	lea	L(tab)(%rip), %r9
+ifdef(`PIC',
+`	movslq	(%r9,%rcx,4), %r10
+	add	%r10, %r9
+	jmp	*%r9
+',`
 	jmp	*(%r9,n,8)
+')
 	JUMPTABSECT
 	ALIGN(8)
-L(jmptab):
-	.quad	0			C not allowed
-	.quad	L(1)			C 1
-	.quad	L(2)			C 2
-	.quad	L(3)			C 3
-C	.quad	L(0m4)			C 4
-C	.quad	L(1m4)			C 5
-C	.quad	L(2m4)			C 6
-C	.quad	L(3m4)			C 7
-C	.quad	L(0m4)			C 8
-C	.quad	L(1m4)			C 9
-C	.quad	L(2m4)			C 10
-C	.quad	L(3m4)			C 11
+L(tab):	JMPENT(	L(tab), L(tab))			C not allowed
+	JMPENT(	L(1), L(tab))			C 1
+	JMPENT(	L(2), L(tab))			C 2
+	JMPENT(	L(3), L(tab))			C 3
+dnl	JMPENT(	L(0m4), L(tab))			C 4
+dnl	JMPENT(	L(1m4), L(tab))			C 5
+dnl	JMPENT(	L(2m4), L(tab))			C 6
+dnl	JMPENT(	L(3m4), L(tab))			C 7
+dnl	JMPENT(	L(0m4), L(tab))			C 8
+dnl	JMPENT(	L(1m4), L(tab))			C 9
+dnl	JMPENT(	L(2m4), L(tab))			C 10
+dnl	JMPENT(	L(3m4), L(tab))			C 11
 	TEXT
 
 L(1):	imul	%r8, %rax

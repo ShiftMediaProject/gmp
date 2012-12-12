@@ -187,6 +187,10 @@ ifdef(`PIC',
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
 
+ifdef(`PIC',
+  `define(`JMPENT', `.long	$1-$2')',
+  `define(`JMPENT', `.quad	$1')')
+
 
 dnl  These macros are defined just for DOS64, where they provide calling
 dnl  sequence glue code.
