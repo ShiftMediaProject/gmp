@@ -187,9 +187,15 @@ ifdef(`PIC',
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
 
+
+dnl  Usage: JMPENT(targlabel,tablabel)
+
+define(`JMPENT',`dnl
 ifdef(`PIC',
-  `define(`JMPENT', `.long	$1-$2')',
-  `define(`JMPENT', `.quad	$1')')
+	`.long	$1-$2'
+,
+	`.quad	$1'
+)')
 
 
 dnl  These macros are defined just for DOS64, where they provide calling
