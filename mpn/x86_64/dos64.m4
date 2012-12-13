@@ -18,15 +18,26 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 define(`HOST_DOS64')
 
+
+dnl  On DOS64 we always generate position-independent-code
+dnl
+
+define(`PIC')
+
+
 define(`LEA',`
 	lea	$1(%rip), $2
 ')
 
+
+dnl  Usage: JUMPTABSECT
+
 define(`JUMPTABSECT', `RODATA')
 
-ifdef(`PIC',
-  `define(`JMPENT', `.long	$1-$2')',
-  `define(`JMPENT', `.quad	$1')')
+
+dnl  Usage: JMPENT(targlabel,tablabel)
+
+define(`JMPENT', `.long	$1-$2')
 
 
 dnl  Usage: FUNC_ENTRY(nregparmas)
@@ -50,12 +61,6 @@ ifelse(eval($1>=4),1,`dnl
 define(`FUNC_EXIT',
 	`pop	%rsi
 	pop	%rdi')
-
-
-dnl  On DOS64 we always generate position-independent-code
-dnl
-
-define(`PIC')
 
 
 dnl  Target ABI macros.  For DOS64 we override the defaults.
