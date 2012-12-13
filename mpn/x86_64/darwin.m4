@@ -32,13 +32,25 @@ dnl  Simply override the definition in x86_64-defs.m4.
 define(`CALL',`call	GSYM_PREFIX`'$1')
 
 
-define(`JUMPTABSECT', `RODATA')
+dnl  Usage: JUMPTABSECT
+dnl
+dnl  CAUTION: Do not put anything sensible here, like RODATA.  That works with
+dnl  some Darwin tool chains, but silently breaks with other.  (Note that
+dnl  putting jump tables in the text segment is a really poor idea for PC many
+dnl  processors, since they cannot cache the same thing in both L1D and L2I.)
 
+define(`JUMPTABSECT', `.text')
+
+
+dnl  Usage: JMPENT(targlabel,tablabel)
+
+define(`JMPENT',`dnl
 ifdef(`PIC',
-  `define(`JMPENT',
 	`.set	$1_tmp, $1-$2
-	.long	$1_tmp')',
-  `define(`JMPENT', `.quad	$1')')
+	.long	$1_tmp'
+,
+	`.quad	$1'
+)')
 
 dnl  Target ABI macros.  For Darwin we override IFELF (and leave default for
 dnl  IFDOS and IFSTD).
