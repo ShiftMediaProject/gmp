@@ -1,6 +1,14 @@
-2012-12-12  Torbjorn Granlund  <tege@gmplib.org>
+2012-12-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.0 released.
+
+	* mpn/x86_64/dos64.m4 (PIC): Move definition early.
+	(JMPENT): Remove PIC variant.
+
+	* mpn/x86_64/darwin.m4 (JUMPTABSECT): Define to .text, instead of
+	something sensible.
+
+2012-12-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/x86_64-defs.m4 (JMPENT): New macro.
 	* mpn/x86_64/dos64.m4: Likewise.
