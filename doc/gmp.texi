@@ -3500,7 +3500,7 @@ This function does some trial divisions, then some Miller-Rabin probabilistic
 primality tests.  The argument @var{reps} controls how many such tests are
 done; a higher value will reduce the chances of a composite being returned as
 ``probably prime''.  25 is a reasonable number; a composite number will then be
-identified as a prime with a probability of less than @m{2^{-50}}.
+identified as a prime with a probability of less than @m{2^{-50},2^(-50)}.
 
 Miller-Rabin and similar tests can be more properly called compositeness
 tests.  Numbers which fail are known to be composite but those which pass
