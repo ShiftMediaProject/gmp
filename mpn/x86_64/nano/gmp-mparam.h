@@ -59,10 +59,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULMID_TOOM42_THRESHOLD             28
 
-#define MULMOD_BNM1_THRESHOLD               16
-#define SQRMOD_BNM1_THRESHOLD               20
-
-#define POWM_SEC_TABLE  3,29,387,1318
+#define MULMOD_BNM1_THRESHOLD               13
+#define SQRMOD_BNM1_THRESHOLD               17
 
 #define MUL_FFT_MODF_THRESHOLD             376  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
@@ -180,7 +178,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     { 131072,18}, { 262144,19}, { 524288,20}, {1048576,21}, \
     {2097152,22}, {4194304,23}, {8388608,24} }
 #define SQR_FFT_TABLE3_SIZE 215
-#define SQR_FFT_THRESHOLD                 3264
+#define SQR_FFT_THRESHOLD                 2880
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  79
@@ -188,10 +186,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define DC_DIV_QR_THRESHOLD                 54
 #define DC_DIVAPPR_Q_THRESHOLD             153
-#define DC_BDIV_QR_THRESHOLD                38
+#define DC_BDIV_QR_THRESHOLD                51
 #define DC_BDIV_Q_THRESHOLD                 52
 
-#define INV_MULMOD_BNM1_THRESHOLD           82
+#define INV_MULMOD_BNM1_THRESHOLD           52
 #define INV_NEWTON_THRESHOLD               150
 #define INV_APPR_THRESHOLD                 151
 
@@ -205,6 +203,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD              1142
 #define MU_BDIV_Q_THRESHOLD               1499
 
+#define POWM_SEC_TABLE  4,29,387,1421
+
 #define MATRIX22_STRASSEN_THRESHOLD         17
 #define HGCD_THRESHOLD                     112
 #define HGCD_APPR_THRESHOLD                185
@@ -215,7 +215,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define GET_STR_DC_THRESHOLD                11
 #define GET_STR_PRECOMPUTE_THRESHOLD        25
-#define SET_STR_DC_THRESHOLD               711
+#define SET_STR_DC_THRESHOLD               414
 #define SET_STR_PRECOMPUTE_THRESHOLD      1945
 
 #define FAC_DSC_THRESHOLD                 1517
