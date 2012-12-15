@@ -1,4 +1,4 @@
-2012-12-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2012-12-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/toom-sqr-shared.h: Skip ALLOCs if the test is skipped.
 
