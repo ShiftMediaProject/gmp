@@ -54,6 +54,8 @@ main (int argc, char **argv)
     }
 
   tests_start ();
+
+  if (MAX_AN > MIN_AN) {
   rands = RANDS;
 
   ap = TMP_ALLOC_LIMBS (MAX_AN);
@@ -62,7 +64,6 @@ main (int argc, char **argv)
   scratch
     = 1+TMP_ALLOC_LIMBS (mpn_toomN_sqr_itch (MAX_AN) + 2);
 
-  if (MAX_AN > MIN_AN)
   for (test = 0; test < count; test++)
     {
       unsigned size_min;
@@ -121,6 +122,7 @@ main (int argc, char **argv)
 	}
     }
   TMP_FREE;
+  }
 
   tests_end ();
   return 0;
