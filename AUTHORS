@@ -50,7 +50,7 @@ Niels Möller		gen-jacobitab.c,
 			div_qr_2n_pi1.asm, div_qr_2u_pi1.asm,
 			mpn/x86_64/core2/aorsmul_1.asm,
 			mpz/nextprime.c, divexact.c, gcd.c, gcdext.c,
-      			jacobi.c, mini-gmp/mini-gmp.c.
+      			jacobi.c, combit.c, mini-gmp/mini-gmp.c.
 				
 
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
