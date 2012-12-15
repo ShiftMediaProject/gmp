@@ -208,5 +208,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SET_STR_DC_THRESHOLD              1204
 #define SET_STR_PRECOMPUTE_THRESHOLD      2251
 
-#define FAC_DSC_THRESHOLD                  732
-#define FAC_ODD_THRESHOLD                   44
+#define FAC_DSC_THRESHOLD                  800
+#define FAC_ODD_THRESHOLD                   28
