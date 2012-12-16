@@ -1,10 +1,15 @@
+2012-12-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 5.1.0 released.
+
+	* mpn/generic/mu_div_qr.c (mpn_preinv_mu_div_qr): Explicitly use
+	MPN_COPY_INCR for slightly overlapping copy.
+
 2012-12-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/toom-sqr-shared.h: Skip ALLOCs if the test is skipped.
 
 2012-12-13  Torbjorn Granlund  <tege@gmplib.org>
-
-	* Version 5.1.0 released.
 
 	* mpn/x86_64/dos64.m4 (PIC): Move definition early.
 	(JMPENT): Remove PIC variant.
