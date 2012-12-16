@@ -10395,6 +10395,14 @@ the internal middle product functions @code{mpn_mulmid_basecase},
 
 Martin Boij wrote @code{mpn_perfect_power_p}.
 
+Marc Glisse improved @file{gmpxx.h}: use fewer temporaries (faster),
+specializations of @code{numeric_limits} and @code{common_type}, C++11
+features (move constructors, explicit bool conversion, UDL), make the
+conversion from @code{mpq_class} to @code{mpz_class} explicit, optimize
+operations where one argument is a small compile-time constant, replace
+some heap allocations by stack allocations.  He also fixed the eofbit
+handling of C++ streams, and removed one division from @file{mpq/aors.c}.
+
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell
 @email{gmp-devel@@gmplib.org} about the omission!)

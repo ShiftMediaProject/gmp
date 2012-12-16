@@ -75,3 +75,5 @@ David Harvey		mpn/generic/add_err1_n.c, add_err2_n.c,
 			mpn/x86_64/core2/aors_err1_n.asm.
 
 Martin Boij		mpn/generic/perfpow.c
+
+Marc Glisse		gmpxx.h improvements
