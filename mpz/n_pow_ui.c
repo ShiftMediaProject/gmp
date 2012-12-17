@@ -167,7 +167,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 	 mpn_trace ("b", bp, bsize));
 
   ASSERT (bsize == 0 || bp[ABS(bsize)-1] != 0);
-  ASSERT (MPN_SAME_OR_SEPARATE2_P (PTR(r), ABSIZ(r), bp, bsize));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (PTR(r), ALLOC(r), bp, ABS(bsize)));
 
   /* b^0 == 1, including 0^0 == 1 */
   if (e == 0)
