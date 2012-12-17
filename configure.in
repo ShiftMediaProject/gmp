@@ -1705,7 +1705,8 @@ case $host in
 
   # Special CPU "none" used to select generic C, now this is obsolete.
   none-*-*)
-    AC_MSG_ERROR([the \"none\" host is obsolete, use --disable-assembly])
+    enable_assembly=no
+    AC_MSG_WARN([the \"none\" host is obsolete, use --disable-assembly])
     ;;
 
 esac
