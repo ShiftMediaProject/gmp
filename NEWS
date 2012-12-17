@@ -11,6 +11,10 @@ Changes between GMP version 5.0.* and 5.1.0
   * When reading a C++ number (like mpz_class) in an istream reaches the end
     of the stream, the eofbit is now set.
 
+  * The result sign of mpz_rootrem's remainder is now always correct.
+
+  * The mpz_remove function now handles negative divisors.
+
   * Contains all fixes from release 5.0.5.
 
   SPEEDUPS
@@ -19,7 +23,7 @@ Changes between GMP version 5.0.* and 5.1.0
 
   * New subquadratic algorithm for the Kronecker/Jacobi/Legendre symbol.
   
-  * Major speedup for ARM, in particular ARM Cortex-A9, thanks to broad
+  * Major speedup for ARM, in particular ARM Cortex-A9 and A15, thanks to broad
     assembly support.
 
   * Significant speedup or POWER6 and POWER7 thanks to improved assembly.
@@ -30,6 +34,8 @@ Changes between GMP version 5.0.* and 5.1.0
   * Minor speed improvements of many functions and for many platforms.
 
   FEATURES
+  * Many new CPUs recognised.
+
   * New functions for multi-factorials, and primorial: mpz_2fac_ui,
     mpz_mfac_uiui and mpz_primorial_ui.
 
@@ -55,6 +61,12 @@ Changes between GMP version 5.0.* and 5.1.0
 
   * The coverage of the testsuite has been improved, using the lcov tool.  See
     also http://gmplib.org/devel/lcov/.
+
+  * It is now possible to compile GMP using a C++ compiler.
+
+  * K&R C compilers are no longer supported.
+
+  * The BSD MP compatibility functions have been removed.
 
 
 Changes between GMP version 5.0.4 and 5.0.5
