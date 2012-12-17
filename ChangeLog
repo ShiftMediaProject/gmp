@@ -2,6 +2,8 @@
 
 	* Version 5.1.0 released.
 
+	* configure.in (none-*-*): Allow this again, but print a warning.
+
 2012-12-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/n_pow_ui.c: Fix typos in an ASSERT.
