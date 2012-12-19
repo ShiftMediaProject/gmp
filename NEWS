@@ -46,7 +46,7 @@ Changes between GMP version 5.0.* and 5.1.0
 
   MISC
   * Inclusion of assembly code is now controlled by the configure options
-    --enable-assembly and --disable-assembly.  The "none" CPU targets is gone.
+    --enable-assembly and --disable-assembly.  The "none" CPU target is gone.
 
   * In C++, the conversions mpq_class->mpz_class, mpf_class->mpz_class and
     mpf_class->mpq_class are now explicit.
