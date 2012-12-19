@@ -26,7 +26,7 @@ Changes between GMP version 5.0.* and 5.1.0
   * Major speedup for ARM, in particular ARM Cortex-A9 and A15, thanks to broad
     assembly support.
 
-  * Significant speedup or POWER6 and POWER7 thanks to improved assembly.
+  * Significant speedup for POWER6 and POWER7 thanks to improved assembly.
 
   * The performance under M$ Windows' 64-bit ABI has been greatly improved
     thanks to complete assembly support.
