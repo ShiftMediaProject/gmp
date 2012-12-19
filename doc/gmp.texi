@@ -3647,7 +3647,7 @@ Set @var{rop} to the factorial of @var{n}: @code{mpz_fac_ui} computes the plain 
 @deftypefun void mpz_primorial_ui (mpz_t @var{rop}, unsigned long int @var{n})
 @cindex Primorial functions
 Set @var{rop} to the primorial of @var{n}, i.e. the product of all positive
-prime numbers smaller then or equal to @var{n}.
+prime numbers @math{@le{}@var{n}}.
 @end deftypefun
 
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
