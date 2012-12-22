@@ -8614,6 +8614,9 @@ current size of the cofactors.
 @subsection Jacobi Symbol
 @cindex Jacobi symbol algorithm
 
+[This section is obsolete.  The current Jacobi code actually uses a very
+efficient algorithm.]
+
 @code{mpz_jacobi} and @code{mpz_kronecker} are currently implemented with a
 simple binary algorithm similar to that described for the GCDs (@pxref{Binary
 GCD}).  They're not very fast when both inputs are large.  Lehmer's multi-step
@@ -8660,7 +8663,7 @@ exponent.  Larger exponents use larger values of @math{k}, the choice being
 made to minimize the average number of multiplications that must supplement
 the squaring.
 
-The modular multiplies and squares use either a simple division or the REDC
+The modular multiplies and squarings use either a simple division or the REDC
 method by Montgomery (@pxref{References}).  REDC is a little faster,
 essentially saving N single limb divisions in a fashion similar to an exact
 remainder (@pxref{Exact Remainder}).
