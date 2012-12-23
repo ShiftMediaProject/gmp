@@ -1,6 +1,6 @@
 /* Test mpz_get_d.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -32,7 +32,7 @@ check_onebit (void)
   double  got, want;
   /* FIXME: It'd be better to base this on the float format. */
 #if defined (__vax) || defined (__vax__)
-  int     limit = 127;  /* vax fp numbers have limited range */
+  int     limit = 127 - 1;  /* vax fp numbers have limited range */
 #else
   int     limit = 512;
 #endif
