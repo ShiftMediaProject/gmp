@@ -857,8 +857,8 @@ main ()
 	case 21:		/* Bulldozer */
 	  cpu_64bit = 1, modelstr = "bulldozer";
 	  break;
-	case 22:		/* AMD Internal, assume future bulldozer */
-	  cpu_64bit = 1, modelstr = "bulldozer";
+	case 22:		/* jaguar, an improved bobcat */
+	  cpu_64bit = 1, modelstr = "bobcat";
 	  break;
 	}
     }
