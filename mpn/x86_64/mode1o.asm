@@ -1,20 +1,20 @@
-dnl  AMD64 mpn_modexact_1_odd -- exact division style remainder.
+dnl  AMD64 mpn_modexact_1_odd -- Hensel norm remainder.
 
 dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2011, 2012 Free
 dnl  Software Foundation, Inc.
-dnl
+
 dnl  This file is part of the GNU MP Library.
-dnl
-dnl  The GNU MP Library is free software; you can redistribute it and/or
-dnl  modify it under the terms of the GNU Lesser General Public License as
-dnl  published by the Free Software Foundation; either version 3 of the
-dnl  License, or (at your option) any later version.
-dnl
-dnl  The GNU MP Library is distributed in the hope that it will be useful,
-dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl  Lesser General Public License for more details.
-dnl
+
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 3 of the License, or (at
+dnl  your option) any later version.
+
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
+
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
@@ -31,37 +31,26 @@ C Intel atom	35
 C VIA nano	 ?
 
 
-C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,
-C                               mp_limb_t divisor);
-C mp_limb_t mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size,
-C                                mp_limb_t divisor, mp_limb_t carry);
-C
-C
 C The dependent chain in the main loop is
 C
 C                            cycles
-C	subq	%rdx, %rax	1
-C	imulq	%r9, %rax	4
-C	mulq	%r8		5
+C	sub	%rdx, %rax	1
+C	imul	%r9, %rax	4
+C	mul	%r8		5
 C			      ----
 C       total		       10
 C
-C The movq load from src seems to need to be scheduled back before the jz to
-C achieve this speed, out-of-order execution apparently can't completely
-C hide the latency otherwise.
+C The mov load from src seems to need to be scheduled back before the jz to
+C achieve this speed, out-of-order execution apparently can't completely hide
+C the latency otherwise.
 C
-C The l=src[i]-cbit step is rotated back too, since that allows us to avoid
-C it for the first iteration (where there's no cbit).
+C The l=src[i]-cbit step is rotated back too, since that allows us to avoid it
+C for the first iteration (where there's no cbit).
 C
-C The code alignment used (32-byte) for the loop also seems necessary.
-C Without that the non-PIC case has adcq crossing the 0x60 offset,
-C apparently making it run at 11 cycles instead of 10.
-C
-C Not done:
-C
-C divq for size==1 was measured at about 79 cycles, compared to the inverse
-C at about 25 cycles (both including function call overheads), so that's not
-C used.
+C The code alignment used (32-byte) for the loop also seems necessary.  Without
+C that the non-PIC case has adc crossing the 0x60 offset, apparently making it
+C run at 11 cycles instead of 10.
+
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
