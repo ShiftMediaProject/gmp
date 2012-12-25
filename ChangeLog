@@ -1,3 +1,14 @@
+2012-12-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bdiv_q_1.asm: Use LEA for binvert_limb_table.
+
+2012-12-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-get_d.c (check_onebit): Decrease vax limit to avoid
+	overflow in last, unused 'want' value.
+
+	* config.guess: Recognise AMD family 22 as a future bobcat.
+
 2012-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Rename configure.in.
