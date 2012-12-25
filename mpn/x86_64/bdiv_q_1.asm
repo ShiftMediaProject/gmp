@@ -38,7 +38,7 @@ define(`up',		`%rsi')
 define(`n',		`%rdx')
 define(`d',		`%rcx')
 define(`di',		`%r8')		C	just mpn_pi1_bdiv_q_1
-define(`shift',		`%r9')		C	just mpn_pi1_bdiv_q_1
+define(`ncnt',		`%r9')		C	just mpn_pi1_bdiv_q_1
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
@@ -51,7 +51,7 @@ PROLOGUE(mpn_bdiv_q_1)
 	push	%rbx
 
 	mov	%rcx, %rax
-	xor	R32(%rcx), R32(%rcx)	C shift count
+	xor	R32(%rcx), R32(%rcx)	C ncnt count
 	mov	%rdx, %r10
 
 	bt	$0, R32(%rax)
@@ -97,7 +97,7 @@ IFDOS(`	mov	64(%rsp), %r9	')
 
 	mov	%rcx, %r11		C d
 	mov	%rdx, %r10		C n
-	mov	%r9, %rcx		C shift
+	mov	%r9, %rcx		C ncnt
 
 L(com):	mov	(up), %rax		C up[0]
 
@@ -118,7 +118,7 @@ L(com):	mov	(up), %rax		C up[0]
 L(top):
 	C rax	q
 	C rbx	carry bit, 0 or 1
-	C rcx	shift
+	C rcx	ncnt
 	C rdx
 	C r10	counter, limbs, negative
 
