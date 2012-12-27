@@ -1,3 +1,9 @@
+2012-12-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/get_d.c: Complete rewrite of non-IEEE code.
+
+	* tests/mpq/t-get_d.c (main): Suppress check_random for vax.
+
 2012-12-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bdiv_q_1.asm: Use LEA for binvert_limb_table.
