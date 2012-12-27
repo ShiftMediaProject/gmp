@@ -265,7 +265,9 @@ main (int argc, char **argv)
 
   check_onebit ();
   check_monotonic (argc, argv);
+#if ! (defined (__vax) || defined (__vax__))
   check_random (argc, argv);
+#endif
 
   tests_end ();
   exit (0);
