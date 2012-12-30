@@ -1,6 +1,6 @@
 /* Test mpq_get_d and mpq_set_d
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2003 Free Software
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2003, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
@@ -153,6 +153,13 @@ my_ldexp (double d, int e)
     }
 }
 
+#define MAXEXP 500
+
+#if defined (__vax) || defined (__vax__)
+#undef MAXEXP
+#define MAXEXP 30
+#endif
+
 void
 check_random (int argc, char **argv)
 {
@@ -173,7 +180,7 @@ check_random (int argc, char **argv)
       d = 0.0;
       for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
 	d = d * MP_BASE_AS_DOUBLE + rp[i];
-      d = my_ldexp (d, (int) (rp[LIMBS_PER_DOUBLE] % 1000) - 500);
+      d = my_ldexp (d, (int) (rp[LIMBS_PER_DOUBLE] % (2 * MAXEXP)) - MAXEXP);
       mpq_set_d (q, d);
       nd = mpz_get_d (mpq_numref (q));
       dd = mpz_get_d (mpq_denref (q));
@@ -265,9 +272,7 @@ main (int argc, char **argv)
 
   check_onebit ();
   check_monotonic (argc, argv);
-#if ! (defined (__vax) || defined (__vax__))
   check_random (argc, argv);
-#endif
 
   tests_end ();
   exit (0);
