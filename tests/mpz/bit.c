@@ -1,6 +1,6 @@
 /* Test mpz_setbit, mpz_clrbit, mpz_tstbit.
 
-Copyright 1997, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001, 2002, 2003, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -38,6 +38,7 @@ debug_mp (mpz_srcptr x, int base)
 
 /* exercise the case where mpz_clrbit or mpz_combit ends up extending a
    value like -2^(k*GMP_NUMB_BITS-1) when clearing bit k*GMP_NUMB_BITS-1.  */
+/* And vice-versa. */
 void
 check_clr_extend (void)
 {
@@ -53,7 +54,7 @@ check_clr_extend (void)
       for (f = 0; f <= 1; f++)
 	{
 	  /* lots of 1 bits in _mp_d */
-	  mpz_set_ui (got, 1L);
+	  mpz_set_si (got, 1L);
 	  mpz_mul_2exp (got, got, 10*GMP_NUMB_BITS);
 	  mpz_sub_ui (got, got, 1L);
 
@@ -78,6 +79,28 @@ check_clr_extend (void)
 	      else
 		printf ("mpz_combit: ");
 	      printf ("wrong after extension\n");
+	      mpz_trace ("got ", got);
+	      mpz_trace ("want", want);
+	      abort ();
+	    }
+
+	  /* complement bit n, going back to ..11100..00 which is -2^(n-1) */
+	  if (f == 0)
+	    mpz_setbit (got, i*GMP_NUMB_BITS-1);
+	  else
+	    mpz_combit (got, i*GMP_NUMB_BITS-1);
+	  MPZ_CHECK_FORMAT (got);
+
+	  mpz_set_si (want, -1L);
+	  mpz_mul_2exp (want, want, i*GMP_NUMB_BITS - 1);
+
+	  if (mpz_cmp (got, want) != 0)
+	    {
+	      if (f == 0)
+		printf ("mpz_setbit: ");
+	      else
+		printf ("mpz_combit: ");
+	      printf ("wrong after shrinking\n");
 	      mpz_trace ("got ", got);
 	      mpz_trace ("want", want);
 	      abort ();

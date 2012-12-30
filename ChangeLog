@@ -1,3 +1,7 @@
+2012-12-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/bit.c (check_clr_extend): Check _set shrink.
+
 2012-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* demos/calc/calc.c: Remove generated file from repo.
