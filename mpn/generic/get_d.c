@@ -60,16 +60,12 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
 /* Return the value {ptr,size}*2^exp, and negative if sign<0.  Must have
    size>=1, and a non-zero high limb ptr[size-1].
 
-   {ptr,size} is truncated towards zero.  This is consistent with other gmp
-   conversions, like mpz_set_f or mpz_set_q, and is easy to implement and test.
+   When we know the fp format, the result is truncated towards zero.  This is
+   consistent with other gmp conversions, like mpz_set_f or mpz_set_q, and is
+   easy to implement and test.
 
-   In the past conversions had attempted (imperfectly) to let the hardware
-   float rounding mode take effect, but that gets tricky since multiple
-   roundings need to be avoided, or taken into account, and denorms mean the
-   effective precision of the mantissa is not constant.  (For reference,
-   mpz_get_d on IEEE systems was ok, except it operated on the absolute value.
-   mpf_get_d and mpq_get_d suffered from multiple roundings and from not always
-   using enough bits to get the rounding right.)
+   When we do not know the format, such truncation seems much harder.  One
+   would need to defeat any rounding mode, including round-up.
 
    It's felt that GMP is not primarily concerned with hardware floats, and
    really isn't enhanced by getting involved with hardware rounding modes
@@ -81,7 +77,7 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    limb and is done with shifts and masks.  The 64-bit case in particular
    should come out nice and compact.
 
-   The generic code used to work one bit at a time, which was ont only slow,
+   The generic code used to work one bit at a time, which was not only slow,
    but implicitly relied upon denoms for intermediates, since the lowest bits'
    weight of a perfectly valid fp number underflows in non-denorm.  Therefore,
    the generic code now works limb-per-limb, initially creating a number x such
@@ -120,6 +116,8 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
 
 
 
+#undef FORMAT_RECOGNIZED
+
 double
 mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
 {
@@ -151,61 +149,7 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
       exp += GMP_NUMB_BITS * size;
     }
 
-#if ! _GMP_IEEE_FLOATS
-    {      /* Non-IEEE or strange limb size, do something generic. */
-      mp_size_t i;
-      double d, weight;
-      unsigned long uexp;
-
-      /* First generate an fp number disregarding exp, instead keeping things
-	 within the numb base factor from 1, which should prevent overflow and
-	 underflow even for the most exponent limited fp formats.  The
-	 termination criteria should be refined, since we now include too many
-	 limbs.  */
-      weight = 1/MP_BASE_AS_DOUBLE;
-      d = up[size - 1];
-      for (i = size - 2; i >= 0; i--)
-	{
-	  d += up[i] * weight;
-	  weight /= MP_BASE_AS_DOUBLE;
-	  if (weight == 0)
-	    break;
-	}
-
-      /* Now apply exp.  */
-      exp -= GMP_NUMB_BITS;
-      if (exp > 0)
-	{
-	  weight = 2.0;
-	  uexp = exp;
-	}
-      else
-	{
-	  weight = 0.5;
-	  uexp = 1 - (unsigned long) (exp + 1);
-	}
-#if 1
-      /* Square-and-multiply exponentiation.  */
-      if (uexp & 1)
-	d *= weight;
-      while (uexp >>= 1)
-	{
-	  weight *= weight;
-	  if (uexp & 1)
-	    d *= weight;
-	}
-#else
-      /* Plain exponentiation.  */
-      while (uexp > 0)
-	{
-	  d *= weight;
-	  uexp--;
-	}
-#endif
-
-      return sign >= 0 ? d : -d;
-    }
-#else /* _GMP_IEEE_FLOATS */
+#if _GMP_IEEE_FLOATS
     {
       union ieee_double_extract u;
 
@@ -345,6 +289,113 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
       u.s.exp = exp + 1023;
       u.s.sig = (sign < 0);
       return u.d;
+    }
+#define FORMAT_RECOGNIZED 1
+#endif
+
+#if HAVE_DOUBLE_VAX_D
+    {
+      union double_extract u;
+
+      up += size;
+
+      mhi = up[-1];
+
+      count_leading_zeros (lshift, mhi);
+      exp -= lshift;
+      mhi <<= lshift;
+
+      mlo = 0;
+      if (size > 1)
+	{
+	  mlo = up[-2];
+	  if (lshift != 0)
+	    mhi += mlo >> (GMP_LIMB_BITS - lshift);
+	  mlo <<= lshift;
+
+	  if (size > 2 && lshift > 8)
+	    {
+	      x = up[-3];
+	      mlo += x >> (GMP_LIMB_BITS - lshift);
+	    }
+	}
+
+      if (UNLIKELY (exp >= 128))
+	{
+	  /* overflow, return maximum number */
+	  mhi = 0xffffffff;
+	  mlo = 0xffffffff;
+	  exp = 127;
+	}
+      else if (UNLIKELY (exp < -128))
+	{
+	  return 0.0;	 /* underflows to zero */
+	}
+
+      u.s.man3 = mhi >> 24;	/* drop msb, since implicit */
+      u.s.man2 = mhi >> 8;
+      u.s.man1 = (mhi << 8) + (mlo >> 24);
+      u.s.man0 = mlo >> 8;
+      u.s.exp = exp + 128;
+      u.s.sig = sign < 0;
+      return u.d;
+    }
+#define FORMAT_RECOGNIZED 1
+#endif
+
+#if ! FORMAT_RECOGNIZED
+    {      /* Non-IEEE or strange limb size, do something generic. */
+      mp_size_t i;
+      double d, weight;
+      unsigned long uexp;
+
+      /* First generate an fp number disregarding exp, instead keeping things
+	 within the numb base factor from 1, which should prevent overflow and
+	 underflow even for the most exponent limited fp formats.  The
+	 termination criteria should be refined, since we now include too many
+	 limbs.  */
+      weight = 1/MP_BASE_AS_DOUBLE;
+      d = up[size - 1];
+      for (i = size - 2; i >= 0; i--)
+	{
+	  d += up[i] * weight;
+	  weight /= MP_BASE_AS_DOUBLE;
+	  if (weight == 0)
+	    break;
+	}
+
+      /* Now apply exp.  */
+      exp -= GMP_NUMB_BITS;
+      if (exp > 0)
+	{
+	  weight = 2.0;
+	  uexp = exp;
+	}
+      else
+	{
+	  weight = 0.5;
+	  uexp = 1 - (unsigned long) (exp + 1);
+	}
+#if 1
+      /* Square-and-multiply exponentiation.  */
+      if (uexp & 1)
+	d *= weight;
+      while (uexp >>= 1)
+	{
+	  weight *= weight;
+	  if (uexp & 1)
+	    d *= weight;
+	}
+#else
+      /* Plain exponentiation.  */
+      while (uexp > 0)
+	{
+	  d *= weight;
+	  uexp--;
+	}
+#endif
+
+      return sign >= 0 ? d : -d;
     }
 #endif
 }
