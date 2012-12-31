@@ -3722,6 +3722,21 @@ union ieee_double_extract
 };
 #endif
 
+#if HAVE_DOUBLE_VAX_D
+union double_extract
+{
+  struct
+    {
+      gmp_uint_least32_t man3:7;	/* highest 7 bits */
+      gmp_uint_least32_t exp:8;		/* excess-128 exponent */
+      gmp_uint_least32_t sig:1;
+      gmp_uint_least32_t man2:16;
+      gmp_uint_least32_t man1:16;
+      gmp_uint_least32_t man0:16;	/* lowest 16 bits */
+    } s;
+  double d;
+};
+#endif
 
 /* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers
    that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */
