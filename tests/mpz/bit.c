@@ -226,7 +226,7 @@ check_single (void)
     {
       for (offset = (limb==0 ? 0 : -2); offset <= 2; offset++)
 	{
-	  for (initial = 0; initial >= -1; initial--)
+	  for (initial = 1; initial >= -1; initial--)
 	    {
 	      mpz_set_si (x, (long) initial);
 
@@ -318,7 +318,7 @@ check_random (int argc, char *argv[])
 
       mpz_set (s2, x);
       bit2 = mpz_tstbit (x, bitindex);
-      mpz_setbit (x, bitindex);
+      mpz_combit (x, bitindex);
       MPZ_CHECK_FORMAT (x);
 
       mpz_set (s3, x);
@@ -346,16 +346,26 @@ check_random (int argc, char *argv[])
       if (mpz_cmp (s2, s3) == 0)
 	abort ();
 
+      mpz_combit (x, bitindex);
+      MPZ_CHECK_FORMAT (x);
+      if (mpz_cmp (s2, x) != 0)
+	abort ();
+
+      mpz_clrbit (x, bitindex);
+      MPZ_CHECK_FORMAT (x);
+      if (mpz_cmp (s2, x) != 0)
+	abort ();
+
       mpz_ui_pow_ui (m, 2L, bitindex);
       MPZ_CHECK_FORMAT (m);
-      mpz_ior (x, s2, m);
+      mpz_ior (x, s0, m);
       MPZ_CHECK_FORMAT (x);
       if (mpz_cmp (x, s3) != 0)
 	abort ();
 
       mpz_com (m, m);
       MPZ_CHECK_FORMAT (m);
-      mpz_and (x, s1, m);
+      mpz_and (x, s0, m);
       MPZ_CHECK_FORMAT (x);
       if (mpz_cmp (x, s2) != 0)
 	abort ();
