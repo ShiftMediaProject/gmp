@@ -1,3 +1,10 @@
+2013-01-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/bit.c: Wider testing for mpz_combit.
+	* tests/mpz/logic.c: Check the -2^n case.
+
+	* mpz/ior.c: Fixed an allocation bug in the -2^n case.
+
 2012-12-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/get_d.c: Minor reorg, add vax D code.
