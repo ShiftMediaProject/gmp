@@ -120,7 +120,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  if (res_size != 0)
 	    {
-	      res_ptr = MPZ_REALLOC (res, res_size);
+	      res_ptr = MPZ_REALLOC (res, res_size + 1);
 
 	      /* Second loop computes the real result.  */
 	      mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
