@@ -1,6 +1,6 @@
 /* Test mpz_com, mpz_and, mpz_ior, and mpz_xor.
 
-Copyright 1993, 1994, 1996, 1997, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 1997, 2001, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
