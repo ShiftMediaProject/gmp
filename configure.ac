@@ -4,7 +4,7 @@ dnl  Process this file with autoconf to produce a configure script.
 define(GMP_COPYRIGHT,[[
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
+2007, 2008, 2009, 2010, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -67,7 +67,7 @@ dnl  Note that there's a copy of these options in the top-level Makefile.am,
 dnl  so update there too if changing anything.
 dnl
 AM_INIT_AUTOMAKE([1.8 gnu no-dependencies])
-AM_CONFIG_HEADER(config.h:config.in)
+AC_CONFIG_HEADERS(config.h:config.in)
 AM_MAINTAINER_MODE
 
 
