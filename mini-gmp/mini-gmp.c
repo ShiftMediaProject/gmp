@@ -3,8 +3,8 @@
    Contributed to the GNU project by Niels Möller
 
 Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001,
-2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Free
-Software Foundation, Inc.
+2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -4061,11 +4061,12 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
       size_t j;
       for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
 	{
-	  limb |= *p << (bytes++ * CHAR_BIT);
+	  limb |= (mp_limb_t) *p << (bytes++ * CHAR_BIT);
 	  if (bytes == sizeof(mp_limb_t))
 	    {
 	      rp[i++] = limb;
 	      bytes = 0;
+	      limb = 0;
 	    }
 	}
     }

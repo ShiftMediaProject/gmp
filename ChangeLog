@@ -1,3 +1,8 @@
+2013-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	From shuax:
+	* mini-gmp/mini-gmp.c (mpz_import): Reset limb after storing it.
+
 2013-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Marko Lindqvist:
