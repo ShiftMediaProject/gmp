@@ -1,3 +1,9 @@
+2013-01-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	From Marko Lindqvist:
+	* configure.ac: Use AC_CONFIG_HEADERS instead of the obsolete
+	AM_CONFIG_HEADER.
+
 2013-01-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/bit.c: Wider testing for mpz_combit.
