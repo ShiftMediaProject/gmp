@@ -1,3 +1,7 @@
+2013-01-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* longlong.h (aarch64): Make add_ssaaaa and sub_ddmmss actually work.
+
 2013-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	From shuax:
