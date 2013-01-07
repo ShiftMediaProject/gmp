@@ -1,3 +1,10 @@
+2013-01-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/README: Document base limitation for conversions.
+	* mini-gmp/mini-gmp.c (mpz_set_str): Remove goto.
+	* mini-gmp/mini-gmp.c (mpz_import): Correctly use order/endianess.
+	(mpz_export): Likewise.
+
 2013-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (aarch64): Make add_ssaaaa and sub_ddmmss actually work.
