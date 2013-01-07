@@ -4039,15 +4039,15 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
 
   p = (unsigned char *) src;
 
+  word_step = (order != endian) ? 2 * size : 0;
+	
   /* Process bytes from the least significant end, so point p at the
      least significant word. */
   if (order == 1)
     {
       p += size * (count - 1);
-      word_step = -(ptrdiff_t) size;
+      word_step = - word_step;
     }
-  else
-    word_step = size;
 
   /* And at least significant byte of that word. */
   if (endian == 1)
@@ -4074,7 +4074,7 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
     rp[i++] = limb;
   assert (i == rn);
 
-  r->_mp_size = rn;
+  r->_mp_size = mpn_normalized_size (rp, i);
 }
 
 void *
@@ -4113,21 +4113,21 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
 
   p = (unsigned char *) r;
 
+  word_step = (order != endian) ? 2 * size : 0;
+
   /* Process bytes from the least significant end, so point p at the
      least significant word. */
   if (order == 1)
     {
       p += size * (count - 1);
-      word_step = -(ptrdiff_t) size;
+      word_step = - word_step;
     }
-  else
-    word_step = size;
 
   /* And at least significant byte of that word. */
   if (endian == 1)
     p += (size - 1);
 
-  for (limb = 0, bytes = 0, i = 0, k = 0; i < un; k++, p += word_step)
+  for (bytes = 0, i = 0, k = 0; k < count; k++, p += word_step)
     {
       size_t j;
       for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
