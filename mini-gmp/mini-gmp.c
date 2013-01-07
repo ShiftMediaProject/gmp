@@ -3946,15 +3946,14 @@ mpz_set_str (mpz_t r, const char *sp, int base)
       else if (*sp >= 'A' && *sp <= 'Z')
 	digit = *sp - 'A' + 10;
       else
+	digit = base; /* fail */
+
+      if (digit >= base)
 	{
-	fail:
 	  gmp_free (dp);
 	  r->_mp_size = 0;
 	  return -1;
 	}
-
-      if (digit >= base)
-	goto fail;
 
       dp[dn++] = digit;
     }
