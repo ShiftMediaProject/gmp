@@ -4032,6 +4032,7 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
 
   assert (order == 1 || order == -1);
   assert (endian >= -1 && endian <= 1);
+  assert (size > 0);
 
   if (endian == 0)
     endian = gmp_detect_endian ();
@@ -4048,7 +4049,7 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
   else
     word_step = size;
 
-  /* And at east significant byte of that word. */
+  /* And at least significant byte of that word. */
   if (endian == 1)
     p += (size - 1);
 
@@ -4097,6 +4098,7 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
 
   assert (order == 1 || order == -1);
   assert (endian >= -1 && endian <= 1);
+  assert (size > 0);
 
   un = GMP_ABS (u->_mp_size);
   if (!un)
@@ -4121,7 +4123,7 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
   else
     word_step = size;
 
-  /* And at east significant byte of that word. */
+  /* And at least significant byte of that word. */
   if (endian == 1)
     p += (size - 1);
 
