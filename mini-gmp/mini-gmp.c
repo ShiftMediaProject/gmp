@@ -4101,10 +4101,10 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
   assert (size > 0);
 
   un = GMP_ABS (u->_mp_size);
-  if (!un)
-    return r;
-
   count = (un * sizeof (mp_limb_t) + size - 1) / size;
+
+  if (un) {
+
   if (!r)
     r = gmp_xalloc (count * size);
 
@@ -4145,6 +4145,7 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
     }
   assert (i == un);
   assert (k == count);
+  }
 
   if (countp)
     *countp = count;
