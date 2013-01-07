@@ -1,4 +1,4 @@
-Copyright 2011, 2012 Free Software Foundation, Inc.
+Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,6 +31,8 @@ The supported GMP subset is declared in mini-gmp.h. The implemented
 functions are fully compatible with the corresponding GMP functions,
 as specified in the GMP manual, with a few exceptions:
 
+  mpz_set_str, mpz_init_set_str, mpz_get_str, mpz_out_str and
+  mpz_sizeinbase support only |base| <= 36;
   mpz_export and mpz_import support only NAILS = 0.
 
   The REALLOC_FUNC and FREE_FUNC registered with
