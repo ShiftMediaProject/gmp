@@ -80,6 +80,21 @@ hex_rrandomb (unsigned long bits)
   return res;
 }
 
+char *
+hex_rrandomb_export (void *dst, size_t *countp,
+		     int order, size_t size, int endian, unsigned long bits)
+{
+  char *res;
+  mpz_t x;
+  mpz_init (x);
+  mpz_rrandomb (x, state, bits);
+  gmp_asprintf (&res, "%Zx", x);
+  mpz_export (dst, countp, order, size, endian, 0, x);
+  mpz_clear (x);
+  return res;
+  
+}
+  
 void
 hex_random_op (enum hex_random_op op,  unsigned long maxbits,
 	       char **ap, char **bp, char **rp)

@@ -1,5 +1,15 @@
 2013-01-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-import.c: New test program, testing both
+	mpz_import and mpz_export.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-import.
+
+	* mini-gmp/tests/mini-random.c (mini_rrandomb_export): New
+	function.
+	* mini-gmp/tests/mini-random.h: Declare it.
+	* mini-gmp/tests/hex-random.c (hex_rrandomb_export): New function.
+	* mini-gmp/tests/hex-random.h: Declare it.
+
 	* mini-gmp/mini-gmp.c (mpz_export): Compute accurate word count up
 	front, to avoid generating any high zero words.
 

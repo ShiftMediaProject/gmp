@@ -51,6 +51,16 @@ mini_rrandomb (mpz_t r, unsigned long bits)
 }
 
 void
+mini_rrandomb_export (mpz_t r, void *dst, size_t *countp,
+		      int order, size_t size, int endian, unsigned long bits)
+{
+  char *s;
+  s = hex_rrandomb_export (dst, countp, order, size, endian, bits);
+  set_str (r, s);
+  free (s);
+}
+
+void
 mini_random_op (enum hex_random_op op, unsigned long maxbits,
 		mpz_t a, mpz_t b, mpz_t r)
 {

@@ -31,6 +31,10 @@ enum hex_random_op
 void hex_random_init (void);
 char *hex_urandomb (unsigned long bits);
 char *hex_rrandomb (unsigned long bits);
+char *hex_rrandomb_export (void *dst, size_t *countp,
+			   int order, size_t size, int endian,
+			   unsigned long bits);
+
 void hex_random_op (enum hex_random_op op,  unsigned long maxbits,
 		    char **ap, char **bp, char **rp);
 void hex_random_op4 (enum hex_random_op op,  unsigned long maxbits,
