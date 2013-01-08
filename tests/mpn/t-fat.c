@@ -278,7 +278,7 @@ check_functions (void)
     }
 }
 
-/* Expect the first use of a each fat threshold to invoke the necessary
+/* Expect the first use of each fat threshold to invoke the necessary
    initialization.  */
 void
 check_thresholds (void)

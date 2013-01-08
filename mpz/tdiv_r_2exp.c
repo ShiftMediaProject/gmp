@@ -1,4 +1,4 @@
-/* mpz_tdiv_r_2exp -- Divide a integer by 2**CNT and produce a remainder.
+/* mpz_tdiv_r_2exp -- Divide an integer by 2**CNT and produce a remainder.
 
 Copyright 1991, 1993, 1994, 1995, 2001, 2002, 2012 Free Software Foundation,
 Inc.

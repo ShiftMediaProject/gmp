@@ -9266,7 +9266,7 @@ are also very good and this is the default algorithm used by GMP.
 @cindex Linear congruential algorithm
 Linear congruential generators are described in many text books, for instance
 Knuth volume 2 (@pxref{References}).  With a modulus @math{M} and parameters
-@math{A} and @math{C}, a integer state @math{S} is iterated by the formula
+@math{A} and @math{C}, an integer state @math{S} is iterated by the formula
 @math{S @leftarrow{} A@GMPmultiply{}S+C @bmod{} M}.  At each step the new
 state is a linear function of the previous, mod @math{M}, hence the name of
 the generator.

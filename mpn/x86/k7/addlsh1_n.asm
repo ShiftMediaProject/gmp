@@ -21,8 +21,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C This is an attempt at a addlsh1_n for x86-32, not relying on sse2 insns.  The
-C innerloop is 2*3-way unrolled, which is best we can do with the available
+C This is an attempt at an addlsh1_n for x86-32, not relying on sse2 insns.
+C The innerloop is 2*3-way unrolled, which is best we can do with the available
 C registers.  It seems tricky to use the same structure for rsblsh1_n, since we
 C cannot feed carry between operations there.
 

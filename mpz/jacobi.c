@@ -121,10 +121,9 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       MPN_SRCPTR_SWAP (asrcp, asize, bsrcp, bsize);
       MP_LIMB_T_SWAP (alow, blow);
 
-      /* NOTE: The value of alow (old blow) is a bit subtle. For this
-	 code path, we get alow as the low, always odd, limb of
-	 shifted A. Which is what we need for the reciprocity update
-	 below.
+      /* NOTE: The value of alow (old blow) is a bit subtle. For this code
+	 path, we get alow as the low, always odd, limb of shifted A. Which is
+	 what we need for the reciprocity update below.
 
 	 However, all other uses of alow assumes that it is *not*
 	 shifted. Luckily, alow matters only when either
@@ -161,10 +160,10 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       return mpn_jacobi_base (alow, blow, result_bit1);
     }
 
-  /* Allocation strategy: For A, we allocate a working copy only for A
-     % B, but when A is much larger than B, we have to allocate space
-     for the large quotient. We use the same area, pointed to by bp,
-     for both the quotient A/B and the working copy of B. */
+  /* Allocation strategy: For A, we allocate a working copy only for A % B, but
+     when A is much larger than B, we have to allocate space for the large
+     quotient. We use the same area, pointed to by bp, for both the quotient
+     A/B and the working copy of B. */
 
   TMP_MARK;
 
@@ -173,12 +172,11 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   else
     TMP_ALLOC_LIMBS_2 (ap, bsize, bp, bsize);
 
-  /* In the case of even B, we conceptually shift out the powers of
-     two first, and then divide A mod B. Hence, when taking those
-     powers of two into account, we must use alow *before* the the
-     division. Doing the actual division first is ok, because the
-     point is to remove multiples of B from A, and multiples of 2^k B
-     are good enough. */
+  /* In the case of even B, we conceptually shift out the powers of two first,
+     and then divide A mod B. Hence, when taking those powers of two into
+     account, we must use alow *before* the division. Doing the actual division
+     first is ok, because the point is to remove multiples of B from A, and
+     multiples of 2^k B are good enough. */
   if (asize > bsize)
     mpn_tdiv_qr (bp, ap, 0, asrcp, asize, bsrcp, bsize);
   else
