@@ -4101,9 +4101,19 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
   assert (size > 0);
 
   un = GMP_ABS (u->_mp_size);
-  count = (un * sizeof (mp_limb_t) + size - 1) / size;
+  if (un == 0)
+    {
+      *countp = 0;
+      return r;
+    }
 
-  if (un) {
+  /* Count bytes in top limb. */
+  for (limb = u->_mp_d[un-1], k = 0; limb > 0; k++, limb >>= CHAR_BIT)
+    ;
+
+  assert (k > 0);
+
+  count = (k + (un-1) * sizeof (mp_limb_t) + size - 1) / size;
 
   if (!r)
     r = gmp_xalloc (count * size);
@@ -4128,24 +4138,23 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
     p += (size - 1);
 
   for (bytes = 0, i = 0, k = 0; k < count; k++, p += word_step)
-    {
-      size_t j;
-      for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
-	{
-	  if (bytes == 0)
-	    {
-	      if (i < un)
-		limb = u->_mp_d[i++];
-	      bytes = sizeof (mp_limb_t);
-	    }
-	  *p = limb;
-	  limb >>= CHAR_BIT;
-	  bytes--;
-	}
-    }
+      {
+	size_t j;
+	for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
+	  {
+	    if (bytes == 0)
+	      {
+		if (i < un)
+		  limb = u->_mp_d[i++];
+		bytes = sizeof (mp_limb_t);
+	      }
+	    *p = limb;
+	    limb >>= CHAR_BIT;
+	    bytes--;
+	  }
+      }
   assert (i == un);
   assert (k == count);
-  }
 
   if (countp)
     *countp = count;

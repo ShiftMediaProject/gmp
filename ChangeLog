@@ -1,3 +1,8 @@
+2013-01-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpz_export): Compute accurate word count up
+	front, to avoid generating any high zero words.
+
 2013-01-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/README: Document base limitation for conversions.
