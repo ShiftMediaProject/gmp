@@ -1,3 +1,7 @@
+2013-01-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpz_export): Support op=0 countp=NULL.
+
 2013-01-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-import.c: New test program, testing both
@@ -17,8 +21,7 @@
 
 	* mini-gmp/README: Document base limitation for conversions.
 	* mini-gmp/mini-gmp.c (mpz_set_str): Remove goto.
-	* mini-gmp/mini-gmp.c (mpz_import): Correctly use order/endianess.
-	(mpz_export): Likewise.
+	(mpz_import, mpz_export): Correctly use order/endianess.
 
 2013-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
