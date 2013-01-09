@@ -4103,7 +4103,8 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
   un = GMP_ABS (u->_mp_size);
   if (un == 0)
     {
-      *countp = 0;
+      if (countp)
+	*countp = 0;
       return r;
     }
 
