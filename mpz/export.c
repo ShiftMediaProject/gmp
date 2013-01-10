@@ -47,7 +47,7 @@ mpz_export (void *data, size_t *countp, int order,
   ASSERT (order == 1 || order == -1);
   ASSERT (endian == 1 || endian == 0 || endian == -1);
   ASSERT (nail <= 8*size);
-  ASSERT (8*size-nail > 0);
+  ASSERT (nail <  8*size || SIZ(z) == 0); /* nail < 8*size+(SIZ(z)==0) */
 
   if (countp == NULL)
     countp = &dummy;

@@ -1,3 +1,9 @@
+2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/export.c: Less restrictive ASSERTs.
+	* mini-gmp/mini-gmp.c (mpz_export, mpz_import): Likewise.
+	* mini-gmp/tests/t-import.c: Test also size=0 or count=0.
+
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mini-gmp/tests/t-import.c (main): Don't drop off functon end.

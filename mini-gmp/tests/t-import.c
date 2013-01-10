@@ -64,8 +64,8 @@ main (int argc, char **argv)
   mpz_init (a);
   mpz_init (res);
 
-  for (size = 1; size <= MAX_WORD_SIZE; size++)
-    for (count = 1; count <= MAX_WORDS; count++)
+  for (size = 0; size <= MAX_WORD_SIZE; size++)
+    for (count = 0; count <= MAX_WORDS; count++)
       for (endian = -1; endian <= 1; endian++)
 	for (order = -1; order <= 1; order += 2)
 	  {
