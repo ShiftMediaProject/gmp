@@ -1,6 +1,6 @@
 /*
 
-Copyright 2013, Free Software Foundation, Inc.
+Copyright 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -45,7 +45,7 @@ dump_bytes (const char *label, const unsigned char *s, size_t n)
 	fprintf (stderr, "\n");
       fprintf (stderr, " %02x", s[i]);
     }
-  fprintf (stderr, "\n");  
+  fprintf (stderr, "\n");
 }
 
 /* Tests both mpz_import and mpz_export. */
@@ -56,7 +56,7 @@ main (int argc, char **argv)
   unsigned char output[MAX_WORDS * MAX_WORD_SIZE + 2];
   size_t count, in_count, out_count, size;
   int endian, order;
-  
+
   mpz_t a, res;
 
   hex_random_init ();
@@ -106,4 +106,6 @@ main (int argc, char **argv)
 	  }
   mpz_clear (a);
   mpz_clear (res);
+
+  return 0;
 }
