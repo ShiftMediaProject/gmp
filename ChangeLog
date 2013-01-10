@@ -1,3 +1,8 @@
+2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
+	with dynamic main GMP build.
+
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.
