@@ -4039,7 +4039,7 @@ mpz_import (mpz_t r, size_t count, int order, size_t size, int endian,
   p = (unsigned char *) src;
 
   word_step = (order != endian) ? 2 * size : 0;
-	
+
   /* Process bytes from the least significant end, so point p at the
      least significant word. */
   if (order == 1)

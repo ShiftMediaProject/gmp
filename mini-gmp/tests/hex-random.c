@@ -92,9 +92,8 @@ hex_rrandomb_export (void *dst, size_t *countp,
   mpz_export (dst, countp, order, size, endian, 0, x);
   mpz_clear (x);
   return res;
-  
 }
-  
+
 void
 hex_random_op (enum hex_random_op op,  unsigned long maxbits,
 	       char **ap, char **bp, char **rp)

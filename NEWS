@@ -40,7 +40,7 @@ Changes between GMP version 5.0.* and 5.1.0
     speedups for small and large operands.
 
   * New subquadratic algorithm for the Kronecker/Jacobi/Legendre symbol.
-  
+
   * Major speedup for ARM, in particular ARM Cortex-A9 and A15, thanks to broad
     assembly support.
 
