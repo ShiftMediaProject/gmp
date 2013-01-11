@@ -1,3 +1,9 @@
+2013-01-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/tests/t-comb.c: New test program, testing both
+	mpz_fac_ui and mpz_bin_uiui.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-comb.
+
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
