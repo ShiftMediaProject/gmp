@@ -1906,30 +1906,13 @@ mpz_sub (mpz_t r, const mpz_t a, const mpz_t b)
 void
 mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 {
-  int sign;
-  mp_size_t un;
-  mpz_t t;
-  mp_ptr tp;
-  mp_limb_t cy;
-
-  if (v == 0)
+  if (v < 0)
     {
-      r->_mp_size = 0;
-      return;
+      mpz_mul_ui (r, u, -((unsigned long int)(v + 1) - 1)); /* ABS_CAST */
+      mpz_neg (r, r);
     }
-  sign = (u->_mp_size ^ v) < 0;
-
-  un = GMP_ABS (u->_mp_size);
-  mpz_init (t);
-
-  tp = MPZ_REALLOC (t, un + 1);
-  cy = mpn_mul_1 (tp, u->_mp_d, un, GMP_ABS (v));
-  tp[un] = cy;
-  un += cy > 0;
-
-  t->_mp_size = sign ? - un : un;
-  mpz_swap (r, t);
-  mpz_clear (t);
+  else
+    mpz_mul_ui (r, u, (unsigned long int) v);
 }
 
 void
