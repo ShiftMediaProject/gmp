@@ -3,6 +3,8 @@
 	* mini-gmp/tests/t-comb.c: New test program, testing both
 	mpz_fac_ui and mpz_bin_uiui.
 	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-comb.
+	* mini-gmp/mini-gmp.c (mpz_fac_ui): Remove a branch.
+	(mpz_bin_uiui): Rewrite.
 
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
 

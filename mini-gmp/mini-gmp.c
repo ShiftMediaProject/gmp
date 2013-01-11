@@ -3184,29 +3184,26 @@ mpz_sqrt (mpz_t s, const mpz_t u)
 void
 mpz_fac_ui (mpz_t x, unsigned long n)
 {
-  if (n < 2) {
-    mpz_set_ui (x, 1);
-    return;
-  }
-  mpz_set_ui (x, n);
-  for (;--n > 1;)
-    mpz_mul_ui (x, x, n);
+  mpz_set_ui (x, n + (n == 0));
+  for (;n > 2;)
+    mpz_mul_ui (x, x, --n);
 }
 
 void
 mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
 {
   mpz_t t;
+  mpz_set_ui (r, k <= n);
 
-  if (k > n) {
-    r->_mp_size = 0;
-    return;
-  }
-  mpz_fac_ui (r, n);
+  if (k > (n >> 1))
+    k = (k <= n) ? n - k : 0;
+
   mpz_init (t);
   mpz_fac_ui (t, k);
-  mpz_divexact (r, r, t);
-  mpz_fac_ui (t, n - k);
+
+  for (; k > 0; k--)
+      mpz_mul_ui (r, r, n--);
+
   mpz_divexact (r, r, t);
   mpz_clear (t);
 }
