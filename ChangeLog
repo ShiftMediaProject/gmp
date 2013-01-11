@@ -6,11 +6,6 @@
 	* mini-gmp/mini-gmp.c (mpz_fac_ui): Remove a branch.
 	(mpz_bin_uiui): Rewrite.
 
-2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
-
-	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
-	with dynamic main GMP build.
-
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.
@@ -20,6 +15,9 @@
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mini-gmp/tests/t-import.c (main): Don't drop off functon end.
+
+	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
+	with dynamic main GMP build.
 
 2013-01-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
