@@ -1931,9 +1931,9 @@ mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
       return;
     }
 
-  mpz_init (t);
+  mpz_init2 (t, (un + 1) * GMP_LIMB_BITS);
 
-  tp = MPZ_REALLOC (t, un + 1);
+  tp = t->_mp_d;
   cy = mpn_mul_1 (tp, u->_mp_d, un, v);
   tp[un] = cy;
 
@@ -1964,9 +1964,9 @@ mpz_mul (mpz_t r, const mpz_t u, const mpz_t v)
 
   sign = (u->_mp_size ^ v->_mp_size) < 0;
 
-  mpz_init (t);
+  mpz_init2 (t, (un + vn) * GMP_LIMB_BITS);
 
-  tp = MPZ_REALLOC (t, un + vn);
+  tp = t->_mp_d;
   if (un >= vn)
     mpn_mul (tp, u->_mp_d, un, v->_mp_d, vn);
   else
@@ -2087,8 +2087,8 @@ mpz_div_qr (mpz_t q, mpz_t r,
 
       if (q)
 	{
-	  mpz_init (tq);
-	  qp = MPZ_REALLOC (tq, qn);
+	  mpz_init2 (tq, qn * GMP_LIMB_BITS);
+	  qp = tq->_mp_d;
 	}
       else
 	qp = NULL;

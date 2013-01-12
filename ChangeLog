@@ -5,6 +5,7 @@
 	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-comb.
 
 	* mini-gmp/mini-gmp.c (mpz_mul_si): Simplify.
+	(mpz_mul_ui, mpz_mul, mpz_div_qr): Replace init+REALLOC with init2.
 
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
