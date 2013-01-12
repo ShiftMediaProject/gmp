@@ -12,6 +12,8 @@
 	
 	* mini-gmp/mini-gmp.c (mpz_set_si, mpz_cmp_si): Simplify by using
 	the _ui variant.
+
+	* mini-gmp/tests/t-root.c: Use mpz_ui_pow_ui, when base fits an ui.
 	
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 

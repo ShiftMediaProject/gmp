@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -41,7 +41,10 @@ rootrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r, unsigned long z)
   mpz_t t;
 
   mpz_init (t);
-  mpz_pow_ui (t, s, z);
+  if (mpz_fits_ulong_p (s))
+    mpz_ui_pow_ui (t, mpz_get_ui (s), z);
+  else
+    mpz_pow_ui (t, s, z);
   mpz_sub (t, u, t);
   if (mpz_sgn (t) != mpz_sgn(u) || mpz_cmp (t, r) != 0)
     {
