@@ -10,6 +10,9 @@
 	* mini-gmp/mini-gmp.c (NEG_CAST): New macro.
 	(mpz_mul_si, mpz_set_si, mpz_cmp_si): Use NEG_CAST.
 	
+	* mini-gmp/mini-gmp.c (mpz_set_si, mpz_cmp_si): Simplify by using
+	the _ui variant.
+	
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.

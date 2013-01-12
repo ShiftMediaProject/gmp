@@ -1343,18 +1343,13 @@ mpz_realloc (mpz_t r, mp_size_t size)
 void
 mpz_set_si (mpz_t r, signed long int x)
 {
-  if (x > 0)
-    {
-      r->_mp_size = 1;
-      r->_mp_d[0] = x;
-    }
-  else if (x < 0)
+  if (x >= 0)
+    mpz_set_ui (r, x);
+  else /* (x < 0) */
     {
       r->_mp_size = -1;
       r->_mp_d[0] = NEG_CAST (unsigned long int, x);
     }
-  else
-    r->_mp_size = 0;
 }
 
 void
@@ -1629,34 +1624,19 @@ mpz_cmp_si (const mpz_t u, long v)
 {
   mp_size_t usize = u->_mp_size;
 
-  if (usize > 1)
-    return 1;
-  else if (usize < -1)
+  if (usize < -1)
     return -1;
-  else if (usize == 0)
-    {
-      if (v > 0)
-	return -1;
-      else if (v < 0)
-	return 1;
-    }
-  else
+  else if (v >= 0)
+    return mpz_cmp_ui (u, v);
+  else if (usize >= 0)
+    return 1;
+  else /* usize == -1 */
     {
       mp_limb_t ul = u->_mp_d[0];
-      if (usize == 1)
-	{
-	  if (v <= 0 || (mp_limb_t) v < ul)
-	    return 1;
-	  else if ((mp_limb_t) v > ul)
-	    return -1;
-	}
-      else /* usize == -1 */
-	{
-	  if (v >= 0 || (mp_limb_t)NEG_CAST (unsigned long int, v) < ul)
-	    return -1;
-	  else if ( (mp_limb_t)NEG_CAST (unsigned long int, v) > ul)
-	    return 1;
-	}
+      if ((mp_limb_t)NEG_CAST (unsigned long int, v) < ul)
+	return -1;
+      else if ( (mp_limb_t)NEG_CAST (unsigned long int, v) > ul)
+	return 1;
     }
   return 0;
 }
