@@ -55,6 +55,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_ULONG_HIGHBIT ((unsigned long) 1 << (GMP_ULONG_BITS - 1))
 
 #define GMP_ABS(x) ((x) >= 0 ? (x) : -(x))
+#define NEG_CAST(T,x) (-((T)((x) + 1) - 1))
 
 #define GMP_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define GMP_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -1350,7 +1351,7 @@ mpz_set_si (mpz_t r, signed long int x)
   else if (x < 0)
     {
       r->_mp_size = -1;
-      r->_mp_d[0] = -x;
+      r->_mp_d[0] = NEG_CAST (unsigned long int, x);
     }
   else
     r->_mp_size = 0;
@@ -1651,9 +1652,9 @@ mpz_cmp_si (const mpz_t u, long v)
 	}
       else /* usize == -1 */
 	{
-	  if (v >= 0 || (mp_limb_t) -v < ul)
+	  if (v >= 0 || (mp_limb_t)NEG_CAST (unsigned long int, v) < ul)
 	    return -1;
-	  else if ((mp_limb_t) -v > ul)
+	  else if ( (mp_limb_t)NEG_CAST (unsigned long int, v) > ul)
 	    return 1;
 	}
     }
@@ -1908,7 +1909,7 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 {
   if (v < 0)
     {
-      mpz_mul_ui (r, u, -((unsigned long int)(v + 1) - 1)); /* ABS_CAST */
+      mpz_mul_ui (r, u, NEG_CAST (unsigned long int, v));
       mpz_neg (r, r);
     }
   else
