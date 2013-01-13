@@ -19,6 +19,8 @@
 	* mini-gmp/tests/t-sub.c: Test also mpz_ui_sub.
 	
 	* mini-gmp/mini-gmp.c (mpz_fits_slong_p): Correct range.
+	* mini-gmp/tests/t-signed.c: New test program, for get/set/cmp_si.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-signed.
 	
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
