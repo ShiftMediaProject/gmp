@@ -1410,9 +1410,9 @@ mpz_fits_slong_p (const mpz_t u)
   if (us == 0)
     return 1;
   else if (us == 1)
-    return u->_mp_d[0] < (GMP_LIMB_HIGHBIT / 2);
+    return u->_mp_d[0] < GMP_LIMB_HIGHBIT;
   else if (us == -1)
-    return u->_mp_d[0] <= (GMP_LIMB_HIGHBIT / 2);
+    return u->_mp_d[0] <= GMP_LIMB_HIGHBIT;
   else
     return 0;
 }

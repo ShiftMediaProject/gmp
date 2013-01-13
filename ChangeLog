@@ -18,6 +18,8 @@
 	* mini-gmp/tests/t-mul.c: Test also mpz_mul_si.
 	* mini-gmp/tests/t-sub.c: Test also mpz_ui_sub.
 	
+	* mini-gmp/mini-gmp.c (mpz_fits_slong_p): Correct range.
+	
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.
