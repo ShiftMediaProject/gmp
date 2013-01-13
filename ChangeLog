@@ -1,3 +1,8 @@
+2012-02-29  Marc Glisse  <marc.glisse@inria.fr>
+
+	* doc/gmp.texi: Let mpn_sqrtrem reference mpn_perfect_square_p instead
+	of mpz_perfect_square_p.
+
 2013-01-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-comb.c: New test program, testing both

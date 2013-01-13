@@ -5439,7 +5439,7 @@ case the return value is zero or non-zero according to whether the remainder
 would have been zero or non-zero.
 
 A return value of zero indicates a perfect square.  See also
-@code{mpz_perfect_square_p}.
+@code{mpn_perfect_square_p}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
