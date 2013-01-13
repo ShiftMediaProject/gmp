@@ -84,6 +84,17 @@ main (int argc, char **argv)
 	  dump ("ref", ref);
 	  abort ();
 	}
+
+      if (mpz_popcount (a) != mpz_hamdist (res, b))
+	{
+	  fprintf (stderr, "mpz_popcount(a) and mpz_hamdist(r,b) differ:\n");
+	  dump ("a", a);
+	  dump ("b", b);
+	  dump ("r", res);
+	  fprintf (stderr, "mpz_popcount(a) = %lu:\n", mpz_popcount (a));
+	  fprintf (stderr, "mpz_hamdist(r,b) = %lu:\n", mpz_hamdist (res, b));
+	  abort ();
+	}
     }
   mpz_clear (a);
   mpz_clear (b);
