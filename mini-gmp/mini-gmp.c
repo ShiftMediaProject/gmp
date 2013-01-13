@@ -3620,7 +3620,7 @@ mpz_hamdist (const mpz_t u, const mpz_t v)
     }
   assert (vc == 0);
 
-  for (; i < vn; i++)
+  for (; i < un; i++)
     {
       ul = (up[i] ^ comp) + uc;
       uc = ul < uc;
