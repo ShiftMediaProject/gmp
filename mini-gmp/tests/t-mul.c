@@ -38,13 +38,14 @@ int
 main (int argc, char **argv)
 {
   unsigned i;
-  mpz_t a, b, res, ref;
+  mpz_t a, b, res, res_ui, ref;
 
   hex_random_init ();
 
   mpz_init (a);
   mpz_init (b);
   mpz_init (res);
+  mpz_init (res_ui);
   mpz_init (ref);
 
   for (i = 0; i < COUNT; i++)
@@ -60,10 +61,23 @@ main (int argc, char **argv)
 	  dump ("ref", ref);
 	  abort ();
 	}
+      if (mpz_fits_slong_p (b)) {
+	mpz_mul_si (res_ui, a, mpz_get_si (b));
+	if (mpz_cmp (res_ui, ref))
+	  {
+	    fprintf (stderr, "mpz_mul_si failed:\n");
+	    dump ("a", a);
+	    dump ("b", b);
+	    dump ("r", res_ui);
+	    dump ("ref", ref);
+	    abort ();
+	  }
+      }
     }
   mpz_clear (a);
   mpz_clear (b);
   mpz_clear (res);
+  mpz_clear (res_ui);
   mpz_clear (ref);
 
   return 0;

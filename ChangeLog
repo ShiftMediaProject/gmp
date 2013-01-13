@@ -15,6 +15,9 @@
 
 	* mini-gmp/tests/t-root.c: Use mpz_ui_pow_ui, when base fits an ui.
 	
+	* mini-gmp/tests/t-mul.c: Test also mpz_mul_si.
+	* mini-gmp/tests/t-sub.c: Test also mpz_ui_sub.
+	
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.
