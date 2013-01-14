@@ -1,3 +1,8 @@
+2013-01-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	From Mike Frysinger:
+	* configure.ac: Add x32 ABI for x86_64.
+
 2013-01-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (main): Added tests for mpn_get_str and
