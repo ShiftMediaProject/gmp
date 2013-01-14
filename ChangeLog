@@ -1,4 +1,4 @@
-2012-02-29  Marc Glisse  <marc.glisse@inria.fr>
+2013-01-13  Marc Glisse  <marc.glisse@inria.fr>
 
 	* doc/gmp.texi: Let mpn_sqrtrem reference mpn_perfect_square_p instead
 	of mpz_perfect_square_p.
