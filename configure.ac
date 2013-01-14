@@ -1668,9 +1668,21 @@ case $host in
 	CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
 	SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
 	cyclecounter_size_64=2
-	abilist="64 32"
+
+	cclist_x32="gcc"
+	gcc_x32_cflags="$gcc_cflags -mx32"
+	gcc_x32_cflags_optlist="$gcc_64_cflags_optlist"
+	CALLING_CONVENTIONS_OBJS_x32="$CALLING_CONVENTIONS_OBJS_64"
+	SPEED_CYCLECOUNTER_OBJ_x32="$SPEED_CYCLECOUNTER_OBJ_64"
+	cyclecounter_size_x32="$cyclecounter_size_64"
+	path_x32="$path_64"
+	limb_x32=longlong
+	any_x32_testlist="sizeof-long-4"
+
+	abilist="64 x32 32"
 	if test "$enable_assembly" = "yes" ; then
 	    extra_functions_64="invert_limb_table"
+	    extra_functions_x32=$extra_functions_64
 	fi
 
 	case $host in
@@ -3427,7 +3439,7 @@ if test "$gmp_asm_syntax_testing" != no; then
 	      GMP_INCLUDE_MPN(x86/darwin.m4) ;;
 	  esac
           ;;
-        64)
+        64|x32)
           GMP_INCLUDE_MPN(x86_64/x86_64-defs.m4)
           AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86_64)
 	  case $host in
