@@ -2187,7 +2187,7 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @findex gmp_version
 The GMP version number, as a null-terminated string, in the form ``i.j.k''.
 This release is @nicode{"@value{VERSION}"}.  Note that the format ``i.j'' was
-used when k was zero was used before version 4.3.0.
+used, before version 4.3.0, when k was zero.
 @end deftypevr
 
 @defmac __GMP_CC
@@ -2203,7 +2203,7 @@ strings.
 @cindex Past GMP versions
 @cindex Upward compatibility
 
-This version of GMP is upwardly binary compatible with all 4.x and 3.x
+This version of GMP is upwardly binary compatible with all 5.x, 4.x, and 3.x
 versions, and upwardly compatible at the source level with all 2.x versions,
 with the following exceptions.
 
@@ -2215,10 +2215,13 @@ with other @code{mpn} functions.
 @item
 @code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
 3.0.1, but in 3.1 reverted to the 2.x style.
+
+@item
+@code{mpn_bdivmod}, documented as preliminary in GMP 4, has been removed.
 @end itemize
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
-course also apply when porting applications from GMP 1 to GMP 4.  Please
+course also apply when porting applications from GMP 1 to GMP 5.  Please
 see the GMP 2 manual for details.
 
 @c @item Integer division functions round the result differently.  The obsolete
