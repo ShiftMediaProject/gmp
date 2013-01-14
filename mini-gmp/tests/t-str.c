@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License along with
 the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <assert.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,6 +27,9 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MAXBITS 400
 #define COUNT 2000
+
+#define GMP_LIMB_BITS (sizeof(mp_limb_t) * CHAR_BIT)
+#define MAXLIMBS ((MAXBITS + GMP_LIMB_BITS - 1) / GMP_LIMB_BITS)
 
 static void
 dump (const char *label, const mpz_t x)
@@ -99,6 +103,73 @@ main (int argc, char **argv)
 	      dump ("b", b);
 	      dump ("r", a);
 	      abort ();
+	    }
+	  
+	  /* Test mpn interface */
+	  if (mpz_sgn (a))
+	    {
+	      size_t i;
+	      const char *absr;
+	      mp_limb_t t[MAXLIMBS];
+	      mp_size_t tn = mpz_size (a);
+
+	      assert (tn <= MAXLIMBS);
+	      mpn_copyi (t, a[0]._mp_d, tn);
+	      
+	      bn = mpn_get_str (bp, base, t, tn);
+	      if (bn != arn)
+		{
+		  fprintf (stderr, "mpn_get_str failed:\n");
+		  fprintf (stderr, "returned length: %d (bad)\n", bn);
+		  fprintf (stderr, "expected: %d\n", arn);
+		  fprintf (stderr, "  base = %d\n", base);
+		  fprintf (stderr, "r = %s\n", ap);
+		  fprintf (stderr, "  base = 16\n");
+		  dump ("b", b);
+		  dump ("r", a);
+		  abort ();
+		}
+	      absr = rp + (rp[0] == '-');
+
+	      for (i = 0; i < bn; i++)
+		{
+		  unsigned char digit = absr[i];
+		  unsigned value;
+		  if (digit >= '0' && digit <= '9')
+		    value = digit - '0';
+		  else if (digit >= 'a' && digit <= 'z')
+		    value = digit - 'a' + 10;
+		  else if (digit >= 'A' && digit <= 'Z')
+		    value = digit - 'A' + 10;
+		  else
+		    {
+		      fprintf (stderr, "Internal error in test.\n");
+		      abort();
+		    }
+		  if (bp[i] != value)
+		    {
+		      fprintf (stderr, "mpn_get_str failed:\n");
+		      fprintf (stderr, "digit %d: %d (bad)\n", i, bp[i]);
+		      fprintf (stderr, "expected: %d\n", value);
+		      fprintf (stderr, "  base = %d\n", base);
+		      fprintf (stderr, "r = %s\n", ap);
+		      fprintf (stderr, "  base = 16\n");
+		      dump ("b", b);
+		      dump ("r", a);
+		      abort ();
+		    }
+		}
+	      tn = mpn_set_str (t, bp, bn, base);
+	      if (tn != mpz_size (a) || mpn_cmp (t, a[0]._mp_d, tn))
+		{
+		  fprintf (stderr, "mpn_set_str failed:\n");
+		  fprintf (stderr, "r = %s\n", rp);
+		  fprintf (stderr, "  base = %d\n", base);
+		  fprintf (stderr, "r = %s\n", ap);
+		  fprintf (stderr, "  base = 16\n");
+		  dump ("r", a);
+		  abort ();
+		}
 	    }
 	  free (ap);
 	  free (bp);

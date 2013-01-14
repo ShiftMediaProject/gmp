@@ -1,3 +1,8 @@
+2013-01-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/t-str.c (main): Added tests for mpn_get_str and
+	mpn_set_str.
+
 2013-01-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (gmp_version): Remove "was used" repetition.
