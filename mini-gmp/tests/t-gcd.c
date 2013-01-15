@@ -119,7 +119,7 @@ main (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_random_op (OP_GCD, MAXBITS, a, b, s);
+      mini_random_op3 (OP_GCD, MAXBITS, a, b, s);
       mpz_gcd (g, a, b);
       if (mpz_cmp (g, s))
 	{

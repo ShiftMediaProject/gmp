@@ -1,3 +1,18 @@
+2013-01-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/t-mul.c (main): Test mpn_mul_n and mpn_sqr.
+
+	* mini-gmp/tests/hex-random.h (enum hex_random_op): New value
+	OP_SQR.
+
+	* mini-gmp/tests/mini-random.c (mini_random_op3): Renamed, from...
+	(mini_random_op): ... old name. Updated callers.
+	(mini_random_op2): New function.
+
+	* mini-gmp/tests/hex-random.c (hex_random_op3): Renamed, from...
+	(hex_random_op): ... old name. Updated callers.
+	(hex_random_op2): New function.
+
 2013-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-logops.c: Improve popcount/hamdist testing.

@@ -94,9 +94,43 @@ hex_rrandomb_export (void *dst, size_t *countp,
   return res;
 }
 
+void hex_random_op2 (enum hex_random_op op,  unsigned long maxbits,
+		     char **ap, char **rp)
+{
+  mpz_t a, r;
+  unsigned long abits;
+  unsigned signs;
+
+  mpz_init (a);
+  mpz_init (r);
+
+  abits = gmp_urandomb_ui (state, 32) % maxbits;
+
+  mpz_rrandomb (a, state, abits);
+
+  signs = gmp_urandomb_ui (state, 1);
+  if (signs & 1)
+    mpz_neg (a, a);
+
+  switch (op)
+    {
+    default:
+      abort ();
+    case OP_SQR:
+      mpz_mul (r, a, a);
+      break;
+    }
+
+  gmp_asprintf (ap, "%Zx", a);
+  gmp_asprintf (rp, "%Zx", r);
+
+  mpz_clear (a);
+  mpz_clear (r);
+}
+
 void
-hex_random_op (enum hex_random_op op,  unsigned long maxbits,
-	       char **ap, char **bp, char **rp)
+hex_random_op3 (enum hex_random_op op,  unsigned long maxbits,
+		char **ap, char **bp, char **rp)
 {
   mpz_t a, b, r;
   unsigned long abits, bbits;

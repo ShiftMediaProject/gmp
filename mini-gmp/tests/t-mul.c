@@ -20,11 +20,15 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "mini-random.h"
 
 #define MAXBITS 400
 #define COUNT 10000
+
+#define GMP_LIMB_BITS (sizeof(mp_limb_t) * CHAR_BIT)
+#define MAXLIMBS ((MAXBITS + GMP_LIMB_BITS - 1) / GMP_LIMB_BITS)
 
 static void
 dump (const char *label, const mpz_t x)
@@ -39,6 +43,8 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, res, res_ui, ref;
+  mp_limb_t t[2*MAXLIMBS];
+  mp_size_t an, rn;
 
   hex_random_init ();
 
@@ -50,7 +56,7 @@ main (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_random_op (OP_MUL, MAXBITS, a, b, ref);
+      mini_random_op3 (OP_MUL, MAXBITS, a, b, ref);
       mpz_mul (res, a, b);
       if (mpz_cmp (res, ref))
 	{
@@ -60,6 +66,24 @@ main (int argc, char **argv)
 	  dump ("r", res);
 	  dump ("ref", ref);
 	  abort ();
+	}
+      if (mpz_size (a) == mpz_size (b))
+	{
+	  memset (t, 0, sizeof(t));
+	  an = mpz_size (a);
+	  if (an > 0)
+	    {
+	      mpn_mul_n (t, a->_mp_d, b->_mp_d, an);
+	      rn = 2*an - (res->_mp_d[2*an-1] == 0);
+	      if (rn != mpz_size (ref) || mpn_cmp (t, ref->_mp_d, rn))
+		{
+		  fprintf (stderr, "mpn_mul_n failed:\n");
+		  dump ("a", a);
+		  dump ("b", b);
+		  dump ("ref", ref);
+		  abort ();
+		}
+	    }
 	}
       if (mpz_fits_slong_p (b)) {
 	mpz_mul_si (res_ui, a, mpz_get_si (b));
@@ -73,6 +97,22 @@ main (int argc, char **argv)
 	    abort ();
 	  }
       }
+      mini_random_op2 (OP_SQR, MAXBITS, a, ref);
+      an = mpz_size (a);
+      if (an > 0)
+	{
+	  memset (t, 0, sizeof(t));
+	  mpn_sqr (t, a->_mp_d, an);
+
+	  rn = 2*an - (t[2*an-1] == 0);
+	  if (rn != mpz_size (ref) || mpn_cmp (t, ref->_mp_d, rn))
+	    {
+	      fprintf (stderr, "mpn (squaring) failed:\n");
+	      dump ("a", a);
+	      dump ("ref", ref);
+	      abort ();
+	    }
+	}
     }
   mpz_clear (a);
   mpz_clear (b);

@@ -49,7 +49,7 @@ main (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_random_op (OP_LCM, MAXBITS, a, b, s);
+      mini_random_op3 (OP_LCM, MAXBITS, a, b, s);
       mpz_lcm (g, a, b);
       if (mpz_cmp (g, s))
 	{

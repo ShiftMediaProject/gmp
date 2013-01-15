@@ -19,7 +19,8 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
 enum hex_random_op
   {
-    OP_ADD, OP_SUB, OP_MUL, OP_CDIV, OP_FDIV, OP_TDIV,
+    OP_ADD, OP_SUB, OP_MUL, OP_SQR,
+    OP_CDIV, OP_FDIV, OP_TDIV,
     OP_CDIV_Q_2, OP_CDIV_R_2,
     OP_FDIV_Q_2, OP_FDIV_R_2,
     OP_TDIV_Q_2,  OP_TDIV_R_2,
@@ -35,8 +36,10 @@ char *hex_rrandomb_export (void *dst, size_t *countp,
 			   int order, size_t size, int endian,
 			   unsigned long bits);
 
-void hex_random_op (enum hex_random_op op,  unsigned long maxbits,
-		    char **ap, char **bp, char **rp);
+void hex_random_op2 (enum hex_random_op op,  unsigned long maxbits,
+		     char **ap, char **rp);
+void hex_random_op3 (enum hex_random_op op,  unsigned long maxbits,
+		     char **ap, char **bp, char **rp);
 void hex_random_op4 (enum hex_random_op op,  unsigned long maxbits,
 		     char **ap, char **bp, char **rp, char **qp);
 void hex_random_bit_op (enum hex_random_op op, unsigned long maxbits,

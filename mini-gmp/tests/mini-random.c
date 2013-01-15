@@ -61,14 +61,29 @@ mini_rrandomb_export (mpz_t r, void *dst, size_t *countp,
 }
 
 void
-mini_random_op (enum hex_random_op op, unsigned long maxbits,
-		mpz_t a, mpz_t b, mpz_t r)
+mini_random_op2 (enum hex_random_op op, unsigned long maxbits,
+		 mpz_t a, mpz_t r)
+{
+  char *ap;
+  char *rp;
+
+  hex_random_op2 (op, maxbits, &ap, &rp);
+  set_str (a, ap);
+  set_str (r, rp);
+
+  free (ap);
+  free (rp);
+}
+
+void
+mini_random_op3 (enum hex_random_op op, unsigned long maxbits,
+		 mpz_t a, mpz_t b, mpz_t r)
 {
   char *ap;
   char *bp;
   char *rp;
 
-  hex_random_op (op, maxbits, &ap, &bp, &rp);
+  hex_random_op3 (op, maxbits, &ap, &bp, &rp);
   set_str (a, ap);
   set_str (b, bp);
   set_str (r, rp);

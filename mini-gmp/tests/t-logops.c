@@ -50,7 +50,7 @@ main (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_random_op (OP_AND, MAXBITS, a, b, ref);
+      mini_random_op3 (OP_AND, MAXBITS, a, b, ref);
       mpz_and (res, a, b);
       if (mpz_cmp (res, ref))
 	{
@@ -62,7 +62,7 @@ main (int argc, char **argv)
 	  abort ();
 	}
 
-      mini_random_op (OP_IOR, MAXBITS, a, b, ref);
+      mini_random_op3 (OP_IOR, MAXBITS, a, b, ref);
       mpz_ior (res, a, b);
       if (mpz_cmp (res, ref))
 	{
@@ -74,7 +74,7 @@ main (int argc, char **argv)
 	  abort ();
 	}
 
-      mini_random_op (OP_XOR, MAXBITS, a, b, ref);
+      mini_random_op3 (OP_XOR, MAXBITS, a, b, ref);
       mpz_xor (res, a, b);
       if (mpz_cmp (res, ref))
 	{

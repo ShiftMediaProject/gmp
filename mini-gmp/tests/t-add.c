@@ -48,7 +48,7 @@ main (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_random_op (OP_ADD, MAXBITS, a, b, ref);
+      mini_random_op3 (OP_ADD, MAXBITS, a, b, ref);
       mpz_add (res, a, b);
       if (mpz_cmp (res, ref))
 	{
