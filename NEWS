@@ -13,14 +13,16 @@ Changes between GMP version 5.1.0 and 5.1.1
 
   * Aarch64 alias ARM64 support now works.
 
+  * Several bugs in mini-gmp have been fixed.
+
   SPEEDUPS
   * None.
 
   FEATURES
-  * None.
+  * Preliminary support for the x32 ABI under x86-64.
 
   MISC
-  * None.
+  * The mini-gmp testsuite now tests the entire set of functions.
 
 
 Changes between GMP version 5.0.* and 5.1.0
