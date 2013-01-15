@@ -80,9 +80,30 @@ try_op_si (int c)
       }
 
     if ((si < oi ? -1 : si > oi) != c)
-      break;
+      {
+	mpz_set (oz, sz);
+	break;
+      }
 
     check_si (sz, oz, si, c);
+
+    oi = si + c;
+    if (c == -1)
+      mpz_sub_ui (oz, sz, 1);
+    else
+      mpz_add_ui (oz, sz, 1);
+
+    if (mpz_cmp_si (oz, si) != c)
+      {
+	printf ("mpz_cmp_si (oz, %ld) != %i.\n", si, c);
+	printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
+	abort ();
+      }
+
+    if ((oi < si ? -1 : oi > si) != c)
+      break;
+
+    check_si (oz, sz, oi, c);
 
     oi = (si - c) * 2 + c;
     mpz_mul_si (oz, sz, 2*c); 
@@ -99,24 +120,21 @@ try_op_si (int c)
       }
 
     if ((oi < si ? -1 : oi > si) != c)
-      {
-	mpz_set (sz, oz);
-	break;
-      }
+      break;
 
     check_si (oz, sz, oi, c);
   } while (1);
 
-  mpz_clear (oz);
+  mpz_clear (sz);
 
-  if (mpz_fits_slong_p (sz))
+  if (mpz_fits_slong_p (oz))
     {
       printf ("Should not fit a signed long any more.\n");
-      printf (" sz="); mpz_out_str (stdout, 10, sz); printf ("\n");
+      printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
       abort ();
     }
 
-  mpz_clear (sz);
+  mpz_clear (oz);
 }
 
 int

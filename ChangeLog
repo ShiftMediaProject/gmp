@@ -1,6 +1,7 @@
 2013-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-logops.c: Improve popcount/hamdist testing.
+	* mini-gmp/tests/t-signed.c: Test more cases.
 
 2013-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
