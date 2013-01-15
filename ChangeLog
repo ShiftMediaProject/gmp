@@ -1,5 +1,8 @@
 2013-01-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-str.c (main): Use x->_mp_d rather than x[0]._mp_d.
+	* mini-gmp/tests/t-invert.c (main): Likewise.
+
 	* mini-gmp/tests/t-mul.c (main): Test mpn_mul_n and mpn_sqr.
 
 	* mini-gmp/tests/hex-random.h (enum hex_random_op): New value

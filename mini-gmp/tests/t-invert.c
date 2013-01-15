@@ -53,7 +53,7 @@ main (int argc, char **argv)
       mini_urandomb (u, GMP_LIMB_BITS);
       mpz_setbit (u, GMP_LIMB_BITS -1);
 
-      mpz_set_ui (m, mpn_invert_limb (u[0]._mp_d[0]));
+      mpz_set_ui (m, mpn_invert_limb (u->_mp_d[0]));
       mpz_setbit (m, GMP_LIMB_BITS);
 
       mpz_mul (p, m, u);
@@ -79,7 +79,7 @@ main (int argc, char **argv)
       mini_urandomb (u, 2*GMP_LIMB_BITS);
       mpz_setbit (u, 2*GMP_LIMB_BITS -1);
 
-      mpz_set_ui (m, mpn_invert_3by2 (u[0]._mp_d[1], u[0]._mp_d[0]));
+      mpz_set_ui (m, mpn_invert_3by2 (u->_mp_d[1], u[0]._mp_d[0]));
 
       mpz_setbit (m, GMP_LIMB_BITS);
 
