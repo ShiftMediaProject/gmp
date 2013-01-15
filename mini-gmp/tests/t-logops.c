@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -39,6 +39,7 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, res, ref;
+  mp_bitcnt_t c;
 
   hex_random_init ();
 
@@ -85,14 +86,25 @@ main (int argc, char **argv)
 	  abort ();
 	}
 
-      if (mpz_popcount (a) != mpz_hamdist (res, b))
+      if (i % 8) {
+	c = 0;
+	mpz_mul_2exp (res, res, i % 8);
+      } else if (mpz_sgn (res) >= 0) {
+	c = mpz_odd_p (res) != 0;
+	mpz_tdiv_q_2exp (res, res, 1);
+      } else {
+	c = (~ (mp_bitcnt_t) 0) - 3;
+	mpz_set_ui (res, 11 << ((i >> 3)%4)); /* set 3 bits */
+      } 
+
+      if (mpz_popcount (res) + c != mpz_hamdist (a, b))
 	{
-	  fprintf (stderr, "mpz_popcount(a) and mpz_hamdist(r,b) differ:\n");
+	  fprintf (stderr, "mpz_popcount(r) + %lu and mpz_hamdist(a,b) differ:\n", c);
 	  dump ("a", a);
 	  dump ("b", b);
 	  dump ("r", res);
-	  fprintf (stderr, "mpz_popcount(a) = %lu:\n", mpz_popcount (a));
-	  fprintf (stderr, "mpz_hamdist(r,b) = %lu:\n", mpz_hamdist (res, b));
+	  fprintf (stderr, "mpz_popcount(r) = %lu:\n", mpz_popcount (res));
+	  fprintf (stderr, "mpz_hamdist(a,b) = %lu:\n", mpz_hamdist (a, b));
 	  abort ();
 	}
     }
