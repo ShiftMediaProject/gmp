@@ -1605,7 +1605,7 @@ mpz_cmp_d (const mpz_t x, double d)
 }
 
 
-/* MPN comparisons and the like. */
+/* MPZ comparisons and the like. */
 int
 mpz_sgn (const mpz_t u)
 {

@@ -69,7 +69,7 @@ try_op_si (int c)
   mpz_init_set (oz, sz);
 
   do {
-    si *= 2;
+    si *= 2; /* c * 2^k */
     mpz_mul_2exp (sz, sz, 1);
 
     if (mpz_cmp_si (sz, oi) != c)
@@ -87,7 +87,7 @@ try_op_si (int c)
 
     check_si (sz, oz, si, c);
 
-    oi = si + c;
+    oi = si + c; /* c * (2^k + 1) */
     if (c == -1)
       mpz_sub_ui (oz, sz, 1);
     else
@@ -105,7 +105,7 @@ try_op_si (int c)
 
     check_si (oz, sz, oi, c);
 
-    oi = (si - c) * 2 + c;
+    oi = (si - c) * 2 + c; /* c * (2^K - 1) */
     mpz_mul_si (oz, sz, 2*c); 
     if (c == -1)
       mpz_ui_sub (oz, 1, oz); /* oz = sz * 2 + 1 */
