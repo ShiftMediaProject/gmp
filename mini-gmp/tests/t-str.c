@@ -58,9 +58,9 @@ main (int argc, char **argv)
   for (i = 0; i < COUNT; i++)
     {
       int base;
-      for (base = 2; base <= 36; base++)
+      for (base = 0; base <= 36; base += 1 + (base == 0))
 	{
-	  hex_random_str_op (MAXBITS, base, &ap, &rp);
+	  hex_random_str_op (MAXBITS, i&1 ? base: -base, &ap, &rp);
 	  if (mpz_set_str (a, ap, 16) != 0)
 	    {
 	      fprintf (stderr, "mpz_set_str failed on input %s\n", ap);
@@ -70,7 +70,7 @@ main (int argc, char **argv)
 	  rn = strlen (rp);
 	  arn = rn - (rp[0] == '-');
 
-	  bn = mpz_sizeinbase (a, base);
+	  bn = mpz_sizeinbase (a, base ? base : 10);
 	  if (bn < arn || bn > (arn + 1))
 	    {
 	      fprintf (stderr, "mpz_sizeinbase failed:\n");
@@ -80,7 +80,7 @@ main (int argc, char **argv)
 		       base, (unsigned) arn, (unsigned)bn);
 	      abort ();
 	    }
-	  bp = mpz_get_str (NULL, base, a);
+	  bp = mpz_get_str (NULL, i&1 ? base: -base, a);
 	  if (strcmp (bp, rp))
 	    {
 	      fprintf (stderr, "mpz_get_str failed:\n");
@@ -106,7 +106,7 @@ main (int argc, char **argv)
 	    }
 	  
 	  /* Test mpn interface */
-	  if (mpz_sgn (a))
+	  if (base && mpz_sgn (a))
 	    {
 	      size_t i;
 	      const char *absr;

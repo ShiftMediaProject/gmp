@@ -4,6 +4,7 @@
 	* mini-gmp/mini-gmp.c (mpz_cmp_d): Correct multiword comparison.
 
 	* mini-gmp/mini-gmp.c (mpz_set_str): Handle the empty string.
+	* mini-gmp/tests/t-str.c: Test base <= 0.
 
 2013-01-15  Niels Möller  <nisse@lysator.liu.se>
 
