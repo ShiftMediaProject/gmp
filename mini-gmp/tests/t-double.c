@@ -101,6 +101,18 @@ main (int argc, char **argv)
 	  fprintf (stderr, "mpz_set_d/mpz_get_d failed:\n");
 	  goto dumperror;
 	}
+      if ((f == d) ? (mpz_cmp_d (x, d) != 0) : (mpz_cmp_d (x, d) >= 0))
+	{
+	  fprintf (stderr, "mpz_cmp_d (x, d) failed:\n");
+	  goto dumperror;
+	}
+      f = d + 1;
+      if (f > d && ! (mpz_cmp_d (x, f) < 0))
+	{
+	  fprintf (stderr, "mpz_cmp_d (x, f) failed:\n");
+	  goto dumperror;
+	}
+
       d = - d;
 
       mpz_set_d (x, d);
@@ -115,6 +127,17 @@ main (int argc, char **argv)
 	  fprintf (stderr, "f = %.15g\n", f);
 	  fprintf (stderr, "f - d = %.5g\n", f - d);
 	  abort ();
+	}
+      if ((f == d) ? (mpz_cmp_d (x, d) != 0) : (mpz_cmp_d (x, d) <= 0))
+	{
+	  fprintf (stderr, "mpz_cmp_d (x, d) failed:\n");
+	  goto dumperror;
+	}
+      f = d - 1;
+      if (f < d && ! (mpz_cmp_d (x, f) > 0))
+	{
+	  fprintf (stderr, "mpz_cmp_d (x, f) failed:\n");
+	  goto dumperror;
 	}
     }
 

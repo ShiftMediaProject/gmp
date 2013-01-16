@@ -1,5 +1,6 @@
 2013-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mini-gmp/tests/t-double.c: Test mpz_cmp_d.
 	* mini-gmp/mini-gmp.c (mpz_cmp_d): Correct multiword comparison.
 
 2013-01-15  Niels Möller  <nisse@lysator.liu.se>
