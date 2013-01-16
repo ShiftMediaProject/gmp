@@ -3877,12 +3877,12 @@ mpz_set_str (mpz_t r, const char *sp, int base)
       if (*sp == '0')
 	{
 	  sp++;
-	  if (*sp == 'x')
+	  if (*sp == 'x' || *sp == 'X')
 	    {
 	      base = 16;
 	      sp++;
 	    }
-	  else if (*sp == 'b')
+	  else if (*sp == 'b' || *sp == 'B')
 	    {
 	      base = 2;
 	      sp++;
