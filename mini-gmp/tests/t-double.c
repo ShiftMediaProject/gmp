@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -99,12 +99,7 @@ main (int argc, char **argv)
       if (f != floor (d))
 	{
 	  fprintf (stderr, "mpz_set_d/mpz_get_d failed:\n");
-	  dump ("x", x);
-	  fprintf (stderr, "m = %lx, e = %i\n", m, e);
-	  fprintf (stderr, "d = %.15g\n", d);
-	  fprintf (stderr, "f = %.15g\n", f);
-	  fprintf (stderr, "d - f = %.5g\n", d - f);
-	  abort ();
+	  goto dumperror;
 	}
       d = - d;
 
@@ -113,11 +108,12 @@ main (int argc, char **argv)
       if (f != ceil (d))
 	{
 	  fprintf (stderr, "mpz_set_d/mpz_get_d failed:\n");
+	dumperror:
 	  dump ("x", x);
 	  fprintf (stderr, "m = %lx, e = %i\n", m, e);
 	  fprintf (stderr, "d = %.15g\n", d);
-	  fprintf (stderr, "c = %.15g\n", f);
-	  fprintf (stderr, "c - d = %.5g\n", f - d);
+	  fprintf (stderr, "f = %.15g\n", f);
+	  fprintf (stderr, "f - d = %.5g\n", f - d);
 	  abort ();
 	}
     }
