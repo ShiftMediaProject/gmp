@@ -3895,7 +3895,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
     }
 
   sn = strlen (sp);
-  dp = gmp_xalloc (sn);
+  dp = gmp_xalloc (sn + (sn == 0));
 
   for (dn = 0; *sp; sp++)
     {

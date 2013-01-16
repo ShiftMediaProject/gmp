@@ -3,6 +3,8 @@
 	* mini-gmp/tests/t-double.c: Test mpz_cmp_d.
 	* mini-gmp/mini-gmp.c (mpz_cmp_d): Correct multiword comparison.
 
+	* mini-gmp/mini-gmp.c (mpz_set_str): Handle the empty string.
+
 2013-01-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (main): Use x->_mp_d rather than x[0]._mp_d.
