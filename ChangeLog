@@ -1,3 +1,7 @@
+2013-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpz_cmp_d): Correct multiword comparison.
+
 2013-01-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (main): Use x->_mp_d rather than x[0]._mp_d.

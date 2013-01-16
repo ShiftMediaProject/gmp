@@ -1585,7 +1585,7 @@ mpz_cmp_d (const mpz_t x, double d)
   if (d >= B)
     return -sign;
 
-  for (i = xn; i-- > 0; i++)
+  for (i = xn; i-- > 0; i)
     {
       mp_limb_t f, xl;
 
