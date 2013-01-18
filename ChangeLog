@@ -1,5 +1,9 @@
 2013-01-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-str.c (test_small): New function, exercising
+	parsing of whitespace and base prefixes.
+	(testmain): Call it.
+
 	* mini-gmp/tests/t-gcd.c (gcdext_valid_p): Fixed memory leak.
 
 	* mini-gmp/tests/t-double.c (testmain): Call tu_free rather than

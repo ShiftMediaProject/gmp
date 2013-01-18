@@ -39,6 +39,96 @@ dump (const char *label, const mpz_t x)
   free (buf);
 }
 
+static void
+test_small (void)
+{
+  struct {
+    const char *input;
+    const char *decimal;
+  } data[] = {
+    { "183407", "183407" },
+    { " 763959", "763959" },
+    { "9 81999", "981999" },
+    { "10\t7398", "107398" },
+    { "9585 44", "958544" },
+    { "0704436", "231710" },
+    { " 02503517", "689999" },
+    { "0 1312143", "365667" },
+    { "03 274062", "882738" },
+    { "012\t242", "5282" },
+    { "0b11010111110010001111", "883855" },
+    { " 0b11001010010100001", "103585" },
+    { "0b101010110011101111", "175343" },
+    { "0b 1111111011011100110", "521958" },
+    { "0b1 1111110111001000011", "1044035" },
+    { " 0x53dfc", "343548" },
+    { "0xfa019", "1024025" },
+    { "0x 642d1", "410321" },
+    { "0x5 8067", "360551" },
+    { "0xd6be6", "879590" },
+    { "\t0B1110000100000000011", "460803" },
+    { "0B\t1111110010010100101", "517285" },
+    { "0B1\t010111101101110100", "359284" },
+    { "0B101\t1001101111111001", "367609" },
+    { "0B10001001010111110000", "562672" },
+    { "0Xe4b7e", "936830" },
+    { "0X1e4bf", "124095" },
+    { "0Xfdb90", "1039248" },
+    { "0X7fc47", "523335" },
+    { "0X8167c", "530044" },
+    /* Some invalid inputs */
+    { "0ab", NULL },
+    { "10x0", NULL },
+    { "0xxab", NULL },
+    { "ab", NULL },
+    { "0%#", NULL },
+    { "$foo", NULL },
+    { NULL, NULL }
+  };
+  unsigned i;
+  mpz_t a, b;
+  mpz_init (a);
+  mpz_init (b);
+
+  for (i = 0; data[i].input; i++)
+    {
+      int res = mpz_set_str (a, data[i].input, 0);
+      if (data[i].decimal)
+	{
+	  if (res != 0)
+	    {
+	      fprintf (stderr, "mpz_set_str returned -1, input: %s\n",
+		       data[i].input);
+	      abort ();
+	    }
+	  if (mpz_set_str (b, data[i].decimal, 10) != 0)
+	    {
+	      fprintf (stderr, "mpz_set_str returned -1, decimal input: %s\n",
+		       data[i].input);
+	      abort ();
+	    }
+	  if (mpz_cmp (a, b) != 0)
+	    {
+	      fprintf (stderr, "mpz_set_str failed for input: %s\n",
+		       data[i].input);
+
+	      dump ("got", a);
+	      dump ("ref", b);
+	      abort ();
+	    }
+	}
+      else if (res != -1)
+	{
+	  fprintf (stderr, "mpz_set_str returned %d, invalid input: %s\n",
+		   res, data[i].input);
+	  abort ();
+	}
+    }
+
+  mpz_clear (a);
+  mpz_clear (b);
+}
+
 void
 testmain (int argc, char **argv)
 {
@@ -49,6 +139,8 @@ testmain (int argc, char **argv)
   size_t bn, rn, arn;
 
   mpz_t a, b;
+
+  test_small ();
 
   mpz_init (a);
   mpz_init (b);
@@ -102,7 +194,7 @@ testmain (int argc, char **argv)
 	      dump ("r", a);
 	      abort ();
 	    }
-	  
+
 	  /* Test mpn interface */
 	  if (base && mpz_sgn (a))
 	    {
@@ -113,7 +205,7 @@ testmain (int argc, char **argv)
 
 	      assert (tn <= MAXLIMBS);
 	      mpn_copyi (t, a->_mp_d, tn);
-	      
+
 	      bn = mpn_get_str (bp, base, t, tn);
 	      if (bn != arn)
 		{
