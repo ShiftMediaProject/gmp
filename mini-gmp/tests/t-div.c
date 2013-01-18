@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -45,6 +45,7 @@ main (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, q, r, rq, rr;
+  int div_p;
 
   hex_random_init ();
 
@@ -126,6 +127,17 @@ main (int argc, char **argv)
 	      dump ("rref", rr);
 	      abort ();
 	    }
+
+	  div_p = mpz_divisible_p (a, b);
+	  if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+	    {
+	      fprintf (stderr, "mpz_divisible_p failed:\n");
+	      dump ("a", a);
+	      dump ("b", b);
+	      dump ("r   ", r);
+	      abort ();
+	    }
+
 	  if (mpz_fits_ulong_p (b))
 	    {
 	      mp_limb_t rl;
@@ -180,6 +192,16 @@ main (int argc, char **argv)
 		  dump ("b", b);
 		  fprintf(stderr, "rl   = %lx\n", rl);
 		  dump ("rref", rr);
+		  abort ();
+		}
+
+	      div_p = mpz_divisible_ui_p (a, mpz_get_ui (b));
+	      if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+		{
+		  fprintf (stderr, "mpz_divisible_ui_p failed:\n");
+		  dump ("a", a);
+		  dump ("b", b);
+		  dump ("r   ", r);
 		  abort ();
 		}
 	    }
