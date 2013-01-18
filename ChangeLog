@@ -1,6 +1,7 @@
 2013-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-signed.c: Slightly larger coverage.
+	* mini-gmp/tests/t-double.c: Test also mpz_init_set_d.
 
 2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
 

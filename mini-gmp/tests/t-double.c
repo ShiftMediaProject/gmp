@@ -63,12 +63,10 @@ main (int argc, char **argv)
 
   hex_random_init ();
 
-  mpz_init (x);
-
   for (i = 0; values[i].s; i++)
     {
       char *s;
-      mpz_set_d (x, values[i].d);
+      mpz_init_set_d (x, values[i].d);
       s = mpz_get_str (NULL, 16, x);
       if (strcmp (s, values[i].s) != 0)
 	{
@@ -80,7 +78,10 @@ main (int argc, char **argv)
 	  abort ();
 	}
       free(s);
+      mpz_clear (x);
     }
+
+  mpz_init (x);
 
   for (i = 0; i < COUNT; i++)
     {
