@@ -1,3 +1,7 @@
+2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mini-gmp/mini-gmp.c: Prefix some names with GMP_.
+
 2013-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-signed.c: Slightly larger coverage.
