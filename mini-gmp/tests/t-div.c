@@ -128,14 +128,45 @@ main (int argc, char **argv)
 	      abort ();
 	    }
 
-	  div_p = mpz_divisible_p (a, b);
-	  if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+	  if (j == 0)		/* do this once, not for all roundings */
 	    {
-	      fprintf (stderr, "mpz_divisible_p failed:\n");
-	      dump ("a", a);
-	      dump ("b", b);
-	      dump ("r   ", r);
-	      abort ();
+	      div_p = mpz_divisible_p (a, b);
+	      if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+		{
+		  fprintf (stderr, "mpz_divisible_p failed:\n");
+		  dump ("a", a);
+		  dump ("b", b);
+		  dump ("r   ", r);
+		  abort ();
+		}
+	    }
+
+	  if (j == 0 && mpz_sgn (b) < 0)  /* ceil, negative divisor */
+	    {
+	      mpz_mod (r, a, b);
+	      if (mpz_cmp (r, rr))
+		{
+		  fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		  dump ("a", a);
+		  dump ("b", b);
+		  dump ("r   ", r);
+		  dump ("rref", rr);
+		  abort ();
+		}
+	    }
+
+	  if (j == 1 && mpz_sgn (b) > 0) /* floor, positive divisor */
+	    {
+	      mpz_mod (r, a, b);
+	      if (mpz_cmp (r, rr))
+		{
+		  fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		  dump ("a", a);
+		  dump ("b", b);
+		  dump ("r   ", r);
+		  dump ("rref", rr);
+		  abort ();
+		}
 	    }
 
 	  if (mpz_fits_ulong_p (b))
@@ -195,14 +226,31 @@ main (int argc, char **argv)
 		  abort ();
 		}
 
-	      div_p = mpz_divisible_ui_p (a, mpz_get_ui (b));
-	      if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+	      if (j == 0)	/* do this once, not for all roundings */
 		{
-		  fprintf (stderr, "mpz_divisible_ui_p failed:\n");
-		  dump ("a", a);
-		  dump ("b", b);
-		  dump ("r   ", r);
-		  abort ();
+		  div_p = mpz_divisible_ui_p (a, mpz_get_ui (b));
+		  if ((mpz_sgn (r) == 0) ^ (div_p != 0))
+		    {
+		      fprintf (stderr, "mpz_divisible_ui_p failed:\n");
+		      dump ("a", a);
+		      dump ("b", b);
+		      dump ("r   ", r);
+		      abort ();
+		    }
+		}
+
+	      if (j == 1)	/* floor */
+		{
+		  mpz_mod_ui (r, a, mpz_get_ui (b));
+		  if (mpz_cmp (r, rr))
+		    {
+		      fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		      dump ("a", a);
+		      dump ("b", b);
+		      dump ("r   ", r);
+		      dump ("rref", rr);
+		      abort ();
+		    }
 		}
 	    }
 	}
