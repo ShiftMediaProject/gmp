@@ -1,3 +1,13 @@
+2013-01-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/testutils.h: New file, declarations for test
+	programs.
+
+	* mini-gmp/tests/testutils.c (main): New file, with shared main
+	function for all the test programs. Also includes mini-gmp.c.
+	Calls testmain after initialization. All other test programs
+	updated to define testmain rather than main.
+
 2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mini-gmp/tests/t-div.c: Test also mpz_mod, mpz_mod_ui.  Compare

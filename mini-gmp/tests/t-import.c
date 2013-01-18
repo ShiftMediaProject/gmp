@@ -21,7 +21,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <string.h>
 
-#include "mini-random.h"
+#include "testutils.h"
 
 #define MAX_WORDS 20
 #define MAX_WORD_SIZE 10
@@ -49,8 +49,8 @@ dump_bytes (const char *label, const unsigned char *s, size_t n)
 }
 
 /* Tests both mpz_import and mpz_export. */
-int
-main (int argc, char **argv)
+void
+testmain (int argc, char **argv)
 {
   unsigned char input[MAX_WORDS * MAX_WORD_SIZE];
   unsigned char output[MAX_WORDS * MAX_WORD_SIZE + 2];
@@ -58,8 +58,6 @@ main (int argc, char **argv)
   int endian, order;
 
   mpz_t a, res;
-
-  hex_random_init ();
 
   mpz_init (a);
   mpz_init (res);
@@ -106,6 +104,4 @@ main (int argc, char **argv)
 	  }
   mpz_clear (a);
   mpz_clear (res);
-
-  return 0;
 }

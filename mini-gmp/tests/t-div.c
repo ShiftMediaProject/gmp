@@ -21,7 +21,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "mini-random.h"
+#include "testutils.h"
 
 #define MAXBITS 400
 #define COUNT 10000
@@ -40,14 +40,12 @@ typedef void div_func (mpz_t, const mpz_t, const mpz_t);
 typedef unsigned long div_x_ui_func (mpz_t, const mpz_t, unsigned long);
 typedef unsigned long div_ui_func (const mpz_t, unsigned long);
 
-int
-main (int argc, char **argv)
+void
+testmain (int argc, char **argv)
 {
   unsigned i;
   mpz_t a, b, q, r, rq, rr;
   int div_p;
-
-  hex_random_init ();
 
   mpz_init (a);
   mpz_init (b);
@@ -261,6 +259,4 @@ main (int argc, char **argv)
   mpz_clear (q);
   mpz_clear (rr);
   mpz_clear (rq);
-
-  return 0;
 }

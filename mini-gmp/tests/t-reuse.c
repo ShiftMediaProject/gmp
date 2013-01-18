@@ -21,7 +21,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <string.h>
 
-#include "mini-random.h"
+#include "testutils.h"
 
 #define COUNT 100
 
@@ -142,8 +142,8 @@ const char *ds_func_names[] =
   failures++;								\
   } while (0)
 
-int
-main (int argc, char **argv)
+void
+testmain (int argc, char **argv)
 {
   int i;
   int pass, reps = COUNT;
@@ -157,8 +157,6 @@ main (int argc, char **argv)
   long failures = 0;
   mpz_t bs;
   unsigned long bsi, size_range;
-
-  hex_random_init ();
 
   mpz_init (bs);
 
@@ -624,8 +622,6 @@ main (int argc, char **argv)
   mpz_clear (res2);
   mpz_clear (res3);
   mpz_clear (t);
-
-  return 0;
 }
 
 void

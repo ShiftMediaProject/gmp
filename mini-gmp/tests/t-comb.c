@@ -20,7 +20,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mini-gmp.h"
+#include "testutils.h"
 
 /* Usage: t-fac_ui [x|num]
 
@@ -149,8 +149,8 @@ checkprimes (unsigned long p1, unsigned long p2, unsigned long p3)
 
 }
 
-int
-main (int argc, char *argv[])
+void
+testmain (int argc, char *argv[])
 {
   unsigned long  limit = 128;
 
@@ -162,6 +162,4 @@ main (int argc, char *argv[])
   checkprimes(1009, 733, 277);
   fac_smallexaustive (limit);
   bin_smallexaustive (limit);
-
-  return 0;
 }

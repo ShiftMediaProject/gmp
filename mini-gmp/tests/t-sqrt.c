@@ -21,7 +21,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "mini-random.h"
+#include "testutils.h"
 
 #define MAXBITS 400
 #define COUNT 10000
@@ -60,13 +60,11 @@ sqrtrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r)
   return 1;
 }
 
-int
-main (int argc, char **argv)
+void
+testmain (int argc, char **argv)
 {
   unsigned i;
   mpz_t u, s, r;
-
-  hex_random_init ();
 
   mpz_init (u);
   mpz_init (s);
@@ -89,6 +87,4 @@ main (int argc, char **argv)
   mpz_clear (u);
   mpz_clear (s);
   mpz_clear (r);
-
-  return 0;
 }

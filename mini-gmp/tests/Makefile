@@ -32,7 +32,7 @@ CHECK_PROGRAMS = t-add t-sub t-mul t-invert t-div t-div_2exp \
 	t-sqrt t-root t-powm t-logops t-bitops t-scan t-str \
 	t-reuse
 
-MISC_OBJS = hex-random.o mini-random.o mini-gmp.o
+MISC_OBJS = hex-random.o mini-random.o testutils.o
 
 all:
 
@@ -48,8 +48,7 @@ clean:
 %.o: %.c $(MINI_GMP_DIR)/mini-gmp.h hex-random.h mini-random.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-mini-gmp.o: $(MINI_GMP_DIR)/mini-gmp.c $(MINI_GMP_DIR)/mini-gmp.h
-	$(CC) $(CFLAGS) -c $(MINI_GMP_DIR)/mini-gmp.c -o mini-gmp.o
+testutils.o: $(MINI_GMP_DIR)/mini-gmp.c
 
 %: %.o $(MISC_OBJS)
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@

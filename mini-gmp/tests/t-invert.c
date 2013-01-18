@@ -21,7 +21,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "mini-random.h"
+#include "testutils.h"
 
 #define GMP_LIMB_BITS (sizeof(mp_limb_t) * CHAR_BIT)
 
@@ -35,13 +35,11 @@ dump (const char *label, const mpz_t x)
   free (buf);
 }
 
-int
-main (int argc, char **argv)
+void
+testmain (int argc, char **argv)
 {
   unsigned i;
   mpz_t u, m, p, t;
-
-  hex_random_init ();
 
   mpz_init (u);
   mpz_init (m);
@@ -105,6 +103,4 @@ main (int argc, char **argv)
   mpz_clear (m);
   mpz_clear (p);
   mpz_clear (t);
-
-  return 0;
 }

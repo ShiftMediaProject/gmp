@@ -20,7 +20,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mini-gmp.h"
+#include "testutils.h"
 
 int
 check_si (mpz_t sz, mpz_t oz, long si, long oi, int c)
@@ -134,11 +134,9 @@ try_op_si (int c)
   mpz_clear (oz);
 }
 
-int
-main (int argc, char *argv[])
+void
+testmain (int argc, char *argv[])
 {
   try_op_si (-1);
   try_op_si (1);
-
-  return 0;
 }
