@@ -427,14 +427,15 @@ istringstream : public std::istrstream {
       repfactor = strtod (envval, &end);				\
       if (*end || repfactor <= 0)					\
 	{								\
-	  fprintf (stderr, "Invalid repfactor: %ld.\n", repfactor);	\
+	  fprintf (stderr, "Invalid repfactor: %f.\n", repfactor);	\
 	  exit (1);							\
 	}								\
       count *= repfactor;						\
       reps_nondefault = 1;						\
     }									\
   if (reps_nondefault)							\
-    printf ("Running test with %ld repetitions (include this in bug reports)\n", count);		\
+    printf ("Running test with %ld repetitions (include this in bug reports)\n",\
+	    (long) count);						\
   } while (0)
 
 
