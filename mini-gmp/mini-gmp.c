@@ -55,7 +55,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_ULONG_HIGHBIT ((unsigned long) 1 << (GMP_ULONG_BITS - 1))
 
 #define GMP_ABS(x) ((x) >= 0 ? (x) : -(x))
-#define NEG_CAST(T,x) (-((T)((x) + 1) - 1))
+#define GMP_NEG_CAST(T,x) (-((T)((x) + 1) - 1))
 
 #define GMP_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define GMP_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -1348,7 +1348,7 @@ mpz_set_si (mpz_t r, signed long int x)
   else /* (x < 0) */
     {
       r->_mp_size = -1;
-      r->_mp_d[0] = NEG_CAST (unsigned long int, x);
+      r->_mp_d[0] = GMP_NEG_CAST (unsigned long int, x);
     }
 }
 
@@ -1633,9 +1633,9 @@ mpz_cmp_si (const mpz_t u, long v)
   else /* usize == -1 */
     {
       mp_limb_t ul = u->_mp_d[0];
-      if ((mp_limb_t)NEG_CAST (unsigned long int, v) < ul)
+      if ((mp_limb_t)GMP_NEG_CAST (unsigned long int, v) < ul)
 	return -1;
-      else if ( (mp_limb_t)NEG_CAST (unsigned long int, v) > ul)
+      else if ( (mp_limb_t)GMP_NEG_CAST (unsigned long int, v) > ul)
 	return 1;
     }
   return 0;
@@ -1889,7 +1889,7 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 {
   if (v < 0)
     {
-      mpz_mul_ui (r, u, NEG_CAST (unsigned long int, v));
+      mpz_mul_ui (r, u, GMP_NEG_CAST (unsigned long int, v));
       mpz_neg (r, r);
     }
   else
@@ -1998,7 +1998,7 @@ mpz_mul_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bits)
 
 
 /* MPZ division */
-enum mpz_div_round_mode { DIV_FLOOR, DIV_CEIL, DIV_TRUNC };
+enum mpz_div_round_mode { GMP_DIV_FLOOR, GMP_DIV_CEIL, GMP_DIV_TRUNC };
 
 /* Allows q or r to be zero. Returns 1 iff remainder is non-zero. */
 static int
@@ -2028,7 +2028,7 @@ mpz_div_qr (mpz_t q, mpz_t r,
 
   if (nn < dn)
     {
-      if (mode == DIV_CEIL && qs >= 0)
+      if (mode == GMP_DIV_CEIL && qs >= 0)
 	{
 	  /* q = 1, r = n - d */
 	  if (r)
@@ -2036,7 +2036,7 @@ mpz_div_qr (mpz_t q, mpz_t r,
 	  if (q)
 	    mpz_set_ui (q, 1);
 	}
-      else if (mode == DIV_FLOOR && qs < 0)
+      else if (mode == GMP_DIV_FLOOR && qs < 0)
 	{
 	  /* q = -1, r = n + d */
 	  if (r)
@@ -2085,14 +2085,14 @@ mpz_div_qr (mpz_t q, mpz_t r,
       rn = mpn_normalized_size (np, dn);
       tr->_mp_size = ns < 0 ? - rn : rn;
 
-      if (mode == DIV_FLOOR && qs < 0 && rn != 0)
+      if (mode == GMP_DIV_FLOOR && qs < 0 && rn != 0)
 	{
 	  if (q)
 	    mpz_sub_ui (tq, tq, 1);
 	  if (r)
 	    mpz_add (tr, tr, d);
 	}
-      else if (mode == DIV_CEIL && qs >= 0 && rn != 0)
+      else if (mode == GMP_DIV_CEIL && qs >= 0 && rn != 0)
 	{
 	  if (q)
 	    mpz_add_ui (tq, tq, 1);
@@ -2117,64 +2117,64 @@ mpz_div_qr (mpz_t q, mpz_t r,
 void
 mpz_cdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, r, n, d, DIV_CEIL);
+  mpz_div_qr (q, r, n, d, GMP_DIV_CEIL);
 }
 
 void
 mpz_fdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, r, n, d, DIV_FLOOR);
+  mpz_div_qr (q, r, n, d, GMP_DIV_FLOOR);
 }
 
 void
 mpz_tdiv_qr (mpz_t q, mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, r, n, d, DIV_TRUNC);
+  mpz_div_qr (q, r, n, d, GMP_DIV_TRUNC);
 }
 
 void
 mpz_cdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, NULL, n, d, DIV_CEIL);
+  mpz_div_qr (q, NULL, n, d, GMP_DIV_CEIL);
 }
 
 void
 mpz_fdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, NULL, n, d, DIV_FLOOR);
+  mpz_div_qr (q, NULL, n, d, GMP_DIV_FLOOR);
 }
 
 void
 mpz_tdiv_q (mpz_t q, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (q, NULL, n, d, DIV_TRUNC);
+  mpz_div_qr (q, NULL, n, d, GMP_DIV_TRUNC);
 }
 
 void
 mpz_cdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (NULL, r, n, d, DIV_CEIL);
+  mpz_div_qr (NULL, r, n, d, GMP_DIV_CEIL);
 }
 
 void
 mpz_fdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (NULL, r, n, d, DIV_FLOOR);
+  mpz_div_qr (NULL, r, n, d, GMP_DIV_FLOOR);
 }
 
 void
 mpz_tdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 {
-  mpz_div_qr (NULL, r, n, d, DIV_TRUNC);
+  mpz_div_qr (NULL, r, n, d, GMP_DIV_TRUNC);
 }
 
 void
 mpz_mod (mpz_t r, const mpz_t n, const mpz_t d)
 {
   if (d->_mp_size >= 0)
-    mpz_div_qr (NULL, r, n, d, DIV_FLOOR);
+    mpz_div_qr (NULL, r, n, d, GMP_DIV_FLOOR);
   else
-    mpz_div_qr (NULL, r, n, d, DIV_CEIL);
+    mpz_div_qr (NULL, r, n, d, GMP_DIV_CEIL);
 }
 
 static void
@@ -2196,7 +2196,7 @@ mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bit_index,
   qn = GMP_ABS (un) - limb_cnt;
   bit_index %= GMP_LIMB_BITS;
 
-  if (mode == ((un > 0) ? DIV_CEIL : DIV_FLOOR)) /* un != 0 here. */
+  if (mode == ((un > 0) ? GMP_DIV_CEIL : GMP_DIV_FLOOR)) /* un != 0 here. */
     /* Note: Below, the final indexing at limb_cnt is valid because at
        that point we have qn > 0. */
     adjust = (qn <= 0
@@ -2257,7 +2257,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
     {
       /* Quotient (with truncation) is zero, and remainder is
 	 non-zero */
-      if (mode == ((us > 0) ? DIV_CEIL : DIV_FLOOR)) /* us != 0 here. */
+      if (mode == ((us > 0) ? GMP_DIV_CEIL : GMP_DIV_FLOOR)) /* us != 0 here. */
 	{
 	  /* Have to negate and sign extend. */
 	  mp_size_t i;
@@ -2292,7 +2292,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 
       rp[rn-1] = u->_mp_d[rn-1] & mask;
 
-      if (mode == ((us > 0) ? DIV_CEIL : DIV_FLOOR)) /* us != 0 here. */
+      if (mode == ((us > 0) ? GMP_DIV_CEIL : GMP_DIV_FLOOR)) /* us != 0 here. */
 	{
 	  /* If r != 0, compute 2^{bit_count} - r. */
 	  mp_size_t i;
@@ -2321,49 +2321,49 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 void
 mpz_cdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_q_2exp (r, u, cnt, DIV_CEIL);
+  mpz_div_q_2exp (r, u, cnt, GMP_DIV_CEIL);
 }
 
 void
 mpz_fdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_q_2exp (r, u, cnt, DIV_FLOOR);
+  mpz_div_q_2exp (r, u, cnt, GMP_DIV_FLOOR);
 }
 
 void
 mpz_tdiv_q_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_q_2exp (r, u, cnt, DIV_TRUNC);
+  mpz_div_q_2exp (r, u, cnt, GMP_DIV_TRUNC);
 }
 
 void
 mpz_cdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_r_2exp (r, u, cnt, DIV_CEIL);
+  mpz_div_r_2exp (r, u, cnt, GMP_DIV_CEIL);
 }
 
 void
 mpz_fdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_r_2exp (r, u, cnt, DIV_FLOOR);
+  mpz_div_r_2exp (r, u, cnt, GMP_DIV_FLOOR);
 }
 
 void
 mpz_tdiv_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t cnt)
 {
-  mpz_div_r_2exp (r, u, cnt, DIV_TRUNC);
+  mpz_div_r_2exp (r, u, cnt, GMP_DIV_TRUNC);
 }
 
 void
 mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)
 {
-  gmp_assert_nocarry (mpz_div_qr (q, NULL, n, d, DIV_TRUNC));
+  gmp_assert_nocarry (mpz_div_qr (q, NULL, n, d, GMP_DIV_TRUNC));
 }
 
 int
 mpz_divisible_p (const mpz_t n, const mpz_t d)
 {
-  return mpz_div_qr (NULL, NULL, n, d, DIV_TRUNC) == 0;
+  return mpz_div_qr (NULL, NULL, n, d, GMP_DIV_TRUNC) == 0;
 }
 
 static unsigned long
@@ -2397,8 +2397,8 @@ mpz_div_qr_ui (mpz_t q, mpz_t r,
   rs = rl > 0;
   rs = (ns < 0) ? -rs : rs;
 
-  if (rl > 0 && ( (mode == DIV_FLOOR && ns < 0)
-		  || (mode == DIV_CEIL && ns >= 0)))
+  if (rl > 0 && ( (mode == GMP_DIV_FLOOR && ns < 0)
+		  || (mode == GMP_DIV_CEIL && ns >= 0)))
     {
       if (q)
 	gmp_assert_nocarry (mpn_add_1 (qp, qp, qn, 1));
@@ -2425,89 +2425,89 @@ mpz_div_qr_ui (mpz_t q, mpz_t r,
 unsigned long
 mpz_cdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, r, n, d, DIV_CEIL);
+  return mpz_div_qr_ui (q, r, n, d, GMP_DIV_CEIL);
 }
 
 unsigned long
 mpz_fdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, r, n, d, DIV_FLOOR);
+  return mpz_div_qr_ui (q, r, n, d, GMP_DIV_FLOOR);
 }
 
 unsigned long
 mpz_tdiv_qr_ui (mpz_t q, mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, r, n, d, DIV_TRUNC);
+  return mpz_div_qr_ui (q, r, n, d, GMP_DIV_TRUNC);
 }
 
 unsigned long
 mpz_cdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, NULL, n, d, DIV_CEIL);
+  return mpz_div_qr_ui (q, NULL, n, d, GMP_DIV_CEIL);
 }
 
 unsigned long
 mpz_fdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, NULL, n, d, DIV_FLOOR);
+  return mpz_div_qr_ui (q, NULL, n, d, GMP_DIV_FLOOR);
 }
 
 unsigned long
 mpz_tdiv_q_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (q, NULL, n, d, DIV_TRUNC);
+  return mpz_div_qr_ui (q, NULL, n, d, GMP_DIV_TRUNC);
 }
 
 unsigned long
 mpz_cdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, r, n, d, DIV_CEIL);
+  return mpz_div_qr_ui (NULL, r, n, d, GMP_DIV_CEIL);
 }
 unsigned long
 mpz_fdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, r, n, d, DIV_FLOOR);
+  return mpz_div_qr_ui (NULL, r, n, d, GMP_DIV_FLOOR);
 }
 unsigned long
 mpz_tdiv_r_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, r, n, d, DIV_TRUNC);
+  return mpz_div_qr_ui (NULL, r, n, d, GMP_DIV_TRUNC);
 }
 
 unsigned long
 mpz_cdiv_ui (const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, NULL, n, d, DIV_CEIL);
+  return mpz_div_qr_ui (NULL, NULL, n, d, GMP_DIV_CEIL);
 }
 
 unsigned long
 mpz_fdiv_ui (const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, NULL, n, d, DIV_FLOOR);
+  return mpz_div_qr_ui (NULL, NULL, n, d, GMP_DIV_FLOOR);
 }
 
 unsigned long
 mpz_tdiv_ui (const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, NULL, n, d, DIV_TRUNC);
+  return mpz_div_qr_ui (NULL, NULL, n, d, GMP_DIV_TRUNC);
 }
 
 unsigned long
 mpz_mod_ui (mpz_t r, const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, r, n, d, DIV_FLOOR);
+  return mpz_div_qr_ui (NULL, r, n, d, GMP_DIV_FLOOR);
 }
 
 void
 mpz_divexact_ui (mpz_t q, const mpz_t n, unsigned long d)
 {
-  gmp_assert_nocarry (mpz_div_qr_ui (q, NULL, n, d, DIV_TRUNC));
+  gmp_assert_nocarry (mpz_div_qr_ui (q, NULL, n, d, GMP_DIV_TRUNC));
 }
 
 int
 mpz_divisible_ui_p (const mpz_t n, unsigned long d)
 {
-  return mpz_div_qr_ui (NULL, NULL, n, d, DIV_TRUNC) == 0;
+  return mpz_div_qr_ui (NULL, NULL, n, d, GMP_DIV_TRUNC) == 0;
 }
 
 
