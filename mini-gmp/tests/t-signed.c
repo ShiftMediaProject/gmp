@@ -22,11 +22,21 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "mini-gmp.h"
 
-void
-check_si (mpz_t sz, mpz_t oz, long si, int c)
+int
+check_si (mpz_t sz, mpz_t oz, long si, long oi, int c)
 {
   mpz_t t;
   int fail;
+
+  if (mpz_cmp_si (sz, oi) != c)
+    {
+      printf ("mpz_cmp_si (sz, %ld) != %i.\n", oi, c);
+      printf (" sz="); mpz_out_str (stdout, 10, sz); printf ("\n");
+      abort ();
+    }
+
+  if ((si < oi ? -1 : si > oi) != c)
+    return 1;
 
   mpz_init_set_si (t, si);
 
@@ -54,6 +64,8 @@ check_si (mpz_t sz, mpz_t oz, long si, int c)
       printf (" si=%ld\n", si);
       abort ();
     }
+
+  return 0;
 }
 
 void
@@ -72,20 +84,11 @@ try_op_si (int c)
     si *= 2; /* c * 2^k */
     mpz_mul_2exp (sz, sz, 1);
 
-    if (mpz_cmp_si (sz, oi) != c)
-      {
-	printf ("mpz_cmp_si (sz, %ld) != %i.\n", oi, c);
-	printf (" sz="); mpz_out_str (stdout, 10, sz); printf ("\n");
-	abort ();
-      }
-
-    if ((si < oi ? -1 : si > oi) != c)
+    if (check_si (sz, oz, si, oi, c))
       {
 	mpz_set (oz, sz);
 	break;
       }
-
-    check_si (sz, oz, si, c);
 
     oi = si + c; /* c * (2^k + 1) */
     if (c == -1)
@@ -93,17 +96,8 @@ try_op_si (int c)
     else
       mpz_add_ui (oz, sz, 1);
 
-    if (mpz_cmp_si (oz, si) != c)
-      {
-	printf ("mpz_cmp_si (oz, %ld) != %i.\n", si, c);
-	printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
-	abort ();
-      }
-
-    if ((oi < si ? -1 : oi > si) != c)
+    if (check_si (oz, sz, oi, si, c))
       break;
-
-    check_si (oz, sz, oi, c);
 
     oi = (si - c) * 2 + c; /* c * (2^K - 1) */
     mpz_mul_si (oz, sz, 2*c); 
@@ -111,19 +105,7 @@ try_op_si (int c)
       mpz_ui_sub (oz, 1, oz); /* oz = sz * 2 + 1 */
     else
       mpz_sub_ui (oz, oz, 1); /* oz = sz * 2 - 1 */
-
-    if (mpz_cmp_si (oz, si) != c)
-      {
-	printf ("mpz_cmp_si (oz, %ld) != %i.\n", si, c);
-	printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
-	abort ();
-      }
-
-    if ((oi < si ? -1 : oi > si) != c)
-      break;
-
-    check_si (oz, sz, oi, c);
-  } while (1);
+  } while (check_si (oz, sz, oi, si, c) == 0);
 
   mpz_clear (sz);
 
@@ -133,6 +115,21 @@ try_op_si (int c)
       printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
       abort ();
     }
+
+  if (mpz_cmp_si (oz, -c) != c)
+      {
+	printf ("mpz_cmp_si (oz, %i) != %i.\n", c, c);
+	printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
+	abort ();
+      }
+
+  mpz_mul_2exp (oz, oz, 1);
+  if (mpz_cmp_si (oz, -c) != c)
+      {
+	printf ("mpz_cmp_si (oz, %i) != %i.\n", c, c);
+	printf (" oz="); mpz_out_str (stdout, 10, oz); printf ("\n");
+	abort ();
+      }
 
   mpz_clear (oz);
 }
