@@ -5,6 +5,9 @@
 
 2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/set_str.c (normalization_steps): Eliminate set-but-unused
+	variable.
+
 	* mini-gmp/tests/t-div.c: Test mpz_divisible_p and mpz_divisible_ui_p.
 
 	* tests/tests.h (TESTS_REPS): Fix printf argument type clashes.
