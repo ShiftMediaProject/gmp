@@ -100,6 +100,11 @@ gcdext_valid_p (const mpz_t a, const mpz_t b,
       if (mpz_cmpabs (r, ta) > 0)
 	return 0;
     }
+
+  mpz_clear (ta);
+  mpz_clear (tb);
+  mpz_clear (r);
+
   return 1;
 }
 

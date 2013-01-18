@@ -1,5 +1,17 @@
 2013-01-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-gcd.c (gcdext_valid_p): Fixed memory leak.
+
+	* mini-gmp/tests/t-double.c (testmain): Call tu_free rather than
+	free, for storage allocated by mpz_get_str.
+	* mini-gmp/tests/t-str.c (testmain): Likewise.
+
+	* mini-gmp/tests/testutils.c (block_init, block_check): New
+	functions.
+	(tu_alloc, tu_realloc, tu_free): New functions.
+	(main): Use mp_set_memory_functions.
+	* mini-gmp/tests/testutils.h (tu_free): Declare.
+
 	* mini-gmp/tests/testutils.h: New file, declarations for test
 	programs.
 

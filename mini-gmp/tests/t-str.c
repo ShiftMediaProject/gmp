@@ -170,7 +170,7 @@ testmain (int argc, char **argv)
 		}
 	    }
 	  free (ap);
-	  free (bp);
+	  tu_free (bp, 0);
 	}
     }
   mpz_clear (a);

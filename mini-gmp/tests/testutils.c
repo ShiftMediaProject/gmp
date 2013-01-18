@@ -23,13 +23,99 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
    works. */
 #include "../mini-gmp.c"
 
+static size_t total_alloc = 0; 
+
+/* Custom memory allocation to track memory usage, and add a small red
+   zone.
+
+   About alignment: In general, getting a block from malloc, and
+   incrementing it by sizeof(size_t), like we do here, might give a
+   pointer which is not properlt unaligned for all types. But the
+   largest type we allocate space for is unsigned long (mp_limb_t),
+   which shouldn't have stricter alignment requirements than
+   size_t. */
+
+static char block_end[8] =
+  { 0x7c, 0x37, 0xd6, 0x12, 0xa8, 0x6c, 0x01, 0xd1 };
+
+static void *
+block_init (size_t *block, size_t size)
+{
+  char *p;
+  *block++ = size;
+
+  p = (char *) block;
+  memcpy (p + size, block_end, sizeof(block_end));
+
+  total_alloc += size;
+  return p;
+}
+
+/* Check small redzone, return pointer to malloced block. */
+size_t *
+block_check  (char *p)
+{
+  size_t *block = (size_t *) p - 1;
+  size_t size = block[0];
+
+  if (memcmp (p + size, block_end, sizeof(block_end)) != 0)
+    {
+      fprintf (stderr, "red zone overwritten.\n");
+      abort ();
+    }
+  total_alloc -= size;
+  return block;
+}
+
+static void *
+tu_alloc (size_t size)
+{
+  size_t *block = malloc (sizeof(size_t) + size + sizeof(block_end));
+  if (!block)
+    {
+      fprintf (stderr, "Virtual memory exhausted.\n");
+      abort ();
+    }
+
+  return block_init (block, size);
+}
+
+static void *
+tu_realloc (void *p, size_t old_size, size_t new_size)
+{
+  size_t *block = block_check (p);
+  block = realloc (block, sizeof(size_t) + new_size + sizeof(block_end));
+  if (!block)
+    {
+      fprintf (stderr, "Virtual memory exhausted.\n");
+      abort ();
+    }
+
+  return block_init (block, new_size);
+}
+
+void
+tu_free (void *p, size_t old_size)
+{
+  free (block_check (p));
+}
+
 int
 main (int argc, char **argv)
 {
   hex_random_init ();
+
+  mp_set_memory_functions (tu_alloc, tu_realloc, tu_free);
+
   /* Currently, t-comb seems to be the only program accepting any
      arguments. It might make sense to parse common arguments here. */
   testmain (argc, argv);
 
+  if (total_alloc != 0)
+    {
+      fprintf (stderr, "Memory leaked: %lu bytes.\n",
+	       (unsigned long) total_alloc);
+      abort ();
+    }
   return 0;
 }

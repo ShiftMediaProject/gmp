@@ -75,7 +75,7 @@ testmain (int argc, char **argv)
 		   values[i].d, s, values[i].s);
 	  abort ();
 	}
-      free(s);
+      tu_free(s, 0);
       mpz_clear (x);
     }
 
