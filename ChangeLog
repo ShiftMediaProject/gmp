@@ -1,3 +1,7 @@
+2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/tests.h (TESTS_REPS): Fix printf argument type clashes.
+
 2013-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-double.c: Test mpz_cmp_d.
