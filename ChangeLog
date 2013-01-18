@@ -1,5 +1,8 @@
 2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mini-gmp/tests/t-div.c: Test also mpz_mod, mpz_mod_ui.  Compare
+	mpz_divisible_p just to ceil, to save time.
+
 	* mini-gmp/mini-gmp.c: Prefix some names with GMP_.
 
 2013-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
