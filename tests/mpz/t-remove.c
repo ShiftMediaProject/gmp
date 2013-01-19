@@ -54,13 +54,16 @@ main (int argc, char **argv)
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 17 + 2; /* 0..524288 bit operands */
 
-      do
-	{
-	  mpz_urandomb (bs, rands, size_range);
-	  divisor_size = mpz_get_ui (bs);
-	  mpz_rrandomb (divisor, rands, divisor_size);
-	}
-      while (mpz_cmp_ui (divisor, 1) <= 0);
+      if (i == 0)
+	mpz_set_ui (divisor, 1);
+      else
+	do
+	  {
+	    mpz_urandomb (bs, rands, size_range);
+	    divisor_size = mpz_get_ui (bs);
+	    mpz_rrandomb (divisor, rands, divisor_size);
+	  }
+	while (mpz_cmp_ui (divisor, 1) <= 0);
 
       mpz_urandomb (bs, rands, size_range);
       dividend_size = mpz_get_ui (bs) + divisor_size;
@@ -99,22 +102,29 @@ unsigned long int
 mpz_refremove (mpz_t dest, const mpz_t src, const mpz_t f)
 {
   unsigned long int pwr;
-  mpz_t rem, x;
 
-  mpz_init (rem);
-  mpz_init (x);
+  pwr = 0;
 
   mpz_set (dest, src);
-  for (pwr = 0;; pwr++)
+  if (mpz_cmpabs_ui (f, 1) > 0)
     {
-      mpz_tdiv_qr (x, rem, dest, f);
-      if (mpz_cmp_ui (rem, 0) != 0)
-	break;
-      mpz_set (dest, x);
+      mpz_t rem, x;
+
+      mpz_init (x);
+      mpz_init (rem);
+
+      for (;; pwr++)
+	{
+	  mpz_tdiv_qr (x, rem, dest, f);
+	  if (mpz_cmp_ui (rem, 0) != 0)
+	    break;
+	  mpz_swap (dest, x);
+	}
+
+      mpz_clear (x);
+      mpz_clear (rem);
     }
 
-  mpz_clear (x);
-  mpz_clear (rem);
   return pwr;
 }
 
