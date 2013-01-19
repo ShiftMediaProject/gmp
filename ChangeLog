@@ -6,6 +6,8 @@
 
 	* mini-gmp/tests/testutils.h (tu_free): Remove declaration.
 
+	* mini-gmp/tests/testutils.c (block_check, tu_free): Mark static.
+
 2013-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (test_small): New function, exercising
