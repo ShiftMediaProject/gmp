@@ -10,6 +10,8 @@
 
 	* tests/mpz/t-set_str.c: Check also failing conditions.
 
+	* tests/mpz/t-remove.c: Test removal of 1.
+
 2013-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (test_small): New function, exercising
