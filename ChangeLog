@@ -1,3 +1,7 @@
+2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/memory.c (PTRLIMB): New macro, used for conformant casting.
+
 2013-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-double.c (testmain): Get the current free
