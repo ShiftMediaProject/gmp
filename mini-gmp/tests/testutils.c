@@ -30,7 +30,7 @@ static size_t total_alloc = 0;
 
    About alignment: In general, getting a block from malloc, and
    incrementing it by sizeof(size_t), like we do here, might give a
-   pointer which is not properlt unaligned for all types. But the
+   pointer which is not properly aligned for all types. But the
    largest type we allocate space for is unsigned long (mp_limb_t),
    which shouldn't have stricter alignment requirements than
    size_t. */
