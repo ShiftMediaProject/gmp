@@ -52,7 +52,7 @@ block_init (size_t *block, size_t size)
 }
 
 /* Check small redzone, return pointer to malloced block. */
-size_t *
+static size_t *
 block_check  (char *p)
 {
   size_t *block = (size_t *) p - 1;
@@ -94,7 +94,7 @@ tu_realloc (void *p, size_t old_size, size_t new_size)
   return block_init (block, new_size);
 }
 
-void
+static void
 tu_free (void *p, size_t old_size)
 {
   free (block_check (p));
