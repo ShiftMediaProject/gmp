@@ -61,6 +61,9 @@ testmain (int argc, char **argv)
   unsigned i;
   mpz_t x;
 
+  void (*freefunc) (void *, size_t);
+  mp_get_memory_functions (NULL, NULL, &freefunc);
+
   for (i = 0; values[i].s; i++)
     {
       char *s;
@@ -75,7 +78,7 @@ testmain (int argc, char **argv)
 		   values[i].d, s, values[i].s);
 	  abort ();
 	}
-      tu_free(s, 0);
+      freefunc(s, 0);
       mpz_clear (x);
     }
 
