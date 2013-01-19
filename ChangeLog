@@ -24,13 +24,6 @@
 	Calls testmain after initialization. All other test programs
 	updated to define testmain rather than main.
 
-2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
-
-	* mini-gmp/tests/t-div.c: Test also mpz_mod, mpz_mod_ui.  Compare
-	mpz_divisible_p just to ceil, to save time.
-
-	* mini-gmp/mini-gmp.c: Prefix some names with GMP_.
-
 2013-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-signed.c: Slightly larger coverage.
@@ -44,6 +37,11 @@
 	* mini-gmp/tests/t-div.c: Test mpz_divisible_p and mpz_divisible_ui_p.
 
 	* tests/tests.h (TESTS_REPS): Fix printf argument type clashes.
+
+	* mini-gmp/tests/t-div.c: Test also mpz_mod, mpz_mod_ui.  Compare
+	mpz_divisible_p just to ceil, to save time.
+
+	* mini-gmp/mini-gmp.c: Prefix some names with GMP_.
 
 2013-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
