@@ -1,6 +1,6 @@
 /* Memory allocation used during tests.
 
-Copyright 2001, 2002, 2007 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2007, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -30,6 +30,12 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #else
 #define PATTERN1 CNST_LIMB(0xcafebabe)
 #define PATTERN2 CNST_LIMB(0xdeadbeef)
+#endif
+
+#if HAVE_INTPTR_T
+#define PTRLIMB(p)  ((mp_limb_t) (intptr_t) p)
+#else
+#define PTRLIMB(p)  ((mp_limb_t) (size_t) p)
 #endif
 
 /* Each block allocated is a separate malloc, for the benefit of a redzoning
@@ -92,8 +98,8 @@ tests_allocate (size_t size)
   ptr = (void *) ((gmp_intptr_t) rptr + sizeof (mp_limb_t));
 
   *((mp_limb_t *) ((gmp_intptr_t) ptr - sizeof (mp_limb_t)))
-    = PATTERN1 - ((mp_limb_t) ptr);
-  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+    = PATTERN1 - PTRLIMB (ptr);
+  PATTERN2_var = PATTERN2 - PTRLIMB (ptr);
   memcpy ((void *) ((gmp_intptr_t) ptr + size), &PATTERN2_var, sizeof (mp_limb_t));
 
   h->size = size;
@@ -132,12 +138,12 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
     }
 
   if (*((mp_limb_t *) ((gmp_intptr_t) ptr - sizeof (mp_limb_t)))
-      != PATTERN1 - ((mp_limb_t) ptr))
+      != PATTERN1 - PTRLIMB (ptr))
     {
       fprintf (stderr, "in realloc: redzone clobbered before block\n");
       abort ();
     }
-  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  PATTERN2_var = PATTERN2 - PTRLIMB (ptr);
   if (memcmp ((void *) ((gmp_intptr_t) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
     {
       fprintf (stderr, "in realloc: redzone clobbered after block\n");
@@ -150,8 +156,8 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
   ptr = (void *) ((gmp_intptr_t) rptr + sizeof (mp_limb_t));
 
   *((mp_limb_t *) ((gmp_intptr_t) ptr - sizeof (mp_limb_t)))
-    = PATTERN1 - ((mp_limb_t) ptr);
-  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+    = PATTERN1 - PTRLIMB (ptr);
+  PATTERN2_var = PATTERN2 - PTRLIMB (ptr);
   memcpy ((void *) ((gmp_intptr_t) ptr + new_size), &PATTERN2_var, sizeof (mp_limb_t));
 
   h->size = new_size;
@@ -182,12 +188,12 @@ tests_free_nosize (void *ptr)
   *hp = h->next;  /* unlink */
 
   if (*((mp_limb_t *) ((gmp_intptr_t) ptr - sizeof (mp_limb_t)))
-      != PATTERN1 - ((mp_limb_t) ptr))
+      != PATTERN1 - PTRLIMB (ptr))
     {
       fprintf (stderr, "in free: redzone clobbered before block\n");
       abort ();
     }
-  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  PATTERN2_var = PATTERN2 - PTRLIMB (ptr);
   if (memcmp ((void *) ((gmp_intptr_t) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
     {
       fprintf (stderr, "in free: redzone clobbered after block\n");
