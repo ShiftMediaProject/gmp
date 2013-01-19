@@ -1,7 +1,7 @@
 /* Test mpz_remove.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2009, 2012 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2009, 2012, 2013
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
