@@ -1,3 +1,9 @@
+2013-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/tests/t-double.c (testmain): Get the current free
+	function using mp_get_memory_functions.
+	* mini-gmp/tests/t-str.c (testmain): Likewise.
+
 2013-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (test_small): New function, exercising
