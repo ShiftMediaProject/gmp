@@ -1,4 +1,6 @@
-2013-01-20  TG  <tege@gmplib.org>
+2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-div.c: Test mpn_sb_div_qr_sec and mpn_sb_div_r_sec.
 
 	* tests/mpz/t-remove.c: Back out last change which left `divisor_size'
 	uninitialised; achieve change's aim with a parameter tweak.
