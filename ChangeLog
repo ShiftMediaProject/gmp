@@ -1,10 +1,14 @@
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Makefile.am (check-mini-gmp): Set also DYLD_LIBRARY_PATH for the
+	benefit of Darwin.
+
 	* tests/mpn/t-div.c: Test mpn_sb_div_qr_sec and mpn_sb_div_r_sec.
 	(main): Separate divisor into normalised (dnp) and unnormalised (dup),
 	pass appropriate variant to each function.
 	(main): Make negative `test' index value mean divisor bits, for better
 	small operands coverage.
+	(main): Put random junk at qp[] instead of zeroing.
 
 	* tests/mpz/t-remove.c: Back out last change which left `divisor_size'
 	uninitialised; achieve change's aim with a parameter tweak.
