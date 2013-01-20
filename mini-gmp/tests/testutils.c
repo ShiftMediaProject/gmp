@@ -119,3 +119,25 @@ main (int argc, char **argv)
     }
   return 0;
 }
+
+void
+testhalves (int count, void (*tested_fun) (int))
+{
+  void (*freefunc) (void *, size_t);
+  void *(*reallocfunc) (void *, size_t, size_t);
+  void *(*allocfunc) (size_t);
+  size_t initial_alloc;
+
+  mp_get_memory_functions (&allocfunc, &reallocfunc, &freefunc);
+  initial_alloc = total_alloc; 
+  (*tested_fun) (count / 2);
+  if (initial_alloc != total_alloc)
+    {
+      fprintf (stderr, "First half, memory leaked: %lu bytes.\n",
+	       (unsigned long) total_alloc - initial_alloc);
+      abort ();
+    }
+  mp_set_memory_functions (NULL, NULL, NULL);
+  (*tested_fun) (count / 2);
+  mp_set_memory_functions (allocfunc, reallocfunc, freefunc);
+}

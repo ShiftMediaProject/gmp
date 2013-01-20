@@ -20,3 +20,5 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include "mini-random.h"
 
 void testmain (int argc, char **argv);
+
+void testhalves (int count, void (*tested_fun) (int));

@@ -35,7 +35,7 @@ dump (const char *label, const mpz_t x)
 }
 
 void
-testmain (int argc, char **argv)
+testlogops (int count)
 {
   unsigned i;
   mpz_t a, b, res, ref;
@@ -46,7 +46,7 @@ testmain (int argc, char **argv)
   mpz_init (res);
   mpz_init (ref);
 
-  for (i = 0; i < COUNT; i++)
+  for (i = 0; i < count; i++)
     {
       mini_random_op3 (OP_AND, MAXBITS, a, b, ref);
       mpz_and (res, a, b);
@@ -110,4 +110,11 @@ testmain (int argc, char **argv)
   mpz_clear (b);
   mpz_clear (res);
   mpz_clear (ref);
+}
+
+void
+testmain (int argc, char **argv)
+{
+  testhalves (COUNT*2/3, testlogops);
+  testlogops (COUNT/3);
 }
