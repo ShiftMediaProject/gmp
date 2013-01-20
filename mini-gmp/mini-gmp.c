@@ -3946,6 +3946,13 @@ mpz_set_str (mpz_t r, const char *sp, int base)
   return 0;
 }
 
+int
+mpz_init_set_str (mpz_t r, const char *sp, int base)
+{
+  mpz_init (r);
+  return mpz_set_str (r, sp, base);
+}
+
 size_t
 mpz_out_str (FILE *stream, int base, const mpz_t x)
 {

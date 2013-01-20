@@ -89,12 +89,11 @@ test_small (void)
   };
   unsigned i;
   mpz_t a, b;
-  mpz_init (a);
   mpz_init (b);
 
   for (i = 0; data[i].input; i++)
     {
-      int res = mpz_set_str (a, data[i].input, 0);
+      int res = mpz_init_set_str (a, data[i].input, 0);
       if (data[i].decimal)
 	{
 	  if (res != 0)
@@ -125,9 +124,9 @@ test_small (void)
 		   res, data[i].input);
 	  abort ();
 	}
+      mpz_clear (a);
     }
 
-  mpz_clear (a);
   mpz_clear (b);
 }
 
