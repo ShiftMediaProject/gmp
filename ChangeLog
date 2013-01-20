@@ -1,7 +1,12 @@
+2013-01-20  TG  <tege@gmplib.org>
+
+	* tests/mpz/t-remove.c: Back out last change which left `divisor_size'
+	uninitialised; achieve change's aim with a parameter tweak.
+
 2013-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp/tests/testutils.c (testhalves): New function, test
-	default memory functions.	
+	* mini-gmp/tests/testutils.c (testhalves): New function, test default
+	memory functions.
 	* mini-gmp/tests/testutils.h (testhalves): Declare it
 	* mini-gmp/tests/t-logops.c: Use testhalves.
 
