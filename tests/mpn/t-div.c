@@ -1,4 +1,4 @@
-/* Copyright 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+/* Copyright 2006, 2007, 2009, 2010, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -305,6 +305,36 @@ main (int argc, char **argv)
 	      qp[nn - dn] = mpn_sbpi1_div_q (qp, rp, nn, dp, dn, dinv.inv32);
 	      check_one (qp, NULL, np, nn, dp, dn, "mpn_sbpi1_div_q", 0);
 	    }
+
+	  /* Test mpn_sb_div_qr_sec */
+	  itch = 3 * nn + 4;
+	  if (itch + 1 > alloc)
+	    {
+	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	      alloc = itch + 1;
+	    }
+	  scratch[itch] = ran;
+	  MPN_COPY (rp, np, nn);
+	  if (nn >= dn)
+	    MPN_ZERO (qp, nn - dn + 1);
+	  mpn_sb_div_qr_sec (qp, rp, nn, dp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  check_one (qp, rp, np, nn, dp, dn, "mpn_sb_div_qr_sec", 0);
+
+	  /* Test mpn_sb_div_r_sec */
+	  itch = nn + 2 * dn + 2;
+	  if (itch + 1 > alloc)
+	    {
+	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	      alloc = itch + 1;
+	    }
+	  scratch[itch] = ran;
+	  MPN_COPY (rp, np, nn);
+	  mpn_sb_div_r_sec (rp, nn, dp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  /* Note: Since check_one cannot cope with random-only functions, we
+	     pass qp[] from the previous function, mpn_sb_div_qr_sec.  */
+	  check_one (qp, rp, np, nn, dp, dn, "mpn_sb_div_r_sec", 0);
 	}
 
       /* Test mpn_dcpi1_div_qr */
