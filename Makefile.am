@@ -2,7 +2,7 @@
 
 
 # Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004,
-# 2006, 2007, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
+# 2006, 2007, 2008, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -407,6 +407,7 @@ check-mini-gmp:
 	$(MKDIR_P) mini-gmp/tests \
 	&& cd mini-gmp/tests \
 	&& LD_LIBRARY_PATH="../../.libs:$$LD_LIBRARY_PATH" \
+	&& DYLD_LIBRARY_PATH="../../.libs:$$DYLD_LIBRARY_PATH" \
 	   $(MAKE) -f "$$abs_srcdir/mini-gmp/tests/Makefile" \
 		VPATH="$$abs_srcdir/mini-gmp/tests" \
 		srcdir="$$abs_srcdir/mini-gmp/tests" \
