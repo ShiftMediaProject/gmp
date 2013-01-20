@@ -52,18 +52,15 @@ main (int argc, char **argv)
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 17 + 2; /* 0..524288 bit operands */
+      size_range = mpz_get_ui (bs) % 18 + 1; /* 1..524288 bit operands */
 
-      if (i == 0)
-	mpz_set_ui (divisor, 1);
-      else
-	do
-	  {
-	    mpz_urandomb (bs, rands, size_range);
-	    divisor_size = mpz_get_ui (bs);
-	    mpz_rrandomb (divisor, rands, divisor_size);
-	  }
-	while (mpz_cmp_ui (divisor, 1) <= 0);
+      do
+	{
+	  mpz_urandomb (bs, rands, size_range);
+	  divisor_size = mpz_get_ui (bs);
+	  mpz_rrandomb (divisor, rands, divisor_size);
+	}
+      while (mpz_sgn (divisor) == 0);
 
       mpz_urandomb (bs, rands, size_range);
       dividend_size = mpz_get_ui (bs) + divisor_size;
