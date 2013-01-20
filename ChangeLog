@@ -1,3 +1,10 @@
+2013-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/tests/testutils.c (testhalves): New function, test
+	default memory functions.	
+	* mini-gmp/tests/testutils.h (testhalves): Declare it
+	* mini-gmp/tests/t-logops.c: Use testhalves.
+
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/memory.c (PTRLIMB): New macro, used for conformant casting.
