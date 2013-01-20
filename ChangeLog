@@ -5,6 +5,10 @@
 	* mini-gmp/tests/testutils.h (testhalves): Declare it
 	* mini-gmp/tests/t-logops.c: Use testhalves.
 
+	* mini-gmp/mini-gmp.c (mpz_init_set_str): New function.
+	* mini-gmp/mini-gmp.h (mpz_init_set_str): Declare it.
+	* mini-gmp/tests/t-str.c: Test mpz_init_set_str.
+
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/memory.c (PTRLIMB): New macro, used for conformant casting.
