@@ -54,7 +54,7 @@ dumpy (mp_srcptr p, mp_size_t n)
   puts ("");
 }
 
-static unsigned long test;
+static signed long test;
 
 static void
 check_one (mp_ptr qp, mp_srcptr rp,
@@ -84,7 +84,7 @@ check_one (mp_ptr qp, mp_srcptr rp,
       tvalue = "Q*D";
     error:
       printf ("\r*******************************************************************************\n");
-      printf ("%s failed test %lu: %s\n", fname, test, msg);
+      printf ("%s failed test %ld: %s\n", fname, test, msg);
       printf ("N=    "); dumpy (np, nn);
       printf ("D=    "); dumpy (dp, dn);
       printf ("Q=    "); dumpy (qp, qn);
@@ -147,12 +147,11 @@ main (int argc, char **argv)
   mp_ptr np, dup, dnp, qp, rp;
   mp_limb_t t;
   gmp_pi1_t dinv;
-  int count = COUNT;
+  long count = COUNT;
   mp_ptr scratch;
   mp_limb_t ran;
   mp_size_t alloc, itch;
   mp_limb_t rran0, rran1, qran0, qran1;
-  mp_limb_t dh;
   TMP_DECL;
 
   if (argc > 1)
@@ -190,17 +189,14 @@ main (int argc, char **argv)
   alloc = 1;
   scratch = __GMP_ALLOCATE_FUNC_LIMBS (alloc);
 
-  for (test = 0; test < count;)
+  for (test = -300; test < count;)
     {
-      do
-	{
-	  nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
-	  if (maxdbits > nbits)
-	    dbits = random_word (rands) % nbits + 1;
-	  else
-	    dbits = random_word (rands) % maxdbits + 1;
-	}
-      while (nbits < dbits);
+      nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
+
+      if (test < 0)
+	dbits = (test + 300) % nbits + 1;
+      else
+	dbits = random_word (rands) % nbits % maxdbits + 1;
 
 #if RAND_UNIFORM
 #define RANDFUNC mpz_urandomb
@@ -214,7 +210,7 @@ main (int argc, char **argv)
       dn = SIZ (d);
       dup = PTR (d);
       MPN_COPY (dnp, dup, dn);
-     dnp[dn - 1] |= GMP_NUMB_HIGHBIT;
+      dnp[dn - 1] |= GMP_NUMB_HIGHBIT;
 
       if (test % 2 == 0)
 	{
