@@ -141,6 +141,8 @@ testmain (int argc, char **argv)
 
   mpz_t a, b;
 
+  FILE *tmp;
+
   void (*freefunc) (void *, size_t);
   mp_get_memory_functions (NULL, NULL, &freefunc);
 
@@ -148,6 +150,11 @@ testmain (int argc, char **argv)
 
   mpz_init (a);
   mpz_init (b);
+
+  tmp = tmpfile ();
+  if (!tmp)
+    fprintf (stderr,
+	     "Failed to create temporary file. Skipping mpz_out_str tests.\n");
 
   for (i = 0; i < COUNT; i++)
     {
@@ -183,6 +190,43 @@ testmain (int argc, char **argv)
 	      fprintf (stderr, "  base = %d\n", base);
 	      fprintf (stderr, "r = %s\n", rp);
 	      abort ();
+	    }
+
+	  /* Just a few tests with file i/o. */
+	  if (tmp && i < 20)
+	    {
+	      size_t tn;
+	      rewind (tmp);
+	      tn = mpz_out_str (tmp, i&1 ? base: -base, a);
+	      if (tn != rn)
+		{
+		  fprintf (stderr, "mpz_out_str, bad return value:\n");
+		  dump ("a", a);
+		  fprintf (stderr, "r = %s\n", rp);
+		  fprintf (stderr, "  base %d, correct size %u, got %u\n",
+			   base, (unsigned) rn, (unsigned)tn);
+		  abort ();
+		}
+	      rewind (tmp);
+	      memset (bp, 0, rn);
+	      tn = fread (bp, 1, rn, tmp);
+	      if (tn != rn)
+		{
+		  fprintf (stderr,
+			   "fread failed, expected %u bytes, got only %u.\n",
+			   rn, tn);
+		  abort ();
+		}
+
+	      if (memcmp (bp, rp, rn) != 0)
+		{
+		  fprintf (stderr, "mpz_out_str failed:\n");
+		  dump ("a", a);
+		  fprintf (stderr, "b = %s\n", bp);
+		  fprintf (stderr, "  base = %d\n", base);
+		  fprintf (stderr, "r = %s\n", rp);
+		  abort ();
+		}
 	    }
 
 	  mpz_set_str (b, rp, base);

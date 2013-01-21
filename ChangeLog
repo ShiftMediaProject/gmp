@@ -1,3 +1,8 @@
+2013-01-21  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/t-str.c (testmain): Test mpz_out_str, using
+	the tmpfile function for i/o.
+
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (check-mini-gmp): Set also DYLD_LIBRARY_PATH for the
