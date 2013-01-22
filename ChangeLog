@@ -1,3 +1,7 @@
+2013-01-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Makefile.am (check-mini-gmp): Fix typo in last change.
+
 2013-01-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpz_cmp_d): Simplified, just sort out
