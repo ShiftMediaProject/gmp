@@ -17,7 +17,12 @@ Public License for more details.
 You should have received a copy of the GNU General Public License along with
 the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "mini-random.h"
+
+#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
 void testmain (int argc, char **argv);
 

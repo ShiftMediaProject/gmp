@@ -28,7 +28,7 @@ LDFLAGS =
 LIBS = -lgmp -lm -lmcheck
 
 CHECK_PROGRAMS = t-add t-sub t-mul t-invert t-div t-div_2exp \
-	t-double t-gcd t-lcm t-import t-comb t-signed \
+	t-double t-cmp_d t-gcd t-lcm t-import t-comb t-signed \
 	t-sqrt t-root t-powm t-logops t-bitops t-scan t-str \
 	t-reuse
 

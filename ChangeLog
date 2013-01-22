@@ -1,5 +1,12 @@
 2013-01-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/testutils.h: Include stdio.h and stdlib.h.
+	(numberof): New define.
+
+	* mini-gmp/tests/t-cmp_d.c: New file, copied from
+	tests/mpz/t-cmp_d.c with minor changes.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-cmp_d,
+
 	* mini-gmp/mini-gmp.c (mpz_cmpabs_d): New function.
 	* mini-gmp/mini-gmp.h: Declare it.
 
