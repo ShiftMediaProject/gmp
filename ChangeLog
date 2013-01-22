@@ -1,5 +1,8 @@
 2013-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/reuse.c: Delete always zero 'failures' and code depending
+	on it.  Replace rotating progress with real measure.
+
 	* Makefile.am (check-mini-gmp): Fix typo in last change.
 
 2013-01-22  Niels Möller  <nisse@lysator.liu.se>
