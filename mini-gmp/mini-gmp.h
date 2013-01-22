@@ -108,6 +108,7 @@ int mpz_cmp (const mpz_t, const mpz_t);
 int mpz_cmpabs_ui (const mpz_t, unsigned long);
 int mpz_cmpabs (const mpz_t, const mpz_t);
 int mpz_cmp_d (const mpz_t, double);
+int mpz_cmpabs_d (const mpz_t, double);
 
 void mpz_abs (mpz_t, const mpz_t);
 void mpz_neg (mpz_t, const mpz_t);

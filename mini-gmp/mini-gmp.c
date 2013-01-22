@@ -1545,6 +1545,54 @@ mpz_get_d (const mpz_t u)
 }
 
 int
+mpz_cmpabs_d (const mpz_t x, double d)
+{
+  mp_size_t xn;
+  double B, Bi;
+  mp_size_t i;
+
+  xn = GMP_ABS (x->_mp_size);
+  d = GMP_ABS (d);
+
+  if (xn == 0)
+    return - (d > 0.0);
+  if (d < 1.0)
+    return 1;
+
+  B = 2.0 * (double) GMP_LIMB_HIGHBIT;
+  Bi = 1.0 / B;
+
+  /* Scale d so it can be compared with the top limb. */
+  for (i = 1; i < xn; i++)
+    {
+      d *= Bi;
+      if (d < 1.0)
+	return 1;
+    }
+  if (d >= B)
+    return -1;
+
+  /* Subtract x from d, one limb at a time. */
+  for (i = xn; i-- > 0;)
+    {
+      mp_limb_t f, xl;
+
+      f = (mp_limb_t) d;
+      xl = x->_mp_d[i];
+      if (xl > f)
+	return 1;
+      else if (xl < f)
+	return -1;
+      d = B * (d - f);
+    }
+
+  if (d > 0)
+    return -1;
+  else
+    return 0;  
+}
+
+int
 mpz_cmp_d (const mpz_t x, double d)
 {
   mp_size_t xn = x->_mp_size;

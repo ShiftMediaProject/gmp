@@ -1,3 +1,8 @@
+2013-01-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpz_cmpabs_d): New function.
+	* mini-gmp/mini-gmp.h: Declare it.
+
 2013-01-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (testmain): Test mpz_out_str, using
