@@ -6,8 +6,8 @@
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
 
-Copyright 1996, 1999, 2000, 2001, 2002, 2009, 2012 Free Software Foundation,
-Inc.
+Copyright 1996, 1999, 2000, 2001, 2002, 2009, 2012, 2013 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -210,7 +210,6 @@ main (int argc, char **argv)
   mpz_t ref1, ref2, ref3;
   mpz_t t;
   unsigned long int r1, r2;
-  long failures = 0;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
@@ -237,7 +236,7 @@ main (int argc, char **argv)
     {
       if (isatty (fileno (stdout)))
 	{
-	  printf ("\r%c", "-/|\\"[pass % 4]);
+	  printf ("\r%d/%d passes", pass, reps);
 	  fflush (stdout);
 	}
 
@@ -661,11 +660,7 @@ main (int argc, char **argv)
 	}
     }
 
-  if (failures != 0)
-    {
-      fprintf (stderr, "mpz/reuse: %ld error%s\n", failures, "s" + (failures == 1));
-      exit (1);
-    }
+  printf ("\r%20s", "");
 
   mpz_clear (bs);
   mpz_clear (in1);
