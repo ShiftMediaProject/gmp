@@ -1,5 +1,8 @@
 2013-01-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/mini-gmp.c (mpz_cmp_d): Simplified, just sort out
+	signs, then call mpz_cmpabs_d.
+
 	* mini-gmp/tests/testutils.h: Include stdio.h and stdlib.h.
 	(numberof): New define.
 
