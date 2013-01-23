@@ -1554,11 +1554,8 @@ mpz_cmpabs_d (const mpz_t x, double d)
   xn = GMP_ABS (x->_mp_size);
   d = GMP_ABS (d);
 
-  if (xn == 0)
-    return - (d > 0.0);
-  if (d < 1.0)
-    return 1;
-
+  if (xn != 0)
+    {
   B = 2.0 * (double) GMP_LIMB_HIGHBIT;
   Bi = 1.0 / B;
 
@@ -1566,8 +1563,6 @@ mpz_cmpabs_d (const mpz_t x, double d)
   for (i = 1; i < xn; i++)
     {
       d *= Bi;
-      if (d < 1.0)
-	return 1;
     }
   if (d >= B)
     return -1;
@@ -1585,29 +1580,14 @@ mpz_cmpabs_d (const mpz_t x, double d)
 	return -1;
       d = B * (d - f);
     }
-
-  if (d > 0)
-    return -1;
-  else
-    return 0;
+    }
+  return - (d > 0.0);
 }
 
 int
 mpz_cmp_d (const mpz_t x, double d)
 {
-  mp_size_t xn = x->_mp_size;
-
-  if (xn == 0)
-    {
-      if (d < 0.0)
-	return 1;
-      else if (d > 0.0)
-	return -1;
-      else
-	return 0;
-    }
-
-  if (xn < 0)
+  if (x->_mp_size < 0)
     {
       if (d >= 0.0)
 	return -1;
@@ -1616,7 +1596,7 @@ mpz_cmp_d (const mpz_t x, double d)
     }
   else
     {
-      if (d <= 0.0)
+      if (d < 0.0)
 	return 1;
       else
 	return mpz_cmpabs_d (x, d);
