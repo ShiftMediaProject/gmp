@@ -3883,10 +3883,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
   if (*sp == '-')
     {
       sign = 1;
-
-      do
-	sp++;
-      while (isspace( (unsigned char) *sp));
+      sp++;
     }
   else
     sign = 0;
