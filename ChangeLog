@@ -1,6 +1,7 @@
 2013-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp/mini-gmp.c (mpz_set_str): Behaviour more adherent to the real GMP. 
+	* mini-gmp/mini-gmp.c (mpz_cmpabs_d, mpz_cmp_d): Simplify.
+	(mpz_set_str): Behaviour more adherent to the real GMP. 
 
 2013-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
