@@ -1551,35 +1551,36 @@ mpz_cmpabs_d (const mpz_t x, double d)
   double B, Bi;
   mp_size_t i;
 
-  xn = GMP_ABS (x->_mp_size);
+  xn = x->_mp_size;
   d = GMP_ABS (d);
 
   if (xn != 0)
     {
-  B = 2.0 * (double) GMP_LIMB_HIGHBIT;
-  Bi = 1.0 / B;
+      xn = GMP_ABS (xn);
 
-  /* Scale d so it can be compared with the top limb. */
-  for (i = 1; i < xn; i++)
-    {
-      d *= Bi;
-    }
-  if (d >= B)
-    return -1;
+      B = 2.0 * (double) GMP_LIMB_HIGHBIT;
+      Bi = 1.0 / B;
 
-  /* Compare floor(d) to top limb, subtract and cancel when equal. */
-  for (i = xn; i-- > 0;)
-    {
-      mp_limb_t f, xl;
+      /* Scale d so it can be compared with the top limb. */
+      for (i = 1; i < xn; i++)
+	d *= Bi;
 
-      f = (mp_limb_t) d;
-      xl = x->_mp_d[i];
-      if (xl > f)
-	return 1;
-      else if (xl < f)
+      if (d >= B)
 	return -1;
-      d = B * (d - f);
-    }
+
+      /* Compare floor(d) to top limb, subtract and cancel when equal. */
+      for (i = xn; i-- > 0;)
+	{
+	  mp_limb_t f, xl;
+
+	  f = (mp_limb_t) d;
+	  xl = x->_mp_d[i];
+	  if (xl > f)
+	    return 1;
+	  else if (xl < f)
+	    return -1;
+	  d = B * (d - f);
+	}
     }
   return - (d > 0.0);
 }
