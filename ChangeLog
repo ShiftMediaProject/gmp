@@ -3,6 +3,12 @@
 	* mini-gmp/mini-gmp.c (mpz_cmpabs_d, mpz_cmp_d): Simplify.
 	(mpz_set_str): Behaviour more adherent to the real GMP. 
 
+	* mini-gmp/tests/t-str.c: Cast size_t to unsigned long, for printf.
+	* mini-gmp/tests/t-import.c: Likewise.
+	* mini-gmp/tests/t-comb.c: Remove an unused var.
+	* mini-gmp/tests/t-div.c: Remove unused args passed to fprintf.
+	* mini-gmp/tests/t-double.c: Use float immediates with float vars.
+
 2013-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.

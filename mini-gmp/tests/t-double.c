@@ -108,7 +108,7 @@ testmain (int argc, char **argv)
 	  fprintf (stderr, "mpz_cmp_d (x, d) failed:\n");
 	  goto dumperror;
 	}
-      f = d + 1;
+      f = d + 1.0;
       if (f > d && ! (mpz_cmp_d (x, f) < 0))
 	{
 	  fprintf (stderr, "mpz_cmp_d (x, f) failed:\n");
@@ -135,7 +135,7 @@ testmain (int argc, char **argv)
 	  fprintf (stderr, "mpz_cmp_d (x, d) failed:\n");
 	  goto dumperror;
 	}
-      f = d - 1;
+      f = d - 1.0;
       if (f < d && ! (mpz_cmp_d (x, f) > 0))
 	{
 	  fprintf (stderr, "mpz_cmp_d (x, f) failed:\n");

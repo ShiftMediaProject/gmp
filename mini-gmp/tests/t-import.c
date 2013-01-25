@@ -73,8 +73,8 @@ testmain (int argc, char **argv)
 	    if (mpz_cmp (a, res))
 	      {
 		fprintf (stderr, "mpz_import failed:\n"
-			 "in_count %d, out_count %d, endian = %d, order = %d\n",
-			 in_count, out_count, endian, order);
+			 "in_count %lu, out_count %lu, endian = %d, order = %d\n",
+			 (unsigned long) in_count, (unsigned long) out_count, endian, order);
 		dump ("a", a);
 		dump ("res", res);
 		abort ();
@@ -89,15 +89,15 @@ testmain (int argc, char **argv)
 		|| output[1+in_count*size] != 17)
 	      {
 		fprintf (stderr, "mpz_export failed:\n"
-			 "in_count %d, out_count %d, endian = %d, order = %d\n",
-			 in_count, out_count, endian, order);
+			 "in_count %lu, out_count %lu, endian = %d, order = %d\n",
+			 (unsigned long) in_count, (unsigned long) out_count, endian, order);
 		dump_bytes ("input", input, in_count * size);
 		dump_bytes ("output", output+1, out_count * size);
 		if (output[0] != 17)
 		  fprintf (stderr, "Overwrite at -1, value %02x\n", output[0]);
 		if (output[1+in_count*size] != 17)
-		  fprintf (stderr, "Overwrite at %d, value %02x\n",
-			   in_count*size, output[1+in_count*size]);
+		  fprintf (stderr, "Overwrite at %lu, value %02x\n",
+			   (unsigned long) (in_count*size), output[1+in_count*size]);
 
 		abort ();
 	      }

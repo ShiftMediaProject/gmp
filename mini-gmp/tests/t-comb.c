@@ -54,7 +54,6 @@ bin_smallexaustive (unsigned int count)
 {
   mpz_t          want;
   unsigned long  n, k;
-  int            tests;
 
   mpz_init (want);
 

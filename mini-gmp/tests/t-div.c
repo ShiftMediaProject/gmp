@@ -144,7 +144,7 @@ testmain (int argc, char **argv)
 	      mpz_mod (r, a, b);
 	      if (mpz_cmp (r, rr))
 		{
-		  fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		  fprintf (stderr, "mpz_mod failed:\n");
 		  dump ("a", a);
 		  dump ("b", b);
 		  dump ("r   ", r);
@@ -158,7 +158,7 @@ testmain (int argc, char **argv)
 	      mpz_mod (r, a, b);
 	      if (mpz_cmp (r, rr))
 		{
-		  fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		  fprintf (stderr, "mpz_mod failed:\n");
 		  dump ("a", a);
 		  dump ("b", b);
 		  dump ("r   ", r);
@@ -242,7 +242,7 @@ testmain (int argc, char **argv)
 		  mpz_mod_ui (r, a, mpz_get_ui (b));
 		  if (mpz_cmp (r, rr))
 		    {
-		      fprintf (stderr, "mpz_mod failed:\n", name[j]);
+		      fprintf (stderr, "mpz_mod failed:\n");
 		      dump ("a", a);
 		      dump ("b", b);
 		      dump ("r   ", r);

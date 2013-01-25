@@ -213,8 +213,8 @@ testmain (int argc, char **argv)
 	      if (tn != rn)
 		{
 		  fprintf (stderr,
-			   "fread failed, expected %u bytes, got only %u.\n",
-			   rn, tn);
+			   "fread failed, expected %lu bytes, got only %lu.\n",
+			   (unsigned long) rn, (unsigned long) tn);
 		  abort ();
 		}
 
@@ -258,8 +258,8 @@ testmain (int argc, char **argv)
 	      if (bn != arn)
 		{
 		  fprintf (stderr, "mpn_get_str failed:\n");
-		  fprintf (stderr, "returned length: %d (bad)\n", bn);
-		  fprintf (stderr, "expected: %d\n", arn);
+		  fprintf (stderr, "returned length: %lu (bad)\n", (unsigned long) bn);
+		  fprintf (stderr, "expected: %lu\n", (unsigned long) arn);
 		  fprintf (stderr, "  base = %d\n", base);
 		  fprintf (stderr, "r = %s\n", ap);
 		  fprintf (stderr, "  base = 16\n");
@@ -287,7 +287,7 @@ testmain (int argc, char **argv)
 		  if (bp[i] != value)
 		    {
 		      fprintf (stderr, "mpn_get_str failed:\n");
-		      fprintf (stderr, "digit %d: %d (bad)\n", i, bp[i]);
+		      fprintf (stderr, "digit %lu: %d (bad)\n", (unsigned long) i, bp[i]);
 		      fprintf (stderr, "expected: %d\n", value);
 		      fprintf (stderr, "  base = %d\n", base);
 		      fprintf (stderr, "r = %s\n", ap);
