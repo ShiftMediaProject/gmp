@@ -660,7 +660,8 @@ main (int argc, char **argv)
 	}
     }
 
-  printf ("\r%20s", "");
+  if (isatty (fileno (stdout)))
+    printf ("\r%20s", "");
 
   mpz_clear (bs);
   mpz_clear (in1);
