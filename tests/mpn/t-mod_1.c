@@ -1,6 +1,6 @@
 /* Test mpn_mod_1 variants.
 
-Copyright 2010 Free Software Foundation, Inc.
+Copyright 2010, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -49,6 +49,17 @@ check_one (mp_srcptr ap, mp_size_t n, mp_limb_t b)
       if (r != r_ref)
 	{
 	  printf ("mpn_mod_1s_2p failed\n");
+	  goto fail;
+	}
+    }
+  if (b <= GMP_NUMB_MASK / 3)
+    {
+      mp_limb_t pre[6];
+      mpn_mod_1s_3p_cps (pre, b);
+      r = mpn_mod_1s_3p (ap, n, b << pre[1], pre);
+      if (r != r_ref)
+	{
+	  printf ("mpn_mod_1s_3p failed\n");
 	  goto fail;
 	}
     }
