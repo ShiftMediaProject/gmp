@@ -2,6 +2,8 @@
 
 	* mpz/remove.c: init+set=init_set, cast before shifting.
 
+	* mpz/cmp_si.c: Use ABS_CAST.
+
 2013-01-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-mod_1.c: Test also mpn_mod_1s_3p.
