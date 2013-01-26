@@ -7,7 +7,7 @@
 2013-01-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/logic.c: Set things up to always test library logops, not
-	gmp-impl.h's inlined variants.
+	gmp-impl.h's inlined variants.  Test also mpn_com.
 
 	* tests/mpn/t-mod_1.c: Test also mpn_mod_1s_3p.
 
