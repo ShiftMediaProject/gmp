@@ -9,7 +9,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -44,17 +44,20 @@ mpn_mod_1s_3p_cps (mp_limb_t cps[6], mp_limb_t b)
   b <<= cnt;
   invert_limb (bi, b);
 
-  B1modb = -b * ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
-  ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
-  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
-  udiv_rnnd_preinv (B3modb, B2modb, 0, b, bi);
-  udiv_rnnd_preinv (B4modb, B3modb, 0, b, bi);
-
   cps[0] = bi;
   cps[1] = cnt;
+
+  B1modb = -b * ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
+  ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   cps[2] = B1modb >> cnt;
+
+  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
   cps[3] = B2modb >> cnt;
+
+  udiv_rnnd_preinv (B3modb, B2modb, 0, b, bi);
   cps[4] = B3modb >> cnt;
+
+  udiv_rnnd_preinv (B4modb, B3modb, 0, b, bi);
   cps[5] = B4modb >> cnt;
 
 #if WANT_ASSERT
