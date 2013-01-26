@@ -1,7 +1,7 @@
 /* Test mpn_and, mpn_ior, mpn_xor, mpn_andn, mpn_iorn, mpn_xnor, mpn_nand, and
    mpn_nior.
 
-Copyright 2011, 2012 Free Software Foundation, Inc.
+Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -22,9 +22,23 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <stdio.h>
 
+/* Fake native prevalence of the tested operations, so that we actually test
+   the compiled functions, i.., the ones which users will reach.  The inlined
+   variants will be tested through tests/mpz/logic.c.  */
+#define HAVE_NATIVE_mpn_com    1
+#define HAVE_NATIVE_mpn_and_n  1
+#define HAVE_NATIVE_mpn_andn_n 1
+#define HAVE_NATIVE_mpn_nand_n 1
+#define HAVE_NATIVE_mpn_ior_n  1
+#define HAVE_NATIVE_mpn_iorn_n 1
+#define HAVE_NATIVE_mpn_nior_n 1
+#define HAVE_NATIVE_mpn_xor_n  1
+#define HAVE_NATIVE_mpn_xnor_n 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "tests.h"
+
 
 void
 check_one (mp_srcptr refp, mp_srcptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, char *funcname)
