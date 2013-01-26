@@ -179,9 +179,9 @@ gen_consts (int numb, int nail, int limb)
   ofe = (ofe / 16 + 1) * 16;
 
   printf
-    ("\n/* This table contains 1i-popc(2i) for small i */\n");
+    ("\n/* This table contains 2n-popc(2n) for small n */\n");
   printf
-    ("\n/* It begins with 2-1=1 (N=1) */\n");
+    ("\n/* It begins with 2-1=1 (n=1) */\n");
   printf
     ("#define TABLE_2N_MINUS_POPC_2N 1");
   for (b = 4; b <= ofe; b += 2)
