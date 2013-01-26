@@ -1,5 +1,9 @@
 2013-01-26  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-mod_1.c: Test also mpn_mod_1s_3p.
+
+	* mpn/generic/mod_1_3.c: Swap some lines to make it similar to mod_4.c.
+
 	* tests/mpz/reuse.c: Fix typo in last change.
 
 2013-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
