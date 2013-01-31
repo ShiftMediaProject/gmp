@@ -50,19 +50,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_mul_toom22   1
 #define MAYBE_mul_toom44   1
 #else
-#if MUL_TOOM6H_THRESHOLD != 0
-#define MUL_NEXTALG_THRESHOLD MUL_TOOM6H_THRESHOLD
-#elif MUL_TOOM8H_THRESHOLD != 0
-#define MUL_NEXTALG_THRESHOLD MUL_TOOM8H_THRESHOLD
-#else
-#define MUL_NEXTALG_THRESHOLD MUL_FFT_THRESHOLD
-#endif
 #define MAYBE_mul_basecase						\
   (MUL_TOOM44_THRESHOLD < 4 * MUL_TOOM22_THRESHOLD)
 #define MAYBE_mul_toom22						\
   (MUL_TOOM44_THRESHOLD < 4 * MUL_TOOM33_THRESHOLD)
 #define MAYBE_mul_toom44						\
-  (MUL_NEXTALG_THRESHOLD >= 4 * MUL_TOOM44_THRESHOLD)
+  (MUL_TOOM6H_THRESHOLD >= 4 * MUL_TOOM44_THRESHOLD)
 #endif
 
 #define TOOM44_MUL_N_REC(p, a, b, n, ws)				\

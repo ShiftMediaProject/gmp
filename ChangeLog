@@ -1,3 +1,9 @@
+2013-01-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom44_mul.c: Revert last change in favour of a simple
+	change (thanks Marco!).
+	* mpn/generic/toom4_sqr.c: Likewise.
+
 2013-01-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom44_mul.c (MAYBE_mul_toom44): Take toom6h and toom8h

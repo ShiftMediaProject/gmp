@@ -47,19 +47,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_sqr_toom2   1
 #define MAYBE_sqr_toom4   1
 #else
-#if SQR_TOOM6H_THRESHOLD != 0
-#define SQR_NEXTALG_THRESHOLD SQR_TOOM6H_THRESHOLD
-#elif SQR_TOOM8H_THRESHOLD != 0
-#define SQR_NEXTALG_THRESHOLD SQR_TOOM8H_THRESHOLD
-#else
-#define SQR_NEXTALG_THRESHOLD SQR_FFT_THRESHOLD
-#endif
 #define MAYBE_sqr_basecase						\
   (SQR_TOOM4_THRESHOLD < 4 * SQR_TOOM2_THRESHOLD)
 #define MAYBE_sqr_toom2							\
   (SQR_TOOM4_THRESHOLD < 4 * SQR_TOOM3_THRESHOLD)
 #define MAYBE_sqr_toom4							\
-  (SQR_NEXTALG_THRESHOLD >= 4 * SQR_TOOM4_THRESHOLD)
+  (SQR_TOOM6_THRESHOLD >= 4 * SQR_TOOM4_THRESHOLD)
 #endif
 
 #define TOOM4_SQR_REC(p, a, n, ws)					\
