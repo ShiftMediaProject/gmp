@@ -2,7 +2,7 @@
    of the normal gmp code.  Speed isn't a consideration.
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
+2007, 2008, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -1854,6 +1854,7 @@ refmpn_mulmid (mp_ptr rp, mp_srcptr up, mp_size_t un,
 
 #define TOOM3_THRESHOLD (MAX (MUL_TOOM33_THRESHOLD, SQR_TOOM3_THRESHOLD))
 #define TOOM4_THRESHOLD (MAX (MUL_TOOM44_THRESHOLD, SQR_TOOM4_THRESHOLD))
+#define TOOM6_THRESHOLD (MAX (MUL_TOOM6H_THRESHOLD, SQR_TOOM6_THRESHOLD))
 #if WANT_FFT
 #define FFT_THRESHOLD (MAX (MUL_FFT_THRESHOLD, SQR_FFT_THRESHOLD))
 #else
@@ -1868,8 +1869,7 @@ refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 
   if (vn < TOOM3_THRESHOLD)
     {
-      /* In the mpn_mul_basecase and mpn_kara_mul_n range, use our own
-	 mul_basecase.  */
+      /* In the mpn_mul_basecase and toom2 range, use our own mul_basecase.  */
       if (vn != 0)
 	refmpn_mul_basecase (wp, up, un, vp, vn);
       else
@@ -1879,24 +1879,31 @@ refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 
   if (vn < TOOM4_THRESHOLD)
     {
-      /* In the mpn_toom33_mul range, use mpn_toom22_mul.  */
+      /* In the toom3 range, use mpn_toom22_mul.  */
       tn = 2 * vn + mpn_toom22_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom22_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
-  else if (vn < FFT_THRESHOLD)
+  else if (vn < TOOM6_THRESHOLD)
     {
-      /* In the mpn_toom44_mul range, use mpn_toom33_mul.  */
+      /* In the toom4 range, use mpn_toom33_mul.  */
       tn = 2 * vn + mpn_toom33_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom33_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
-  else
+  else if (vn < FFT_THRESHOLD)
     {
-      /* Finally, for the largest operands, use mpn_toom44_mul.  */
+      /* In the toom6 range, use mpn_toom44_mul.  */
       tn = 2 * vn + mpn_toom44_mul_itch (vn, vn);
       tp = refmpn_malloc_limbs (tn);
       mpn_toom44_mul (tp, up, vn, vp, vn, tp + 2 * vn);
+    }
+  else
+    {
+      /* Finally, for the largest operands, use mpn_toom6h_mul.  */
+      tn = 2 * vn + mpn_toom6h_mul_itch (vn, vn);
+      tp = refmpn_malloc_limbs (tn);
+      mpn_toom6h_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
 
   if (un != vn)
