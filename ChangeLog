@@ -1,3 +1,8 @@
+2013-02-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/refmpn.c (refmpn_mul): Use toom6h instead of toom44 for the
+	largest operands.
+
 2013-01-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom44_mul.c: Revert last change in favour of a simple
