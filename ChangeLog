@@ -1,5 +1,8 @@
 2013-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (DIGITS_IN_BASE_PER_LIMB): Add a cast.
+	(LIMBS_PER_DIGIT_IN_BASE): Likewise.
+
 	* tests/refmpn.c (refmpn_mul): Use toom6h instead of toom44 for the
 	largest operands.
 
