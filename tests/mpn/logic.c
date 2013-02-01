@@ -23,7 +23,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 
 /* Fake native prevalence of the tested operations, so that we actually test
-   the compiled functions, i.., the ones which users will reach.  The inlined
+   the compiled functions, i.e., the ones which users will reach.  The inlined
    variants will be tested through tests/mpz/logic.c.  */
 #define HAVE_NATIVE_mpn_com    1
 #define HAVE_NATIVE_mpn_and_n  1
