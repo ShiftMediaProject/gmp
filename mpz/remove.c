@@ -44,7 +44,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
       return 0;
     }
 
-  if ((fp0 & 1) == 1)
+  if ((fp0 & 1) != 0)
     { /* f is odd */
       mp_ptr dp;
       mp_size_t dn;
@@ -60,7 +60,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
     { /* mpz_cmpabs_ui (f, 2) == 0 */
       pwr = mpz_scan1 (src, 0);
       mpz_div_2exp (dest, src, pwr);
-      if (pwr & (SIZ (f) < 0)) /*((pwr % 2 == 1) && (SIZ (f) < 0))*/
+      if (pwr & (fn < 0)) /*((pwr % 2 == 1) && (SIZ (f) < 0))*/
 	mpz_neg (dest, dest);
     }
   else
