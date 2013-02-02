@@ -1,3 +1,7 @@
+2013-02-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/remove.c: Correct the sign in case of reuse.
+
 2013-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (DIGITS_IN_BASE_PER_LIMB): Add a cast.
