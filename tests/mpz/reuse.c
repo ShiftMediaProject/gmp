@@ -202,7 +202,7 @@ int
 main (int argc, char **argv)
 {
   int i;
-  int pass, reps = 200;
+  int pass, reps = 400;
   mpz_t in1, in2, in3;
   unsigned long int in2i;
   mp_size_t size;
@@ -243,25 +243,44 @@ main (int argc, char **argv)
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 21 + 2;
 
-      mpz_urandomb (bs, rands, size_range);
-      size = mpz_get_ui (bs);
-      mpz_rrandomb (in1, rands, size);
+      if ((pass & 1) == 0)
+	{
+	  /* Make all input operands have quite different sizes */
+	  mpz_urandomb (bs, rands, 32);
+	  size = mpz_get_ui (bs) % size_range;
+	  mpz_rrandomb (in1, rands, size);
 
-      mpz_urandomb (bs, rands, size_range);
-      size = mpz_get_ui (bs);
-      mpz_rrandomb (in2, rands, size);
+	  mpz_urandomb (bs, rands, 32);
+	  size = mpz_get_ui (bs) % size_range;
+	  mpz_rrandomb (in2, rands, size);
 
-      mpz_urandomb (bs, rands, size_range);
-      size = mpz_get_ui (bs);
-      mpz_rrandomb (in3, rands, size);
+	  mpz_urandomb (bs, rands, 32);
+	  size = mpz_get_ui (bs) % size_range;
+	  mpz_rrandomb (in3, rands, size);
+	}
+      else
+	{
+	  /* Make all input operands have about the same size */
+	  mpz_urandomb (bs, rands, size_range);
+	  size = mpz_get_ui (bs);
+	  mpz_rrandomb (in1, rands, size);
+
+	  mpz_urandomb (bs, rands, size_range);
+	  size = mpz_get_ui (bs);
+	  mpz_rrandomb (in2, rands, size);
+
+	  mpz_urandomb (bs, rands, size_range);
+	  size = mpz_get_ui (bs);
+	  mpz_rrandomb (in3, rands, size);
+	}
 
       mpz_urandomb (bs, rands, 3);
       bsi = mpz_get_ui (bs);
       if ((bsi & 1) != 0)
 	mpz_neg (in1, in1);
-      if ((bsi & 1) != 0)
+      if ((bsi & 2) != 0)
 	mpz_neg (in2, in2);
-      if ((bsi & 1) != 0)
+      if ((bsi & 4) != 0)
 	mpz_neg (in3, in3);
 
       for (i = 0; i < numberof (dss); i++)
@@ -600,22 +619,23 @@ main (int argc, char **argv)
 	  FAIL2 (mpz_gcd_ui, in1, in2, NULL);
       }
 
-      if (mpz_cmp_ui (in2, 1L) > 0 && mpz_sgn (in1) != 0)
+      if (mpz_sgn (in2) != 0)
 	{
 	  /* Test mpz_remove */
-	  mpz_remove (ref1, in1, in2);
+	  mp_bitcnt_t refretval, retval;
+	  refretval = mpz_remove (ref1, in1, in2);
 	  MPZ_CHECK_FORMAT (ref1);
 
 	  mpz_set (res1, in1);
-	  mpz_remove (res1, res1, in2);
+	  retval = mpz_remove (res1, res1, in2);
 	  MPZ_CHECK_FORMAT (res1);
-	  if (mpz_cmp (ref1, res1) != 0)
+	  if (mpz_cmp (ref1, res1) != 0 || refretval != retval)
 	    FAIL2 (mpz_remove, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
-	  mpz_remove (res1, in1, res1);
+	  retval = mpz_remove (res1, in1, res1);
 	  MPZ_CHECK_FORMAT (res1);
-	  if (mpz_cmp (ref1, res1) != 0)
+	  if (mpz_cmp (ref1, res1) != 0 || refretval != retval)
 	    FAIL2 (mpz_remove, in1, in2, NULL);
 	}
 
