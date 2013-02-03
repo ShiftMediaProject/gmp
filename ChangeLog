@@ -1,3 +1,9 @@
+2013-02-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/reuse.c: Fix typo causing the same negation condition to be
+	applied to all operands.  Fix condition for when to invoke mpz_remove.
+	Make different-size random operands.
+
 2013-02-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/remove.c: Correct the sign in case of reuse.
