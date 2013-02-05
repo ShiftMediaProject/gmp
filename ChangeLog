@@ -1,3 +1,7 @@
+2013-02-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-div.c: Limit random dbits to avoid an infinite loop.
+
 2013-02-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/reuse.c: Fix typo causing the same negation condition to be
