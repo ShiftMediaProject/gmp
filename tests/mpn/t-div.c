@@ -195,9 +195,9 @@ main (int argc, char **argv)
       nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
 
       if (test < 0)
-	dbits = (test + 300) % nbits + 1;
+	dbits = (test + 300) % (nbits - 1) + 1;
       else
-	dbits = random_word (rands) % nbits % maxdbits + 1;
+	dbits = random_word (rands) % (nbits - 1) % maxdbits + 1;
 
 #if RAND_UNIFORM
 #define RANDFUNC mpz_urandomb
