@@ -1,3 +1,8 @@
+2013-02-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-jac.c (check_large_quotients): Rewrote. Now uses a
+	more efficient method for generating the test inputs.
+
 2013-02-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-div.c: Limit random dbits to avoid an infinite loop.
