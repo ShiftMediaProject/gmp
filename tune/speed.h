@@ -1022,30 +1022,30 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 /* For mpn_mul, mpn_mul_basecase, xsize=r, ysize=s->size. */
 #define SPEED_ROUTINE_MPN_MUL(function)					\
   {									\
-    mp_ptr    wp, xp;							\
+    mp_ptr    wp;							\
     mp_size_t size1;							\
     unsigned  i;							\
     double    t;							\
     TMP_DECL;								\
 									\
     size1 = (s->r == 0 ? s->size : s->r);				\
+    if (size1 < 0) size1 = -size1 - s->size;				\
 									\
-    SPEED_RESTRICT_COND (s->size >= 1);					\
-    SPEED_RESTRICT_COND (size1 >= s->size);				\
+    SPEED_RESTRICT_COND (size1 >= 1);					\
+    SPEED_RESTRICT_COND (s->size >= size1);				\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, size1 + s->size, s->align_wp);		\
-    SPEED_TMP_ALLOC_LIMBS (xp, size1, s->align_xp);			\
 									\
-    speed_operand_src (s, xp, size1);					\
-    speed_operand_src (s, s->yp, s->size);				\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, s->yp, size1);				\
     speed_operand_dst (s, wp, size1 + s->size);				\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, xp, size1, s->yp, s->size);				\
+      function (wp, s->xp, s->size, s->yp, size1);			\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

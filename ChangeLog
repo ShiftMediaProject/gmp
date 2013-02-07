@@ -1,3 +1,8 @@
+2013-02-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Use operands from struct s. 
+	* tune/README: Document new parameter syntax mpn_mul.<#> .
+
 2013-02-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): Rewrote. Now uses a
