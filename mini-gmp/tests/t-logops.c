@@ -93,7 +93,7 @@ testlogops (int count)
       } else {
 	c = (~ (mp_bitcnt_t) 0) - 3;
 	mpz_set_ui (res, 11 << ((i >> 3)%4)); /* set 3 bits */
-      } 
+      }
 
       if (mpz_popcount (res) + c != mpz_hamdist (a, b))
 	{

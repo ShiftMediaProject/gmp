@@ -880,7 +880,7 @@ check_large_quotients (void)
 #define PBITS 200
 #define PPOWER 201
 #define MAX_QBITS 500
-  
+
   gmp_randstate_ptr rands = RANDS;
 
   mpz_t p, n, q, g, s, t, x, y, bs;
@@ -909,7 +909,7 @@ check_large_quotients (void)
   mpz_pow_ui (n, p, PPOWER);
 
   nsize = mpz_sizeinbase (n, 2);
-  
+
   for (i = 0; i < COUNT; i++)
     {
       unsigned j;
@@ -978,7 +978,7 @@ check_large_quotients (void)
   mpz_clear (M[0][0]);
   mpz_clear (M[0][1]);
   mpz_clear (M[1][0]);
-  mpz_clear (M[1][1]);  
+  mpz_clear (M[1][1]);
 #undef COUNT
 #undef PBITS
 #undef PPOWER

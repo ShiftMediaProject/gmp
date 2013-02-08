@@ -1,6 +1,6 @@
 2013-02-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Use operands from struct s. 
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Use operands from struct s.
 	* tune/README: Document new parameter syntax mpn_mul.<#> .
 
 2013-02-06  Niels Möller  <nisse@lysator.liu.se>
@@ -62,7 +62,7 @@
 2013-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (mpz_cmpabs_d, mpz_cmp_d): Simplify.
-	(mpz_set_str): Behaviour more adherent to the real GMP. 
+	(mpz_set_str): Behaviour more adherent to the real GMP.
 
 	* mini-gmp/tests/t-str.c: Cast size_t to unsigned long, for printf.
 	* mini-gmp/tests/t-import.c: Likewise.

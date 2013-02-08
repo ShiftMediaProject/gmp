@@ -100,7 +100,7 @@ try_op_si (int c)
       break;
 
     oi = (si - c) * 2 + c; /* c * (2^K - 1) */
-    mpz_mul_si (oz, sz, 2*c); 
+    mpz_mul_si (oz, sz, 2*c);
     if (c == -1)
       mpz_ui_sub (oz, 1, oz); /* oz = sz * 2 + 1 */
     else

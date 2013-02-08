@@ -23,7 +23,7 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
    works. */
 #include "../mini-gmp.c"
 
-static size_t total_alloc = 0; 
+static size_t total_alloc = 0;
 
 /* Custom memory allocation to track memory usage, and add a small red
    zone.
@@ -129,7 +129,7 @@ testhalves (int count, void (*tested_fun) (int))
   size_t initial_alloc;
 
   mp_get_memory_functions (&allocfunc, &reallocfunc, &freefunc);
-  initial_alloc = total_alloc; 
+  initial_alloc = total_alloc;
   (*tested_fun) (count / 2);
   if (initial_alloc != total_alloc)
     {
