@@ -1,3 +1,7 @@
+2013-02-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 5.1.1 released.
+
 2013-02-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Use operands from struct s.
