@@ -15,6 +15,8 @@ Changes between GMP version 5.1.0 and 5.1.1
 
   * A possible buffer overrun in mpz_ior has been fixed.
 
+  * A rare sign flip in mpz_remove has been fixed.
+
   * Several bugs in mini-gmp have been fixed.
 
   SPEEDUPS
