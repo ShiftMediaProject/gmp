@@ -17,10 +17,13 @@ Changes between GMP version 5.1.0 and 5.1.1
 
   * A rare sign flip in mpz_remove has been fixed.
 
-  * A bug causing problems with mpf numbers with absolute value > 2^31 has been
-    fixed.
+  * A bug causing problems with mpf numbers with absolute value >= 2^31 has
+    been fixed.
 
   * Several bugs in mini-gmp have been fixed.
+
+  * A bug caused by automake, related to the 'distcheck' target, has been fixed
+    by upgrading the automake used for GMP release engineering.
 
   SPEEDUPS
   * None.
