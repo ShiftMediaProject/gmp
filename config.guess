@@ -812,7 +812,7 @@ main ()
 	  else if (model == 0x2e)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
 	  else if (model == 0x2f)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
 	  else if (model == 0x3a)	cpu_64bit = 1, modelstr = "coreisbr"; /* IBR */
-	  else if (model == 0x3c)	cpu_64bit = 1, modelstr = "coreisbr"; /* Haswell */
+	  else if (model == 0x3c)	cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell */
 	  else if (model == 0x36)	cpu_64bit = 1, modelstr = "atom";  /* Cedarview/Saltwell */
 	  else cpu_64bit = 1, modelstr = "corei"; /* default */
 	  break;
