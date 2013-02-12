@@ -248,61 +248,6 @@ gen_consts (int numb, int nail, int limb)
     }
   printf ("\n");
 
-#if 0
-  mpz_set_ui (x, 1);
-  mpz_mul_2exp (x, x, limb + 1);	/* x=2^(limb+1)        */
-  mpz_init (y);
-  mpz_set_ui (y, 10000);
-  mpz_mul (x, x, y);		/* x=2^(limb+1)*10^4     */
-  mpz_set_ui (y, 27182);	/* exp(1)*10^4      */
-  mpz_tdiv_q (x, x, y);		/* x=2^(limb+1)/exp(1)        */
-  printf ("\n/* is 2^(GMP_LIMB_BITS+1)/exp(1) */\n");
-  printf ("#define FAC2OVERE CNST_LIMB(0x");
-  mpz_out_str (stdout, 16, x);
-  printf (")\n");
-
-
-  printf
-    ("\n/* FACMULn is largest odd x such that x*(x+2)*...*(x+2(n-1))<=2^GMP_NUMB_BITS-1 */\n\n");
-  mpz_init (z);
-  mpz_init (t);
-  for (a = 2; a <= 4; a++)
-    {
-      mpz_set_ui (x, 1);
-      mpz_mul_2exp (x, x, numb);
-      mpz_root (x, x, a);
-      /* so x is approx sol       */
-      if (mpz_even_p (x))
-	mpz_sub_ui (x, x, 1);
-      mpz_set_ui (y, 1);
-      mpz_mul_2exp (y, y, numb);
-      mpz_sub_ui (y, y, 1);
-      /* decrement x until we are <= real sol     */
-      do
-	{
-	  mpz_sub_ui (x, x, 2);
-	  odd_products (t, x, a);
-	  if (mpz_cmp (t, y) <= 0)
-	    break;
-	}
-      while (1);
-      /* increment x until > real sol     */
-      do
-	{
-	  mpz_add_ui (x, x, 2);
-	  odd_products (t, x, a);
-	  if (mpz_cmp (t, y) > 0)
-	    break;
-	}
-      while (1);
-      /* dec once to get real sol */
-      mpz_sub_ui (x, x, 2);
-      printf ("#define FACMUL%lu CNST_LIMB(0x", a);
-      mpz_out_str (stdout, 16, x);
-      printf (")\n");
-    }
-#endif
-
   return 0;
 }
 
