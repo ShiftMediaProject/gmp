@@ -7,6 +7,10 @@
 	* mpn/generic/mulmod_bnm1.c: Reorganise branches.
 	* mini-gmp/mini-gmp.c: Reduce branches.
 
+	* mpz/bin_ui.c: Avoid a copy when n < 0.
+	* mpz/mfac_uiui.c: Reduce memory usage.
+	* mpz/primorial_ui.c: Use MPZ_NEWALLOC.
+
 2013-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.1 released.
