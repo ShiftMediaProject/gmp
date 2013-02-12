@@ -1,3 +1,8 @@
+2013-02-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (MPZ_PROVOKE_REALLOC): Remove unused macro.
+	* gen-fac.c (gen_consts): Remove obsolete code.
+
 2013-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.1 released.

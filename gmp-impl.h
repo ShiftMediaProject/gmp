@@ -4536,10 +4536,6 @@ __GMP_DECLSPEC int __gmp_doscan (const struct gmp_doscan_funs_t *, void *, const
   } while (0)
 
 
-#define MPZ_PROVOKE_REALLOC(z)						\
-  do { ALLOC(z) = ABSIZ(z); } while (0)
-
-
 /* Enhancement: The "mod" and "gcd_1" functions below could have
    __GMP_ATTRIBUTE_PURE, but currently (gcc 3.3) that's not supported on
    function pointers, only actual functions.  It probably doesn't make much
