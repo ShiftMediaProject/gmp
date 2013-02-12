@@ -160,13 +160,13 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     }
 
   /* Require at least one digit, possibly after an initial decimal point.  */
-  if (digit_value[c] >= (base == 0 ? 10 : base))
+  if (digit_value[c] >= base)
     {
       /* not a digit, must be a decimal point */
       for (i = 0; i < pointlen; i++)
 	if (str[i] != point[i])
 	  return -1;
-      if (digit_value[(unsigned char) str[pointlen]] >= (base == 0 ? 10 : base))
+      if (digit_value[(unsigned char) str[pointlen]] >= base)
 	return -1;
     }
 
