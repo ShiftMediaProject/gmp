@@ -27,12 +27,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 static mp_limb_t
 powlimb (mp_limb_t a, mp_limb_t e)
 {
-  mp_limb_t r = 1;
-  mp_limb_t s = a;
+  mp_limb_t r;
 
-  for (r = 1, s = a; e > 0; e >>= 1, s *= s)
+  for (r = 1; e > 0; e >>= 1, a *= a)
     if (e & 1)
-      r *= s;
+      r *= a;
 
   return r;
 }
@@ -80,20 +79,19 @@ mpn_brootinv (mp_ptr rp, mp_srcptr yp, mp_size_t bn, mp_limb_t k, mp_ptr tp)
   /* 4-bit initial approximation:
 
    y%16 | 1  3  5  7  9 11 13 15,
-    k%4 +-----------------------------
-     1  | 1 11 13  7  9  3  5 15
-     3  | 1  3  5  7  9 11 13 15
+    k%4 +-------------------------+k2%4
+     1  | 1 11 13  7  9  3  5 15  |  2
+     3  | 1  3  5  7  9 11 13 15  |  0
 
   */
   y0 = yp[0];
 
-  r0 = y0 ^ (((y0 << 1) ^ (y0 << 2)) & ~(k << 2) & 8);		/* 4 bits */
+  r0 = y0 ^ (((y0 << 1) ^ (y0 << 2)) & (k2 << 2) & 8);		/* 4 bits */
   r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0x7f));		/* 8 bits */
-  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0xffff));	/* 16 bits */
-  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2));			/* 32 bits */
-#if GMP_NUMB_BITS > 32
+  r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2 & 0x7fff));	/* 16 bits */
+#if GMP_NUMB_BITS > 16
   {
-    unsigned prec = 32;
+    unsigned prec = 16;
     do
       {
 	r0 = kinv * (k2 * r0 - y0 * powlimb(r0, k2));

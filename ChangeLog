@@ -17,6 +17,8 @@
 	* mpz/urandomb.c: Likewise.
 	* mpn/generic/random2.c: Likewise.
 
+	* mpn/generic/brootinv.c: Micro-optimisation.
+
 2013-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.1 released.
