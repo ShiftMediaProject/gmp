@@ -46,8 +46,8 @@ mpz_import (mpz_ptr z, size_t count, int order,
   ASSERT (endian == 1 || endian == 0 || endian == -1);
   ASSERT (nail <= 8*size);
 
-  zsize = (count * (8*size - nail) + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
-  zp = MPZ_REALLOC (z, zsize);
+  zsize = BITS_TO_LIMBS (count * (8*size - nail));
+  zp = MPZ_NEWALLOC (z, zsize);
 
   if (endian == 0)
     endian = HOST_ENDIAN;

@@ -82,11 +82,11 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
   abs_csize = ABS (csize);
 
   /* round up to a multiple of limbs */
-  abs_xsize = (abs_csize*8 + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
+  abs_xsize = BITS_TO_LIMBS (abs_csize*8);
 
   if (abs_xsize != 0)
     {
-      xp = MPZ_REALLOC (x, abs_xsize);
+      xp = MPZ_NEWALLOC (x, abs_xsize);
 
       /* Get limb boundaries right in the read, for the benefit of the
 	 non-nails case.  */
