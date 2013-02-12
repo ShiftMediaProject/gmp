@@ -1,6 +1,7 @@
 /* mpz_bin_ui - compute n over k.
 
-Copyright 1998, 1999, 2000, 2001, 2002, 2012 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001, 2002, 2012, 2013 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -50,8 +51,8 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
     {
       /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
       mpz_init (ni);
-      mpz_neg (ni, n);
-      mpz_sub_ui (ni, ni, 1L);
+      mpz_add_ui (ni, n, 1L);
+      mpz_neg (ni, ni);
       negate = (k & 1);   /* (-1)^k */
     }
   else
