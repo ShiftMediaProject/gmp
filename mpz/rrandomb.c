@@ -30,10 +30,10 @@ mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, mp_bitcnt_t nbits)
   mp_size_t nl;
   mp_ptr xp;
 
-  nl = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
+  nl = BITS_TO_LIMBS (nbits);
   if (nbits != 0)
     {
-      xp = MPZ_REALLOC (x, nl);
+      xp = MPZ_NEWALLOC (x, nl);
       gmp_rrandomb (xp, rstate, nbits);
     }
 
@@ -58,7 +58,7 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, mp_bitcnt_t nbits)
   mp_size_t i;
 
   /* Set entire result to 111..1  */
-  i = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS - 1;
+  i = BITS_TO_LIMBS (nbits) - 1;
   rp[i] = GMP_NUMB_MAX >> (GMP_NUMB_BITS - (nbits % GMP_NUMB_BITS)) % GMP_NUMB_BITS;
   for (i = i - 1; i >= 0; i--)
     rp[i] = GMP_NUMB_MAX;

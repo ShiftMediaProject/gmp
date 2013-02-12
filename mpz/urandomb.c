@@ -29,7 +29,7 @@ mpz_urandomb (mpz_ptr rop, gmp_randstate_t rstate, mp_bitcnt_t nbits)
   mp_size_t size;
 
   size = BITS_TO_LIMBS (nbits);
-  rp = MPZ_REALLOC (rop, size);
+  rp = MPZ_NEWALLOC (rop, size);
 
   _gmp_rand (rp, rstate, nbits);
   MPN_NORMALIZE (rp, size);
