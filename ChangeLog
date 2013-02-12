@@ -11,6 +11,12 @@
 	* mpz/mfac_uiui.c: Reduce memory usage.
 	* mpz/primorial_ui.c: Use MPZ_NEWALLOC.
 
+	* mpz/import.c: Use BITS_TO_LIMBS and MPZ_NEWALLOC.
+	* mpz/inp_raw.c: Likewise.
+	* mpz/rrandomb.c: Likewise.
+	* mpz/urandomb.c: Likewise.
+	* mpn/generic/random2.c: Likewise.
+
 2013-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.1.1 released.
