@@ -116,7 +116,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 
       size = 1 + n / GMP_NUMB_BITS + n / (2*GMP_NUMB_BITS);
       ASSERT (size >= primesieve_size (n));
-      sieve = MPZ_REALLOC (x, size);
+      sieve = MPZ_NEWALLOC (x, size);
       size = (gmp_primesieve (sieve, n) + 1) / log_n_max (n) + 1;
 
       TMP_MARK;
@@ -137,7 +137,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 	LOOP_ON_SIEVE_END;
       }
 
-      if (j != 0)
+      if (LIKELY (j != 0))
 	{
 	  factors[j++] = prod;
 	  mpz_prodlimbs (x, factors, j);
