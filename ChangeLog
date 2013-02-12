@@ -1,3 +1,11 @@
+2013-02-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Recognise haswell.
+	* config.guess: Recognise haswell.
+	* config.sub: Match haswell.
+
+	* mpn/x86_64/haswell/mul_1.asm: New file, mainly for testing HNI.
+
 2013-02-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (MPZ_PROVOKE_REALLOC): Remove unused macro.
