@@ -222,7 +222,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 #define MPZ_SRCPTR_SWAP(x, y)						\
   do {									\
-    mpz_srcptr __mpz_srcptr_swap__tmp = (x);			\
+    mpz_srcptr __mpz_srcptr_swap__tmp = (x);				\
     (x) = (y);								\
     (y) = __mpz_srcptr_swap__tmp;					\
   } while (0)
@@ -344,10 +344,8 @@ mpn_cmp (mp_srcptr ap, mp_srcptr bp, mp_size_t n)
 {
   for (; n > 0; n--)
     {
-      if (ap[n-1] < bp[n-1])
-	return -1;
-      else if (ap[n-1] > bp[n-1])
-	return 1;
+      if (ap[n-1] != bp[n-1])
+	return ap[n-1] > bp[n-1] ? 1 : -1;
     }
   return 0;
 }
@@ -355,10 +353,8 @@ mpn_cmp (mp_srcptr ap, mp_srcptr bp, mp_size_t n)
 static int
 mpn_cmp4 (mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn)
 {
-  if (an > bn)
-    return 1;
-  else if (an < bn)
-    return -1;
+  if (an != bn)
+    return an < bn ? -1 : 1;
   else
     return mpn_cmp (ap, bp, an);
 }
@@ -715,8 +711,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
       if (r < th)
 	{
 	  m--;
-	  if (r > u1 || (r == u1 && tl > u0))
-	    m--;
+	  m -= ((r > u1) | ((r == u1) & (tl > u0)));
 	}
     }
 
@@ -1422,7 +1417,7 @@ mpz_fits_ulong_p (const mpz_t u)
 {
   mp_size_t us = u->_mp_size;
 
-  return us == 0 || us == 1;
+  return (us == (us > 0));
 }
 
 long int
@@ -1473,19 +1468,15 @@ mpz_set_d (mpz_t r, double x)
 
   /* x != x is true when x is a NaN, and x == x * 0.5 is true when x is
      zero or infinity. */
-  if (x == 0.0 || x != x || x == x * 0.5)
+  if (x != x || x == x * 0.5)
     {
       r->_mp_size = 0;
       return;
     }
 
-  if (x < 0.0)
-    {
-      x = - x;
-      sign = 1;
-    }
-  else
-    sign = 0;
+  sign = x < 0.0 ;
+  if (sign)
+    x = - x;
 
   if (x < 1.0)
     {
@@ -1611,12 +1602,7 @@ mpz_sgn (const mpz_t u)
 {
   mp_size_t usize = u->_mp_size;
 
-  if (usize > 0)
-    return 1;
-  else if (usize < 0)
-    return -1;
-  else
-    return 0;
+  return (usize > 0) - (usize < 0);
 }
 
 int
@@ -1635,10 +1621,9 @@ mpz_cmp_si (const mpz_t u, long v)
       mp_limb_t ul = u->_mp_d[0];
       if ((mp_limb_t)GMP_NEG_CAST (unsigned long int, v) < ul)
 	return -1;
-      else if ( (mp_limb_t)GMP_NEG_CAST (unsigned long int, v) > ul)
-	return 1;
+      else 
+	return (mp_limb_t)GMP_NEG_CAST (unsigned long int, v) > ul;
     }
-  return 0;
 }
 
 int
@@ -1653,12 +1638,8 @@ mpz_cmp_ui (const mpz_t u, unsigned long v)
   else
     {
       mp_limb_t ul = (usize > 0) ? u->_mp_d[0] : 0;
-      if (ul > v)
-	return 1;
-      else if (ul < v)
-	return -1;
+      return (ul > v) - (ul < v);
     }
-  return 0;
 }
 
 int
@@ -1667,16 +1648,12 @@ mpz_cmp (const mpz_t a, const mpz_t b)
   mp_size_t asize = a->_mp_size;
   mp_size_t bsize = b->_mp_size;
 
-  if (asize > bsize)
-    return 1;
-  else if (asize < bsize)
-    return -1;
-  else if (asize > 0)
+  if (asize != bsize)
+    return (asize < bsize) ? -1 : 1;
+  else if (asize >= 0)
     return mpn_cmp (a->_mp_d, b->_mp_d, asize);
-  else if (asize < 0)
-    return -mpn_cmp (a->_mp_d, b->_mp_d, -asize);
   else
-    return 0;
+    return mpn_cmp (b->_mp_d, a->_mp_d, -asize);
 }
 
 int
@@ -1690,12 +1667,7 @@ mpz_cmpabs_ui (const mpz_t u, unsigned long v)
 
   ul = (un == 1) ? u->_mp_d[0] : 0;
 
-  if (ul > v)
-    return 1;
-  else if (ul < v)
-    return -1;
-  else
-    return 0;
+  return (ul > v) - (ul < v);
 }
 
 int
@@ -1753,7 +1725,7 @@ mpz_abs_add_ui (mpz_t r, const mpz_t a, unsigned long b)
 
   cy = mpn_add_1 (rp, a->_mp_d, an, b);
   rp[an] = cy;
-  an += (cy > 0);
+  an += cy;
 
   return an;
 }
@@ -1828,7 +1800,7 @@ mpz_abs_add (mpz_t r, const mpz_t a, const mpz_t b)
 
   rp[rn] = cy;
 
-  return rn + (cy > 0);
+  return rn + cy;
 }
 
 static mp_size_t
@@ -2171,10 +2143,7 @@ mpz_tdiv_r (mpz_t r, const mpz_t n, const mpz_t d)
 void
 mpz_mod (mpz_t r, const mpz_t n, const mpz_t d)
 {
-  if (d->_mp_size >= 0)
-    mpz_div_qr (NULL, r, n, d, GMP_DIV_FLOOR);
-  else
-    mpz_div_qr (NULL, r, n, d, GMP_DIV_CEIL);
+  mpz_div_qr (NULL, r, n, d, d->_mp_size >= 0 ? GMP_DIV_FLOOR : GMP_DIV_CEIL);
 }
 
 static void
@@ -3064,7 +3033,7 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   mpz_t t, u;
 
   sgn = y->_mp_size < 0;
-  if (sgn && (z & 1) == 0)
+  if ((~z & sgn) != 0)
     gmp_die ("mpz_rootrem: Negative argument, with even root.");
   if (z == 0)
     gmp_die ("mpz_rootrem: Zeroth root.");
@@ -3589,16 +3558,13 @@ mpz_hamdist (const mpz_t u, const mpz_t v)
   if ( (un ^ vn) < 0)
     return ~(mp_bitcnt_t) 0;
 
-  if (un < 0)
+  comp = - (uc = vc = (un < 0));
+  if (uc)
     {
       assert (vn < 0);
       un = -un;
       vn = -vn;
-      uc = vc = 1;
-      comp = - (mp_limb_t) 1;
     }
-  else
-    uc = vc = comp = 0;
 
   up = u->_mp_d;
   vp = v->_mp_d;
@@ -3859,13 +3825,8 @@ mpz_set_str (mpz_t r, const char *sp, int base)
   while (isspace( (unsigned char) *sp))
     sp++;
 
-  if (*sp == '-')
-    {
-      sign = 1;
-      sp++;
-    }
-  else
-    sign = 0;
+  sign = (*sp == '-');
+  sp += sign;
 
   if (base == 0)
     {
@@ -3965,14 +3926,9 @@ mpz_out_str (FILE *stream, int base, const mpz_t x)
 static int
 gmp_detect_endian (void)
 {
-  static const int i = 1;
+  static const int i = 2;
   const unsigned char *p = (const unsigned char *) &i;
-  if (*p == 1)
-    /* Little endian */
-    return -1;
-  else
-    /* Big endian */
-    return 1;
+  return 1 - *p;
 }
 
 /* Import and export. Does not support nails. */
