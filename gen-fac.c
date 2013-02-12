@@ -25,9 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 int
 mpz_remove_twos (mpz_t x)
 {
-  int r = 0;
-  for (;mpz_even_p (x);r++)
-    mpz_tdiv_q_2exp (x, x, 1);
+  mp_bitcnt_t r = mpz_scan1(x, 0);
+  mpz_tdiv_q_2exp (x, x, r);
   return r;
 }
 
@@ -75,8 +74,8 @@ gen_consts (int numb, int nail, int limb)
   for (b = 3;; b++)
     {
       for (a = b; (a & 1) == 0; a >>= 1);
-      mpz_set (last, x);
-      mpz_mul_ui (x, x, a);
+      mpz_swap (last, x);
+      mpz_mul_ui (x, last, a);
       if (mpz_sizeinbase (x, 2) > numb)
 	break;
       printf ("),CNST_LIMB(0x");
@@ -91,7 +90,7 @@ gen_consts (int numb, int nail, int limb)
   ofl = b - 1;
   printf
     ("#define ODD_FACTORIAL_TABLE_LIMIT (%lu)\n", ofl);
-  mpz_init (mask);
+  mpz_init2 (mask, numb);
   mpz_setbit (mask, numb);
   mpz_sub_ui (mask, mask, 1);
   printf
@@ -130,8 +129,8 @@ gen_consts (int numb, int nail, int limb)
   mpz_set_ui (x, 1);
   for (b = 3;; b+=2)
     {
-      mpz_set (last, x);
-      mpz_mul_ui (x, x, b);
+      mpz_swap (last, x);
+      mpz_mul_ui (x, last, b);
       if (mpz_sizeinbase (x, 2) > numb)
 	break;
       printf ("),CNST_LIMB(0x");
