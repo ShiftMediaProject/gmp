@@ -1,7 +1,7 @@
 dnl  GMP specific autoconf macros
 
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009, 2011 Free
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009, 2011, 2013 Free
 dnl  Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
@@ -2598,6 +2598,81 @@ yes)
   AC_MSG_WARN([| Host CPU has SSE2 code, but it can't be assembled by])
   AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| Non-SSE2 replacements will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
+  ifelse([$2],,:,[$2])
+  ;;
+esac
+])
+
+
+dnl  GMP_ASM_X86_MULX([ACTION-IF-YES][,ACTION-IF-NO])
+dnl  ------------------------------------------------
+dnl  Determine whether the assembler supports the mulx instruction which debut
+dnl  with Haswell.
+dnl
+dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
+dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
+dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
+dnl  needed at all, at least for just checking instruction syntax.
+
+AC_DEFUN([GMP_ASM_X86_MULX],
+[AC_CACHE_CHECK([if the assembler knows about the mulx instruction],
+		gmp_cv_asm_x86_mulx,
+[GMP_TRY_ASSEMBLE(
+[	.text
+	mulx	%r8, %r9, %r10],
+  [gmp_cv_asm_x86_mulx=yes],
+  [gmp_cv_asm_x86_mulx=no])
+])
+case $gmp_cv_asm_x86_mulx in
+yes)
+  ifelse([$1],,:,[$1])
+  ;;
+*)
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Host CPU has the mulx instruction, but it can't be assembled by])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
+  AC_MSG_WARN([| Older x86 instructions will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
+  ifelse([$2],,:,[$2])
+  ;;
+esac
+])
+
+
+dnl  GMP_ASM_X86_ADOX([ACTION-IF-YES][,ACTION-IF-NO])
+dnl  ------------------------------------------------
+dnl  Determine whether the assembler supports the adcx and adox instructions
+dnl  which debut with the Haswell shrink Broadwell.
+dnl
+dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
+dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
+dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
+dnl  needed at all, at least for just checking instruction syntax.
+
+AC_DEFUN([GMP_ASM_X86_ADOX],
+[AC_CACHE_CHECK([if the assembler knows about the adox instruction],
+		gmp_cv_asm_x86_adox,
+[GMP_TRY_ASSEMBLE(
+[	.text
+	adox	%r8, %r9
+	adcx	%r8, %r9],
+  [gmp_cv_asm_x86_adox=yes],
+  [gmp_cv_asm_x86_adox=no])
+])
+case $gmp_cv_asm_x86_adox in
+yes)
+  ifelse([$1],,:,[$1])
+  ;;
+*)
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Host CPU has the adcx and adox instructions, but they can't be assembled by])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
+  AC_MSG_WARN([| Older x86 instructions will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
   ifelse([$2],,:,[$2])
