@@ -1,3 +1,10 @@
+2013-02-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mp_dv_tab.c (__gmp_digit_value_tab): Remove a line of unused values.
+	* mpf/set_str.c: Update offset accordingly.
+	* mpz/inp_str.c: Likewise.
+	* mpz/set_str.c: Likewise.
+
 2013-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (GMP_ASM_X86_MULX, GMP_ASM_X86_ADOX): New feature tests.
