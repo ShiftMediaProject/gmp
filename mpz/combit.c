@@ -50,15 +50,16 @@ mpz_combit (mpz_ptr d, mp_bitcnt_t bit_index)
 	  dp = MPZ_REALLOC (d, 1 + dsize);
 	  dp[dsize] = 0;
 	  MPN_INCR_U (dp + limb_index, 1 + dsize - limb_index, bit);
-	  SIZ(d) -= dp[dsize];
+	  SIZ(d) = - dsize - dp[dsize];
 	}
       else
 	{
 	  /* We toggle a zero bit, subtract from the absolute value. */
 	  MPN_DECR_U (dp + limb_index, dsize - limb_index, bit);
-	  MPN_NORMALIZE (dp, dsize);
-	  ASSERT (dsize > 0);
-	  SIZ(d) = -dsize;
+	  /* The absolute value shrinked by at most one bit. */
+	  dsize -= dp[dsize - 1] == 0;
+	  ASSERT (dsize > 0 && dp[dsize - 1] != 0);
+	  SIZ (d) = -dsize;
 	}
     }
   else
@@ -67,15 +68,17 @@ mpz_combit (mpz_ptr d, mp_bitcnt_t bit_index)
       dsize = ABS(dsize);
       if (limb_index < dsize)
 	{
-	  dp[limb_index] ^= bit;
+	  mp_limb_t	 dlimb;
+	  dlimb = dp[limb_index] ^ bit;
+	  dp[limb_index] = dlimb;
 
 	  /* Can happen only when limb_index = dsize - 1. Avoid SIZ(d)
 	     bookkeeping in the common case. */
-	  if (dp[dsize-1] == 0)
+	  if (UNLIKELY ((dlimb == 0) + limb_index == dsize)) /* dsize == limb_index + 1 */
 	    {
-	      dsize--;
-	      MPN_NORMALIZE (dp, dsize);
-	      SIZ (d) = SIZ (d) >= 0 ? dsize : -dsize;
+	      /* high limb became zero, must normalize */
+	      MPN_NORMALIZE (dp, limb_index);
+	      SIZ (d) = SIZ (d) >= 0 ? limb_index : -limb_index;
 	    }
 	}
       else
