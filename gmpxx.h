@@ -885,15 +885,15 @@ struct __gmp_binary_equal
   static bool eval(mpz_srcptr z, unsigned long int l)
   { return mpz_cmp_ui(z, l) == 0; }
   static bool eval(unsigned long int l, mpz_srcptr z)
-  { return mpz_cmp_ui(z, l) == 0; }
+  { return eval(z, l); }
   static bool eval(mpz_srcptr z, signed long int l)
   { return mpz_cmp_si(z, l) == 0; }
   static bool eval(signed long int l, mpz_srcptr z)
-  { return mpz_cmp_si(z, l) == 0; }
+  { return eval(z, l); }
   static bool eval(mpz_srcptr z, double d)
   { return mpz_cmp_d(z, d) == 0; }
   static bool eval(double d, mpz_srcptr z)
-  { return mpz_cmp_d(z, d) == 0; }
+  { return eval(z, d); }
 
   static bool eval(mpq_srcptr q, mpq_srcptr r)
   { return mpq_equal(q, r) != 0; }
@@ -901,11 +901,11 @@ struct __gmp_binary_equal
   static bool eval(mpq_srcptr q, unsigned long int l)
   { return mpq_cmp_ui(q, l, 1) == 0; }
   static bool eval(unsigned long int l, mpq_srcptr q)
-  { return mpq_cmp_ui(q, l, 1) == 0; }
+  { return eval(q, l); }
   static bool eval(mpq_srcptr q, signed long int l)
   { return mpq_cmp_si(q, l, 1) == 0; }
   static bool eval(signed long int l, mpq_srcptr q)
-  { return mpq_cmp_si(q, l, 1) == 0; }
+  { return eval(q, l); }
   static bool eval(mpq_srcptr q, double d)
   {
     bool b;
@@ -926,15 +926,15 @@ struct __gmp_binary_equal
   static bool eval(mpf_srcptr f, unsigned long int l)
   { return mpf_cmp_ui(f, l) == 0; }
   static bool eval(unsigned long int l, mpf_srcptr f)
-  { return mpf_cmp_ui(f, l) == 0; }
+  { return eval(f, l); }
   static bool eval(mpf_srcptr f, signed long int l)
   { return mpf_cmp_si(f, l) == 0; }
   static bool eval(signed long int l, mpf_srcptr f)
-  { return mpf_cmp_si(f, l) == 0; }
+  { return eval(f, l); }
   static bool eval(mpf_srcptr f, double d)
   { return mpf_cmp_d(f, d) == 0; }
   static bool eval(double d, mpf_srcptr f)
-  { return mpf_cmp_d(f, d) == 0; }
+  { return eval(f, d); }
 };
 
 struct __gmp_binary_less

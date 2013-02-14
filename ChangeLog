@@ -1,6 +1,7 @@
 2013-02-14  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_binary_greater): Forward to __gmp_binary_less.
+	(__gmp_binary_equal): Forward to itself after swapping operands.
 
 2013-02-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
