@@ -10,6 +10,7 @@
 
 	* mpz/clrbit.c: Reorganise branches.
 	* mpz/setbit.c: Likewise.
+	* mpz/combit.c: Same micro-optimisations as in set/clr.
 
 2013-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
