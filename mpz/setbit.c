@@ -49,8 +49,6 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_idx)
     }
   else
     {
-      mp_size_t zero_bound;
-
       /* Simulate two's complement arithmetic, i.e. simulate
 	 1. Set OP = ~(OP - 1) [with infinitely many leading ones].
 	 2. Set the bit.
@@ -58,40 +56,39 @@ mpz_setbit (mpz_ptr d, mp_bitcnt_t bit_idx)
 
       dsize = -dsize;
 
-      /* No index upper bound on this loop, we're sure there's a non-zero limb
-	 sooner or later.  */
-      zero_bound = 0;
-      while (dp[zero_bound] == 0)
-	zero_bound++;
-
-      if (limb_idx > zero_bound)
+      if (limb_idx < dsize)
 	{
-	  if (limb_idx < dsize)
+	  mp_size_t zero_bound;
+	  /* No index upper bound on this loop, we're sure there's a non-zero limb
+	     sooner or later.  */
+	  zero_bound = 0;
+	  while (dp[zero_bound] == 0)
+	    zero_bound++;
+
+	  if (limb_idx > zero_bound)
 	    {
 	      mp_limb_t	 dlimb;
 	      dlimb = dp[limb_idx] & ~mask;
 	      dp[limb_idx] = dlimb;
 
-	      if (UNLIKELY (dlimb == 0 && limb_idx == dsize-1))
+	      if (UNLIKELY ((dlimb == 0) + limb_idx == dsize)) /* dsize == limb_idx + 1 */
 		{
 		  /* high limb became zero, must normalize */
-		  do {
-		    dsize--;
-		  } while (dsize > 0 && dp[dsize-1] == 0);
-		  SIZ (d) = -dsize;
+		  MPN_NORMALIZE (dp, limb_idx);
+		  SIZ (d) = -limb_idx;
 		}
 	    }
-	}
-      else if (limb_idx == zero_bound)
-	{
-	  dp[limb_idx] = ((dp[limb_idx] - 1) & ~mask) + 1;
-	  ASSERT (dp[limb_idx] != 0);
-	}
-      else
-	{
-	  MPN_DECR_U (dp + limb_idx, dsize - limb_idx, mask);
-	  dsize -= dp[dsize - 1] == 0;
-	  SIZ (d) = -dsize;
+	  else if (limb_idx == zero_bound)
+	    {
+	      dp[limb_idx] = ((dp[limb_idx] - 1) & ~mask) + 1;
+	      ASSERT (dp[limb_idx] != 0);
+	    }
+	  else
+	    {
+	      MPN_DECR_U (dp + limb_idx, dsize - limb_idx, mask);
+	      dsize -= dp[dsize - 1] == 0;
+	      SIZ (d) = -dsize;
+	    }
 	}
     }
 }
