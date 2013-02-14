@@ -87,6 +87,18 @@ main (int argc, char **argv)
       mpq_canonicalize (a);
       mpq_canonicalize (b);
 
+      ccref = ref_mpq_cmp_ui (a, 1, 1);
+      cc = mpq_cmp_ui (a, 1, 1);
+
+      if (SGN (ccref) != SGN (cc))
+	abort ();
+
+      ccref = ref_mpq_cmp_ui (a, 0, 1);
+      cc = mpq_cmp_ui (a, 0, 1);
+
+      if (SGN (ccref) != SGN (cc))
+	abort ();
+
       bn = mpz_get_ui (NUM (b));
       bd = mpz_get_ui (DEN (b));
 
