@@ -1,3 +1,7 @@
+2013-02-14  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_binary_greater): Forward to __gmp_binary_less.
+
 2013-02-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mp_dv_tab.c (__gmp_digit_value_tab): Remove a line of unused values.

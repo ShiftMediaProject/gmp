@@ -1003,66 +1003,8 @@ struct __gmp_binary_less
 
 struct __gmp_binary_greater
 {
-  static bool eval(mpz_srcptr z, mpz_srcptr w) { return mpz_cmp(z, w) > 0; }
-
-  static bool eval(mpz_srcptr z, unsigned long int l)
-  { return mpz_cmp_ui(z, l) > 0; }
-  static bool eval(unsigned long int l, mpz_srcptr z)
-  { return mpz_cmp_ui(z, l) < 0; }
-  static bool eval(mpz_srcptr z, signed long int l)
-  { return mpz_cmp_si(z, l) > 0; }
-  static bool eval(signed long int l, mpz_srcptr z)
-  { return mpz_cmp_si(z, l) < 0; }
-  static bool eval(mpz_srcptr z, double d)
-  { return mpz_cmp_d(z, d) > 0; }
-  static bool eval(double d, mpz_srcptr z)
-  { return mpz_cmp_d(z, d) < 0; }
-
-  static bool eval(mpq_srcptr q, mpq_srcptr r) { return mpq_cmp(q, r) > 0; }
-
-  static bool eval(mpq_srcptr q, unsigned long int l)
-  { return mpq_cmp_ui(q, l, 1) > 0; }
-  static bool eval(unsigned long int l, mpq_srcptr q)
-  { return mpq_cmp_ui(q, l, 1) < 0; }
-  static bool eval(mpq_srcptr q, signed long int l)
-  { return mpq_cmp_si(q, l, 1) > 0; }
-  static bool eval(signed long int l, mpq_srcptr q)
-  { return mpq_cmp_si(q, l, 1) < 0; }
-  static bool eval(mpq_srcptr q, double d)
-  {
-    bool b;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    b = (mpq_cmp(q, temp) > 0);
-    mpq_clear(temp);
-    return b;
-  }
-  static bool eval(double d, mpq_srcptr q)
-  {
-    bool b;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    b = (mpq_cmp(temp, q) > 0);
-    mpq_clear(temp);
-    return b;
-  }
-
-  static bool eval(mpf_srcptr f, mpf_srcptr g) { return mpf_cmp(f, g) > 0; }
-
-  static bool eval(mpf_srcptr f, unsigned long int l)
-  { return mpf_cmp_ui(f, l) > 0; }
-  static bool eval(unsigned long int l, mpf_srcptr f)
-  { return mpf_cmp_ui(f, l) < 0; }
-  static bool eval(mpf_srcptr f, signed long int l)
-  { return mpf_cmp_si(f, l) > 0; }
-  static bool eval(signed long int l, mpf_srcptr f)
-  { return mpf_cmp_si(f, l) < 0; }
-  static bool eval(mpf_srcptr f, double d)
-  { return mpf_cmp_d(f, d) > 0; }
-  static bool eval(double d, mpf_srcptr f)
-  { return mpf_cmp_d(f, d) < 0; }
+  template <class T, class U>
+  static inline bool eval(T t, U u) { return __gmp_binary_less::eval(u, t); }
 };
 
 struct __gmp_unary_increment
