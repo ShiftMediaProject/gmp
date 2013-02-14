@@ -6,6 +6,7 @@
 	* mpz/set_str.c: Likewise.
 
 	* gmp-h.in (mpq_cmp_ui): Optimize comparison with 1/1.
+	* tests/mpq/t-cmp_ui.c: Test special comparisons: 0/1, 1/1.
 
 2013-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
