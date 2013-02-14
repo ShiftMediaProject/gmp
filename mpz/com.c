@@ -51,7 +51,7 @@ mpz_com (mpz_ptr dst, mpz_srcptr src)
 
 	  cy = mpn_add_1 (dst_ptr, src_ptr, size, (mp_limb_t) 1);
 	  dst_ptr[size] = cy;
-	  size += (cy != 0);
+	  size += cy;
 
 	  /* Store a negative size, to indicate ones-extension.  */
 	  SIZ (dst) = -size;
