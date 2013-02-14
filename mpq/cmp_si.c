@@ -1,6 +1,6 @@
 /* _mpq_cmp_si -- compare mpq and long/ulong fraction.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,11 +46,11 @@ _mpq_cmp_si (mpq_srcptr q, long n, unsigned long d)
         {
           mpq_t  qabs;
           SIZ(NUM(qabs)) = ABSIZ(NUM(q));
-          PTR(NUM(qabs))    = PTR(NUM(q));
+          PTR(NUM(qabs)) = PTR(NUM(q));
           SIZ(DEN(qabs)) = SIZ(DEN(q));
-          PTR(DEN(qabs))    = PTR(DEN(q));
+          PTR(DEN(qabs)) = PTR(DEN(q));
 
-          return - _mpq_cmp_ui (qabs, -n, d);    /* <0 cmp <0 */
+          return - _mpq_cmp_ui (qabs, NEG_CAST (unsigned long, n), d);    /* <0 cmp <0 */
         }
     }
 }

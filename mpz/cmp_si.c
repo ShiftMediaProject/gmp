@@ -25,11 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 int
 _mpz_cmp_si (mpz_srcptr u, signed long int v_digit) __GMP_NOTHROW
 {
-  mp_size_t usize = SIZ (u);
-  mp_size_t vsize;
-  mp_limb_t u_digit;
-  unsigned long int absv_digit;
-
 #if GMP_NAIL_BITS != 0
   /* FIXME.  This isn't very pretty.  */
   mpz_t tmp;
@@ -38,30 +33,28 @@ _mpz_cmp_si (mpz_srcptr u, signed long int v_digit) __GMP_NOTHROW
   ALLOC(tmp) = 2;
   mpz_set_si (tmp, v_digit);
   return mpz_cmp (u, tmp);
-#endif
+#else
 
-  vsize = 0;
-  if (v_digit > 0)
-    vsize = 1;
-  else if (v_digit < 0)
-    {
-      vsize = -1;
-    }
-  absv_digit = ABS_CAST (unsigned long int, v_digit);
+  mp_size_t vsize, usize;
 
-  if (usize != vsize)
+  usize = SIZ (u);
+  vsize = (v_digit > 0) - (v_digit < 0);
+
+  if ((usize == 0) | (usize != vsize))
     return usize - vsize;
+  else {
+    mp_limb_t u_digit, absv_digit;
 
-  if (usize == 0)
-    return 0;
+    u_digit = PTR (u)[0];
+    absv_digit = ABS_CAST (unsigned long, v_digit);
 
-  u_digit = PTR (u)[0];
+    if (u_digit == absv_digit)
+      return 0;
 
-  if (u_digit == (mp_limb_t) absv_digit)
-    return 0;
-
-  if (u_digit > (mp_limb_t) absv_digit)
-    return usize;
-  else
-    return -usize;
+    if (u_digit > absv_digit)
+      return usize;
+    else
+      return -usize;
+  }
+#endif
 }
