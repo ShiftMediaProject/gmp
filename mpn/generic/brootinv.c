@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Martin Boij (as part of perfpow.c).
 
-Copyright 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
