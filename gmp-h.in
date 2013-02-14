@@ -1,7 +1,7 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002,
-2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Free
+2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Free
 Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -2145,17 +2145,18 @@ mpn_neg (mp_ptr __gmp_rp, mp_srcptr __gmp_up, mp_size_t __gmp_n)
 #define mpz_cmp_ui(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0				\
    ? mpz_sgn (Z) : _mpz_cmp_ui (Z,UI))
-#define mpz_cmp_si(Z,SI) \
-  (__builtin_constant_p (SI) && (SI) == 0 ? mpz_sgn (Z)			\
-   : __builtin_constant_p (SI) && (SI) > 0				\
-    ? _mpz_cmp_ui (Z, __GMP_CAST (unsigned long int, SI))		\
+#define mpz_cmp_si(Z,SI)						\
+  (__builtin_constant_p ((SI) >= 0) && (SI) >= 0			\
+   ? mpz_cmp_ui (Z, __GMP_CAST (unsigned long, SI))			\
    : _mpz_cmp_si (Z,SI))
-#define mpq_cmp_ui(Q,NUI,DUI) \
-  (__builtin_constant_p (NUI) && (NUI) == 0				\
-   ? mpq_sgn (Q) : _mpq_cmp_ui (Q,NUI,DUI))
-#define mpq_cmp_si(q,n,d)                       \
-  (__builtin_constant_p ((n) >= 0) && (n) >= 0  \
-   ? mpq_cmp_ui (q, __GMP_CAST (unsigned long, n), d) \
+#define mpq_cmp_ui(Q,NUI,DUI)					\
+  (__builtin_constant_p (NUI) && (NUI) == 0 ? mpq_sgn (Q)	\
+   : __builtin_constant_p ((NUI) == (DUI)) && (NUI) == (DUI)	\
+   ? mpz_cmp (mpq_numref (Q), mpq_denref (Q))			\
+   : _mpq_cmp_ui (Q,NUI,DUI))
+#define mpq_cmp_si(q,n,d)				\
+  (__builtin_constant_p ((n) >= 0) && (n) >= 0		\
+   ? mpq_cmp_ui (q, __GMP_CAST (unsigned long, n), d)	\
    : _mpq_cmp_si (q, n, d))
 #else
 #define mpz_cmp_ui(Z,UI) _mpz_cmp_ui (Z,UI)
