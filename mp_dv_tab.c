@@ -3,7 +3,7 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND MAY CHANGE
    INCOMPATIBLY OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,7 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    First part of table supports common usages, where 'A' and 'a' have the same
    value; this supports bases 2..36
 
-   At offset 224, values for bases 37..62 start.  Here, 'A' has the value 10
+   At offset 208, values for bases 37..62 start.  Here, 'A' has the value 10
    (in decimal) and 'a' has the value 36.  */
 
 #define X 0xff
@@ -43,7 +43,6 @@ const unsigned char __gmp_digit_value_tab[] =
   25,26,27,28,29,30,31,32,33,34,35,X, X, X, X, X,
   X,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,
   25,26,27,28,29,30,31,32,33,34,35,X, X, X, X, X,
-  X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X,
   X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X,
   X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X,
   X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X,

@@ -5,7 +5,7 @@
    0oo...o means base 8, otherwise assume base 10.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000, 2001, 2002, 2003, 2005,
-2011, 2012 Free Software Foundation, Inc.
+2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -47,7 +47,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
     {
       /* For bases > 36, use the collating sequence
 	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
-      digit_value += 224;
+      digit_value += 208;
       if (base > 62)
 	return -1;		/* too large base */
     }

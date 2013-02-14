@@ -3,7 +3,7 @@
    of STRING is used to figure out the base.
 
 Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2007,
-2008, 2011 Free Software Foundation, Inc.
+2008, 2011, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -154,7 +154,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     {
       /* For bases > 36, use the collating sequence
 	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
-      digit_value += 224;
+      digit_value += 208;
       if (base > 62)
 	return -1;		/* too large base */
     }

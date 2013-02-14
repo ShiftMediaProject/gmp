@@ -5,8 +5,8 @@
    REST ARE INTERNALS AND ARE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE
    CHANGES OR DISAPPEAR COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001, 2002, 2003, 2011, 2012
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001, 2002, 2003, 2011,
+2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -72,7 +72,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
     {
       /* For bases > 36, use the collating sequence
 	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
-      digit_value += 224;
+      digit_value += 208;
       if (base > 62)
 	return 0;		/* too large base */
     }
