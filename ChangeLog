@@ -16,6 +16,8 @@
 	* mpz/ior.c: Use macros: MPZ_REALLOC and MPN_INCR_U.
 
 	* gmp-impl.h (NEG_CAST): New macro, used by ABS_CAST.
+	* mpq/cmp_si.c: Use NEG_CAST.
+	* mpz/cmp_si.c: Reorganise branches.
 
 2013-02-13  Torbjorn Granlund  <tege@gmplib.org>
 
