@@ -33,7 +33,7 @@ FUNCTION (mpz_srcptr z) __GMP_NOTHROW
   if (n == 1)
     return limb <= MAXIMUM;
   if (n == -1)
-    return limb <= - (mp_limb_t) MINIMUM;
+    return limb <= NEG_CAST (mp_limb_t, MINIMUM);
 #if GMP_NAIL_BITS != 0
   {
     if ((p[1] >> GMP_NAIL_BITS) == 0)
@@ -42,7 +42,7 @@ FUNCTION (mpz_srcptr z) __GMP_NOTHROW
 	if (n == 2)
 	  return limb <= MAXIMUM;
 	if (n == -2)
-	  return limb <= - (mp_limb_t) MINIMUM;
+	  return limb <= NEG_CAST (mp_limb_t, MINIMUM);
       }
   }
 #endif
