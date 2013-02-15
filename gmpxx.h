@@ -1391,6 +1391,29 @@ __GMPN_DECLARE_COMPOUND_OPERATOR(fun)
   inline __gmp_expr & fun();                  \
   inline __gmp_expr fun(int);
 
+#define __GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS		\
+  __gmp_expr(signed char c) { init_si(c); }		\
+  __gmp_expr(unsigned char c) { init_ui(c); }		\
+  __gmp_expr(signed int i) { init_si(i); }		\
+  __gmp_expr(unsigned int i) { init_ui(i); }		\
+  __gmp_expr(signed short int s) { init_si(s); }	\
+  __gmp_expr(unsigned short int s) { init_ui(s); }	\
+  __gmp_expr(signed long int l) { init_si(l); }		\
+  __gmp_expr(unsigned long int l) { init_ui(l); }	\
+  __gmp_expr(float f) { init_d(f); }			\
+  __gmp_expr(double d) { init_d(d); }
+
+#define __GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS		\
+  __gmp_expr & operator=(signed char c) { assign_si(c); return *this; } \
+  __gmp_expr & operator=(unsigned char c) { assign_ui(c); return *this; } \
+  __gmp_expr & operator=(signed int i) { assign_si(i); return *this; } \
+  __gmp_expr & operator=(unsigned int i) { assign_ui(i); return *this; } \
+  __gmp_expr & operator=(signed short int s) { assign_si(s); return *this; } \
+  __gmp_expr & operator=(unsigned short int s) { assign_ui(s); return *this; } \
+  __gmp_expr & operator=(signed long int l) { assign_si(l); return *this; } \
+  __gmp_expr & operator=(unsigned long int l) { assign_ui(l); return *this; } \
+  __gmp_expr & operator=(float f) { assign_d(f); return *this; } \
+  __gmp_expr & operator=(double d) { assign_d(d); return *this; }
 
 /**************** mpz_class -- wrapper for mpz_t ****************/
 
@@ -1400,6 +1423,16 @@ class __gmp_expr<mpz_t, mpz_t>
 private:
   typedef mpz_t value_type;
   value_type mp;
+
+  // Helper functions used for all arithmetic types
+  void assign_ui(unsigned long l) { mpz_set_ui(mp, l); }
+  void assign_si(signed long l)   { mpz_set_si(mp, l); }
+  void assign_d (double d)        { mpz_set_d (mp, d); }
+
+  void init_ui(unsigned long l)	{ mpz_init_set_ui(mp, l); }
+  void init_si(signed long l)	{ mpz_init_set_si(mp, l); }
+  void init_d (double d)	{ mpz_init_set_d (mp, d); }
+
 public:
   mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 
@@ -1418,21 +1451,7 @@ public:
   explicit __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpz_init(mp); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(signed char c) { mpz_init_set_si(mp, c); }
-  __gmp_expr(unsigned char c) { mpz_init_set_ui(mp, c); }
-
-  __gmp_expr(signed int i) { mpz_init_set_si(mp, i); }
-  __gmp_expr(unsigned int i) { mpz_init_set_ui(mp, i); }
-
-  __gmp_expr(signed short int s) { mpz_init_set_si(mp, s); }
-  __gmp_expr(unsigned short int s) { mpz_init_set_ui(mp, s); }
-
-  __gmp_expr(signed long int l) { mpz_init_set_si(mp, l); }
-  __gmp_expr(unsigned long int l) { mpz_init_set_ui(mp, l); }
-
-  __gmp_expr(float f) { mpz_init_set_d(mp, f); }
-  __gmp_expr(double d) { mpz_init_set_d(mp, d); }
-  // __gmp_expr(long double ld) { mpz_init_set_d(mp, ld); }
+  __GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS
 
   explicit __gmp_expr(const char *s, int base = 0)
   {
@@ -1468,26 +1487,7 @@ public:
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
 
-  __gmp_expr & operator=(signed char c) { mpz_set_si(mp, c); return *this; }
-  __gmp_expr & operator=(unsigned char c) { mpz_set_ui(mp, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpz_set_si(mp, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(mp, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpz_set_si(mp, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpz_set_ui(mp, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpz_set_si(mp, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpz_set_ui(mp, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpz_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpz_set_d(mp, d); return *this; }
-  // __gmp_expr & operator=(long double ld)
-  // { mpz_set_ld(mp, ld); return *this; }
+  __GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS
 
   __gmp_expr & operator=(const char *s)
   {
@@ -1568,6 +1568,16 @@ class __gmp_expr<mpq_t, mpq_t>
 private:
   typedef mpq_t value_type;
   value_type mp;
+
+  // Helper functions used for all arithmetic types
+  void assign_ui(unsigned long l) { mpq_set_ui(mp, l, 1); }
+  void assign_si(signed long l)   { mpq_set_si(mp, l, 1); }
+  void assign_d (double d)        { mpq_set_d (mp, d); }
+
+  void init_ui(unsigned long l)	{ mpq_init(mp); assign_ui(l); }
+  void init_si(signed long l)	{ mpq_init(mp); assign_si(l); }
+  void init_d (double d)	{ mpq_init(mp); assign_d (d); }
+
 public:
   mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
   void canonicalize() { mpq_canonicalize(mp); }
@@ -1594,21 +1604,7 @@ public:
   explicit __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpq_init(mp); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(signed char c) { mpq_init(mp); mpq_set_si(mp, c, 1); }
-  __gmp_expr(unsigned char c) { mpq_init(mp); mpq_set_ui(mp, c, 1); }
-
-  __gmp_expr(signed int i) { mpq_init(mp); mpq_set_si(mp, i, 1); }
-  __gmp_expr(unsigned int i) { mpq_init(mp); mpq_set_ui(mp, i, 1); }
-
-  __gmp_expr(signed short int s) { mpq_init(mp); mpq_set_si(mp, s, 1); }
-  __gmp_expr(unsigned short int s) { mpq_init(mp); mpq_set_ui(mp, s, 1); }
-
-  __gmp_expr(signed long int l) { mpq_init(mp); mpq_set_si(mp, l, 1); }
-  __gmp_expr(unsigned long int l) { mpq_init(mp); mpq_set_ui(mp, l, 1); }
-
-  __gmp_expr(float f) { mpq_init(mp); mpq_set_d(mp, f); }
-  __gmp_expr(double d) { mpq_init(mp); mpq_set_d(mp, d); }
-  // __gmp_expr(long double ld) { mpq_init(mp); mpq_set_ld(mp, ld); }
+  __GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS
 
   explicit __gmp_expr(const char *s, int base = 0)
   {
@@ -1664,29 +1660,7 @@ public:
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
 
-  __gmp_expr & operator=(signed char c)
-  { mpq_set_si(mp, c, 1); return *this; }
-  __gmp_expr & operator=(unsigned char c)
-  { mpq_set_ui(mp, c, 1); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpq_set_si(mp, i, 1); return *this; }
-  __gmp_expr & operator=(unsigned int i)
-  { mpq_set_ui(mp, i, 1); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpq_set_si(mp, s, 1); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpq_set_ui(mp, s, 1); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpq_set_si(mp, l, 1); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpq_set_ui(mp, l, 1); return *this; }
-
-  __gmp_expr & operator=(float f) { mpq_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpq_set_d(mp, d); return *this; }
-  // __gmp_expr & operator=(long double ld)
-  // { mpq_set_ld(mp, ld); return *this; }
+  __GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS
 
   __gmp_expr & operator=(const char *s)
   {
@@ -1766,6 +1740,16 @@ class __gmp_expr<mpf_t, mpf_t>
 private:
   typedef mpf_t value_type;
   value_type mp;
+
+  // Helper functions used for all arithmetic types
+  void assign_ui(unsigned long l) { mpf_set_ui(mp, l); }
+  void assign_si(signed long l)   { mpf_set_si(mp, l); }
+  void assign_d (double d)        { mpf_set_d (mp, d); }
+
+  void init_ui(unsigned long l)	{ mpf_init_set_ui(mp, l); }
+  void init_si(signed long l)	{ mpf_init_set_si(mp, l); }
+  void init_d (double d)	{ mpf_init_set_d (mp, d); }
+
 public:
   mp_bitcnt_t get_prec() const { return mpf_get_prec(mp); }
 
@@ -1790,38 +1774,30 @@ public:
   __gmp_expr(const __gmp_expr<T, U> &expr, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(signed char c) { mpf_init_set_si(mp, c); }
+  __GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS
+
   __gmp_expr(signed char c, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, c); }
-  __gmp_expr(unsigned char c) { mpf_init_set_ui(mp, c); }
   __gmp_expr(unsigned char c, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, c); }
 
-  __gmp_expr(signed int i) { mpf_init_set_si(mp, i); }
   __gmp_expr(signed int i, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, i); }
-  __gmp_expr(unsigned int i) { mpf_init_set_ui(mp, i); }
   __gmp_expr(unsigned int i, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, i); }
 
-  __gmp_expr(signed short int s) { mpf_init_set_si(mp, s); }
   __gmp_expr(signed short int s, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, s); }
-  __gmp_expr(unsigned short int s) { mpf_init_set_ui(mp, s); }
   __gmp_expr(unsigned short int s, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, s); }
 
-  __gmp_expr(signed long int l) { mpf_init_set_si(mp, l); }
   __gmp_expr(signed long int l, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, l); }
-  __gmp_expr(unsigned long int l) { mpf_init_set_ui(mp, l); }
   __gmp_expr(unsigned long int l, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, l); }
 
-  __gmp_expr(float f) { mpf_init_set_d(mp, f); }
   __gmp_expr(float f, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_d(mp, f); }
-  __gmp_expr(double d) { mpf_init_set_d(mp, d); }
   __gmp_expr(double d, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_d(mp, d); }
   // __gmp_expr(long double ld) { mpf_init_set_d(mp, ld); }
@@ -1883,26 +1859,7 @@ public:
   __gmp_expr<value_type, value_type> & operator=(const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
 
-  __gmp_expr & operator=(signed char c) { mpf_set_si(mp, c); return *this; }
-  __gmp_expr & operator=(unsigned char c) { mpf_set_ui(mp, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpf_set_si(mp, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpf_set_ui(mp, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpf_set_si(mp, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpf_set_ui(mp, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpf_set_si(mp, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpf_set_ui(mp, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpf_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpf_set_d(mp, d); return *this; }
-  // __gmp_expr & operator=(long double ld)
-  // { mpf_set_ld(mp, ld); return *this; }
+  __GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS
 
   __gmp_expr & operator=(const char *s)
   {
@@ -3328,6 +3285,8 @@ namespace std {
 #undef __GMP_DECLARE_COMPOUND_OPERATOR
 #undef __GMP_DECLARE_COMPOUND_OPERATOR_UI
 #undef __GMP_DECLARE_INCREMENT_OPERATOR
+#undef __GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS
+#undef __GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS
 
 #undef __GMPZQ_DEFINE_EXPR
 

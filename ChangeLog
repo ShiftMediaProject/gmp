@@ -1,3 +1,11 @@
+2013-02-15  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__GMPXX_DEFINE_ARITHMETIC_CONSTRUCTORS,
+	__GMPXX_DEFINE_ARITHMETIC_ASSIGNMENTS): New macros.
+	(mpz_class, mpq_class, mpf_class) [init_ui, init_si, init_d,
+	assign_ui, assign_si, assign_d]: New functions.
+	(__gmp_expr::__gmp_expr, __gmp_expr::operator=): Replace with macros.
+
 2013-02-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (NEG_CAST, ABS_CAST): Use __GMP_CAST.
