@@ -5,6 +5,7 @@
 	(mpz_class, mpq_class, mpf_class) [init_ui, init_si, init_d,
 	assign_ui, assign_si, assign_d]: New functions.
 	(__gmp_expr::__gmp_expr, __gmp_expr::operator=): Replace with macros.
+	(__GMPXX_CONSTANT_TRUE): New macro.
 
 2013-02-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 

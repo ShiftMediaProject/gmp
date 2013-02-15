@@ -39,6 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #else
 #define __GMPXX_CONSTANT(X) false
 #endif
+#define __GMPXX_CONSTANT_TRUE(X) (__GMPXX_CONSTANT(X) && (X))
 
 // Use C++11 features
 #ifndef __GMPXX_USE_CXX11
@@ -1425,13 +1426,53 @@ private:
   value_type mp;
 
   // Helper functions used for all arithmetic types
-  void assign_ui(unsigned long l) { mpz_set_ui(mp, l); }
-  void assign_si(signed long l)   { mpz_set_si(mp, l); }
-  void assign_d (double d)        { mpz_set_d (mp, d); }
+  void assign_ui(unsigned long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l == 0))
+      mp->_mp_size = 0;
+    else
+      mpz_set_ui(mp, l);
+  }
+  void assign_si(signed long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      assign_ui(l);
+    else if (__GMPXX_CONSTANT_TRUE(l <= 0))
+      {
+	assign_ui(-static_cast<unsigned long>(l));
+	mpz_neg(mp, mp);
+      }
+    else
+      mpz_set_si(mp, l);
+  }
+  void assign_d (double d)
+  {
+    mpz_set_d (mp, d);
+  }
 
-  void init_ui(unsigned long l)	{ mpz_init_set_ui(mp, l); }
-  void init_si(signed long l)	{ mpz_init_set_si(mp, l); }
-  void init_d (double d)	{ mpz_init_set_d (mp, d); }
+  void init_ui(unsigned long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l == 0))
+      mpz_init(mp);
+    else
+      mpz_init_set_ui(mp, l);
+  }
+  void init_si(signed long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      init_ui(l);
+    else if (__GMPXX_CONSTANT_TRUE(l <= 0))
+      {
+	init_ui(-static_cast<unsigned long>(l));
+	mpz_neg(mp, mp);
+      }
+    else
+      mpz_init_set_si(mp, l);
+  }
+  void init_d (double d)
+  {
+    mpz_init_set_d (mp, d);
+  }
 
 public:
   mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
@@ -3337,6 +3378,7 @@ namespace std {
 #undef __GMPQ_DEFINE_INCREMENT_OPERATOR
 #undef __GMPF_DEFINE_INCREMENT_OPERATOR
 
+#undef __GMPXX_CONSTANT_TRUE
 #undef __GMPXX_CONSTANT
 
 #endif /* __GMP_PLUSPLUS__ */
