@@ -506,8 +506,8 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 #define UNLIKELY(cond)                 __GMP_UNLIKELY(cond)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
-#define NEG_CAST(T,x) (-((T)((x) + 1) - 1))
-#define ABS_CAST(T,x) ((x) >= 0 ? (T)(x) : NEG_CAST(T,x))
+#define NEG_CAST(T,x) (- (__GMP_CAST (T, (x) + 1) - 1))
+#define ABS_CAST(T,x) ((x) >= 0 ? __GMP_CAST (T, x) : NEG_CAST (T,x))
 #undef MIN
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
 #undef MAX
