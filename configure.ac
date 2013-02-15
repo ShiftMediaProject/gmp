@@ -606,6 +606,11 @@ case $host in
     ;;
 
 
+  arm64*-*-* | aarch64*-*-*)
+    path="arm64"
+    ;;
+
+
   clipper*-*-*)
     path="clipper"
     ;;
