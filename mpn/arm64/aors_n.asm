@@ -42,7 +42,7 @@ ifdef(`OPERATION_sub_n', `
   define(`ADDSUB',	subs)
   define(`ADDSUBC',	sbcs)
   define(`CLRCY',	`cmp	xzr, xzr')
-  define(`SETCY',	`rsbs	$1, $1, xzr')
+  define(`SETCY',	`subs	$1, xzr, $1')
   define(`RETVAL',	`sbc	x0, xzr, xzr
 			and	x0, x0, #1')
   define(`func',	mpn_sub_n)
@@ -65,11 +65,11 @@ L(ent):	lsl	x3, x3, #3
 
 L(top):	ldr	x6, [x1,x3]
 	ldr	x5, [x2,x3]
-	adcs	x7, x6, x5
+	ADDSUBC	x7, x6, x5
 	str	x7, [x0,x3]
 	add	x3, x3, #8
 	cbnz	x3, L(top)
 
-	adc	x0, xzr, xzr
+	RETVAL
 	ret
 EPILOGUE()
