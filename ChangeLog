@@ -1,3 +1,7 @@
+2013-02-16  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h: Include <algorithm>.
+
 2013-02-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/x86_64-defs.m4 (PROTECT): Emit '.hidden' instead of

@@ -26,6 +26,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <cstring>  /* for strlen */
 #include <limits>  /* numeric_limits */
 #include <utility>
+#include <algorithm>  /* swap */
 #include <string>
 #include <stdexcept>
 #include <cfloat>
