@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 1996, 1998, 1999, 2000, 2001, 2002, 2005, 2011 Free Software
+# Copyright 1996, 1998, 1999, 2000, 2001, 2002, 2005, 2011, 2013 Free Software
 # Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
@@ -29,7 +29,7 @@ nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
-TARG_DIST = a29k alpha arm clipper cray generic i960 ia64 lisp m68k m88k \
+TARG_DIST = a29k alpha arm arm64 clipper cray generic i960 ia64 lisp m68k m88k \
   minithres mips32 mips64 ns32k pa32 pa64 power powerpc32 powerpc64 pyr \
   s390_32 s390_64 sh sparc32 sparc64 thumb vax x86 x86_64 z8000
 
