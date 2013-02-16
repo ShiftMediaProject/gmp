@@ -2,8 +2,8 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009, 2011, 2012
-dnl  Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009, 2011,
+dnl  2012, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -218,7 +218,7 @@ dnl  Used for private GMP symbols that should never be overridden by users.
 dnl  This can save reloc entries and improve shlib sharing as well as
 dnl  application startup times
 
-define(`PROTECT',  `.protected $1')
+define(`PROTECT',  `.hidden $1')
 
 
 dnl  Usage: x86_lookup(target, key,value, key,value, ...)
