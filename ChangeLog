@@ -4,6 +4,8 @@
 
 2013-02-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/Makefile.am (TARG_DIST): Add arm64.
+
 	* mpn/x86_64/x86_64-defs.m4 (PROTECT): Emit '.hidden' instead of
 	'.protected" to please Sun's assembler, but also for semantic reasons.
 
