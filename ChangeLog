@@ -3,6 +3,9 @@
 	* cxx/osdoprnti.cc: Use <stdarg.h> and <string.h> rather than <cstdarg>
 	and <cstring> (revert 2002-12-21).
 
+	* tests/cxx/Makefile.am: Link with libm.
+	* tests/cxx/t-ops2.cc: Comment about more tests.
+
 2013-02-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Include <algorithm>.
