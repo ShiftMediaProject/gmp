@@ -10,7 +10,8 @@
 	and <cstring> (revert 2002-12-21).
 
 	* tests/cxx/Makefile.am: Link with libm.
-	* tests/cxx/t-ops2.cc: Comment about more tests.
+	* tests/cxx/t-ops2.cc: Comment about more tests. Use <math.h> rather
+	than <cmath> and using namespace. Don't include <iostream>.
 
 2013-02-16  Marc Glisse  <marc.glisse@inria.fr>
 

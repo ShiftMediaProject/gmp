@@ -19,15 +19,12 @@ the GNU MP Library test suite.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "config.h"
 
-#include <iostream>
-#include <cmath>
+#include <math.h>
 
 #include "gmp.h"
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
-
-using namespace std;
 
 
 #define CHECK1(Type,a,fun) \
