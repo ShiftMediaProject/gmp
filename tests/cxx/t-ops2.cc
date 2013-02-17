@@ -129,6 +129,9 @@ void checkz (){
   ASSERT_ALWAYS(sgn(mpz_class(0))==0);
   ASSERT_ALWAYS(sgn(mpz_class(9))==1);
   ASSERT_ALWAYS(sgn(mpz_class(-17))==-1);
+  ASSERT_ALWAYS(mpz_class(1)+DBL_MAX>2);
+  ASSERT_ALWAYS(mpz_class(1)+DBL_MIN<2);
+  ASSERT_ALWAYS(mpz_class(1)+std::numeric_limits<double>::denorm_min()<2);
 }
 
 template<class T>
@@ -175,6 +178,11 @@ void checkqf (){
   ASSERT_ALWAYS(sgn(T(0))==0);
   ASSERT_ALWAYS(sgn(T(9))==1);
   ASSERT_ALWAYS(sgn(T(-17))==-1);
+  ASSERT_ALWAYS(T(1)+DBL_MAX>2);
+  ASSERT_ALWAYS(T(1)+DBL_MIN>1);
+  ASSERT_ALWAYS(T(1)+DBL_MIN<1.001);
+  ASSERT_ALWAYS(T(1)+std::numeric_limits<double>::denorm_min()>1);
+  ASSERT_ALWAYS(T(1)+std::numeric_limits<double>::denorm_min()<1.001);
 }
 
 void checkf (){
@@ -236,6 +244,8 @@ main (void)
 {
   tests_start();
 
+  // Enough precision for 1 + denorm_min
+  mpf_set_default_prec(DBL_MANT_DIG-DBL_MIN_EXP+42);
   checkz();
   checkqf<mpq_class>();
   checkqf<mpf_class>();

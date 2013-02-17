@@ -13,6 +13,13 @@
 	* tests/cxx/t-ops2.cc: Comment about more tests. Use <math.h> rather
 	than <cmath> and using namespace. Don't include <iostream>.
 
+	* gmpxx.h (__GMPXX_BITS_TO_LIMBS, __GMPQ_NUM_DBL_LIMBS,
+	__GMPQ_DEN_DBL_LIMBS, __GMPXX_TMPQ_D): New macros.
+	(__gmp_binary_plus, __gmp_binary_minus, __gmp_binary_multiplies,
+	__gmp_binary_divides, __gmp_binary_equal, __gmp_binary_less,
+	__gmp_cmp_function): Use __GMPXX_TMPQ_D.
+	* tests/cxx/t-ops2.cc: Test __GMPXX_TMPQ_D on DBL_MIN, DBL_MAX.
+
 2013-02-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Include <algorithm>.

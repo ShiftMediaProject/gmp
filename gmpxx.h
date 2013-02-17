@@ -58,14 +58,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define __GMPXX_NOEXCEPT
 #endif
 
-// Max allocations for plain types when converted to mpz_t
-#define __GMPZ_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
-
+// Max allocations for plain types when converted to GMP types
 #if GMP_NAIL_BITS != 0 && ! defined _LONG_LONG_LIMB
 #define __GMPZ_ULI_LIMBS 2
 #else
 #define __GMPZ_ULI_LIMBS 1
 #endif
+
+#define __GMPXX_BITS_TO_LIMBS(n)  (((n) + (GMP_NUMB_BITS - 1)) / GMP_NUMB_BITS)
+#define __GMPZ_DBL_LIMBS __GMPXX_BITS_TO_LIMBS(DBL_MAX_EXP)+1
+#define __GMPQ_NUM_DBL_LIMBS __GMPZ_DBL_LIMBS
+#define __GMPQ_DEN_DBL_LIMBS __GMPXX_BITS_TO_LIMBS(DBL_MANT_DIG+1-DBL_MIN_EXP)+1
+// The final +1s are a security margin. The current implementation of
+// mpq_set_d seems to need it for the denominator.
 
 inline void __mpz_set_ui_safe(mpz_ptr p, unsigned long l)
 {
@@ -124,6 +129,14 @@ inline void __mpz_set_si_safe(mpz_ptr p, long l)
   mpq_denref(temp)->_mp_d = limbs + __GMPZ_ULI_LIMBS;			\
   mpq_denref(temp)->_mp_size = 1;					\
   mpq_denref(temp)->_mp_d[0] = 1
+#define __GMPXX_TMPQ_D							\
+  mpq_t temp;								\
+  mp_limb_t limbs[__GMPQ_NUM_DBL_LIMBS + __GMPQ_DEN_DBL_LIMBS];		\
+  mpq_numref(temp)->_mp_d = limbs;					\
+  mpq_numref(temp)->_mp_alloc = __GMPQ_NUM_DBL_LIMBS;			\
+  mpq_denref(temp)->_mp_d = limbs + __GMPQ_NUM_DBL_LIMBS;		\
+  mpq_denref(temp)->_mp_alloc = __GMPQ_DEN_DBL_LIMBS;			\
+  mpq_set_d (temp, d)
 
 inline unsigned long __gmpxx_abs_ui (signed long l)
 {
@@ -216,13 +229,7 @@ struct __gmp_binary_plus
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   { eval(q, r, l); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_add(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_add (q, r, temp); }
   static void eval(mpq_ptr q, double d, mpq_srcptr r)
   { eval(q, r, d); }
 
@@ -346,21 +353,9 @@ struct __gmp_binary_minus
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   { eval(q, r, l); mpq_neg(q, q); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_sub(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_sub (q, r, temp); }
   static void eval(mpq_ptr q, double d, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_sub(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_sub (q, temp, r); }
 
   static void eval(mpq_ptr q, mpq_srcptr r, mpz_srcptr z)
   {
@@ -569,13 +564,7 @@ struct __gmp_binary_multiplies
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   { eval(q, r, l); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_mul(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_mul (q, r, temp); }
   static void eval(mpq_ptr q, double d, mpq_srcptr r)
   { eval(q, r, d); }
 
@@ -718,21 +707,9 @@ struct __gmp_binary_divides
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   {  __GMPXX_TMPQ_SI;   mpq_div (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, double d)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_div(q, r, temp);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_div (q, r, temp); }
   static void eval(mpq_ptr q, double d, mpq_srcptr r)
-  {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    mpq_div(q, temp, r);
-    mpq_clear(temp);
-  }
+  {  __GMPXX_TMPQ_D;    mpq_div (q, temp, r); }
 
   static void eval(mpf_ptr f, mpf_srcptr g, mpf_srcptr h)
   { mpf_div(f, g, h); }
@@ -909,19 +886,9 @@ struct __gmp_binary_equal
   static bool eval(signed long int l, mpq_srcptr q)
   { return eval(q, l); }
   static bool eval(mpq_srcptr q, double d)
-  {
-    bool b;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    b = (mpq_equal(q, temp) != 0);
-    mpq_clear(temp);
-    return b;
-  }
+  {  __GMPXX_TMPQ_D;    return mpq_equal (q, temp) != 0; }
   static bool eval(double d, mpq_srcptr q)
-  {
-    return eval(q, d);
-  }
+  { return eval(q, d); }
 
   static bool eval(mpf_srcptr f, mpf_srcptr g) { return mpf_cmp(f, g) == 0; }
 
@@ -967,25 +934,9 @@ struct __gmp_binary_less
   static bool eval(signed long int l, mpq_srcptr q)
   { return mpq_cmp_si(q, l, 1) > 0; }
   static bool eval(mpq_srcptr q, double d)
-  {
-    bool b;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    b = (mpq_cmp(q, temp) < 0);
-    mpq_clear(temp);
-    return b;
-  }
+  {  __GMPXX_TMPQ_D;    return mpq_cmp (q, temp) < 0; }
   static bool eval(double d, mpq_srcptr q)
-  {
-    bool b;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    b = (mpq_cmp(temp, q) < 0);
-    mpq_clear(temp);
-    return b;
-  }
+  {  __GMPXX_TMPQ_D;    return mpq_cmp (temp, q) < 0; }
 
   static bool eval(mpf_srcptr f, mpf_srcptr g) { return mpf_cmp(f, g) < 0; }
 
@@ -1133,25 +1084,9 @@ struct __gmp_cmp_function
   static int eval(signed long int l, mpq_srcptr q)
   { return -mpq_cmp_si(q, l, 1); }
   static int eval(mpq_srcptr q, double d)
-  {
-    int i;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    i = mpq_cmp(q, temp);
-    mpq_clear(temp);
-    return i;
-  }
+  {  __GMPXX_TMPQ_D;    return mpq_cmp (q, temp); }
   static int eval(double d, mpq_srcptr q)
-  {
-    int i;
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set_d(temp, d);
-    i = mpq_cmp(temp, q);
-    mpq_clear(temp);
-    return i;
-  }
+  {  __GMPXX_TMPQ_D;    return mpq_cmp (temp, q); }
 
   static int eval(mpf_srcptr f, mpf_srcptr g) { return mpf_cmp(f, g); }
 
