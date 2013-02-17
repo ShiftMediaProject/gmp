@@ -1,3 +1,9 @@
+2013-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmpxx.h (mpq_class, mpf_class) [init_ui, init_si, assign_si]:
+	Optimise _si using _ui for positive arguments.
+	(__gmp_hypot_function): Use _mul_ui to square an ui, abs for si.
+
 2013-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* cxx/osdoprnti.cc: Use <stdarg.h> and <string.h> rather than <cstdarg>
