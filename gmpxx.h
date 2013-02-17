@@ -1072,24 +1072,15 @@ struct __gmp_hypot_function
     mpf_init2(temp, mpf_get_prec(f));
     mpf_mul(temp, g, g);
     mpf_set_ui(f, l);
-    mpf_mul(f, f, f);
+    mpf_mul_ui(f, f, l);
     mpf_add(f, f, temp);
-    mpf_sqrt(f, f);
     mpf_clear(temp);
+    mpf_sqrt(f, f);
   }
   static void eval(mpf_ptr f, unsigned long int l, mpf_srcptr g)
   { eval(f, g, l); }
   static void eval(mpf_ptr f, mpf_srcptr g, signed long int l)
-  {
-    mpf_t temp;
-    mpf_init2(temp, mpf_get_prec(f));
-    mpf_mul(temp, g, g);
-    mpf_set_si(f, l);
-    mpf_mul(f, f, f);
-    mpf_add(f, f, temp);
-    mpf_sqrt(f, f);
-    mpf_clear(temp);
-  }
+  { eval(f, g, __gmpxx_abs_ui(l)); }
   static void eval(mpf_ptr f, signed long int l, mpf_srcptr g)
   { eval(f, g, l); }
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
@@ -1613,11 +1604,17 @@ private:
 
   // Helper functions used for all arithmetic types
   void assign_ui(unsigned long l) { mpq_set_ui(mp, l, 1); }
-  void assign_si(signed long l)   { mpq_set_si(mp, l, 1); }
+  void assign_si(signed long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      assign_ui(l);
+    else
+      mpq_set_si(mp, l, 1);
+  }
   void assign_d (double d)        { mpq_set_d (mp, d); }
 
-  void init_ui(unsigned long l)	{ mpq_init(mp); assign_ui(l); }
-  void init_si(signed long l)	{ mpq_init(mp); assign_si(l); }
+  void init_ui(unsigned long l)	{ mpq_init(mp); get_num() = l; }
+  void init_si(signed long l)	{ mpq_init(mp); get_num() = l; }
   void init_d (double d)	{ mpq_init(mp); assign_d (d); }
 
 public:
@@ -1785,11 +1782,29 @@ private:
 
   // Helper functions used for all arithmetic types
   void assign_ui(unsigned long l) { mpf_set_ui(mp, l); }
-  void assign_si(signed long l)   { mpf_set_si(mp, l); }
+  void assign_si(signed long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      assign_ui(l);
+    else
+      mpf_set_si(mp, l);
+  }
   void assign_d (double d)        { mpf_set_d (mp, d); }
 
-  void init_ui(unsigned long l)	{ mpf_init_set_ui(mp, l); }
-  void init_si(signed long l)	{ mpf_init_set_si(mp, l); }
+  void init_ui(unsigned long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l == 0))
+      mpf_init(mp);
+    else
+      mpf_init_set_ui(mp, l);
+  }
+  void init_si(signed long l)
+  {
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      init_ui(l);
+    else
+      mpf_init_set_si(mp, l);
+  }
   void init_d (double d)	{ mpf_init_set_d (mp, d); }
 
 public:
