@@ -20,6 +20,9 @@
 	__gmp_cmp_function): Use __GMPXX_TMPQ_D.
 	* tests/cxx/t-ops2.cc: Test __GMPXX_TMPQ_D on DBL_MIN, DBL_MAX.
 
+	* gmpxx.h (__gmp_binary_multiplies, __gmp_binary_divides): Use
+	__GMPXX_CONSTANT_TRUE.
+
 2013-02-16  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h: Include <algorithm>.

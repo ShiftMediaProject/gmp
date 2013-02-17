@@ -497,16 +497,13 @@ struct __gmp_binary_multiplies
   { eval(z, w, l); }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
   {
-    if (__GMPXX_CONSTANT(l))
-    {
-      if (l >= 0)
-        eval(z, w, static_cast<unsigned long>(l));
-      else
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      eval(z, w, static_cast<unsigned long>(l));
+    else if (__GMPXX_CONSTANT_TRUE(l <= 0))
       {
         eval(z, w, -static_cast<unsigned long>(l));
 	mpz_neg(z, z);
       }
-    }
     else
       mpz_mul_si (z, w, l);
   }
@@ -545,21 +542,18 @@ struct __gmp_binary_multiplies
   { eval(q, r, l); }
   static void eval(mpq_ptr q, mpq_srcptr r, signed long int l)
   {
-    if (__GMPXX_CONSTANT(l))
-    {
-      if (l >= 0)
-        eval(q, r, static_cast<unsigned long>(l));
-      else
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      eval(q, r, static_cast<unsigned long>(l));
+    else if (__GMPXX_CONSTANT_TRUE(l <= 0))
       {
         eval(q, r, -static_cast<unsigned long>(l));
 	mpq_neg(q, q);
       }
-    }
     else
-    {
-      __GMPXX_TMPQ_SI;
-      mpq_mul (q, r, temp);
-    }
+      {
+	__GMPXX_TMPQ_SI;
+	mpq_mul (q, r, temp);
+      }
   }
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   { eval(q, r, l); }
@@ -688,21 +682,18 @@ struct __gmp_binary_divides
   {  __GMPXX_TMPQ_UI;   mpq_div (q, temp, r); }
   static void eval(mpq_ptr q, mpq_srcptr r, signed long int l)
   {
-    if (__GMPXX_CONSTANT(l))
-    {
-      if (l >= 0)
-        eval(q, r, static_cast<unsigned long>(l));
-      else
+    if (__GMPXX_CONSTANT_TRUE(l >= 0))
+      eval(q, r, static_cast<unsigned long>(l));
+    else if (__GMPXX_CONSTANT_TRUE(l <= 0))
       {
         eval(q, r, -static_cast<unsigned long>(l));
 	mpq_neg(q, q);
       }
-    }
     else
-    {
-      __GMPXX_TMPQ_SI;
-      mpq_div (q, r, temp);
-    }
+      {
+	__GMPXX_TMPQ_SI;
+	mpq_div (q, r, temp);
+      }
   }
   static void eval(mpq_ptr q, signed long int l, mpq_srcptr r)
   {  __GMPXX_TMPQ_SI;   mpq_div (q, temp, r); }
