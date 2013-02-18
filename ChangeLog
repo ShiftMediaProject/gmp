@@ -16,6 +16,9 @@
 	* rand/randmts.c: Use init2, as size of variables is known in advance.
 	(mangle_seed): Get a single argument.
 
+	* mpz/remove.c: Delay allocation in the generic case; use swap
+	instead of set.
+
 2013-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* cxx/osdoprnti.cc: Use <stdarg.h> and <string.h> rather than <cstdarg>
