@@ -831,14 +831,20 @@ mpn_div_qr_1 (mp_ptr qp, mp_srcptr np, mp_size_t nn, mp_limb_t d)
   assert (d > 0);
 
   /* Special case for powers of two. */
-  if (d > 1 && (d & (d-1)) == 0)
+  if ((d & (d-1)) == 0)
     {
-      unsigned shift;
       mp_limb_t r = np[0] & (d-1);
-      gmp_ctz (shift, d);
       if (qp)
-	mpn_rshift (qp, np, nn, shift);
-
+	{
+	  if (d <= 1)
+	    mpn_copyi (qp, np, nn);
+	  else
+	    {
+	      unsigned shift;
+	      gmp_ctz (shift, d);
+	      mpn_rshift (qp, np, nn, shift);
+	    }
+	}
       return r;
     }
   else

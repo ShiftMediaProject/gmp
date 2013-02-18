@@ -11,6 +11,7 @@
 	(mpz_rootrem): Use _init2 before _setbit.
 	(mpz_set_str): Optimise-out a variable.
 	(mpz_import): Normalise only if needed.
+	(mpn_div_qr_1): Speed-up the d=1 case, delaying a branch.
 
 	* rand/randmts.c: Use init2, as size of variables is known in advance.
 	(mangle_seed): Get a single argument.
