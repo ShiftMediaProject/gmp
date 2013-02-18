@@ -4,6 +4,14 @@
 	Optimise _si using _ui for positive arguments.
 	(__gmp_hypot_function): Use _mul_ui to square an ui, abs for si.
 
+	* mini-gmp/mini-gmp.c (mpz_mul): Read sizes just once.
+	(mpn_set_str_other): Remove a redundant variable.
+	(mpz_abs_add): Use SWAP once, to order sizes.
+	(mpz_mul_ui): Micro-optimisation.
+	(mpz_rootrem): Use _init2 before _setbit.
+	(mpz_set_str): Optimise-out a variable.
+	(mpz_import): Normalise only if needed.
+
 2013-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* cxx/osdoprnti.cc: Use <stdarg.h> and <string.h> rather than <cstdarg>
