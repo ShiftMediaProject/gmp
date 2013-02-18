@@ -18,6 +18,7 @@
 
 	* mpz/remove.c: Delay allocation in the generic case; use swap
 	instead of set.
+	* mpn/generic/remove.c: Delay (possibly smaller) allocation.
 
 2013-02-17  Marc Glisse  <marc.glisse@inria.fr>
 
