@@ -931,11 +931,11 @@ mpn_div_qr_pi1 (mp_ptr qp,
 
   assert (dn > 2);
   assert (nn >= dn);
-  assert ((dp[dn-1] & GMP_LIMB_HIGHBIT) != 0);
 
   d1 = dp[dn - 1];
   d0 = dp[dn - 2];
 
+  assert ((d1 & GMP_LIMB_HIGHBIT) != 0);
   /* Iteration variable is the index of the q limb.
    *
    * We divide <n1, np[dn-1+i], np[dn-2+i], np[dn-3+i],..., np[i]>
@@ -995,16 +995,15 @@ mpn_div_qr_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
       mp_limb_t nh;
       unsigned shift;
 
-      assert (dp[dn-1] & GMP_LIMB_HIGHBIT);
+      assert (inv->d1 == dp[dn-1]);
+      assert (inv->d0 == dp[dn-2]);
+      assert ((inv->d1 & GMP_LIMB_HIGHBIT) != 0);
 
       shift = inv->shift;
       if (shift > 0)
 	nh = mpn_lshift (np, np, nn, shift);
       else
 	nh = 0;
-
-      assert (inv->d1 == dp[dn-1]);
-      assert (inv->d0 == dp[dn-2]);
 
       mpn_div_qr_pi1 (qp, np, nn, nh, dp, dn, inv->di);
 
