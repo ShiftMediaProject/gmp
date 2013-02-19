@@ -192,9 +192,9 @@ testmain (int argc, char **argv)
       bsi = mpz_get_ui (bs);
       if ((bsi & 1) != 0)
 	mpz_neg (in1, in1);
-      if ((bsi & 1) != 0)
+      if ((bsi & 2) != 0)
 	mpz_neg (in2, in2);
-      if ((bsi & 1) != 0)
+      if ((bsi & 4) != 0)
 	mpz_neg (in3, in3);
 
       for (i = 0; i < sizeof (dss_funcs) / sizeof (dss_func); i++)
