@@ -1877,7 +1877,6 @@ void
 mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 {
   mp_size_t un, us;
-  mpz_t t;
   mp_ptr tp;
   mp_limb_t cy;
 
@@ -1891,17 +1890,12 @@ mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 
   un = GMP_ABS (us);
 
-  mpz_init2 (t, (un + 1) * GMP_LIMB_BITS);
-
-  tp = t->_mp_d;
+  tp = MPZ_REALLOC (r, un + 1);
   cy = mpn_mul_1 (tp, u->_mp_d, un, v);
   tp[un] = cy;
 
   un += (cy > 0);
-  t->_mp_size = (us < 0) ? - un : un;
-
-  mpz_swap (r, t);
-  mpz_clear (t);
+  r->_mp_size = (us < 0) ? - un : un;
 }
 
 void
