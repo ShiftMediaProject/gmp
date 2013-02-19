@@ -1,6 +1,11 @@
 2013-02-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-        * mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug. 
+        * mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug.
+	(mpz_export): Reorder branches.
+	(mpz_mul_ui): Avoid temporary allocation (mpn_mul_1 can work in-place).
+
+	* mini-gmp/tests/t-reuse.c: Fix typo causing the same negation condition
+	to be applied to all operands.
 
 2013-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
