@@ -5,7 +5,7 @@
 	(mpz_mul_ui): Avoid temporary allocation (mpn_mul_1 can work in-place).
 
 	* mini-gmp/tests/t-reuse.c: Fix typo causing the same negation condition
-	to be applied to all operands.
+	to be applied to all operands. (See 2013-02-03, Torbjorn)
 
 2013-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
