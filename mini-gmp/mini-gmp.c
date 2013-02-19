@@ -4016,17 +4016,8 @@ void *
 mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
 	    size_t nails, const mpz_t u)
 {
-  unsigned char *p;
-  ptrdiff_t word_step;
-  size_t count, k;
+  size_t count;
   mp_size_t un;
-
-  /* The current (partial) limb. */
-  mp_limb_t limb;
-  /* The number of bytes left to to in this limb. */
-  size_t bytes;
-  /* The index where the limb was read. */
-  mp_size_t i;
 
   if (nails != 0)
     gmp_die ("mpz_import: Nails not supported.");
@@ -4035,62 +4026,74 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
   assert (endian >= -1 && endian <= 1);
   assert (size > 0 || u->_mp_size == 0);
 
-  un = GMP_ABS (u->_mp_size);
-  if (un == 0)
+  un = u->_mp_size;
+  count = 0;
+  if (un != 0)
     {
-      if (countp)
-	*countp = 0;
-      return r;
+      size_t k;
+      unsigned char *p;
+      ptrdiff_t word_step;
+      /* The current (partial) limb. */
+      mp_limb_t limb;
+      /* The number of bytes left to to in this limb. */
+      size_t bytes;
+      /* The index where the limb was read. */
+      mp_size_t i;
+
+      un = GMP_ABS (un);
+
+      /* Count bytes in top limb. */
+      limb = u->_mp_d[un-1];
+      assert (limb != 0);
+
+      k = 0;
+      do {
+	k++; limb >>= CHAR_BIT;
+      } while (limb != 0);
+
+      count = (k + (un-1) * sizeof (mp_limb_t) + size - 1) / size;
+
+      if (!r)
+	r = gmp_xalloc (count * size);
+
+      if (endian == 0)
+	endian = gmp_detect_endian ();
+
+      p = (unsigned char *) r;
+
+      word_step = (order != endian) ? 2 * size : 0;
+
+      /* Process bytes from the least significant end, so point p at the
+	 least significant word. */
+      if (order == 1)
+	{
+	  p += size * (count - 1);
+	  word_step = - word_step;
+	}
+
+      /* And at least significant byte of that word. */
+      if (endian == 1)
+	p += (size - 1);
+
+      for (bytes = 0, i = 0, k = 0; k < count; k++, p += word_step)
+	{
+	  size_t j;
+	  for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
+	    {
+	      if (bytes == 0)
+		{
+		  if (i < un)
+		    limb = u->_mp_d[i++];
+		  bytes = sizeof (mp_limb_t);
+		}
+	      *p = limb;
+	      limb >>= CHAR_BIT;
+	      bytes--;
+	    }
+	}
+      assert (i == un);
+      assert (k == count);
     }
-
-  /* Count bytes in top limb. */
-  for (limb = u->_mp_d[un-1], k = 0; limb > 0; k++, limb >>= CHAR_BIT)
-    ;
-
-  assert (k > 0);
-
-  count = (k + (un-1) * sizeof (mp_limb_t) + size - 1) / size;
-
-  if (!r)
-    r = gmp_xalloc (count * size);
-
-  if (endian == 0)
-    endian = gmp_detect_endian ();
-
-  p = (unsigned char *) r;
-
-  word_step = (order != endian) ? 2 * size : 0;
-
-  /* Process bytes from the least significant end, so point p at the
-     least significant word. */
-  if (order == 1)
-    {
-      p += size * (count - 1);
-      word_step = - word_step;
-    }
-
-  /* And at least significant byte of that word. */
-  if (endian == 1)
-    p += (size - 1);
-
-  for (bytes = 0, i = 0, k = 0; k < count; k++, p += word_step)
-      {
-	size_t j;
-	for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
-	  {
-	    if (bytes == 0)
-	      {
-		if (i < un)
-		  limb = u->_mp_d[i++];
-		bytes = sizeof (mp_limb_t);
-	      }
-	    *p = limb;
-	    limb >>= CHAR_BIT;
-	    bytes--;
-	  }
-      }
-  assert (i == un);
-  assert (k == count);
 
   if (countp)
     *countp = count;
