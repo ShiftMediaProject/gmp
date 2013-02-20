@@ -163,9 +163,13 @@ my_ldexp (double d, int e)
 void
 check_random (int argc, char **argv)
 {
-  double d, d2, nd, dd;
+  gmp_randstate_ptr rands = RANDS;
+  
+  double d;
   mpq_t q;
-  mp_limb_t rp[LIMBS_PER_DOUBLE + 1];
+  mpz_t a, t;
+  int exp;
+
   int test, reps = 100000;
   int i;
 
@@ -173,27 +177,40 @@ check_random (int argc, char **argv)
      reps = 100 * atoi (argv[1]);
 
   mpq_init (q);
-
+  mpz_init (a);
+  mpz_init (t);
+  
   for (test = 0; test < reps; test++)
     {
-      mpn_random2 (rp, LIMBS_PER_DOUBLE + 1);
-      d = 0.0;
-      for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
-	d = d * MP_BASE_AS_DOUBLE + rp[i];
-      d = my_ldexp (d, (int) (rp[LIMBS_PER_DOUBLE] % (2 * MAXEXP)) - MAXEXP);
+      mpz_rrandomb (a, rands, 53);
+      mpz_urandomb (t, rands, 32);
+      exp = mpz_get_ui (t) % (2*MAXEXP) - MAXEXP;
+
+      d = my_ldexp (mpz_get_d (a), exp);
       mpq_set_d (q, d);
-      nd = mpz_get_d (mpq_numref (q));
-      dd = mpz_get_d (mpq_denref (q));
-      d2 = nd / dd;
-      if (d != d2)
+      /* Check that n/d = a * 2^exp, or
+	 d*a 2^{exp} = n */
+      mpz_mul (t, a, mpq_denref (q));
+      if (exp > 0)
+	mpz_mul_2exp (t, t, exp);
+      else
 	{
+	  if (!mpz_divisible_2exp_p (t, -exp))
+	    goto fail;
+	  mpz_div_2exp (t, t, -exp);
+	}
+      if (mpz_cmp (t, mpq_numref (q)) != 0)
+	{
+	fail:
 	  printf ("ERROR (check_random test %d): bad mpq_set_d results\n", test);
 	  printf ("%.16g\n", d);
-	  printf ("%.16g\n", d2);
+	  gmp_printf ("%Qd\n", q);
 	  abort ();
 	}
     }
   mpq_clear (q);
+  mpz_clear (t);
+  mpz_clear (a);
 }
 
 void

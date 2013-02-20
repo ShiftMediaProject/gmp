@@ -1,3 +1,9 @@
+2013-02-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpq/t-get_d.c (check_random): Rewrote to make test less
+	dependent on float operations. Fixes problem with m68k-linux and
+	extended float precision.
+
 2013-02-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
         * mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug.
