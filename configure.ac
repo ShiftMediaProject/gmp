@@ -1651,6 +1651,12 @@ case $host in
 	path="x86/haswell x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
 	path_64="x86_64/haswell/mulx x86_64/haswell x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
+      coreibwl)
+	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
+	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
+	path="x86/haswell x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path_64="x86_64/haswell/mulx/adx x86_64/haswell/mulx x86_64/haswell x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
+	;;
       atom)
 	gcc_cflags_cpu="-mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=atom -march=pentium3"
@@ -2302,8 +2308,8 @@ case $host in
       *mulx*)  GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(mulx)]) ;;
     esac
     case "$path $fat_path" in
-      *adox*)  GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(adox)])
-	       GMP_ASM_X86_ADOX( , [GMP_STRIP_PATH(adox)]) ;;
+      *adx*)   GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(adx)])
+	       GMP_ASM_X86_ADX( , [GMP_STRIP_PATH(adx)]) ;;
     esac
     ;;
 esac

@@ -2643,7 +2643,7 @@ esac
 ])
 
 
-dnl  GMP_ASM_X86_ADOX([ACTION-IF-YES][,ACTION-IF-NO])
+dnl  GMP_ASM_X86_ADX([ACTION-IF-YES][,ACTION-IF-NO])
 dnl  ------------------------------------------------
 dnl  Determine whether the assembler supports the adcx and adox instructions
 dnl  which debut with the Haswell shrink Broadwell.
@@ -2653,17 +2653,17 @@ dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
 
-AC_DEFUN([GMP_ASM_X86_ADOX],
+AC_DEFUN([GMP_ASM_X86_ADX],
 [AC_CACHE_CHECK([if the assembler knows about the adox instruction],
-		gmp_cv_asm_x86_adox,
+		gmp_cv_asm_x86_adx,
 [GMP_TRY_ASSEMBLE(
 [	.text
 	adox	%r8, %r9
 	adcx	%r8, %r9],
-  [gmp_cv_asm_x86_adox=yes],
-  [gmp_cv_asm_x86_adox=no])
+  [gmp_cv_asm_x86_adx=yes],
+  [gmp_cv_asm_x86_adx=no])
 ])
-case $gmp_cv_asm_x86_adox in
+case $gmp_cv_asm_x86_adx in
 yes)
   ifelse([$1],,:,[$1])
   ;;
