@@ -11,7 +11,7 @@
 	* configure.ac: Support coreibwl.  Use proper name for ADX extension.
 	* acinclude.m4 (GMP_ASM_X86_ADX): Rename from GMP_ASM_X86_ADOX.
 
-	* tests/tests.h (TESTS_REPS): Keep count >= 10.
+	* tests/tests.h (TESTS_REPS): Keep count >= 1.
 
 2013-02-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
