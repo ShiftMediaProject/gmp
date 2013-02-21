@@ -431,7 +431,7 @@ istringstream : public std::istrstream {
 	  exit (1);							\
 	}								\
       count *= repfactor;						\
-      count = MAX (count, 10);						\
+      count = MAX (count, 1);						\
       reps_nondefault = 1;						\
     }									\
   if (reps_nondefault)							\
