@@ -2308,8 +2308,7 @@ case $host in
       *mulx*)  GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(mulx)]) ;;
     esac
     case "$path $fat_path" in
-      *adx*)   GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(adx)])
-	       GMP_ASM_X86_ADX( , [GMP_STRIP_PATH(adx)]) ;;
+      *adx*)   GMP_ASM_X86_ADX( , [GMP_STRIP_PATH(adx)]) ;;
     esac
     ;;
 esac
