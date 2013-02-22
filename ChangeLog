@@ -1,3 +1,8 @@
+2013-02-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Fix typo in adx/mulx path stripping code.
+	* config.sub: Match coreibwl.
+
 2013-02-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpq/t-get_d.c (check_random): Rewrote to make test less
