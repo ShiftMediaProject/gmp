@@ -26,7 +26,7 @@ C StrongARM:	 -
 C XScale	 -
 C Cortex-A8	 ?
 C Cortex-A9	 2.25
-C Cortex-A15	 ?
+C Cortex-A15	 2.5
 
 C TODO
 C  * This is a trivial edit of the addmul_2 code.  Check for simplifications,
