@@ -33,6 +33,7 @@ C Numbers measured with: speed -CD -s8-32 -t24 mpn_gcd_1
 
 C TODO
 C  * Optimise inner-loop better.
+C  * Push saving/restoring of callee-user regs into call code
 
 C Threshold of when to call bmod when U is one limb.  Should be about
 C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
