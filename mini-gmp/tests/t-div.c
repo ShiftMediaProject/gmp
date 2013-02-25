@@ -31,7 +31,7 @@ dump (const char *label, const mpz_t x)
 {
   char *buf = mpz_get_str (NULL, 16, x);
   fprintf (stderr, "%s: %s\n", label, buf);
-  free (buf);
+  testfree (buf);
 }
 
 typedef void div_qr_func (mpz_t, mpz_t, const mpz_t, const mpz_t);

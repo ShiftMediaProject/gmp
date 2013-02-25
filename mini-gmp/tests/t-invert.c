@@ -32,7 +32,7 @@ dump (const char *label, const mpz_t x)
 {
   char *buf = mpz_get_str (NULL, 16, x);
   fprintf (stderr, "%s: %s\n", label, buf);
-  free (buf);
+  testfree (buf);
 }
 
 void

@@ -34,7 +34,7 @@ dump (const char *label, const mpz_t x)
 {
   char *buf = mpz_get_str (NULL, 16, x);
   fprintf (stderr, "%s: %s\n", label, buf);
-  free (buf);
+  testfree (buf);
 }
 
 static const struct
@@ -61,9 +61,6 @@ testmain (int argc, char **argv)
   unsigned i;
   mpz_t x;
 
-  void (*freefunc) (void *, size_t);
-  mp_get_memory_functions (NULL, NULL, &freefunc);
-
   for (i = 0; values[i].s; i++)
     {
       char *s;
@@ -78,7 +75,7 @@ testmain (int argc, char **argv)
 		   values[i].d, s, values[i].s);
 	  abort ();
 	}
-      freefunc(s, 0);
+      testfree (s);
       mpz_clear (x);
     }
 

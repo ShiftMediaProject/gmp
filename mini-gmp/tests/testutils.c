@@ -100,6 +100,16 @@ tu_free (void *p, size_t old_size)
   free (block_check (p));
 }
 
+/* Free memory allocated via mini-gmp allocation function. */
+void
+testfree (void *p)
+{
+  void (*freefunc) (void *, size_t);
+  mp_get_memory_functions (NULL, NULL, &freefunc);
+
+  freefunc (p, 0);
+}
+
 int
 main (int argc, char **argv)
 {
