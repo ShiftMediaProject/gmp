@@ -83,7 +83,9 @@ testmain (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      double d, f;
+      /* Use volatile, to avoid extended precision in floating point
+	 registers, e.g., on m68k and 80387. */
+      volatile double d, f;
       unsigned long m;
       int e;
 
