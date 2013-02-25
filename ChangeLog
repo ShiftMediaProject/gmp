@@ -1,3 +1,18 @@
+2013-02-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/limbs_finish.c (mpz_limbs_finish): New file and function.
+	* mpz/limbs_modify.c (mpz_limbs_modify): New file and function.
+	* mpz/limbs_read.c (mpz_limbs_read): New file and function.
+	* mpz/limbs_write.c (mpz_limbs_write): New file and function.
+	* mpz/roinit_n.c (mpz_roinit_n): New file and function.
+	* gmp-h.in: Declare new functions.
+	(MPZ_ROINIT_N): New macro.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Added new files.
+	* Makefile.am (MPZ_OBJECTS): Added new object files.
+
+	* tests/mpz/t-limbs.c: New testcase.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Added t-limbs.
+
 2013-02-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Fix typo in adx/mulx path stripping code.

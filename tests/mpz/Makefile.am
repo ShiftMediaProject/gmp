@@ -30,7 +30,7 @@ check_PROGRAMS = t-addsub t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv   \
   t-fac_ui t-mfac_uiui t-primorial_ui t-fib_ui t-lucnum_ui t-scan t-fits   \
   t-divis t-divis_2exp t-cong t-cong_2exp t-sizeinbase t-set_str        \
   t-aorsmul t-cmp_d t-cmp_si t-hamdist t-oddeven t-popcount t-set_f     \
-  t-io_raw t-import t-export t-pprime_p t-nextprime t-remove
+  t-io_raw t-import t-export t-pprime_p t-nextprime t-remove t-limbs
 
 TESTS = $(check_PROGRAMS)
 
