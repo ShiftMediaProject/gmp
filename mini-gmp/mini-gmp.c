@@ -1625,7 +1625,7 @@ mpz_cmp_si (const mpz_t u, long v)
       mp_limb_t ul = u->_mp_d[0];
       if ((mp_limb_t)GMP_NEG_CAST (unsigned long int, v) < ul)
 	return -1;
-      else 
+      else
 	return (mp_limb_t)GMP_NEG_CAST (unsigned long int, v) > ul;
     }
 }

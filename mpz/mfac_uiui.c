@@ -93,7 +93,7 @@ mpz_mfac_uiui (mpz_ptr x, unsigned long n, unsigned long m)
       n -= m;
       max_prod = GMP_NUMB_MAX / n;
 
-      if (g > 1) 
+      if (g > 1)
 	factors = MPZ_NEWALLOC (x, sn / log_n_max (n) + 2);
       else {
 	TMP_MARK;

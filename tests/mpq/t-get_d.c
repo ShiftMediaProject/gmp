@@ -164,7 +164,7 @@ void
 check_random (int argc, char **argv)
 {
   gmp_randstate_ptr rands = RANDS;
-  
+
   double d;
   mpq_t q;
   mpz_t a, t;
@@ -179,7 +179,7 @@ check_random (int argc, char **argv)
   mpq_init (q);
   mpz_init (a);
   mpz_init (t);
-  
+
   for (test = 0; test < reps; test++)
     {
       mpz_rrandomb (a, rands, 53);
