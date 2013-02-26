@@ -1,3 +1,8 @@
+2013-02-26  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-limbs.c (check_roinit): Test MPZ_ROINIT_N only if
+	compiler supports c99.
+
 2013-02-25  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-double.c (testmain): Declare double variables

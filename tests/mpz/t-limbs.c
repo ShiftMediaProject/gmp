@@ -186,24 +186,27 @@ check_roinit (void)
       mpz_add (ref, a, b);
       {
 	mpz_t a1, b1;
+#if __STDC_VERSION__ >= 199001
 	const mpz_t a2 = MPZ_ROINIT_N ( (mp_ptr) ap, an);
 	const mpz_t b2 = MPZ_ROINIT_N ( (mp_ptr) bp, bn);
 
-	mpz_add (r, mpz_roinit_n (a1, ap, an), mpz_roinit_n (b1, bp, bn));
+	mpz_set_ui (r, 0);
+	mpz_add (r, a2, b2);
 	if (mpz_cmp (r, ref) != 0)
 	  {
-	    printf ("mpz_roinit_n failed\n");
+	    printf ("MPZ_ROINIT_N failed\n");
 	    gmp_printf ("a = %Zx\n", a);
 	    gmp_printf ("b = %Zx\n", b);
 	    gmp_printf ("r = %Zx (bad)\n", r);
 	    gmp_printf ("ref = %Zx\n", ref);
 	    abort ();
 	  }
+#endif
 	mpz_set_ui (r, 0);
-	mpz_add (r, a2, b2);
+	mpz_add (r, mpz_roinit_n (a1, ap, an), mpz_roinit_n (b1, bp, bn));
 	if (mpz_cmp (r, ref) != 0)
 	  {
-	    printf ("MPZ_ROINIT_N failed\n");
+	    printf ("mpz_roinit_n failed\n");
 	    gmp_printf ("a = %Zx\n", a);
 	    gmp_printf ("b = %Zx\n", b);
 	    gmp_printf ("r = %Zx (bad)\n", r);
