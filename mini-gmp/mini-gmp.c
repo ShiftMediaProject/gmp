@@ -2572,32 +2572,15 @@ mpz_gcd_ui (mpz_t g, const mpz_t u, unsigned long v)
 }
 
 static mp_bitcnt_t
-mpz_make_odd (mpz_t r, const mpz_t u)
+mpz_make_odd (mpz_t r)
 {
-  mp_size_t un, rn, i;
-  mp_ptr rp;
-  unsigned shift;
+  mp_bitcnt_t shift;
 
-  un = GMP_ABS (u->_mp_size);
-  assert (un > 0);
+  assert (r->_mp_size > 0);
+  shift = mpn_common_scan (r->_mp_d[0], 0, r->_mp_d, r->_mp_size, 0);
+  mpz_tdiv_q_2exp (r, r, shift);
 
-  for (i = 0; u->_mp_d[i] == 0; i++)
-    ;
-
-  gmp_ctz (shift, u->_mp_d[i]);
-
-  rn = un - i;
-  rp = MPZ_REALLOC (r, rn);
-  if (shift > 0)
-    {
-      mpn_rshift (rp, u->_mp_d + i, rn, shift);
-      rn -= (rp[rn-1] == 0);
-    }
-  else
-    mpn_copyi (rp, u->_mp_d + i, rn);
-
-  r->_mp_size = rn;
-  return i * GMP_LIMB_BITS + shift;
+  return shift;
 }
 
 void
@@ -2620,8 +2603,10 @@ mpz_gcd (mpz_t g, const mpz_t u, const mpz_t v)
   mpz_init (tu);
   mpz_init (tv);
 
-  uz = mpz_make_odd (tu, u);
-  vz = mpz_make_odd (tv, v);
+  mpz_abs (tu, u);
+  uz = mpz_make_odd (tu);
+  mpz_abs (tv, v);
+  vz = mpz_make_odd (tv);
   gz = GMP_MIN (uz, vz);
 
   if (tu->_mp_size < tv->_mp_size)
@@ -2637,7 +2622,7 @@ mpz_gcd (mpz_t g, const mpz_t u, const mpz_t v)
       {
 	int c;
 
-	mpz_make_odd (tu, tu);
+	mpz_make_odd (tu);
 	c = mpz_cmp (tu, tv);
 	if (c == 0)
 	  {
@@ -2699,8 +2684,10 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
   mpz_init (t0);
   mpz_init (t1);
 
-  uz = mpz_make_odd (tu, u);
-  vz = mpz_make_odd (tv, v);
+  mpz_abs (tu, u);
+  uz = mpz_make_odd (tu);
+  mpz_abs (tv, v);
+  vz = mpz_make_odd (tv);
   gz = GMP_MIN (uz, vz);
 
   uz -= gz;
@@ -2748,7 +2735,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
   if (tu->_mp_size > 0)
     {
       mp_bitcnt_t shift;
-      shift = mpz_make_odd (tu, tu);
+      shift = mpz_make_odd (tu);
       mpz_mul_2exp (t0, t0, shift);
       mpz_mul_2exp (s0, s0, shift);
       power += shift;
@@ -2771,7 +2758,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
 	      mpz_add (t0, t0, t1);
 	      mpz_add (s0, s0, s1);
 
-	      shift = mpz_make_odd (tv, tv);
+	      shift = mpz_make_odd (tv);
 	      mpz_mul_2exp (t1, t1, shift);
 	      mpz_mul_2exp (s1, s1, shift);
 	    }
@@ -2781,7 +2768,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
 	      mpz_add (t1, t0, t1);
 	      mpz_add (s1, s0, s1);
 
-	      shift = mpz_make_odd (tu, tu);
+	      shift = mpz_make_odd (tu);
 	      mpz_mul_2exp (t0, t0, shift);
 	      mpz_mul_2exp (s0, s0, shift);
 	    }
