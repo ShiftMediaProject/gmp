@@ -657,6 +657,26 @@ mpn_common_scan (mp_limb_t limb, mp_size_t i, mp_srcptr up, mp_size_t un,
   return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
 }
 
+mp_bitcnt_t
+mpn_scan1 (mp_srcptr ptr, mp_bitcnt_t bit)
+{
+  mp_size_t i;
+  i = bit / GMP_LIMB_BITS;
+
+  return mpn_common_scan ( ptr[i] & (GMP_LIMB_MAX << (bit % GMP_LIMB_BITS)),
+			  i, ptr, i, 0);
+}
+
+mp_bitcnt_t
+mpn_scan0 (mp_srcptr ptr, mp_bitcnt_t bit)
+{
+  mp_size_t i;
+  i = bit / GMP_LIMB_BITS;
+
+  return mpn_common_scan (~ptr[i] & (GMP_LIMB_MAX << (bit % GMP_LIMB_BITS)),
+			  i, ptr, i, GMP_LIMB_MAX);
+}
+
 
 /* MPN division interface. */
 mp_limb_t
