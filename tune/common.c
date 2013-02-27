@@ -165,6 +165,9 @@ speed_measure (double (*fun) (struct speed_params *s), struct speed_params *s)
 		  fprintf (stderr, "Fatal error: too many (%d) failed measurements (0.0)\n", zeros);
 		  abort ();
 		}
+	     if (s->reps < 10000)
+	       s->reps *= 2;
+
 	      continue;
 	    }
 
