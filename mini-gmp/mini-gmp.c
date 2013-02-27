@@ -2597,7 +2597,8 @@ mpz_make_odd (mpz_t r)
   mp_bitcnt_t shift;
 
   assert (r->_mp_size > 0);
-  shift = mpn_common_scan (r->_mp_d[0], 0, r->_mp_d, r->_mp_size, 0);
+  /* Count trailing zeros, equivalent to mpn_scan1, because we know that there is a 1 */
+  shift = mpn_common_scan (r->_mp_d[0], 0, r->_mp_d, 0, 0);
   mpz_tdiv_q_2exp (r, r, shift);
 
   return shift;
