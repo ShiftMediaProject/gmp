@@ -5,6 +5,8 @@
 	(mpz_scan0, mpz_scan1): Simplify by using mpn_common_scan.
 	(mpz_make_odd): Simplify, assume in-place operation on positive.
 	(mpn_scan0, mpn_scan1): New functions.
+	* mini-gmp/mini-gmp.h (mpn_scan0, mpn_scan1): New declarations.
+	* mini-gmp/tests/t-scan.c: Test also mpn_scan0 and mpn_scan1.
 
 2013-02-26  Niels Möller  <nisse@lysator.liu.se>
 
