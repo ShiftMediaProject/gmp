@@ -186,7 +186,7 @@ check_roinit (void)
       mpz_add (ref, a, b);
       {
 	mpz_t a1, b1;
-#if __STDC_VERSION__ >= 199001
+#if __STDC_VERSION__ >= 199901
 	const mpz_t a2 = MPZ_ROINIT_N ( (mp_ptr) ap, an);
 	const mpz_t b2 = MPZ_ROINIT_N ( (mp_ptr) bp, bn);
 
