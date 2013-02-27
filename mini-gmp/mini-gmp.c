@@ -637,6 +637,26 @@ mpn_rshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   return retval;
 }
 
+static mp_bitcnt_t
+mpn_common_scan (mp_limb_t limb, mp_size_t i, mp_srcptr up, mp_size_t un,
+		 mp_limb_t ux)
+{
+  unsigned cnt;
+
+  assert (ux == 0 || ux == GMP_LIMB_MAX);
+  assert (0 <= i && i <= un );
+
+  while (limb == 0)
+    {
+      i++;
+      if (i == un)
+	return (ux == 0 ? ~(mp_bitcnt_t) 0 : un * GMP_LIMB_BITS);
+      limb = ux ^ up[i];
+    }
+  gmp_ctz (cnt, limb);
+  return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
+}
+
 
 /* MPN division interface. */
 mp_limb_t
@@ -3608,10 +3628,8 @@ mpz_scan1 (const mpz_t u, mp_bitcnt_t starting_bit)
 {
   mp_ptr up;
   mp_size_t us, un, i;
-  mp_limb_t limb, ux, uc;
-  unsigned cnt;
+  mp_limb_t limb, ux;
 
-  up = u->_mp_d;
   us = u->_mp_size;
   un = GMP_ABS (us);
   i = starting_bit / GMP_LIMB_BITS;
@@ -3621,36 +3639,24 @@ mpz_scan1 (const mpz_t u, mp_bitcnt_t starting_bit)
   if (i >= un)
     return (us >= 0 ? ~(mp_bitcnt_t) 0 : starting_bit);
 
-  if (us < 0)
+  up = u->_mp_d;
+  ux = 0;
+  limb = up[i];
+
+  if (starting_bit != 0)
     {
-      ux = GMP_LIMB_MAX;
-      uc = mpn_zero_p (up, i);
-    }
-  else
-    ux = uc = 0;
-
-  limb = (ux ^ up[i]) + uc;
-  uc = limb < uc;
-
-  /* Mask to 0 all bits before starting_bit, thus ignoring them. */
-  limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
-
-  while (limb == 0)
-    {
-      i++;
-      if (i == un)
+      if (us < 0)
 	{
-	  assert (uc == 0);
-	  /* For the u > 0 case, this can happen only for the first
-	     masked limb. For the u < 0 case, it happens when the
-	     highest limbs of the absolute value are all ones. */
-	  return (us >= 0 ? ~(mp_bitcnt_t) 0 : un * GMP_LIMB_BITS);
+	  ux = mpn_zero_p (up, i);
+	  limb = ~ limb + ux;
+	  ux = - (mp_limb_t) (limb >= ux);
 	}
-      limb = (ux ^ up[i]) + uc;
-      uc = limb < uc;
+
+      /* Mask to 0 all bits before starting_bit, thus ignoring them. */
+      limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
     }
-  gmp_ctz (cnt, limb);
-  return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
+
+  return mpn_common_scan (limb, i, up, un, ux);
 }
 
 mp_bitcnt_t
@@ -3658,10 +3664,8 @@ mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
 {
   mp_ptr up;
   mp_size_t us, un, i;
-  mp_limb_t limb, ux, uc;
-  unsigned cnt;
+  mp_limb_t limb, ux;
 
-  up = u->_mp_d;
   us = u->_mp_size;
   un = GMP_ABS (us);
   i = starting_bit / GMP_LIMB_BITS;
@@ -3671,33 +3675,21 @@ mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
   if (i >= un)
     return (us >= 0 ? starting_bit : ~(mp_bitcnt_t) 0);
 
+  up = u->_mp_d;
+  ux = GMP_LIMB_MAX;
+  limb = ~ up[i];
+
   if (us < 0)
     {
-      ux = GMP_LIMB_MAX;
-      uc = mpn_zero_p (up, i);
+      ux = mpn_zero_p (up, i);
+      limb = ~ (limb + ux);
+      ux = 0;
     }
-  else
-    ux = uc = 0;
 
-  limb = (ux ^ up[i]) + uc;
-  uc = limb < uc;
+  /* Mask all bits before starting_bit, thus ignoring them. */
+  limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
 
-  /* Mask to 1 all bits before starting_bit, thus ignoring them. */
-  limb |= ((mp_limb_t) 1 << (starting_bit % GMP_LIMB_BITS)) - 1;
-
-  while (limb == GMP_LIMB_MAX)
-    {
-      i++;
-      if (i == un)
-	{
-	  assert (uc == 0);
-	  return (us >= 0 ? un * GMP_LIMB_BITS : ~(mp_bitcnt_t) 0);
-	}
-      limb = (ux ^ up[i]) + uc;
-      uc = limb < uc;
-    }
-  gmp_ctz (cnt, ~limb);
-  return (mp_bitcnt_t) i * GMP_LIMB_BITS + cnt;
+  return mpn_common_scan (limb, i, up, un, ux);
 }
 
 
