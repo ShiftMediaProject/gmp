@@ -794,7 +794,7 @@ cgt_works_p (void)
       duration = (end.tv_sec + end.tv_nsec * 1e-9
 		  - start.tv_sec - start.tv_nsec * 1e-9);
       if (speed_option_verbose)
-	printf ("delay loop of %d rounds took %s (according to clock_get_time)\n",
+	printf ("delay loop of %d rounds took %s (according to clock_gettime)\n",
 		CGT_DELAY_COUNT, unittime_string (duration));
       if (duration < 100e-9)
 	{
