@@ -56,6 +56,19 @@ testmain (int argc, char **argv)
 	  fprintf (stderr, "ref: %lu\n", ref);
 	  abort ();
 	}
+      if (mpz_sgn (a) > 0 && ref < mpz_sizeinbase (a, 2))
+	{
+	  res = mpn_scan0 (a->_mp_d, b);
+	  if (res != ref)
+	    {
+	      fprintf (stderr, "mpn_scan0 failed:\n");
+	      dump ("a", a);
+	      fprintf (stderr, "b: %lu\n", b);
+	      fprintf (stderr, "r: %lu\n", res);
+	      fprintf (stderr, "ref: %lu\n", ref);
+	      abort ();
+	    }
+	}
       mini_random_scan_op (OP_SCAN1, MAXBITS, a, &b, &ref);
       res = mpz_scan1 (a, b);
       if (res != ref)
@@ -66,6 +79,19 @@ testmain (int argc, char **argv)
 	  fprintf (stderr, "r: %lu\n", res);
 	  fprintf (stderr, "ref: %lu\n", ref);
 	  abort ();
+	}
+      if (mpz_sgn (a) > 0 && ref != ~ (mp_bitcnt_t) 0)
+	{
+	  res = mpn_scan1 (a->_mp_d, b);
+	  if (res != ref)
+	    {
+	      fprintf (stderr, "mpn_scan1 failed:\n");
+	      dump ("a", a);
+	      fprintf (stderr, "b: %lu\n", b);
+	      fprintf (stderr, "r: %lu\n", res);
+	      fprintf (stderr, "ref: %lu\n", ref);
+	      abort ();
+	    }
 	}
     }
   mpz_clear (a);
