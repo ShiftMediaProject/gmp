@@ -1,3 +1,11 @@
+2013-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+        * mini-gmp/mini-gmp.c (mpz_div_q_2exp): Adjust only if needed.
+	(mpn_common_scan): New service function to unify scan loops.
+	(mpz_scan0, mpz_scan1): Simplify by using mpn_common_scan.
+	(mpz_make_odd): Simplify, assume in-place operation on positive.
+	(mpn_scan0, mpn_scan1): New functions.
+
 2013-02-26  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-limbs.c (check_roinit): Test MPZ_ROINIT_N only if
