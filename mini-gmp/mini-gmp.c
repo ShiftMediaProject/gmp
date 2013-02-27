@@ -2156,7 +2156,7 @@ mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bit_index,
   mp_size_t un, qn;
   mp_size_t limb_cnt;
   mp_ptr qp;
-  mp_limb_t adjust;
+  int adjust;
 
   un = u->_mp_size;
   if (un == 0)
@@ -2198,7 +2198,8 @@ mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bit_index,
 
   q->_mp_size = qn;
 
-  mpz_add_ui (q, q, adjust);
+  if (adjust)
+    mpz_add_ui (q, q, 1);
   if (un < 0)
     mpz_neg (q, q);
 }
