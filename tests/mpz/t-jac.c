@@ -912,8 +912,6 @@ check_large_quotients (void)
 
   for (i = 0; i < COUNT; i++)
     {
-      unsigned j;
-      unsigned chain_len;
       int answer;
       mp_bitcnt_t msize;
 

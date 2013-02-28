@@ -89,7 +89,6 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
       if (op2_size < 0)
 	{
 	  mp_ptr opx, opy;
-	  mp_limb_t cy;
 
 	  /* Both operands are negative, so will be the result.
 	     -((-OP1) | (-OP2)) = -(~(OP1 - 1) | ~(OP2 - 1)) =

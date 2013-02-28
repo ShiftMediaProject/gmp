@@ -66,7 +66,7 @@ main (int argc, char *argv[])
       MPZ_CHECK_FORMAT (res);
       if (mpz_cmp (ref[m], res) != 0)
         {
-          printf ("mpz_mfac_uiui(%lu,&i) wrong\n", n, MULTIFAC_WHEEL);
+          printf ("mpz_mfac_uiui(%lu,%d) wrong\n", n, MULTIFAC_WHEEL);
           printf ("  got  "); mpz_out_str (stdout, 10, res); printf("\n");
           printf ("  want "); mpz_out_str (stdout, 10, ref[m]); printf("\n");
           abort ();
@@ -75,7 +75,7 @@ main (int argc, char *argv[])
       MPZ_CHECK_FORMAT (res);
       if (mpz_cmp (ref2[m2], res) != 0)
         {
-          printf ("mpz_mfac_uiui(%lu,&i) wrong\n", n, MULTIFAC_WHEEL2);
+          printf ("mpz_mfac_uiui(%lu,%d) wrong\n", n, MULTIFAC_WHEEL2);
           printf ("  got  "); mpz_out_str (stdout, 10, res); printf("\n");
           printf ("  want "); mpz_out_str (stdout, 10, ref2[m2]); printf("\n");
           abort ();

@@ -64,6 +64,7 @@ check_funcs (const char *name,
   if (mpz_cmp (r, ref) != 0)
     {
       printf ("%s failed, abits %u, bbits %u\n",
+	      name,
 	      (unsigned) mpz_sizeinbase (a, 2),
 	      (unsigned) mpz_sizeinbase (b, 2));
       gmp_printf ("a = %Zx\n", a);
@@ -100,7 +101,6 @@ alt_mul (mpz_ptr r, mpz_srcptr a, mpz_srcptr b)
   mp_size_t an = mpz_size (a);
   mp_size_t bn = mpz_size (b);
   mp_srcptr ap, bp;
-  mp_ptr rp;
   TMP_DECL;
 
   TMP_MARK;
@@ -143,7 +143,7 @@ void
 check_mul (void)
 {
   gmp_randstate_ptr rands = RANDS;
-  mpz_t bs, a, b, r, ref;
+  mpz_t bs, a, b;
   unsigned i;
   mpz_inits (bs, a, b, NULL);
   for (i = 0; i < COUNT; i++)

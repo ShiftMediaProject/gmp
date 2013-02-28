@@ -63,7 +63,6 @@ main (int argc, char **argv)
     {
       mp_size_t n;
       mp_limb_t k;
-      int c;
 
       n = 1 + gmp_urandomm_ui (rands, MAX_LIMBS);
 

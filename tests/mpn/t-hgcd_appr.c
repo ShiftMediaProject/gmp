@@ -157,9 +157,6 @@ debug_mp (mpz_t x, int base)
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }
 
-static int
-mpz_mpn_equal (const mpz_t a, mp_srcptr bp, mp_size_t bsize);
-
 static mp_size_t
 one_test (mpz_t a, mpz_t b, int i)
 {
@@ -381,16 +378,6 @@ hgcd_ref (struct hgcd_ref *hgcd, mpz_t a, mpz_t b)
   mpz_clear (q);
 
   return 1;
-}
-
-static int
-mpz_mpn_equal (const mpz_t a, mp_srcptr bp, mp_size_t bsize)
-{
-  mp_srcptr ap = a->_mp_d;
-  mp_size_t asize = a->_mp_size;
-
-  MPN_NORMALIZE (bp, bsize);
-  return asize == bsize && mpn_cmp (ap, bp, asize) == 0;
 }
 
 static int

@@ -66,7 +66,7 @@ void
 mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
 {
   mp_size_t sizes[GMP_LIMB_BITS * 2];
-  mp_ptr akm1, tp, rnp, ep, scratch;
+  mp_ptr akm1, tp, rnp, ep;
   mp_limb_t a0, r0, km1, kp1h, kinv;
   mp_size_t rn;
   unsigned i;

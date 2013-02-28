@@ -212,9 +212,7 @@ void
 smallexaustive (unsigned int count)
 {
   mpz_t          n_z, want;
-  unsigned long  n, k, i, r;
-  int            tests;
-  gmp_randstate_ptr rands;
+  unsigned long  n, k;
 
   mpz_init (n_z);
   mpz_init (want);

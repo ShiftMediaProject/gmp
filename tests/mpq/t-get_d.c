@@ -171,7 +171,6 @@ check_random (int argc, char **argv)
   int exp;
 
   int test, reps = 100000;
-  int i;
 
   if (argc == 2)
      reps = 100 * atoi (argv[1]);
