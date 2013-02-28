@@ -484,8 +484,8 @@ __GMP_DECLSPEC void mp_set_memory_functions (void *(*) (size_t),
 
 #define mp_get_memory_functions __gmp_get_memory_functions
 __GMP_DECLSPEC void mp_get_memory_functions (void *(**) (size_t),
-                                      void *(**) (void *, size_t, size_t),
-                                      void (**) (void *, size_t)) __GMP_NOTHROW;
+				      void *(**) (void *, size_t, size_t),
+				      void (**) (void *, size_t)) __GMP_NOTHROW;
 
 #define mp_bits_per_limb __gmp_bits_per_limb
 __GMP_DECLSPEC extern const int mp_bits_per_limb;
@@ -1129,7 +1129,7 @@ __GMP_DECLSPEC mp_ptr mpz_limbs_modify (mpz_ptr, mp_size_t);
 #define mpz_limbs_finish __gmpz_limbs_finish
 __GMP_DECLSPEC void mpz_limbs_finish (mpz_ptr, mp_size_t);
 
-#define mpz_roinit_n __gmpz_roinit_n  
+#define mpz_roinit_n __gmpz_roinit_n
 __GMP_DECLSPEC mpz_srcptr mpz_roinit_n (mpz_ptr, mp_srcptr, mp_size_t);
 
 #define MPZ_ROINIT_N(xp, xs) {{0, (xs),(xp) }}
