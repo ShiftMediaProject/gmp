@@ -2653,14 +2653,13 @@ strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
 
 Valgrind does not always support every possible instruction, in particular
-ones recently added to an ISA.  Valgrind might make therefore be incompatible
-with a recent GMP or even a less recent GMP which is compiled using a recent
-GCC.
+ones recently added to an ISA.  Valgrind might therefore be incompatible with
+a recent GMP or even a less recent GMP which is compiled using a recent GCC.
 
 GMP's assembly code sometimes promotes a read of the limbs to some larger size,
 for efficiency.  GMP will do this even at the start and end of a multilimb
-operand, using naturaly aligned operations on the larger type.  This may lead
-to benign reads outside of allocated areas, triggering complants from Valgrind.
+operand, using naturally aligned operations on the larger type.  This may lead
+to benign reads outside of allocated areas, triggering complaints from Valgrind.
 Valgrind's option @samp{--partial-loads-ok=yes} should help.
 
 @item Other Problems
