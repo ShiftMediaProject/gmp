@@ -2647,19 +2647,21 @@ library.
 
 @item Valgrind
 @cindex Valgrind
-The valgrind program (@uref{http://valgrind.org/}) is a memory
-checker for x86s.  It translates and emulates machine instructions to do
+Valgrind (@uref{http://valgrind.org/}) is a memory checker for x86, ARM, MIPS,
+PowerPC, and S/390.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
 
-Recent versions of Valgrind are getting support for MMX and SSE/SSE2
-instructions, for past versions GMP will need to be configured not to use
-those, i.e.@: for an x86 without them (for instance plain @samp{i486}).
+Valgrind does not always support every possible instruction, in particular
+ones recently added to an ISA.  Valgrind might make therefore be incompatible
+with a recent GMP or even a less recent GMP which is compiled using a recent
+GCC.
 
 GMP's assembly code sometimes promotes a read of the limbs to some larger size,
 for efficiency.  GMP will do this even at the start and end of a multilimb
 operand, using naturaly aligned operations on the larger type.  This may lead
 to benign reads outside of allocated areas, triggering complants from Valgrind.
+Valgrind's option @samp{--partial-loads-ok=yes} should help.
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
