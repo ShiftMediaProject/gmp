@@ -25,10 +25,12 @@ C	     cycles/limb
 C Cortex-A53	 ?
 C Cortex-A57	 ?
 
-define(`rp', `r0')
-define(`up', `r1')
-define(`vp', `r2')
-define(`n',  `r3')
+changecom(@&*$)
+
+define(`rp', `x0')
+define(`up', `x1')
+define(`vp', `x2')
+define(`n',  `x3')
 
 ifdef(`OPERATION_add_n', `
   define(`ADDSUB',	adds)
@@ -57,19 +59,31 @@ PROLOGUE(func_nc)
 EPILOGUE()
 PROLOGUE(func)
 	CLRCY
-L(ent):	lsl	x3, x3, #3
-	add	x0, x0, x3
-	add	x1, x1, x3
-	add	x2, x2, x3
-	neg	x3, x3
+L(ent):	tbz	n, #0, L(b0)
 
-L(top):	ldr	x6, [x1,x3]
-	ldr	x5, [x2,x3]
-	ADDSUBC	x7, x6, x5
-	str	x7, [x0,x3]
-	add	x3, x3, #8
-	cbnz	x3, L(top)
+	ldr	x4, [up],#8
+	ldr	x6, [vp],#8
+	sub	n, n, #1
+	ADDSUBC	x8, x4, x6
+	str	x8, [rp],#8
+	cbz	n, L(rt)
 
-	RETVAL
+L(b0):	ldp	x4, x5, [up],#16
+	ldp	x6, x7, [vp],#16
+	sub	n, n, #2
+	ADDSUBC	x8, x4, x6
+	ADDSUBC	x9, x5, x7
+	cbz	n, L(end)
+
+L(top):	ldp	x4, x5, [up],#16
+	ldp	x6, x7, [vp],#16
+	sub	n, n, #2
+	stp	x8, x9, [rp],#16
+	ADDSUBC	x8, x4, x6
+	ADDSUBC	x9, x5, x7
+	cbnz	n, L(top)
+
+L(end):	stp	x8, x9, [rp],#16
+L(rt):	RETVAL
 	ret
 EPILOGUE()
