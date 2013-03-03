@@ -3,8 +3,8 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2011, 2012 Free
-# Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2011, 2012, 2013
+# Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -78,36 +78,46 @@ exact_cpu=
 # files, since lame C compilers generate these even when not asked.
 #
 
-dummy=dummy-$$
-trap 'rm -f $dummy.c $dummy.o $dummy.core $dummy ${dummy}1.s ${dummy}2.c ; exit 1' 1 2 15
+# CC_FOR_BUILD -- compiler used by this script. Note that the use of a
+# compiler to aid in system detection is discouraged as it requires
+# temporary files to be created and, as you can see below, it is a
+# headache to deal with in a portable fashion.
 
-# Use $HOST_CC if defined. $CC may point to a cross-compiler
-if test x"$CC_FOR_BUILD" = x; then
-  if test x"$HOST_CC" != x; then
-    CC_FOR_BUILD="$HOST_CC"
-  else
-    if test x"$CC" != x; then
-      CC_FOR_BUILD="$CC"
-    else
-      echo 'dummy(){}' >$dummy.c
-      for c in cc gcc c89 c99; do
-	  ($c $dummy.c -c) >/dev/null 2>&1
-	  if test $? = 0; then
-	      CC_FOR_BUILD="$c"; break
-	  fi
-      done
-      rm -f $dummy.c $dummy.o
-      if test x"$CC_FOR_BUILD" = x; then
-	CC_FOR_BUILD=no_compiler_found
-      fi
-    fi
-  fi
-fi
+# Historically, `CC_FOR_BUILD' used to be named `HOST_CC'. We still
+# use `HOST_CC' if defined, but it is deprecated.
+
+# Portable tmp directory creation inspired by the Autoconf team.
+
+set_cc_for_build='
+trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" 0 ;
+trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" 1 2 13 15 ;
+: ${TMPDIR=/tmp} ;
+ { tmp=`(umask 077 && mktemp -d "$TMPDIR/cgXXXXXX") 2>/dev/null` && test -n "$tmp" && test -d "$tmp" ; } ||
+ { test -n "$RANDOM" && tmp=$TMPDIR/cg$$-$RANDOM && (umask 077 && mkdir $tmp) ; } ||
+ { tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir $tmp) && echo "Warning: creating insecure temp directory" >&2 ; } ||
+ { echo "$me: cannot create a temporary directory in $TMPDIR" >&2 ; exit 1 ; } ;
+dummy=$tmp/dummy ;
+tmpfiles="$dummy.c $dummy.o $dummy.rel $dummy $dummy.core ${dummy}0.s ${dummy}1.s ${dummy}2.c" ;
+case $CC_FOR_BUILD,$HOST_CC,$CC in
+ ,,)    echo "int x;" > $dummy.c ;
+	for c in cc gcc c89 c99 ; do
+	  if ($c -c -o $dummy.o $dummy.c) >/dev/null 2>&1 ; then
+	     CC_FOR_BUILD="$c"; break ;
+	  fi ;
+	done ;
+	if test x"$CC_FOR_BUILD" = x ; then
+	  CC_FOR_BUILD=no_compiler_found ;
+	fi
+	;;
+ ,,*)   CC_FOR_BUILD=$CC ;;
+ ,*,*)  CC_FOR_BUILD=$HOST_CC ;;
+esac ; set_cc_for_build= ;'
 
 
 case "$guess_full" in
 
 alpha-*-*)
+  eval $set_cc_for_build
   # configfsf.guess detects exact alpha cpu types for OSF and GNU/Linux, but
   # not for *BSD and other systems.  We try to get an exact type for any
   # plain "alpha" it leaves.
@@ -140,7 +150,7 @@ main:
 EOF
   $CC_FOR_BUILD $dummy.s -o $dummy 2>/dev/null
   if test "$?" = 0 ; then
-    case `./$dummy` in
+    case `$dummy` in
     0-0)	exact_cpu=alpha      ;;
     1-0)	exact_cpu=alphaev5   ;;
     1-1)	exact_cpu=alphaev56  ;;
@@ -150,7 +160,6 @@ EOF
     2-1307)	exact_cpu=alphaev68  ;;
     esac
   fi
-  rm -f $dummy.s $dummy.o $dummy
   ;;
 
 arm*-*-*)
@@ -185,6 +194,7 @@ arm*-*-*)
   ;;
 
 ia64*-*-*)
+  eval $set_cc_for_build
   # CPUID[3] bits 24 to 31 is the processor family.  itanium2 is documented
   # as 0x1f, plain itanium has been seen returning 0x07 on two systems, but
   # haven't found any documentation on it as such.
@@ -195,7 +205,7 @@ ia64*-*-*)
   # "unsigned long long" is always 64 bits, in fact on hpux in ilp32 mode
   # (which is the default there), it's the only 64-bit type.
   #
-  cat >${dummy}a.s <<EOF
+  cat >${dummy}1.s <<EOF
 	.text
 	.global	_getcpuid
 	.proc	_getcpuid
@@ -210,7 +220,7 @@ getcpuid:
 	br.ret.sptk.many rp ;;
 	.endp	getcpuid
 EOF
-  cat >${dummy}b.c <<EOF
+  cat >${dummy}2.c <<EOF
 #include <stdio.h>
 unsigned long long getcpuid ();
 int
@@ -228,10 +238,9 @@ main ()
   return 0;
 }
 EOF
-  if $CC_FOR_BUILD ${dummy}a.s ${dummy}b.c -o $dummy >/dev/null 2>&1; then
-    exact_cpu=`./$dummy`
+  if $CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy >/dev/null 2>&1; then
+    exact_cpu=`$dummy`
   fi
-  rm -f ${dummy}a.s ${dummy}a.o ${dummy}b.c ${dummy}b.o $dummy $dummy.core core
   ;;
 
 mips-*-irix[6789]*)
@@ -240,6 +249,7 @@ mips-*-irix[6789]*)
   ;;
 
 m68k-*-*)
+  eval $set_cc_for_build
   # NetBSD (and presumably other *BSD) "sysctl hw.model" gives for example
   #   hw.model = Apple Macintosh Quadra 610  (68040)
   exact_cpu=`(sysctl hw.model) 2>/dev/null | sed -n 's/^.*\(680[012346]0\).*$/m\1/p'`
@@ -263,9 +273,10 @@ _main:
 	.byte	0x70, 0x00
 	.byte	0x4e, 0x75
 EOF
-    if ($CC_FOR_BUILD $dummy.s -o $dummy && ./$dummy) >/dev/null 2>&1; then
 
-      # $SHELL -c is used to execute ./$dummy below, since (./$dummy)
+    if ($CC_FOR_BUILD $dummy.s -o $dummy && $dummy) >/dev/null 2>&1; then
+
+      # $SHELL -c is used to execute $dummy below, since ($dummy)
       # 2>/dev/null still prints the SIGILL message on some shells.
       #
         # Try: movel #0,%d0
@@ -280,7 +291,7 @@ _main:
 	.byte	0x4e, 0x74, 0x00, 0x00
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          $SHELL -c ./$dummy >/dev/null 2>&1
+          $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68000    # because rtd didn't work
           fi
@@ -304,7 +315,7 @@ _main:
 	.byte	0x4e, 0x75
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          $SHELL -c ./$dummy >/dev/null 2>&1
+          $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68010    # because trapf didn't work
           fi
@@ -326,7 +337,7 @@ _main:
 	.byte	0x4e, 0x75
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          $SHELL -c ./$dummy >/dev/null 2>&1
+          $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68360  # cpu32, because bfffo didn't work
           fi
@@ -338,7 +349,6 @@ EOF
         exact_cpu=m68020
       fi
     fi
-    rm -f $dummy.s $dummy.o $dummy $dummy.core core
   fi
   if test -z "$exact_cpu"; then
     case "$guess_full" in
@@ -368,6 +378,7 @@ rs6000-*-* | powerpc*-*-*)
   # a function descriptor, not actual code.  But this doesn't matter since
   # AIX doesn't allow mfpvr anyway.
   #
+  eval $set_cc_for_build
   cat >$dummy.c <<\EOF
 #include <stdio.h>
 struct {
@@ -414,13 +425,12 @@ main ()
 EOF
   if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
     # This style construct is needed on AIX 4.3 to suppress the SIGILL error
-    # from (*fun)().  Using $SHELL -c ./$dummy 2>/dev/null doesn't work.
-    { x=`./$dummy`; } 2>/dev/null
+    # from (*fun)().  Using $SHELL -c $dummy 2>/dev/null doesn't work.
+    { x=`$dummy`; } 2>/dev/null
     if test -n "$x"; then
       exact_cpu=$x
     fi
   fi
-  rm -f $dummy.c $dummy.o $dummy $dummy.core
 
   # Grep the linux kernel /proc/cpuinfo pseudo-file.
   # Anything unrecognised is ignored, since of course we mustn't spit out
@@ -498,12 +508,11 @@ main ()
 }
 EOF
     if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-      x=`./$dummy`
+      x=`$dummy`
       if test -n "$x"; then
         exact_cpu=$x
       fi
     fi
-    rm -f $dummy.c $dummy.o $dummy
   fi
 
   if test -z "$exact_cpu"; then
@@ -542,12 +551,11 @@ main (void)
 }
 EOF
     if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-      x=`./$dummy`
+      x=`$dummy`
       if test -n "$x"; then
         exact_cpu=$x
       fi
     fi
-    rm -f $dummy.c $dummy.o $dummy
   fi
   ;;
 
@@ -597,18 +605,17 @@ sparc-*-* | sparc64-*-*)
   #
   if test -z "$exact_cpu"; then
     for i in sysinfo /usr/kvm/sysinfo; do
-      if $SHELL -c $i 2>/dev/null >conftest.dat; then
-        if grep 'cpu0 is a "SuperSPARC' conftest.dat >/dev/null; then
+      if $SHELL -c $i 2>/dev/null >dummy; then
+        if grep 'cpu0 is a "SuperSPARC' dummy >/dev/null; then
           exact_cpu=supersparc
           break
-        elif grep 'cpu0 is a .*TMS390Z5.' conftest.dat >/dev/null; then
+        elif grep 'cpu0 is a .*TMS390Z5.' dummy >/dev/null; then
           # TMS390Z50 and TMS390Z55
           exact_cpu=supersparc
           break
         fi
       fi
     done
-    rm -f conftest.dat
   fi
 
   # Grep the output from prtconf on Solaris.
@@ -631,35 +638,34 @@ sparc-*-* | sparc64-*-*)
   #
   for prtconfopt in "" "-vp"; do
     if test -z "$exact_cpu"; then
-      if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >conftest.dat; then
-	if grep 'SUNW,UltraSPARC-T3' conftest.dat >/dev/null; then
+      if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >dummy; then
+	if grep 'SUNW,UltraSPARC-T3' dummy >/dev/null; then
 	  exact_cpu=ultrasparct3
-	elif grep 'SUNW,UltraSPARC-T2' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-T2' dummy >/dev/null; then
 	  exact_cpu=ultrasparct2
-	elif grep 'SUNW,UltraSPARC-T1' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-T1' dummy >/dev/null; then
 	  exact_cpu=ultrasparct1
-	elif grep 'SUNW,UltraSPARC-III' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-III' dummy >/dev/null; then
 	  exact_cpu=ultrasparc3
-	elif grep 'SUNW,UltraSPARC-IIi' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-IIi' dummy >/dev/null; then
 	  exact_cpu=ultrasparc2i
-	elif grep 'SUNW,UltraSPARC-II' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-II' dummy >/dev/null; then
 	  exact_cpu=ultrasparc2
-	elif grep 'SUNW,UltraSPARC' conftest.dat >/dev/null; then
+	elif grep 'SUNW,UltraSPARC' dummy >/dev/null; then
 	  exact_cpu=ultrasparc
-	elif grep 'Ross,RT62.' conftest.dat >/dev/null; then
+	elif grep 'Ross,RT62.' dummy >/dev/null; then
 	  # RT620, RT625, RT626 hypersparcs (v8).
 	  exact_cpu=sparcv8
-	elif grep 'TI,TMS390Z5.' conftest.dat >/dev/null; then
+	elif grep 'TI,TMS390Z5.' dummy >/dev/null; then
 	  # TMS390Z50 and TMS390Z55
 	  exact_cpu=supersparc
-	elif grep 'TI,TMS390S10' conftest.dat >/dev/null; then
+	elif grep 'TI,TMS390S10' dummy >/dev/null; then
 	  exact_cpu=microsparc
-	elif grep 'FMI,MB86904' conftest.dat >/dev/null; then
+	elif grep 'FMI,MB86904' dummy >/dev/null; then
 	  # actually MicroSPARC-II
 	  exact_cpu=microsparc
 	fi
       fi
-      rm -f conftest.dat
     fi
   done
 
@@ -670,34 +676,33 @@ sparc-*-* | sparc64-*-*)
   #     hw.model: Sun Microsystems UltraSparc-IIi
   #
   if test -z "$exact_cpu"; then
-    if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >conftest.dat; then
-      if grep -i 'UltraSparc-T3' conftest.dat >/dev/null; then
+    if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >dummy; then
+      if grep -i 'UltraSparc-T3' dummy >/dev/null; then
         exact_cpu=ultrasparct3
-      elif grep -i 'UltraSparc-T2' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-T2' dummy >/dev/null; then
         exact_cpu=ultrasparct2
-      elif grep -i 'UltraSparc-T1' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-T1' dummy >/dev/null; then
         exact_cpu=ultrasparct1
-      elif grep -i 'UltraSparc-III' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-III' dummy >/dev/null; then
         exact_cpu=ultrasparc3
-      elif grep -i 'UltraSparc-IIi' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-IIi' dummy >/dev/null; then
         exact_cpu=ultrasparc2i
-      elif grep -i 'UltraSparc-II' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc-II' dummy >/dev/null; then
         exact_cpu=ultrasparc2
-      elif grep -i 'UltraSparc' conftest.dat >/dev/null; then
+      elif grep -i 'UltraSparc' dummy >/dev/null; then
         exact_cpu=ultrasparc
-      elif grep 'TMS390Z5.' conftest.dat >/dev/null; then
+      elif grep 'TMS390Z5.' dummy >/dev/null; then
         # TMS390Z50 and TMS390Z55
         exact_cpu=supersparc
-      elif grep 'TMS390S10' conftest.dat >/dev/null; then
+      elif grep 'TMS390S10' dummy >/dev/null; then
         exact_cpu=microsparc
-      elif grep 'MB86904' conftest.dat >/dev/null; then
+      elif grep 'MB86904' dummy >/dev/null; then
         # actually MicroSPARC-II
         exact_cpu=microsparc
-      elif grep 'MB86907' conftest.dat >/dev/null; then
+      elif grep 'MB86907' dummy >/dev/null; then
         exact_cpu=turbosparc
       fi
     fi
-    rm -f conftest.dat
   fi
 
   # sun4m and sun4d are v8s of some sort, sun4u is a v9 of some sort
@@ -717,6 +722,8 @@ sparc-*-* | sparc64-*-*)
 # conventions.
 
 i?86-*-* | amd64-*-* | x86_64-*-*)
+  eval $set_cc_for_build
+
   cat <<EOF >${dummy}0.s
 	.globl cpuid
 	.globl _cpuid
@@ -897,7 +904,7 @@ EOF
     # "Illegal instruction (core dumped)" message to stdout, so we test $?
     # to check if the program run was successful.
     #
-    x=`$SHELL -c ./$dummy 2>/dev/null`
+    x=`$SHELL -c $dummy 2>/dev/null`
     if test $? = 0 && test -n "$x"; then
       exact_cpu=$x
     fi
@@ -912,7 +919,7 @@ EOF
     # "Illegal instruction (core dumped)" message to stdout, so we test $?
     # to check if the program run was successful.
     #
-    x=`$SHELL -c ./$dummy 2>/dev/null`
+    x=`$SHELL -c $dummy 2>/dev/null`
     if test $? = 0 && test -n "$x"; then
       exact_cpu=$x
     fi
@@ -921,7 +928,6 @@ EOF
 
   # We need to remove some .o files here since lame C compilers
   # generate these even when not asked.
-  rm -f ${dummy}0.s ${dummy}0.o ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
   ;;
 
 s390*-*-*)
