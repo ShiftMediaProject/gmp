@@ -1,6 +1,8 @@
 dnl  ARM mpn_copyd.
 
-dnl  Copyright 2003, 2012 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Robert Harley and Torbjörn Granlund.
+
+dnl  Copyright 2003, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,8 +25,12 @@ C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 1.5
-C Cortex-A15	 ?
+C Cortex-A9	 1.25-1.5
+C Cortex-A15	 1.25
+
+C TODO
+C  * Consider wider unrolling.  Analogous 8-way code runs 10% faster on both A9
+C    and A15.  But it probably slows things down for 8 <= n < a few dozen.
 
 define(`rp', `r0')
 define(`up', `r1')
@@ -34,8 +40,8 @@ ASM_START()
 PROLOGUE(mpn_copyd)
 	mov	r12, n, lsl #2
 	sub	r12, r12, #4
-	add	rp, rp, r12			C make rp point at last limb
-	add	up, up, r12			C make up point at last limb
+	add	rp, rp, r12
+	add	up, up, r12
 
 	tst	n, #1
 	beq	L(skip1)
@@ -44,18 +50,23 @@ PROLOGUE(mpn_copyd)
 L(skip1):
 	tst	n, #2
 	beq	L(skip2)
-	ldmda	up!, { r3, r12 }		C load 2 limbs
-	stmda	rp!, { r3, r12 }		C store 2 limbs
+	ldmda	up!, { r3,r12 }
+	stmda	rp!, { r3,r12 }
 L(skip2):
 	bics	n, n, #3
 	beq	L(rtn)
-	stmfd	sp!, { r7, r8, r9 }		C save regs on stack
 
-L(top):	ldmda	up!, { r3, r8, r9, r12 }	C load 4 limbs
+	push	{ r4-r5 }
 	subs	n, n, #4
-	stmda	rp!, { r3, r8, r9, r12 }	C store 4 limbs
+	ldmda	up!, { r3,r4,r5,r12 }
+	beq	L(end)
+
+L(top):	subs	n, n, #4
+	stmda	rp!, { r3,r4,r5,r12 }
+	ldmda	up!, { r3,r4,r5,r12 }
 	bne	L(top)
 
-	ldmfd	sp!, { r7, r8, r9 }		C restore regs from stack
+L(end):	stmda	rp!, { r3,r4,r5,r12 }
+	pop	{ r4-r5 }
 L(rtn):	bx	lr
 EPILOGUE()
