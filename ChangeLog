@@ -1,10 +1,14 @@
 2013-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/arm/neon/tabselect.asm: New file.
+	* mpn/arm64/logops_n.asm: New file.
+	* mpn/arm64/gcd_1.asm: New file.
+	* mpn/arm64/aorsmul_1.asm: New file.
+	* mpn/arm64/addmul_1.asm: Remove.
+	* mpn/arm64/aors_n.asm: Complete rewrite.
 
+	* mpn/arm/neon/tabselect.asm: New file.
 	* mpn/arm/copyi.asm: Software pipeline.
 	* mpn/arm/copyd.asm: Likewise.
-
 	* mpn/arm/tabselect.asm: New file.
 
 	* config.guess: Rework tmp file handling to resemble configfsf.guess's.
