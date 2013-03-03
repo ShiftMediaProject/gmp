@@ -1,5 +1,8 @@
 2013-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/v7a/cora15/copyd.asm: New file.
+	* mpn/arm/v7a/cora15/copyi.asm: New file.
+
 	* mpn/arm64/logops_n.asm: New file.
 	* mpn/arm64/gcd_1.asm: New file.
 	* mpn/arm64/aorsmul_1.asm: New file.
