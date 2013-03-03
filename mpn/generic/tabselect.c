@@ -26,8 +26,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Select entry `which' from table `tab', which has nents entries, each `n'
    limbs.  Store the selected entry at rp.  Reads entire table to avoid
-   side-channel information leaks.  O(n*nents).
-   FIXME: Move to its own file.  */
+   side-channel information leaks.  O(n*nents).  */
 void
 mpn_tabselect (volatile mp_limb_t *rp, volatile mp_limb_t *tab, mp_size_t n,
 	       mp_size_t nents, mp_size_t which)
