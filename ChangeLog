@@ -1,5 +1,9 @@
 2013-03-03  Niels Möller  <nisse@lysator.liu.se>
 
+	* doc/gmp.texi (Integer Special Functions): Document
+	mpz_limbs_read, mpz_limbs_write, mpz_limbs_modify,
+	mpz_limbs_finish, mpz_roinit_n and MPZ_ROINIT_N.
+
 	* mpz/roinit_n.c (mpz_roinit_n): Normalize the input.
 
 2013-02-27  Niels Möller  <nisse@lysator.liu.se>
