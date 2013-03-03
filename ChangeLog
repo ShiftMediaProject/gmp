@@ -1,5 +1,7 @@
 2013-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/neon/tabselect.asm: New file.
+
 	* mpn/arm/copyi.asm: Software pipeline.
 	* mpn/arm/copyd.asm: Likewise.
 
