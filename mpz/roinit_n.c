@@ -23,8 +23,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 mpz_srcptr
 mpz_roinit_n (mpz_ptr x, mp_srcptr xp, mp_size_t xs)
 {
+  mp_size_t xn = ABS(xs);
+  MPN_NORMALIZE (xp, xn);
+
   ALLOC (x) = 0;
-  SIZ (x) = xs;
+  SIZ (x) = xs < 0 ? -xn : xn;
   PTR (x) = (mp_ptr) xp;
   return x;
 }

@@ -1,3 +1,7 @@
+2013-03-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/roinit_n.c (mpz_roinit_n): Normalize the input.
+
 2013-02-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_measure): Increase repetition count if we
