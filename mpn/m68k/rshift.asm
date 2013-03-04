@@ -79,7 +79,7 @@ ifelse(scale_available_p,1,`
 	cmpl	s_ptr, a2
 	bls	L(Lspecial)		C jump if s_ptr >= res_ptr + s_size
 
-L(Lnormal:)
+L(Lnormal):
 	moveql	#32, d5
 	subl	cnt, d5
 	movel	M(s_ptr,+), d2
@@ -94,14 +94,14 @@ L(Lnormal:)
 	bcs	L(L1)
 	subql	#1, s_size
 
-L(Loop:)
+L(Loop):
 	movel	M(s_ptr,+), d2
 	movel	d2, d3
 	lsll	d5, d3
 	orl	d3, d1
 	movel	d1, M(res_ptr,+)
 	lsrl	cnt, d2
-L(L1:)
+L(L1):
 	movel	M(s_ptr,+), d1
 	movel	d1, d3
 	lsll	d5, d3
@@ -113,7 +113,7 @@ L(L1:)
 	subl	#0x10000, s_size
 	bcc	L(Loop)
 
-L(Lend:)
+L(Lend):
 	movel	d1, M(res_ptr)	C store most significant limb
 
 C Restore used registers from stack frame.
@@ -124,7 +124,7 @@ C We loop from most significant end of the arrays, which is only permissable
 C if the source and destination don't overlap, since the function is
 C documented to work for overlapping source and destination.
 
-L(Lspecial:)
+L(Lspecial):
 ifelse(scale_available_p,1,`
 	lea	M(s_ptr,s_size,l,4), s_ptr
 	lea	M(res_ptr,s_size,l,4), res_ptr
@@ -141,11 +141,11 @@ ifelse(scale_available_p,1,`
 	bcc	L(LL1)
 	subql	#1, s_size
 
-L(LLoop:)
+L(LLoop):
 	movel	M(-,s_ptr), d2
 	roxrl	#1, d2
 	movel	d2, M(-,res_ptr)
-L(LL1:)
+L(LL1):
 	movel	M(-,s_ptr), d2
 	roxrl	#1, d2
 	movel	d2, M(-,res_ptr)
@@ -157,7 +157,7 @@ L(LL1:)
 	addl	d0, d0		C restore cy
 	bra	L(LLoop)
 
-L(LLend:)
+L(LLend):
 C Restore used registers from stack frame.
 	moveml	M(sp,+), d2-d6/a2
 	rts

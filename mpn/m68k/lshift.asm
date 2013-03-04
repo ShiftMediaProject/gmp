@@ -104,14 +104,14 @@ ifelse(scale_available_p,1,`
 	bcs	L(L1)
 	subql	#1, s_size
 
-L(Loop:)
+L(Loop):
 	movel	M(-,s_ptr), d2
 	movel	d2, d3
 	lsrl	d5, d3
 	orl	d3, d1
 	movel	d1, M(-,res_ptr)
 	lsll	cnt, d2
-L(L1:)
+L(L1):
 	movel	M(-,s_ptr), d1
 	movel	d1, d3
 	lsrl	d5, d3
@@ -123,7 +123,7 @@ L(L1:)
 	subl	#0x10000, s_size
 	bcc	L(Loop)
 
-L(Lend:)
+L(Lend):
 	movel	d1, M(-,res_ptr)	C store least significant limb
 
 C Restore used registers from stack frame.
