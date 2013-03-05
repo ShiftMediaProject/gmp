@@ -1,3 +1,10 @@
+2013-03-05  David Miller  <davem@davemloft.net>
+
+	* mpn/sparc32/ultrasparct1/mul_1.asm: Unroll main loop one time, add
+	T2/T3/T4 timings.
+	* mpn/sparc32/ultrasparct1/addmul_1.asm: Likewise.	
+	* mpn/sparc32/ultrasparct1/submul_1.asm: Likewise.
+
 2013-03-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/neon/lorrshift.asm: New file.

@@ -1,6 +1,8 @@
 dnl  SPARC T1 32-bit mpn_mul_1.
 
-dnl  Copyright 2010 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by David Miller.
+
+dnl  Copyright 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,7 +22,10 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T1:       23
+C UltraSPARC T1:       20
+C UltraSPARC T2:       18
+C UltraSPARC T3:       18
+C UltraSPARC T4:       4
 
 C INPUT PARAMETERS
 define(`rp',	`%o0')
@@ -30,21 +35,38 @@ define(`v0',	`%o3')
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
-	mov	0, %g4
-	srl	v0, 0, v0
 	srl	n, 0, n
-	dec	n			C n--
+	srl	v0, 0, v0
+	subcc	n, 1, n
+	be	L(final_one)
+	 clr	%o5
 
 L(top):	lduw	[up+0], %g1
-	add	up, 4, up		C up++
+	lduw	[up+4], %g2
 	mulx	%g1, v0, %g3
-	add	%g4, %g3, %g3
-	stw	%g3, [rp+0]
-	add	rp, 4, rp		C rp++
-	srlx	%g3, 32, %g4
-	brnz	n, L(top)
-	dec	n			C n--
+	add	up, 8, up
+	mulx	%g2, v0, %o4
+	sub	n, 2, n
+	add	rp, 8, rp
+	add	%o5, %g3, %g3
+	stw	%g3, [rp-8]
+	srlx	%g3, 32, %o5
+	add	%o5, %o4, %o4
+	stw	%o4, [rp-4]
+	brgz	n, L(top)
+	 srlx	%o4, 32, %o5
 
+	brlz,pt	n, L(done)
+	 nop
+
+L(final_one):
+	lduw	[up+0], %g1
+	mulx	%g1, v0, %g3
+	add	%o5, %g3, %g3
+	stw	%g3, [rp+0]
+	srlx	%g3, 32, %o5
+
+L(done):
 	retl
-	mov	%g4, %o0		C return value
+	 mov	%o5, %o0
 EPILOGUE()
