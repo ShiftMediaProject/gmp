@@ -581,6 +581,8 @@ sparc-*-* | sparc64-*-*)
     elif grep 'cpu.*MB86904' /proc/cpuinfo >/dev/null; then
       # actually MicroSPARC-II
       exact_cpu=microsparc
+    elif grep 'cpu.*UltraSparc T4' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparct4"
     elif grep 'cpu.*UltraSparc T3' /proc/cpuinfo >/dev/null; then
       exact_cpu="ultrasparct3"
     elif grep 'cpu.*UltraSparc T2' /proc/cpuinfo >/dev/null; then

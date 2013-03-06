@@ -1284,6 +1284,8 @@ case $host in
     # abilist="64" only.
     #
     case $host_cpu in
+      [ultrasparct[34]])
+        gcc_32_cflags="$gcc_cflags -Wa,-xarch=v8plusd" ;;
       sparc64 | sparcv9* | ultrasparc*)
         gcc_32_cflags="$gcc_cflags -Wa,-xarch=v8plus" ;;
     esac
@@ -1324,6 +1326,7 @@ case $host in
 	case $host_cpu in
 	  sparcv8 | microsparc | supersparc | turbosparc)
 					      cc_cflags_arch="-xarch=v8" ;;
+          [ultrasparct[34]])                  cc_cflags_arch="-xarch=v8plusd" ;;
 	  sparc64 | sparcv9* | ultrasparc*)   cc_cflags_arch="-xarch=v8plus" ;;
 	  *)                                  cc_cflags_arch="-xarch=v7" ;;
 	esac
@@ -1380,8 +1383,10 @@ case $host in
 	    path_64="sparc64/ultrasparc1234 sparc64" ;;
 	  [ultrasparc[34]])
 	    path_64="sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64" ;;
-	  [ultrasparct[1234]])
+	  [ultrasparct[12]])
 	    path_64="sparc64/ultrasparct1 sparc64" ;;
+	  [ultrasparct[34]])
+	    path_64="sparc64/ultrasparct3 sparc64/ultrasparct1 sparc64" ;;
 	  *)
 	    path_64="sparc64"
 	esac
@@ -1404,6 +1409,11 @@ case $host in
         gcc_64_ldflags="-Wc,-m64"
         gcc_64_cflags_optlist="cpu"
 
+	case $host_cpu in
+          [ultrasparct[34]])
+            gcc_64_cflags="$gcc_64_cflags -Wa,-xarch=v9d" ;;
+        esac
+
         case $host in
           *-*-solaris*)
             # Sun cc.
@@ -1413,8 +1423,13 @@ case $host in
             # -fast is documented as miscompiling things for the sake of speed.
             #
             cclist_64="$cclist_64 cc"
-            cc_64_cflags="-xO3 -xarch=v9"
             cc_64_cflags_optlist="cpu"
+            case $host_cpu in
+              [ultrasparct[34]])
+                cc_64_cflags="$cc_64_cflags -xO3 -xarch=v9d" ;;
+              *)
+                cc_64_cflags="-xO3 -xarch=v9" ;;
+            esac
             ;;
         esac
 
