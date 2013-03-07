@@ -2776,6 +2776,7 @@ case $tmp_fn in
 		     tmp_mulfunc="aors_err3_n" ;;
   addcnd_n|subcnd_n) tmp_mulfunc="aorscnd_n"   ;;
   addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
+  mul_2|addmul_2)    tmp_mulfunc="aormul_2" ;;
   popcount|hamdist)  tmp_mulfunc="popham"    ;;
   and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)
                      tmp_mulfunc="logops_n"  ;;
