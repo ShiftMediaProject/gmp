@@ -1,5 +1,7 @@
 dnl  SPARC v9 mpn_mul_1 for T3/T4.
 
+dnl  Contributed to the GNU project by David Miller.
+
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -20,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	 25.5
+C UltraSPARC T3:	25.5
 C UltraSPARC T4:	 3.8
 
 C INPUT PARAMETERS
