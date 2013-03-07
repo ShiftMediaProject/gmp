@@ -1,3 +1,8 @@
+2013-03-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/submul_1.asm: Optimise out two carry
+	propagating adds.
+
 2013-03-06  David Miller  <davem@davemloft.net>
 
 	* config.guess: Recognize UltraSparc T4 under Linux.
@@ -8,10 +13,10 @@
 	* mpn/sparc64/ultrasparct3/submul_1.asm: New file.
 	* mpn/sparc64/ultrasparct3/add_n.asm: New file.
 	* mpn/sparc64/ultrasparct3/sub_n.asm: New file.
-	
+
 	* mpn/sparc32/ultrasparct1/mul_1.asm: Unroll main loop one time, add
 	T2/T3/T4 timings.
-	* mpn/sparc32/ultrasparct1/addmul_1.asm: Likewise.	
+	* mpn/sparc32/ultrasparct1/addmul_1.asm: Likewise.
 	* mpn/sparc32/ultrasparct1/submul_1.asm: Likewise.
 
 2013-03-04  Torbjorn Granlund  <tege@gmplib.org>
