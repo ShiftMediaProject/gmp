@@ -42,7 +42,8 @@ PROLOGUE(mpn_tabselect)
 	push	{r4-r11, r14}
 	ldr	r11, [sp, #36]
 	sub	r11, r11, r3
-L(out):	add	r7, r11, r3
+L(outer):
+	add	r7, r11, r3
 	subs	r7, r7, #1
 	sbc	r7, r7, r7
 	mov	r6, r0
@@ -88,7 +89,7 @@ L(1):	bne	L(2)
 	str	r9, [r6], #4
 
 L(2):	subs	r3, r3, #1
-	bne	L(out)
+	bne	L(outer)
 	pop	{r4-r11, r14}
 	bx	lr
 EPILOGUE()
