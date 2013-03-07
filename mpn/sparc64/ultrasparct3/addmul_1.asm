@@ -1,5 +1,7 @@
 dnl  SPARC v9 mpn_addmul_1 for T3/T4.
 
+dnl  Contributed to the GNU project by David Miller.
+
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -20,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	 28
+C UltraSPARC T3:	28
 C UltraSPARC T4:	 5.5
 
 C INPUT PARAMETERS
@@ -51,12 +53,12 @@ L(top):
 	mulx	%l1, v0, %o2
 	sub	n, 2, n
 	umulxhi	%l1, v0, %o3
-	addxccc	%o0, %o5, %o0
-	addxccc	%o2, %o1, %o2
+	addxccc	%o5, %o0, %o0
+	addxccc	%o1, %o2, %o2
 	addxc	%g0, %o3, %o5
-	addcc	%o0, %l2, %o0
+	addcc	%l2, %o0, %o0
 	stx	%o0, [rp-16]
-	addxccc	%o2, %l3, %o2
+	addxccc	%l3, %o2, %o2
 	brgz	n, L(top)
 	 stx	%o2, [rp-8]
 
@@ -74,7 +76,7 @@ L(final_one):
 	stx	%o0, [rp+0]
 
 L(done):
-	addxc	%g0, %o5, %o5
+	addxc	%g0, %o5, %i0
 	ret
-	 restore %o5, 0, %o0
+	 restore
 EPILOGUE()
