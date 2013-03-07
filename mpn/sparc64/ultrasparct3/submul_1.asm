@@ -34,7 +34,6 @@ define(`v0', `%i3')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-	ALIGN(32)
 PROLOGUE(mpn_submul_1)
 	save	%sp, -176, %sp
 	subcc	n, 1, n

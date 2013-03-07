@@ -34,7 +34,6 @@ define(`v0', `%o3')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-	ALIGN(32)
 PROLOGUE(mpn_mul_1)
 	subcc	n, 1, n
 	be	L(final_one)
