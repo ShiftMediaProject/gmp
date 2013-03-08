@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_mul_1 for Intel Broadwell.
+dnl  AMD64 mpn_addmul_1 for Intel Broadwell.
 
 dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
