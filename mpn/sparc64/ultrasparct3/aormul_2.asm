@@ -20,9 +20,10 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		   cycles/limb
-C UltraSPARC T3:	 ?
-C UltraSPARC T4:	 ?
+C		    cycles/limbC    cycles/limb
+C		       mul_2C         addmul_2
+C UltraSPARC T3:	 ?		 ?
+C UltraSPARC T4:	~3.5		~4
 
 
 C This code is based on the summation algorithm used for x86-64 where the
@@ -67,7 +68,7 @@ C Testing mechanism for running this on older v9 processrs
 ifdef(`FAKE_T3',`
   include(`missing.m4')
 ',`
-  define(`addxccc',	``addxcc'	$1, $2, $3')
+  define(`addxccc',	``addxccc'	$1, $2, $3')
   define(`addxc',	``addxc'	$1, $2, $3')
   define(`umulxhi',	``umulxhi'	$1, $2, $3')
 ')
