@@ -24,7 +24,7 @@ C StrongARM:	 -
 C XScale	 -
 C Cortex-A8	 ?
 C Cortex-A9	 3.25
-C Cortex-A15	 ?
+C Cortex-A15	 4
 
 C TODO
 C  * Micro-optimise feed-in code.
