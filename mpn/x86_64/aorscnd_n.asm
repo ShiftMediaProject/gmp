@@ -44,11 +44,11 @@ C  * This runs optimally at decoder bandwidth on K10.  It has not been tuned
 C    for any other processor.
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`vp',	`%rdx')
-define(`n',	`%rcx')
-define(`cnd',	`%r8')
+define(`cnd',	`%rdi')
+define(`rp',	`%rsi')
+define(`up',	`%rdx')
+define(`vp',	`%rcx')
+define(`n',	`%r8')
 
 ifdef(`OPERATION_addcnd_n', `
 	define(ADDSUB,	      add)

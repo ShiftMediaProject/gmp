@@ -1133,12 +1133,12 @@ speed_mpn_rsh1sub_n (struct speed_params *s)
 double
 speed_mpn_addcnd_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_addcnd_n (wp, xp, yp, s->size, 1));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_addcnd_n (1, wp, xp, yp, s->size));
 }
 double
 speed_mpn_subcnd_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_subcnd_n (wp, xp, yp, s->size, 1));
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (mpn_subcnd_n (1, wp, xp, yp, s->size));
 }
 
 /* mpn_and_n etc can be macros and so have to be handled with

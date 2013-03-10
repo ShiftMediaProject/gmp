@@ -597,7 +597,7 @@ refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 }
 
 mp_limb_t
-refmpn_addcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_limb_t cnd)
+refmpn_addcnd_n (mp_limb_t cnd, mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   if (cnd != 0)
     return refmpn_add_n (rp, s1p, s2p, size);
@@ -608,7 +608,7 @@ refmpn_addcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_lim
     }
 }
 mp_limb_t
-refmpn_subcnd_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size, mp_limb_t cnd)
+refmpn_subcnd_n (mp_limb_t cnd, mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   if (cnd != 0)
     return refmpn_sub_n (rp, s1p, s2p, size);

@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 mp_limb_t
-mpn_subcnd_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t cnd)
+mpn_subcnd_n (mp_limb_t cnd, mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   mp_limb_t ul, vl, sl, rl, cy, cy1, cy2, mask;
 

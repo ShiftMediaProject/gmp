@@ -1,3 +1,29 @@
+2013-03-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/sbpi1_div_sec.c: Update calls of mpn_addcnd_n and
+	mpn_subcnd_n.
+	* mpn/generic/powm_sec.c (MPN_REDC_1_SEC, MPN_REDC_2_SEC)
+	(mpn_powm_sec): Update calls of mpn_subcnd_n.
+
+	* tests/tests.h (refmpn_addcnd_n, refmpn_subcnd_n): Update
+	declarations.
+	* tests/refmpn.c (refmpn_addcnd_n, refmpn_subcnd_n): Similar
+	reorder of arguments.
+	* tests/devel/try.c (call): Pass condition first, for
+	TYPE_ADDCND_N and TYPE_SUBCND_N.
+
+	* tune/common.c (speed_mpn_addcnd_n, speed_mpn_subcnd_n): Update
+	to pass condition as first argument.
+
+	* gmp-impl.h (mpn_addcnd_n, mpn_subcnd_n): Updated declarations.
+
+	* mpn/generic/addcnd_n.c (mpn_addcnd_n): Reordered arguments, make
+	condition the first argument.
+	* mpn/generic/subcnd_n.c (mpn_subcnd_n): Likewise.
+	* mpn/arm/aorscnd_n.asm: Likewise.
+	* mpn/x86_64/aorscnd_n.asm: Likewise.
+	* mpn/powerpc64/mode64/aorscnd_n.asm: Likewise.
+
 2013-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mulx/adx/missing.asm: Simulate some mulx/adx insns.

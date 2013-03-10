@@ -26,12 +26,13 @@ C Cortex-A8	 ?
 C Cortex-A9	 2.5	slightly fluctuating
 C Cortex-A15	 ?
 
-define(`rp',	`r0')
-define(`up',	`r1')
-define(`vp',	`r2')
-define(`n',	`r3')
+define(`cnd',	`r0')
+define(`rp',	`r1')
+define(`up',	`r2')
+define(`vp',	`r3')
 
-define(`cnd',	`r12')
+define(`n',	`r12')
+
 
 ifdef(`OPERATION_addcnd_n', `
 	define(`ADDSUB',      adds)
@@ -52,7 +53,7 @@ MULFUNC_PROLOGUE(mpn_addcnd_n mpn_subcnd_n)
 ASM_START()
 PROLOGUE(func)
 	push	{r4-r11}
-	ldr	cnd, [sp, #32]
+	ldr	n, [sp, #32]
 
 	INITCY				C really only needed for n = 0 (mod 4)
 

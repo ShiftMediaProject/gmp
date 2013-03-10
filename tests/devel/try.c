@@ -2409,10 +2409,13 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_RSBLSH2_NC:
   case TYPE_ADD_NC:
   case TYPE_SUB_NC:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, size, carry);
+    break;
   case TYPE_ADDCND_N:
   case TYPE_SUBCND_N:
     e->retval = CALLING_CONVENTIONS (function)
-      (e->d[0].p, e->s[0].p, e->s[1].p, size, carry);
+      (carry, e->d[0].p, e->s[0].p, e->s[1].p, size);
     break;
   case TYPE_ADD_ERR1_N:
   case TYPE_SUB_ERR1_N:

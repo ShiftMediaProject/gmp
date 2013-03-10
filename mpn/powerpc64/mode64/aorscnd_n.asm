@@ -28,11 +28,11 @@ C POWER6                 3
 C POWER7                 ?
 
 C INPUT PARAMETERS
-define(`rp',   `r3')
-define(`up',   `r4')
-define(`vp',   `r5')
-define(`n',    `r6')
-define(`cnd',  `r7')
+define(`cnd',  `r3')
+define(`rp',   `r4')
+define(`up',   `r5')
+define(`vp',   `r6')
+define(`n',    `r7')
 
 ifdef(`OPERATION_addcnd_n',`
   define(ADDSUBC,	adde)
