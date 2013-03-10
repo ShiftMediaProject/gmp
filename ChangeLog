@@ -1,5 +1,13 @@
 2013-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/mulx/adx/missing.asm: Simulate some mulx/adx insns.
+	* mpn/x86_64/mulx/adx/missing-call.m4: Call variant.
+	* mpn/x86_64/mulx/adx/missing-inline.m4: Inline variant.
+
+	* mpn/sparc64/ultrasparct3/missing.asm: Simulate some v9-2011 insns.
+	* mpn/sparc64/ultrasparct3/missing.m4: Inline or invoke missing.asm for
+	v9-2011 insn.
+
 	* configure.ac: Strip `haswell' from paths for now.
 
 	* mpn/x86_64/mulx/addmul_1.asm: New.
