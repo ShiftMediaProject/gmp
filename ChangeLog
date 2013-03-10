@@ -1,3 +1,22 @@
+2013-03-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Strip `haswell' from paths for now.
+
+	* mpn/x86_64/mulx/addmul_1.asm: New.
+	* mpn/x86_64/mulx/mul_1.asm: Rewrite file from `haswell' subdir.
+	* mpn/x86_64/mulx/adx/addmul_1.asm: Likewise.
+	* mpn/x86_64/haswell: Remove.
+
+	* mpn/arm/v7a/cora15/mul_1.asm: New file.
+	* mpn/arm/v7a/cora15/addmul_1.asm: New file.
+
+2013-03-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparc1234/add_n.asm: Use g5 instead of g4.
+	* mpn/sparc64/ultrasparc1234/sub_n.asm: Likewise.
+
+	* mpn/sparc64/ultrasparct3/aormul_2.asm: Fix a typo.
+
 2013-03-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v7a/cora9/gmp-mparam.h: New file.
