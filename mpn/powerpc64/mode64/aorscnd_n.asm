@@ -64,11 +64,11 @@ PROLOGUE(func)
 	subfic	cnd, cnd, 0
 	subfe	cnd, cnd, cnd
 
-	rldicl.	r0, r6, 0,62	C r0 = n & 3, set cr0
+	rldicl.	r0, n, 0,62	C r0 = n & 3, set cr0
 	cmpdi	cr6, r0, 2
-	addi	r6, r6, 3	C compute count...
-	srdi	r6, r6, 2	C ...for ctr
-	mtctr	r6		C copy count into ctr
+	addi	n, n, 3	C compute count...
+	srdi	n, n, 2	C ...for ctr
+	mtctr	n		C copy count into ctr
 	beq	cr0, L(b00)
 	blt	cr6, L(b01)
 	beq	cr6, L(b10)
@@ -122,7 +122,7 @@ L(b10):	ld	r10, 0(up)	C load s1 limb
 	b	L(ret)
 
 L(b00):	CLRCB			C clear/set cy
-L(go):	ld	r6, 0(up)	C load s1 limb
+L(go):	ld	r7, 0(up)	C load s1 limb
 	ld	r27, 0(vp)	C load s2 limb
 	ld	r8, 8(up)	C load s1 limb
 	ld	r9, 8(vp)	C load s2 limb
@@ -139,8 +139,8 @@ L(go):	ld	r6, 0(up)	C load s1 limb
 	addi	up, up, 32
 	addi	vp, vp, 32
 
-L(top):	ADDSUBC	r28, r27, r6
-	ld	r6, 0(up)	C load s1 limb
+L(top):	ADDSUBC	r28, r27, r7
+	ld	r7, 0(up)	C load s1 limb
 	ld	r27, 0(vp)	C load s2 limb
 	ADDSUBC	r29, r9, r8
 	ld	r8, 8(up)	C load s1 limb
@@ -164,7 +164,7 @@ L(top):	ADDSUBC	r28, r27, r6
 	and	r0, r0, cnd
 	bdnz	L(top)		C decrement ctr and loop back
 
-L(end):	ADDSUBC	r28, r27, r6
+L(end):	ADDSUBC	r28, r27, r7
 	ADDSUBC	r29, r9, r8
 	ADDSUBC	r30, r11, r10
 	ADDSUBC	r31, r0, r12
