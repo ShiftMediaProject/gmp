@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addcnd_n, mpn_subcnd_n
 
-dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -44,11 +44,11 @@ C  * This runs optimally at decoder bandwidth on K10.  It has not been tuned
 C    for any other processor.
 
 C INPUT PARAMETERS
-define(`cnd',	`%rdi')
-define(`rp',	`%rsi')
-define(`up',	`%rdx')
-define(`vp',	`%rcx')
-define(`n',	`%r8')
+define(`cnd',	`%rdi')	dnl rcx
+define(`rp',	`%rsi')	dnl rdx
+define(`up',	`%rdx')	dnl r8
+define(`vp',	`%rcx')	dnl r9
+define(`n',	`%r8')	dnl rsp+40
 
 ifdef(`OPERATION_addcnd_n', `
 	define(ADDSUB,	      add)
@@ -69,7 +69,7 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(func)
 	FUNC_ENTRY(4)
-IFDOS(`	mov	56(%rsp), %r8	')
+IFDOS(`	mov	56(%rsp), R32(%r8)')
 	push	%rbx
 	push	%rbp
 	push	%r12
