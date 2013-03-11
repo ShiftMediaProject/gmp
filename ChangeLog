@@ -1,3 +1,9 @@
+2013-03-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-powm_ui.c: Test larger arguments.  General cleanup.
+
+	* mpz/powm_ui.c (mod): Adhere to mpn_mu_div_qr's overlap requirements.
+
 2013-03-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_sec.c: Update calls of mpn_addcnd_n and
