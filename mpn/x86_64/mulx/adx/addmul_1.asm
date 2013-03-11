@@ -35,23 +35,20 @@ C Intel BWL	 ?
 C Intel atom	 -
 C VIA nano	 -
 
-define(`rp',      `%rdi')   C rcx
-define(`up',      `%rsi')   C rdx
-define(`n_param', `%rdx')   C r8
-define(`v0_param',`%rcx')   C r9
+define(`rp',      `%rdi')	dnl rcx
+define(`up',      `%rsi')	dnl rdx
+define(`n_param', `%rdx')	dnl r8
+define(`v0_param',`%rcx')	dnl r9
 
-define(`n',       `%rcx')
-define(`v0',      `%rdx')
+define(`n',       `%rcx')	dnl
+define(`v0',      `%rdx')	dnl
 
-IFDOS(`	define(`up',       ``%rsi'')	') dnl
-IFDOS(`	define(`rp',       ``%rcx'')	') dnl
-IFDOS(`	define(`v0_param', ``%r9'')	') dnl
-IFDOS(`	define(`r9',       ``rdi'')	') dnl
-IFDOS(`	define(`n_param',  ``%r8'')	') dnl
-IFDOS(`	define(`r8',       ``r11'')	') dnl
+C Make mulx and adx emulation the default.
+C FIXME: Remove this once qemu's adx flags handling is fixed.
+ifdef(`FAKE_MULXADX',,`define(`FAKE_MULXADX',1)')
 
 C Testing mechanism for running this on older AMD64 processrs
-ifdef(`FAKE_MULXADX',`
+ifelse(FAKE_MULXADX,1,`
   include(`missing-call.m4')
 ',`
   define(`adox',	``adox'	$1, $2')
@@ -82,37 +79,30 @@ PROLOGUE(mpn_addmul_1)
 	jl	L(b1)
 	jz	L(b2)
 
-L(b3):	xor	%r8, %r8
-	mulx(	(up,n,8), %r11, %r10)
+L(b3):	mulx(	(up,n,8), %r11, %r10)
 	mulx(	8(up,n,8), %r13, %r12)
 	mulx(	16(up,n,8), %rbx, %rax)
-	add	%r8, %r11
 	dec	n
 	jmp	L(lo3)
 
-L(b0):	xor	%rax, %rax
-	mulx(	(up,n,8), %r9, %r8)
+L(b0):	mulx(	(up,n,8), %r9, %r8)
 	mulx(	8(up,n,8), %r11, %r10)
 	mulx(	16(up,n,8), %r13, %r12)
-	adcx(	%rax, %r9)
 	jmp	L(lo0)
 
-L(b2):	xor	%r10, %r10
-	mulx(	(up,n,8), %r13, %r12)
+L(b2):	mulx(	(up,n,8), %r13, %r12)
 	mulx(	8(up,n,8), %rbx, %rax)
 	lea	2(n), n
 	jrcxz	L(wd2)
 L(gt2):	mulx(	(up,n,8), %r9, %r8)
-	adcx(	%r10, %r13)
 	jmp	L(lo2)
 
-L(b1):	xor	%r12, %r12
+L(b1):	and	R8(%rax), R8(%rax)
 	mulx(	(up,n,8), %rbx, %rax)
 	lea	1(n), n
 	jrcxz	L(wd1)
 	mulx(	(up,n,8), %r9, %r8)
 	mulx(	8(up,n,8), %r11, %r10)
-	adcx(	%r12, %rbx)
 	jmp	L(lo1)
 
 L(end):	adcx(	%r10, %r13)
