@@ -1,5 +1,7 @@
 2013-03-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/aorscnd_n.asm: Read 32 bits for 'n' arguments on DOS64.
+
 	* tests/mpz/t-powm_ui.c: Test larger arguments.  General cleanup.
 
 	* mpz/powm_ui.c (mod): Adhere to mpn_mu_div_qr's overlap requirements.
