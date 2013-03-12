@@ -1671,6 +1671,7 @@ case $host in
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
 	path_64="x86_64/mulx/adx x86_64/mulx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
+	extra_functions_64="missing"	     # FIXME: remove when qemu's adx flags handling works
 	;;
       atom)
 	gcc_cflags_cpu="-mtune=atom -mtune=pentium3"
@@ -1713,7 +1714,7 @@ case $host in
 
 	abilist="64 x32 32"
 	if test "$enable_assembly" = "yes" ; then
-	    extra_functions_64="invert_limb_table"
+	    extra_functions_64="$extra_functions_64 invert_limb_table"
 	    extra_functions_x32=$extra_functions_64
 	fi
 
