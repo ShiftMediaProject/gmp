@@ -30,7 +30,6 @@ C Accept the single explicit parameter on the stack, return the two result
 C words on the stack.  This calling convention means that we need to move the
 C return address up.
 C 
-PROTECT(__gmp_mulx)
 PROLOGUE(__gmp_mulx)
 	lea	-8(%rsp), %rsp
 	push	%rax
