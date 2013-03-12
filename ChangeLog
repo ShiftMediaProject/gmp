@@ -1,3 +1,10 @@
+2013-03-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Add "missing" to extra_functions for coreibwl.
+
+	* mpn/x86_64/mulx/adx/addmul_1.asm: Simplify.  Make FAKE_MULXADX the
+	default awaiting proper qemu behaviour.
+
 2013-03-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorscnd_n.asm: Read 32 bits for 'n' arguments on DOS64.
