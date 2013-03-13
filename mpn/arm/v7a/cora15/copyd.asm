@@ -72,7 +72,7 @@ L(top):	vld1.32	{d22-d23}, [up], r12
 	bge	L(top)
 
 	add	up, up, #16			C undo up offset
-		    				C rp offset undoing folded
+						C rp offset undoing folded
 L(end):	vst1.32	{d26-d27}, [rp:128]
 
 C Copy last 0-7 limbs.  Note that rp is aligned after loop, but not when we

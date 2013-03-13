@@ -36,7 +36,7 @@ define(`adcx',`
 
 define(`mulx',`
 	push	$1
-	call	__gmp_mulx	
+	call	__gmp_mulx
 	pop	$2
 	pop	$3
 ')

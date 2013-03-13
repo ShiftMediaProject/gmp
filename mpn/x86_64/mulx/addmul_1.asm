@@ -77,7 +77,7 @@ L(b1):	mulx	%r8, %rbx, %rax
 	jz	L(wd1)
 	mulx	(up,n,8), %r9, %r8
 	mulx	8(up,n,8), %r11, %r10
-	and	%rax, %rax	 		C clear cy
+	and	%rax, %rax			C clear cy
 	jmp	L(lo1)
 
 L(b0):	mulx	%r8, %r9, %r8
@@ -94,7 +94,7 @@ L(b3):	mulx	%r8, %r11, %r10
 	adc	$0, %rax
 	sub	$-3, n
 	jz	L(wd3)
-	and	%rax, %rax	 		C clear cy
+	and	%rax, %rax			C clear cy
 	jmp	L(lo3)
 
 L(b2):	mulx	%r8, %r13, %r12
@@ -104,7 +104,7 @@ L(b2):	mulx	%r8, %r13, %r12
 	sub	$-2, n
 	jz	L(wd2)
 	mulx	(up,n,8), %r9, %r8
-	and	%rax, %rax	 		C clear cy
+	and	%rax, %rax			C clear cy
 	jmp	L(lo2)
 
 L(top):	add	%r9, (rp,n,8)

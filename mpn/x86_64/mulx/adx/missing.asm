@@ -25,11 +25,11 @@ include(`../config.m4')
 ASM_START()
 
 C Fake the MULX instruction
-C 
+C
 C Accept the single explicit parameter on the stack, return the two result
 C words on the stack.  This calling convention means that we need to move the
 C return address up.
-C 
+C
 PROLOGUE(__gmp_mulx)
 	lea	-8(%rsp), %rsp
 	push	%rax
@@ -50,10 +50,10 @@ PROTECT(__gmp_mulx)
 
 
 C Fake the ADOX instruction
-C 
+C
 C Accept the two parameters on the stack, return the result word on the stack.
 C This calling convention means that we need to move the return address down.
-C 
+C
 PROLOGUE(__gmp_adox)
 	push	%rcx
 	push	%rbx
@@ -90,10 +90,10 @@ PROTECT(__gmp_adox)
 
 
 C Fake the ADCX instruction
-C 
+C
 C Accept the two parameters on the stack, return the result word on the stack.
 C This calling convention means that we need to move the return address down.
-C 
+C
 PROLOGUE(__gmp_adcx)
 	push	%rcx
 	push	%rbx

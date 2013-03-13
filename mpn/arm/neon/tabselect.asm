@@ -40,7 +40,7 @@ C      which  on stack
 
 define(`mask',  `r6')
 define(`maskv', `d6')
-C 
+C
 ASM_START()
 PROLOGUE(mpn_tabselect)
 	push	{r4-r7}

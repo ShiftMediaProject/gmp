@@ -29,7 +29,7 @@ C UltraSPARC T4:	~3.5		~4
 C This code is based on the summation algorithm used for x86-64 where the
 C multiply instruction clobbers the carry flag.  It would be possible to
 C keep carry alive and thereby save 3 instructions per iteration.
-C 
+C
 C The code is reasonably scheduled for long-latency instructions, but no micro-
 C scheduling has been done.  There is hope that this could run at around 3.5
 C c/l on T4 if an optimal schedule was found.
