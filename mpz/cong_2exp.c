@@ -1,6 +1,6 @@
 /* mpz_congruent_2exp_p -- test congruence of mpz mod 2^n.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,10 +28,19 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, mp_bitcnt_t d) __GMP_NOTHROW
   unsigned       dbits;
   mp_ptr         ap, cp;
   mp_limb_t      dmask, alimb, climb, sum;
-  mp_size_t      asize_signed, csize_signed, asize, csize;
+  mp_size_t      as, cs, asize, csize;
 
-  if (ABSIZ(a) < ABSIZ(c))
-    MPZ_SRCPTR_SWAP (a, c);
+  as = SIZ(a);
+  asize = ABS(as);
+
+  cs = SIZ(c);
+  csize = ABS(cs);
+
+  if (asize < csize)
+    {
+      MPZ_SRCPTR_SWAP (a, c);
+      MP_SIZE_T_SWAP (asize, csize);
+    }
 
   dlimbs = d / GMP_NUMB_BITS;
   dbits = d % GMP_NUMB_BITS;
@@ -40,16 +49,10 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, mp_bitcnt_t d) __GMP_NOTHROW
   ap = PTR(a);
   cp = PTR(c);
 
-  asize_signed = SIZ(a);
-  asize = ABS(asize_signed);
-
-  csize_signed = SIZ(c);
-  csize = ABS(csize_signed);
-
-  if (csize_signed == 0)
+  if (csize == 0)
     goto a_zeros;
 
-  if ((asize_signed ^ csize_signed) >= 0)
+  if ((cs ^ as) >= 0)
     {
       /* same signs, direct comparison */
 
@@ -83,7 +86,7 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, mp_bitcnt_t d) __GMP_NOTHROW
       /* common low zero limbs, stopping at first non-zeros, which must
 	 match twos complement */
       i = 0;
-      for (;;)
+      do
 	{
 	  ASSERT (i < csize);  /* always have a non-zero limb on c */
 	  alimb = ap[i];
@@ -92,33 +95,25 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, mp_bitcnt_t d) __GMP_NOTHROW
 
 	  if (i >= dlimbs)
 	    return (sum & dmask) == 0;
-	  i++;
+	  ++i;
 
 	  /* require both zero, or first non-zeros as twos-complements */
 	  if (sum != 0)
 	    return 0;
-
-	  if (alimb != 0)
-	    break;
-	}
+	} while (alimb == 0);
 
       /* further limbs matching as ones-complement */
-      for (;;)
+      for (; i < csize; ++i)
 	{
-	  if (i >= csize)
-	    break;
-
 	  alimb = ap[i];
 	  climb = cp[i];
-	  sum = (alimb + climb + 1) & GMP_NUMB_MASK;
+	  sum = alimb ^ climb ^ GMP_NUMB_MASK;
 
 	  if (i >= dlimbs)
 	    return (sum & dmask) == 0;
 
 	  if (sum != 0)
 	    return 0;
-
-	  i++;
 	}
 
       /* no more c, so require all 1 bits in a */
