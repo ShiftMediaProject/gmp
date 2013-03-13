@@ -88,6 +88,10 @@
 	* mpn/arm/v7a/cora15/mul_1.asm: New file.
 	* mpn/arm/v7a/cora15/addmul_1.asm: New file.
 
+2013-03-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-cong_2exp.c: Improve coverage.
+
 2013-03-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparc1234/add_n.asm: Use g5 instead of g4.
