@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_addcnd_n, mpn_subcnd_n
+dnl  AMD64 mpn_cnd_add_n, mpn_cnd_sub_n
 
 dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
@@ -37,8 +37,8 @@ C    is supposed to have the exact same execution pattern for cnd true and
 C    false, and since cmov's documentation is not clear about wheather it
 C    actually reads both source operands and writes the register for a false
 C    condition, we cannot use it.
-C  * Two cases could be optimised: (1) addcnd_n could use ADCSBB-from-memory
-C    to save one insn/limb, and (2) when up=rp addcnd_n and subcnd_n could use
+C  * Two cases could be optimised: (1) cnd_add_n could use ADCSBB-from-memory
+C    to save one insn/limb, and (2) when up=rp cnd_add_n and cnd_sub_n could use
 C    ADCSBB-to-memory, again saving 1 insn/limb.
 C  * This runs optimally at decoder bandwidth on K10.  It has not been tuned
 C    for any other processor.
@@ -50,16 +50,16 @@ define(`up',	`%rdx')	dnl r8
 define(`vp',	`%rcx')	dnl r9
 define(`n',	`%r8')	dnl rsp+40
 
-ifdef(`OPERATION_addcnd_n', `
+ifdef(`OPERATION_cnd_add_n', `
 	define(ADDSUB,	      add)
 	define(ADCSBB,	      adc)
-	define(func,	      mpn_addcnd_n)')
-ifdef(`OPERATION_subcnd_n', `
+	define(func,	      mpn_cnd_add_n)')
+ifdef(`OPERATION_cnd_sub_n', `
 	define(ADDSUB,	      sub)
 	define(ADCSBB,	      sbb)
-	define(func,	      mpn_subcnd_n)')
+	define(func,	      mpn_cnd_sub_n)')
 
-MULFUNC_PROLOGUE(mpn_addcnd_n mpn_subcnd_n)
+MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)

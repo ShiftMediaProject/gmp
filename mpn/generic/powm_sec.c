@@ -63,7 +63,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   do {									\
     mp_limb_t cy;							\
     cy = mpn_redc_1 (rp, up, mp, n, invm);				\
-    mpn_subcnd_n (cy, rp, rp, mp, n);					\
+    mpn_cnd_sub_n (cy, rp, rp, mp, n);					\
   } while (0)
 
 #undef MPN_REDC_2_SEC
@@ -71,7 +71,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   do {									\
     mp_limb_t cy;							\
     cy = mpn_redc_2 (rp, up, mp, n, mip);				\
-    mpn_subcnd_n (cy, rp, rp, mp, n);					\
+    mpn_cnd_sub_n (cy, rp, rp, mp, n);					\
   } while (0)
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
@@ -418,7 +418,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   MPN_REDC_1_SEC (rp, tp, mp, n, mip[0]);
 #endif
   cnd = mpn_sub_n (tp, rp, mp, n);	/* we need just retval */
-  mpn_subcnd_n (!cnd, rp, rp, mp, n);
+  mpn_cnd_sub_n (!cnd, rp, rp, mp, n);
 }
 
 mp_size_t

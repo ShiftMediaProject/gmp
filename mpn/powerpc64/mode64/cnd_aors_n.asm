@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_addcnd_n/mpn_subcnd_n.
+dnl  PowerPC-64 mpn_cnd_add_n/mpn_cnd_sub_n.
 
 dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007, 2011, 2012 Free
 dnl  Software Foundation, Inc.
@@ -34,24 +34,24 @@ define(`up',   `r5')
 define(`vp',   `r6')
 define(`n',    `r7')
 
-ifdef(`OPERATION_addcnd_n',`
+ifdef(`OPERATION_cnd_add_n',`
   define(ADDSUBC,	adde)
   define(ADDSUB,	addc)
-  define(func,		mpn_addcnd_n)
+  define(func,		mpn_cnd_add_n)
   define(GENRVAL,	`addi	r3, r3, 1')
   define(SETCBR,	`addic	r0, $1, -1')
   define(CLRCB,		`addic	r0, r0, 0')
 ')
-ifdef(`OPERATION_subcnd_n',`
+ifdef(`OPERATION_cnd_sub_n',`
   define(ADDSUBC,	subfe)
   define(ADDSUB,	subfc)
-  define(func,		mpn_subcnd_n)
+  define(func,		mpn_cnd_sub_n)
   define(GENRVAL,	`neg	r3, r3')
   define(SETCBR,	`subfic	r0, $1, 0')
   define(CLRCB,		`addic	r0, r1, -1')
 ')
 
-MULFUNC_PROLOGUE(mpn_addcnd_n mpn_subcnd_n)
+MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
 
 ASM_START()
 PROLOGUE(func)

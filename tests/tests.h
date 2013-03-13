@@ -162,8 +162,8 @@ int refmpf_validate (const char *, mpf_srcptr, mpf_srcptr);
 int refmpf_validate_division (const char *, mpf_srcptr, mpf_srcptr, mpf_srcptr);
 
 
-mp_limb_t refmpn_addcnd_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
-mp_limb_t refmpn_subcnd_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+mp_limb_t refmpn_cnd_add_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+mp_limb_t refmpn_cnd_sub_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 
 mp_limb_t refmpn_add (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 mp_limb_t refmpn_add_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);

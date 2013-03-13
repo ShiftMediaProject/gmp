@@ -2718,7 +2718,7 @@ gmp_mpn_functions_optional="umul udiv					\
   add_n_sub_n addaddmul_1msb0"
 
 gmp_mpn_functions="$extra_functions					   \
-  add add_1 add_n sub sub_1 sub_n addcnd_n subcnd_n neg com		   \
+  add add_1 add_n sub sub_1 sub_n cnd_add_n cnd_sub_n neg com		   \
   mul_1 addmul_1 submul_1						   \
   add_err1_n add_err2_n add_err3_n sub_err1_n sub_err2_n sub_err3_n	   \
   lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2		   \
@@ -2775,7 +2775,7 @@ case $tmp_fn in
 		     tmp_mulfunc="aors_err2_n" ;;
   add_err3_n|sub_err3_n)
 		     tmp_mulfunc="aors_err3_n" ;;
-  addcnd_n|subcnd_n) tmp_mulfunc="aorscnd_n"   ;;
+  cnd_add_n|cnd_sub_n) tmp_mulfunc="cnd_aors_n"   ;;
   addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
   mul_2|addmul_2)    tmp_mulfunc="aormul_2" ;;
   popcount|hamdist)  tmp_mulfunc="popham"    ;;
@@ -3268,7 +3268,6 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_add_n_sub_n
 #undef HAVE_NATIVE_mpn_add_nc
 #undef HAVE_NATIVE_mpn_addaddmul_1msb0
-#undef HAVE_NATIVE_mpn_addcnd_n
 #undef HAVE_NATIVE_mpn_addlsh1_n
 #undef HAVE_NATIVE_mpn_addlsh2_n
 #undef HAVE_NATIVE_mpn_addlsh_n
@@ -3301,6 +3300,8 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_bdiv_dbm1c
 #undef HAVE_NATIVE_mpn_bdiv_q_1
 #undef HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#undef HAVE_NATIVE_mpn_cnd_add_n
+#undef HAVE_NATIVE_mpn_cnd_sub_n
 #undef HAVE_NATIVE_mpn_com
 #undef HAVE_NATIVE_mpn_copyd
 #undef HAVE_NATIVE_mpn_copyi
@@ -3357,7 +3358,6 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sqr_diag_addlsh1
 #undef HAVE_NATIVE_mpn_sub_n
 #undef HAVE_NATIVE_mpn_sub_nc
-#undef HAVE_NATIVE_mpn_subcnd_n
 #undef HAVE_NATIVE_mpn_sublsh1_n
 #undef HAVE_NATIVE_mpn_sublsh2_n
 #undef HAVE_NATIVE_mpn_sublsh_n

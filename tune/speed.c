@@ -474,8 +474,8 @@ const struct routine_t {
   { "mpn_rsh1sub_n",     speed_mpn_rsh1sub_n, FLAG_R_OPTIONAL },
 #endif
 
-  { "mpn_addcnd_n",     speed_mpn_addcnd_n, FLAG_R_OPTIONAL },
-  { "mpn_subcnd_n",     speed_mpn_subcnd_n, FLAG_R_OPTIONAL },
+  { "mpn_cnd_add_n",     speed_mpn_cnd_add_n, FLAG_R_OPTIONAL },
+  { "mpn_cnd_sub_n",     speed_mpn_cnd_sub_n, FLAG_R_OPTIONAL },
 
   { "MPN_ZERO",          speed_MPN_ZERO             },
 

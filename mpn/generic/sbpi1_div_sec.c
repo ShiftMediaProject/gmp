@@ -64,7 +64,7 @@ FNAME (Q(mp_ptr qp)
   if (nn == dn)
     {
       cy = mpn_sub_n (np, np, dp, dn);
-      mpn_addcnd_n (cy, np, np, dp, dn);
+      mpn_cnd_add_n (cy, np, np, dp, dn);
 #if OPERATION_sbpi1_div_qr_sec
       return 1 - cy;
 #else
@@ -124,7 +124,7 @@ FNAME (Q(mp_ptr qp)
 #if OPERATION_sbpi1_div_qr_sec
   qlp[0] += h;
 #endif
-  h -= mpn_subcnd_n (h, np, np, dp, dn);
+  h -= mpn_cnd_sub_n (h, np, np, dp, dn);
 
   /* 2nd adjustment depends on remainder/divisor comparision as well as whether
      extra remainder limb was nullified by previous subtract.  */
@@ -133,7 +133,7 @@ FNAME (Q(mp_ptr qp)
 #if OPERATION_sbpi1_div_qr_sec
   qlp[0] += cy;
 #endif
-  mpn_addcnd_n (1 - cy, np, np, dp, dn);
+  mpn_cnd_add_n (1 - cy, np, np, dp, dn);
 
   /* Combine quotient halves into final quotient.  */
 #if OPERATION_sbpi1_div_qr_sec

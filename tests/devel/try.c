@@ -747,12 +747,12 @@ param_init (void)
   p = &param[TYPE_ADDCND_N];
   COPY (TYPE_ADD_N);
   p->carry = CARRY_BIT;
-  REFERENCE (refmpn_addcnd_n);
+  REFERENCE (refmpn_cnd_add_n);
 
   p = &param[TYPE_SUBCND_N];
   COPY (TYPE_ADD_N);
   p->carry = CARRY_BIT;
-  REFERENCE (refmpn_subcnd_n);
+  REFERENCE (refmpn_cnd_sub_n);
 
 
   p = &param[TYPE_MUL_1];
@@ -1716,8 +1716,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_copyd), TYPE_COPYD },
 #endif
 
-  { TRY(mpn_addcnd_n), TYPE_ADDCND_N },
-  { TRY(mpn_subcnd_n), TYPE_SUBCND_N },
+  { TRY(mpn_cnd_add_n), TYPE_ADDCND_N },
+  { TRY(mpn_cnd_sub_n), TYPE_SUBCND_N },
 #if HAVE_NATIVE_mpn_addlsh1_n
   { TRY(mpn_addlsh1_n), TYPE_ADDLSH1_N },
 #endif

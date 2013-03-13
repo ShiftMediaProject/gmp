@@ -1,3 +1,32 @@
+2013-03-12  Niels Möller  <nisse@lysator.liu.se>
+
+	New names mpn_cnd_add_n and mpn_cnd_sub_n.
+	* mpn/generic/cnd_add_n.c (mpn_cnd_add_n): Renamed file and
+	function, from addcnd.c:mpn_addcnd_n.
+	* mpn/generic/cnd_sub_n.c (mpn_cnd_sub_n): Renamed, from
+	subcnd.c:mpn_subcnd_n.
+	* mpn/arm/cnd_aors_n.asm: Renamed file, from aorscnd.asm, and
+	renamed functions.
+	* mpn/x86_64/cnd_aors_n.asm: Analogous renaming.
+	* mpn/powerpc64/mode64/cnd_aors_n.asm: Analogous renaming.
+	* gmp-impl.h (mpn_cnd_add_n, mpn_cnd_add_n): Updated prototypes
+	with new names.
+	* configure.ac: Updated for new names.
+	* tests/refmpn.c (refmpn_cnd_add_n): Renamed, from refmpn_addcnd_n.
+	(refmpn_cnd_sub_n): Renamed, from refmpn_subcnd_n.
+	* tests/tests.h (refmpn_cnd_add_n, refmpn_cnd_sub_n): Updated
+	prototypes with new names.
+	* tune/common.c (speed_mpn_cnd_add_n): Renamed, from
+	speed_mpn_addcnd_n, call mpn_cnd_add_n.
+	(speed_mpn_cnd_sub_n): Renamed, from speed_mpn_subcnd_n, call
+	mpn_cnd_sub_n.
+	* tune/speed.h (speed_mpn_cnd_add_n, speed_mpn_cnd_sub_n): Updated
+	prototypes with new names.
+	* tune/speed.c (routine): Updated list with new names.
+	* tests/devel/try.c: Updated for new mpn_cnd_* names.
+	* mpn/generic/sbpi1_div_sec.c: Likewise.
+	* mpn/generic/powm_sec.c: Likewise.
+
 2013-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Add "missing" to extra_functions for coreibwl.

@@ -1,4 +1,4 @@
-dnl  ARM mpn_addcnd_n, mpn_subcnd_n
+dnl  ARM mpn_cnd_add_n, mpn_cnd_sub_n
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -34,21 +34,21 @@ define(`vp',	`r3')
 define(`n',	`r12')
 
 
-ifdef(`OPERATION_addcnd_n', `
+ifdef(`OPERATION_cnd_add_n', `
 	define(`ADDSUB',      adds)
 	define(`ADDSUBC',      adcs)
 	define(`INITCY',      `cmn	r0, #0')
 	define(`RETVAL',      `adc	r0, n, #0')
-	define(func,	      mpn_addcnd_n)')
-ifdef(`OPERATION_subcnd_n', `
+	define(func,	      mpn_cnd_add_n)')
+ifdef(`OPERATION_cnd_sub_n', `
 	define(`ADDSUB',      subs)
 	define(`ADDSUBC',      sbcs)
 	define(`INITCY',      `cmp	r0, #0')
 	define(`RETVAL',      `adc	r0, n, #0
 			      rsb	r0, r0, #1')
-	define(func,	      mpn_subcnd_n)')
+	define(func,	      mpn_cnd_sub_n)')
 
-MULFUNC_PROLOGUE(mpn_addcnd_n mpn_subcnd_n)
+MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
 
 ASM_START()
 PROLOGUE(func)
