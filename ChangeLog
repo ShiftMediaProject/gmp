@@ -1,3 +1,9 @@
+2013-03-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/cong_2exp.c: Write loops in a cleaner way.
+	* mini-gmp/mini-gmp.c: Likewise.
+	* gmp-impl.h (mpz_zero_p): Likewise.
+
 2013-03-12  Niels Möller  <nisse@lysator.liu.se>
 
 	New names mpn_cnd_add_n and mpn_cnd_sub_n.
