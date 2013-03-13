@@ -342,10 +342,10 @@ mpn_copyd (mp_ptr d, mp_srcptr s, mp_size_t n)
 int
 mpn_cmp (mp_srcptr ap, mp_srcptr bp, mp_size_t n)
 {
-  for (; n > 0; n--)
+  while (--n >= 0)
     {
-      if (ap[n-1] != bp[n-1])
-	return ap[n-1] > bp[n-1] ? 1 : -1;
+      if (ap[n] != bp[n])
+	return ap[n] > bp[n] ? 1 : -1;
     }
   return 0;
 }
@@ -375,14 +375,16 @@ mpn_add_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b)
   mp_size_t i;
 
   assert (n > 0);
-
-  for (i = 0; i < n; i++)
+  i = 0;
+  do
     {
       mp_limb_t r = ap[i] + b;
       /* Carry out */
       b = (r < b);
       rp[i] = r;
     }
+  while (++i < n);
+
   return b;
 }
 
@@ -425,7 +427,8 @@ mpn_sub_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b)
 
   assert (n > 0);
 
-  for (i = 0; i < n; i++)
+  i = 0;
+  do
     {
       mp_limb_t a = ap[i];
       /* Carry out */
@@ -433,6 +436,8 @@ mpn_sub_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b)
       rp[i] = a - b;
       b = cy;
     }
+  while (++i < n);
+
   return b;
 }
 
@@ -598,7 +603,7 @@ mpn_lshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   retval = low_limb >> tnc;
   high_limb = (low_limb << cnt);
 
-  for (i = n - 1; i != 0; i--)
+  for (i = n; --i != 0;)
     {
       low_limb = *--up;
       *--rp = high_limb | (low_limb >> tnc);
@@ -626,7 +631,7 @@ mpn_rshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   retval = (high_limb << tnc);
   low_limb = high_limb >> cnt;
 
-  for (i = n - 1; i != 0; i--)
+  for (i = n; --i != 0;)
     {
       high_limb = *up++;
       *rp++ = low_limb | (high_limb << tnc);
@@ -921,7 +926,8 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
 
   r0 = np[nn - 1];
 
-  for (i = nn - 2; i >= 0; i--)
+  i = nn - 2;
+  do
     {
       mp_limb_t n0, q;
       n0 = np[i];
@@ -930,6 +936,7 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
       if (qp)
 	qp[i] = q;
     }
+  while (--i >= 0);
 
   if (shift > 0)
     {
@@ -982,7 +989,8 @@ mpn_div_qr_pi1 (mp_ptr qp,
    * by            <d1,          d0,        dp[dn-3],  ..., dp[0] >
    */
 
-  for (i = nn - dn; i >= 0; i--)
+  i = nn - dn;
+  do
     {
       mp_limb_t n0 = np[dn-1+i];
 
@@ -1014,6 +1022,7 @@ mpn_div_qr_pi1 (mp_ptr qp,
       if (qp)
 	qp[i] = q;
     }
+  while (--i >= 0);
 
   np[dn - 1] = n1;
 }
@@ -1537,8 +1546,9 @@ mpz_set_d (mpz_t r, double x)
   f = (mp_limb_t) x;
   x -= f;
   assert (x < 1.0);
-  rp[rn-1] = f;
-  for (i = rn-1; i-- > 0; )
+  i = rn-1;
+  rp[i] = f;
+  while (--i >= 0)
     {
       x = B * x;
       f = (mp_limb_t) x;
@@ -2316,7 +2326,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 	    {
 	      /* r > 0, need to flip sign. */
 	      rp[i] = ~rp[i] + 1;
-	      for (i++; i < rn; i++)
+	      while (++i < rn)
 		rp[i] = ~rp[i];
 
 	      rp[rn-1] &= mask;
@@ -2927,12 +2937,16 @@ mpz_pow_ui (mpz_t r, const mpz_t b, unsigned long e)
   mpz_t tr;
   mpz_init_set_ui (tr, 1);
 
-  for (bit = GMP_ULONG_HIGHBIT; bit > 0; bit >>= 1)
+  bit = GMP_ULONG_HIGHBIT;
+  do
     {
       mpz_mul (tr, tr, tr);
       if (e & bit)
 	mpz_mul (tr, tr, b);
+      bit >>= 1;
     }
+  while (bit > 0);
+
   mpz_swap (r, tr);
   mpz_clear (tr);
 }
@@ -3020,7 +3034,8 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
       mp_limb_t w = e->_mp_d[en];
       mp_limb_t bit;
 
-      for (bit = GMP_LIMB_HIGHBIT; bit > 0; bit >>= 1)
+      bit = GMP_LIMB_HIGHBIT;
+      do
 	{
 	  mpz_mul (tr, tr, tr);
 	  if (w & bit)
@@ -3030,7 +3045,9 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
 	      mpn_div_qr_preinv (NULL, tr->_mp_d, tr->_mp_size, mp, mn, &minv);
 	      tr->_mp_size = mpn_normalized_size (tr->_mp_d, mn);
 	    }
+	  bit >>= 1;
 	}
+      while (bit > 0);
     }
 
   /* Final reduction */
@@ -3377,7 +3394,8 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
   up = u->_mp_d;
   vp = v->_mp_d;
 
-  for (i = 0; i < vn; i++)
+  i = 0;
+  do
     {
       ul = (up[i] ^ ux) + uc;
       uc = ul < uc;
@@ -3389,6 +3407,7 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
       rc = rl < rc;
       rp[i] = rl;
     }
+  while (++i < vn);
   assert (vc == 0);
 
   for (; i < rn; i++)
@@ -3448,7 +3467,8 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
   up = u->_mp_d;
   vp = v->_mp_d;
 
-  for (i = 0; i < vn; i++)
+  i = 0;
+  do
     {
       ul = (up[i] ^ ux) + uc;
       uc = ul < uc;
@@ -3460,6 +3480,7 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
       rc = rl < rc;
       rp[i] = rl;
     }
+  while (++i < vn);
   assert (vc == 0);
 
   for (; i < rn; i++)
@@ -3515,7 +3536,8 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
   up = u->_mp_d;
   vp = v->_mp_d;
 
-  for (i = 0; i < vn; i++)
+  i = 0;
+  do
     {
       ul = (up[i] ^ ux) + uc;
       uc = ul < uc;
@@ -3527,6 +3549,7 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
       rc = rl < rc;
       rp[i] = rl;
     }
+  while (++i < vn);
   assert (vc == 0);
 
   for (; i < un; i++)
@@ -3675,24 +3698,20 @@ mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
   mp_limb_t limb, ux;
 
   us = u->_mp_size;
+  ux = - (mp_limb_t) (us >= 0);
   un = GMP_ABS (us);
   i = starting_bit / GMP_LIMB_BITS;
 
   /* When past end, there's an immediate 0 bit for u>=0, or no 0 bits for
      u<0.  Notice this test picks up all cases of u==0 too. */
   if (i >= un)
-    return (us >= 0 ? starting_bit : ~(mp_bitcnt_t) 0);
+    return (ux ? starting_bit : ~(mp_bitcnt_t) 0);
 
   up = u->_mp_d;
-  ux = GMP_LIMB_MAX;
-  limb = ~ up[i];
+  limb = up[i] ^ ux;
 
-  if (us < 0)
-    {
-      ux = mpn_zero_p (up, i);
-      limb = ~ (limb + ux);
-      ux = 0;
-    }
+  if (ux == 0)
+    limb -= mpn_zero_p (up, i); /* limb = ~(~limb + zero_p) */
 
   /* Mask all bits before starting_bit, thus ignoring them. */
   limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
@@ -3743,11 +3762,15 @@ mpz_sizeinbase (const mpz_t u, int base)
   mpn_copyi (tp, up, un);
   mpn_div_qr_1_invert (&bi, base);
 
-  for (ndigits = 0; un > 0; ndigits++)
+  ndigits = 0;
+  do
     {
+      ndigits++;
       mpn_div_qr_1_preinv (tp, tp, un, &bi);
       un -= (tp[un-1] == 0);
     }
+  while (un > 0);
+
   gmp_free (tp);
   return ndigits;
 }
