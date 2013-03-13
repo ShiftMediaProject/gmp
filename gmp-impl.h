@@ -4633,10 +4633,9 @@ mpn_sub_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
 static inline int
 mpn_zero_p (mp_srcptr ap, mp_size_t n)
 {
-  mp_size_t i;
-  for (i = n - 1; i >= 0; i--)
+  while (--n >= 0)
     {
-      if (ap[i] != 0)
+      if (ap[n] != 0)
 	return 0;
     }
   return 1;
