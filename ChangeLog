@@ -1,5 +1,15 @@
 2013-03-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/ia64/cnd_aors_n.asm: New file.
+
+	* mpn/arm64/cnd_aors_n.asm: New file.
+
+	* mpn/arm64/aors_n.asm (ADDSUB): Remove unused definition.
+
+	* mpn/ia64/aors_n.asm: Remove a redundant ASM_START.
+
+	* mpn/arm/cnd_aors_n.asm: Avoid ARM conditional insn execution.
+
 	* mpn/x86_64/missing.asm: Move from mulx/adx since we cannot currently
 	prune missing.asm from path.
 	* mpn/x86_64/mulx/adx/missing-call.m4: Likewise.
