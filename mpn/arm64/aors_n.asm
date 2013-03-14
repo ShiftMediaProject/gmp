@@ -33,7 +33,6 @@ define(`vp', `x2')
 define(`n',  `x3')
 
 ifdef(`OPERATION_add_n', `
-  define(`ADDSUB',	adds)
   define(`ADDSUBC',	adcs)
   define(`CLRCY',	`cmn	xzr, xzr')
   define(`SETCY',	`cmp	$1, #1')
@@ -41,7 +40,6 @@ ifdef(`OPERATION_add_n', `
   define(`func',	mpn_add_n)
   define(`func_nc',	mpn_add_nc)')
 ifdef(`OPERATION_sub_n', `
-  define(`ADDSUB',	subs)
   define(`ADDSUBC',	sbcs)
   define(`CLRCY',	`cmp	xzr, xzr')
   define(`SETCY',	`subs	$1, xzr, $1')
