@@ -1,6 +1,6 @@
 dnl  ARM mpn_cnd_add_n, mpn_cnd_sub_n
 
-dnl  Copyright 2012 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -55,10 +55,10 @@ PROLOGUE(func)
 	push	{r4-r11}
 	ldr	n, [sp, #32]
 
-	INITCY				C really only needed for n = 0 (mod 4)
+	cmp	cnd, #1
+	sbc	cnd, cnd, cnd		C conditionally set to 0xffffffff
 
-	teq	cnd, #0			C could use this for clearing/setting cy
-	mvnne	cnd, #0			C conditionally set to 0xffffffff
+	INITCY				C really only needed for n = 0 (mod 4)
 
 	ands	r4, n, #3
 	beq	L(top)
@@ -68,9 +68,9 @@ PROLOGUE(func)
 
 L(b3):	ldm	vp!, {r4,r5,r6}
 	ldm	up!, {r8,r9,r10}
-	and	r4, r4, cnd
-	and	r5, r5, cnd
-	and	r6, r6, cnd
+	bic	r4, r4, cnd
+	bic	r5, r5, cnd
+	bic	r6, r6, cnd
 	ADDSUB	r8, r8, r4
 	ADDSUBC	r9, r9, r5
 	ADDSUBC	r10, r10, r6
@@ -82,8 +82,8 @@ L(b3):	ldm	vp!, {r4,r5,r6}
 
 L(b2):	ldm	vp!, {r4,r5}
 	ldm	up!, {r8,r9}
-	and	r4, r4, cnd
-	and	r5, r5, cnd
+	bic	r4, r4, cnd
+	bic	r5, r5, cnd
 	ADDSUB	r8, r8, r4
 	ADDSUBC	r9, r9, r5
 	stm	rp!, {r8,r9}
@@ -94,7 +94,7 @@ L(b2):	ldm	vp!, {r4,r5}
 
 L(b1):	ldr	r4, [vp], #4
 	ldr	r8, [up], #4
-	and	r4, r4, cnd
+	bic	r4, r4, cnd
 	ADDSUB	r8, r8, r4
 	str	r8, [rp], #4
 	sub	n, n, #1
@@ -103,10 +103,10 @@ L(b1):	ldr	r4, [vp], #4
 
 L(top):	ldm	vp!, {r4,r5,r6,r7}
 	ldm	up!, {r8,r9,r10,r11}
-	and	r4, r4, cnd
-	and	r5, r5, cnd
-	and	r6, r6, cnd
-	and	r7, r7, cnd
+	bic	r4, r4, cnd
+	bic	r5, r5, cnd
+	bic	r6, r6, cnd
+	bic	r7, r7, cnd
 	ADDSUBC	r8, r8, r4
 	ADDSUBC	r9, r9, r5
 	ADDSUBC	r10, r10, r6
