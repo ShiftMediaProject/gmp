@@ -30,7 +30,7 @@ C  * Consider using special code for small n, using something like
 C    "switch (8 * (n >= 8) + (n mod 8))" to enter it and feed-in code.
 C  * The non-nc code was trimmed cycle for cycle to its current state.  It is
 C    probably hard to save more that an odd cycle there.  The nc code is much
-C    rawer (since tune/speed doesn't have any applicable direct measurements).
+C    cruder (since tune/speed doesn't have any applicable direct measurements).
 C  * Without the nc entry points, this becomes around 1800 bytes of object
 C    code; the nc code adds over 1000 bytes.  We should perhaps sacrifice a
 C    few cycles for the non-nc code and let it fall into the nc code.
@@ -406,7 +406,6 @@ ifdef(`HAVE_ABI_32',`
 
 EPILOGUE()
 
-ASM_START()
 PROLOGUE(func)
 	.prologue
 	.save	ar.lc, r2
