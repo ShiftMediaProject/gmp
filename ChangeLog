@@ -1,3 +1,20 @@
+2013-03-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul_fft.c: Use TMP_BALLOC*, but combine several areas.
+
+	* mpz/powm_ui.c (mod): Use TMP_BALLOC in mu code.
+
+	* mpn/arm/v6/addmul_3.asm: New file.
+
+	* mpn/arm/v7a/cora15/copyd.asm: Tweak.
+
+	* mpn/arm64/copyi.asm: New file.
+	* mpn/arm64/copyd.asm: New file.
+
+2013-03-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v6/addmul_2.asm: Tweak for better A9 performance.
+
 2013-03-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/cnd_aors_n.asm: New file.
