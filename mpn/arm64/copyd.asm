@@ -1,4 +1,4 @@
-dnl  ARM mpn_copyd.
+dnl  ARM64 mpn_copyd.
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
@@ -20,79 +20,63 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C StrongARM	 ?
-C XScale	 ?
-C Cortex-A8	 ?
-C Cortex-A9	 1.75		slower than core register code
-C Cortex-A15	 0.52
+C Cortex-A53	 ?
+C Cortex-A57	 ?
 
-define(`rp', `r0')
-define(`up', `r1')
-define(`n',  `r2')
+changecom(@&*$)
+
+define(`rp', `x0')
+define(`up', `x1')
+define(`n',  `x2')
 
 ASM_START()
 PROLOGUE(mpn_copyd)
-	add	rp, rp, n, lsl #2
-	add	up, up, n, lsl #2
+	add	rp, rp, n, lsl #3
+	add	up, up, n, lsl #3
 
-	cmp	n, #7
-	ble	L(bc)
+	cmp	n, #3
+	b.le	L(bc)
 
 C Copy until rp is 128-bit aligned
-	tst	rp, #4
-	beq	L(al1)
-	sub	up, up, #4
-	vld1.32	{d22[0]}, [up]
-	sub	n, n, #1
-	sub	rp, rp, #4
-	vst1.32	{d22[0]}, [rp]
-L(al1):	tst	rp, #8
-	beq	L(al2)
+	tbz	rp, #3, L(al2)
 	sub	up, up, #8
-	vld1.32	{d22}, [up]
-	sub	n, n, #2
+	ld1	{v22.1d}, [up]
+	sub	n, n, #1
 	sub	rp, rp, #8
-	vst1.32	{d22}, [rp:64]
+	st1	{v22.1d}, [rp]
+
 L(al2):	sub	up, up, #16
-	vld1.32	{d26-d27}, [up]
-	subs	n, n, #12
+	ld1	{v26.2d}, [up]
+	subs	n, n, #6
 	sub	rp, rp, #16			C offset rp for loop
-	blt	L(end)
+	b.lt	L(end)
 
 	sub	up, up, #16			C offset up for loop
-	mov	r12, #-16
+	mov	x12, #-16
 
 	ALIGN(16)
-L(top):	vld1.32	{d22-d23}, [up], r12
-	vst1.32	{d26-d27}, [rp:128], r12
-	vld1.32	{d26-d27}, [up], r12
-	vst1.32	{d22-d23}, [rp:128], r12
-	subs	n, n, #8
-	bge	L(top)
+L(top):	ld1	{v22.2d}, [up], x12
+	st1	{v26.2d}, [rp], x12
+	ld1	{v26.2d}, [up], x12
+	st1	{v22.2d}, [rp], x12
+	subs	n, n, #4
+	b.ge	L(top)
 
 	add	up, up, #16			C undo up offset
-						C rp offset undoing folded
-L(end):	vst1.32	{d26-d27}, [rp:128]
 
-C Copy last 0-7 limbs.  Note that rp is aligned after loop, but not when we
+L(end):	st1	{v26.2d}, [rp]
+
+C Copy last 0-3 limbs.  Note that rp is aligned after loop, but not when we
 C arrive here via L(bc)
-L(bc):	tst	n, #4
-	beq	L(tl1)
+L(bc):	tbz	n, #1, L(tl1)
 	sub	up, up, #16
-	vld1.32	{d22-d23}, [up]
+	ld1	{v22.2d}, [up]
 	sub	rp, rp, #16
-	vst1.32	{d22-d23}, [rp]
-L(tl1):	tst	n, #2
-	beq	L(tl2)
+	st1	{v22.2d}, [rp]
+L(tl1):	tbz	n, #0, L(tl2)
 	sub	up, up, #8
-	vld1.32	{d22}, [up]
+	ld1	{v22.1d}, [up]
 	sub	rp, rp, #8
-	vst1.32	{d22}, [rp]
-L(tl2):	tst	n, #1
-	beq	L(tl3)
-	sub	up, up, #4
-	vld1.32	{d22[0]}, [up]
-	sub	rp, rp, #4
-	vst1.32	{d22[0]}, [rp]
-L(tl3):	bx	lr
+	st1	{v22.1d}, [rp]
+L(tl2):	ret
 EPILOGUE()

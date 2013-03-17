@@ -7,7 +7,7 @@
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 Copyright 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-2009, 2010, 2012 Free Software Foundation, Inc.
+2009, 2010, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -429,7 +429,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
   if (n >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
     {
       int k, K2, nprime2, Nprime2, M2, maxLK, l, Mp2;
-      int **fft_l;
+      int **fft_l, *tmp;
       mp_ptr *Ap, *Bp, A, B, T;
 
       k = mpn_fft_best_k (n, sqr);
@@ -460,14 +460,19 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 
       Mp2 = Nprime2 >> k;
 
-      Ap = TMP_ALLOC_MP_PTRS (K2);
-      Bp = TMP_ALLOC_MP_PTRS (K2);
-      A = TMP_ALLOC_LIMBS (2 * (nprime2 + 1) << k);
-      T = TMP_ALLOC_LIMBS (2 * (nprime2 + 1));
+      Ap = TMP_BALLOC_MP_PTRS (K2);
+      Bp = TMP_BALLOC_MP_PTRS (K2);
+      A = TMP_BALLOC_LIMBS (2 * (nprime2 + 1) << k);
+      T = TMP_BALLOC_LIMBS (2 * (nprime2 + 1));
       B = A + ((nprime2 + 1) << k);
-      fft_l = TMP_ALLOC_TYPE (k + 1, int *);
+      fft_l = TMP_BALLOC_TYPE (k + 1, int *);
+      tmp = TMP_BALLOC_TYPE (2 << k, int);
       for (i = 0; i <= k; i++)
-	fft_l[i] = TMP_ALLOC_TYPE (1<<i, int);
+	{
+	  fft_l[i] = tmp;
+	  tmp += 1 << i;
+	}
+
       mpn_fft_initl (fft_l, k);
 
       TRACE (printf ("recurse: %ldx%ld limbs -> %d times %dx%d (%1.2f)\n", n,
@@ -493,7 +498,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
       mp_ptr a, b, tp, tpn;
       mp_limb_t cc;
       int n2 = 2 * n;
-      tp = TMP_ALLOC_LIMBS (n2);
+      tp = TMP_BALLOC_LIMBS (n2);
       tpn = tp + n;
       TRACE (printf ("  mpn_mul_n %d of %ld limbs\n", K, n));
       for (i = 0; i < K; i++)
@@ -639,7 +644,7 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
       mp_size_t dif = nl - Kl;
       mp_limb_signed_t cy;
 
-      tmp = TMP_ALLOC_LIMBS(Kl + 1);
+      tmp = TMP_BALLOC_LIMBS(Kl + 1);
 
       if (dif > Kl)
 	{
@@ -815,7 +820,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   int K, maxLK, i;
   mp_size_t N, Nprime, nprime, M, Mp, l;
   mp_ptr *Ap, *Bp, A, T, B;
-  int **fft_l;
+  int **fft_l, *tmp;
   int sqr = (n == m && nl == ml);
   mp_limb_t h;
   TMP_DECL;
@@ -825,9 +830,14 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
 
   TMP_MARK;
   N = pl * GMP_NUMB_BITS;
-  fft_l = TMP_ALLOC_TYPE (k + 1, int *);
+  fft_l = TMP_BALLOC_TYPE (k + 1, int *);
+  tmp = TMP_BALLOC_TYPE (2 << k, int);
   for (i = 0; i <= k; i++)
-    fft_l[i] = TMP_ALLOC_TYPE (1 << i, int);
+    {
+      fft_l[i] = tmp;
+      tmp += 1 << i;
+    }
+
   mpn_fft_initl (fft_l, k);
   K = 1 << k;
   M = N >> k;	/* N = 2^k M */
@@ -856,27 +866,27 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
     }
   ASSERT_ALWAYS (nprime < pl); /* otherwise we'll loop */
 
-  T = TMP_ALLOC_LIMBS (2 * (nprime + 1));
+  T = TMP_BALLOC_LIMBS (2 * (nprime + 1));
   Mp = Nprime >> k;
 
   TRACE (printf ("%ldx%ld limbs -> %d times %ldx%ld limbs (%1.2f)\n",
 		pl, pl, K, nprime, nprime, 2.0 * (double) N / Nprime / K);
 	 printf ("   temp space %ld\n", 2 * K * (nprime + 1)));
 
-  A = TMP_ALLOC_LIMBS (K * (nprime + 1));
-  Ap = TMP_ALLOC_MP_PTRS (K);
+  A = TMP_BALLOC_LIMBS (K * (nprime + 1));
+  Ap = TMP_BALLOC_MP_PTRS (K);
   mpn_mul_fft_decompose (A, Ap, K, nprime, n, nl, l, Mp, T);
   if (sqr)
     {
       mp_size_t pla;
       pla = l * (K - 1) + nprime + 1; /* number of required limbs for p */
-      B = TMP_ALLOC_LIMBS (pla);
-      Bp = TMP_ALLOC_MP_PTRS (K);
+      B = TMP_BALLOC_LIMBS (pla);
+      Bp = TMP_BALLOC_MP_PTRS (K);
     }
   else
     {
-      B = TMP_ALLOC_LIMBS (K * (nprime + 1));
-      Bp = TMP_ALLOC_MP_PTRS (K);
+      B = TMP_BALLOC_LIMBS (K * (nprime + 1));
+      Bp = TMP_BALLOC_MP_PTRS (K);
       mpn_mul_fft_decompose (B, Bp, K, nprime, m, ml, l, Mp, T);
     }
   h = mpn_mul_fft_internal (op, pl, k, Ap, Bp, A, B, nprime, l, Mp, fft_l, T, sqr);
@@ -953,7 +963,7 @@ mpn_mul_fft_full (mp_ptr op,
     TMP_DECL;
 
     TMP_MARK;
-    tmp = TMP_ALLOC_LIMBS (l);
+    tmp = TMP_BALLOC_LIMBS (l);
     MPN_COPY (tmp, pad_op, l);
     c2 = mpn_sub_n (pad_op,      pad_op, pad_op + l, l);
     cc += mpn_add_n (pad_op + l, tmp,    pad_op + l, l);

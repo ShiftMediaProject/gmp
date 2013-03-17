@@ -79,9 +79,9 @@ mod (mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, gmp_pi1_t *dinv, mp_pt
       /* We need to allocate separate remainder area, since mpn_mu_div_qr does
 	 not handle overlap between the numerator and remainder areas.
 	 FIXME: Make it handle such overlap.  */
-      mp_ptr rp = TMP_ALLOC_LIMBS (dn);
+      mp_ptr rp = TMP_BALLOC_LIMBS (dn);
       mp_size_t itch = mpn_mu_div_qr_itch (nn, dn, 0);
-      mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
+      mp_ptr scratch = TMP_BALLOC_LIMBS (itch);
       mpn_mu_div_qr (qp, rp, np, nn, dp, dn, scratch);
       MPN_COPY (np, rp, dn);
     }
