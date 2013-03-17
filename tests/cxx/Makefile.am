@@ -32,10 +32,12 @@ LDADD = -L$(top_builddir)/.libs \
   -lm
 
 if WANT_CXX
-check_PROGRAMS = t-assign t-binary t-cast t-constr t-cxx11 \
+check_PROGRAMS = t-binary t-cast t-cxx11 \
   t-headers t-iostream t-istream t-locale t-misc t-mix \
   t-ops t-ops2 t-ops3 t-ostream t-prec \
-  t-rand t-ternary t-unary
+  t-ternary t-unary \
+  t-do-exceptions-work-at-all-with-this-compiler \
+  t-assign t-constr t-rand
 TESTS = $(check_PROGRAMS)
 endif
 
@@ -58,6 +60,8 @@ t_prec_SOURCES    = t-prec.cc
 t_rand_SOURCES    = t-rand.cc
 t_ternary_SOURCES = t-ternary.cc
 t_unary_SOURCES   = t-unary.cc
+t_do_exceptions_work_at_all_with_this_compiler_SOURCES = \
+  t-do-exceptions-work-at-all-with-this-compiler.cc
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
