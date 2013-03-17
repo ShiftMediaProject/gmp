@@ -32,9 +32,8 @@ define(`n',  `r2')
 
 ASM_START()
 PROLOGUE(mpn_copyd)
-	mov	r12, n, lsl #2
-	add	rp, rp, r12
-	add	up, up, r12
+	add	rp, rp, n, lsl #2
+	add	up, up, n, lsl #2
 
 	cmp	n, #7
 	ble	L(bc)
