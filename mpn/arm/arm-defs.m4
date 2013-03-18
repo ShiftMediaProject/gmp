@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for ARM assembler.
 
-dnl  Copyright 2001, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2012, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -48,6 +48,7 @@ deflit(lr,r14)
 deflit(pc,r15)
 
 
+define(`lea_list', `')
 define(`lea_num',0)
 
 dnl  LEA(reg,gmp_symbol)
@@ -59,16 +60,21 @@ dnl  from the point of use.
 define(`LEA',`dnl
 ldr	$1, L(ptr`'lea_num)
 ifdef(`PIC',dnl
-`
+`dnl
 L(bas`'lea_num):dnl
 	add	$1, $1, pc`'dnl
-	define(`EPILOGUE_cpu',
-		L(ptr`'lea_num):	.word	GSYM_PREFIX`'$2-L(bas`'lea_num)-8)dnl
+	m4append(`lea_list',`
+L(ptr'lea_num`):	.word	GSYM_PREFIX`'$2-L(bas'lea_num`)-8')
 	define(`lea_num', eval(lea_num+1))dnl
 ',`dnl
-	define(`EPILOGUE_cpu',
-		L(ptr`'lea_num):	.word	GSYM_PREFIX`'$2)')dnl
+	m4append(`lea_list',`
+L(ptr'lea_num`):	.word	GSYM_PREFIX`'$2')
+	define(`lea_num', eval(lea_num+1))dnl
+')dnl
 ')
 
+define(`EPILOGUE_cpu',
+`lea_list
+	SIZE(`$1',.-`$1')')
 
 divert
