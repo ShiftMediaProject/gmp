@@ -3045,8 +3045,7 @@ make it an integer.
 
 @deftypefun int mpz_set_str (mpz_t @var{rop}, char *@var{str}, int @var{base})
 Set the value of @var{rop} from @var{str}, a null-terminated C string in base
-@var{base}.  White space is allowed at the beginning, and at the end of the
-string, or between digits, and is simply ignored.
+@var{base}.  White space is allowed in the string, and is simply ignored.
 
 The @var{base} may vary from 2 to 62, or if @var{base} is 0, then the leading
 characters are used: @code{0x} and @code{0X} for hexadecimal, @code{0b} and
@@ -3989,15 +3988,7 @@ everywhere we know of.  However on Cray vector systems it may be noted that
 @code{short} and @code{int} are always stored in 8 bytes (and with
 @code{sizeof} indicating that) but use only 32 or 46 bits.  The @var{nails}
 feature can account for this, by passing for instance
-@code{8*sizeof(int)-INT_BIT}.  The supported way to set an @code{mpz_t}
-variable with a value in the @code{mpn} format, follows.
-
-@example
-mp_limb_t *xp;
-mp_size_t  xn;
-/* Initialize @var{z} and @var{xp, xn} */
-mpz_import (z, xn, -1, sizeof(mp_limb_t), 0, GMP_NAIL_BITS, xp);
-@end example
+@code{8*sizeof(int)-INT_BIT}.
 @end deftypefun
 
 @deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{countp}, int @var{order}, size_t @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
@@ -4040,16 +4031,6 @@ zero no space at all is actually needed (or written).
 numb = 8*size - nail;
 count = (mpz_sizeinbase (z, 2) + numb-1) / numb;
 p = malloc (count * size);
-@end example
-
-The supported way to extract the absolute value of an @code{mpz_t} variable
-into the @code{mpn} format, follows.
-
-@example
-mp_limb_t *xp;
-mp_size_t  xn;
-/* Initialize @var{z} */
-xp = mpz_export (NULL, &xn, -1, sizeof(mp_limb_t), 0, GMP_NAIL_BITS, z);
 @end example
 @end deftypefun
 
