@@ -570,6 +570,7 @@ case $host in
     gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
+    CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
     case $host_cpu in
       armsa1 | armv4*)
 	;;
