@@ -1,3 +1,9 @@
+2013-03-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* doc/gmp.texi (--enable-fat): No quote in concept index.
+
+	* mpf/swap.c: Reduce the number of variables.
+
 2012-03-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc: New file.
