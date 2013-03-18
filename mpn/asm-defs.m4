@@ -1740,4 +1740,11 @@ m4_assert_defined(`GMP_NUMB_BITS')
 `m4_hex_lowmask(GMP_NUMB_BITS)')
 
 
+dnl  Usage: m4append(`variable',`value-to-append')
+
+define(`m4append',
+`define(`$1',  defn(`$1')`$2')
+'
+)
+
 divert`'dnl

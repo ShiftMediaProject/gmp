@@ -19,13 +19,6 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 define(`DARWIN')
 
 
-dnl m4append is used below.  Consider moving it to mpn/asm-defs.m4.
-
-define(`m4append',
-`define(`$1',  defn(`$1')`$2')'
-)
-
-
 dnl  Usage LEA(symbol,reg)
 dnl
 dnl  We maintain lists of stuff to append in load_eip and darwin_bd.  The
