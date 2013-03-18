@@ -1,3 +1,21 @@
+2013-03-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac (arm*-*-*): Define CALLING_CONVENTIONS_OBJS.
+
+	* tests/arm32call.asm: New file.
+	* tests/arm32check.c: New file.
+
+	* mpn/arm/arm-defs.m4 (LEA): Rewrite to properly handle repeated use.
+	(EPILOGUE_cpu): Define.
+
+	* mpn/arm/v6/addmul_3.asm: Make code work for PIC.
+
+	* tests/x86call.asm: Modernise asm syntax.
+	* tests/amd64call.asm: Likewise.
+
+	* mpn/x86/darwin.m4 (m4append): Move definition from here...
+	* mpn/asm-defs.m4: ...to here.
+
 2013-03-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (--enable-fat): No quote in concept index.
@@ -216,7 +234,7 @@
 
 2013-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-        * mini-gmp/mini-gmp.c (mpz_div_q_2exp): Adjust only if needed.
+	* mini-gmp/mini-gmp.c (mpz_div_q_2exp): Adjust only if needed.
 	(mpn_common_scan): New service function to unify scan loops.
 	(mpz_scan0, mpz_scan1): Simplify by using mpn_common_scan.
 	(mpz_make_odd): Simplify, assume in-place operation on positive.
@@ -274,7 +292,7 @@
 
 2013-02-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-        * mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug.
+	* mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug.
 	(mpz_export): Reorder branches.
 	(mpz_mul_ui): Avoid temporary allocation (mpn_mul_1 can work in-place).
 
