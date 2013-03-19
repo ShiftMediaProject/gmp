@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004, 2013 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library test suite.
 #
@@ -27,7 +27,8 @@ LDADD = libtests.la $(top_builddir)/libgmp.la
 
 check_LTLIBRARIES = libtests.la
 
-EXTRA_libtests_la_SOURCES = amd64call.asm amd64check.c x86call.asm x86check.c
+EXTRA_libtests_la_SOURCES = amd64call.asm amd64check.c x86call.asm x86check.c \
+    arm32call.asm arm32check.c
 libtests_la_SOURCES = tests.h \
   memory.c misc.c refmpf.c refmpn.c refmpq.c refmpz.c spinner.c trace.c
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
