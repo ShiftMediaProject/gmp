@@ -205,7 +205,7 @@ main (void)
 
   mpf_set_si (f, (long) SHRT_MIN);
   mpf_sub_ui (f, f, 1L);
-  expr = "SHRT_MIN + 1";
+  expr = "SHRT_MIN - 1";
   EXPECT (mpf_fits_sshort_p, 0);
 
 
@@ -222,7 +222,7 @@ main (void)
 
   mpf_set_si (f, (long) INT_MIN);
   mpf_sub_ui (f, f, 1L);
-  expr = "INT_MIN + 1";
+  expr = "INT_MIN - 1";
   EXPECT (mpf_fits_sint_p, 0);
 
 
@@ -237,7 +237,7 @@ main (void)
 
   mpf_set_si (f, LONG_MIN);
   mpf_sub_ui (f, f, 1L);
-  expr = "LONG_MIN + 1";
+  expr = "LONG_MIN - 1";
   EXPECT (mpf_fits_slong_p, 0);
 
 
