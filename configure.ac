@@ -566,11 +566,15 @@ case $host in
 
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
-    gcc_cflags_optlist="arch tune"
+    gcc_cflags_optlist="arch neon tune"
     gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
+
+    # FIXME: We make mandatory compiler options optional here.  We should
+    # either enforce them, or organise to strip paths as the corresponding
+    # options fail.
     case $host_cpu in
       armsa1 | armv4*)
 	;;
@@ -586,32 +590,45 @@ case $host in
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
-      armcortexa9 | armcortexa9neon)
+      armcortexa5 | armv7a*)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	;;
+      armcortexa8)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a8"
+	;;
+      armcortexa8neon)
+	path="arm/v6t2 arm/v6 arm/v5 arm/neon arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_neon="-mfpu=neon"
+	gcc_cflags_tune="-mtune=cortex-a8"
+	;;
+      armcortexa9)
 	path="arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a9"
 	;;
-      armcortexa15 | armcortexa15neon)
+      armcortexa9neon)
+	path="arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm/neon arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_neon="-mfpu=neon"
+	gcc_cflags_tune="-mtune=cortex-a9"
+	;;
+      armcortexa15)
 	path="arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
-      armcortexa5 | armcortexa8 | armcortexa8neon | armv7a*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
+      armcortexa15neon)
+	path="arm/v7a/cora15/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm/neon arm"
 	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_neon="-mfpu=neon"
+	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
       *)
 	path="arm"
-	;;
-    esac
-
-    case $host_cpu in
-      *neon)
-	path2=""
-	for p in $path
-	  do path2="$path2 $p/neon $p"
-	  done
-	path="$path2"
 	;;
     esac
     ;;
