@@ -59,19 +59,19 @@ C Tricky n mod 6
 	and	w0, w0, #0xc0000001	C pseudo-CRT mod 3,2
 	sub	n, n, #3
 ifdef(`PIC',`
-	ldr	pc, [pc, w0, ror $28]
-	nop
-	.word	L(b0), L(b2), L(b4), 0, L(b3), L(b5), L(b1)
-',`
 	add	pc, pc, w0, ror $28
 	nop
 	b	L(b0)
 	b	L(b2)
 	b	L(b4)
-	.word	0
+	udf	#17
 	b	L(b3)
 	b	L(b5)
 	b	L(b1)
+',`
+	ldr	pc, [pc, w0, ror $28]
+	nop
+	.word	L(b0), L(b2), L(b4), 0, L(b3), L(b5), L(b1)
 ')
 
 L(b5):	add	up, up, #-8
