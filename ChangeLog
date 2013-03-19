@@ -1,3 +1,13 @@
+2013-03-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/arm32check.c: Get printing of clobbered register right.
+
+	* mpn/arm/neon/popcount.asm: New file.
+	* mpn/arm/neon/hamdist.asm: New file.
+
+	* tests/Makefile.am (EXTRA_libtests_la_SOURCES): Add arm32call.asm and
+	arm32check.c.
+
 2013-03-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac (arm*-*-*): Define CALLING_CONVENTIONS_OBJS.
