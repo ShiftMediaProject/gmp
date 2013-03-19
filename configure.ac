@@ -586,22 +586,32 @@ case $host in
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
-      armcortexa9)
+      armcortexa9 | armcortexa9neon)
 	path="arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a9"
 	;;
-      armcortexa15)
+      armcortexa15 | armcortexa15neon)
 	path="arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
-      armcortexa5 | armcortexa8 | armv7a*)
+      armcortexa5 | armcortexa8 | armcortexa8neon | armv7a*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
       *)
 	path="arm"
+	;;
+    esac
+
+    case $host_cpu in
+      *neon)
+	path2=""
+	for p in $path
+	  do path2="$path2 $p/neon $p"
+	  done
+	path="$path2"
 	;;
     esac
     ;;
