@@ -64,7 +64,7 @@ ifdef(`PIC',`
 	b	L(b0)
 	b	L(b2)
 	b	L(b4)
-	udf	#17
+	.word	e7f000f0	C udf
 	b	L(b3)
 	b	L(b5)
 	b	L(b1)
