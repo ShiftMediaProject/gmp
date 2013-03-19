@@ -26,7 +26,7 @@ C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 13	 14	 13
-C Cortex-A15	 ?
+C Cortex-A15	 11.4	 11.8	 11.1
 
 C TODO
 C  * Optimise inner-loops better, they could likely run a cycle or two faster.
