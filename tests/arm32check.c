@@ -76,11 +76,11 @@ calling_conventions_check (void)
   int  ret = 1;
   int i;
 
-#define CHECK(callreg, value)						\
+#define CHECK(callreg, regnum, value)					\
   if (callreg != value)							\
     {									\
       printf ("%s   r%d	got 0x%08lX want 0x%08lX\n",			\
-	      header, i, callreg, value);				\
+	      header, regnum, callreg, value);				\
       header = "";							\
       ret = 0;								\
     }
@@ -88,6 +88,7 @@ calling_conventions_check (void)
   for (i = 0; i < 8; i++)
     {
       CHECK (calling_conventions_values[GOT_CALLEE_SAVES + i],
+	     i + 4,
 	     calling_conventions_values[WANT_CALLEE_SAVES + i]);
     }
 
