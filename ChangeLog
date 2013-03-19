@@ -1,3 +1,8 @@
+2013-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpf/fits_u.h: accept numbers truncating to zero before checking the sign.
+	* tests/mpf/t-fits.c: Check new edges.
+
 2013-03-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/arm32check.c: Get printing of clobbered register right.
