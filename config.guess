@@ -191,6 +191,7 @@ arm*-*-*)
       0xc15)	exact_cpu="armcortexr5";;	# v7r
       0xc23)	exact_cpu="armcortexm3";;	# v7m
   esac
+  exact_cpu="${exact_cpu}`sed -n 's;^Features.*\(neon\).*;\1;p' /proc/cpuinfo 2>/dev/null`"
   ;;
 
 ia64*-*-*)
