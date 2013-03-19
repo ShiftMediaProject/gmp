@@ -1,3 +1,8 @@
+2013-03-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Tack on "neon" for appropriate arm CPUs.
+	* configure.ac (arm*-*-*): Recognise neon suffix for a8, a9, and a15.
+
 2013-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/fits_u.h: accept numbers truncating to zero before checking the sign.
