@@ -1,5 +1,8 @@
 2013-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/v7a/cora15/neon/copyi.asm: Move from "..".
+	* mpn/arm/v7a/cora15/neon/copyd.asm: Likewise.
+
 	* config.guess: Tack on "neon" for appropriate arm CPUs.
 	* configure.ac (arm*-*-*): Recognise neon suffix for a8, a9, and a15.
 
