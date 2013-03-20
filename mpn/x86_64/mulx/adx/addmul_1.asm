@@ -43,10 +43,6 @@ define(`v0_param',`%rcx')	dnl r9
 define(`n',       `%rcx')	dnl
 define(`v0',      `%rdx')	dnl
 
-C Make mulx and adx emulation the default.
-C FIXME: Remove this once qemu's adx flags handling is fixed.
-ifdef(`FAKE_MULXADX',,`define(`FAKE_MULXADX',1)')
-
 C Testing mechanism for running this on older AMD64 processrs
 ifelse(FAKE_MULXADX,1,`
   include(CONFIG_TOP_SRCDIR`/mpn/x86_64/missing-call.m4')
