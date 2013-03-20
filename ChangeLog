@@ -1,5 +1,11 @@
 2013-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Rework arm CPU recognition.
+	* config.sub: Corresponding updates.
+	* configure.ac: Likewise.
+
+	* mpn/x86_64/mulx/adx/addmul_1.asm: Let FAKE_MULXADX be off by default.
+
 	* mpn/arm/v7a/cora15/neon/copyi.asm: Move from "..".
 	* mpn/arm/v7a/cora15/neon/copyd.asm: Likewise.
 
@@ -8,7 +14,8 @@
 
 2013-03-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpf/fits_u.h: accept numbers truncating to zero before checking the sign.
+	* mpf/fits_u.h: Accept numbers truncating to zero before checking the
+	sign.
 	* tests/mpf/t-fits.c: Check new edges.
 
 2013-03-19  Torbjorn Granlund  <tege@gmplib.org>
