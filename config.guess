@@ -165,25 +165,24 @@ EOF
 arm*-*-*)
   cpu_code=`sed -n 's/^CPU part.*\(0x.*\)$/\1/p' /proc/cpuinfo 2>/dev/null`
   case "$cpu_code" in
-      0x210)	exact_cpu="armxscale";;		# v5 pxa250
-      0x290)	exact_cpu="armxscale";;		# v5 pxa260
-      0x2d0)	exact_cpu="armxscale";;		# v5 pxa255
-      0x2d0)	exact_cpu="armxscale";;		# v5 pxa261
-      0x2d0)	exact_cpu="armxscale";;		# v5 pxa262
-      0x411)	exact_cpu="armxscale";;		# v5 pxa270
-      0x915)	exact_cpu="armti915t";;		# v?
-      0x925)	exact_cpu="armti925t";;		# v?
-      0x926)	exact_cpu="arm926";;		# v5
-      0x946)	exact_cpu="arm946";;		# v5
-      0x966)	exact_cpu="arm966";;		# v5
-      0xa11)	exact_cpu="armsa1";;		# v4 strongarm/sa1100
-      0xa26)	exact_cpu="arm1026";;		# v5
+      0xa10 | 0xa11 | 0xb11)			# v4 strongarm/sa1100
+		exact_cpu="armsa1";;
+      0x915 | 0x925 | \
+      0x920 | 0x922 | 0x940)			# v4
+		exact_cpu="arm9tdmi";;
+      0x210 | 0x290 | 0x2d0 | \
+      0x212 | 0x292 | 0x2d2 | \
+      0x411)	exact_cpu="armxscale";;		# v5 pxa2xx
+      0x926 | 0x946 | 0x966 | 0x968)		# v5te/v5tej
+		exact_cpu="arm9te";;
+      0xa20 | 0xa22 | 0xa26)			# v5te
+		exact_cpu="arm10";;
       0xb02)	exact_cpu="arm11mpcore";;	# v6
-      0xb11)	exact_cpu="armsa1";;		# v4 strongarm/sa1110
       0xb36)	exact_cpu="arm1136";;		# v6
       0xb56)	exact_cpu="arm1156";;		# v6t2
       0xb76)	exact_cpu="arm1176";;		# v6
       0xc05)	exact_cpu="armcortexa5";;	# v7a
+      0xc07)	exact_cpu="armcortexa7";;	# v7a
       0xc08)	exact_cpu="armcortexa8";;	# v7a
       0xc09)	exact_cpu="armcortexa9";;	# v7a
       0xc0f)	exact_cpu="armcortexa15";;	# v7a

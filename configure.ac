@@ -564,6 +564,11 @@ case $host in
     ;;
 
 
+  arm64*-*-* | aarch64*-*-*)
+    path="arm64"
+    ;;
+
+
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch neon tune"
@@ -576,9 +581,9 @@ case $host in
     # either enforce them, or organise to strip paths as the corresponding
     # options fail.
     case $host_cpu in
-      armsa1 | armv4*)
+      armsa1 | arm9tdmi | armv4*)
 	;;
-      armxscale | arm926 | arm946 | arm966 | arm1026 | armv5*)
+      armxscale | arm9te | arm10 | armv5*)
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
@@ -588,7 +593,7 @@ case $host in
 	;;
       arm1156)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6"
+	gcc_cflags_arch="-march=armv6t2 -march=armv6"
 	;;
       armcortexa5 | armv7a*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
@@ -631,11 +636,6 @@ case $host in
 	path="arm"
 	;;
     esac
-    ;;
-
-
-  arm64*-*-* | aarch64*-*-*)
-    path="arm64"
     ;;
 
 
