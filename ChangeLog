@@ -1,3 +1,13 @@
+2013-03-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/neon/lshiftc.asm: New file.
+
+	* mpn/arm/v6/sqr_basecase.asm: Trim 'sqr_diag_addlsh1' loop.
+
+	* gen-trialdivtab.c: Output just raw data, remove actual variables.
+	* mpn/generic/trialdiv.c: Put variables from gen-trialdivtab.c here,
+	and make them 'const'.
+
 2013-03-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Rework arm CPU recognition.
