@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -58,9 +58,23 @@ struct gmp_primes_ptab {
   unsigned int np :8;	/* number of primes related to this entry */
 };
 
-#define P(p,inv,lim) {inv,lim}
 
+static const struct gmp_primes_dtab gmp_primes_dtab[] =
+{
+#define WANT_dtab
+#define P(p,inv,lim) {inv,lim}
 #include "trialdivtab.h"
+#undef WANT_dtab
+#undef P
+  {0,0}
+};
+
+static const struct gmp_primes_ptab gmp_primes_ptab[] =
+{
+#define WANT_ptab
+#include "trialdivtab.h"
+#undef WANT_ptab
+};
 
 #define PTAB_LINES (sizeof (gmp_primes_ptab) / sizeof (gmp_primes_ptab[0]))
 

@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Torbjorn Granlund.
 
-Copyright 2009, 2012 Free Software Foundation, Inc.
+Copyright 2009, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -98,7 +98,9 @@ main (int argc, char *argv[])
   omitted_p = 3;
   interval_end = 0;
 
-  printf ("static struct gmp_primes_dtab gmp_primes_dtab[] = {\n");
+/*  printf ("static struct gmp_primes_dtab gmp_primes_dtab[] = {\n"); */
+
+  printf ("#ifdef WANT_dtab\n");
 
   for (t = start_p; t <= end_p; t += 2)
     {
@@ -120,7 +122,7 @@ main (int argc, char *argv[])
 	      if (! isprime (p))
 		continue;
 
-	      printf ("	 P(%d,", (int) p);
+	      printf ("  P(%d,", (int) p);
 	      mpz_invert_ui_2exp (inv, p, limb_bits);
 	      printf ("CNST_LIMB(0x");  mpz_out_str (stdout, 16, inv);  printf ("),");
 
@@ -138,10 +140,12 @@ main (int argc, char *argv[])
 	}
       interval_end = t;
     }
-  printf ("  P(0,0,0)\n};\n");
+  printf ("#define SMALLEST_OMITTED_PRIME %d\n", (int) omitted_p);
+  printf ("#endif\n");
 
+  printf ("#ifdef WANT_ptab\n");
 
-  printf ("static struct gmp_primes_ptab gmp_primes_ptab[] = {\n");
+/*  printf ("static struct gmp_primes_ptab gmp_primes_ptab[] = {\n"); */
 
   endtok = "";
 
@@ -193,9 +197,9 @@ main (int argc, char *argv[])
       interval_end = t;
       np++;
     }
-  printf ("\n};\n");
 
-  printf ("#define SMALLEST_OMITTED_PRIME %d\n", (int) omitted_p);
+  printf ("\n");
+  printf ("#endif\n");
 
   return 0;
 }
