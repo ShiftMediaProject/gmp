@@ -2,7 +2,7 @@ dnl  ARM v6 mpn_sqr_basecase.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2012 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -396,6 +396,7 @@ L(sqr_diag_addlsh1):
 	ldr	r3, [up], #4
 	umull	w1, r5, r3, r3
 	mov	w2, #0
+	mov	r10, #0
 C	cmn	r0, #0			C clear cy (already clear by luck)
 	b	L(lm)
 
@@ -409,8 +410,7 @@ L(lm):	ldr	w0, [rp, #4]
 	adcs	w0, w0, w0
 	ldr	r3, [up], #4
 	adcs	w1, w1, w1
-	mov	w2, #0
-	adc	w2, w2, w2
+	adc	w2, r10, r10
 	umull	r4, r5, r3, r3
 	subs	n, n, #1
 	bne	L(tsd)
