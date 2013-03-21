@@ -25,8 +25,8 @@ C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
 C Cortex-A8	 ?
-C Cortex-A9	10
-C Cortex-A15	 ?
+C Cortex-A9	 9
+C Cortex-A15	 7
 
 define(`up', `r0')
 define(`n',  `r1')
