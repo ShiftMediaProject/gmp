@@ -514,7 +514,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
 #endif
-/* This is a bizarre test, but GCC doesn't define useful common symbol. */
+/* This is a bizarre test, but GCC doesn't define any useful common symbol. */
 #if defined (__ARM_ARCH_5__)  || defined (__ARM_ARCH_5T__) || \
     defined (__ARM_ARCH_5E__) || defined (__ARM_ARCH_5TE__)|| \
     defined (__ARM_ARCH_6__)  || defined (__ARM_ARCH_6J__) || \
