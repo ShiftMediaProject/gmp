@@ -1,3 +1,15 @@
+2013-03-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v7a/cora15/neon/aorsorrlshC_n.asm: New file.
+	* mpn/arm/v7a/cora15/neon/aorsorrlsh2_n.asm: New file.
+	* mpn/arm/v7a/cora15/neon/aorsorrlsh1_n.asm: New file.
+	* mpn/arm/v7a/cora15/neon/rsh1aors_n.asm: New file.
+
+	* configure.ac (GMP_MULFUNC_CHOICES): Support add+sub+rsb lsh files.
+
+	* tests/refmpn.c (refmpn_addlsh_nc, refmpn_sublsh_nc): Remove silly
+	assert of mp_limb being non-negative.
+
 2013-03-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/neon/lshiftc.asm: New file.
