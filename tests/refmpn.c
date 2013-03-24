@@ -852,11 +852,11 @@ refmpn_addlsh2_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
 }
 mp_limb_t
 refmpn_addlsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
-		 mp_size_t n, unsigned int s, mp_limb_t carry)
+		  mp_size_t n, unsigned int s, mp_limb_t carry)
 {
   mp_limb_t cy;
 
-  ASSERT (carry >= 0 && carry <= (CNST_LIMB(1) << s));
+  ASSERT (carry <= (CNST_LIMB(1) << s));
 
   cy = refmpn_addlsh_n (rp, up, vp, n, s);
   cy += refmpn_add_1 (rp, rp, n, carry);
@@ -934,11 +934,11 @@ refmpn_sublsh2_n_ip2 (mp_ptr rp, mp_srcptr vp, mp_size_t n)
 }
 mp_limb_t
 refmpn_sublsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
-		 mp_size_t n, unsigned int s, mp_limb_t carry)
+		  mp_size_t n, unsigned int s, mp_limb_t carry)
 {
   mp_limb_t cy;
 
-  ASSERT (carry >= 0 && carry <= (CNST_LIMB(1) << s));
+  ASSERT (carry <= (CNST_LIMB(1) << s));
 
   cy = refmpn_sublsh_n (rp, up, vp, n, s);
   cy += refmpn_sub_1 (rp, rp, n, carry);
@@ -986,7 +986,7 @@ refmpn_rsblsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 }
 mp_limb_signed_t
 refmpn_rsblsh_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
-		 mp_size_t n, unsigned int s, mp_limb_signed_t carry)
+		  mp_size_t n, unsigned int s, mp_limb_signed_t carry)
 {
   mp_limb_signed_t cy;
 
