@@ -1,3 +1,9 @@
+2013-03-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/pentium4/sse2/cnd_add_n.asm: New file.
+	* mpn/x86/pentium4/sse2/cnd_sub_n.asm: New file.
+	* mpn/x86/cnd_aors_n.asm: New file.
+
 2013-03-25  David S. Miller  <davem@davemloft.net>
 
 	* mpn/sparc64/ultrasparct3/hamdist.asm: New file.
