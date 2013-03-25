@@ -1,3 +1,9 @@
+2013-03-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/aorsorrlshC_n.asm: Generalised from aorslshC_n.asm.
+	* mpn/ia64/aorsorrlsh1_n.asm: Generalised from aorslsh1_n.asm.
+	* mpn/ia64/aorsorrlsh2_n.asm: Generalised from aorslsh2_n.asm.
+
 2013-03-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v7a/cora15/neon/aorsorrlshC_n.asm: New file.
