@@ -1,6 +1,6 @@
 dnl  ARM mpn_rsh1add_n and mpn_rsh1sub_n.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -24,6 +24,7 @@ include(`../config.m4')
 C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	3.64-3.7
 C Cortex-A15	 ?

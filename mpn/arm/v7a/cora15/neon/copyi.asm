@@ -1,4 +1,4 @@
-dnl  ARM mpn_copyi.
+dnl  ARM Neon mpn_copyi optimised for A15.
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
@@ -20,8 +20,9 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C StrongARM	 ?
-C XScale	 ?
+C StrongARM	 -
+C XScale	 -
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 1.75		slower than core register code
 C Cortex-A15	 0.52

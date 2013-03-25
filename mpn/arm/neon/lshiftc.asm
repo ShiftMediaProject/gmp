@@ -23,11 +23,12 @@ include(`../config.m4')
 
 C	     cycles/limb     cycles/limb     cycles/limb      good
 C              aligned	      unaligned	      best seen	     for cpu?
-C StrongARM	 n/a
-C XScale	 n/a
-C Cortex-A8	 ?
-C Cortex-A9	 3.5		3.5				Y
-C Cortex-A15	 1.75		1.75				Y
+C StrongARM	 -		 -
+C XScale	 -		 -
+C Cortex-A7	 ?		 ?
+C Cortex-A8	 ?		 ?
+C Cortex-A9	 3.5		 3.5				Y
+C Cortex-A15	 1.75		 1.75				Y
 
 
 C We read 64 bits at a time at 32-bit aligned addresses, and except for the

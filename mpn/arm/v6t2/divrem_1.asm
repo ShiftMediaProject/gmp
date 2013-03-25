@@ -1,6 +1,6 @@
 dnl  ARM v6t2 mpn_divrem_1 and mpn_preinv_divrem_1.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -22,11 +22,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		norm	unorm	frac
-C StrongARM	 ?
-C XScale	 ?
-C Cortex-A8	 ?
-C Cortex-A9	 13	 14	 13
-C Cortex-A15	 11.4	 11.8	 11.1
+C StrongARM	 -	 -	 -
+C XScale	 -	 -	 -
+C Cortex-A7	 ?	 ?	 ?
+C Cortex-A8	 ?	 ?	 ?
+C Cortex-A9	13	14	13
+C Cortex-A15	11.4	11.8	11.1
 
 C TODO
 C  * Optimise inner-loops better, they could likely run a cycle or two faster.

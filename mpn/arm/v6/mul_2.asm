@@ -1,6 +1,6 @@
 dnl  ARM mpn_mul_2.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -24,6 +24,7 @@ include(`../config.m4')
 C	     cycles/limb
 C StrongARM:	 -
 C XScale	 -
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 2.25
 C Cortex-A15	 2.5

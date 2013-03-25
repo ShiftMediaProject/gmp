@@ -1,6 +1,6 @@
 dnl  ARM mpn_and_n, mpn_andn_n. mpn_nand_n, etc.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 1997, 2000, 2001, 2012 Free Software Foundation, Inc.
 
@@ -25,9 +25,10 @@ C            cycles/limb             cycles/limb
 C          and andn ior xor         nand iorn nior xnor
 C StrongARM	 ?			 ?
 C XScale	 ?			 ?
+C Cortex-A7	 ?			 ?
 C Cortex-A8	 ?			 ?
 C Cortex-A9	2.5-2.72		2.75-3
-C Cortex-A15	 ?			 ?
+C Cortex-A15	2.25			2.75
 
 C TODO
 C  * It seems that 2.25 c/l and 2.75 c/l is possible for A9.

@@ -1,6 +1,6 @@
 dnl  ARM mpn_rshift.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 1997, 2000, 2001, 2012 Free Software Foundation, Inc.
 
@@ -24,6 +24,7 @@ include(`../config.m4')
 C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 3.5
 C Cortex-A15	 ?

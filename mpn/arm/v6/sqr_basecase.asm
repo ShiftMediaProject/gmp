@@ -1,6 +1,6 @@
 dnl  ARM v6 mpn_sqr_basecase.
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 

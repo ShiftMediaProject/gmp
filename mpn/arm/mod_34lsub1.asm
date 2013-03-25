@@ -22,9 +22,10 @@ include(`../config.m4')
 C	     cycles/limb
 C StrongARM	 ?
 C XScale	 ?
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 1.33
-C Cortex-A15	 ?
+C Cortex-A15	 1.33
 
 define(`ap',	r0)
 define(`n',	r1)

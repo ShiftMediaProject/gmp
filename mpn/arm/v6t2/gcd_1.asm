@@ -1,6 +1,6 @@
 dnl  ARM v6t2 mpn_gcd_1.
 
-dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for ARM by Torbjorn
+dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for ARM by Torbjörn
 dnl  Granlund.
 
 dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012 Free Software
@@ -24,11 +24,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/bit (approx)
-C StrongARM	 ?
-C XScale	 ?
+C StrongARM	 -
+C XScale	 -
+C Cortex-A7	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 5.30
-C Cortex-A15	 ?
+C Cortex-A9	 5.3
+C Cortex-A15	 3.5
 C Numbers measured with: speed -CD -s8-32 -t24 mpn_gcd_1
 
 C TODO

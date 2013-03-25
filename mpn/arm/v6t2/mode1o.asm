@@ -1,6 +1,6 @@
 dnl  ARM mpn_modexact_1c_odd
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -22,11 +22,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C StrongARM	 ?
-C XScale	 ?
+C StrongARM	 -
+C XScale	 -
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 9
-C Cortex-A15	 ?
+C Cortex-A15	 7
 
 define(`up', `r0')
 define(`n',  `r1')

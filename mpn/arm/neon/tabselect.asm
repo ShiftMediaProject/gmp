@@ -1,4 +1,4 @@
-dnl  ARM mpn_tabselect
+dnl  ARM Neon mpn_tabselect
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -22,8 +22,9 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C StrongARM	 ?
-C XScale	 ?
+C StrongARM	 -
+C XScale	 -
+C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	 2.25
 C Cortex-A15	 0.95

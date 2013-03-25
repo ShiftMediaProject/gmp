@@ -1,6 +1,6 @@
 dnl  ARM mpn_addlsh1_n and mpn_sublsh1_n
 
-dnl  Contributed to the GNU project by Torbjorn Granlund.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
@@ -25,6 +25,7 @@ C	      addlsh1_n       sublsh1_n
 C	     cycles/limb     cycles/limb
 C StrongARM	 ?		 ?
 C XScale	 ?		 ?
+C Cortex-A7	 ?		 ?
 C Cortex-A8	 ?		 ?
 C Cortex-A9	 3.12		 3.7
 C Cortex-A15	 ?		 ?
