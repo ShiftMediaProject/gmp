@@ -3,10 +3,7 @@
    accesses, since this function is intended to be used where side-channel
    attack resilience is relevant.
 
-   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
-   SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
-
-Copyright 1992, 1993, 1994, 1996, 2000, 2002, 2008, 2009, 2011 Free Software
+Copyright 1992, 1993, 1994, 1996, 2000, 2002, 2008, 2009, 2011, 2013 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
