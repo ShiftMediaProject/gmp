@@ -1,3 +1,12 @@
+2013-03-26  Niels Möller  <nisse@lysator.liu.se>
+
+	Make mpn_cnd_add_n and mpn_cnd_sub_n public.
+	* doc/gmp.texi (Low-level Functions): Document mpn_cnd_add_n and
+	mpn_cnd_sub_n.
+	* gmp-h.in (mpn_cnd_add_n, mpn_cnd_sub_n): Moved prototypes
+	here...
+	* gmp-impl.h: ... from here.
+
 2013-03-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/cnd_add_n.asm: New file.

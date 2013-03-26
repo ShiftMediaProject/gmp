@@ -5654,6 +5654,19 @@ Copy from @{@var{s1p}, @var{n}@} to @{@var{rp}, @var{n}@}, decreasingly.
 Zero @{@var{rp}, @var{n}@}.
 @end deftypefun
 
+@deftypefun void mpn_cnd_add_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+@deftypefunx void mpn_cnd_sub_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+These functions do conditional addition and subtraction, and are intended for
+cryptographic applications where resilience to side-channel attacks is
+desired. If @var{cnd} is non-zero, they produce the same result as a regular
+@code{mpn_add_n} or @code{mpn_sub_n}, and if @var{cnd} is zero, they copy
+@{@var{s1p},@var{n}@} to the result area and return zero. The functions are
+designed to have timing and memory access patterns depending only on size and
+location of the data areas, but independent of the condition @var{cnd}. Like
+for @code{mpn_add_n} and @code{mpn_sub_n}, on most machines, the timing will
+also be independent of the actual limb values.
+@end deftypefun
+
 @sp 1
 @section Nails
 @cindex Nails

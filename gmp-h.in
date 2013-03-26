@@ -1626,6 +1626,11 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
 #define mpn_zero __MPN(zero)
 __GMP_DECLSPEC void mpn_zero (mp_ptr, mp_size_t);
 
+#define mpn_cnd_add_n __MPN(cnd_add_n)
+__GMP_DECLSPEC mp_limb_t mpn_cnd_add_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+#define mpn_cnd_sub_n __MPN(cnd_sub_n)
+__GMP_DECLSPEC mp_limb_t mpn_cnd_sub_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
+
 /**************** mpz inlines ****************/
 
 /* The following are provided as inlines where possible, but always exist as

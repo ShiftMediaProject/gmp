@@ -1555,10 +1555,6 @@ __GMP_DECLSPEC void      mpn_powm_sec (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, 
 __GMP_DECLSPEC mp_size_t mpn_powm_sec_itch (mp_size_t, mp_size_t, mp_size_t);
 #define   mpn_tabselect __MPN(tabselect)
 __GMP_DECLSPEC void      mpn_tabselect (volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);
-#define   mpn_cnd_add_n __MPN(cnd_add_n)
-__GMP_DECLSPEC mp_limb_t mpn_cnd_add_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
-#define   mpn_cnd_sub_n __MPN(cnd_sub_n)
-__GMP_DECLSPEC mp_limb_t mpn_cnd_sub_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 
 #define mpn_sb_div_qr_sec __MPN(sb_div_qr_sec)
 __GMP_DECLSPEC void mpn_sb_div_qr_sec (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
