@@ -239,7 +239,7 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
 }
 
 mp_limb_t
-mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
+mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t bmodb[4])
 {
   int cnt;
   mp_limb_t bi, B1modb;

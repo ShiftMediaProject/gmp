@@ -74,7 +74,7 @@ mpn_mod_1s_3p_cps (mp_limb_t cps[6], mp_limb_t b)
 }
 
 mp_limb_t
-mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[6])
+mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[6])
 {
   mp_limb_t rh, rl, bi, ph, pl, ch, cl, r;
   mp_limb_t B1modb, B2modb, B3modb, B4modb;

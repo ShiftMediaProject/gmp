@@ -1131,7 +1131,7 @@ __GMP_DECLSPEC void mpn_mod_1_1p_cps (mp_limb_t [4], mp_limb_t);
 #endif
 #ifndef mpn_mod_1_1p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1_1p __MPN(mod_1_1p)
-__GMP_DECLSPEC mp_limb_t mpn_mod_1_1p (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]) __GMP_ATTRIBUTE_PURE;
+__GMP_DECLSPEC mp_limb_t mpn_mod_1_1p (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [4]) __GMP_ATTRIBUTE_PURE;
 #endif
 
 #ifndef mpn_mod_1s_2p_cps  /* if not done with cpuvec in a fat binary */
@@ -1140,7 +1140,7 @@ __GMP_DECLSPEC void mpn_mod_1s_2p_cps (mp_limb_t [5], mp_limb_t);
 #endif
 #ifndef mpn_mod_1s_2p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_2p __MPN(mod_1s_2p)
-__GMP_DECLSPEC mp_limb_t mpn_mod_1s_2p (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [5]) __GMP_ATTRIBUTE_PURE;
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_2p (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [5]) __GMP_ATTRIBUTE_PURE;
 #endif
 
 #ifndef mpn_mod_1s_3p_cps  /* if not done with cpuvec in a fat binary */
@@ -1149,7 +1149,7 @@ __GMP_DECLSPEC void mpn_mod_1s_3p_cps (mp_limb_t [6], mp_limb_t);
 #endif
 #ifndef mpn_mod_1s_3p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_3p __MPN(mod_1s_3p)
-__GMP_DECLSPEC mp_limb_t mpn_mod_1s_3p (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [6]) __GMP_ATTRIBUTE_PURE;
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_3p (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [6]) __GMP_ATTRIBUTE_PURE;
 #endif
 
 #ifndef mpn_mod_1s_4p_cps  /* if not done with cpuvec in a fat binary */
@@ -1158,7 +1158,7 @@ __GMP_DECLSPEC void mpn_mod_1s_4p_cps (mp_limb_t [7], mp_limb_t);
 #endif
 #ifndef mpn_mod_1s_4p  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_1s_4p __MPN(mod_1s_4p)
-__GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [7]) __GMP_ATTRIBUTE_PURE;
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [7]) __GMP_ATTRIBUTE_PURE;
 #endif
 
 #define mpn_bc_mulmod_bnm1 __MPN(bc_mulmod_bnm1)
