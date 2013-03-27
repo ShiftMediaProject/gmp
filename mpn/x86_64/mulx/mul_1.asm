@@ -23,7 +23,9 @@ C	     cycles/limb
 C AMD K8,K9	 -
 C AMD K10	 -
 C AMD bd1	 -
+C AMD bd2	 ?
 C AMD bobcat	 -
+C AMD jaguar	 ?
 C Intel P4	 -
 C Intel PNR	 -
 C Intel NHM	 -
