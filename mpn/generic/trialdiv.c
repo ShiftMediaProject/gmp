@@ -84,8 +84,8 @@ mp_limb_t
 mpn_trialdiv (mp_srcptr tp, mp_size_t tn, mp_size_t nprimes, int *where)
 {
   mp_limb_t ppp;
-  mp_limb_t *cps;
-  struct gmp_primes_dtab *dp;
+  const mp_limb_t *cps;
+  const struct gmp_primes_dtab *dp;
   long i, j, idx, np;
   mp_limb_t r, q;
 
