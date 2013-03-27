@@ -1,5 +1,13 @@
 2013-03-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/trialdiv.c: Make variables 'const' to match tables.
+
+	* mpn/generic/mod_1_1.c (mpn_mod_1s_4p): Make precomputed arg 'const'.
+	* mpn/generic/mod_1_2.c (mpn_mod_1s_3p): Likewise.
+	* mpn/generic/mod_1_3.c (mpn_mod_1s_2p): Likewise.
+	* mpn/generic/mod_1_4.c (mpn_mod_1_1p): Likewise.
+	* gmp-impl.h: Update prototypes.
+
 	* mpn/x86_64/mulx/aorsmul_1.asm: New file.
 	* mpn/x86_64/mulx/addmul_1.asm: Remove.
 
