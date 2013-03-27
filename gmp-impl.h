@@ -89,7 +89,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DECL_mod_1(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_srcptr, mp_size_t, mp_limb_t)
 #define DECL_mod_1_1p(name) \
-  __GMP_DECLSPEC mp_limb_t name (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [])
+  __GMP_DECLSPEC mp_limb_t name (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [])
 #define DECL_mod_1_1p_cps(name) \
   __GMP_DECLSPEC void name (mp_limb_t cps[], mp_limb_t b)
 #define DECL_mod_1s_2p(name) \
