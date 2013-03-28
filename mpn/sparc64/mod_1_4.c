@@ -46,19 +46,23 @@ mpn_mod_1s_4p_cps (mp_limb_t cps[7], mp_limb_t b)
   b <<= cnt;
   invert_limb (bi, b);
 
-  B1modb = -b * ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
-  ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
-  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
-  udiv_rnnd_preinv (B3modb, B2modb, 0, b, bi);
-  udiv_rnnd_preinv (B4modb, B3modb, 0, b, bi);
-  udiv_rnnd_preinv (B5modb, B4modb, 0, b, bi);
-
   cps[0] = bi;
   cps[1] = cnt;
+
+  B1modb = -b * ((bi >> (GMP_LIMB_BITS-cnt)) | (CNST_LIMB(1) << cnt));
+  ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   cps[2] = B1modb >> cnt;
+
+  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
   cps[3] = B2modb >> cnt;
+
+  udiv_rnnd_preinv (B3modb, B2modb, 0, b, bi);
   cps[4] = B3modb >> cnt;
+
+  udiv_rnnd_preinv (B4modb, B3modb, 0, b, bi);
   cps[5] = B4modb >> cnt;
+
+  udiv_rnnd_preinv (B5modb, B4modb, 0, b, bi);
   cps[6] = B5modb >> cnt;
 
 #if WANT_ASSERT
@@ -75,7 +79,7 @@ mpn_mod_1s_4p_cps (mp_limb_t cps[7], mp_limb_t b)
 }
 
 mp_limb_t
-mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[7])
+mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 {
   mp_limb_t rh, rl, bi, ph, pl, ch, cl, r;
   mp_limb_t B1modb, B2modb, B3modb, B4modb, B5modb;
