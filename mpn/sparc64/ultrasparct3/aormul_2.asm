@@ -135,8 +135,8 @@ AM2(`	addcc	w3, %g1, w3')
 	stx	w3, [rp+0]
 	ADDX(`	%l1, w0, w0')
 	addxccc(%l5, w1, w1)
-	umulxhi(%i4, v0, %l6)
 	mulx	%i4, v0, %l2
+	umulxhi(%i4, v0, %l6)
 AM2(`	ldx	[rp+8], %g1')
 	addcc	%l2, w0, w0
 	addxccc(%l6, w1, w1)
