@@ -1,3 +1,7 @@
+2013-03-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/aormul_2.asm: Always do mulx before umulxhi.
+
 2013-03-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/mod_1_4.c (mpn_mod_1s_4p): Make precomputed arg 'const'.
