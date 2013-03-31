@@ -1,9 +1,9 @@
 dnl  SPARC64 mpn_gcd_1.
 
-dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for SPARC by Torbjorn
+dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for SPARC by Torbjörn
 dnl  Granlund.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012 Free Software
+dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012, 2013 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -25,9 +25,11 @@ include(`../config.m4')
 
 
 C		  cycles/bit (approx)
-C UltraSPARC 1&2:      5.1
-C UltraSPARC 3:        5.0
-C UltraSPARC T1:      12.8
+C UltraSPARC 1&2:	 5.1
+C UltraSPARC 3:		 5.0
+C UltraSPARC T1:	11.4
+C UltraSPARC T3:	 ?
+C UltraSPARC T4:	 ?
 C Numbers measured with: speed -CD -s32-64 -t32 mpn_gcd_1
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
@@ -110,7 +112,7 @@ ifdef(`PIC',`
 
 	cmp	%o0, 0
 	bnz	%xcc, L(mid)
-	 andcc	%o0, MASK, %g3		C
+	 and	%o0, MASK, %g3		C
 
 	return	%i7+8
 	 sllx	%o2, %o4, %o0		C CAUTION: v0 alias for o2
@@ -118,15 +120,13 @@ ifdef(`PIC',`
 	ALIGN(16)
 L(top):	movcc	%xcc, %l4, v0		C v = min(u,v)
 	movcc	%xcc, %l2, %o0		C u = |v - u]
-	cmp	%g3, 0			C are all MAXSHIFT low bits zero?
-L(mid):	ldub	[%i5+%g3], %g3		C
-	bz,a	%xcc, L(shift_alot)	C
+L(mid):	ldub	[%i5+%g3], %g5		C
+	brz,a,pn %g3, L(shift_alot)	C
 	 srlx	%o0, MAXSHIFT, %o0
-	srlx	%o0, %g3, %l4		C new u, odd
-	nop				C force parallel exec of sub insns
+	srlx	%o0, %g5, %l4		C new u, odd
 	subcc	v0, %l4, %l2		C v - u, set flags for branch and movcc
 	sub	%l4, v0, %o0		C u - v
-	bnz	%xcc, L(top)		C
+	bnz,pt	%xcc, L(top)		C
 	 and	%l2, MASK, %g3		C extract low MAXSHIFT bits from (v-u)
 
 	return	%i7+8
@@ -134,7 +134,7 @@ L(mid):	ldub	[%i5+%g3], %g3		C
 
 L(shift_alot):
 	b	L(mid)
-	 andcc	%o0, MASK, %g3		C
+	 and	%o0, MASK, %g3		C
 
 ifdef(`PIC',`
 L(LGETPC0):
