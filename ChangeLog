@@ -1,12 +1,18 @@
 2013-04-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/ultrasparct3/missing.m4 (umulxhi): Don't clobber retaddr,
+	allowing use in functions that does not do save/restore.
+
 	* mpn/sparc64/gcd_1.asm: Tweak for tighter loop.
 
-2013-03-31  Torbjorn Granlund  <tege@gmplib.org>
+2013-03-31  David S. Miller  <davem@davemloft.net>
 
 	* mpn/sparc64/lshift.asm: New file.
 	* mpn/sparc64/rshift.asm: New file.
 	* mpn/sparc64/lshiftc.asm: New file.
+
+2013-03-31  Torbjorn Granlund  <tege@gmplib.org>
+
 	* mpn/sparc64/ultrasparct1/lshift.asm: Remove.
 	* mpn/sparc64/ultrasparct1/rshift.asm: Remove.
 	* mpn/sparc64/ultrasparct1/lshiftc.asm: Remove.
