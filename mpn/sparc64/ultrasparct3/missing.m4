@@ -53,8 +53,11 @@ dnl  Calls __gmpn_umulh using a non-standard calling convention
 define(`umulxhi',`dnl
 	add	%sp, -512, %sp
 	stx	$1, [%sp+2047+256]
+	stx	$2, [%sp+2047+256+8]
+	stx	%o7, [%sp+2047+256+16]
 	call	__gmpn_umulh
-	 stx	$2, [%sp+2047+256+8]
+	nop
+	ldx	[%sp+2047+256+16], %o7
 	ldx	[%sp+2047+256], $3
 	sub	%sp, -512, %sp
 ')
