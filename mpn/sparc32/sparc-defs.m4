@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for SPARC assembler (32 and 64 bit).
 
 
-dnl  Copyright 2002, 2011 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2011, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -35,5 +35,14 @@ m4_assert_defined(`HAVE_REGISTER')
 `ifelse(HAVE_REGISTER,yes,
 `.register `$1',`$2'')')
 
+
+C Testing mechanism for running newer code on older processors
+ifdef(`FAKE_T3',`
+  include_mpn(`sparc64/ultrasparct3/missing.m4')
+',`
+  define(`addxccc',	``addxccc'	$1, $2, $3')
+  define(`addxc',	``addxc'	$1, $2, $3')
+  define(`umulxhi',	``umulxhi'	$1, $2, $3')
+')
 
 divert

@@ -64,16 +64,6 @@ ifdef(`OPERATION_addmul_2',`
 ')
 
 
-C Testing mechanism for running this on older v9 processrs
-ifdef(`FAKE_T3',`
-  include(`missing.m4')
-',`
-  define(`addxccc',	``addxccc'	$1, $2, $3')
-  define(`addxc',	``addxc'	$1, $2, $3')
-  define(`umulxhi',	``umulxhi'	$1, $2, $3')
-')
-
-
 MULFUNC_PROLOGUE(mpn_mul_2 mpn_addmul_2)
 
 ASM_START()
