@@ -1,3 +1,15 @@
+2013-04-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/missing.m4: Misc tweaks.
+	 (lzcnt): New.
+	* mpn/sparc64/ultrasparct3/missing.asm (__gmpn_lzcnt): New function.
+
+	* mpn/sparc32/sparc-defs.m4: Put FAKE_T3 stuff here...
+	* mpn/sparc64/ultrasparct3/aormul_2.asm: ...moved from here.
+
+	* mpn/sparc64/ultrasparc1234/lshift.asm: Remove.
+	* mpn/sparc64/ultrasparc1234/rshift.asm: Remove.
+
 2013-04-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparct3/missing.m4 (umulxhi): Don't clobber retaddr,
