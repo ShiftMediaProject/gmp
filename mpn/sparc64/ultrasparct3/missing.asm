@@ -49,3 +49,18 @@ PROLOGUE(__gmpn_umulh)
 	ret
 	 restore
 EPILOGUE()
+
+PROLOGUE(__gmpn_lzcnt)
+	save	%sp, -176, %sp
+	ldx	[%sp+2047+176+256], %o0
+	brz,a	%o0, 2f
+	 mov	64, %o1
+	brlz	%o0, 2f
+	 mov	0, %o1
+1:	sllx	%o0, 1, %o0
+	brgz	%o0, 1b
+	 add	%o1, 1, %o1
+	stx	%o1, [%sp+2047+176+256]
+2:	ret
+	 restore
+EPILOGUE()
