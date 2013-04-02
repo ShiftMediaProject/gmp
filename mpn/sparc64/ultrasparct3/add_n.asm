@@ -53,9 +53,9 @@ L(top):
 	add	rp, 16, rp
 	ldx	[vp-8], %g2
 	sub	n, 2, n
-	addxccc	%o4, %o5, %g3
+	addxccc(%o4, %o5, %g3)
 	stx	%g3, [rp-16]
-	addxccc	%g1, %g2, %g2
+	addxccc(%g1, %g2, %g2)
 	brgz	n, L(top)
 	 stx	%g2, [rp-8]
 
@@ -65,10 +65,10 @@ L(top):
 L(final_one):
 	ldx	[up+0], %o4
 	ldx	[vp+0], %o5
-	addxccc	%o4, %o5, %g3
+	addxccc(%o4, %o5, %g3)
 	stx	%g3, [rp+0]
 
 L(done):
 	retl
-	 addxc	%g0, %g0, %o0
+	 addxc(	%g0, %g0, %o0)
 EPILOGUE()

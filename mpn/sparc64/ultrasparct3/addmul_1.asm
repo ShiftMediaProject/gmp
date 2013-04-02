@@ -47,17 +47,17 @@ L(top):
 	ldx	[rp+8], %l3
 	mulx	%l0, v0, %o0
 	add	up, 16, up
-	umulxhi	%l0, v0, %o1
+	umulxhi(%l0, v0, %o1)
 	add	rp, 16, rp
 	mulx	%l1, v0, %o2
 	sub	n, 2, n
-	umulxhi	%l1, v0, %o3
-	addxccc	%o5, %o0, %o0
-	addxccc	%o1, %o2, %o2
-	addxc	%g0, %o3, %o5
+	umulxhi(%l1, v0, %o3)
+	addxccc(%o5, %o0, %o0)
+	addxccc(%o1, %o2, %o2)
+	addxc(	%g0, %o3, %o5)
 	addcc	%l2, %o0, %o0
 	stx	%o0, [rp-16]
-	addxccc	%l3, %o2, %o2
+	addxccc(%l3, %o2, %o2)
 	brgz	n, L(top)
 	 stx	%o2, [rp-8]
 
@@ -68,14 +68,14 @@ L(final_one):
 	ldx	[up+0], %l0
 	ldx	[rp+0], %l2
 	mulx	%l0, v0, %o0
-	umulxhi	%l0, v0, %o1
-	addxccc	%o5, %o0, %o0
-	addxc	%g0, %o1, %o5
+	umulxhi(%l0, v0, %o1)
+	addxccc(%o5, %o0, %o0)
+	addxc(	%g0, %o1, %o5)
 	addcc	%l2, %o0, %o0
 	stx	%o0, [rp+0]
 
 L(done):
-	addxc	%g0, %o5, %i0
+	addxc(	%g0, %o5, %i0)
 	ret
 	 restore
 EPILOGUE()
