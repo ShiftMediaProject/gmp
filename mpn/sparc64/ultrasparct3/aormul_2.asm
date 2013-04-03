@@ -1,4 +1,4 @@
-dnl  SPARC v9 mpn_mul_2 and mpn_addmul_2 for T3/T4.
+dnl  SPARC v9 mpn_mul_2 and mpn_addmul_2 for T3/T4/T5.
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
@@ -20,20 +20,24 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		    cycles/limb     cycles/limb
-C		       mul_2          addmul_2
-C UltraSPARC T3:	23		24
-C UltraSPARC T4:	~3.5		~4
+C		    cycles/limb      cycles/limb
+C		       mul_2           addmul_2
+C UltraSPARC T3:	 ?		 ?
+C UltraSPARC T4:	 3.25		 3.75
 
 
-C This code is based on the summation algorithm used for x86-64 where the
-C multiply instruction clobbers the carry flag.  It would be possible to
-C keep carry alive and thereby save 3 instructions per iteration.
+C The code is reasonably scheduled but also relies on OoO.  Micro-scheduling
+C remains to be done.  There is hope that this could run at around 3.0 and 3.5
+C c/l respectively, on T4 if an optimal schedule is found.  Two cycles per
+C iteration needs to be removed.
 C
-C The code is reasonably scheduled for long-latency instructions, but no micro-
-C scheduling has been done.  There is hope that this could run at around 3.5
-C c/l on T4 if an optimal schedule was found.
-
+C We could almost use 2-way unrolling, but currently the wN registers live too
+C long.  By changing add x,w1,w1 to add x,w1,w0, i.e. migrate the values down-
+C wards, 2-way unrolling should become possible.  With n-indexed addressing it
+C should run no slower.
+C
+C The rp loads to g1/g3 are very much over-scheduled.  Presumably, they could
+C be postponed a full way, and then just one register could be used.
 
 C INPUT PARAMETERS
 define(`rp', `%i0')
@@ -48,16 +52,15 @@ define(`w1', `%o3')
 define(`w2', `%o4')
 define(`w3', `%o5')
 
-C Free registers: i5 o7.  We use g2,g3 for the missing.m4 emulation mechanism.
+C Free or little used registers: o7, g4, g5.  We use g2 for addxccc emulation.
+C l0,l6, l1,l3, l5,l7 and l2,l4 could be coalesced.
 
 ifdef(`OPERATION_mul_2',`
-      define(`ADDSUB',   `add')
       define(`AM2',      `')
       define(`ADDX',	 `addcc`'$1')
       define(`func',     `mpn_mul_2')
 ')
 ifdef(`OPERATION_addmul_2',`
-      define(`ADDSUB',   `sub')
       define(`AM2',      `$1')
       define(`ADDX',	 `addxccc($1,$2,$3)')
       define(`func',     `mpn_addmul_2')
@@ -67,22 +70,17 @@ ifdef(`OPERATION_addmul_2',`
 MULFUNC_PROLOGUE(mpn_mul_2 mpn_addmul_2)
 
 ASM_START()
-ifdef(`FAKE_T3',`
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-')
 PROLOGUE(func)
 	save	%sp, -176, %sp
 
 	ldx	[vp+0], v0		C load v0
 	ldx	[vp+8], v1		C load v1
-	ldx	[up+0], %i4		C load u0
-AM2(`	ldx	[rp+0], %g1	')	C load r0 if addmul_2
-
-	mulx	%i4, v0, %l0
-	umulxhi(%i4, v0, %l4)
+	ldx	[up+0], %g4
 
 	and	n, 3, %g5
+	add	n, -6, n
 	brz	%g5, L(b0)
 	 cmp	%g5, 2
 	bcs	L(b1)
@@ -90,98 +88,131 @@ AM2(`	ldx	[rp+0], %g1	')	C load r0 if addmul_2
 	be	L(b2)
 	 nop
 
-L(b3):	mov	%l0, w1
-	mov	%l4, w2
-	mov	0, w3
-	add	rp, -16, rp
-	b	L(lo3)
-	 add	up, -16, up
-
-L(b2):	mov	%l0, w2
-	mov	%l4, w3
-	mov	0, w0
-	add	rp, -24, rp
-	b	L(lo2)
-	 add	up, -24, up
-
-L(b1):	mov	%l0, w3
-	mov	%l4, w0
-	mov	0, w1
-	b	L(top)
-	 add	n, -1, n
-
-L(b0):	mov	%l0, w0
-	mov	%l4, w1
-	mov	0, w2
+L(b3):
+AM2(`	ldx	[rp+0], %g1')
+	mulx	%g4, v0, w2
+	umulxhi(%g4, v0, w3)
+	ldx	[up+8], %i5
+	mulx	%g4, v1, %l3
+	umulxhi(%g4, v1, %l7)
+AM2(`	ldx	[rp+8], %g3')
+	add	up, -8, up
 	add	rp, -8, rp
-	b	L(lo0)
-	 add	up, -8, up
+	b	L(lo3)
+	 mov	0, w0
 
-	ALIGN(32)
-L(top):	mulx	%i4, v1, %l1
-	umulxhi(%i4, v1, %l5)
+L(b2):
+AM2(`	ldx	[rp+0], %g3')
+	mulx	%g4, v0, w3
+	umulxhi(%g4, v0, w0)
 	ldx	[up+8], %i4
-AM2(`	addcc	w3, %g1, w3')
-	stx	w3, [rp+0]
+	mulx	%g4, v1, %l1
+	umulxhi(%g4, v1, %l5)
+AM2(`	ldx	[rp+8], %g1')
+	add	rp, 16, rp
+	brlz	n, L(end)
+	 mov	0, w1
+	ba	L(top)
+	 add	up, 16, up
+
+L(b1):
+AM2(`	ldx	[rp+0], %g1')
+	mulx	%g4, v0, w0
+	umulxhi(%g4, v0, w1)
+	ldx	[up+8], %i5
+	mulx	%g4, v1, %l3
+	umulxhi(%g4, v1, %l7)
+AM2(`	ldx	[rp+8], %g3')
+	add	up, 8, up
+	add	rp, 8, rp
+	b	L(lo1)
+	 mov	0, w2
+
+L(b0):
+AM2(`	ldx	[rp+0], %g3')
+	mulx	%g4, v0, w1
+	umulxhi(%g4, v0, w2)
+	ldx	[up+8], %i4
+	mulx	%g4, v1, %l1
+	umulxhi(%g4, v1, %l5)
+AM2(`	ldx	[rp+8], %g1')
+	b	L(lo0)
+	 mov	0, w3
+
+	ALIGN(32)			C cycle
+L(top):	mulx	%i4, v0, %l2		C 0->5
+	umulxhi(%i4, v0, %l6)		C 0->5
+	ldx	[up+0], %i5		C 1->6
+AM2(`	addcc	w3, %g3, w3')		C 1
+	stx	w3, [rp-16]		C 2
+	ADDX(`	%l1, w0, w0')		C 2
+	addxccc(%l5, w1, w1)		C 3
+	mulx	%i4, v1, %l3		C 3->9
+	umulxhi(%i4, v1, %l7)		C 4->9
+AM2(`	ldx	[rp+0], %g3')		C 4
+	addcc	%l2, w0, w0		C 5
+	addxccc(%l6, w1, w1)		C 5
+	addxc(	%g0, %g0, w2)		C 6
+L(lo1):	mulx	%i5, v0, %l0		C 6
+	umulxhi(%i5, v0, %l4)		C 7
+	ldx	[up+8], %i4		C 7
+AM2(`	addcc	w0, %g1, w0')		C 8
+	stx	w0, [rp-8]		C 8
+	ADDX(`	%l3, w1, w1')		C 9
+	addxccc(%l7, w2, w2)		C 9
+	mulx	%i5, v1, %l1		C 10
+	umulxhi(%i5, v1, %l5)		C 10
+AM2(`	ldx	[rp+8], %g1')		C 11
+	addcc	%l0, w1, w1		C 11
+	addxccc(%l4, w2, w2)		C 12
+	addxc(	%g0, %g0, w3)		C 12
+L(lo0):	mulx	%i4, v0, %l2		C 13
+	umulxhi(%i4, v0, %l6)		C 13
+	ldx	[up+16], %i5		C 14
+AM2(`	addcc	w1, %g3, w1')		C 14
+	stx	w1, [rp+0]		C 15
+	ADDX(`	%l1, w2, w2')		C 15
+	addxccc(%l5, w3, w3)		C 16
+	mulx	%i4, v1, %l3		C 16
+	umulxhi(%i4, v1, %l7)		C 17
+AM2(`	ldx	[rp+16], %g3')		C 17
+	addcc	%l2, w2, w2		C 18
+	addxccc(%l6, w3, w3)		C 18
+	addxc(	%g0, %g0, w0)		C 19
+L(lo3):	mulx	%i5, v0, %l0		C 19
+	umulxhi(%i5, v0, %l4)		C 20
+	ldx	[up+24], %i4		C 20
+AM2(`	addcc	w2, %g1, w2')		C 21
+	stx	w2, [rp+8]		C 21
+	ADDX(`	%l3, w3, w3')		C 22
+	addxccc(%l7, w0, w0)		C 22
+	mulx	%i5, v1, %l1		C 23
+	umulxhi(%i5, v1, %l5)		C 23
+AM2(`	ldx	[rp+24], %g1')		C 24
+	addcc	%l0, w3, w3		C 24
+	addxccc(%l4, w0, w0)		C 25
+	addxc(	%g0, %g0, w1)		C 25
+	add	up, 32, up
+	add	rp, 32, rp
+	brgz	n, L(top)
+	 add	n, -4, n
+
+L(end):	mulx	%i4, v0, %l2
+	umulxhi(%i4, v0, %l6)
+AM2(`	addcc	w3, %g3, w3')
+	stx	w3, [rp-16]
 	ADDX(`	%l1, w0, w0')
 	addxccc(%l5, w1, w1)
-	mulx	%i4, v0, %l2
-	umulxhi(%i4, v0, %l6)
-AM2(`	ldx	[rp+8], %g1')
+	mulx	%i4, v1, %l3
+	umulxhi(%i4, v1, %l7)
 	addcc	%l2, w0, w0
 	addxccc(%l6, w1, w1)
 	addxc(	%g0, %g0, w2)
-L(lo0):	mulx	%i4, v1, %l3
-	umulxhi(%i4, v1, %l7)
-	ldx	[up+16], %i4
 AM2(`	addcc	w0, %g1, w0')
-	stx	w0, [rp+8]
+	stx	w0, [rp-8]
 	ADDX(`	%l3, w1, w1')
-	addxccc(%l7, w2, w2)
-	mulx	%i4, v0, %l0
-	umulxhi(%i4, v0, %l4)
-AM2(`	ldx	[rp+16], %g1')
-	addcc	%l0, w1, w1
-	addxccc(%l4, w2, w2)
-	addxc(	%g0, %g0, w3)
-L(lo3):	mulx	%i4, v1, %l1
-	umulxhi(%i4, v1, %l5)
-	ldx	[up+24], %i4
-AM2(`	addcc	w1, %g1, w1')
-	stx	w1, [rp+16]
-	ADDX(`	%l1, w2, w2')
-	addxccc(%l5, w3, w3)
-	mulx	%i4, v0, %l2
-	umulxhi(%i4, v0, %l6)
-AM2(`	ldx	[rp+24], %g1')
-	addcc	%l2, w2, w2
-	addxccc(%l6, w3, w3)
-	addxc(	%g0, %g0, w0)
-L(lo2):	mulx	%i4, v1, %l3
-	umulxhi(%i4, v1, %l7)
-	ldx	[up+32], %i4
-AM2(`	addcc	w2, %g1, w2')
-	stx	w2, [rp+24]
-	ADDX(`	%l3, w3, w3')
-	addxccc(%l7, w0, w0)
-	mulx	%i4, v0, %l0
-	umulxhi(%i4, v0, %l4)
-AM2(`	ldx	[rp+32], %g1')
-	addcc	%l0, w3, w3
-	addxccc(%l4, w0, w0)
-	addxc(	%g0, %g0, w1)
-	add	n, -4, n
-	add	rp, 32, rp
-	brgz	n, L(top)
-	 add	up, 32, up
-
-L(end):	mulx	%i4, v1, %l1
-	umulxhi(%i4, v1, %l5)
-AM2(`	addcc	w3, %g1, w3')
-	stx	w3, [rp+0]
-	ADDX(`	%l1, w0, w0')
-	stx	w0, [rp+8]
-	addxc(	%l5, w1, %i0)
+	stx	w1, [rp+0]
+	addxc(%l7, w2, %i0)
 
 	ret
 	 restore
