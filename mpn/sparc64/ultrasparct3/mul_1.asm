@@ -25,16 +25,6 @@ C		   cycles/limb
 C UltraSPARC T3:	23
 C UltraSPARC T4:	 3
 
-C If this does not run at 3 c/l, here is what to try:
-C  (1) Reorder the bookkeeping insn at loop end, putting the n update at cycle
-C      10 and the rp update in the delay slot.  To make the loop take the right
-C      # of iterations, add 4 to every delay slot n update in the feed in code,
-C      and put a new 'add n, 4, n' in the L(b0) delay slot.  Motive: This makes
-C      n available to the loop branch from a feed-forward bus instead of the
-C      register bank.
-C  (1) Swap every the mulx insns in the loop with the addxccc immediately
-C      preceding it.
-
 C INPUT PARAMETERS
 define(`rp', `%i0')
 define(`up', `%i1')
