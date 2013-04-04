@@ -73,6 +73,7 @@ PROLOGUE(mpn_invert_limb)
 EPILOGUE()
 
 	RODATA
+	ALIGN(2)
 	TYPE(	approx_tab, object)
 	SIZE(	approx_tab, 512)
 approx_tab:
