@@ -122,21 +122,6 @@ check_one (mp_ptr qp, mp_srcptr rp,
 
 #define COUNT 200
 
-mp_limb_t
-random_word (gmp_randstate_ptr rs)
-{
-  mpz_t x;
-  mp_limb_t r;
-  TMP_DECL;
-  TMP_MARK;
-
-  MPZ_TMP_INIT (x, 2);
-  mpz_urandomb (x, rs, 32);
-  r = mpz_get_ui (x);
-  TMP_FREE;
-  return r;
-}
-
 int
 main (int argc, char **argv)
 {
@@ -192,12 +177,12 @@ main (int argc, char **argv)
 
   for (test = -300; test < count; test++)
     {
-      nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
+      nbits = urandom () % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
 
       if (test < 0)
 	dbits = (test + 300) % (nbits - 1) + 1;
       else
-	dbits = random_word (rands) % (nbits - 1) % maxdbits + 1;
+	dbits = urandom () % (nbits - 1) % maxdbits + 1;
 
 #if RAND_UNIFORM
 #define RANDFUNC mpz_urandomb
@@ -223,8 +208,8 @@ main (int argc, char **argv)
 	{
 	  do
 	    {
-	      RANDFUNC (q, rands, random_word (rands) % (nbits - dbits + 1));
-	      RANDFUNC (r, rands, random_word (rands) % mpz_sizeinbase (d, 2));
+	      RANDFUNC (q, rands, urandom () % (nbits - dbits + 1));
+	      RANDFUNC (r, rands, urandom () % mpz_sizeinbase (d, 2));
 	      mpz_mul (n, q, d);
 	      mpz_add (n, n, r);
 	      nn = SIZ (n);
@@ -252,31 +237,31 @@ main (int argc, char **argv)
       switch ((int) t % 16)
 	{
 	case 0:
-	  clearn = random_word (rands) % nn;
+	  clearn = urandom () % nn;
 	  for (i = clearn; i < nn; i++)
 	    np[i] = 0;
 	  break;
 	case 1:
-	  mpn_sub_1 (np + nn - dn, dnp, dn, random_word (rands));
+	  mpn_sub_1 (np + nn - dn, dnp, dn, urandom ());
 	  break;
 	case 2:
-	  mpn_add_1 (np + nn - dn, dnp, dn, random_word (rands));
+	  mpn_add_1 (np + nn - dn, dnp, dn, urandom ());
 	  break;
 	}
 
       if (dn >= 2)
 	invert_pi1 (dinv, dnp[dn - 1], dnp[dn - 2]);
 
-      rran0 = random_word (rands);
-      rran1 = random_word (rands);
-      qran0 = random_word (rands);
-      qran1 = random_word (rands);
+      rran0 = urandom ();
+      rran1 = urandom ();
+      qran0 = urandom ();
+      qran1 = urandom ();
 
       qp[-1] = qran0;
       qp[nn - dn + 1] = qran1;
       rp[-1] = rran0;
 
-      ran = random_word (rands);
+      ran = urandom ();
 
       if ((double) (nn - dn) * dn < 1e5)
 	{
