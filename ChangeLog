@@ -1,3 +1,17 @@
+2013-04-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/mul_1.asm: Rewrite.
+
+	* mpn/sparc64/ultrasparct3/bdiv_dbm1c.asm: New file.
+	* mpn/sparc64/ultrasparct3/dive_1.asm: New file.
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: New file.
+	* mpn/sparc64/ultrasparct3/mod_1_4.asm: New file.
+	* mpn/sparc64/ultrasparct3/mode1o.asm: New file.
+
+2013-04-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/aormul_2.asm: Reschedule for better speed.
+
 2013-04-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparct3/missing.m4: Misc tweaks.
