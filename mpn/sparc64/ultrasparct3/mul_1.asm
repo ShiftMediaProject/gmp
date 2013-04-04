@@ -1,6 +1,6 @@
-dnl  SPARC v9 mpn_mul_1 for T3/T4.
+dnl  SPARC v9 mpn_mul_1 for T3/T4/T5.
 
-dnl  Contributed to the GNU project by David Miller.
+dnl  Contributed to the GNU project by David Miller and Torbjörn Granlund.
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
@@ -22,50 +22,152 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	25.5
-C UltraSPARC T4:	 3.8
+C UltraSPARC T3:	< 25.5  hopefully
+C UltraSPARC T4:	 3  hopefully
+
+C If this does not run at 3 c/l, here is what to try:
+C  (1) Reorder the bookkeeping insn at loop end, putting the n update at cycle
+C      10 and the rp update in the delay slot.  To make the loop take the right
+C      # of iterations, add 4 to every delay slot n update in the feed in code,
+C      and put a new 'add n, 4, n' in the L(b0) delay slot.  Motive: This makes
+C      n available to the loop branch from a feed-forward bus instead of the
+C      register bank.
+C  (1) Swap every the mulx insns in the loop with the addxccc immediately
+C      preceding it.
 
 C INPUT PARAMETERS
-define(`rp', `%o0')
-define(`up', `%o1')
-define(`n',  `%o2')
-define(`v0', `%o3')
+define(`rp', `%i0')
+define(`up', `%i1')
+define(`n',  `%i2')
+define(`v0', `%i3')
 
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_mul_1)
-	subcc	n, 1, n
-	be	L(final_one)
-	 subcc	%g0, %g0, %o5
+	save	%sp, -176, %sp
 
-L(top):
-	ldx	[up+0], %g1
-	sub	n, 2, n
-	ldx	[up+8], %o4
-	mulx	%g1, v0, %g3
-	add	up, 16, up
-	umulxhi(%g1, v0, %g2)
-	mulx	%o4, v0, %g1
-	add	rp, 16, rp
-	addxccc(%g3, %o5, %g3)
-	umulxhi(%o4, v0, %o5)
-	stx	%g3, [rp-16]
-	addxccc(%g1, %g2, %g1)
-	brgz	n, L(top)
-	 stx	%g1, [rp-8]
-
-	brlz,pt	n, L(done)
+	and	n, 3, %g5
+	add	n, -4, n
+	brz	%g5, L(b0)
+	 cmp	%g5, 2
+	bcs	%xcc, L(b1)
+	 nop
+	be	%xcc, L(b2)
 	 nop
 
-L(final_one):
-	ldx	[up+0], %g1
-	mulx	%g1, v0, %g3
-	addxccc(%g3, %o5, %g3)
-	umulxhi(%g1, v0, %o5)
-	stx	%g3, [rp+0]
+L(b3):	addcc	%g0, %g0, %i5
+	ldx	[up+0], %l0
+	ldx	[up+8], %l1
+	ldx	[up+16], %l2
+	mulx	%l0, v0, %o0
+	umulxhi(%l0, v0, %o1)
+	brgz	n, L(gt3)
+	 add	rp, -8, rp
+	mulx	%l1, v0, %o2
+	umulxhi(%l1, v0, %o3)
+	b	L(wd3)
+	 nop
+L(gt3):	ldx	[up+24], %l3
+	mulx	%l1, v0, %o2
+	umulxhi(%l1, v0, %o3)
+	add	up, 24, up
+	b	L(lo3)
+	 add	n, -3, n
 
-L(done):
-	retl
-	 addxc(	%g0, %o5, %o0)
+L(b2):	addcc	%g0, %g0, %o1
+	ldx	[up+0], %l1
+	ldx	[up+8], %l2
+	brgz	n, L(gt2)
+	 add	rp, -16, rp
+	mulx	%l1, v0, %o2
+	umulxhi(%l1, v0, %o3)
+	mulx	%l2, v0, %o4
+	umulxhi(%l2, v0, %o5)
+	b	L(wd2)
+	 nop
+L(gt2):	ldx	[up+16], %l3
+	mulx	%l1, v0, %o2
+	umulxhi(%l1, v0, %o3)
+	ldx	[up+24], %l0
+	mulx	%l2, v0, %o4
+	umulxhi(%l2, v0, %o5)
+	add	up, 16, up
+	b	L(lo2)
+	 add	n, -2, n
+
+L(b1):	addcc	%g0, %g0, %o3
+	ldx	[up+0], %l2
+	brgz	n, L(gt1)
+	nop
+	mulx	%l2, v0, %o4
+	stx	%o4, [rp+0]
+	umulxhi(%l2, v0, %i0)
+	ret
+	 restore
+L(gt1):	ldx	[up+8], %l3
+	ldx	[up+16], %l0
+	mulx	%l2, v0, %o4
+	umulxhi(%l2, v0, %o5)
+	ldx	[up+24], %l1
+	mulx	%l3, v0, %i4
+	umulxhi(%l3, v0, %i5)
+	add	rp, -24, rp
+	add	up, 8, up
+	b	L(lo1)
+	 add	n, -1, n
+
+L(b0):	addcc	%g0, %g0, %o5
+	ldx	[up+0], %l3
+	ldx	[up+8], %l0
+	ldx	[up+16], %l1
+	mulx	%l3, v0, %i4
+	umulxhi(%l3, v0, %i5)
+	ldx	[up+24], %l2
+	mulx	%l0, v0, %o0
+	umulxhi(%l0, v0, %o1)
+	b	L(lo0)
+	 nop
+
+	ALIGN(32)
+L(top):	ldx	[up+0], %l3	C 0
+	addxccc(%i4, %o5, %i4)	C 0
+	mulx	%l1, v0, %o2	C 1
+	stx	%i4, [rp+0]	C 1
+	umulxhi(%l1, v0, %o3)	C 2
+L(lo3):	ldx	[up+8], %l0	C 2
+	addxccc(%o0, %i5, %o0)	C 3
+	mulx	%l2, v0, %o4	C 3
+	stx	%o0, [rp+8]	C 4
+	umulxhi(%l2, v0, %o5)	C 4
+L(lo2):	ldx	[up+16], %l1	C 5
+	addxccc(%o2, %o1, %o2)	C 5
+	mulx	%l3, v0, %i4	C 6
+	stx	%o2, [rp+16]	C 6
+	umulxhi(%l3, v0, %i5)	C 7
+L(lo1):	ldx	[up+24], %l2	C 7
+	addxccc(%o4, %o3, %o4)	C 8
+	mulx	%l0, v0, %o0	C 8
+	stx	%o4, [rp+24]	C 9
+	umulxhi(%l0, v0, %o1)	C 9
+	add	rp, 32, rp	C 10
+L(lo0):	add	up, 32, up	C 10
+	brgz	n, L(top)	C 11
+	 add	n, -4, n	C 11
+
+L(end):	addxccc(%i4, %o5, %i4)
+	mulx	%l1, v0, %o2
+	stx	%i4, [rp+0]
+	umulxhi(%l1, v0, %o3)
+	addxccc(%o0, %i5, %o0)
+L(wd3):	mulx	%l2, v0, %o4
+	stx	%o0, [rp+8]
+	umulxhi(%l2, v0, %o5)
+	addxccc(%o2, %o1, %o2)
+L(wd2):	stx	%o2, [rp+16]
+	addxccc(%o4, %o3, %o4)
+	stx	%o4, [rp+24]
+	addxc(	%g0, %o5, %i0)
+	ret
+	 restore
 EPILOGUE()
