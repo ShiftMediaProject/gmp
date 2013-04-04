@@ -1,3 +1,10 @@
+2013-04-04  David S. Miller  <davem@davemloft.net>
+
+	* mpn/sparc64/ultrasparct3/add_n.asm: Rewrite.
+	* mpn/sparc64/ultrasparct3/sub_n.asm: Rewrite.
+
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: Align table.
+
 2013-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc32/sparc-defs.m4: Provide dummy lzcnt.
