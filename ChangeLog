@@ -1,5 +1,7 @@
 2013-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc32/sparc-defs.m4: Provide dummy lzcnt.
+
 	* tests/mpn/logic.c: Seed using RANDS, then use mpz_rrandomb.
 
 	* tests/mpn/t-div.c (random_word): Remove.  Let callers invoke urandom.
