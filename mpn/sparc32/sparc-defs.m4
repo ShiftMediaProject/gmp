@@ -43,7 +43,7 @@ ifdef(`FAKE_T3',`
   define(`addxccc',	``addxccc'	$1, $2, $3')
   define(`addxc',	``addxc'	$1, $2, $3')
   define(`umulxhi',	``umulxhi'	$1, $2, $3')
-  define(`lzcnt',	``lzcnt'	$1, $2')
+  define(`lzcnt',	``lzd'	$1, $2')
 ')
 
 divert
