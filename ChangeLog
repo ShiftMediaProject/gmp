@@ -1,5 +1,9 @@
 2013-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/logic.c: Seed using RANDS, then use mpz_rrandomb.
+
+	* tests/mpn/t-div.c (random_word): Remove.  Let callers invoke urandom.
+
 	* mpn/sparc64/ultrasparct3/mul_1.asm: Rewrite.
 
 	* mpn/sparc64/ultrasparct3/bdiv_dbm1c.asm: New file.
