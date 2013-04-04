@@ -20,8 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC 1&2:     2
-C UltraSPARC 3:	      2.5
+C UltraSPARC 1&2:	 2
+C UltraSPARC 3:		 2.5
+C UltraSPARC T1:	17
+C UltraSPARC T3:	 6
+C UltraSPARC T4/T5:	 2
 
 C INPUT PARAMETERS
 C rptr	%o0

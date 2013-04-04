@@ -22,8 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C                  cycles/limb
-C UltraSPARC T3:	 ?
-C UltraSPARC T4/T5:	4  hopefully
+C UltraSPARC T3:	25
+C UltraSPARC T4/T5:	 4
 
 C INPUT PARAMETERS
 define(`qp',  `%i0')

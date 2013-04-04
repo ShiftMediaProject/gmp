@@ -22,7 +22,7 @@ include(`../config.m4')
 
 C		    cycles/limb      cycles/limb
 C		       mul_2           addmul_2
-C UltraSPARC T3:	 ?		 ?
+C UltraSPARC T3:	22.5		 23.5
 C UltraSPARC T4:	 3.25		 3.75
 
 

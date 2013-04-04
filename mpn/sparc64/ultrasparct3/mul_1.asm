@@ -22,8 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	< 25.5  hopefully
-C UltraSPARC T4:	 3  hopefully
+C UltraSPARC T3:	23
+C UltraSPARC T4:	 3
 
 C If this does not run at 3 c/l, here is what to try:
 C  (1) Reorder the bookkeeping insn at loop end, putting the n update at cycle

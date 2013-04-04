@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C                  cycles/limb
 C UltraSPARC T3:	 ?
-C UltraSPARC T4/T5:	 ?
+C UltraSPARC T4/T5:	20-26  hits 20 early, then sharply drops
 
 C INPUT PARAMETERS
 define(`qp',  `%i0')

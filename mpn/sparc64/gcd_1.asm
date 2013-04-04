@@ -28,8 +28,8 @@ C		  cycles/bit (approx)
 C UltraSPARC 1&2:	 5.1
 C UltraSPARC 3:		 5.0
 C UltraSPARC T1:	11.4
-C UltraSPARC T3:	 ?
-C UltraSPARC T4:	 ?
+C UltraSPARC T3:	10
+C UltraSPARC T4:	 6
 C Numbers measured with: speed -CD -s32-64 -t32 mpn_gcd_1
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
