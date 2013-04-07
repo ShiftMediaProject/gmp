@@ -26,8 +26,16 @@ C StrongARM	 ?
 C XScale	 ?
 C Cortex-A7	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 9
-C Cortex-A15	 7
+C Cortex-A9	10
+C Cortex-A15	 9
+
+C Architecture requirements:
+C v5	-
+C v5t	-
+C v5te	-
+C v6	-
+C v6t2	-
+C v7a	-
 
 define(`up', `r0')
 define(`n',  `r1')
