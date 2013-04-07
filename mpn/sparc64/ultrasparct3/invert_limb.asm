@@ -29,8 +29,8 @@ C INPUT PARAMETERS
 define(`d',  `%o0')
 
 ASM_START()
-        REGISTER(%g2,#scratch)
-        REGISTER(%g3,#scratch)
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_invert_limb)
 	srlx	d, 55, %g1
 	add	%g1, %g1, %g1

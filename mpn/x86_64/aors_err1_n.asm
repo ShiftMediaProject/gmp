@@ -90,20 +90,20 @@ L(3mod4):
 	lea	-24(yp,n,8), yp
 	neg	n
 
-        shr     $1, %al            C restore carry
-        mov     (up,n,8), w0
-        mov     8(up,n,8), w1
-        ADCSBB  (vp,n,8), w0
+	shr	$1, %al		   C restore carry
+	mov	(up,n,8), w0
+	mov	8(up,n,8), w1
+	ADCSBB	(vp,n,8), w0
 	mov	w0, (rp,n,8)
 	cmovc	16(yp), el
-        ADCSBB  8(vp,n,8), w1
+	ADCSBB	8(vp,n,8), w1
 	mov	w1, 8(rp,n,8)
 	cmovc	8(yp), t0
-        mov     16(up,n,8), w0
-        ADCSBB  16(vp,n,8), w0
+	mov	16(up,n,8), w0
+	ADCSBB	16(vp,n,8), w0
 	mov	w0, 16(rp,n,8)
 	cmovc	(yp), t1
-	setc	%al                C save carry
+	setc	%al		   C save carry
 	add	t0, el
 	adc	$0, eh
 	add	t1, el
@@ -128,12 +128,12 @@ L(1mod4):
 	lea	-8(yp,n,8), yp
 	neg	n
 
-        shr     $1, %al            C restore carry
-        mov     (up,n,8), w0
-        ADCSBB  (vp,n,8), w0
-        mov     w0, (rp,n,8)
+	shr	$1, %al		   C restore carry
+	mov	(up,n,8), w0
+	ADCSBB	(vp,n,8), w0
+	mov	w0, (rp,n,8)
 	cmovc	(yp), el
-	setc	%al                C save carry
+	setc	%al		   C save carry
 
 	add	$1, n
 	jnz	L(loop)
@@ -147,16 +147,16 @@ L(2mod4):
 	lea	-16(yp,n,8), yp
 	neg	n
 
-        shr     $1, %al            C restore carry
-        mov     (up,n,8), w0
-        mov     8(up,n,8), w1
-        ADCSBB  (vp,n,8), w0
-        mov     w0, (rp,n,8)
+	shr	$1, %al		   C restore carry
+	mov	(up,n,8), w0
+	mov	8(up,n,8), w1
+	ADCSBB	(vp,n,8), w0
+	mov	w0, (rp,n,8)
 	cmovc	8(yp), el
-        ADCSBB  8(vp,n,8), w1
-        mov     w1, 8(rp,n,8)
+	ADCSBB	8(vp,n,8), w1
+	mov	w1, 8(rp,n,8)
 	cmovc	(yp), t0
-	setc	%al                C save carry
+	setc	%al		   C save carry
 	add	t0, el
 	adc	$0, eh
 
@@ -166,39 +166,39 @@ L(2mod4):
 
 	ALIGN(32)
 L(loop):
-        shr     $1, %al            C restore carry
-        mov     -8(yp), t0
-        mov     $0, R32(t3)
-        mov     (up,n,8), w0
-        mov     8(up,n,8), w1
-        ADCSBB  (vp,n,8), w0
-        cmovnc  t3, t0
-        ADCSBB  8(vp,n,8), w1
-        mov     -16(yp), t1
-        mov     w0, (rp,n,8)
-        mov     16(up,n,8), w0
-        mov     w1, 8(rp,n,8)
-        cmovnc  t3, t1
-        mov     -24(yp), t2
-        ADCSBB  16(vp,n,8), w0
-        cmovnc  t3, t2
-        mov     24(up,n,8), w1
-        ADCSBB  24(vp,n,8), w1
-        cmovc   -32(yp), t3
-        setc    %al                C save carry
-        add     t0, el
-        adc     $0, eh
-        add     t1, el
-        adc     $0, eh
-        add     t2, el
-        adc     $0, eh
-        mov     w0, 16(rp,n,8)
-        add     t3, el
-        lea     -32(yp), yp
-        adc     $0, eh
-        mov     w1, 24(rp,n,8)
-        add     $4, n
-        jnz     L(loop)
+	shr	$1, %al		   C restore carry
+	mov	-8(yp), t0
+	mov	$0, R32(t3)
+	mov	(up,n,8), w0
+	mov	8(up,n,8), w1
+	ADCSBB	(vp,n,8), w0
+	cmovnc	t3, t0
+	ADCSBB	8(vp,n,8), w1
+	mov	-16(yp), t1
+	mov	w0, (rp,n,8)
+	mov	16(up,n,8), w0
+	mov	w1, 8(rp,n,8)
+	cmovnc	t3, t1
+	mov	-24(yp), t2
+	ADCSBB	16(vp,n,8), w0
+	cmovnc	t3, t2
+	mov	24(up,n,8), w1
+	ADCSBB	24(vp,n,8), w1
+	cmovc	-32(yp), t3
+	setc	%al		   C save carry
+	add	t0, el
+	adc	$0, eh
+	add	t1, el
+	adc	$0, eh
+	add	t2, el
+	adc	$0, eh
+	mov	w0, 16(rp,n,8)
+	add	t3, el
+	lea	-32(yp), yp
+	adc	$0, eh
+	mov	w1, 24(rp,n,8)
+	add	$4, n
+	jnz	L(loop)
 
 L(end):
 	mov	el, (ep)

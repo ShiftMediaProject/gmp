@@ -34,8 +34,8 @@ define(`d',   `%i3')
 define(`dinv',`%o4')
 
 ASM_START()
-        REGISTER(%g2,#scratch)
-        REGISTER(%g3,#scratch)
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_divexact_1)
 	save	%sp, -176, %sp
 	cmp	%i2, 1

@@ -35,8 +35,8 @@ define(`dinv',`%o5')
 define(`a0',  `%g1')
 
 ASM_START()
-        REGISTER(%g2,#scratch)
-        REGISTER(%g3,#scratch)
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_modexact_1c_odd)
 	srlx	d, 1, %g1
 	and	%g1, 127, %g1

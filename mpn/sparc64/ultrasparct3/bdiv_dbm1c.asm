@@ -37,8 +37,8 @@ define(`phi0',`%l0')  define(`phi1',`%l1')
 define(`a0',  `%g1')  define(`a1',  `%g3')
 
 ASM_START()
-        REGISTER(%g2,#scratch)
-        REGISTER(%g3,#scratch)
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_bdiv_dbm1c)
 	save	%sp, -176, %sp
 
