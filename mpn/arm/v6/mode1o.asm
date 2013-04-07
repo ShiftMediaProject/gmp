@@ -1,4 +1,4 @@
-dnl  ARM mpn_modexact_1c_odd
+dnl  ARM v6 mpn_modexact_1c_odd
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -29,6 +29,14 @@ C Cortex-A8	 ?
 C Cortex-A9	 9
 C Cortex-A15	 7
 
+C Architecture requirements:
+C v5	-
+C v5t	-
+C v5te	smulbb
+C v6	umaal
+C v6t2	-
+C v7a	-
+
 define(`up', `r0')
 define(`n',  `r1')
 define(`d',  `r2')
@@ -43,8 +51,8 @@ PROLOGUE(mpn_modexact_1c_odd)
 
 	ldr	r6, [up], #4		C up[0]
 
-	ubfx	r12, d, #1, #7
-	ldrb	r4, [r4, r12]
+	and	r12, d, #254
+	ldrb	r4, [r4, r12, lsr #1]
 	smulbb	r12, r4, r4
 	mul	r12, d, r12
 	rsb	r12, r12, r4, asl #1
