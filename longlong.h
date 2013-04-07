@@ -1757,6 +1757,25 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	  : "rJ" (ah), "rI" (bh), "rJ" (al), "rI" (bl),			\
 	    "rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
 	   __CLOBBER_CC)
+#ifdef __sparc_vis3
+#undef add_ssaaaa
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ (								\
+       "addcc	%r4, %5, %1\n"						\
+      "	addxc	%r2, %r3, %0"						\
+	  : "=r" (sh), "=&r" (sl)					\
+	  : "rJ" (ah), "rJ" (bh), "%rJ" (al), "rI" (bl) __CLOBBER_CC)
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    (pl) = __m0 * __m1;							\
+    __asm__ ("umulxhi\t%2, %1, %0"					\
+	     : "=r" (ph)						\
+	     : "%r" (__m0), "r" (__m1));				\
+  } while (0)
+#define count_leading_zeros(count, x) \
+  __asm__ ("lzd\t%1,%0" : "=r" (count) : "r" (x))
+#endif
 #endif
 
 #if (defined (__vax) || defined (__vax__)) && W_TYPE_SIZE == 32
