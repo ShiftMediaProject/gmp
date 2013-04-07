@@ -1,3 +1,18 @@
+2013-04-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/mod_34lsub1.asm: New file.
+
+	* longlong.h (sparc64): Define umul_ppmm, add_ssaaaa, and
+	count_leading_zeros conditionally under the symbol__sparc_vis3.
+
+	* mpn/arm/dive_1.asm: New file.
+	* mpn/arm/v6/dive_1.asm: New file.
+
+	* mpn/arm/v6t2/mode1o.asm:  Make trivial change to avoid v6t2...
+	* mpn/arm/v6/mode1o.asm: ...instruction, move file accordingly.
+
+	* mpn/powerpc64/mode64/invert_limb.asm: Put all multiplies low-limb first.
+
 2013-04-04  David S. Miller  <davem@davemloft.net>
 
 	* mpn/sparc64/ultrasparct3/add_n.asm: Rewrite.
