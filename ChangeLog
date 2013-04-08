@@ -1,5 +1,7 @@
 2013-04-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Rework tmp file names, make sure to remove tmp files.
+
 	* mpn/arm/dive_1.asm: Rewrite count-trailing-zeros code, using private
 	table.
 
