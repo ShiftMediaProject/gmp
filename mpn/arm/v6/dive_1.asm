@@ -57,7 +57,7 @@ PROLOGUE(mpn_divexact_1)
 	and	r4, r4, d
 	clz	r4, r4
 	rsb	cnt, r4, #31		C count_trailing_zeros
-	lsr	d, d, cnt
+	mov	d, d, lsr cnt
 
 C binvert limb
 	LEA(	r4, binvert_limb_table)
@@ -97,13 +97,13 @@ L(end):	str	r5, [rp], #4
 L(unnorm):
 	push	{r10,r11}
 	rsb	tnc, cnt, #32
-	lsr	r11, r5, cnt
+	mov	r11, r5, lsr cnt
 	subs	n, n, #1
 	beq	L(edx)
 
 	ldr	r12, [up], #4
 	orr	r9, r11, r12, lsl tnc
-	lsr	r11, r12, cnt
+	mov	r11, r12, lsr cnt
 	mul	r5, r9, r4
 	subs	n, n, #1
 	beq	L(edu)
@@ -111,7 +111,7 @@ L(unnorm):
 	ALIGN(16)
 L(tpu):	ldr	r12, [up], #4
 	orr	r9, r11, r12, lsl tnc
-	lsr	r11, r12, cnt
+	mov	r11, r12, lsr cnt
 	mov	r12, #0
 	str	r5, [rp], #4
 	umaal	r12, cy, r5, d

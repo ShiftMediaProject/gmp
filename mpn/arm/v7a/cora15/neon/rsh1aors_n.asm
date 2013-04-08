@@ -100,7 +100,7 @@ L(b01):	ldr	 r12, [up], #4
 	vmov	 d4, r12, r12
 	bics	 n, n, #1
 	bne	 L(gt1)
-	lsr	 r5, r12, #1
+	mov	 r5, r12, lsr #1
 IFADD(`	adc	 r1, n, #0')
 IFSUB(`	adc	 r1, n, #1')
 	bfi	 r5, r1, #31, #1

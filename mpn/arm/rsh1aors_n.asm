@@ -27,7 +27,7 @@ C XScale	 ?
 C Cortex-A7	 ?
 C Cortex-A8	 ?
 C Cortex-A9	3.64-3.7
-C Cortex-A15	 ?
+C Cortex-A15	 2.5
 
 C TODO
 C  * Not optimised.
@@ -60,7 +60,7 @@ PROLOGUE(func)
 	ldr	r4, [up], #4
 	ldr	r8, [vp], #4
 	ADDSUB	r4, r4, r8
-	rrxs	r12, r7
+	movs	r12, r7, rrx
 	and	r11, r4, #1	C return value
 	subs	n, n, #4
 	blo	L(end)
@@ -71,10 +71,10 @@ L(top):	ldmia	up!, {r5,r6,r7}
 	ADDSUBC	r5, r5, r8
 	ADDSUBC	r6, r6, r9
 	ADDSUBC	r7, r7, r10
-	rrxs	r12, r7
-	rrxs	r6, r6
-	rrxs	r5, r5
-	rrxs	r4, r4
+	movs	r12, r7, rrx
+	movs	r6, r6, rrx
+	movs	r5, r5, rrx
+	movs	r4, r4, rrx
 	subs	n, n, #3
 	stmia	rp!, {r4,r5,r6}
 	mov	r4, r7
@@ -87,9 +87,9 @@ L(end):	cmn	n, #2
 	cmn	r12, r12
 	ADDSUBC	r5, r5, r8
 	ADDSUBC	r6, r6, r9
-	rrxs	r12, r6
-	rrxs	r5, r5
-	rrxs	r4, r4
+	movs	r12, r6, rrx
+	movs	r5, r5, rrx
+	movs	r4, r4, rrx
 	stmia	rp!, {r4,r5}
 	mov	r4, r6
 	b	L(e1)
@@ -99,13 +99,13 @@ L(e2):	bne	L(e1)
 	ldr	r8, [vp, #0]
 	cmn	r12, r12
 	ADDSUBC	r5, r5, r8
-	rrxs	r12, r5
-	rrxs	r4, r4
+	movs	r12, r5, rrx
+	movs	r4, r4, rrx
 	str	r4, [rp], #4
 	mov	r4, r5
 
 L(e1):	RSTCY(	r12, r1)
-	rrxs	r4, r4
+	mov	r4, r4, rrx
 	str	r4, [rp, #0]
 	mov	r0, r11
 	pop	{r4-r11}

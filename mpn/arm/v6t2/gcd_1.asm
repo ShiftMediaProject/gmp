@@ -61,7 +61,7 @@ PROLOGUE(mpn_gcd_1)
 
 	rbit	r12, v0
 	clz	r12, r12
-	lsr	v0, v0, r12
+	mov	v0, v0, lsr r12
 
 	mov	r7, v0
 
@@ -92,7 +92,7 @@ L(red1):cmp	r3, #0
 	ALIGN(8)
 L(top):	movcs	r3, r1		C if x-y < 0
 	movcs	r7, r0		C use x,y-x
-L(mid):	lsr	r3, r3, r12	C
+L(mid):	mov	r3, r3, lsr r12	C
 	mov	r0, r3		C
 	subs	r1, r7, r3	C
 	rsb	r3, r7, r3	C
@@ -100,6 +100,6 @@ L(mid):	lsr	r3, r3, r12	C
 	clz	r12, r12	C
 	bne	L(top)		C
 
-L(end):	lsl	r0, r7, r4
+L(end):	mov	r0, r7, lsl r4
 	pop	{r4, r7, pc}
 EPILOGUE()

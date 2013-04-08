@@ -202,7 +202,7 @@ ifdef(`OPERATION_lshift',`
 	ldr	r4, [ap, #-4]!
 	rsb	tnc, cnt, #32
 
-	lsl	r7, r4, cnt
+	mov	r7, r4, lsl cnt
 	tst	n, #1
 	beq	L(ev)			C n even
 
@@ -218,23 +218,23 @@ L(ev):	ldr	r6, [ap, #-4]!
 L(tp):	ldr	r8, [ap, #-4]!
 	orr	r7, r7, r6, lsr tnc
 	str	r7, [rp, #-4]!
-	lsl	r7, r6, cnt
+	mov	r7, r6, lsl cnt
 L(md):	ldr	r6, [ap, #-4]!
 	orr	r7, r7, r8, lsr tnc
 	str	r7, [rp, #-4]!
-	lsl	r7, r8, cnt
+	mov	r7, r8, lsl cnt
 
 L(ed):	orr	r7, r7, r6, lsr tnc
 	str	r7, [rp, #-4]!
-	lsl	r7, r6, cnt
+	mov	r7, r6, lsl cnt
 L(ed1):	str	r7, [rp, #-4]
-	lsr	r0, r4, tnc
+	mov	r0, r4, lsr tnc
 ')
 ifdef(`OPERATION_rshift',`
 	ldr	r4, [ap]
 	rsb	tnc, cnt, #32
 
-	lsr	r7, r4, cnt
+	mov	r7, r4, lsr cnt
 	tst	n, #1
 	beq	L(ev)			C n even
 
@@ -251,17 +251,17 @@ L(ev):	ldr	r6, [ap, #4]!
 L(tp):	ldr	r8, [ap, #4]!
 	orr	r7, r7, r6, lsl tnc
 	str	r7, [rp], #4
-	lsr	r7, r6, cnt
+	mov	r7, r6, lsr cnt
 L(md):	ldr	r6, [ap, #4]!
 	orr	r7, r7, r8, lsl tnc
 	str	r7, [rp], #4
-	lsr	r7, r8, cnt
+	mov	r7, r8, lsr cnt
 
 L(ed):	orr	r7, r7, r6, lsl tnc
 	str	r7, [rp], #4
-	lsr	r7, r6, cnt
+	mov	r7, r6, lsr cnt
 L(ed1):	str	r7, [rp], #4
-	lsl	r0, r4, tnc
+	mov	r0, r4, lsl tnc
 ')
 	pop	{r4, r6, r7, r8}
 	bx	r14

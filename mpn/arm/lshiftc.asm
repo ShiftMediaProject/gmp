@@ -44,7 +44,7 @@ PROLOGUE(mpn_lshiftc)
 	rsb	tnc, cnt, #32
 	mvn	r6, r4
 
-	lsl	r7, r6, cnt
+	mov	r7, r6, lsl cnt
 	tst	n, #1
 	beq	L(evn)			C n even
 
@@ -63,22 +63,22 @@ L(top):	ldr	r8, [up, #-4]!
 	orr	r7, r7, r6, lsr tnc
 	str	r7, [rp, #-4]!
 	mvn	r8, r8
-	lsl	r7, r6, cnt
+	mov	r7, r6, lsl cnt
 L(mid):	ldr	r6, [up, #-4]!
 	orr	r7, r7, r8, lsr tnc
 	str	r7, [rp, #-4]!
 	mvn	r6, r6
-	lsl	r7, r8, cnt
+	mov	r7, r8, lsl cnt
 	subs	n, n, #2
 	bgt	L(top)
 
 L(end):	orr	r7, r7, r6, lsr tnc
 	str	r7, [rp, #-4]!
-	lsl	r7, r6, cnt
+	mov	r7, r6, lsl cnt
 L(1):	mvn	r6, #0
 	orr	r7, r7, r6, lsr tnc
 	str	r7, [rp, #-4]
-	lsr	r0, r4, tnc
+	mov	r0, r4, lsr tnc
 	pop	{r4, r6, r7, r8}
 	bx	r14
 EPILOGUE()

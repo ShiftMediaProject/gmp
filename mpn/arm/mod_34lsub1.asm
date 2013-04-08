@@ -84,12 +84,12 @@ L(sum2):
 	add	r0, r0, r2, lsr #24
 	add	r0, r0, r7
 
-	lsl	r7, r3, #8
+	mov	r7, r3, lsl #8
 	bic	r1, r7, #0xff000000
 	add	r0, r0, r1
 	add	r0, r0, r3, lsr #16
 
-	lsl	r7, r12, #16
+	mov	r7, r12, lsl #16
 	bic	r1, r7, #0xff000000
 	add	r0, r0, r1
 	add	r0, r0, r12, lsr #8
