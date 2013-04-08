@@ -1,3 +1,8 @@
+2013-04-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/dive_1.asm: Rewrite count-trailing-zeros code, using private
+	table.
+
 2013-04-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparct3/mod_34lsub1.asm: New file.
