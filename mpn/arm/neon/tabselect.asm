@@ -31,7 +31,7 @@ C Cortex-A15	 0.95
 
 C This is a basic implementation using 64-bit Neon, with shallow software
 C pipelining and no unrolling.  It is probably close to optimal for A9, while
-C 128-bit Neon code runs significantly faster on A15.
+C 128-bit Neon code might run faster on A15.
 
 define(`rp',    `r0')
 define(`tabp',  `r1')
