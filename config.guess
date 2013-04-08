@@ -97,7 +97,7 @@ trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" 1 2 13 15 ;
  { tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir $tmp) && echo "Warning: creating insecure temp directory" >&2 ; } ||
  { echo "$me: cannot create a temporary directory in $TMPDIR" >&2 ; exit 1 ; } ;
 dummy=$tmp/dummy ;
-tmpfiles="$dummy.c $dummy.o $dummy.rel $dummy $dummy.core ${dummy}0.s ${dummy}1.s ${dummy}2.c" ;
+tmpfiles="$dummy.c $dummy.o $dummy.rel $dummy $dummy.core ${dummy}0.s" ;
 case $CC_FOR_BUILD,$HOST_CC,$CC in
  ,,)    echo "int x;" > $dummy.c ;
 	for c in cc gcc c89 c99 ; do
@@ -125,7 +125,7 @@ alpha-*-*)
   # configfsf.guess used to have a block of code not unlike this, but these
   # days does its thing with Linux kernel /proc/cpuinfo or OSF psrinfo.
   #
-  cat <<EOF >$dummy.s
+  cat <<EOF >${dummy}0.s
 	.data
 Lformat:
 	.byte 37,100,45,37,120,10,0	# "%d-%x\n"
@@ -148,7 +148,7 @@ main:
 	jsr \$26,exit
 	.end main
 EOF
-  $CC_FOR_BUILD $dummy.s -o $dummy 2>/dev/null
+  $CC_FOR_BUILD ${dummy}0.s -o $dummy 2>/dev/null
   if test "$?" = 0 ; then
     case `$dummy` in
     0-0)	exact_cpu=alpha      ;;
@@ -205,7 +205,7 @@ ia64*-*-*)
   # "unsigned long long" is always 64 bits, in fact on hpux in ilp32 mode
   # (which is the default there), it's the only 64-bit type.
   #
-  cat >${dummy}1.s <<EOF
+  cat >${dummy}0.s <<EOF
 	.text
 	.global	_getcpuid
 	.proc	_getcpuid
@@ -220,7 +220,7 @@ getcpuid:
 	br.ret.sptk.many rp ;;
 	.endp	getcpuid
 EOF
-  cat >${dummy}2.c <<EOF
+  cat >$dummy.c <<EOF
 #include <stdio.h>
 unsigned long long getcpuid ();
 int
@@ -238,7 +238,7 @@ main ()
   return 0;
 }
 EOF
-  if $CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy >/dev/null 2>&1; then
+  if $CC_FOR_BUILD ${dummy}0.s $dummy.c -o $dummy >/dev/null 2>&1; then
     exact_cpu=`$dummy`
   fi
   ;;
@@ -264,7 +264,7 @@ m68k-*-*)
     # .byte is used to avoid problems with assembler syntax variations.
     # For testing, provoke failures by adding "illegal" possibly as
     # ".byte 0x4A, 0xFC"
-    cat >$dummy.s <<EOF
+    cat >${dummy}0.s <<EOF
 	.text
 	.globl main
 	.globl _main
@@ -274,14 +274,14 @@ _main:
 	.byte	0x4e, 0x75
 EOF
 
-    if ($CC_FOR_BUILD $dummy.s -o $dummy && $dummy) >/dev/null 2>&1; then
+    if ($CC_FOR_BUILD ${dummy}0.s -o $dummy && $dummy) >/dev/null 2>&1; then
 
       # $SHELL -c is used to execute $dummy below, since ($dummy)
       # 2>/dev/null still prints the SIGILL message on some shells.
       #
         # Try: movel #0,%d0
         #      rtd #0
-        cat >$dummy.s <<EOF
+        cat >${dummy}0.s <<EOF
 	.text
 	.globl main
 	.globl _main
@@ -290,7 +290,7 @@ _main:
 	.byte	0x70, 0x00
 	.byte	0x4e, 0x74, 0x00, 0x00
 EOF
-        if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
+        if $CC_FOR_BUILD ${dummy}0.s -o $dummy >/dev/null 2>&1; then
           $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68000    # because rtd didn't work
@@ -304,7 +304,7 @@ EOF
         #      rts
         # Another possibility for identifying 68000 and 68010 is the
         # different value stored by "movem a0,(a0)+"
-        cat >$dummy.s <<EOF
+        cat >${dummy}0.s <<EOF
 	.text
 	.globl main
 	.globl _main
@@ -314,7 +314,7 @@ _main:
 	.byte	0x70, 0x00
 	.byte	0x4e, 0x75
 EOF
-        if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
+        if $CC_FOR_BUILD ${dummy}0.s -o $dummy >/dev/null 2>&1; then
           $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68010    # because trapf didn't work
@@ -326,7 +326,7 @@ EOF
         # Try: bfffo %d1{0:31},%d0
         #      movel #0,%d0
         #      rts
-        cat >$dummy.s <<EOF
+        cat >${dummy}0.s <<EOF
 	.text
 	.globl main
 	.globl _main
@@ -336,7 +336,7 @@ _main:
 	.byte	0x70, 0x00
 	.byte	0x4e, 0x75
 EOF
-        if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
+        if $CC_FOR_BUILD ${dummy}0.s -o $dummy >/dev/null 2>&1; then
           $SHELL -c $dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68360  # cpu32, because bfffo didn't work
@@ -607,11 +607,11 @@ sparc-*-* | sparc64-*-*)
   #
   if test -z "$exact_cpu"; then
     for i in sysinfo /usr/kvm/sysinfo; do
-      if $SHELL -c $i 2>/dev/null >dummy; then
-        if grep 'cpu0 is a "SuperSPARC' dummy >/dev/null; then
+      if $SHELL -c $i 2>/dev/null >$dummy; then
+        if grep 'cpu0 is a "SuperSPARC' $dummy >/dev/null; then
           exact_cpu=supersparc
           break
-        elif grep 'cpu0 is a .*TMS390Z5.' dummy >/dev/null; then
+        elif grep 'cpu0 is a .*TMS390Z5.' $dummy >/dev/null; then
           # TMS390Z50 and TMS390Z55
           exact_cpu=supersparc
           break
@@ -640,30 +640,30 @@ sparc-*-* | sparc64-*-*)
   #
   for prtconfopt in "" "-vp"; do
     if test -z "$exact_cpu"; then
-      if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >dummy; then
-	if grep 'SUNW,UltraSPARC-T3' dummy >/dev/null; then
+      if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >$dummy; then
+	if grep 'SUNW,UltraSPARC-T3' $dummy >/dev/null; then
 	  exact_cpu=ultrasparct3
-	elif grep 'SUNW,UltraSPARC-T2' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-T2' $dummy >/dev/null; then
 	  exact_cpu=ultrasparct2
-	elif grep 'SUNW,UltraSPARC-T1' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-T1' $dummy >/dev/null; then
 	  exact_cpu=ultrasparct1
-	elif grep 'SUNW,UltraSPARC-III' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-III' $dummy >/dev/null; then
 	  exact_cpu=ultrasparc3
-	elif grep 'SUNW,UltraSPARC-IIi' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-IIi' $dummy >/dev/null; then
 	  exact_cpu=ultrasparc2i
-	elif grep 'SUNW,UltraSPARC-II' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC-II' $dummy >/dev/null; then
 	  exact_cpu=ultrasparc2
-	elif grep 'SUNW,UltraSPARC' dummy >/dev/null; then
+	elif grep 'SUNW,UltraSPARC' $dummy >/dev/null; then
 	  exact_cpu=ultrasparc
-	elif grep 'Ross,RT62.' dummy >/dev/null; then
+	elif grep 'Ross,RT62.' $dummy >/dev/null; then
 	  # RT620, RT625, RT626 hypersparcs (v8).
 	  exact_cpu=sparcv8
-	elif grep 'TI,TMS390Z5.' dummy >/dev/null; then
+	elif grep 'TI,TMS390Z5.' $dummy >/dev/null; then
 	  # TMS390Z50 and TMS390Z55
 	  exact_cpu=supersparc
-	elif grep 'TI,TMS390S10' dummy >/dev/null; then
+	elif grep 'TI,TMS390S10' $dummy >/dev/null; then
 	  exact_cpu=microsparc
-	elif grep 'FMI,MB86904' dummy >/dev/null; then
+	elif grep 'FMI,MB86904' $dummy >/dev/null; then
 	  # actually MicroSPARC-II
 	  exact_cpu=microsparc
 	fi
@@ -678,30 +678,30 @@ sparc-*-* | sparc64-*-*)
   #     hw.model: Sun Microsystems UltraSparc-IIi
   #
   if test -z "$exact_cpu"; then
-    if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >dummy; then
-      if grep -i 'UltraSparc-T3' dummy >/dev/null; then
+    if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >$dummy; then
+      if grep -i 'UltraSparc-T3' $dummy >/dev/null; then
         exact_cpu=ultrasparct3
-      elif grep -i 'UltraSparc-T2' dummy >/dev/null; then
+      elif grep -i 'UltraSparc-T2' $dummy >/dev/null; then
         exact_cpu=ultrasparct2
-      elif grep -i 'UltraSparc-T1' dummy >/dev/null; then
+      elif grep -i 'UltraSparc-T1' $dummy >/dev/null; then
         exact_cpu=ultrasparct1
-      elif grep -i 'UltraSparc-III' dummy >/dev/null; then
+      elif grep -i 'UltraSparc-III' $dummy >/dev/null; then
         exact_cpu=ultrasparc3
-      elif grep -i 'UltraSparc-IIi' dummy >/dev/null; then
+      elif grep -i 'UltraSparc-IIi' $dummy >/dev/null; then
         exact_cpu=ultrasparc2i
-      elif grep -i 'UltraSparc-II' dummy >/dev/null; then
+      elif grep -i 'UltraSparc-II' $dummy >/dev/null; then
         exact_cpu=ultrasparc2
-      elif grep -i 'UltraSparc' dummy >/dev/null; then
+      elif grep -i 'UltraSparc' $dummy >/dev/null; then
         exact_cpu=ultrasparc
-      elif grep 'TMS390Z5.' dummy >/dev/null; then
+      elif grep 'TMS390Z5.' $dummy >/dev/null; then
         # TMS390Z50 and TMS390Z55
         exact_cpu=supersparc
-      elif grep 'TMS390S10' dummy >/dev/null; then
+      elif grep 'TMS390S10' $dummy >/dev/null; then
         exact_cpu=microsparc
-      elif grep 'MB86904' dummy >/dev/null; then
+      elif grep 'MB86904' $dummy >/dev/null; then
         # actually MicroSPARC-II
         exact_cpu=microsparc
-      elif grep 'MB86907' dummy >/dev/null; then
+      elif grep 'MB86907' $dummy >/dev/null; then
         exact_cpu=turbosparc
       fi
     fi
@@ -726,41 +726,7 @@ sparc-*-* | sparc64-*-*)
 i?86-*-* | amd64-*-* | x86_64-*-*)
   eval $set_cc_for_build
 
-  cat <<EOF >${dummy}0.s
-	.globl cpuid
-	.globl _cpuid
-cpuid:
-_cpuid:
-	pushl %esi
-	pushl %ebx
-	movl 24(%esp),%eax
-	.byte 0x0f
-	.byte 0xa2
-	movl 20(%esp),%esi
-	movl %ebx,(%esi)
-	movl %edx,4(%esi)
-	movl %ecx,8(%esi)
-	popl %ebx
-	popl %esi
-	ret
-EOF
-  cat <<EOF >${dummy}1.s
-	.globl cpuid
-	.globl _cpuid
-cpuid:
-_cpuid:
-	push	%rbx
-	mov	%rdx, %r8
-	mov	%ecx, %eax
-	.byte	0x0f
-	.byte	0xa2
-	mov	%ebx, (%r8)
-	mov	%edx, 4(%r8)
-	mov	%ecx, 8(%r8)
-	pop	%rbx
-	ret
-EOF
-  cat <<EOF >${dummy}2.c
+  cat <<EOF >$dummy.c
 #include <string.h>
 #include <stdio.h>
 #define CPUID(a,b) cpuid(b,a,a,b)
@@ -898,7 +864,24 @@ main ()
 }
 EOF
 
-  if ($CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy) >/dev/null 2>&1; then
+  cat <<EOF >${dummy}0.s
+	.globl cpuid
+	.globl _cpuid
+cpuid:
+_cpuid:
+	push	%rbx
+	mov	%rdx, %r8
+	mov	%ecx, %eax
+	.byte	0x0f
+	.byte	0xa2
+	mov	%ebx, (%r8)
+	mov	%edx, 4(%r8)
+	mov	%ecx, 8(%r8)
+	pop	%rbx
+	ret
+EOF
+
+  if ($CC_FOR_BUILD ${dummy}0.s $dummy.c -o $dummy) >/dev/null 2>&1; then
     # On 80386 and early 80486 cpuid is not available and will result in a
     # SIGILL message, hence 2>/dev/null.
     #
@@ -912,8 +895,27 @@ EOF
     fi
   fi
 
+  cat <<EOF >${dummy}0.s
+	.globl cpuid
+	.globl _cpuid
+cpuid:
+_cpuid:
+	pushl %esi
+	pushl %ebx
+	movl 24(%esp),%eax
+	.byte 0x0f
+	.byte 0xa2
+	movl 20(%esp),%esi
+	movl %ebx,(%esi)
+	movl %edx,4(%esi)
+	movl %ecx,8(%esi)
+	popl %ebx
+	popl %esi
+	ret
+EOF
+
   if test -z "$exact_cpu"; then
-  if ($CC_FOR_BUILD ${dummy}0.s ${dummy}2.c -o $dummy) >/dev/null 2>&1; then
+  if ($CC_FOR_BUILD ${dummy}0.s $dummy.c -o $dummy) >/dev/null 2>&1; then
     # On 80386 and early 80486 cpuid is not available and will result in a
     # SIGILL message, hence 2>/dev/null.
     #
