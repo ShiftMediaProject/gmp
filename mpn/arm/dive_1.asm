@@ -55,20 +55,15 @@ PROLOGUE(mpn_divexact_1)
 	bne	L(inv)
 
 C count trailing zeros
+	movs	r4, d, lsl #16
+	moveq	d, d, lsr #16
+	moveq	cnt, #16
 	tst	d, #0xff
 	moveq	d, d, lsr #8
 	addeq	cnt, cnt, #8
-	tst	d, #0xff
-	moveq	d, d, lsr #8
-	addeq	cnt, cnt, #8
-	tst	d, #0xff
-	moveq	d, d, lsr #8
-	addeq	cnt, cnt, #8
-	rsb	r5, d, #0
-	and	r5, r5, d
-	LEA(	r4, __clz_tab)
+	LEA(	r4, ctz_tab)
+	and	r5, d, #0xff
 	ldrb	r4, [r4, r5]
-	sub	r4, r4, #2
 	mov	d, d, lsr r4
 	add	cnt, cnt, r4
 
@@ -132,3 +127,14 @@ L(edu):	sbc	cy, r5, cy
 	pop	{r4-r9}
 	bx	r14
 EPILOGUE()
+
+	.section .rodata
+ctz_tab:
+	.byte	8,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	5,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	6,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	5,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	7,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	5,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	6,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
+	.byte	5,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0
