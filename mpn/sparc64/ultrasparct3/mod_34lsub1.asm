@@ -21,8 +21,8 @@ include(`../config.m4')
 
 C		    cycles/limb
 C UltraSPARC T1:	 -
-C UltraSPARC T3:	 ?
-C UltraSPARC T4:	 1.67  hopefully
+C UltraSPARC T3:	 5
+C UltraSPARC T4:	 1.57
 
 C This is based on the powerpc64/mode64 code.
 
