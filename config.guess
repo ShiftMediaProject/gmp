@@ -600,6 +600,9 @@ sparc-*-* | sparc64-*-*)
     fi
   fi
 
+  # Need to invoke this for setup of $dummy
+  eval $set_cc_for_build
+
   # Grep the output from sysinfo on SunOS.
   # sysinfo has been seen living in /bin or in /usr/kvm
   #	cpu0 is a "SuperSPARC Model 41 SPARCmodule" CPU
