@@ -1,3 +1,7 @@
+2013-04-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess (sparc*): Invoke set_cc_for_build to get $dummy.
+
 2013-04-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Rework tmp file names, make sure to remove tmp files.
