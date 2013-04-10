@@ -1,3 +1,21 @@
+2013-04-10  David S. Miller  <davem@davemloft.net>
+
+	* acinclude.m4 (GMP_ASM_SPARC_GOTDATA,
+	GMP_ASM_SPARC_SHARED_THUNKS): New feature tests.
+	* configure.ac: Call GMP_ASM_SPARC_GOTDATA and
+	GMP_ASM_SPARC_SHARED_THUNKS on sparc.
+	* mpn/sparc32/sparc-defs.m4 (LEA, LEA_LEAF, LEA_THUNK): New macros.
+	* mpn/sparc32/udiv.asm: Convert over to LEA, LEA_LEAF, and LEA_THUNK.
+	* mpn/sparc32/v8/addmul_1.asm: Likewise.
+	* mpn/sparc32/v8/mul_1.asm: Likewise.
+	* mpn/sparc32/v8/supersparc/udiv.asm: Likewise.
+	* mpn/sparc32/v8/udiv.asm: Likewise.
+	* mpn/sparc64/gcd_1.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/dive_1.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/mode1o.asm: Likewise.
+	* mpn/sparc32/v9/sqr_diagonal.asm: Likewise and use INT32.
+
 2013-04-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess (sparc*): Invoke set_cc_for_build to get $dummy.

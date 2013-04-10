@@ -35,6 +35,100 @@ m4_assert_defined(`HAVE_REGISTER')
 `ifelse(HAVE_REGISTER,yes,
 `.register `$1',`$2'')')
 
+dnl  Usage: LEA(symbol,reg,pic_reg)
+dnl
+dnl  Use whatever code sequence is appropriate to load "symbol" into register
+dnl  "reg", potentially using register "pic_reg" to perform the calculations.
+dnl  This takes into consideration things like PIC, whether we are generating
+dnl  64-bit code, etc.
+
+define(LEA,
+m4_assert_numargs(3)
+m4_assert_defined(`HAVE_GOTDATA')
+`ifdef(`PIC',`
+ifelse(HAVE_GOTDATA,yes,`
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
+	call	__sparc_get_pc_thunk.`$3'
+	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
+99:	sethi	%gdop_hix22(`$1'), %`$2'
+	xor	%`$2', %gdop_lox10(`$1'), %`$2'
+ifdef(`HAVE_ABI_64',`
+	ldx	[%`$3' + %`$2'], %`$2', %gdop(`$1')',`
+	ld	[%`$3' + %`$2'], %`$2', %gdop(`$1')')',`
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
+	call	__sparc_get_pc_thunk.`$3'
+	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
+99:	sethi	%hi(`$1'), %`$2'
+	or	%`$2', %lo(`$1'), %`$2'
+ifdef(`HAVE_ABI_64',`
+	ldx	[%`$3' + %`$2'], %`$2'',`
+	ld	[%`$3' + %`$2'], %`$2'')')',`
+ifdef(`HAVE_ABI_64',`
+	setx	`$1', %`$3', %`$2'',`
+	set	`$1', %`$2'')')')
+
+dnl  Usage: LEA_LEAF(symbol,reg,pic_reg)
+dnl
+dnl  Exactly the same as LEA except that it works in a leaf function.
+dnl  Specifically, when generating PIC code, it makes sure to preserve the %o7
+dnl  register.
+
+define(LEA_LEAF,
+m4_assert_numargs(3)
+m4_assert_defined(`HAVE_GOTDATA')
+`ifdef(`PIC',`
+ifelse(HAVE_GOTDATA,yes,`
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
+	mov	%o7, %`$2'
+	call	__sparc_get_pc_thunk.`$3'
+	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
+99:	mov	%`$2', %o7
+	sethi	%gdop_hix22(`$1'), %`$2'
+	xor	%`$2', %gdop_lox10(`$1'), %`$2'
+ifdef(`HAVE_ABI_64',`
+	ldx	[%`$3' + %`$2'], %`$2', %gdop(`$1')',`
+	ld	[%`$3' + %`$2'], %`$2', %gdop(`$1')')',`
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
+	mov	%o7, %`$2'
+	call	__sparc_get_pc_thunk.`$3'
+	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
+99:	mov	%`$2', %o7
+	sethi	%hi(`$1'), %`$2'
+	or	%`$2', %lo(`$1'), %`$2'
+ifdef(`HAVE_ABI_64',`
+	ldx	[%`$3' + %`$2'], %`$2'',`
+	ld	[%`$3' + %`$2'], %`$2'')')',`
+ifdef(`HAVE_ABI_64',`
+	setx	`$1', %`$3', %`$2'',`
+	set	`$1', %`$2'')')')
+
+dnl  Usage: LEA_THUNK(pic_reg)
+dnl
+dnl  Files that make use of LEA and LEA_LEAF must emit a PIC thunk using
+dnl  LEA_THUNK.  The "pic_reg" argument given must exactly the same as the
+dnl  one given to the LEA LEA_LEAF invocations.
+dnl
+dnl  If multiple PIC registers are used in invocations of LEA and LEA_LEAF then
+dnl  multiple thunks needs to be emitted, one for each PIC register used.
+
+define(LEA_THUNK,
+m4_assert_numargs(1)
+m4_assert_defined(`HAVE_SHARED_THUNKS')
+`ifdef(`PIC',`
+ifelse(HAVE_SHARED_THUNKS,yes,`
+	.section	.text.__sparc_get_pc_thunk.`$1',"axG",@progbits,__sparc_get_pc_thunk.`$1',comdat
+	.weak	__sparc_get_pc_thunk.`$1'
+	.hidden	__sparc_get_pc_thunk.`$1'
+	.type	__sparc_get_pc_thunk.`$1', #function
+__sparc_get_pc_thunk.`$1':
+	jmp	%o7+8
+	 add	%o7, %`$1', %`$1'
+	TEXT
+',`
+	TEXT
+__sparc_get_pc_thunk.`$1':
+	retl
+	 add	%o7, %`$1', %`$1'')')')
 
 C Testing mechanism for running newer code on older processors
 ifdef(`FAKE_T3',`

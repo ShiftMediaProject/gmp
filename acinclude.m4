@@ -3090,6 +3090,57 @@ GMP_DEFINE_RAW(["define(<HAVE_REGISTER>,<$gmp_cv_asm_sparc_register>)"])
 ])
 
 
+dnl  GMP_ASM_SPARC_GOTDATA
+dnl  ----------------------
+dnl  Determine whether the assembler accepts gotdata relocations.
+dnl
+dnl  See also mpn/sparc32/sparc-defs.m4 which uses the result of this test.
+
+AC_DEFUN([GMP_ASM_SPARC_GOTDATA],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([if the assembler accepts gotdata relocations],
+               gmp_cv_asm_sparc_gotdata,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	.text
+	sethi	%gdop_hix22(symbol), %g1
+	or	%g1, %gdop_lox10(symbol), %g1
+],
+[gmp_cv_asm_sparc_gotdata=yes],
+[gmp_cv_asm_sparc_gotdata=no])])
+
+GMP_DEFINE_RAW(["define(<HAVE_GOTDATA>,<$gmp_cv_asm_sparc_gotdata>)"])
+])
+
+
+dnl  GMP_ASM_SPARC_SHARED_THUNKS
+dnl  ----------------------
+dnl  Determine whether the assembler supports all of the features
+dnl  necessary in order to emit shared PIC thunks on sparc.
+dnl
+dnl  See also mpn/sparc32/sparc-defs.m4 which uses the result of this test.
+
+AC_DEFUN([GMP_ASM_SPARC_SHARED_THUNKS],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([if the assembler can support shared PIC thunks],
+               gmp_cv_asm_sparc_shared_thunks,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	.section	.text.__sparc_get_pc_thunk.l7,"axG",@progbits,__sparc_get_pc_thunk.l7,comdat
+	.weak	__sparc_get_pc_thunk.l7
+	.hidden	__sparc_get_pc_thunk.l7
+	.type	__sparc_get_pc_thunk.l7, #function
+__sparc_get_pc_thunk.l7:
+	jmp	%o7+8
+	 add	%o7, %l7, %l7
+],
+[gmp_cv_asm_sparc_shared_thunks=yes],
+[gmp_cv_asm_sparc_shared_thunks=no])])
+
+GMP_DEFINE_RAW(["define(<HAVE_SHARED_THUNKS>,<$gmp_cv_asm_sparc_shared_thunks>)"])
+])
+
+
 dnl  GMP_C_ATTRIBUTE_CONST
 dnl  ---------------------
 

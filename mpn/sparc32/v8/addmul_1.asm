@@ -28,21 +28,15 @@ C size		o2
 C s2_limb	o3
 
 ASM_START()
+	LEA_THUNK(g4)
+	TEXT
 PROLOGUE(mpn_addmul_1)
 	orcc	%g0,%g0,%g2
 	ld	[%o1+0],%o4	C 1
 
 	sll	%o2,4,%g1
 	and	%g1,(4-1)<<4,%g1
-ifdef(`PIC',
-`	mov	%o7,%g4		C Save return address register
-0:	call	1f
-	add	%o7,L(1)-0b,%g3
-1:	mov	%g4,%o7		C Restore return address register
-',
-`	sethi	%hi(L(1)),%g3
-	or	%g3,%lo(L(1)),%g3
-')
+	LEA_LEAF(L(1),g3,g4)
 	jmp	%g3+%g1
 	nop
 L(1):

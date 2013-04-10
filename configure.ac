@@ -3483,12 +3483,14 @@ if test "$gmp_asm_syntax_testing" != no; then
     power*-*-aix*)
       GMP_INCLUDE_MPN(powerpc32/aix.m4)
       ;;
-    sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-*)
+    *sparc*-*-*)
       case $ABI in
         64)
           GMP_ASM_SPARC_REGISTER
           ;;
       esac
+      GMP_ASM_SPARC_GOTDATA
+      GMP_ASM_SPARC_SHARED_THUNKS
       ;;
     X86_PATTERN | X86_64_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
