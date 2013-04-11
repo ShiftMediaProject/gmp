@@ -1,3 +1,8 @@
+2013-04-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/arm/v6/submul_1.asm: New file, using the corresponding
+	addmul_1 loop + complement trick.
+
 2013-04-10  David S. Miller  <davem@davemloft.net>
 
 	* acinclude.m4 (GMP_ASM_SPARC_GOTDATA,
