@@ -23,6 +23,8 @@
 
 2013-04-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (sparc64): Test __VIS__ instead of __sparc_vis3.
+
 	* config.guess (sparc*): Invoke set_cc_for_build to get $dummy.
 
 2013-04-08  Torbjorn Granlund  <tege@gmplib.org>
@@ -37,7 +39,7 @@
 	* mpn/sparc64/ultrasparct3/mod_34lsub1.asm: New file.
 
 	* longlong.h (sparc64): Define umul_ppmm, add_ssaaaa, and
-	count_leading_zeros conditionally under the symbol__sparc_vis3.
+	count_leading_zeros conditionally under the symbol __sparc_vis3.
 
 	* mpn/arm/dive_1.asm: New file.
 	* mpn/arm/v6/dive_1.asm: New file.

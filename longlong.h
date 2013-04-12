@@ -1757,7 +1757,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	  : "rJ" (ah), "rI" (bh), "rJ" (al), "rI" (bl),			\
 	    "rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
 	   __CLOBBER_CC)
-#ifdef __sparc_vis3
+#if __VIS__ >= 0x300
 #undef add_ssaaaa
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ (								\
