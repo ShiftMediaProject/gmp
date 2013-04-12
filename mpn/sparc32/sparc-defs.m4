@@ -50,7 +50,7 @@ ifelse(HAVE_GOTDATA,yes,`
 	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
 	call	__sparc_get_pc_thunk.`$3'
 	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
-99:	sethi	%gdop_hix22(`$1'), %`$2'
+	sethi	%gdop_hix22(`$1'), %`$2'
 	xor	%`$2', %gdop_lox10(`$1'), %`$2'
 ifdef(`HAVE_ABI_64',`
 	ldx	[%`$3' + %`$2'], %`$2', %gdop(`$1')',`
@@ -58,7 +58,7 @@ ifdef(`HAVE_ABI_64',`
 	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %`$3'
 	call	__sparc_get_pc_thunk.`$3'
 	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
-99:	sethi	%hi(`$1'), %`$2'
+	sethi	%hi(`$1'), %`$2'
 	or	%`$2', %lo(`$1'), %`$2'
 ifdef(`HAVE_ABI_64',`
 	ldx	[%`$3' + %`$2'], %`$2'',`
@@ -82,7 +82,7 @@ ifelse(HAVE_GOTDATA,yes,`
 	mov	%o7, %`$2'
 	call	__sparc_get_pc_thunk.`$3'
 	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
-99:	mov	%`$2', %o7
+	mov	%`$2', %o7
 	sethi	%gdop_hix22(`$1'), %`$2'
 	xor	%`$2', %gdop_lox10(`$1'), %`$2'
 ifdef(`HAVE_ABI_64',`
@@ -92,7 +92,7 @@ ifdef(`HAVE_ABI_64',`
 	mov	%o7, %`$2'
 	call	__sparc_get_pc_thunk.`$3'
 	 or	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+4), %`$3'
-99:	mov	%`$2', %o7
+	mov	%`$2', %o7
 	sethi	%hi(`$1'), %`$2'
 	or	%`$2', %lo(`$1'), %`$2'
 ifdef(`HAVE_ABI_64',`

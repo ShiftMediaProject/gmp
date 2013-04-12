@@ -1,3 +1,8 @@
+2013-04-11  David S. Miller  <davem@davemloft.net>
+
+	* mpn/sparc32/sparc-defs.m4 (LEA): Remove unused local label.
+	(LEA_LEAF): Likewise.
+
 2013-04-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/arm/v6/submul_1.asm: New file, using the corresponding
