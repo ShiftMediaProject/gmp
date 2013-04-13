@@ -1,3 +1,14 @@
+2013-04-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/tabselect.asm: New file.
+	* mpn/arm/neon/tabselect.asm: Rewrite.
+	* mpn/arm/tabselect.asm: Rewrite.
+	* mpn/powerpc64/tabselect.asm: Rewrite.
+	* mpn/x86_64/tabselect.asm: Rewrite.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_TABSELECT): Implement special code,
+	making .r argument be table width.
+
 2013-04-11  David S. Miller  <davem@davemloft.net>
 
 	* mpn/sparc32/sparc-defs.m4 (LEA): Remove unused local label.
