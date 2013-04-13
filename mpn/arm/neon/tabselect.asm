@@ -1,8 +1,8 @@
-dnl  ARM Neon mpn_tabselect
+dnl  ARM Neon mpn_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2013 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,82 +21,109 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+
 C	     cycles/limb
 C StrongARM	 -
 C XScale	 -
 C Cortex-A7	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 2.25
-C Cortex-A15	 0.95
+C Cortex-A9	 1.15
+C Cortex-A15	 0.65
 
-C This is a basic implementation using 64-bit Neon, with shallow software
-C pipelining and no unrolling.  It is probably close to optimal for A9, while
-C 128-bit Neon code might run faster on A15.
+define(`rp',     `r0')
+define(`tp',     `r1')
+define(`n',      `r2')
+define(`nents',  `r3')
+C define(`which',  on stack)
 
-define(`rp',    `r0')
-define(`tabp',  `r1')
-define(`n',     `r2')
-define(`nents', `r3')
-C      which  on stack
+define(`i',      `r4')
+define(`j',      `r5')
 
-define(`mask',  `r6')
-define(`maskv', `d6')
-C
+define(`maskq',  `q10')
+define(`maskd',  `d20')
+
 ASM_START()
 PROLOGUE(mpn_tabselect)
-	push	{r4-r7}
-	ldr	r7, [sp, #16]
-	sub	r7, r7, nents
-L(outer):
-	add	mask, r7, nents
-	subs	mask, mask, #1
-	sbc	mask, mask, mask
-	mov	r4, rp
-	mov	r5, rp
-	mov	r12, n
+	push	{r4-r5}
 
-	vdup.32	maskv, mask
+	add	  r4, sp, #8
+	vld1.32	  {d30[], d31[]}, [r4]	C 4 `which' copies
+	vmov.i32  q14, #1		C 4 copies of 1
 
-	tst	rp, #4			C Is rp 64-bit aligned?
-	beq	L(ali)			C Yes, skip!
-	vld1.32	{d4[0]}, [tabp]!	C Else perform one 32-bit...
-	vld1.32	{d0[0]}, [r4]!		C ...operation in...
-	vbit	d0, d4, maskv		C ...order to make...
-	subs	r12, r12, #1		C ...aligned operations...
-	vst1.32	{d0[0]}, [r5]!		C ...on rp[] in loop.
+	subs	j, n, #8
+	bmi	L(outer_end)
 
-L(ali):	subs	r12, r12, #4
-	blt	L(ed1)
-	subs	r12, r12, #4
-	vld1.32	{d4,d5}, [tabp]!
-	b	L(mid)
+L(outer_top):
+	mov	  i, nents
+	mov	  r12, tp		C preserve tp
+	veor	  q13, q13, q13		C 4 counter copies
+	veor	  q2, q2, q2
+	veor	  q3, q3, q3
+	ALIGN(16)
+L(top):	vceq.i32  maskq, q13, q15	C compare idx copies to `which' copies
+	vld1.32	  {q0,q1}, [tp]
+	vadd.i32  q13, q13, q14
+	vbit	  q2, q0, maskq
+	vbit	  q3, q1, maskq
+	add	  tp, tp, n, lsl #2
+	subs	  i, i, #1
+	bne	  L(top)
+	vst1.32	  {q2,q3}, [rp]!
+	add	  tp, r12, #32		C restore tp, point to next slice
+	subs	  j, j, #8
+	bpl	  L(outer_top)
+L(outer_end):
 
-L(top):	subs	r12, r12, #4
-	vld1.32	{d4,d5}, [tabp]!
-	vst1.32	{d0,d1}, [r5:64]!
-L(mid):	vld1.32	{d0,d1}, [r4:64]!
-	vbit	d0, d4, maskv
-	vbit	d1, d5, maskv
-	bge	L(top)
+	tst	  n, #4
+	beq	  L(b0xx)
+L(b1xx):mov	  i, nents
+	mov	  r12, tp
+	veor	  q13, q13, q13
+	veor	  q2, q2, q2
+	ALIGN(16)
+L(tp4):	vceq.i32  maskq, q13, q15
+	vld1.32	  {q0}, [tp]
+	vadd.i32  q13, q13, q14
+	vbit	  q2, q0, maskq
+	add	  tp, tp, n, lsl #2
+	subs	  i, i, #1
+	bne	  L(tp4)
+	vst1.32	  {q2}, [rp]!
+	add	  tp, r12, #16
 
-L(end):	vst1.32	{d0,d1}, [r5:64]!
+L(b0xx):tst	  n, #2
+	beq	  L(b00x)
+L(b01x):mov	  i, nents
+	mov	  r12, tp
+	veor	  d26, d26, d26
+	veor	  d4, d4, d4
+	ALIGN(16)
+L(tp2):	vceq.i32  maskd, d26, d30
+	vld1.32	  {d0}, [tp]
+	vadd.i32  d26, d26, d28
+	vbit	  d4, d0, maskd
+	add	  tp, tp, n, lsl #2
+	subs	  i, i, #1
+	bne	  L(tp2)
+	vst1.32	  {d4}, [rp]!
+	add	  tp, r12, #8
 
-L(ed1):	tst	r12, #2			C 2 or 3 more limbs to go?
-	beq	L(ed2)			C No, skip!
-	vld1.32	{d4}, [tabp]!		C Handle 2 limbs
-	vld1.32	{d0}, [r4:64]!
-	vbit	d0, d4, maskv
-	vst1.32	{d0}, [r5:64]!
+L(b00x):tst	  n, #1
+	beq	  L(b000)
+L(b001):mov	  i, nents
+	mov	  r12, tp
+	veor	  d26, d26, d26
+	veor	  d4, d4, d4
+	ALIGN(16)
+L(tp1):	vceq.i32  maskd, d26, d30
+	vld1.32	  {d0[0]}, [tp]
+	vadd.i32  d26, d26, d28
+	vbit	  d4, d0, maskd
+	add	  tp, tp, n, lsl #2
+	subs	  i, i, #1
+	bne	  L(tp1)
+	vst1.32	  {d4[0]}, [rp]!
 
-L(ed2):	tst	r12, #1			C One more limb to go?
-	beq	L(ed3)			C No, skip!
-	vld1.32	{d4[0]}, [tabp]!	C Handle last limb
-	vld1.32	{d0[0]}, [r4]
-	vbit	d0, d4, maskv
-	vst1.32	{d0[0]}, [r5]
-
-L(ed3):	subs	nents, nents, #1
-	bne	L(outer)
-	pop	{r4-r7}
-	bx	lr
+L(b000):pop	{r4-r5}
+	bx	r14
 EPILOGUE()
