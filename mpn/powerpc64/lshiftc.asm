@@ -30,6 +30,7 @@ C TODO
 C  * Try to reduce the number of needed live registers
 C  * Micro-optimise header code
 C  * Keep in synch with lshift.asm and rshift.asm
+C  * Could the long-scheduled std insns be less scheduled?
 
 C INPUT PARAMETERS
 define(`rp',  `r3')
