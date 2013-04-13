@@ -1,5 +1,12 @@
 2013-04-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/bd1/tabselect.asm: New file.
+	* mpn/x86_64/coreisbr/tabselect.asm: New file.
+	* mpn/x86_64/k10/tabselect.asm: New file.
+	* mpn/x86_64/coreinhm/tabselect.asm: New file.
+	* mpn/x86_64/core2/tabselect.asm: New file.
+	* mpn/x86_64/pentium4/tabselect.asm: New file.
+
 	* mpn/x86_64/fastsse/tabselect.asm: New file.
 	* mpn/arm/neon/tabselect.asm: Rewrite.
 	* mpn/arm/tabselect.asm: Rewrite.
