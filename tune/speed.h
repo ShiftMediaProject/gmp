@@ -1,7 +1,7 @@
 /* Header for speed and threshold things.
 
 Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009, 2010, 2011,
-2012 Free Software Foundation, Inc.
+2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -635,7 +635,36 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
   SPEED_ROUTINE_MPN_COPY_CALL (function (wp, s->xp, s->size))
 
 #define SPEED_ROUTINE_MPN_TABSELECT(function)				\
-  SPEED_ROUTINE_MPN_COPY_CALL (function (wp, s->xp, s->size, 1, s->r))
+  {									\
+    mp_ptr    xp, wp;							\
+    unsigned  i;							\
+    double    t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 0);					\
+									\
+    if (s->r == 0)							\
+      s->r = s->size;	/* default to a quadratic shape */		\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (xp, s->size * s->r, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
+									\
+    speed_operand_src (s, xp, s->size * s->r);				\
+    speed_operand_dst (s, wp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      function (wp, xp, s->size, s->r, (s->r) / 2);			\
+    while (--i != 0);							\
+    t = speed_endtime () / s->r;					\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+
 
 #define SPEED_ROUTINE_MPN_COPYC(function)				\
   {									\
