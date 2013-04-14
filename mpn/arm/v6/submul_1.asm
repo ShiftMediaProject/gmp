@@ -37,6 +37,11 @@ define(`up',`r1')
 define(`n', `r2')
 define(`v0',`r3')
 
+C This loop complements U on the fly,
+C   U' = B^n - 1 - U
+C and then uses that 
+C   R - U*v = R + U'*v + v - B^n v
+
 ASM_START()
 PROLOGUE(mpn_submul_1)
 	stmfd	sp!, { r4, r5, r6, r7 }
