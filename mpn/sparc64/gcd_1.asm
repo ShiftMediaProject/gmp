@@ -58,8 +58,6 @@ define(`v0',    `%i2')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-	LEA_THUNK(l7)
-	TEXT
 PROLOGUE(mpn_gcd_1)
 	save	%sp, -192, %sp
 	ldx	[up+0], %g1		C U low limb
@@ -95,7 +93,22 @@ L(bmod):
 	 mov	0, %o3
 
 L(noreduce):
-	LEA(ctz_table,i5,l7)
+
+ifdef(`PIC',`
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %l7
+	call	L(LGETPC0)
+	add	%l7, %lo(_GLOBAL_OFFSET_TABLE_+4), %l7
+	sethi	%hi(ctz_table), %g1
+	or	%g1, %lo(ctz_table), %g1
+	ldx	[%l7+%g1], %i5
+',`
+	sethi	%hh(ctz_table), %l7
+	or	%l7, %hm(ctz_table), %l7
+	sllx	%l7, 32, %l7
+	sethi	%lm(ctz_table), %g1
+	add	%l7, %g1, %l7
+	or	%l7, %lo(ctz_table), %i5
+')
 
 	cmp	%o0, 0
 	bnz	%xcc, L(mid)
@@ -122,4 +135,10 @@ L(mid):	ldub	[%i5+%g3], %g5		C
 L(shift_alot):
 	b	L(mid)
 	 and	%o0, MASK, %g3		C
+
+ifdef(`PIC',`
+L(LGETPC0):
+	retl
+	add	%o7, %l7, %l7
+')
 EPILOGUE()

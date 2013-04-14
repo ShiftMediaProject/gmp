@@ -73,14 +73,20 @@ C	add	rp,8,rp
 define(`fanop',`fitod %f12,%f10')	dnl  A quasi nop running in the FA pipe
 
 ASM_START()
-	LEA_THUNK(l7)
+
 	TEXT
-	INT32(noll, 0)
+	ALIGN(4)
+.Lnoll:
+	.word	0
+
 PROLOGUE(mpn_sqr_diagonal)
 	save	%sp,-256,%sp
 
-	LEA(L(noll),l0,l7)
-	ld	[%l0], %f8
+ifdef(`PIC',
+`.Lpc:	rd	%pc,%o7
+	ld	[%o7+.Lnoll-.Lpc],%f8',
+`	sethi	%hi(.Lnoll),%g1
+	ld	[%g1+%lo(.Lnoll)],%f8')
 
 	sethi	%hi(0xffff0000),%g5
 	add	%i1,-8,%i1
