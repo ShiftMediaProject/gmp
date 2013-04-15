@@ -29,18 +29,28 @@ C n0		i2
 C d		i3
 
 ASM_START()
-	LEA_THUNK(l7)
+
+ifdef(`PIC',
+`	TEXT
+L(getpc):
+	retl
+	nop')
+
 	TEXT
 	ALIGN(8)
 L(C0):	.double	0r4294967296
 L(C1):	.double	0r2147483648
+
 PROLOGUE(mpn_udiv_qrnnd)
 	save	%sp,-104,%sp
 	st	%i1,[%fp-8]
 	ld	[%fp-8],%f10
 
-	LEA(L(C0),l0,l7)
-	ldd	[%l0], %f8
+ifdef(`PIC',
+`L(pc):	call	L(getpc)		C put address of this insn in %o7
+	ldd	[%o7+L(C0)-L(pc)],%f8',
+`	sethi	%hi(L(C0)),%o7
+	ldd	[%o7+%lo(L(C0))],%f8')
 
 	fitod	%f10,%f4
 	cmp	%i1,0
@@ -66,8 +76,10 @@ L(249):
 L(250):
 	fdivd	%f2,%f4,%f2
 
-	LEA(L(C1),l0,l7)
-	ldd	[%l0], %f4
+ifdef(`PIC',
+`	ldd	[%o7+L(C1)-L(pc)],%f4',
+`	sethi	%hi(L(C1)),%o7
+	ldd	[%o7+%lo(L(C1))],%f4')
 
 	fcmped	%f2,%f4
 	nop

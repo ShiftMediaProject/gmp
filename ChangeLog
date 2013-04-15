@@ -1,3 +1,7 @@
+2013-04-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Revert remaining parts of recent sparc LEA changes.
+
 2013-04-14  David S. Miller  <davem@davemloft.net>
 
 	* mpn/sparc32/v9/sqr_diagonal.asm: Revert LEA and INT32 changes.

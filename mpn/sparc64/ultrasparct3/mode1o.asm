@@ -37,13 +37,27 @@ define(`a0',  `%g1')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-	LEA_THUNK(g3)
-	TEXT
 PROLOGUE(mpn_modexact_1c_odd)
 	srlx	d, 1, %g1
 	and	%g1, 127, %g1
 
-	LEA_LEAF(binvert_limb_table,g2,g3)
+ifdef(`PIC',`
+	save	%sp, -192, %sp
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %l7
+	call	L(GETPC0)
+	add	%l7, %lo(_GLOBAL_OFFSET_TABLE_+4), %l7
+	sethi	%hi(binvert_limb_table), %g2
+	or	%g2, %lo(binvert_limb_table), %g2
+	ldx	[%l7+%g2], %g2
+	restore
+',`
+	sethi	%hh(binvert_limb_table), %g3
+	or	%g3, %hm(binvert_limb_table), %g3
+	sllx	%g3, 32, %g3
+	sethi	%lm(binvert_limb_table), %g2
+	add	%g3, %g2, %g3
+	or	%g3, %lo(binvert_limb_table), %g2
+')
 	ldub	[%g2+%g1], %g1
 	add	%g1, %g1, %g2
 	mulx	%g1, %g1, %g1
@@ -70,4 +84,10 @@ L(top):	ldx	[ap], a0
 
 	retl
 	 mov	cy, %o0
+
+ifdef(`PIC',`
+L(GETPC0):
+	retl
+	add	%o7, %l7, %l7
+')
 EPILOGUE()

@@ -31,13 +31,11 @@ define(`d',  `%o0')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-	LEA_THUNK(g3)
-	TEXT
 PROLOGUE(mpn_invert_limb)
 	srlx	d, 55, %g1
 	add	%g1, %g1, %g1
-	LEA_LEAF(approx_tab,g2,g3)
-	sub	%g2, 512, %g2
+	sethi	%hi(approx_tab-512), %g2
+	or	%g2, %lo(approx_tab-512), %g2
 	lduh	[%g2+%g1], %g3
 	srlx	d, 24, %g4
 	add	%g4, 1, %g4
