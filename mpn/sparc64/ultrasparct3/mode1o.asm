@@ -42,14 +42,13 @@ PROLOGUE(mpn_modexact_1c_odd)
 	and	%g1, 127, %g1
 
 ifdef(`PIC',`
-	save	%sp, -192, %sp
-	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %l7
-	call	L(GETPC0)
-	add	%l7, %lo(_GLOBAL_OFFSET_TABLE_+4), %l7
+	rd	%pc, %g3
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
+	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
+	add	%g3, %g4, %g4
 	sethi	%hi(binvert_limb_table), %g2
 	or	%g2, %lo(binvert_limb_table), %g2
-	ldx	[%l7+%g2], %g2
-	restore
+	ldx	[%g4+%g2], %g2
 ',`
 	sethi	%hh(binvert_limb_table), %g3
 	or	%g3, %hm(binvert_limb_table), %g3
@@ -84,10 +83,4 @@ L(top):	ldx	[ap], a0
 
 	retl
 	 mov	cy, %o0
-
-ifdef(`PIC',`
-L(GETPC0):
-	retl
-	add	%o7, %l7, %l7
-')
 EPILOGUE()

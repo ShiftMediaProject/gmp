@@ -1,5 +1,10 @@
 2013-04-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/gcd_1.asm: Use rdpc for PIC.
+	* mpn/sparc64/ultrasparct3/mode1o.asm: Use rdpc for PIC.
+	* mpn/sparc64/ultrasparct3/dive_1.asm: Use rdpc for PIC.
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: Handle PIC, use rdpc.
+
 	* Revert remaining parts of recent sparc LEA changes.
 
 2013-04-14  David S. Miller  <davem@davemloft.net>

@@ -95,12 +95,13 @@ L(bmod):
 L(noreduce):
 
 ifdef(`PIC',`
-	sethi	%hi(_GLOBAL_OFFSET_TABLE_-4), %l7
-	call	L(LGETPC0)
-	add	%l7, %lo(_GLOBAL_OFFSET_TABLE_+4), %l7
+	rd	%pc, %g3
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
+	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
+	add	%g3, %g4, %g4
 	sethi	%hi(ctz_table), %g1
 	or	%g1, %lo(ctz_table), %g1
-	ldx	[%l7+%g1], %i5
+	ldx	[%g4+%g1], %i5
 ',`
 	sethi	%hh(ctz_table), %l7
 	or	%l7, %hm(ctz_table), %l7
@@ -135,10 +136,4 @@ L(mid):	ldub	[%i5+%g3], %g5		C
 L(shift_alot):
 	b	L(mid)
 	 and	%o0, MASK, %g3		C
-
-ifdef(`PIC',`
-L(LGETPC0):
-	retl
-	add	%o7, %l7, %l7
-')
 EPILOGUE()

@@ -34,8 +34,23 @@ ASM_START()
 PROLOGUE(mpn_invert_limb)
 	srlx	d, 55, %g1
 	add	%g1, %g1, %g1
+
+ifdef(`PIC',`
+	rd	%pc, %g3
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
+	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
+	add	%g3, %g4, %g4
 	sethi	%hi(approx_tab-512), %g2
 	or	%g2, %lo(approx_tab-512), %g2
+	ldx	[%g4+%g2], %g2
+',`
+	sethi	%hh(approx_tab-512), %g3
+	or	%g3, %hm(approx_tab-512), %g3
+	sllx	%g3, 32, %g3
+	sethi	%lm(approx_tab-512), %g2
+	add	%g3, %g2, %g3
+	or	%g3, %lo(approx_tab-512), %g2
+')
 	lduh	[%g2+%g1], %g3
 	srlx	d, 24, %g4
 	add	%g4, 1, %g4
