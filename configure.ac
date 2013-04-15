@@ -1572,7 +1572,7 @@ case $host in
       pentiummmx)
 	gcc_cflags_cpu="-mtune=pentium-mmx -mcpu=pentium-mmx -mcpu=pentium -m486"
 	gcc_cflags_arch="-march=pentium-mmx -march=pentium"
-	path="x86/pentium/mmx x86/pentium x86"
+	path="x86/pentium/mmx x86/pentium x86/mmx x86"
 	;;
       i686 | pentiumpro)
 	gcc_cflags_cpu="-mtune=pentiumpro -mcpu=pentiumpro -mcpu=i486 -m486"
@@ -1582,37 +1582,37 @@ case $host in
       pentium2)
 	gcc_cflags_cpu="-mtune=pentium2 -mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=pentium2 -march=pentiumpro -march=pentium"
-	path="x86/p6/mmx x86/p6 x86"
+	path="x86/p6/mmx x86/p6 x86/mmx x86"
 	;;
       pentium3)
 	gcc_cflags_cpu="-mtune=pentium3 -mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
-	path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	;;
       pentiumm)
 	gcc_cflags_cpu="-mtune=pentium3 -mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
-	path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	;;
       k6)
 	gcc_cflags_cpu="-mtune=k6 -mcpu=k6 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=k6"
-	path="x86/k6/mmx x86/k6 x86"
+	path="x86/k6/mmx x86/k6 x86/mmx x86"
 	;;
       k62)
 	gcc_cflags_cpu="-mtune=k6-2 -mcpu=k6-2 -mcpu=k6 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=k6-2 -march=k6"
-	path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86"
+	path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86/mmx x86"
 	;;
       k63)
 	gcc_cflags_cpu="-mtune=k6-3 -mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=k6-3 -march=k6"
-	path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86"
+	path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86/mmx x86"
 	;;
       geode)
 	gcc_cflags_cpu="-mtune=k6-3 -mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=k6-3 -march=k6"
-	path="x86/geode x86/k6/k62mmx x86/k6/mmx x86/k6 x86"
+	path="x86/geode x86/k6/k62mmx x86/k6/mmx x86/k6 x86/mmx x86"
 	;;
       athlon)
 	# Athlon instruction costs are close to P6 (3 cycle load latency,
@@ -1620,7 +1620,7 @@ case $host in
 	# know athlon (eg. 2.95.2 doesn't) then fall back on pentiumpro.
 	gcc_cflags_cpu="-mtune=athlon -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium"
-	path="x86/k7/mmx x86/k7 x86"
+	path="x86/k7/mmx x86/k7 x86/mmx x86"
 	;;
       i786 | pentium4)
 	# pentiumpro is the primary fallback when gcc doesn't know pentium4.
@@ -1630,7 +1630,7 @@ case $host in
 	gcc_cflags_cpu="-mtune=pentium4 -mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=pentium4 -march=pentium4~-mno-sse2 -march=pentiumpro -march=pentium"
 	gcc_64_cflags_cpu="-mtune=nocona"
-	path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86"
+	path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86/mmx x86"
 	path_64="x86_64/pentium4 x86_64"
 	;;
       viac32)
@@ -1638,79 +1638,79 @@ case $host in
 	# c3-2 has sse and mmx, so pentium3 is good for -march.
 	gcc_cflags_cpu="-mtune=c3-2 -mcpu=c3-2 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=c3-2 -march=pentium3 -march=pentiumpro -march=pentium"
-	path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	;;
       viac3*)
 	# Not sure of the best fallbacks here.
 	gcc_cflags_cpu="-mtune=c3 -mcpu=c3 -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
-	path="x86/pentium/mmx x86/pentium x86"
+	path="x86/pentium/mmx x86/pentium x86/mmx x86"
 	;;
       athlon64 | k8 | x86_64)
 	gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
 	gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
-	path="x86/k8 x86/k7/mmx x86/k7 x86"
+	path="x86/k8 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/k8 x86_64"
 	;;
       k10)
 	gcc_cflags_cpu="-mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/k10 x86/k8 x86/k7/mmx x86/k7 x86"
+	path="x86/k10 x86/k8 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/k10 x86_64/k8 x86_64"
 	;;
       bobcat)
 	gcc_cflags_cpu="-mtune=btver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=btver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/bobcat x86/k7/mmx x86/k7 x86"
+	path="x86/bobcat x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/bobcat x86_64/k10 x86_64/k8 x86_64"
 	;;
       bulldozer | bd1)
 	gcc_cflags_cpu="-mtune=bdver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=bdver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/bd1 x86/k7/mmx x86/k7 x86"
+	path="x86/bd1 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/bd1 x86_64/k10 x86_64/k8 x86_64"
 	;;
       core2)
 	gcc_cflags_cpu="-mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/core2 x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/core2 x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/core2 x86_64"
        ;;
       corei | coreinhm | coreiwsm)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreinhm x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/coreinhm x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreinhm x86_64/core2 x86_64"
 	;;
       coreisbr)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
       coreihwl)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/mulx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
       coreibwl)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86"
+	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/mulx/adx x86_64/mulx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	extra_functions_64="missing"	     # FIXME: remove when qemu's adx flags handling works
 	;;
       atom)
 	gcc_cflags_cpu="-mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=atom -march=pentium3"
-	path="x86/atom/sse2 x86/atom/mmx x86/atom x86"
+	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
 	path_64="x86_64/atom x86_64"
 	;;
       nano)
 	gcc_cflags_cpu="-mtune=nano"
 	gcc_cflags_arch="-march=nano"
-	path="x86/nano x86"
+	path="x86/nano x86/mmx x86"
 	path_64="x86_64/nano x86_64"
 	;;
       *)
