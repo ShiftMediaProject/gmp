@@ -40,9 +40,10 @@ ifdef(`PIC',`
 	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
 	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
 	add	%g3, %g4, %g4
-	sethi	%hi(approx_tab-512), %g2
-	or	%g2, %lo(approx_tab-512), %g2
+	sethi	%hi(approx_tab), %g2
+	or	%g2, %lo(approx_tab), %g2
 	ldx	[%g4+%g2], %g2
+	add	%g1, -512, %g1
 ',`
 	sethi	%hh(approx_tab-512), %g3
 	or	%g3, %hm(approx_tab-512), %g3

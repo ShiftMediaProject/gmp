@@ -1,5 +1,8 @@
 2013-04-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: Avoid addend for GOT entry,
+	it is not portable.
+
 	* mpn/sparc64/tabselect.asm: New file.
 
 	* mpn/x86/mmx/tabselect.asm: New file.
