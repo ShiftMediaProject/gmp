@@ -1,5 +1,8 @@
 2013-04-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/mmx/tabselect.asm: New file.
+	* configure.ac (x86): Add x86/mmx to path for relevant CPUs.
+
 	* mpn/sparc64/gcd_1.asm: Use rdpc for PIC.
 	* mpn/sparc64/ultrasparct3/mode1o.asm: Use rdpc for PIC.
 	* mpn/sparc64/ultrasparct3/dive_1.asm: Use rdpc for PIC.
