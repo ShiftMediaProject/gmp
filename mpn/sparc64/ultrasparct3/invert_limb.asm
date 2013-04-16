@@ -32,28 +32,11 @@ ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_invert_limb)
-	srlx	d, 55, %g1
-	add	%g1, %g1, %g1
-
-ifdef(`PIC',`
-	rd	%pc, %g3
-	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
-	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
-	add	%g3, %g4, %g4
-	sethi	%hi(approx_tab), %g2
-	or	%g2, %lo(approx_tab), %g2
-	ldx	[%g4+%g2], %g2
-	add	%g1, -512, %g1
-',`
-	sethi	%hh(approx_tab-512), %g3
-	or	%g3, %hm(approx_tab-512), %g3
-	sllx	%g3, 32, %g3
-	sethi	%lm(approx_tab-512), %g2
-	add	%g3, %g2, %g3
-	or	%g3, %lo(approx_tab-512), %g2
-')
-	lduh	[%g2+%g1], %g3
+	srlx	d, 54, %g1
+	LEA64(approx_tab, g2, g3)
+	and	%g1, 0x1fe, %g1
 	srlx	d, 24, %g4
+	lduh	[%g2+%g1], %g3
 	add	%g4, 1, %g4
 	sllx	%g3, 11, %g2
 	add	%g2, -1, %g2

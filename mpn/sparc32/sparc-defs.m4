@@ -46,4 +46,23 @@ ifdef(`FAKE_T3',`
   define(`lzcnt',	``lzd'	$1, $2')
 ')
 
+dnl  Usage: LEA64(symbol,reg,pic_reg)
+dnl
+dnl  Use whatever 64-bit code sequence is appropriate to load "symbol" into
+dnl  register "reg", potentially using register "pic_reg" to perform the
+dnl  calculations.
+
+define(LEA64,
+m4_assert_numargs(3)
+m4_assert_defined(`HAVE_GOTDATA')
+`ifdef(`PIC',`
+	rd	%pc, %`$2'
+	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %`$3'
+	add	%`$3', %lo(_GLOBAL_OFFSET_TABLE_+8), %`$3'
+	add	%`$2', %`$3', %`$3'
+	sethi	%hi(`$1'), %`$2'
+	or	%`$2', %lo(`$1'), %`$2'
+	ldx	[%`$3' + %`$2'], %`$2'',`
+	setx	`$1', %`$3', %`$2'')')
+
 divert

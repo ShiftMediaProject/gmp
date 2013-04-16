@@ -37,13 +37,14 @@ C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 deflit(MAXSHIFT, 7)
 deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
-	.section	".rodata"
+	RODATA
+	TYPE(ctz_table,object)
 ctz_table:
 	.byte	MAXSHIFT
 forloop(i,1,MASK,
 `	.byte	m4_count_trailing_zeros(i)
 ')
-
+	SIZE(ctz_table,.-ctz_table)
 
 C Threshold of when to call bmod when U is one limb.  Should be about
 C (time_in_cycles(bmod_1,1) + call_overhead) / (cycles/bit).
@@ -94,22 +95,7 @@ L(bmod):
 
 L(noreduce):
 
-ifdef(`PIC',`
-	rd	%pc, %g3
-	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
-	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
-	add	%g3, %g4, %g4
-	sethi	%hi(ctz_table), %g1
-	or	%g1, %lo(ctz_table), %g1
-	ldx	[%g4+%g1], %i5
-',`
-	sethi	%hh(ctz_table), %l7
-	or	%l7, %hm(ctz_table), %l7
-	sllx	%l7, 32, %l7
-	sethi	%lm(ctz_table), %g1
-	add	%l7, %g1, %l7
-	or	%l7, %lo(ctz_table), %i5
-')
+	LEA64(ctz_table, i5, g4)
 
 	cmp	%o0, 0
 	bnz	%xcc, L(mid)

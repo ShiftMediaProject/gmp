@@ -41,22 +41,7 @@ PROLOGUE(mpn_modexact_1c_odd)
 	srlx	d, 1, %g1
 	and	%g1, 127, %g1
 
-ifdef(`PIC',`
-	rd	%pc, %g3
-	sethi	%hi(_GLOBAL_OFFSET_TABLE_+4), %g4
-	add	%g4, %lo(_GLOBAL_OFFSET_TABLE_+8), %g4
-	add	%g3, %g4, %g4
-	sethi	%hi(binvert_limb_table), %g2
-	or	%g2, %lo(binvert_limb_table), %g2
-	ldx	[%g4+%g2], %g2
-',`
-	sethi	%hh(binvert_limb_table), %g3
-	or	%g3, %hm(binvert_limb_table), %g3
-	sllx	%g3, 32, %g3
-	sethi	%lm(binvert_limb_table), %g2
-	add	%g3, %g2, %g3
-	or	%g3, %lo(binvert_limb_table), %g2
-')
+	LEA64(binvert_limb_table, g2, g4)
 	ldub	[%g2+%g1], %g1
 	add	%g1, %g1, %g2
 	mulx	%g1, %g1, %g1
