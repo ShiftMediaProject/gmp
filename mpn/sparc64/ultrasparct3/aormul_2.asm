@@ -139,7 +139,7 @@ AM2(`	ldx	[rp+8], %g1')
 	b	L(lo0)
 	 mov	0, w3
 
-	ALIGN(32)			C cycle
+	ALIGN(16)			C cycle
 L(top):	mulx	%i4, v0, %l2		C 0->5
 	umulxhi(%i4, v0, %l6)		C 0->5
 	ldx	[up+0], %i5		C 1->6

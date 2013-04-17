@@ -1,3 +1,8 @@
+2013-04-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/sparc64/ultrasparct3/mul_1.asm: Decrease loop alignment.
+	* mpn/sparc64/ultrasparct3/aormul_2.asm: Likewise.
+
 2013-04-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/invert_limb.asm: Generate table.

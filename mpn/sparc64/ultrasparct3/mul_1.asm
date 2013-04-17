@@ -119,7 +119,7 @@ L(b0):	addcc	%g0, %g0, %o5
 	b	L(lo0)
 	 nop
 
-	ALIGN(32)
+	ALIGN(16)
 L(top):	ldx	[up+0], %l3	C 0
 	addxccc(%i4, %o5, %i4)	C 0
 	mulx	%l1, v0, %o2	C 1
