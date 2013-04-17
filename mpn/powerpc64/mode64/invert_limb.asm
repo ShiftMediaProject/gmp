@@ -72,9 +72,6 @@ EPILOGUE()
 
 DEF_OBJECT(approx_tab)
 forloop(i,256,512-1,dnl
-`	.half	eval(0x7fd00/i)
-')dnl
-forloop(i,256,512-1,dnl
 `	.short	eval(0x7fd00/i)
 ')dnl
 END_OBJECT(approx_tab)
