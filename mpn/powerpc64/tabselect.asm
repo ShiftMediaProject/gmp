@@ -28,9 +28,6 @@ C POWER5		 ?
 C POWER6		 5.0
 C POWER7		 1.75
 
-C TODO
-C  * Use r0 instead of r26
-
 define(`rp',     `r3')
 define(`tp',     `r4')
 define(`n',      `r5')
