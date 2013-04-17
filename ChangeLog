@@ -1,5 +1,9 @@
 2013-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (arm64 count_trailing_zeros): New.
+
+	* mpn/arm64/invert_limb.asm: New file.
+
 	* mpn/generic/dive_1.c: Rewrite to use Hensel division also for
 	size = 1.
 
