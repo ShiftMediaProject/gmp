@@ -1,5 +1,12 @@
 2013-04-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dive_1.c: Rewrite to use Hensel division also for
+	size = 1.
+
+	* mpn/generic/mod_1_1.c (add_mssaaaa): Provide VIS3 variant.
+
+	* configure.ac: Remove "missing" from extra_functions_64 for coreibwl.
+
 	* mpn/sparc64/ultrasparct3/mul_1.asm: Decrease loop alignment.
 	* mpn/sparc64/ultrasparct3/aormul_2.asm: Likewise.
 
@@ -366,7 +373,7 @@
 
 2013-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
-	* configure.ac: Add "missing" to extra_functions for coreibwl.
+	* configure.ac: Add "missing" to extra_functions_64 for coreibwl.
 
 	* mpn/x86_64/mulx/adx/addmul_1.asm: Simplify.  Make FAKE_MULXADX the
 	default awaiting proper qemu behaviour.
