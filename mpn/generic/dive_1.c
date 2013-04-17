@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2005, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -76,14 +76,6 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
   ASSERT_MPN (src, size);
   ASSERT_LIMB (divisor);
 
-  s = src[0];
-
-  if (size == 1)
-    {
-      dst[0] = s / divisor;
-      return;
-    }
-
   if ((divisor & 1) == 0)
     {
       count_trailing_zeros (shift, divisor);
@@ -98,40 +90,39 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
   if (shift != 0)
     {
       c = 0;
-      i = 0;
-      size--;
 
-      do
+      s = src[0];
+
+      for (i = 1; i < size; i++)
 	{
-	  s_next = src[i+1];
+	  s_next = src[i];
 	  ls = ((s >> shift) | (s_next << (GMP_NUMB_BITS-shift))) & GMP_NUMB_MASK;
 	  s = s_next;
 
 	  SUBC_LIMB (c, l, ls, c);
 
 	  l = (l * inverse) & GMP_NUMB_MASK;
-	  dst[i] = l;
+	  dst[i - 1] = l;
 
 	  umul_ppmm (h, dummy, l, divisor);
 	  c += h;
-
-	  i++;
 	}
       while (i < size);
 
       ls = s >> shift;
       l = ls - c;
       l = (l * inverse) & GMP_NUMB_MASK;
-      dst[i] = l;
+      dst[size - 1] = l;
     }
   else
     {
+      s = src[0];
+
       l = (s * inverse) & GMP_NUMB_MASK;
       dst[0] = l;
-      i = 1;
       c = 0;
 
-      do
+      for (i = 1; i < size; i++)
 	{
 	  umul_ppmm (h, dummy, l, divisor);
 	  c += h;
@@ -141,8 +132,6 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 
 	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
-	  i++;
 	}
-      while (i < size);
     }
 }
