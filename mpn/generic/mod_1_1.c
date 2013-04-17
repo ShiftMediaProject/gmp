@@ -8,7 +8,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010, 2011, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -80,6 +80,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	   : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),		\
 	     "rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
 	 __CLOBBER_CC)
+#if __VIS__ >= 0x300
+#undef add_mssaaaa
+#define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
+  __asm__ (  "addcc	%r5, %6, %2\n\t"				\
+	     "addxccc	%r3, %4, %1\n\t"				\
+	     "clr	%0\n\t"						\
+	     "movcs	%%xcc, -1, %0"					\
+	   : "=r" (m), "=r" (sh), "=&r" (sl)				\
+	   : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl)		\
+	 __CLOBBER_CC)
+#endif
 #endif
 
 #if HAVE_HOST_CPU_FAMILY_powerpc && !defined (_LONG_LONG_LIMB)
