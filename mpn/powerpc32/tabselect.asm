@@ -1,6 +1,8 @@
 dnl  PowerPC-32 mpn_tabselect.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
+dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -19,80 +21,110 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C                  cycles/limb
-C 603e:              ?
-C 604e:              ?
-C 75x (G3):          ?
-C 7400,7410 (G4):    ?
-C 744x,745x (G4+):   ?
-C power4/ppc970:     3.3
-C power5:            ?
+C                   cycles/limb
+C 603e:			 ?
+C 604e:			 ?
+C 75x (G3):		 ?
+C 7400,7410 (G4):	 2.5
+C 744x,745x (G4+):	 2.0
+C power4/ppc970:	 2.0
+C power5:		 ?
 
-C NOTES
-C  * This has not been tuned for any specific processor.  Its speed should not
-C    be too bad, though.
-C  * Using VMX could result in significant speedup for certain CPUs.
-
-C mpn_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
 define(`rp',     `r3')
 define(`tp',     `r4')
 define(`n',      `r5')
 define(`nents',  `r6')
 define(`which',  `r7')
 
-define(`mask',   `r8')
+define(`i',      `r8')
+define(`j',      `r9')
+define(`stride', `r12')
+define(`mask',   `r11')
+
 
 ASM_START()
-	TEXT
-	ALIGN(16)
 PROLOGUE(mpn_tabselect)
-	addi	r0, n, 1
-	srwi	r0, r0, 1		C inner loop count
-	andi.	r9, n, 1		C set cr0 for use in inner loop
-	subf	which, nents, which
-	slwi	n, n, 2
+	addic.	j, n, -4		C outer loop induction variable
+	stmw	r27, -32(r1)
+	slwi	stride, n, 2
 
-L(outer):
-	mtctr	r0			C put inner loop count in ctr
-
-	add	r9, which, nents	C are we at the selected table entry?
-	addic	r9, r9, -1		C set CF iff not selected entry
-	subfe	mask, r0, r0
-
-	beq	cr0, L(top)		C branch to loop entry if n even
-
-	lwz	r9, 0(tp)
-	addi	tp, tp, 4
-	and	r9, r9, mask
-	lwz	r11, 0(rp)
-	andc	r11, r11, mask
-	or	r9, r9, r11
-	stw	r9, 0(rp)
-	addi	rp, rp, 4
-	bdz	L(end)
+	blt	cr0, L(outer_end)
+L(outer_top):
+	mtctr	nents
+	mr	r10, tp
+	li	r28, 0
+	li	r29, 0
+	li	r30, 0
+	li	r31, 0
+	addic.	j, j, -4		C outer loop induction variable
+	mr	i, which
 
 	ALIGN(16)
-L(top):	lwz	r9, 0(tp)
-	lwz	r10, 4(tp)
-	addi	tp, tp, 8
-	nop
-	and	r9, r9, mask
-	and	r10, r10, mask
-	lwz	r11, 0(rp)
-	lwz	r12, 4(rp)
-	andc	r11, r11, mask
-	andc	r12, r12, mask
-	or	r9, r9, r11
-	or	r10, r10, r12
-	stw	r9, 0(rp)
-	stw	r10, 4(rp)
-	addi	rp, rp, 8
+L(top):	addic	i, i, -1		C set carry iff i != 0
+	subfe	mask, mask, mask
+	lwz	r0, 0(tp)
+	lwz	r27, 4(tp)
+	and	r0, r0, mask
+	and	r27, r27, mask
+	or	r28, r28, r0
+	or	r29, r29, r27
+	lwz	r0, 8(tp)
+	lwz	r27, 12(tp)
+	and	r0, r0, mask
+	and	r27, r27, mask
+	or	r30, r30, r0
+	or	r31, r31, r27
+	add	tp, tp, stride
 	bdnz	L(top)
 
-L(end):	subf	rp, n, rp		C move rp back to beginning
-	cmpwi	cr6, nents, 1
-	addi	nents, nents, -1
-	bne	cr6, L(outer)
+	stw	r28, 0(rp)
+	stw	r29, 4(rp)
+	stw	r30, 8(rp)
+	stw	r31, 12(rp)
+	addi	tp, r10, 16
+	addi	rp, rp, 16
+	bge	cr0, L(outer_top)
+L(outer_end):
 
+	andi.	r0, n, 2
+	beq	cr0, L(b0x)
+L(b1x):	mtctr	nents
+	mr	r10, tp
+	li	r28, 0
+	li	r29, 0
+	mr	i, which
+	ALIGN(16)
+L(tp2):	addic	i, i, -1
+	subfe	mask, mask, mask
+	lwz	r0, 0(tp)
+	lwz	r27, 4(tp)
+	and	r0, r0, mask
+	and	r27, r27, mask
+	or	r28, r28, r0
+	or	r29, r29, r27
+	add	tp, tp, stride
+	bdnz	L(tp2)
+	stw	r28, 0(rp)
+	stw	r29, 4(rp)
+	addi	tp, r10, 8
+	addi	rp, rp, 8
+
+L(b0x):	andi.	r0, n, 1
+	beq	cr0, L(b00)
+L(b01):	mtctr	nents
+	mr	r10, tp
+	li	r28, 0
+	mr	i, which
+	ALIGN(16)
+L(tp1):	addic	i, i, -1
+	subfe	mask, mask, mask
+	lwz	r0, 0(tp)
+	and	r0, r0, mask
+	or	r28, r28, r0
+	add	tp, tp, stride
+	bdnz	L(tp1)
+	stw	r28, 0(rp)
+
+L(b00):	lmw	r27, -32(r1)
 	blr
 EPILOGUE()
