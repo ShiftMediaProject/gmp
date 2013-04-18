@@ -1,3 +1,7 @@
+2013-04-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v7a/cora15/addmul_1.asm: Rewrite.
+
 2013-04-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/tabselect.asm: New file.
