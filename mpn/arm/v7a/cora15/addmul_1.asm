@@ -20,78 +20,110 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb		best
-C StrongARM:	 -
+C StrongARM:     ?
 C XScale	 ?
 C Cortex-A7	 ?
 C Cortex-A8	 ?
-C Cortex-A9	 6.5			3.25
-C Cortex-A15	 3			this
+C Cortex-A9	 6			3.25
+C Cortex-A15	 2			this
 
-
-C This runs well on A15 but very poorly on A9.  We have made no effort at
-C improving its A9 performance, as doubling the speed seems hard.
-
-C This is armv5 code, optimized for the armv7a cpu A15.  Its location in the
+C This code uses umlal for adding in the rp[] data, keeping the recurrency path
+C separate from any multiply instructions.  It performs well on A15, at umlal's
+C bandwidth.
+C
+C An A9 variant should perhaps stick to 3-way unrolling, and use ldm and stm
+C for all loads and stores.  Alternatively, it could do 2-way or 4-way, but
+C then alignment aware code will be necessary (adding O(1) bookkeeping
+C overhead).
+C
+C We don't use r12 due to ldrd and strd limitations.
+C
+C This is armv5 code, optimised for the armv7a cpu A15.  Its location in the
 C GMP file structure might be misleading.
-
 
 define(`rp', `r0')
 define(`up', `r1')
 define(`n',  `r2')
 define(`v0', `r3')
 
+define(`w0', `r10') define(`w1', `r11')
+define(`u0', `r8')  define(`u1', `r9')
+
 ASM_START()
 PROLOGUE(mpn_addmul_1)
-	push	{r4-r8}
+	push	{ r4-r11 }
 
-	adds	r0, r0, #0	C clear carry
+	ands	r6, n, #3
+	sub	n, n, #3
+	beq	L(b00)
+	cmp	r6, #2
+	bcc	L(b01)
+	beq	L(b10)
 
-	tst	n, #1
-	beq	L(bx0)
-
-L(bx1):	mov	r5, #0
-	ldr	r8, [up], #4
-	tst	n, #2
-	beq	L(lo1)
-	b	L(lo3)
-
-L(bx0):	mov	r7, #0
-	ldr	r8, [up], #4
-	adds	r0, r0, #0
-	tst	n, #2
-	beq	L(lo0)
-	b	L(lo2)
-
-L(top):	ldr	r8, [up], #4
-	str	r6, [rp, #-4]
-L(lo0):	ldr	r4, [rp], #4
-	mov	r5, #0
-	umlal	r4, r5, r8, v0
-	adds	r4, r4, r7
-	ldr	r8, [up], #4
-	str	r4, [rp, #-4]
-L(lo3):	ldr	r6, [rp], #4
+L(b11):	mov	r6, #0
+	cmn	r13, #0			C carry clear
+	ldr	u1, [up], #-4
+	ldr	w1, [rp], #-4
 	mov	r7, #0
-	umlal	r6, r7, r8, v0
-	adcs	r6, r6, r5
-	ldr	r8, [up], #4
-	str	r6, [rp, #-4]
-L(lo2):	ldr	r4, [rp], #4
-	mov	r5, #0
-	umlal	r4, r5, r8, v0
-	adcs	r4, r4, r7
-	ldr	r8, [up], #4
-	str	r4, [rp, #-4]
-L(lo1):	ldr	r6, [rp], #4
-	mov	r7, #0
-	umlal	r6, r7, r8, v0
-	adcs	r6, r6, r5
-	adc	r7, r7, #0
-	subs	n, n, #4
-	bgt	L(top)
+	b	L(mid)
 
-	str	r6, [rp, #-4]
-	mov	r0, r7
-	pop	{r4-r8}
-	bx	lr
+L(b00):	ldrd	u0, u1, [up]
+	ldrd	w0, w1, [rp]
+	mov	r6, #0
+	umlal	w0, r6, u0, v0
+	cmn	r13, #0			C carry clear
+	mov	r7, #0
+	str	w0, [rp]
+	b	L(mid)
+
+L(b10):	ldrd	u0, u1, [up], #8
+	ldrd	w0, w1, [rp]
+	mov	r4, #0
+	umlal	w0, r4, u0, v0
+	cmn	r13, #0			C carry clear
+	mov	r5, #0
+	str	w0, [rp], #8
+	umlal	w1, r5, u1, v0
+	tst	n, n
+	bmi	L(end)
+	b	L(top)
+
+L(b01):	mov	r4, #0
+	ldr	u1, [up], #4
+	ldr	w1, [rp], #4
+	mov	r5, #0
+	umlal	w1, r5, u1, v0
+	tst	n, n
+	bmi	L(end)
+
+	ALIGN(16)
+L(top):	ldrd	u0, u1, [up, #0]
+	adcs	r4, r4, w1
+	ldrd	w0, w1, [rp, #0]
+	mov	r6, #0
+	umlal	w0, r6, u0, v0		C 1 2
+	adcs	r5, r5, w0
+	mov	r7, #0
+	strd	r4, r5, [rp, #-4]
+L(mid):	umlal	w1, r7, u1, v0		C 2 3
+	ldrd	u0, u1, [up, #8]
+	adcs	r6, r6, w1
+	ldrd	w0, w1, [rp, #8]
+	mov	r4, #0
+	umlal	w0, r4, u0, v0		C 3 4
+	adcs	r7, r7, w0
+	mov	r5, #0
+	strd	r6, r7, [rp, #4]
+	umlal	w1, r5, u1, v0		C 0 1
+	sub	n, n, #4
+	add	up, up, #16
+	add	rp, rp, #16
+	tst	n, n
+	bpl	L(top)
+
+L(end):	adcs	r4, r4, w1
+	str	r4, [rp, #-4]
+	adc	r0, r5, #0
+	pop	{ r4-r11 }
+	bx	r14
 EPILOGUE()
