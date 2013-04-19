@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb		best
-C StrongARM:     ?
+C StrongARM:     -
 C XScale	 ?
 C Cortex-A7	 ?
 C Cortex-A8	 ?
@@ -37,9 +37,14 @@ C then alignment aware code will be necessary (adding O(1) bookkeeping
 C overhead).
 C
 C We don't use r12 due to ldrd and strd limitations.
-C
-C This is armv5 code, optimised for the armv7a cpu A15.  Its location in the
-C GMP file structure might be misleading.
+
+C Architecture requirements:
+C v5	-
+C v5t	-
+C v5te	ldrd strd
+C v6	-
+C v6t2	-
+C v7a	-
 
 define(`rp', `r0')
 define(`up', `r1')
