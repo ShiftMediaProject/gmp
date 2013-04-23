@@ -1,3 +1,7 @@
+2013-04-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v7a/cora15/logops_n.asm: New file.
+
 2013-04-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/v7a/cora15/aors_n.asm: New file.
