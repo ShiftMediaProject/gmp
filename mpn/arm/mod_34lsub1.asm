@@ -1,6 +1,6 @@
 dnl  ARM mpn_mod_34lsub1 -- remainder modulo 2^24-1.
 
-dnl  Copyright 2012 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -49,7 +49,7 @@ PROLOGUE(mpn_mod_34lsub1)
 	ldmia	ap!, { r2, r3, r12 }
 	subs	n, n, #3
 	blt	L(sum)			C n <= 5
-	adds	r0, r0, #0		C clear carry
+	cmn	r0, #0			C clear carry
 	sub	n, n, #3
 	b	L(mid)
 
