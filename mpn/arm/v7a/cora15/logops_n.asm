@@ -232,9 +232,11 @@ L(end):	POSTOP(	r8)
 	strd	r8, r9, [rp, #8]
 L(wd1):	pop	{ r4-r9 }
 	bx	r14
+ifelse(UNROLL,4x2,`
 L(dne):	POSTOP(	r8)
 	POSTOP(	r9)
 	strd	r8, r9, [rp, #24]
 	pop	{ r4-r9 }
 	bx	r14
+')
 EPILOGUE()
