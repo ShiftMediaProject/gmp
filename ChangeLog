@@ -1,4 +1,15 @@
+2013-04-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/mod_34lsub1.asm: Clear carry smarter.
+
+	* mpn/arm/v7a/cora15/logops_n.asm: Conditionally suppress conditionally
+	used code.
+
+	* mpn/arm/v7a/cora15/submul_1.asm: New file.
+
 2013-04-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v7a/cora15/com.asm: New file.
 
 	* mpn/arm/v7a/cora15/logops_n.asm: New file.
 
