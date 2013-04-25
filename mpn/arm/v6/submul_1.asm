@@ -27,6 +27,11 @@ C Cortex-A8	 ?
 C Cortex-A9	 3.75
 C Cortex-A15	 4.0
 
+C This loop complements U on the fly,
+C   U' = B^n - 1 - U
+C and then uses that
+C   R - U*v = R + U'*v + v - B^n v
+
 C TODO
 C  * Micro-optimise feed-in code.
 C  * Optimise for n=1,2 by delaying register saving.
@@ -36,11 +41,6 @@ define(`rp',`r0')
 define(`up',`r1')
 define(`n', `r2')
 define(`v0',`r3')
-
-C This loop complements U on the fly,
-C   U' = B^n - 1 - U
-C and then uses that 
-C   R - U*v = R + U'*v + v - B^n v
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
