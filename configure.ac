@@ -582,6 +582,8 @@ case $host in
     # options fail.
     case $host_cpu in
       armsa1 | arm9tdmi | armv4*)
+	path="arm"
+	gcc_cflags_arch="-march=armv4"
 	;;
       armxscale | arm9te | arm10 | armv5*)
 	path="arm/v5 arm"
