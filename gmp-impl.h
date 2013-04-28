@@ -1566,6 +1566,46 @@ __GMP_DECLSPEC void mpn_sb_div_r_sec (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, m
 __GMP_DECLSPEC void mpn_sbpi1_div_r_sec (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
 
 
+/* Override mpn_addlsh1_n, mpn_addlsh2_n, mpn_sublsh1_n, etc with mpn_addlsh_n,
+   etc when !HAVE_NATIVE the former but HAVE_NATIVE_ the latter.  */
+
+#if HAVE_NATIVE_mpn_addlsh_n && ! HAVE_NATIVE_mpn_addlsh1_n
+#undef mpn_addlsh1_n
+#define mpn_addlsh1_n(a,b,c,d) mpn_addlsh_n(a,b,c,d,1)
+#define HAVE_NATIVE_mpn_addlsh1_n 1
+#endif
+
+#if HAVE_NATIVE_mpn_addlsh_n && ! HAVE_NATIVE_mpn_addlsh2_n
+#undef mpn_addlsh2_n
+#define mpn_addlsh2_n(a,b,c,d) mpn_addlsh_n(a,b,c,d,2)
+#define HAVE_NATIVE_mpn_addlsh2_n 1
+#endif
+
+#if HAVE_NATIVE_mpn_sublsh_n && ! HAVE_NATIVE_mpn_sublsh1_n
+#undef mpn_sublsh1_n
+#define mpn_sublsh1_n(a,b,c,d) mpn_sublsh_n(a,b,c,d,1)
+#define HAVE_NATIVE_mpn_sublsh1_n 1
+#endif
+
+#if HAVE_NATIVE_mpn_sublsh_n && ! HAVE_NATIVE_mpn_sublsh2_n
+#undef mpn_sublsh2_n
+#define mpn_sublsh2_n(a,b,c,d) mpn_sublsh_n(a,b,c,d,2)
+#define HAVE_NATIVE_mpn_sublsh2_n 1
+#endif
+
+#if HAVE_NATIVE_mpn_rsblsh_n && ! HAVE_NATIVE_mpn_rsblsh1_n
+#undef mpn_rsblsh1_n
+#define mpn_rsblsh1_n(a,b,c,d) mpn_rsblsh_n(a,b,c,d,1)
+#define HAVE_NATIVE_mpn_rsblsh1_n 1
+#endif
+
+#if HAVE_NATIVE_mpn_rsblsh_n && ! HAVE_NATIVE_mpn_rsblsh2_n
+#undef mpn_rsblsh2_n
+#define mpn_rsblsh2_n(a,b,c,d) mpn_rsblsh_n(a,b,c,d,2)
+#define HAVE_NATIVE_mpn_rsblsh2_n 1
+#endif
+
+
 #ifndef DIVEXACT_BY3_METHOD
 #if GMP_NUMB_BITS % 2 == 0 && ! defined (HAVE_NATIVE_mpn_divexact_by3c)
 #define DIVEXACT_BY3_METHOD 0	/* default to using mpn_bdiv_dbm1c */
