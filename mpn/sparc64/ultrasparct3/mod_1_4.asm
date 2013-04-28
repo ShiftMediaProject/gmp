@@ -191,7 +191,7 @@ PROLOGUE(mpn_mod_1s_4p_cps)
 	mulx	%g1, %o0, %g1
 	cmp	%g1, %g3
 	add	%i1, %g3, %g2
-	movgeu	%xcc, %g3, %2
+	movgeu	%xcc, %g3, %g2
 	srlx	%g2, %i5, %g1
 	stx	%g1, [%i0+32]
 
