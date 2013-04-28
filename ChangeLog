@@ -1,3 +1,14 @@
+2013-04-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Override mpn_addlsh1_n, mpn_addlsh2_n, mpn_sublsh1_n, etc
+	with mpn_addlsh_n, etc when !HAVE_NATIVE the former but HAVE_NATIVE the
+	latter.
+
+	* mpn/sparc64/ultrasparct3/aorslsh_n.asm: New file.
+
+	* configure.ac (sparc-*-*): Recognise t5 along with t3 and t4.
+	Remove sparc64/ultrasparct1 from path_64 for T3, T3, and T5.
+
 2013-04-27  Mike Frysinger  <vapier@gentoo.org>
 
 	* configure.ac (arm*-*-*): Set up path also for plainest CPU varaints.
