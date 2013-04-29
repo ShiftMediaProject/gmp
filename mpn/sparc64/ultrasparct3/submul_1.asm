@@ -100,6 +100,7 @@ L(b11):	add	up, 24, up
 	brlz	n, L(end)
 	 nop
 
+	ALIGN(16)
 L(top):	ldx	[up+0], %o0
 	addxccc(%g3, %l2, %g1)
 	ldx	[rp+0], %o2
