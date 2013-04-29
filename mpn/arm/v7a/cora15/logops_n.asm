@@ -42,7 +42,7 @@ C v6t2	-
 C v7a	-
 
 define(`FEEDIN_VARIANT', 1)	C alternatives: 0 1 2
-define(`UNROLL', 4x2)	 	C alternatives: 4 4x2
+define(`UNROLL', 4x2)		C alternatives: 4 4x2
 
 define(`rp', `r0')
 define(`up', `r1')
