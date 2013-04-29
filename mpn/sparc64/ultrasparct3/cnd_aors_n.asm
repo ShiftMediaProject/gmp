@@ -25,8 +25,8 @@ C		   cycles/limb
 C UltraSPARC T3:	 ?
 C UltraSPARC T4:	 3 hopefully
 
-C We use a double-pointer trick to allow indexed addressing.  Its setup cost
-C might be prohibitive in these functions, since we don't expect huge n
+C We use a double-pointer trick to allow indexed addressing.  Its setup
+C cost might be a problem in these functions, since we don't expect huge n
 C arguments.
 C
 C For sub we need ~(a & mask) = (~a | ~mask) but by complementing mask we can
@@ -49,21 +49,21 @@ define(`x0',  `%g1')  define(`x1',  `%g3')
 define(`w0',  `%g1')  define(`w1',  `%g3')
 
 ifdef(`OPERATION_cnd_add_n',`
-      define(`LOGOP',   `and	$1, $2, $3')
-      define(`MAKEMASK',`cmp	%g0, $1
-      			subc	%g0, %g0, $2')
-      define(`INITCY',  `addcc	%g0, 0, %g0')
-      define(`RETVAL',  `addxc(	%g0, %g0, %i0)')
-      define(`func',    `mpn_cnd_add_n')
+  define(`LOGOP',   `and	$1, $2, $3')
+  define(`MAKEMASK',`cmp	%g0, $1
+		     subc	%g0, %g0, $2')
+  define(`INITCY',  `addcc	%g0, 0, %g0')
+  define(`RETVAL',  `addxc(	%g0, %g0, %i0)')
+  define(`func',    `mpn_cnd_add_n')
 ')
 ifdef(`OPERATION_cnd_sub_n',`
-      define(`LOGOP',   `orn	$2, $1, $3')
-      define(`MAKEMASK',`cmp	$1, 1
-      			subc	%g0, %g0, $2')
-      define(`INITCY',  `subcc	%g0, 1, %g0')
-      define(`RETVAL',  `addxc(	%g0, %g0, %i0)
-      			xor	%i0, 1, %i0')
-      define(`func',    `mpn_cnd_sub_n')
+  define(`LOGOP',   `orn	$2, $1, $3')
+  define(`MAKEMASK',`cmp	$1, 1
+		     subc	%g0, %g0, $2')
+  define(`INITCY',  `subcc	%g0, 1, %g0')
+  define(`RETVAL',  `addxc(	%g0, %g0, %i0)
+		     xor	%i0, 1, %i0')
+  define(`func',    `mpn_cnd_sub_n')
 ')
 
 MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
