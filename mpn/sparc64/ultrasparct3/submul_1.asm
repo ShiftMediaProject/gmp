@@ -1,6 +1,6 @@
-dnl  SPARC v9 mpn_submul_1 for T3/T4.
+dnl  SPARC v9 mpn_submul_1 for T3/T4/T5.
 
-dnl  Contributed to the GNU project by David Miller.
+dnl  Contributed to the GNU project by David Miller and Torbjörn Granlund.
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
@@ -22,8 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	29
-C UltraSPARC T4:	 5.8
+C UltraSPARC T3:	 ?
+C UltraSPARC T4:	 4.5  hopefully
 
 C INPUT PARAMETERS
 define(`rp', `%i0')
@@ -36,47 +36,124 @@ ASM_START()
 	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_submul_1)
 	save	%sp, -176, %sp
-	subcc	n, 1, n
-	be	L(final_one)
-	 subcc	%g0, %g0, %o5
+	ldx	[up+0], %g1
 
-L(top):
-	ldx	[up+0], %l0
-	ldx	[up+8], %l1
-	ldx	[rp+0], %l2
-	ldx	[rp+8], %l3
-	mulx	%l0, v0, %o0
-	add	up, 16, up
-	umulxhi(%l0, v0, %o1)
-	add	rp, 16, rp
-	mulx	%l1, v0, %o2
-	sub	n, 2, n
-	umulxhi(%l1, v0, %o3)
-	addxccc(%o5, %o0, %o0)
-	addxc(	%g0, %o1, %o5)
-	subcc	%l2, %o0, %o0
-	stx	%o0, [rp-16]
-	addxccc(%o5, %o2, %o2)
-	addxc(	%g0, %o3, %o5)
-	subcc	%l3, %o2, %o2
-	brgz	n, L(top)
-	 stx	%o2, [rp-8]
-
-	brlz,pt	n, L(done)
+	and	n, 3, %g5
+	add	n, -4, n
+	brz	%g5, L(b00)
+	 cmp	%g5, 2
+	bcs	%xcc, L(b01)
+	 nop
+	ldx	[up+8], %g4
+	bne	%xcc, L(b11)
 	 nop
 
-L(final_one):
-	ldx	[up+0], %l0
-	ldx	[rp+0], %l2
-	mulx	%l0, v0, %o0
-	umulxhi(%l0, v0, %o1)
-	addxccc(%o5, %o0, %o0)
-	addxc(	%g0, %o1, %o5)
-	subcc	%l2, %o0, %o0
-	stx	%o0, [rp+0]
+L(b10):	add	up, 16, up
+	addcc	%g0, 0, %g3
+	mulx	%g1, v0, %l4
+	umulxhi(%g1, v0, %l5)
+	ldx	[rp+0], %o2
+	mulx	%g4, v0, %l6
+	umulxhi(%g4, v0, %l7)
+	brlz	n, L(wd2)
+	 nop
+L(gt2):	ldx	[up+0], %o0
+	b	L(lo2)
+	 nop
 
-L(done):
-	addxc(	%g0, %o5, %i0)
+L(b00):	add	rp, -16, rp
+	addcc	%g0, 0, %g3
+	ldx	[up+8], %o1
+	mulx	%g1, v0, %l0
+	umulxhi(%g1, v0, %l1)
+	ldx	[up+16], %o0
+	ldx	[rp+16], %o2
+	mulx	%o1, v0, %l2
+	umulxhi(%o1, v0, %l3)
+	b	     L(lo0)
+	 nop
+
+L(b01):	add	up, 8, up
+	add	rp, -8, rp
+	addcc	%g0, 0, %g3
+	ldx	[rp+8], %o3
+	mulx	%g1, v0, %l6
+	umulxhi(%g1, v0, %l7)
+	brlz	n, L(wd1)
+	 nop
+	ldx	[up+0], %o0
+	ldx	[up+8], %o1
+	mulx	%o0, v0, %l0
+	umulxhi(%o0, v0, %l1)
+	b	L(lo1)
+	 nop
+
+L(b11):	add	up, 24, up
+	add	rp, 8, rp
+	addcc	%g0, 0, %g3
+	mulx	%g1, v0, %l2
+	umulxhi(%g1, v0, %l3)
+	ldx	[up-8], %o1
+	ldx	[rp-8], %o3
+	mulx	%g4, v0, %l4
+	umulxhi(%g4, v0, %l5)
+	brlz	n, L(end)
+	 nop
+
+L(top):	ldx	[up+0], %o0
+	addxccc(%g3, %l2, %g1)
+	ldx	[rp+0], %o2
+	addxc(	%g0, %l3, %g3)
+	mulx	%o1, v0, %l6
+	subcc	%o3, %g1, %g4
+	umulxhi(%o1, v0, %l7)
+	stx	%g4, [rp-8]
+L(lo2):	ldx	[up+8], %o1
+	addxccc(%g3, %l4, %g1)
+	ldx	[rp+8], %o3
+	addxc(	%g0, %l5, %g3)
+	mulx	%o0, v0, %l0
+	subcc	%o2, %g1, %g4
+	umulxhi(%o0, v0, %l1)
+	stx	%g4, [rp+0]
+L(lo1):	ldx	[up+16], %o0
+	addxccc(%g3, %l6, %g1)
+	ldx	[rp+16], %o2
+	addxc(	%g0, %l7, %g3)
+	mulx	%o1, v0, %l2
+	subcc	%o3, %g1, %g4
+	umulxhi(%o1, v0, %l3)
+	stx	%g4, [rp+8]
+L(lo0):	ldx	[up+24], %o1
+	addxccc(%g3, %l0, %g1)
+	ldx	[rp+24], %o3
+	addxc(	%g0, %l1, %g3)
+	mulx	%o0, v0, %l4
+	subcc	%o2, %g1, %g4
+	umulxhi(%o0, v0, %l5)
+	stx	%g4, [rp+16]
+	add	n, -4, n
+	add	up, 32, up
+	brgez	n, L(top)
+	 add	rp, 32, rp
+
+L(end):	addxccc(%g3, %l2, %g1)
+	ldx	[rp+0], %o2
+	addxc(	%g0, %l3, %g3)
+	mulx	%o1, v0, %l6
+	subcc	%o3, %g1, %g4
+	umulxhi(%o1, v0, %l7)
+	stx	%g4, [rp-8]
+L(wd2):	addxccc(%g3, %l4, %g1)
+	ldx	[rp+8], %o3
+	addxc(	%g0, %l5, %g3)
+	subcc	%o2, %g1, %g4
+	stx	%g4, [rp+0]
+L(wd1):	addxccc(%g3, %l6, %g1)
+	addxc(	%g0, %l7, %g3)
+	subcc	%o3, %g1, %g4
+	stx	%g4, [rp+8]
+	addxc(	%g0, %g3, %i0)
 	ret
 	 restore
 EPILOGUE()
