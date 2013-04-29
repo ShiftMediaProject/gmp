@@ -23,20 +23,20 @@ include(`../config.m4')
 
 C			     cycles/limb     cycles/limb
 C			      ali,evn n	     unal,evn n
-C P5				 
-C P6 model 0-8,10-12		 
-C P6 model 9  (Banias)		 
+C P5
+C P6 model 0-8,10-12
+C P6 model 9  (Banias)
 C P6 model 13 (Dothan)		 1.33		 1.87
-C P4 model 0  (Willamette)	 
-C P4 model 1  (?)		 
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
 C P4 model 2  (Northwood)	 2.1		 2.63
-C P4 model 3  (Prescott)	 
+C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)		 1.7		 2.57
 C Intel Atom			 1.85		 2.7
-C AMD K6			
+C AMD K6
 C AMD K7			 1.33		 1.33
-C AMD K8			
-C AMD K10			
+C AMD K8
+C AMD K10
 
 define(`rp',     `%edi')
 define(`tp',     `%esi')
