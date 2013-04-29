@@ -80,7 +80,7 @@ PROLOGUE(func)
 	add	rp0, -8, rp1
 	add	rp0, -16, rp0
 	be	L(evn)
-	 neg	n
+	 neg	n, n
 
 L(odd):	ldx	[vp0 + n], %l1
 	mov	0, %l2
