@@ -44,9 +44,8 @@ PROLOGUE(mpn_submul_1)
 	 cmp	%g5, 2
 	bcs	%xcc, L(b01)
 	 nop
-	ldx	[up+8], %g4
 	bne	%xcc, L(b11)
-	 nop
+	 ldx	[up+8], %g4
 
 L(b10):	add	up, 16, up
 	addcc	%g0, 0, %g3
