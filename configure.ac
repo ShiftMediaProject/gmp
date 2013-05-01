@@ -2808,6 +2808,8 @@ case $tmp_fn in
   cnd_add_n|cnd_sub_n) tmp_mulfunc="cnd_aors_n"   ;;
   addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
   mul_2|addmul_2)    tmp_mulfunc="aormul_2" ;;
+  mul_3|addmul_3)    tmp_mulfunc="aormul_3" ;;
+  mul_4|addmul_4)    tmp_mulfunc="aormul_4" ;;
   popcount|hamdist)  tmp_mulfunc="popham"    ;;
   and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)
                      tmp_mulfunc="logops_n"  ;;
