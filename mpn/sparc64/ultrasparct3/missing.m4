@@ -22,13 +22,17 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 dnl Usage addxccc(r1,r2,r3, t1)
 dnl  64-bit add with carry-in and carry-out
-dnl  FIXME: Uses scratch register g2
+dnl  FIXME: Register g2 must not be destination
 
 define(`addxccc',`dnl
+	add	%sp, -512, %sp
+	stx	%g2, [%sp+2047+256+16]
 	mov	0, %g2
 	movcs	%xcc, -1, %g2
 	addcc	%g2, 1, %g0
 	addccc	$1, $2, $3
+	ldx	[%sp+2047+256+16], %g2
+	sub	%sp, -512, %sp
 ')
 
 
@@ -50,9 +54,10 @@ dnl  Calls __gmpn_umulh using a non-standard calling convention
 define(`umulxhi',`dnl
 	add	%sp, -512, %sp
 	stx	$1, [%sp+2047+256]
+	stx	$2, [%sp+2047+256+8]
 	stx	%o7, [%sp+2047+256+16]
 	call	__gmpn_umulh
-	 stx	$2, [%sp+2047+256+8]
+	 nop
 	ldx	[%sp+2047+256+16], %o7
 	ldx	[%sp+2047+256], $3
 	sub	%sp, -512, %sp
