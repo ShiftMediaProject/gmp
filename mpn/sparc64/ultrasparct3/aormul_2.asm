@@ -1,5 +1,7 @@
 dnl  SPARC v9 mpn_mul_2 and mpn_addmul_2 for T3/T4/T5.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -26,9 +28,8 @@ C UltraSPARC T3:	22.5		 23.5
 C UltraSPARC T4:	 3.25		 3.75
 
 
-C The code is reasonably scheduled but also relies on OoO.  Micro-scheduling
-C remains to be done.  There is hope that this could run at around 3.0 and 3.5
-C c/l respectively, on T4 if an optimal schedule is found.  Two cycles per
+C The code is reasonably scheduled but also relies on OoO.  There was hope that
+C this could run at around 3.0 and 3.5 c/l respectively, on T4.  Two cycles per
 C iteration needs to be removed.
 C
 C We could almost use 2-way unrolling, but currently the wN registers live too
@@ -47,13 +48,11 @@ define(`vp', `%i3')
 
 define(`v0', `%o0')
 define(`v1', `%o1')
+
 define(`w0', `%o2')
 define(`w1', `%o3')
 define(`w2', `%o4')
 define(`w3', `%o5')
-
-C Free or little used registers: o7, g4, g5.  We use g2 for addxccc emulation.
-C l0,l6, l1,l3, l5,l7 and l2,l4 could be coalesced.
 
 ifdef(`OPERATION_mul_2',`
       define(`AM2',      `')
@@ -76,11 +75,10 @@ PROLOGUE(func)
 	save	%sp, -176, %sp
 
 	ldx	[vp+0], v0		C load v0
-	ldx	[vp+8], v1		C load v1
-	ldx	[up+0], %g4
-
 	and	n, 3, %g5
+	ldx	[vp+8], v1		C load v1
 	add	n, -6, n
+	ldx	[up+0], %g4
 	brz	%g5, L(b0)
 	 cmp	%g5, 2
 	bcs	L(b1)
