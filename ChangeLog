@@ -1,5 +1,14 @@
 2013-05-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/arm/copyd.asm: Suppress dead pointer update.
+	* mpn/arm/copyi.asm: Likewise.
+	* mpn/arm/neon/logops_n.asm: Likewise.
+	* mpn/arm/neon/tabselect.asm: Likewise.
+	* mpn/arm/rshift.asm: Likewise.
+	* mpn/arm/tabselect.asm: Likewise.
+	* mpn/arm/v6/dive_1.asm: Likewise
+	* mpn/arm/v7a/cora15/neon/copyi.asm: Likewise.
+
 	* mpn/arm/v7a/cora15/neon/com.asm: New file.
 
 2013-05-01  Torbjorn Granlund  <tege@gmplib.org>
