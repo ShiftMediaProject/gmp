@@ -1,3 +1,7 @@
+2013-05-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/v7a/cora15/neon/com.asm: New file.
+
 2013-05-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparct3/aormul_4.asm: New file.
@@ -31,7 +35,7 @@
 
 2013-04-27  Mike Frysinger  <vapier@gentoo.org>
 
-	* configure.ac (arm*-*-*): Set up path also for plainest CPU varaints.
+	* configure.ac (arm*-*-*): Set up path also for plainest CPU variants.
 
 2013-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
