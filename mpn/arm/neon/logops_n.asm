@@ -130,10 +130,10 @@ L(tl1):	tst		n, #2
 	vst1.32		{d0}, [rp]!
 L(tl2):	tst		n, #1
 	beq		L(tl3)
-	vld1.32		{d0[0]}, [up]!
-	vld1.32		{d1[0]}, [vp]!
+	vld1.32		{d0[0]}, [up]
+	vld1.32		{d1[0]}, [vp]
 	LOGOP(		d0, d0, d1)
 	POSTOP(		d0, d0)
-	vst1.32		{d0[0]}, [rp]!
+	vst1.32		{d0[0]}, [rp]
 L(tl3):	bx		lr
 EPILOGUE()

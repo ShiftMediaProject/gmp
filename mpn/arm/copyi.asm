@@ -62,7 +62,7 @@ L(top):	subs	n, n, #4
 	ldmia	up!, { r3,r4,r5,r12 }
 	bne	L(top)
 
-L(end):	stm	rp!, { r3,r4,r5,r12 }
+L(end):	stm	rp, { r3,r4,r5,r12 }
 	pop	{ r4-r5 }
 L(rtn):	bx	lr
 EPILOGUE()

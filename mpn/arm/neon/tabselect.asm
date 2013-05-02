@@ -122,7 +122,7 @@ L(tp1):	vceq.i32  maskd, d26, d30
 	add	  tp, tp, n, lsl #2
 	subs	  i, i, #1
 	bne	  L(tp1)
-	vst1.32	  {d4[0]}, [rp]!
+	vst1.32	  {d4[0]}, [rp]
 
 L(b000):pop	{r4-r5}
 	bx	r14

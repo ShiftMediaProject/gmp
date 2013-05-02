@@ -96,7 +96,7 @@ L(tp2):	subs	c, c, #1
 	orr	r8, r8, r4
 	orr	r9, r9, r5
 	bge	L(tp2)
-	stmia	rp!, {r8,r9}
+	stmia	rp, {r8,r9}
 	pop	{r4-r11, r14}
 	bx	lr
 

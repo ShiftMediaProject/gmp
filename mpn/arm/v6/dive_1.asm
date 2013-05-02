@@ -90,7 +90,7 @@ L(top):	ldr	r9, [up], #4
 	subs	n, n, #1
 	bne	L(top)
 
-L(end):	str	r5, [rp], #4
+L(end):	str	r5, [rp]
 	pop	{r4,r5,r6,r7,r8,r9}
 	bx	r14
 

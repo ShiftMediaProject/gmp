@@ -73,7 +73,7 @@ L(tl1):	tst	n, #2
 	vst1.32	{d22}, [rp]!
 L(tl2):	tst	n, #1
 	beq	L(tl3)
-	vld1.32	{d22[0]}, [up]!
-	vst1.32	{d22[0]}, [rp]!
+	vld1.32	{d22[0]}, [up]
+	vst1.32	{d22[0]}, [rp]
 L(tl3):	bx	lr
 EPILOGUE()
