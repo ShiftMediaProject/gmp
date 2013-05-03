@@ -1718,10 +1718,10 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_cnd_add_n), TYPE_ADDCND_N },
   { TRY(mpn_cnd_sub_n), TYPE_SUBCND_N },
-#if HAVE_NATIVE_mpn_addlsh1_n
+#if HAVE_NATIVE_mpn_addlsh1_n == 1
   { TRY(mpn_addlsh1_n), TYPE_ADDLSH1_N },
 #endif
-#if HAVE_NATIVE_mpn_addlsh2_n
+#if HAVE_NATIVE_mpn_addlsh2_n == 1
   { TRY(mpn_addlsh2_n), TYPE_ADDLSH2_N },
 #endif
 #if HAVE_NATIVE_mpn_addlsh_n
@@ -1745,10 +1745,10 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_addlsh_n_ip2
   { TRY_FUNFUN(mpn_addlsh_n_ip2), TYPE_ADDLSH_N_IP2 },
 #endif
-#if HAVE_NATIVE_mpn_sublsh1_n
+#if HAVE_NATIVE_mpn_sublsh1_n == 1
   { TRY(mpn_sublsh1_n), TYPE_SUBLSH1_N },
 #endif
-#if HAVE_NATIVE_mpn_sublsh2_n
+#if HAVE_NATIVE_mpn_sublsh2_n == 1
   { TRY(mpn_sublsh2_n), TYPE_SUBLSH2_N },
 #endif
 #if HAVE_NATIVE_mpn_sublsh_n
@@ -1763,10 +1763,10 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_sublsh_n_ip1
   { TRY_FUNFUN(mpn_sublsh_n_ip1), TYPE_SUBLSH_N_IP1 },
 #endif
-#if HAVE_NATIVE_mpn_rsblsh1_n
+#if HAVE_NATIVE_mpn_rsblsh1_n == 1
   { TRY(mpn_rsblsh1_n), TYPE_RSBLSH1_N },
 #endif
-#if HAVE_NATIVE_mpn_rsblsh2_n
+#if HAVE_NATIVE_mpn_rsblsh2_n == 1
   { TRY(mpn_rsblsh2_n), TYPE_RSBLSH2_N },
 #endif
 #if HAVE_NATIVE_mpn_rsblsh_n
