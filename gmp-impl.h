@@ -1567,42 +1567,44 @@ __GMP_DECLSPEC void mpn_sbpi1_div_r_sec (mp_ptr, mp_size_t, mp_srcptr, mp_size_t
 
 
 /* Override mpn_addlsh1_n, mpn_addlsh2_n, mpn_sublsh1_n, etc with mpn_addlsh_n,
-   etc when !HAVE_NATIVE the former but HAVE_NATIVE_ the latter.  */
+   etc when !HAVE_NATIVE the former but HAVE_NATIVE_ the latter.  We then lie
+   and say these macros represent native functions, but leave a trace by using
+   the value 2 rather than 1.  */
 
 #if HAVE_NATIVE_mpn_addlsh_n && ! HAVE_NATIVE_mpn_addlsh1_n
 #undef mpn_addlsh1_n
 #define mpn_addlsh1_n(a,b,c,d) mpn_addlsh_n(a,b,c,d,1)
-#define HAVE_NATIVE_mpn_addlsh1_n 1
+#define HAVE_NATIVE_mpn_addlsh1_n 2
 #endif
 
 #if HAVE_NATIVE_mpn_addlsh_n && ! HAVE_NATIVE_mpn_addlsh2_n
 #undef mpn_addlsh2_n
 #define mpn_addlsh2_n(a,b,c,d) mpn_addlsh_n(a,b,c,d,2)
-#define HAVE_NATIVE_mpn_addlsh2_n 1
+#define HAVE_NATIVE_mpn_addlsh2_n 2
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_n && ! HAVE_NATIVE_mpn_sublsh1_n
 #undef mpn_sublsh1_n
 #define mpn_sublsh1_n(a,b,c,d) mpn_sublsh_n(a,b,c,d,1)
-#define HAVE_NATIVE_mpn_sublsh1_n 1
+#define HAVE_NATIVE_mpn_sublsh1_n 2
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_n && ! HAVE_NATIVE_mpn_sublsh2_n
 #undef mpn_sublsh2_n
 #define mpn_sublsh2_n(a,b,c,d) mpn_sublsh_n(a,b,c,d,2)
-#define HAVE_NATIVE_mpn_sublsh2_n 1
+#define HAVE_NATIVE_mpn_sublsh2_n 2
 #endif
 
 #if HAVE_NATIVE_mpn_rsblsh_n && ! HAVE_NATIVE_mpn_rsblsh1_n
 #undef mpn_rsblsh1_n
 #define mpn_rsblsh1_n(a,b,c,d) mpn_rsblsh_n(a,b,c,d,1)
-#define HAVE_NATIVE_mpn_rsblsh1_n 1
+#define HAVE_NATIVE_mpn_rsblsh1_n 2
 #endif
 
 #if HAVE_NATIVE_mpn_rsblsh_n && ! HAVE_NATIVE_mpn_rsblsh2_n
 #undef mpn_rsblsh2_n
 #define mpn_rsblsh2_n(a,b,c,d) mpn_rsblsh_n(a,b,c,d,2)
-#define HAVE_NATIVE_mpn_rsblsh2_n 1
+#define HAVE_NATIVE_mpn_rsblsh2_n 2
 #endif
 
 
