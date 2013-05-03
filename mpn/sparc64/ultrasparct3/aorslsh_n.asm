@@ -43,13 +43,13 @@ define(`tnc',`%o5')
 
 ifdef(`OPERATION_addlsh_n',`
   define(`INITCY', `subcc	%g0, 0, %g0')
-  define(`MERGE', `or')
-  define(`func',  `mpn_addlsh_n')
+  define(`MERGE',  `or')
+  define(`func',   `mpn_addlsh_n')
 ')
 ifdef(`OPERATION_sublsh_n',`
   define(`INITCY', `subcc	%g0, 1, %g0')
   define(`MERGE',  `xnor')
-  define(`func',  `mpn_sublsh_n')
+  define(`func',   `mpn_sublsh_n')
 ')
 
 define(`rp0',  `rp')
@@ -65,7 +65,6 @@ ASM_START()
 	REGISTER(%g3,#scratch)
 PROLOGUE(func)
 	save	%sp, -176, %sp
-	INITCY
 	mov	64, tnc
 	sub	tnc, cnt, tnc
 
@@ -79,8 +78,9 @@ PROLOGUE(func)
 	add	vp0, 8, vp1
 	add	rp0, -8, rp1
 	add	rp0, -16, rp0
+	neg	n, n
 	be	L(evn)
-	 neg	n, n
+	 INITCY
 
 L(odd):	ldx	[vp0 + n], %l1
 	mov	0, %l2
