@@ -1,5 +1,8 @@
 2013-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/sparc64/ultrasparct3/aorslsh_n.asm: Invoke INITCY where it has
+	effect.
+
 	* gmp-impl.h: Amend last change.
 	* tests/devel/try.c (choice_array): Don't try to table addlsh1_n etc if
 	a macro.
