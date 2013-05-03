@@ -1,3 +1,9 @@
+2013-05-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Amend last change.
+	* tests/devel/try.c (choice_array): Don't try to table addlsh1_n etc if
+	a macro.
+
 2013-05-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/copyd.asm: Suppress dead pointer update.
