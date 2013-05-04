@@ -1,3 +1,16 @@
+2013-05-03  David S. Miller  <davem@davemloft.net>
+
+	* tune/common.c (speed_mpn_addlsh1_n, speed_mpn_sublsh1_n,
+	speed_mpn_rsblsh1_n, speed_mpn_addlsh2_n, speed_mpn_sublsh2_n,
+	speed_mpn_rsblsh2_n): Don't define if these routines are macros.
+	* tune/speed.c (routine): Likewise don't table if they are macros.
+
+	* mpn/sparc64/ultrasparct3/addmul_1.asm: Add T4 and T3 timings.
+	* mpn/sparc64/ultrasparct3/aormul_4.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/aorslsh_n.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/cnd_aors_n.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/submul_1.asm: Likewise.
+
 2013-05-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/sparc64/ultrasparct3/aorslsh_n.asm: Invoke INITCY where it has
