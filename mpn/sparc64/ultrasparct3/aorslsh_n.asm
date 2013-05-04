@@ -22,8 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	 ?
-C UltraSPARC T4:	 4 c/l hopefully
+C UltraSPARC T3:	11
+C UltraSPARC T4:	 4
 
 C For sublsh_n we combine the two shifted limbs using xnor, using the identity
 C (a xor not b) = (not (a xor b)) which equals (not (a or b)) when (a and b) =

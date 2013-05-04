@@ -24,8 +24,8 @@ include(`../config.m4')
 
 C		    cycles/limb      cycles/limb
 C		       mul_4           addmul_4
-C UltraSPARC T3:	 ?		 ?
-C UltraSPARC T4:	 2.5?		 2.75?
+C UltraSPARC T3:	21.5		22.0
+C UltraSPARC T4:	 2.625		 2.75
 
 
 C The code is well-scheduled and relies on OoO very little.  There is hope that

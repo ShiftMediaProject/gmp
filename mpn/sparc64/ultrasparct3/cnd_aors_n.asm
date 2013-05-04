@@ -22,8 +22,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C		   cycles/limb
-C UltraSPARC T3:	 ?
-C UltraSPARC T4:	 3 hopefully
+C UltraSPARC T3:	 8.5
+C UltraSPARC T4:	 3
 
 C We use a double-pointer trick to allow indexed addressing.  Its setup
 C cost might be a problem in these functions, since we don't expect huge n
