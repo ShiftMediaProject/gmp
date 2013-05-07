@@ -171,7 +171,7 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
    *   B2modb = - b * bi;
    *   ASSERT (B2modb <= b);    // NB: equality iff b = B/2
    */
-  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
+  udiv_rnnd_preinv (B2modb, B1modb, CNST_LIMB(0), b, bi);
   cps[3] = B2modb >> cnt;
 }
 
@@ -305,8 +305,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t bmodb[4])
       r1 = (r1 << cnt) | (r0 >> (GMP_LIMB_BITS - cnt));
       r0 <<= cnt;
 
-      /* NOTE: Might get r1 == b here, but udiv_rnnd_preinv allows
-	 that. */
+      /* NOTE: Might get r1 == b here, but udiv_rnnd_preinv allows that. */
     }
   else
     {
