@@ -1,3 +1,15 @@
+2013-05-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c: Cast constant udiv_rnnd_preinv arguments.
+	* mpn/generic/mod_1_2.c: Likewise.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+	* mpn/generic/divrem_2.c: Likewise.
+
+2013-05-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess (power*): Handle all ppc970 variants.
+
 2013-05-03  David S. Miller  <davem@davemloft.net>
 
 	* tune/common.c (speed_mpn_addlsh1_n, speed_mpn_sublsh1_n,
