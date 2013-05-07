@@ -7,7 +7,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2009, 2011, 2012 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,7 +48,6 @@ long __gmpn_cpuid (char [12], int);
    as per config.guess/config.sub.  */
 
 #define __gmpn_cpuid            fake_cpuid
-#define __gmpn_cpuid_available  fake_cpuid_available
 
 #define MAKE_FMS(family, model)						\
   ((((family) & 0xf) << 8) + (((family) & 0xff0) << 20)			\
@@ -95,14 +94,8 @@ fake_cpuid_lookup (void)
   abort ();
 }
 
-static int
-fake_cpuid_available (void)
-{
-  return fake_cpuid_table[fake_cpuid_lookup()].vendor[0] != '\0';
-}
-
 static long
-fake_cpuid (char dst[12], int id)
+fake_cpuid (char dst[12], unsigned int id)
 {
   int  i = fake_cpuid_lookup();
 
@@ -112,6 +105,9 @@ fake_cpuid (char dst[12], int id)
     return 0;
   case 1:
     return fake_cpuid_table[i].fms;
+  case 0x80000001:
+    dst[4 + 29 / 8] = (1 << (29 % 8));		/* "long" mode */
+    return 0;
   default:
     printf ("fake_cpuid(): oops, unknown id %d\n", id);
     abort ();
