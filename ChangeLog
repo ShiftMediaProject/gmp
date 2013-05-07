@@ -1,5 +1,8 @@
 2013-05-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/fat/fat.c (fake_cpuid): Handle 0x80000001 request.
+	(fake_cpuid_available): Remove unused function.
+
 	* mpn/generic/mod_1_1.c: Cast constant udiv_rnnd_preinv arguments.
 	* mpn/generic/mod_1_2.c: Likewise.
 	* mpn/generic/mod_1_3.c: Likewise.
