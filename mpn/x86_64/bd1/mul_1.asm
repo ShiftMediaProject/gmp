@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_mul_1 optimised for AMD Bulldozer.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012 Free Software
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -53,7 +53,7 @@ IFDOS(`	define(`rp', ``%rcx'')	') dnl
 IFDOS(`	define(`v0', ``%r9'')	') dnl
 IFDOS(`	define(`r9', ``rdi'')	') dnl
 IFDOS(`	define(`n',  ``%r8'')	') dnl
-IFDOS(`	define(`r8', ``r11'')	') dnl
+IFDOS(`	define(`r8', ``rbx'')	') dnl
 
 ASM_START()
 	TEXT
