@@ -69,7 +69,6 @@ IFDOS(`	mov	64(%rsp), %r10')	C 40 + 3*8  (3 push insns)
 EPILOGUE()
 
 PROLOGUE(mpn_mul_1)
-
 IFDOS(``push	%rsi		'')
 IFDOS(``push	%rdi		'')
 IFDOS(``mov	%rdx, %rsi	'')
