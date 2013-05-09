@@ -1,5 +1,9 @@
 2013-05-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.ac (--enable-fake-cpuid): New option.
+	* mpn/x86_64/fat/fat.c (WANT_FAKE_CPUID): Remove defaulting.
+	* mpn/x86/fat/fat.c (WANT_FAKE_CPUID): Likewise.
+
 	* mpn/x86_64/bd1/mul_1.asm: Fix typo.
 
 2013-05-07  Torbjorn Granlund  <tege@gmplib.org>

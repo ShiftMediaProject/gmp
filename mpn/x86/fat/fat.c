@@ -31,9 +31,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* Change this to "#define TRACE(x) x" for some traces. */
 #define TRACE(x)
 
-/* Change this to 1 to take the cpuid from GMP_CPU_TYPE env var. */
-#define WANT_FAKE_CPUID  0
-
 
 /* fat_entry.asm */
 long __gmpn_cpuid (char [12], int);

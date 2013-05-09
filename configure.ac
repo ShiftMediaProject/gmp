@@ -36,6 +36,7 @@ m4_pattern_allow(GMP_MPARAM_H_SUGGEST)
 m4_pattern_allow(GMP_NAIL_BITS)
 m4_pattern_allow(GMP_NUMB_BITS)
 m4_pattern_allow(GMP_NONSTD_ABI)
+m4_pattern_allow(GMP_CPU_TYPE)
 
 # If --target is not used then $target_alias is empty, but if say
 # "./configure athlon-pc-freebsd3.5" is used, then all three of
@@ -243,8 +244,26 @@ esac],
 [enable_minithres=no])
 
 
+AC_ARG_ENABLE(fake-cpuid,
+AC_HELP_STRING([--enable-fake-cpuid],[enable GMP_CPU_TYPE faking cpuid [[default=no]]]),
+[case $enableval in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-fake-cpuid, need yes or no]) ;;
+esac],
+[enable_fake_cpuid=no])
+
+if test "$enable_fake_cpuid" = "yes"; then
+  AC_DEFINE(WANT_FAKE_CPUID,1,
+  [Define to 1 to enable GMP_CPU_TYPE faking cpuid, per --enable-fake-cpuid])
+fi
+
+
 if test $enable_fat = yes && test $enable_assembly = no ; then
   AC_MSG_ERROR([when doing a fat build, disabling assembly will not work])
+fi
+
+if test $enable_fake_cpuid = yes && test $enable_fat = no ; then
+  AC_MSG_ERROR([--enable-fake-cpuid requires --enable-fat])
 fi
 
 
