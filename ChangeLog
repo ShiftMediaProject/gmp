@@ -1,3 +1,8 @@
+2013-05-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/p6/mmx/gmp-mparam.h: Set down SQR_TOOM2_THRESHOLD to parent
+	directory value.
+
 2013-05-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac (--enable-fake-cpuid): New option.
