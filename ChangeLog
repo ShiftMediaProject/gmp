@@ -1,5 +1,8 @@
 2013-05-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreisbr/aorsmul_1.asm: Fix, then enable DOS64 support.
+	* mpn/x86_64/coreisbr/mul_1.asm: Enable DOS64 support.
+
 	* mpn/x86/p6/mmx/gmp-mparam.h: Set down SQR_TOOM2_THRESHOLD to parent
 	directory value.
 

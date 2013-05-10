@@ -46,7 +46,7 @@ define(`v0',      `%rcx')   C r9
 
 define(`n',	  `%r11')
 
-dnl Disable until tested ABI_SUPPORT(DOS64)
+ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 IFDOS(`	define(`up', ``%rsi'')	') dnl

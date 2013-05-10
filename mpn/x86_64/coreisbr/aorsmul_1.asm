@@ -54,7 +54,7 @@ ifdef(`OPERATION_submul_1',`
       define(`func',  `mpn_submul_1')
 ')
 
-dnl Disable until tested ABI_SUPPORT(DOS64)
+ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
@@ -64,7 +64,7 @@ IFDOS(`	define(`rp', ``%rcx'')	') dnl
 IFDOS(`	define(`v0', ``%r9'')	') dnl
 IFDOS(`	define(`r9', ``rdi'')	') dnl
 IFDOS(`	define(`n',  ``%r8'')	') dnl
-IFDOS(`	define(`r8', ``r11'')	') dnl
+IFDOS(`	define(`r8', ``rbx'')	') dnl
 
 ASM_START()
 	TEXT
