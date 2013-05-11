@@ -1,6 +1,6 @@
 dnl  X86-64 mpn_addmul_1 and mpn_submul_1 optimised for Intel Sandy Bridge.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012 Free Software
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -59,12 +59,13 @@ ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
-IFDOS(`	define(`up', ``%rsi'')	') dnl
-IFDOS(`	define(`rp', ``%rcx'')	') dnl
-IFDOS(`	define(`v0', ``%r9'')	') dnl
-IFDOS(`	define(`r9', ``rdi'')	') dnl
-IFDOS(`	define(`n',  ``%r8'')	') dnl
-IFDOS(`	define(`r8', ``rbx'')	') dnl
+IFDOS(`	define(`up',     ``%rsi'')') dnl
+IFDOS(`	define(`rp',     ``%rcx'')') dnl
+IFDOS(`	define(`v0',     ``%r9'')') dnl
+IFDOS(`	define(`r9',     ``rdi'')') dnl
+IFDOS(`	define(`n_param',``%r8'')') dnl
+IFDOS(`	define(`n',      ``%r8'')') dnl
+IFDOS(`	define(`r8',     ``rbx'')') dnl
 
 ASM_START()
 	TEXT
@@ -77,11 +78,10 @@ IFDOS(``mov	%rdx, %rsi	'')
 
 	mov	(up), %rax
 	push	%rbx
-IFSTD(`	mov	R32(n_param), R32(%rdx)	')
-IFDOS(`	mov	n, %rdx			')
-IFSTD(`	mov	R32(n_param), R32(n)	')
+	mov	R32(`n_param'), R32(%rdx)
+IFSTD(`	mov	n_param, n		')
 
-	lea	-8(up,n,8), up
+	lea	-8(up,n_param,8), up
 	and	$3, R32(%rdx)
 	jz	L(b0)
 	cmp	$2, R32(%rdx)

@@ -1,3 +1,8 @@
+2013-05-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/mul_1.asm: Handle n = 1 for DOS64.  Streamline.
+	* mpn/x86_64/coreisbr/aorsmul_1.asm: Streamline.
+
 2013-05-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/aorsmul_1.asm: Fix, then enable DOS64 support.
