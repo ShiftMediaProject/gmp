@@ -132,6 +132,11 @@ yes|no) ;;
 esac],
 [enable_assembly=yes])
 
+if test "$enable_assembly" = "yes"; then
+  AC_DEFINE(WANT_ASSEMBLY,1,
+  [Defined to 1 as per --enable-assembly])
+fi
+
 
 AC_ARG_ENABLE(fft,
 AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [[default=yes]]]),
