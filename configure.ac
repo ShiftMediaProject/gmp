@@ -614,7 +614,7 @@ case $host in
 	;;
       arm1156)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6t2 -march=armv6"
+	gcc_cflags_arch="-march=armv6t2"
 	;;
       armcortexa5 | armv7a*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
