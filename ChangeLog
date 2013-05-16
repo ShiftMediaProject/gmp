@@ -1,3 +1,14 @@
+2013-05-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/misc.c (tests_hardware_getround, tests_hardware_setround): 
+	Avoid assembly dependency unless WANT_ASSEMBLY.
+
+	* configure.ac (WANT_ASSEMBLY): Conditionally define.
+
+2013-05-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac (arm1156): Don't fall back to plain v6 compiler option.
+
 2013-05-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/mul_1.asm: Handle n = 1 for DOS64.  Streamline.
@@ -727,8 +738,8 @@
 	(mpz_export): Reorder branches.
 	(mpz_mul_ui): Avoid temporary allocation (mpn_mul_1 can work in-place).
 
-	* mini-gmp/tests/t-reuse.c: Fix typo causing the same negation condition
-	to be applied to all operands. (See 2013-02-03, Torbjorn)
+	* mini-gmp/tests/t-reuse.c: Fix typo causing the same negation
+	condition to be applied to all operands. (See 2013-02-03, Torbjorn)
 
 2013-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
