@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_divrem_2 -- Divide an mpn number by a normalized 2-limb number.
 
-dnl  Copyright 2010, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
