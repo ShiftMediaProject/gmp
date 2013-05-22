@@ -1,6 +1,18 @@
+2013-05-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Reporting Bugs): Ask for configure's output.
+
+	* mpn/ia64/divrem_2.asm: Don't clobber f16-f18.
+
+2013-05-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/arm/udiv.asm: Change spacing to work around binutils bug.
+
 2013-05-16  Torbjorn Granlund  <tege@gmplib.org>
 
-	* tests/misc.c (tests_hardware_getround, tests_hardware_setround): 
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+
+	* tests/misc.c (tests_hardware_getround, tests_hardware_setround):
 	Avoid assembly dependency unless WANT_ASSEMBLY.
 
 	* configure.ac (WANT_ASSEMBLY): Conditionally define.
