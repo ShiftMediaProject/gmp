@@ -2659,8 +2659,8 @@ a recent GMP or even a less recent GMP which is compiled using a recent GCC.
 GMP's assembly code sometimes promotes a read of the limbs to some larger size,
 for efficiency.  GMP will do this even at the start and end of a multilimb
 operand, using naturally aligned operations on the larger type.  This may lead
-to benign reads outside of allocated areas, triggering complaints from Valgrind.
-Valgrind's option @samp{--partial-loads-ok=yes} should help.
+to benign reads outside of allocated areas, triggering complaints from
+Valgrind.  Valgrind's option @samp{--partial-loads-ok=yes} should help.
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -2883,7 +2883,10 @@ informative (@samp{where} in @command{gdb}, or @samp{$C} in @command{adb}).
 Please do not send core dumps, executables or @command{strace}s.
 
 @item
-The configuration options you used when building GMP, if any.
+The @samp{configure} options you used when building GMP, if any.
+
+@item
+The output from @samp{configure}, as printed to stdout, with any options used.
 
 @item
 The name of the compiler and its version.  For @command{gcc}, get the version
