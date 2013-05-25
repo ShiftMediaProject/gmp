@@ -1,3 +1,7 @@
+2013-05-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac (*sparc*-*-*): Major overhaul.
+
 2013-05-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Reporting Bugs): Ask for configure's output.
