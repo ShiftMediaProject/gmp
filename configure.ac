@@ -1337,32 +1337,49 @@ case $host in
     # latter would be used in the 64-bit ABI on systems like "*bsd" where
     # abilist="64" only.
     #
-    case $host_cpu in
-      [ultrasparct[345]])
-        gcc_32_cflags="$gcc_cflags -Wa,-xarch=v8plusd" ;;
-      sparc64 | sparcv9* | ultrasparc*)
-        gcc_32_cflags="$gcc_cflags -Wa,-xarch=v8plus" ;;
-    esac
     gcc_32_cflags_maybe="-m32"
-    gcc_cflags_optlist="cpu"
+    gcc_cflags_optlist="cpu asm"
 
     # gcc 2.7.2 knows -mcypress, -msupersparc, -mv8, -msparclite.
     # gcc 2.95 knows -mcpu= v7, hypersparc, sparclite86x, f930, f934,
     #   sparclet, tsc701, v9, ultrasparc.  A warning is given that the
     #   plain -m forms will disappear.
-    # gcc 3.0 adds nothing.
-    # gcc 3.1 adds nothing.
-    # gcc 3.2 adds nothing.
     # gcc 3.3 adds ultrasparc3.
     #
     case $host_cpu in
-      supersparc)           gcc_cflags_cpu="-mcpu=supersparc -msupersparc" ;;
-      sparcv8 | microsparc | turbosparc)
-			    gcc_cflags_cpu="-mcpu=v8 -mv8" ;;
-      sparc64 | sparcv9*)   gcc_cflags_cpu="-mcpu=v9 -mv8" ;;
-      ultrasparc3)          gcc_cflags_cpu="-mcpu=ultrasparc3 -mcpu=ultrasparc -mv8" ;;
-      ultrasparc*)          gcc_cflags_cpu="-mcpu=ultrasparc -mv8" ;;
-      *)                    gcc_cflags_cpu="-mcpu=v7 -mcypress" ;;
+      supersparc*)
+			gcc_cflags_cpu="-mcpu=supersparc -msupersparc"
+			gcc_cflags_asm="-Wa,-Av8 -Wa,-xarch=v8";;
+      sparcv8 | microsparc* | turbosparc | hypersparc*)
+			gcc_cflags_cpu="-mcpu=v8 -mv8"
+			gcc_cflags_asm="-Wa,-Av8 -Wa,-xarch=v8";;
+      sparc64 | sparcv9*)
+			gcc_cflags_cpu="-mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8 -Wa,-xarch=v8plus"
+			gcc_64_cflags_asm="-Wa,-Av9 -Wa,-xarch=v9";;
+      ultrasparc1 | ultrasparc2*)
+			gcc_cflags_cpu="-mcpu=ultrasparc -mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8plusa -Wa,-xarch=v8plusa"
+			gcc_64_cflags_asm="-Wa,-Av9a -Wa,-xarch=v9a";;
+      [ultrasparc[34]])
+			gcc_cflags_cpu="-mcpu=ultrasparc3 -mcpu=ultrasparc -mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8plusb -Wa,-xarch=v8plusb"
+			gcc_64_cflags_asm="-Wa,-Av9b -Wa,-xarch=v9b";;
+      [ultrasparct[12]])
+			gcc_cflags_cpu="-mcpu=niagara -mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8plusc -Wa,-xarch=v8plusc"
+			gcc_64_cflags_asm="-Wa,-Av9c -Wa,-xarch=v9c";;
+      ultrasparct3)
+			gcc_cflags_cpu="-mcpu=niagara3 -mcpu=niagara -mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8plusd -Wa,-xarch=v8plusd"
+			gcc_64_cflags_asm="-Wa,-Av9d -Wa,-xarch=v9d";;
+      ultrasparct4)
+			gcc_cflags_cpu="-mcpu=niagara4 -mcpu=niagara3 -mcpu=niagara -mcpu=v9"
+			gcc_32_cflags_asm="-Wa,-Av8plusd -Wa,-xarch=v8plusd"
+			gcc_64_cflags_asm="-Wa,-Av9d -Wa,-xarch=v9d";;
+      *)
+			gcc_cflags_cpu="-mcpu=v7 -mcypress"
+			gcc_cflags_asm="";;
     esac
 
     # SunPRO cc and acc, and SunOS bundled cc
@@ -1378,11 +1395,14 @@ case $host in
         # SunOS cc doesn't know -xarch, apparently always generating v7
         # code, so make this optional
 	case $host_cpu in
-	  sparcv8 | microsparc | supersparc | turbosparc)
-					      cc_cflags_arch="-xarch=v8" ;;
-          [ultrasparct[345]])                 cc_cflags_arch="-xarch=v8plusd" ;;
-	  sparc64 | sparcv9* | ultrasparc*)   cc_cflags_arch="-xarch=v8plus" ;;
-	  *)                                  cc_cflags_arch="-xarch=v7" ;;
+	  sparcv8 | microsparc* | supersparc* | turbosparc | hypersparc*)
+			cc_cflags_arch="-xarch=v8";;
+          [ultrasparct[345]])
+			cc_cflags_arch="-xarch=v8plusd" ;;
+	  sparc64 | sparcv9* | ultrasparc*)
+			cc_cflags_arch="-xarch=v8plus" ;;
+	  *)
+			cc_cflags_arch="-xarch=v7" ;;
 	esac
 
         # SunOS cc doesn't know -xchip and doesn't seem to have an equivalent.
@@ -1390,17 +1410,21 @@ case $host in
 	#   micro2, hyper, hyper2, powerup, ultra, ultra2, ultra2i.
 	# SunPRO cc 6 adds -xchip=ultra2e, ultra3cu.
         #
-	# FIXME: Which of ultra, ultra2 or ultra2i is the best fallback for
-	# ultrasparc3?
-	#
 	case $host_cpu in
-	  supersparc)   cc_cflags_cpu="-xchip=super" ;;
-	  microsparc)   cc_cflags_cpu="-xchip=micro" ;;
+	  supersparc*)  cc_cflags_cpu="-xchip=super" ;;
+	  microsparc*)  cc_cflags_cpu="-xchip=micro" ;;
 	  turbosparc)   cc_cflags_cpu="-xchip=micro2" ;;
+	  hypersparc*)  cc_cflags_cpu="-xchip=hyper" ;;
 	  ultrasparc)   cc_cflags_cpu="-xchip=ultra" ;;
-	  ultrasparc2)  cc_cflags_cpu="-xchip=ultra2" ;;
-	  ultrasparc2i) cc_cflags_cpu="-xchip=ultra2i" ;;
+	  ultrasparc2)  cc_cflags_cpu="-xchip=ultra2 -xchip=ultra" ;;
+	  ultrasparc2i) cc_cflags_cpu="-xchip=ultra2i -xchip=ultra2 -xchip=ultra" ;;
 	  ultrasparc3)  cc_cflags_cpu="-xchip=ultra3 -xchip=ultra" ;;
+	  ultrasparc4)  cc_cflags_cpu="-xchip=ultra4 -xchip=ultra3 -xchip=ultra" ;;
+	  ultrasparct1) cc_cflags_cpu="-xchip=ultraT1" ;;
+	  ultrasparct2) cc_cflags_cpu="-xchip=ultraT2 -xchip=ultraT1" ;;
+	  ultrasparct3) cc_cflags_cpu="-xchip=ultraT3 -xchip=ultraT2" ;;
+	  ultrasparct4) cc_cflags_cpu="-xchip=T4" ;;
+	  ultrasparct5) cc_cflags_cpu="-xchip=T5 -xchip=T4" ;;
 	  *)            cc_cflags_cpu="-xchip=generic" ;;
 	esac
     esac
@@ -1461,12 +1485,7 @@ case $host in
         #
         gcc_64_cflags="$gcc_cflags -m64 -mptr64"
         gcc_64_ldflags="-Wc,-m64"
-        gcc_64_cflags_optlist="cpu"
-
-	case $host_cpu in
-          [ultrasparct[345]])
-            gcc_64_cflags="$gcc_64_cflags -Wa,-xarch=v9d" ;;
-        esac
+        gcc_64_cflags_optlist="cpu asm"
 
         case $host in
           *-*-solaris*)
