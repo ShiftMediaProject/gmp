@@ -1,3 +1,9 @@
+2013-05-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mu_div_q.c: Call mpn_mu_divappr_q for entire division,
+	never just for tail.  (This fixes performance issues at the expense of
+	memory needs.)
+
 2013-05-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac (*sparc*-*-*): Major overhaul.
