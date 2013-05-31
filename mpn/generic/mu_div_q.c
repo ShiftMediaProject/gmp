@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2007, 2009, 2010, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -63,8 +63,8 @@ mpn_mu_div_q (mp_ptr qp,
 	      mp_srcptr dp, mp_size_t dn,
 	      mp_ptr scratch)
 {
-  mp_ptr tp, rp, ip, this_ip;
-  mp_size_t qn, in, this_in;
+  mp_ptr tp, rp;
+  mp_size_t qn;
   mp_limb_t cy, qh;
   TMP_DECL;
 
@@ -76,57 +76,18 @@ mpn_mu_div_q (mp_ptr qp,
 
   if (qn >= dn)			/* nn >= 2*dn + 1 */
     {
-      /* Find max inverse size needed by the two preinv calls.  FIXME: This is
-	 not optimal, it underestimates the invariance.  */
-      if (dn != qn)
-	{
-	  mp_size_t in1, in2;
-
-	  in1 = mpn_mu_div_qr_choose_in (qn - dn, dn, 0);
-	  in2 = mpn_mu_divappr_q_choose_in (dn + 1, dn, 0);
-	  in = MAX (in1, in2);
-	}
-      else
-	{
-	  in = mpn_mu_divappr_q_choose_in (dn + 1, dn, 0);
-	}
-
-      ip = TMP_BALLOC_LIMBS (in + 1);
-
-      if (dn == in)
-	{
-	  MPN_COPY (scratch + 1, dp, in);
-	  scratch[0] = 1;
-	  mpn_invertappr (ip, scratch, in + 1, NULL);
-	  MPN_COPY_INCR (ip, ip + 1, in);
-	}
-      else
-	{
-	  cy = mpn_add_1 (scratch, dp + dn - (in + 1), in + 1, 1);
-	  if (UNLIKELY (cy != 0))
-	    MPN_ZERO (ip, in);
-	  else
-	    {
-	      mpn_invertappr (ip, scratch, in + 1, NULL);
-	      MPN_COPY_INCR (ip, ip + 1, in);
-	    }
-	}
-
        /* |_______________________|   dividend
 			 |________|   divisor  */
-      rp = TMP_BALLOC_LIMBS (2 * dn + 1);
 
-      this_in = mpn_mu_div_qr_choose_in (qn - dn, dn, 0);
-      this_ip = ip + in - this_in;
-      qh = mpn_preinv_mu_div_qr (tp + dn + 1, rp + dn + 1, np + dn, qn, dp, dn,
-				 this_ip, this_in, scratch);
-
-      MPN_COPY (rp + 1, np, dn);
+      rp = TMP_BALLOC_LIMBS (nn + 1);
+      MPN_COPY (rp + 1, np, nn);
       rp[0] = 0;
-      this_in = mpn_mu_divappr_q_choose_in (dn + 1, dn, 0);
-      this_ip = ip + in - this_in;
-      cy = mpn_preinv_mu_divappr_q (tp, rp, 2 * dn + 1, dp, dn,
-				    this_ip, this_in, scratch);
+
+      qh = mpn_cmp (rp + 1 + nn - dn, dp, dn) >= 0;
+      if (qh != 0)
+	mpn_sub_n (rp + 1 + nn - dn, rp + 1 + nn - dn, dp, dn);
+
+      cy = mpn_mu_divappr_q (tp, rp, nn + 1, dp, dn, scratch);
 
       if (UNLIKELY (cy != 0))
 	{
@@ -134,7 +95,7 @@ mpn_mu_div_q (mp_ptr qp,
 	     canonically reduced, replace the returned value of B^(qn-dn)+eps
 	     by the largest possible value.  */
 	  mp_size_t i;
-	  for (i = 0; i < dn + 1; i++)
+	  for (i = 0; i < qn + 1; i++)
 	    tp[i] = GMP_NUMB_MAX;
 	}
 
@@ -149,8 +110,7 @@ mpn_mu_div_q (mp_ptr qp,
 	  mp_limb_t cy;
 	  mp_ptr pp;
 
-	  /* FIXME: can we use already allocated space? */
-	  pp = TMP_BALLOC_LIMBS (nn);
+	  pp = rp;
 	  mpn_mul (pp, tp + 1, qn, dp, dn);
 
 	  cy = (qh != 0) ? mpn_add_n (pp + qn, pp + qn, dp, dn) : 0;
@@ -205,18 +165,15 @@ mpn_mu_div_q (mp_ptr qp,
 mp_size_t
 mpn_mu_div_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
 {
-  mp_size_t qn, itch1, itch2;
+  mp_size_t qn;
 
   qn = nn - dn;
   if (qn >= dn)
     {
-      itch1 = mpn_mu_div_qr_itch (qn, dn, mua_k);
-      itch2 = mpn_mu_divappr_q_itch (2 * dn + 1, dn, mua_k);
-      return MAX (itch1, itch2);
+      return mpn_mu_divappr_q_itch (nn + 1, dn, mua_k);
     }
   else
     {
-      itch1 = mpn_mu_divappr_q_itch (2 * qn + 2, qn + 1, mua_k);
-      return itch1;
+      return mpn_mu_divappr_q_itch (2 * qn + 2, qn + 1, mua_k);
     }
 }
