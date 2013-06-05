@@ -143,10 +143,6 @@
 
 	* mpn/arm/v7a/cora15/cnd-aors_n.asm: New file.
 
-2013-04-26  Richard Henderson  <rth@twiddle.net>
-
-	* mpn/arm/neon/logops_n.asm: New file.
-
 2013-04-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/arm/mod_34lsub1.asm: Clear carry smarter.
