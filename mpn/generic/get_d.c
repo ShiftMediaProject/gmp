@@ -135,7 +135,7 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
      overflow.  After this exp can of course be reduced to anywhere within
      the {up,size} region without underflow.  */
   if (UNLIKELY ((unsigned long) (GMP_NUMB_BITS * size)
-		> (unsigned long) (LONG_MAX - exp)))
+		> ((unsigned long) LONG_MAX - exp)))
     {
 #if _GMP_IEEE_FLOATS
       goto ieee_infinity;

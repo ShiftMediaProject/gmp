@@ -1,3 +1,7 @@
+2013-06-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* mpn/generic/get_d.c (mpn_get_d): Avoid signed overflow.
+
 2013-05-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_div_q.c: Call mpn_mu_divappr_q for entire division,
