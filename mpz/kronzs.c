@@ -50,7 +50,7 @@ mpz_kronecker_si (mpz_srcptr a, long b)
 #endif
 
   result_bit1 = JACOBI_BSGN_SS_BIT1 (a_size, b);
-  b_limb = (unsigned long) ABS (b);
+  b_limb = ABS_CAST (unsigned long, b);
   a_ptr = PTR(a);
 
   if ((b_limb & 1) == 0)

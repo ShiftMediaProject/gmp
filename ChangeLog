@@ -1,6 +1,7 @@
 2013-06-09  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/generic/get_d.c (mpn_get_d): Avoid signed overflow.
+	* mpz/kronzs.c (mpz_kronecker_si): Use ABS_CAST.
 
 2013-05-31  Torbjorn Granlund  <tege@gmplib.org>
 
