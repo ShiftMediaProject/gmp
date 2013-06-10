@@ -37,11 +37,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   1. This is a rudimentary implementation of mpn_mu_div_q.  The algorithm is
      probably close to optimal, except when mpn_mu_divappr_q fails.
 
-     An alternative which could be considered for much simpler code for the
-     complex qn>=dn arm would be to allocate a temporary nn+1 limb buffer, then
-     simply call mpn_mu_divappr_q.  Such a temporary allocation is
-     unfortunately very large.
-
   2. We used to fall back to mpn_mu_div_qr when we detect a possible
      mpn_mu_divappr_q rounding problem, now we multiply and compare.
      Unfortunately, since mpn_mu_divappr_q does not return the partial
