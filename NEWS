@@ -23,6 +23,9 @@ Changes between GMP version 5.1.* and 5.2.0
 
   * Support for ARM64 alias Aarch64.
 
+  * New functions mpn_cnd_add_n and mpn_cnd_sub_n. Side-channel silent
+    conditional addition and subtraction.
+  
   MISC
 
 
