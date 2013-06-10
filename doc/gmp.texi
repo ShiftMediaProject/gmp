@@ -713,7 +713,7 @@ the binaries won't run on older members of the family, and might run slower on
 other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
-The following CPUs have specific support.  See @file{configure.in} for details
+The following CPUs have specific support.  See @file{configure.ac} for details
 of what code and compiler options they select.
 
 @itemize @bullet
