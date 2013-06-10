@@ -5,6 +5,49 @@ Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
 
+Changes between GMP version 5.1.* and 5.2.0
+
+  BUGS FIXED
+
+  SPEEDUPS
+  * Plain division if large operands is faster and more monotonous in operand
+    size.
+
+  * Major speedup for ARM, in particular ARM Cortex-A15, thanks to improved
+    assembly.
+
+  * Major speedup for SPARC T4/T5 and speedup also for T3.
+
+  FEATURES
+  * Support for new Intel and AMD CPUs.
+
+  * Support for ARM64 alias Aarch64.
+
+  MISC
+
+
+Changes between GMP version 5.1.1 and 5.1.2
+
+  BUGS FIXED
+  * A bug in mpz_powm_ui triggered by base arguments of at least 15000 decimal
+    digits or mod arguments of at least 7500 decimal digits has been fixed.
+
+  * A AMD Bulldozer specific bug affecting the 64-bit Windows ABI has been
+    fixed.  This bug was in a key function (mpn_mul_1) and made both Bulldozer
+    specific builds and fat builds run on Bulldozer completely non-functional.
+
+  SPEEDUPS
+  * None.
+
+  FEATURES
+  * None.
+
+  MISC
+  * Fixes and generalisations to the test suite.
+
+  * Minor portability enhancements.
+
+
 Changes between GMP version 5.1.0 and 5.1.1
 
   BUGS FIXED
