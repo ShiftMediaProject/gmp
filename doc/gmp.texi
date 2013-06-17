@@ -5266,7 +5266,9 @@ This function requires that @var{s1n} is greater than or equal to
 
 @deftypefun mp_limb_t mpn_neg (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Perform the negation of @{@var{sp}, @var{n}@}, and write the result to
-@{@var{rp}, @var{n}@}.  Return carry-out.
+@{@var{rp}, @var{n}@}.  This is equivalent to calling @code{mpn_sub_n} with a
+@var{n}-limb zero minuend and passing @{@var{sp}, @var{n}@} as subtrahend.
+Return borrow, either 0 or 1.
 @end deftypefun
 
 @deftypefun void mpn_mul_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
