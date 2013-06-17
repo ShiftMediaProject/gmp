@@ -45,7 +45,7 @@ PROLOGUE(mpn_rshift)
 	mflr	r12
 	bcl	20, 31, L(r)		C get pc using a local "call"
 L(r):	mflr	r11
-	addi	r11, r11, L(e1)-Lr-64	C address of L(e1) label in SHIFT(1)
+	addi	r11, r11, L(e1)-L(r)-64	C address of L(e1) label in SHIFT(1)
 	sldi	r10, cnt, 6		C multiply cnt by size of a SHIFT block
 	add	r11, r11, r10		C address of L(oN) for N = cnt
 	mr	rp, rp_param

@@ -27,7 +27,6 @@ C POWER6		 4
 
 C TODO
 C  * Micro-optimise header code
-C  * Write analogous lshiftc.asm
 C  * Perhaps do 4-way unrolling, for 2.5 c/l on POWER6.  The code is 4248
 C    bytes, 4-way code would become about 50% larger.
 
@@ -48,7 +47,7 @@ PROLOGUE(mpn_lshift)
 L(r):	mflr	r11
 	sldi	r0, n, 3
 	sldi	r10, cnt, 6		C multiply cnt by size of a SHIFT block
-	addi	r11, r11, L(e1)-Lr-64	C address of L(e1) label in SHIFT(1)
+	addi	r11, r11, L(e1)-L(r)-64	C address of L(e1) label in SHIFT(1)
 	add	up, up, r0		C make up point at end of up[]
 	add	r11, r11, r10		C address of L(oN) for N = cnt
 	add	rp, rp_param, r0	C make rp point at end of rp[]
