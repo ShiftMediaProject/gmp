@@ -1,6 +1,7 @@
 2013-06-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p6/lshift.asm: Fix typo in label reference.
+	For 32-bit mode, zero extend `n' argument and split retval.
 	* mpn/powerpc64/p6/rshift.asm: Likewise.
 	* mpn/powerpc64/p6/lshiftc.asm: Likewise.
 

@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_lshiftc -- rp[] = ~up[] << cnt
 
-dnl  Copyright 2003, 2005, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -42,6 +42,10 @@ define(`rp',  `r7')
 
 ASM_START()
 PROLOGUE(mpn_lshiftc)
+
+ifdef(`HAVE_ABI_mode32',`
+	rldicl	n, n, 0,32		C FIXME: avoid this zero extend
+')
 	mflr	r12
 	bcl	20, 31, L(r)		C get pc using a local "call"
 L(r):	mflr	r11
@@ -82,6 +86,10 @@ L(1):	srd	r3, r9, tnc		C retval
 	nor	r8, r8, r8
 	std	r8, -8(rp)
 	mtlr	r12
+ifdef(`HAVE_ABI_mode32',
+`	mr	r4, r3
+	srdi	r3, r3, 32
+')
 	blr
 
 
@@ -112,5 +120,9 @@ L(com):	nor	r11, r11, r11
 	std	r11, -8(rp)
 	std	r10, -16(rp)
 	mtlr	r12
+ifdef(`HAVE_ABI_mode32',
+`	mr	r4, r3
+	srdi	r3, r3, 32
+')
 	blr
 EPILOGUE()
