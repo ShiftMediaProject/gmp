@@ -27,7 +27,7 @@ C POWER6		 4
 
 C TODO
 C  * Micro-optimise header code
-C  * Perhaps do 4-way unrolling, for 2.5 c/l on POWER6.  The code is 4248
+C  * Perhaps do 4-way unrolling, for 2.5 c/l on POWER6.  The code is 4236
 C    bytes, 4-way code would become about 50% larger.
 
 C INPUT PARAMETERS
@@ -47,38 +47,34 @@ ifdef(`HAVE_ABI_mode32',`
 	rldicl	n, n, 0,32		C FIXME: avoid this zero extend
 ')
 	mflr	r12
-	bcl	20, 31, L(r)		C get pc using a local "call"
-L(r):	mflr	r11
-	sldi	r0, n, 3
+	sldi	r8, n, 3
 	sldi	r10, cnt, 6		C multiply cnt by size of a SHIFT block
-	addi	r11, r11, L(e1)-L(r)-64	C address of L(e1) label in SHIFT(1)
-	add	up, up, r0		C make up point at end of up[]
+	LEAL(	r11, L(e1))		C address of L(e1) label in SHIFT(1)
+	add	up, up, r8		C make up point at end of up[]
 	add	r11, r11, r10		C address of L(oN) for N = cnt
-	add	rp, rp_param, r0	C make rp point at end of rp[]
+	srdi	r10, n, 1
+	add	rp, rp_param, r8	C make rp point at end of rp[]
 	subfic	tnc, cnt, 64
-	rlwinm.  r8, n, 0,31,31		C extract bit 0
+	rlwinm.	r8, n, 0,31,31		C extract bit 0
+	mtctr	r10
 	beq	L(evn)
 
 L(odd):	ld	r9, -8(up)
 	cmpdi	cr0, n, 1		C n = 1?
 	beq	L(1)
 	ld	r8, -16(up)
-	addi	r11, r11, L(o1)-L(e1)
+	addi	r11, r11, -88		C L(o1) - L(e1) - 64
 	mtlr	r11
-	srdi	r11, n, 1
 	srd	r3, r9, tnc		C retval
 	addi	up, up, 8
 	addi	rp, rp, -8
-	mtctr	r11
 	blr				C branch to L(oN)
 
 L(evn):	ld	r8, -8(up)
 	ld	r9, -16(up)
+	addi	r11, r11, -64
 	mtlr	r11
-	addi	n, n, 1
-	srdi	r10, n, 1
 	srd	r3, r8, tnc		C retval
-	mtctr	r10
 	blr				C branch to L(eN)
 
 L(1):	srd	r3, r9, tnc		C retval
@@ -126,3 +122,4 @@ ifdef(`HAVE_ABI_mode32',
 ')
 	blr
 EPILOGUE()
+ASM_END()

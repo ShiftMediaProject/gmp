@@ -1,3 +1,9 @@
+2013-06-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/p6/lshift.asm: Rewrite switching-into-loop code.
+	* mpn/powerpc64/p6/rshift.asm: Likewise.
+	* mpn/powerpc64/p6/lshiftc.asm: Likewise.
+
 2013-06-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p6/lshift.asm: Fix typo in label reference.
