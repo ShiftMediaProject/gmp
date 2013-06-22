@@ -1,6 +1,6 @@
-dnl  PowerPC-64 mpn_addlsh2_n and mpn_sublsh2_n.
+dnl  PowerPC-64 mpn_addlsh1_n, mpn_sublsh1_n, mpn_rsblsh1_n.
 
-dnl  Copyright 2003, 2005, 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009, 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,25 +20,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-define(LSH,		2)
-define(RSH,		62)
+define(LSH,		1)
+define(RSH,		63)
 
-ifdef(`OPERATION_addlsh2_n',`
-  define(ADDSUBC,	addc)
-  define(ADDSUBE,	adde)
-  define(INITCY,	`addic	$1, r1, 0')
-  define(RETVAL,	`addze	r3, $1')
-  define(func, mpn_addlsh2_n)
-')
-ifdef(`OPERATION_sublsh2_n',`
-  define(ADDSUBC,	subfc)
-  define(ADDSUBE,	subfe)
-  define(INITCY,	`addic	$1, r1, -1')
-  define(RETVAL,	`subfze	r3, $1
-			neg	r3, r3')
-  define(func, mpn_sublsh2_n)
-')
+ifdef(`OPERATION_addlsh1_n',`define(`DO_add')')
+ifdef(`OPERATION_sublsh1_n',`define(`DO_sub')')
+ifdef(`OPERATION_rsblsh1_n',`define(`DO_rsb')')
 
-MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_sublsh2_n)
+MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n mpn_rsblsh1_n)
 
-include_mpn(`powerpc64/mode64/aorslshC_n.asm')
+include_mpn(`powerpc64/mode64/aorsorrlshC_n.asm')
