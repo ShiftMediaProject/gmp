@@ -47,7 +47,7 @@ operator<< (ostream &o, mpf_srcptr f)
   point[0] = use_facet< numpunct<char> >(o.getloc()).decimal_point();
   point[1] = '\0';
 #else
-  const char *point = localeconv()->decimal_point;
+  const char *point = GMP_DECIMAL_POINT;
 #endif
 
   GMP_ASPRINTF_T_INIT (d, &result);

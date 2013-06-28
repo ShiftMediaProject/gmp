@@ -45,7 +45,7 @@ operator>> (istream &i, mpf_ptr f)
   bool ok = false;
 
   // C decimal point, as expected by mpf_set_str
-  const char *lconv_point = localeconv()->decimal_point;
+  const char *lconv_point = GMP_DECIMAL_POINT;
 
   // C++ decimal point
 #if HAVE_STD__LOCALE

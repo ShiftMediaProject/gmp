@@ -1,3 +1,9 @@
+2013-06-28  Marc Glisse  <marc.glisse@inria.fr>
+
+	* cxx/ismpf.cc: Use GMP_DECIMAL_POINT.
+	* cxx/osmpf.cc: Likewise.
+	* tests/cxx/t-locale.cc: Likewise.
+
 2013-06-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p6/lshift.asm: Rewrite switching-into-loop code.

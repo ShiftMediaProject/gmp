@@ -105,7 +105,7 @@ check_input (void)
                   cout << "  point " << point[i] << "\n";
                   cout << "  str   \"" << str << "\"\n";
                   cout << "  localeconv point \""
-                       << localeconv()->decimal_point << "\"\n";
+                       << GMP_DECIMAL_POINT << "\"\n";
                   abort ();
                 }
 
@@ -120,7 +120,7 @@ check_input (void)
                   cout << "  got   " << got << "\n";
                   cout << "  want  " << want << "\n";
                   cout << "  localeconv point \""
-                       << localeconv()->decimal_point << "\"\n";
+                       << GMP_DECIMAL_POINT << "\"\n";
                   abort ();
                 }
             }
