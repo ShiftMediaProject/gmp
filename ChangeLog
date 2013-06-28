@@ -1,3 +1,15 @@
+2013-06-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p7/aorsorrlshC_n.asm: New file.
+	* mpn/powerpc64/mode64/p7/aorsorrlsh1_n.asm: New file.
+	* mpn/powerpc64/mode64/p7/aorsorrlsh2_n.asm: New file.
+
+	* mpn/powerpc64/mode64/aorsorrlshC_n.asm: Use alias regname.
+
+2013-06-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p7/aors_n.asm: New file.
+
 2013-06-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* aorslshC_n.asm, aorslsh2_n.asm, aorslsh1_n.asm: Remove.
