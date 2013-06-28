@@ -37,24 +37,24 @@ define(`vp', `r5')
 define(`n',  `r6')
 
 ifdef(`DO_add', `
-  define(`ADDSUBC',     `addc	$1, $2, $3')
-  define(`ADDSUBE',     `adde	$1, $2, $3')
+  define(`ADDSUBC',	`addc	$1, $2, $3')
+  define(`ADDSUBE',	`adde	$1, $2, $3')
   define(INITCY,	`addic	$1, r1, 0')
   define(RETVAL,	`addze	r3, $1')
-  define(`func',        mpn_addlsh`'LSH`'_n)')
+  define(`func',	mpn_addlsh`'LSH`'_n)')
 ifdef(`DO_sub', `
-  define(`ADDSUBC',     `subfc	$1, $2, $3')
-  define(`ADDSUBE',     `subfe	$1, $2, $3')
+  define(`ADDSUBC',	`subfc	$1, $2, $3')
+  define(`ADDSUBE',	`subfe	$1, $2, $3')
   define(INITCY,	`addic	$1, r1, -1')
   define(RETVAL,	`subfze	r3, $1
 			neg	r3, r3')
-  define(`func',        mpn_sublsh`'LSH`'_n)')
+  define(`func',	mpn_sublsh`'LSH`'_n)')
 ifdef(`DO_rsb', `
-  define(`ADDSUBC',    `subfc	$1, $3, $2')
-  define(`ADDSUBE',    `subfe	$1, $3, $2')
+  define(`ADDSUBC',	`subfc	$1, $3, $2')
+  define(`ADDSUBE',	`subfe	$1, $3, $2')
   define(INITCY,	`addic	$1, r1, -1')
   define(RETVAL,	`addme	r3, $1')
-  define(`func',        mpn_rsblsh`'LSH`'_n)')
+  define(`func',	mpn_rsblsh`'LSH`'_n)')
 
 define(`rpx', `r6')
 define(`upx', `r7')
@@ -171,6 +171,6 @@ L(mid):	ldx	u0, rpx, upx
 	ADDSUBE(s1, s1, u0)	C add limbs with cy, set cy
 	std	s1, 24(rp)
 
-	RETVAL(	r0)
+	RETVAL(	s0)
 	blr
 EPILOGUE()
