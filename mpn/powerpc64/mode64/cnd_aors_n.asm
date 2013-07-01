@@ -25,7 +25,7 @@ C POWER3/PPC630          ?
 C POWER4/PPC970          2.25
 C POWER5                 ?
 C POWER6                 3
-C POWER7                 ?
+C POWER7                 2
 
 C INPUT PARAMETERS
 define(`cnd',  `r3')

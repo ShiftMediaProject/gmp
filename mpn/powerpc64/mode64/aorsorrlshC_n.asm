@@ -1,6 +1,6 @@
-dnl  PowerPC-64 mpn_addlshC_n and mpn_sublshC_n, where C is a small constant.
+dnl  PowerPC-64 mpn_addlshC_n, mpn_sublshC_n, mpn_rsblshC_n.
 
-dnl  Copyright 2003, 2005, 2009, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009, 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -36,6 +36,26 @@ define(`up', `r4')
 define(`vp', `r5')
 define(`n',  `r6')
 
+ifdef(`DO_add', `
+  define(`ADDSUBC',	`addc	$1, $2, $3')
+  define(`ADDSUBE',	`adde	$1, $2, $3')
+  define(INITCY,	`addic	$1, r1, 0')
+  define(RETVAL,	`addze	r3, $1')
+  define(`func',	mpn_addlsh`'LSH`'_n)')
+ifdef(`DO_sub', `
+  define(`ADDSUBC',	`subfc	$1, $2, $3')
+  define(`ADDSUBE',	`subfe	$1, $2, $3')
+  define(INITCY,	`addic	$1, r1, -1')
+  define(RETVAL,	`subfze	r3, $1
+			neg	r3, r3')
+  define(`func',	mpn_sublsh`'LSH`'_n)')
+ifdef(`DO_rsb', `
+  define(`ADDSUBC',	`subfc	$1, $3, $2')
+  define(`ADDSUBE',	`subfe	$1, $3, $2')
+  define(INITCY,	`addic	$1, r1, -1')
+  define(RETVAL,	`addme	r3, $1')
+  define(`func',	mpn_rsblsh`'LSH`'_n)')
+
 define(`rpx', `r6')
 define(`upx', `r7')
 define(`vpx', `r12')
@@ -62,26 +82,26 @@ PROLOGUE(func)
 
 	ALIGN(16)
 L(lo0):	ld	v1, 8(vp)	C load v limb
-	ADDSUBE	s1, s1, u0	C add limbs with cy, set cy
+	ADDSUBE(s1, s1, u0)	C add limbs with cy, set cy
 	ldu	u0, 16(up)	C load u limb and update up
 	srdi	s0, v0, RSH	C shift down previous v limb
 	std	s1, 8(rp)	C store result limb
 	rldimi	s0, v1, LSH, 0	C left shift v limb and merge with prev v limb
 	bdz	L(ex0)		C decrement ctr and exit if done
 	ldu	v0, 16(vp)	C load v limb and update vp
-	ADDSUBE	s0, s0, u0	C add limbs with cy, set cy
+	ADDSUBE(s0, s0, u0)	C add limbs with cy, set cy
 	ld	u0, 8(up)	C load u limb
 	srdi	s1, v1, RSH	C shift down previous v limb
 	stdu	s0, 16(rp)	C store result limb and update rp
 	rldimi	s1, v0, LSH, 0	C left shift v limb and merge with prev v limb
 	bdnz	L(lo0)		C decrement ctr and loop back
 
-L(ex1):	ADDSUBE	r7, s1, u0
+L(ex1):	ADDSUBE(r7, s1, u0)
 	std	r7, 8(rp)	C store last result limb
 	srdi	r0, v0, RSH
 	RETVAL(	r0)
 	blr
-L(ex0):	ADDSUBE	r7, s0, u0
+L(ex0):	ADDSUBE(r7, s0, u0)
 	std	r7, 16(rp)	C store last result limb
 	srdi	r0, v1, RSH
 	RETVAL(	r0)
@@ -99,7 +119,7 @@ L(b1):	ld	v1, 0(vp)
 	sldi	s1, v1, LSH
 	srdi	s0, v1, RSH
 	ld	v0, 8(vp)
-	ADDSUBC	s1, s1, u0	C add limbs without cy, set cy
+	ADDSUBC(s1, s1, u0)	C add limbs without cy, set cy
 	addi	rpx, rp, -16
 	addi	rp, rp, -8
 	sub	upx, up, rp
@@ -117,7 +137,7 @@ L(b0):	ld	v0, 0(vp)
 	sldi	s0, v0, LSH
 	srdi	s1, v0, RSH
 	ld	v1, 8(vp)
-	ADDSUBC	s0, s0, u0	C add limbs without cy, set cy
+	ADDSUBC(s0, s0, u0)	C add limbs without cy, set cy
 	addi	rpx, rp, -8
 	addi	rp, rp, -16
 	sub	upx, up, rpx
@@ -135,22 +155,22 @@ L(top):	ldx	u0, rp, up
 	rldimi	s1, v1, LSH, 0
 	stdu	s0, 16(rp)
 	srdi	s0, v1, RSH
-	ADDSUBE	s1, s1, u0	C add limbs with cy, set cy
+	ADDSUBE(s1, s1, u0)	C add limbs with cy, set cy
 L(mid):	ldx	u0, rpx, upx
 	ldx	v1, rpx, vpx
 	rldimi	s0, v0, LSH, 0
 	stdu	s1, 16(rpx)
 	srdi	s1, v0, RSH
-	ADDSUBE	s0, s0, u0	C add limbs with cy, set cy
+	ADDSUBE(s0, s0, u0)	C add limbs with cy, set cy
 	bdnz	L(top)		C decrement CTR and loop back
 
 	ldx	u0, rp, up
 	rldimi	s1, v1, LSH, 0
 	std	s0, 16(rp)
 	srdi	s0, v1, RSH
-	ADDSUBE	s1, s1, u0	C add limbs with cy, set cy
+	ADDSUBE(s1, s1, u0)	C add limbs with cy, set cy
 	std	s1, 24(rp)
 
-	RETVAL(	r0)
+	RETVAL(	s0)
 	blr
 EPILOGUE()

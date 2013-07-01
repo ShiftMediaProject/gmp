@@ -1,8 +1,34 @@
+2013-07-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Comment out AC_PROG_F77.
+
+	* mpn/powerpc64/mode64/rsh1add_n.asm: Remove.
+	* mpn/powerpc64/mode64/rsh1sub_n.asm: Remove.
+	* mpn/powerpc64/mode64/rsh1aors_n.asm: New file, code not based on
+	removed files.
+
 2013-06-28  Marc Glisse  <marc.glisse@inria.fr>
 
 	* cxx/ismpf.cc: Use GMP_DECIMAL_POINT.
 	* cxx/osmpf.cc: Likewise.
 	* tests/cxx/t-locale.cc: Likewise.
+
+2013-06-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p7/aorsorrlshC_n.asm: New file.
+	* mpn/powerpc64/mode64/p7/aorsorrlsh1_n.asm: New file.
+	* mpn/powerpc64/mode64/p7/aorsorrlsh2_n.asm: New file.
+
+	* mpn/powerpc64/mode64/aorsorrlshC_n.asm: Use alias regname.
+
+2013-06-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p7/aors_n.asm: New file.
+
+2013-06-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* aorslshC_n.asm, aorslsh2_n.asm, aorslsh1_n.asm: Remove.
+	* aorsorrlshC_n.asm, aorsorrlsh1_n.asm, aorsorrlsh2_n.asm: New files.
 
 2013-06-19  Torbjorn Granlund  <tege@gmplib.org>
 
