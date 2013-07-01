@@ -2547,7 +2547,7 @@ fi
 # FIXME: Rumour has it libtool will one day provide a way for a configure.in
 # to say what it wants from among supported languages etc.
 #
-AC_PROVIDE([AC_PROG_F77])
+#AC_PROVIDE([AC_PROG_F77])
 
 AC_PROG_LIBTOOL
 
