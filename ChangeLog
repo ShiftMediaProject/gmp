@@ -1,3 +1,13 @@
+2013-07-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/p7/copyi.asm: New file.
+	* mpn/powerpc64/p7/copyd.asm: New file.
+
+2013-07-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/gcd_1.asm: New file.
+	* mpn/powerpc64/mode64/p7/gcd_1.asm: New file.
+
 2013-07-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Comment out AC_PROG_F77.
