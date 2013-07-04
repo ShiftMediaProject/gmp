@@ -1,4 +1,14 @@
+2013-07-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/p7/aormul_2.asm: New file.
+
+	* mpn/powerpc64/darwin.m4 (EXTRA_REGISTER): New define.
+	* mpn/powerpc64/aix.m4: New define (actually undefine).
+	* mpn/powerpc64/elf.m4: Likewise.
+
 2013-07-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/com.asm: Rewrite.
 
 	* mpn/powerpc64/p7/copyi.asm: New file.
 	* mpn/powerpc64/p7/copyd.asm: New file.
