@@ -21,9 +21,8 @@ include(`../config.m4')
 
 C                 cycles/limb
 C POWER3/PPC630       6-18
-C POWER4/PPC970       8.5?
+C POWER4/PPC970       8.25
 C POWER5              8.5  fluctuating as function of n % 3
-C POWER6             15
 C POWER6             15
 C POWER7              4.75
 
