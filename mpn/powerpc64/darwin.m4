@@ -101,4 +101,6 @@ define(`CALL',
 
 define(`ASM_END', `dnl')
 
+define(`EXTRA_REGISTER', r2)
+
 divert

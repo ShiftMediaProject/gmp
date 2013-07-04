@@ -84,4 +84,6 @@ define(`CALL',
 
 define(`ASM_END', `TOC_ENTRY')
 
+undefine(`EXTRA_REGISTER')
+
 divert
