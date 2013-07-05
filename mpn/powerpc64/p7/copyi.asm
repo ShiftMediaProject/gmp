@@ -62,15 +62,15 @@ L(xx1):	ld	r6, 0(up)
 	addi	rp, rp, 8
 
 L(xx0):	bne	cr6, L(x10)
-L(x00):	ld	r6, 0(r4)
-	ld	r7, 8(r4)
+L(x00):	ld	r6, 0(up)
+	ld	r7, 8(up)
 	bne	cr7, L(100)
 L(000):	addi	rp, rp, -32
 	b	L(lo0)
 L(100):	addi	up, up, -32
 	b	L(lo4)
-L(x10):	ld	r8, 0(r4)
-	ld	r9, 8(r4)
+L(x10):	ld	r8, 0(up)
+	ld	r9, 8(up)
 	bne	cr7, L(110)
 L(010):	addi	up, up, 16
 	addi	rp, rp, -16
@@ -79,7 +79,9 @@ L(110):	addi	up, up, -16
 	addi	rp, rp, -48
 	b	L(lo6)
 
-L(sml):	mtctr	n
+L(sml):	cmpdi	cr0, n, 0
+	beqlr-	cr0
+	mtctr	n
 L(t):	ld	r6, 0(up)
 	addi	up, up, 8
 	std	r6, 0(rp)

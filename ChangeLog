@@ -1,3 +1,8 @@
+2013-07-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/p7/copyi.asm: Handle n = 0.
+	* mpn/powerpc64/p7/copyd.asm: Likewise.
+
 2013-07-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/p7/aormul_2.asm: New file.
