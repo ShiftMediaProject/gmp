@@ -51,9 +51,6 @@ ifdef(`OPERATION_cnd_sub_n', `
 
 MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
 
-ABI_SUPPORT(DOS64)
-ABI_SUPPORT(STD64)
-
 ASM_START()
 	TEXT
 	ALIGN(16)
