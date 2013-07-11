@@ -20,15 +20,15 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 2.25
+C AMD K8,K9	 2
 C AMD K10	 2
-C AMD bd1	 3.55
-C AMD bobcat	 2.5
+C AMD bd1	 2.32
+C AMD bobcat	 3
 C Intel P4	13
 C Intel core2	 2.9
-C Intel NHM	 2.9
+C Intel NHM	 2.8
 C Intel SBR	 2.4
-C Intel atom	 6.5
+C Intel atom	 5.33
 C VIA nano	 3
 
 C NOTES
@@ -94,19 +94,19 @@ IFDOS(`	mov	56(%rsp), R32(%r8)')
 L(b3):	mov	(vp,n,8), %r12
 	mov	8(vp,n,8), %r13
 	mov	16(vp,n,8), %r14
-	mov	(up,n,8), %r10
-	mov	8(up,n,8), %rbx
-	mov	16(up,n,8), %rbp
 	and	cnd, %r12
+	mov	(up,n,8), %r10
 	and	cnd, %r13
+	mov	8(up,n,8), %rbx
 	and	cnd, %r14
+	mov	16(up,n,8), %rbp
 	ADDSUB	%r12, %r10
-	ADCSBB	%r13, %rbx
-	ADCSBB	%r14, %rbp
-	sbb	R32(%rax), R32(%rax)	C save carry
 	mov	%r10, (rp,n,8)
+	ADCSBB	%r13, %rbx
 	mov	%rbx, 8(rp,n,8)
+	ADCSBB	%r14, %rbp
 	mov	%rbp, 16(rp,n,8)
+	sbb	R32(%rax), R32(%rax)	C save carry
 	add	$3, n
 	js	L(top)
 	jmp	L(end)
@@ -114,14 +114,14 @@ L(b3):	mov	(vp,n,8), %r12
 L(b2):	mov	(vp,n,8), %r12
 	mov	8(vp,n,8), %r13
 	mov	(up,n,8), %r10
-	mov	8(up,n,8), %rbx
 	and	cnd, %r12
+	mov	8(up,n,8), %rbx
 	and	cnd, %r13
 	ADDSUB	%r12, %r10
-	ADCSBB	%r13, %rbx
-	sbb	R32(%rax), R32(%rax)	C save carry
 	mov	%r10, (rp,n,8)
+	ADCSBB	%r13, %rbx
 	mov	%rbx, 8(rp,n,8)
+	sbb	R32(%rax), R32(%rax)	C save carry
 	add	$2, n
 	js	L(top)
 	jmp	L(end)
@@ -130,8 +130,8 @@ L(b1):	mov	(vp,n,8), %r12
 	mov	(up,n,8), %r10
 	and	cnd, %r12
 	ADDSUB	%r12, %r10
-	sbb	R32(%rax), R32(%rax)	C save carry
 	mov	%r10, (rp,n,8)
+	sbb	R32(%rax), R32(%rax)	C save carry
 	add	$1, n
 	jns	L(end)
 
@@ -140,24 +140,24 @@ L(top):	mov	(vp,n,8), %r12
 	mov	8(vp,n,8), %r13
 	mov	16(vp,n,8), %r14
 	mov	24(vp,n,8), %r11
-	mov	(up,n,8), %r10
-	mov	8(up,n,8), %rbx
-	mov	16(up,n,8), %rbp
-	mov	24(up,n,8), %r9
 	and	cnd, %r12
+	mov	(up,n,8), %r10
 	and	cnd, %r13
+	mov	8(up,n,8), %rbx
 	and	cnd, %r14
+	mov	16(up,n,8), %rbp
 	and	cnd, %r11
+	mov	24(up,n,8), %r9
 	add	R32(%rax), R32(%rax)	C restore carry
 	ADCSBB	%r12, %r10
-	ADCSBB	%r13, %rbx
-	ADCSBB	%r14, %rbp
-	ADCSBB	%r11, %r9
-	sbb	R32(%rax), R32(%rax)	C save carry
 	mov	%r10, (rp,n,8)
+	ADCSBB	%r13, %rbx
 	mov	%rbx, 8(rp,n,8)
+	ADCSBB	%r14, %rbp
 	mov	%rbp, 16(rp,n,8)
+	ADCSBB	%r11, %r9
 	mov	%r9, 24(rp,n,8)
+	sbb	R32(%rax), R32(%rax)	C save carry
 	add	$4, n
 	js	L(top)
 
