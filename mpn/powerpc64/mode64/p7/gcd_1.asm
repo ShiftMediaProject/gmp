@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	 	    cycles/bit (approx)
+C		    cycles/bit (approx)
 C POWER3/PPC630		 -
 C POWER4/PPC970		 -
 C POWER5		 -
