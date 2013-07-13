@@ -81,7 +81,7 @@ L(top):	ldp	x4, x5, [up],#16
 	ADDSUBC	x9, x5, x7
 	cbnz	n, L(top)
 
-L(end):	stp	x8, x9, [rp],#16
+L(end):	stp	x8, x9, [rp]
 L(rt):	RETVAL
 	ret
 EPILOGUE()
