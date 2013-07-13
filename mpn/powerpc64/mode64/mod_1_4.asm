@@ -195,7 +195,6 @@ PROLOGUE(mpn_mod_1s_4p_cps)
 	sld	r30, r4, r31
 	mr	r3, r30
 	CALL(	mpn_invert_limb)
-	nop
 	subfic	r9, r31, 64
 	li	r10, 1
 	sld	r10, r10, r31

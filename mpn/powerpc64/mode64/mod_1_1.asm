@@ -116,7 +116,6 @@ PROLOGUE(mpn_mod_1_1p_cps)
 	sld	r30, r4, r31
 	mr	r3, r30
 	CALL(	mpn_invert_limb)
-	nop
 	cmpdi	cr7, r31, 0
 	neg	r0, r30
 	beq-	cr7, L(13)

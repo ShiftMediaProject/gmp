@@ -97,7 +97,6 @@ L(71):
 	sld	r31, r31, r27
 	mr	r3, r30
 	CALL(	mpn_invert_limb)
-	nop
 	beq-	cr4, L(110)
 	sldi	r9, r28, 3
 	addic.	r6, r28, -2

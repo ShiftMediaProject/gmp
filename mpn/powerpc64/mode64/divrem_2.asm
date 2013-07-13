@@ -96,7 +96,6 @@ L(8):
 	blt	cr0, L(18)
 	mr	r3, r30
 	CALL(	mpn_invert_limb)
-	nop
 	mulld	r10, r3, r30
 	mulhdu	r0, r3, r28
 	addc	r8, r10, r28
