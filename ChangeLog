@@ -1,3 +1,30 @@
+2013-07-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sb_div_sec.c: Compute inverse as floor(B^2/(dh+1)), per
+	Niels' suggestion.
+	* mpn/generic/sbpi1_div_sec.c: Remove inverse rounding-up code.
+
+2013-07-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/divrem_1.asm: Remove explicit nop after CALL.
+	* mpn/powerpc64/mode64/divrem_2.asm: Likewise.
+	* mpn/powerpc64/mode64/mod_1_1.asm:  Likewise.
+	* mpn/powerpc64/mode64/mod_1_4.asm:  Likewise.
+
+2013-07-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/atom/cnd_add_n.asm: New file.
+	* mpn/x86/atom/cnd_sub_n.asm: New file.o
+
+2013-07-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sbpi1_div_sec.c: Partial rewrite.
+
+2013-07-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/cnd_aors_n.asm: Tweak for better speed on K8, bobcat, bd1,
+	NHM, Atom.
+
 2013-07-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/p7/copyi.asm: Handle n = 0.
