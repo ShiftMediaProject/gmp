@@ -94,9 +94,6 @@ FNAME (Q(mp_ptr qp)
 #endif
     }
 
-  /* Decremenet inverse to keep quotient half limbs from being too large.  */
-  dinv -= dinv != 0;				/* FIXME: cmp-to-int */
-
   /* Create a divisor copy shifted half a limb.  */
   hp = tp;					/* (dn + 1) limbs */
   hp[dn] = mpn_lshift (hp, dp, dn, GMP_NUMB_BITS / 2);

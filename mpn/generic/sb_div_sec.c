@@ -81,18 +81,9 @@ FNAME (Q(mp_ptr qp)
       np2 = np;
     }
 
-  if (dn == 1)
-    {
-      d0 = dp2[dn - 1];
-      invert_limb (inv32, d0);
-    }
-  else
-    {
-      d1 = dp2[dn - 1];
-      d0 = dp2[dn - 2];
-      invert_pi1 (dinv, d1, d0);
-      inv32 = dinv.inv32;
-    }
+  d0 = dp2[dn - 1];
+  d0 += (~d0 != 0);
+  invert_limb (inv32, d0);
 
   /* We add nn + dn to tp here, not nn + 1 + dn, as expected.  This is since nn
      here will have been incremented.  */
