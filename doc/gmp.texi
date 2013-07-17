@@ -6155,7 +6155,7 @@ The following functions are provided in @file{libgmpxx} (@pxref{Headers and
 Libraries}), which is built if C++ support is enabled (@pxref{Build Options}).
 Prototypes are available from @code{<gmp.h>}.
 
-@deftypefun ostream& operator<< (ostream& @var{stream}, mpz_t @var{op})
+@deftypefun ostream& operator<< (ostream& @var{stream}, const mpz_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ios::width} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
@@ -6165,7 +6165,7 @@ decimal.  This is unlike the standard @code{operator<<} routines on @code{int}
 etc, which instead give twos complement.
 @end deftypefun
 
-@deftypefun ostream& operator<< (ostream& @var{stream}, mpq_t @var{op})
+@deftypefun ostream& operator<< (ostream& @var{stream}, const mpq_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ios::width} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
@@ -6178,7 +6178,7 @@ decimal.  If @code{ios::showbase} is set then a base indicator is shown on
 both the numerator and denominator (if the denominator is required).
 @end deftypefun
 
-@deftypefun ostream& operator<< (ostream& @var{stream}, mpf_t @var{op})
+@deftypefun ostream& operator<< (ostream& @var{stream}, const mpf_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ios::width} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
@@ -6631,7 +6631,7 @@ function, for example @code{double} follows @code{mpz_set_d}
 (@pxref{Assigning Integers}).
 @end deftypefun
 
-@deftypefun explicit mpz_class::mpz_class (mpz_t @var{z})
+@deftypefun explicit mpz_class::mpz_class (const mpz_t @var{z})
 Construct an @code{mpz_class} from an @code{mpz_t}.  The value in @var{z} is
 copied into the new @code{mpz_class}, there won't be any permanent association
 between it and @var{z}.
@@ -6731,7 +6731,7 @@ mpq_class q (1, 3);
 @end example
 @end deftypefun
 
-@deftypefun explicit mpq_class::mpq_class (mpq_t @var{q})
+@deftypefun explicit mpq_class::mpq_class (const mpq_t @var{q})
 Construct an @code{mpq_class} from an @code{mpq_t}.  The value in @var{q} is
 copied into the new @code{mpq_class}, there won't be any permanent association
 between it and @var{q}.
@@ -6840,8 +6840,8 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @end example
 @end deftypefun
 
-@deftypefun explicit mpf_class::mpf_class (mpf_t @var{f})
-@deftypefunx {} mpf_class::mpf_class (mpf_t @var{f}, mp_bitcnt_t @var{prec})
+@deftypefun explicit mpf_class::mpf_class (const mpf_t @var{f})
+@deftypefunx {} mpf_class::mpf_class (const mpf_t @var{f}, mp_bitcnt_t @var{prec})
 Construct an @code{mpf_class} from an @code{mpf_t}.  The value in @var{f} is
 copied into the new @code{mpf_class}, there won't be any permanent association
 between it and @var{f}.
@@ -10308,7 +10308,7 @@ evaluating it,
 @example
 struct __gmp_binary_plus
 @{
-  static void eval(mpf_t f, mpf_t g, mpf_t h) @{ mpf_add(f, g, h); @}
+  static void eval(mpf_t f, const mpf_t g, const mpf_t h) @{ mpf_add(f, g, h); @}
 @};
 @end example
 
