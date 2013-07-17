@@ -6499,7 +6499,7 @@ overloaded functions and operators which may be more convenient.
 
 Due to the implementation of this interface, a reasonably recent C++ compiler
 is required, one supporting namespaces, partial specialization of templates
-and member templates.  For GCC this means version 2.91 or later.
+and member templates.
 
 @strong{Everything described in this chapter is to be considered preliminary
 and might be subject to incompatible changes if some unforeseen difficulty
