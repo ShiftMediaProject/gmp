@@ -3273,8 +3273,8 @@ same way as for normal C @code{int} arithmetic.
 @deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{const mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_ui (const mpz_t @var{n}, @w{unsigned long int @var{d}})
 @maybepagebreak
-@deftypefunx void mpz_cdiv_q_2exp (const mpz_t @var{q}, mpz_t @var{n}, @w{mp_bitcnt_t @var{b}})
-@deftypefunx void mpz_cdiv_r_2exp (const mpz_t @var{r}, mpz_t @var{n}, @w{mp_bitcnt_t @var{b}})
+@deftypefunx void mpz_cdiv_q_2exp (mpz_t @var{q}, const mpz_t @var{n}, @w{mp_bitcnt_t @var{b}})
+@deftypefunx void mpz_cdiv_r_2exp (mpz_t @var{r}, const mpz_t @var{n}, @w{mp_bitcnt_t @var{b}})
 @end deftypefun
 
 @deftypefun void mpz_fdiv_q (mpz_t @var{q}, const mpz_t @var{n}, const mpz_t @var{d})
