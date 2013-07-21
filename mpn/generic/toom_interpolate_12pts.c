@@ -1,4 +1,4 @@
-/* Interpolaton for the algorithm Toom-Cook 6.5-way.
+/* Interpolation for the algorithm Toom-Cook 6.5-way.
 
    Contributed to the GNU project by Marco Bodrato.
 

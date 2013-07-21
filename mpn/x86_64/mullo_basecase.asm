@@ -31,7 +31,7 @@ C     size congruence class.
 C   * Stop iterating addmul_2 earlier, falling into straight-line triangle code
 C     for the last 2-3 iterations.
 C   * Perhaps implement n=4 special code.
-C   * The reload of the outer loop jump address hurts branch preditiction.
+C   * The reload of the outer loop jump address hurts branch prediction.
 C   * The addmul_2 loop ends with an MUL whose high part is not used upon loop
 C     exit.
 

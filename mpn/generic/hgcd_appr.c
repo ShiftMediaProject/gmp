@@ -97,7 +97,7 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	     sbits <-- sbits + 1 - p,
 
 	     rather than just sbits <-- sbits - p. This adjustment makes
-	     the produced matrix sligthly smaller than it could be. */
+	     the produced matrix slightly smaller than it could be. */
 
 	  if (GMP_NUMB_BITS * (n + 1) + 2 * extra_bits <= 2*GMP_NUMB_BITS * s)
 	    {
@@ -130,14 +130,13 @@ mpn_hgcd_appr (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
       if (extra_bits > 0)
 	{
-	  /* We can get here only of we have dropped at least one of the
-	     least significant bits, so we can decrement ap and bp. We can
-	     then shift left extra bits using mpn_shiftr. */
-	  /* NOTE: In the unlikely case that n is large, it would be
-	     preferable to do an initial subdiv step to reduce the size
-	     before shifting, but that would mean daplicating
-	     mpn_gcd_subdiv_step with a bit count rather than a limb
-	     count. */
+	  /* We can get here only of we have dropped at least one of the least
+	     significant bits, so we can decrement ap and bp. We can then shift
+	     left extra bits using mpn_rshift. */
+	  /* NOTE: In the unlikely case that n is large, it would be preferable
+	     to do an initial subdiv step to reduce the size before shifting,
+	     but that would mean duplicating mpn_gcd_subdiv_step with a bit
+	     count rather than a limb count. */
 	  ap--; bp--;
 	  ap[0] = mpn_rshift (ap+1, ap+1, n, GMP_NUMB_BITS - extra_bits);
 	  bp[0] = mpn_rshift (bp+1, bp+1, n, GMP_NUMB_BITS - extra_bits);

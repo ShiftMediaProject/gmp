@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* These numbers were measured manually using the tune/speed program.
-   The standard tune/tunup takes too long.  (VAX 8800) */
+   The standard tune/tuneup takes too long.  (VAX 8800) */
 
 #define MUL_TOOM22_THRESHOLD             14
 #define MUL_TOOM33_THRESHOLD            110

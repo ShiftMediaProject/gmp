@@ -107,4 +107,4 @@ down to 2.5 cycles/limb and mpn_addmul_1 times to 4 cycles/limb.  By
 storing even fewer bits per limb, perhaps 56, it would be possible to
 write a mul_mul_basecase that would run at effectively 1 cycle/limb.
 (Use VM here to better handle the romb-shaped multiply area, perhaps
-rouding operand sizes up to the next power of 2.)
+rounding operand sizes up to the next power of 2.)

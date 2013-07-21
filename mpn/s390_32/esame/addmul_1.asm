@@ -37,7 +37,7 @@ define(`z',	`%r9')
 ASM_START()
 PROLOGUE(mpn_addmul_1)
 	stm	%r9, %r12, 36(%r15)
-	lhi	%r12, 0			C zero index reister
+	lhi	%r12, 0			C zero index register
 	ahi	%r12, 0			C clear carry fla
 	lhi	%r11, 0			C clear carry limb
 	lhi	z, 0			C clear carry limb

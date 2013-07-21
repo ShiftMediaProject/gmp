@@ -1286,7 +1286,7 @@
 
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mini-gmp/tests/t-import.c (main): Don't drop off functon end.
+	* mini-gmp/tests/t-import.c (main): Don't drop off function end.
 
 	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
 	with dynamic main GMP build.
@@ -1314,7 +1314,7 @@
 
 	* mini-gmp/README: Document base limitation for conversions.
 	* mini-gmp/mini-gmp.c (mpz_set_str): Remove goto.
-	(mpz_import, mpz_export): Correctly use order/endianess.
+	(mpz_import, mpz_export): Correctly use order/endianness.
 
 2013-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -2294,7 +2294,7 @@
 
 2012-04-02 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpz/oddfac_1.c: Initalize size for ASSERT.
+	* mpz/oddfac_1.c: Initialize size for ASSERT.
 
 2012-04-02  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -2827,7 +2827,7 @@
 
 2012-02-10  Niels Möller  <nisse@lysator.liu.se>
 
-	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce sligthly stricter
+	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce slightly stricter
 	bound for cofactors.
 
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_hook): Corrected
@@ -3987,7 +3987,7 @@
 
 2011-05-23  Niels Möller  <nisse@lysator.liu.se>
 
-	* mpz/jacobi.c (mpz_jacobi): Simplied by swapping operands when
+	* mpz/jacobi.c (mpz_jacobi): Simplified by swapping operands when
 	needed, to get asize >= bsize. Use the reciprocity law generalized
 	to work when one operand is even.
 
@@ -4615,7 +4615,7 @@
 
 	* tune/tuneup.c (tune_mod_1): Record result of MOD_1_1P_METHOD
 	measurement for use by mpn_mod_1_tune. And omit measurement if
-	mpn_mod_1_1p is native assebly code.
+	mpn_mod_1_1p is native assembly code.
 
 	* mpn/generic/mod_1.c (mpn_mod_1_1p) [TUNE_PROGRAM_BUILD]: Macro
 	to check mod_1_1p_method and call the right function.
@@ -5658,7 +5658,7 @@
 	* configure.in (powerpc64): Support CPU specific mode-less subdirs.
 
 	* mpn/powerpc64/aix.m4 (PROLOGUE_cpu): Use "named csect" making
-	requested aignment actually honoured.
+	requested alignment actually honoured.
 
 2010-04-30  Niels Möller  <nisse@lysator.liu.se>
 
@@ -12883,7 +12883,7 @@
 	numbers.
 	(hgcd_tdiv): New function.
 	(gcd_lehmer): New function, currently #if:ed out.
-	(hgcd_start_row_p): New function, duplicatd from hgcd.c.
+	(hgcd_start_row_p): New function, duplicated from hgcd.c.
 	(gcd_schoenhage_itch): New function.
 	(gcd_schoenhage): New function.
 	(mpn_gcd): New advertised gcd function, which calls
@@ -13756,7 +13756,7 @@
 
 2003-09-24  Torbjorn Granlund  <tege@swox.com>
 
-	* tune/speed.c (routine): Add entires for mpn_addlsh1_n, mpn_sublsh1_n,
+	* tune/speed.c (routine): Add entries for mpn_addlsh1_n, mpn_sublsh1_n,
 	mpn_rsh1add_n, and mpn_rsh1sub_n.
 
 	* tune/speed.h: Declare speed_mpn_addlsh1_n, speed_mpn_sublsh1_n,
@@ -13850,7 +13850,7 @@
 	mpn_addlsh1_n.  Avoid all copying, at the expense of some additional
 	workspace.
 
-	* gmp-impl.h (MPN_TOOM3_MUL_N_TSIZE, MPN_TOOM3_SQR_N_TSIZE): Accomodate
+	* gmp-impl.h (MPN_TOOM3_MUL_N_TSIZE, MPN_TOOM3_SQR_N_TSIZE): Accommodate
 	latest toom3 code.
 
 2003-09-19  Kevin Ryde  <kevin@swox.se>
@@ -14715,7 +14715,7 @@
 	* mpz/get_str.c: Likewise.
 	* mpf/get_str.c: Likewise.
 
-	* mpz/inp_str.c: Restucture to allocate more string space just
+	* mpz/inp_str.c: Restructure to allocate more string space just
 	before needed.
 	* mpbsd/min.c: Likewise.
 
@@ -17035,7 +17035,7 @@
 	* mpf/fits_u.h: Rewrite - nailify.
 	* mpf/fits_s.h: Likewise.
 
-	* mpz/mod.c: Disambiguate if-statament with extra {}.
+	* mpz/mod.c: Disambiguate if-statement with extra {}.
 
 	* mpf/int_p.c: Fix type of size variables.
 	* mpf/get_ui: Likewise.
@@ -18193,7 +18193,7 @@
 
 	* mpn/mp_bases.c: Add entries for base 256.  Remove __ prefix from
 	table name.
-	* gmp-impl.h (__mp_bases): Remove superflous `mp_' part of name, making
+	* gmp-impl.h (__mp_bases): Remove superfluous mp_ part of name, making
 	it __gmpn_bases instead of __gmpn_mp_bases.
 	(mp_bases): New #define.
 	* tune/speed.h (SPEED_ROUTINE_MPN_SET_STR): Allow bases up to 256.
@@ -25273,7 +25273,7 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/generic/dump.c: Suppress output of leadign zeros.
+	* mpn/generic/dump.c: Suppress output of leading zeros.
 
 	* mpz/inp_str.c: Fix memory leakage.
 
@@ -26180,7 +26180,7 @@
 	tests/rand/Makefile.
 
 	* acinclude.m4 (AC_CANONICAL_BUILD): Define to
-	`_AC_CANONICAL_BUILD' to deal with incompabilities between
+	`_AC_CANONICAL_BUILD' to deal with incompatibilities between
 	Autoconf and Libtool.
 	(AC_CHECK_TOOL_PREFIX): Likewise.
 
@@ -27027,7 +27027,7 @@
 	appropriate.
 	(athlon-*-*): Fix typo.
 
-	* config.guess: Update x86 recog code to intiallly match
+	* config.guess: Update x86 recog code to initially match
 	more than just i386.
 	Call K6-2 and K6-III for "k62" and "k63" respectively.
 
@@ -27981,7 +27981,7 @@ Wed Jan 28 20:28:19 1998  Torbjorn Granlund  <tege@sophie.matematik.su.se>
 Mon Jan 26 01:39:02 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
 
 	* mpz/pprime_p.c (mpz_probab_prime_p): Major overhaul: Check small
-	numers specifically; check small factors, then perform a fermat test.
+	numbers specifically; check small factors, then perform a fermat test.
 
 Tue Jan 13 14:58:28 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
 

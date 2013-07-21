@@ -41,9 +41,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    there's no addback, but it would need a multi-precision inverse and so
    might be slower than the plain method (on small sizes at least).
 
-   When D must be normalized (shifted to low bit set), it's possible to supress
-   the bit-shifting of A down, as long as it's already been checked that A has
-   at least as many trailing zero bits as D.  */
+   When D must be normalized (shifted to low bit set), it's possible to
+   suppress the bit-shifting of A down, as long as it's already been checked
+   that A has at least as many trailing zero bits as D.  */
 
 int
 mpn_divisible_p (mp_srcptr ap, mp_size_t an,

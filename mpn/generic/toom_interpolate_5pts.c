@@ -141,7 +141,7 @@ mpn_toom_interpolate_5pts (mp_ptr c, mp_ptr v2, mp_ptr vm1,
       1 0 1 0 0; v1
       0 1 0 1 0; vm1
       0 0 0 0 1] v0
-     Some vaues already are in-place (we added vm1 in the correct position)
+     Some values already are in-place (we added vm1 in the correct position)
      | vinf|  v1 |  v0 |
 	      | vm1 |
      One still is in a separated area

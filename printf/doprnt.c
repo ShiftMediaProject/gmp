@@ -94,7 +94,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    In GMP 4.1.1 we documented "ll" and "L" as being equivalent, but in C99
    in fact "ll" is just for long long and "L" just for long double.
-   Apparentely GLIBC allows "L" for long long though.  This doesn't affect
+   Apparently GLIBC allows "L" for long long though.  This doesn't affect
    us as such, since both are passed through to the C library.  To be
    consistent with what we said before, the two are treated equivalently
    here, and it's left to the C library to do what it thinks with them.

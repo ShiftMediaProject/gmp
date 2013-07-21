@@ -43,7 +43,7 @@ define(`v0_param',`%rcx')	dnl r9
 define(`n',       `%rcx')	dnl
 define(`v0',      `%rdx')	dnl
 
-C Testing mechanism for running this on older AMD64 processrs
+C Testing mechanism for running this on older AMD64 processors
 ifelse(FAKE_MULXADX,1,`
   include(CONFIG_TOP_SRCDIR`/mpn/x86_64/missing-call.m4')
 ',`

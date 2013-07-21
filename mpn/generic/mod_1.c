@@ -59,7 +59,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #if TUNE_PROGRAM_BUILD && !HAVE_NATIVE_mpn_mod_1_1p
-/* Duplicates declaratinos in tune/speed.h */
+/* Duplicates declarations in tune/speed.h */
 mp_limb_t mpn_mod_1_1p_1 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
 mp_limb_t mpn_mod_1_1p_2 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
 

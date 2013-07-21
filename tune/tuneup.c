@@ -1828,7 +1828,7 @@ tune_gcdext_dc (void)
 
 /* In tune_powm_sec we compute the table used by the win_size function.  The
    cutoff points are in exponent bits, disregarding other operand sizes.  It is
-   not possible to use the one framework since it currently uses a granilarity
+   not possible to use the one framework since it currently uses a granularity
    of full limbs.
 */
 

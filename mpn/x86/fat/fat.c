@@ -272,7 +272,7 @@ __gmpn_cpuvec_init (void)
 		case 0x09:		/* Banias */
 		case 0x0d:		/* Dothan */
 		case 0x0e:		/* Yonah */
-		  TRACE (printf ("  Banias/Bothan/Yonah\n"));
+		  TRACE (printf ("  Banias/Dothan/Yonah\n"));
                   CPUVEC_SETUP_p6_mmx;
                   CPUVEC_SETUP_p6_p3mmx;
                   CPUVEC_SETUP_p6_sse2;
@@ -387,9 +387,9 @@ __gmpn_cpuvec_init (void)
 
             case 0x0f:		/* k8 */
             case 0x11:		/* "fam 11h", mix of k8 and k10 */
-            case 0x13:		/* unknown, conservativeky assume k8  */
-            case 0x16:		/* unknown, conservativeky assume k8  */
-            case 0x17:		/* unknown, conservativeky assume k8  */
+            case 0x13:		/* unknown, conservatively assume k8  */
+            case 0x16:		/* unknown, conservatively assume k8  */
+            case 0x17:		/* unknown, conservatively assume k8  */
               TRACE (printf ("  k8\n"));
               CPUVEC_SETUP_k7;
               CPUVEC_SETUP_k7_mmx;

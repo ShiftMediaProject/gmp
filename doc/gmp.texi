@@ -8017,10 +8017,10 @@ a multiple of 4 points, that's why for higher degree Toom'n'half is used.
 
 Toom'n'half means that the existence of one more piece is considered for a
 single operand. It can be virtual, i.e. zero, or real, when the two operand
-are not exactly balanced. By chosing an even @math{r},
+are not exactly balanced. By choosing an even @math{r},
 Toom-@m{r{1\over2},r+1/2} requires @math{2r} points, a multiple of four.
 
-The four-plets of points inlcude 0, @m{\infty,inf}, +1, -1 and
+The four-plets of points include 0, @m{\infty,inf}, +1, -1 and
 @m{\pm2^i,+-2^i}, @m{\pm2^{-i},+-2^-i} . Each of them giving shortcuts for the
 evaluation phase and for some steps in the interpolation phase. Further tricks
 are used to reduce the memory footprint of the whole multiplication algorithm

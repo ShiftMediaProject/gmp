@@ -1831,7 +1831,7 @@ AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
 	.byte   0
       	.align  4, 0x90],
 [if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
-  echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
+  echo "Suppressing this warning by omitting 0x90" 1>&AC_FD_CC
   gmp_cv_asm_align_fill_0x90=no
 else
   gmp_cv_asm_align_fill_0x90=yes

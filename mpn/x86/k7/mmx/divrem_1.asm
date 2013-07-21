@@ -445,7 +445,7 @@ C chain, and nothing better than 18 cycles has been found when using it.
 C The jump is taken only when q1 is 0xFFFFFFFF, and on random data this will
 C be an extremely rare event.
 C
-C Branch mispredictions will hit random occurrances of q1==0xFFFFFFFF, but
+C Branch mispredictions will hit random occurrences of q1==0xFFFFFFFF, but
 C if some special data is coming out with this always, the q1_ff special
 C case actually runs at 15 c/l.  0x2FFF...FFFD divided by 3 is a good way to
 C induce the q1_ff case, for speed measurements or testing.  Note that

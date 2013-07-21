@@ -22,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 2.75 (most alignments, degenerates to 3 c/l for some aligments)
+C AMD K8,K9	 2.75 (degenerates to 3 c/l for some alignments)
 C AMD K10	 ?
 C Intel P4	 ?
 C Intel core2	 ?

@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-  This file current as of 5 Dec 2011.  An up-to-date version is available at
+  This file current as of 21 Jul 2013.  An up-to-date version is available at
   <a href="http://gmplib.org/tasks.html">http://gmplib.org/tasks.html</a>.
   Please send comments about this page to gmp-devel<font>@</font>gmplib.org.
 
@@ -704,7 +704,7 @@ either already been taken care of, or have become irrelevant.
      Consider making these variant <code>mpz_set_str</code> etc forms
      available for <code>mpz_t</code> too, not just <code>mpz_class</code>
      etc.
-<li> <code>mpq_class operator+=</code>: Don't emit an unnecssary
+<li> <code>mpq_class operator+=</code>: Don't emit an unnecessary
      <code>mpq_set(q,q)</code> before <code>mpz_addmul</code> etc.
 <li> Put various bits of gmpxx.h into libgmpxx, to avoid excessive inlining.
      Candidates for this would be,

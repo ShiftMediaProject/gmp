@@ -51,7 +51,7 @@ hgcd_hook (void *p, mp_srcptr gp, mp_size_t gn,
    below the given size s. Return new size for a and b, or 0 if no
    more steps are possible.
 
-   If hgcd2 succeds, needs temporary space for hgcd_matrix_mul_1, M->n
+   If hgcd2 succeeds, needs temporary space for hgcd_matrix_mul_1, M->n
    limbs, and hgcd_mul_matrix1_inverse_vector, n limbs. If hgcd2
    fails, needs space for the quotient, qn <= n - s limbs, for and
    hgcd_matrix_update_q, qn + (size of the appropriate column of M) <=

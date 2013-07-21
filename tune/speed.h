@@ -787,7 +787,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
 									\
-    /* (don't have a mechnanism to specify zp alignments) */		\
+    /* (don't have a mechanism to specify zp alignments) */		\
     for (i = 0; i < K; i++)						\
       SPEED_TMP_ALLOC_LIMBS (zp[i], s->size, 0);			\
 									\

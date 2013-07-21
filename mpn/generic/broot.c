@@ -59,7 +59,7 @@ powlimb (mp_limb_t a, mp_limb_t e)
 
      r' = r - (a^{k-1} r^{k+1} - r) / k
 
-   where we still have cancelation of low limbs.
+   where we still have cancellation of low limbs.
 
  */
 void

@@ -44,7 +44,7 @@ ref_mpq_cmp_ui (mpq_t a, unsigned long int bn, unsigned long int bd)
 }
 
 #ifndef SIZE
-#define SIZE 8	/* increasing this lowers the probabilty of finding an error */
+#define SIZE 8	/* increasing this lowers the probability of finding an error */
 #endif
 
 int

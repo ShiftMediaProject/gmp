@@ -86,7 +86,7 @@ check_data (void)
 
       if (got != got_swapped || got != data[i].want)
 	{
-	  printf ("check_data() wrong reault at data[%d]\n", i);
+	  printf ("check_data() wrong result at data[%d]\n", i);
 	  mpf_trace ("x   ", x);
 	  mpf_trace ("y   ", y);
 	  printf ("got         %d\n", got);

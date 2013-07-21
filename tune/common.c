@@ -350,7 +350,7 @@ speed_cache_fill (struct speed_params *s)
 }
 
 
-/* Miscellanous options accepted by tune and speed programs under -o. */
+/* Miscellaneous options accepted by tune and speed programs under -o. */
 
 void
 speed_option_set (const char *s)

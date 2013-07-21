@@ -1,4 +1,4 @@
-dnl  AMD64 MULX/ADX simultion support, function call version.
+dnl  AMD64 MULX/ADX simulation support, function call version.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 

@@ -1,4 +1,4 @@
-dnl  AMD64 MULX/ADX simultion support, inline version.
+dnl  AMD64 MULX/ADX simulation support, inline version.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 

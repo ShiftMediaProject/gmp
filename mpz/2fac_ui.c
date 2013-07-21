@@ -62,7 +62,7 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
       mp_limb_t *factors, prod, max_prod, j;
       TMP_SDECL;
 
-      /* FIXME: we might alloc a fixed ammount 1+FAC_2DSC_THRESHOLD/FACTORS_PER_LIMB */
+      /* FIXME: we might alloc a fixed amount 1+FAC_2DSC_THRESHOLD/FACTORS_PER_LIMB */
       TMP_SMARK;
       factors = TMP_SALLOC_LIMBS (1 + n / (2 * FACTORS_PER_LIMB));
 

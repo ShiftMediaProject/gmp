@@ -287,7 +287,7 @@ mpn_divrem_1, using division by 32 as an example.
 
 EXAMPLE COMPARISONS - MULTIPLICATION
 
-mul_basecase takes a ".<r>" parameter. If positivie, it gives the second
+mul_basecase takes a ".<r>" parameter. If positive, it gives the second
 (smaller) operand size.  For example to show speeds for 3x3 up to 20x3 in
 cycles,
 

@@ -55,7 +55,7 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
      V = s1 u + s0 v
 
      where U, V are the inputs (without any shared power of two),
-     and the matris has determinant ± 2^{shift}.
+     and the matrix has determinant ± 2^{shift}.
   */
   mp_limb_t s0 = 1;
   mp_limb_t t0 = 0;

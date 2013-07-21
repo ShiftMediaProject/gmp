@@ -179,7 +179,7 @@ check_data (void)
 
           if (mpf_cmp (got, want) != 0)
             {
-              printf ("check_data() wrong reault at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+              printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
               mpf_trace ("x   ", x);
               mpf_trace ("y   ", y);
               mpf_trace ("got ", got);

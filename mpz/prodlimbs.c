@@ -38,7 +38,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Computes the product of the j>1 limbs pointed by factors, puts the
  * result in x. It assumes that all limbs are non-zero. Above
- * Karatsuba's threshold it uses a binary splitting startegy, to gain
+ * Karatsuba's threshold it uses a binary splitting strategy, to gain
  * speed by the asymptotically fast multiplication algorithms.
  *
  * The list in  {factors, j} is overwritten.

@@ -1348,7 +1348,7 @@ mpz_init (mpz_t r)
 }
 
 /* The utility of this function is a bit limited, since many functions
-   assings the result variable using mpz_swap. */
+   assigns the result variable using mpz_swap. */
 void
 mpz_init2 (mpz_t r, mp_bitcnt_t bits)
 {
@@ -3002,7 +3002,7 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
   if (e->_mp_size < 0)
     {
       if (!mpz_invert (base, b, m))
-	gmp_die ("mpz_powm: Negative exponent and non-invertibe base.");
+	gmp_die ("mpz_powm: Negative exponent and non-invertible base.");
     }
   else
     {
@@ -3200,7 +3200,7 @@ mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
 
 /* Numbers are treated as if represented in two's complement (and
    infinitely sign extended). For a negative values we get the two's
-   complement from -x = ~x + 1, where ~ is bitwise complementt.
+   complement from -x = ~x + 1, where ~ is bitwise complement.
    Negation transforms
 
      xxxx10...0

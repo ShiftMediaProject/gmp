@@ -52,7 +52,7 @@ mpz_set_f (mpz_ptr w, mpf_srcptr u)
     }
   else
     {
-      /* exp<=size, trucate to the high "exp" many limbs */
+      /* exp<=size, truncate to the high "exp" many limbs */
       up += (size - exp);
       size = exp;
     }

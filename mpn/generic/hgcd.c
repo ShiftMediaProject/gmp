@@ -98,7 +98,7 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  success = 1;
 	}
 
-      /* NOTE: It apppears this loop never runs more than once (at
+      /* NOTE: It appears this loop never runs more than once (at
 	 least when not recursing to hgcd_appr). */
       while (n > n2)
 	{

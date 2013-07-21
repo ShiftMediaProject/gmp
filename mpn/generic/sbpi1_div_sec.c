@@ -36,7 +36,7 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    too large (B is the limb base, D is the divisor, and i is the induction
    variable); the subsequent step will handle the extra partial remainder bits.
 
-   WIth that partial remainder reduction, each step generates a quotient "half
+   With that partial remainder reduction, each step generates a quotient "half
    limb".  The outer loop generates two quotient half limbs, an upper (q1h) and
    a lower (q0h) which are stored sparsely in separate limb arrays.  These
    arrays are added at the end; using separate arrays avoids data-dependent
@@ -48,7 +48,7 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    remainders, which we reduce later, as described above.
 
    In order to keep quotients from getting too big, corresponding to a negative
-   partial remainder, we use an inverse which is sligtly smaller than usually.
+   partial remainder, we use an inverse which is slightly smaller than usually.
 */
 
 #if OPERATION_sbpi1_div_qr_sec

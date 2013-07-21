@@ -94,7 +94,7 @@ spinner_init (void)
     }
   alarm (1);
 
-  /* unbufferred output so the spinner will show up */
+  /* unbuffered output so the spinner will show up */
   setbuf (stdout, NULL);
 }
 

@@ -88,7 +88,7 @@ m4_assert_defined(`IA64_ALIGN_OK')
 
 dnl  Usage: ASSERT([pr] [,code])
 dnl
-dnl  Require that the given predictate register is true after executing the
+dnl  Require that the given predicate register is true after executing the
 dnl  test code.  For example,
 dnl
 dnl         ASSERT(p6,

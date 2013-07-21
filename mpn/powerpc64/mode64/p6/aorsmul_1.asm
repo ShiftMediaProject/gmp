@@ -33,7 +33,7 @@ C  * Reduce register usage.
 C  * Schedule function entry code.
 C  * Unroll more.  8-way unrolling would bring us to 10 c/l, 16-way unrolling
 C    would bring us to 9 c/l.
-C  * Handle n = 1 and perhaps n = 2 seperately, without saving any registers.
+C  * Handle n = 1 and perhaps n = 2 separately, without saving any registers.
 
 C INPUT PARAMETERS
 define(`rp',  `r3')
