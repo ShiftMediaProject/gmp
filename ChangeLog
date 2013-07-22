@@ -1,4 +1,15 @@
+2013-07-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/mod_1_1.asm: Handle little-endian mode.
+	* mpn/powerpc64/mode64/mod_1_4.asm: Likewise.
+
+2013-07-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi: Declare countless of function arguments as 'const'.
+
 2013-07-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/core2/aors_n.asm: Rewrite.
 
 	* mpn/generic/sb_div_sec.c: Compute inverse as floor(B^2/(dh+1)), per
 	Niels' suggestion.
