@@ -69,7 +69,10 @@ L(top):	ld	r4, -24(r3)
 	adde	r9, r9, r10
 	bdnz	L(top)
 
-L(end):	lwz	r0, 12(r6)
+L(end):
+ifdef(`HAVE_LIMB_LITTLE_ENDIAN',
+`	lwz	r0, 8(r6)',
+`	lwz	r0, 12(r6)')
 	ld	r3, 0(r6)
 	cmpdi	cr7, r0, 0
 	beq-	cr7, L(4)

@@ -144,7 +144,10 @@ L(top):	ld	r31, -16(ap)
 	adde	r9, r7, r4
 	bdnz	L(top)
 
-L(end):	lwz	r3, 12(cps)
+L(end):
+ifdef(`HAVE_LIMB_LITTLE_ENDIAN',
+`	lwz	r3, 8(cps)',
+`	lwz	r3, 12(cps)')
 	mulld	r10, r9, r26
 	mulhdu	r9, r9, r26
 	addc	r11, r0, r10
