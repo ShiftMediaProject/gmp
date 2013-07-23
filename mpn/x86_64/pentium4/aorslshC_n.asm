@@ -184,7 +184,6 @@ L(1):	mov	%r11, 8(rp)
 	pop	%rbp
 	pop	%r12
 	pop	%rbx
-	emms
 	FUNC_EXIT()
 	ret
 L(c3):	mov	$1, R8(%rax)
