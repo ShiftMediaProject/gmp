@@ -28,7 +28,8 @@ C AMD bobcat
 C Intel P4
 C Intel core2
 C Intel NHM
-C Intel SBR
+C Intel SBR	 2.5
+C Intel IBR	 2.4
 C Intel atom
 C VIA nano
 
@@ -38,6 +39,8 @@ C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 C TODO
 C  * The loop is great, but the prologue code was quickly written.  Tune it!
 C  * Add mul_1c entry point.
+C  * We could preserve one less register under DOS64 calling conventions, using
+C    r10 instead of rsi.
 
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx
