@@ -1,4 +1,5 @@
-dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1) optimised for Intel Atom.
+dnl  AMD64 mpn_sublsh1_n optimised for Intel Atom.
+dnl  Used also for AMD bd1.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
@@ -28,6 +29,8 @@ C  * aorrlsh1_n.asm and this file use the same basic pattern.
 C	     cycles/limb
 C AMD K8,K9	 ?
 C AMD K10	 ?
+C AMD bd1	 2.3
+C AMD bobcat	 ?
 C Intel P4	 ?
 C Intel core2	 ?
 C Intel NHM	 ?
