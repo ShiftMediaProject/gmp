@@ -23,10 +23,13 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 1.5
 C AMD K10	 1.5
-C Intel P4	 ?
+C AMD bd1	 1.8
+C AMD bobcat	 2.5
+C Intel P4
 C Intel core2	 4.9
 C Intel NHM	 5.5
-C Intel SBR	 1.59
+C Intel SBR	 1.61
+C Intel IBR	 1.61
 C Intel atom	 4
 C VIA nano	 3.25
 
@@ -38,7 +41,7 @@ define(`rp',	`%rdi')	C rcx
 define(`up',	`%rsi')	C rdx
 define(`vp',	`%rdx')	C r8
 define(`n',	`%rcx')	C r9
-define(`cy',	`%r8')	C rsp+40    (only for mpn_add_nc)
+define(`cy',	`%r8')	C rsp+40    (mpn_add_nc and mpn_sub_nc)
 
 ifdef(`OPERATION_add_n', `
 	define(ADCSBB,	      adc)
