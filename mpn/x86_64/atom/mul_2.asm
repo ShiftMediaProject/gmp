@@ -81,7 +81,6 @@ L(b00):	mov	%rax, w0
 	mov	(up), %rax
 	mov	%rdx, w1
 	xor	R32(w2), R32(w2)
-	lea	-8(up), up
 	lea	-8(rp), rp
 	jmp	L(lo0)
 
@@ -89,7 +88,7 @@ L(b10):	mov	%rax, w2
 	mov	(up), %rax
 	mov	%rdx, w3
 	xor	R32(w0), R32(w0)
-	lea	-24(up), up
+	lea	-16(up), up
 	lea	-24(rp), rp
 	jmp	L(lo2)
 
@@ -100,6 +99,7 @@ L(b01):	mov	%rax, w3
 	mov	%rdx, w0
 	mov	(up), %rax
 	xor	R32(w1), R32(w1)
+	lea	8(up), up
 	dec	n
 	jmp	L(lo1)
 
@@ -107,7 +107,7 @@ L(b11):	mov	%rax, w1
 	mov	(up), %rax
 	mov	%rdx, w2
 	xor	R32(w3), R32(w3)
-	lea	-16(up), up
+	lea	-8(up), up
 	lea	-16(rp), rp
 	jmp	L(lo3)
 
@@ -115,56 +115,56 @@ L(b11):	mov	%rax, w1
 L(top):
 L(lo1):	mul	v1
 	add	%rax, w0
-	mov	8(up), %rax
+	mov	(up), %rax
 	mov	$0, R32(w2)
 	mov	w3, (rp)
 	adc	%rdx, w1
 	mul	v0
 	add	%rax, w0
-	mov	8(up), %rax
+	mov	(up), %rax
 	adc	%rdx, w1
 	adc	$0, R32(w2)
 L(lo0):	mul	v1
 	add	%rax, w1
-	mov	16(up), %rax
+	mov	8(up), %rax
 	mov	w0, 8(rp)
 	adc	%rdx, w2
 	mul	v0
 	add	%rax, w1
-	mov	16(up), %rax
+	mov	8(up), %rax
 	adc	%rdx, w2
 	mov	$0, R32(w3)
 	adc	$0, R32(w3)
 L(lo3):	mul	v1
 	add	%rax, w2
-	mov	24(up), %rax
+	mov	16(up), %rax
 	mov	w1, 16(rp)
 	mov	$0, R32(w0)
 	adc	%rdx, w3
 	mul	v0
 	add	%rax, w2
-	mov	24(up), %rax
+	mov	16(up), %rax
 	adc	%rdx, w3
 L(lo2):	mov	$0, R32(w1)
 	mov	w2, 24(rp)
 	adc	$0, R32(w0)
 	mul	v1
 	add	%rax, w3
-	mov	32(up), %rax
+	mov	24(up), %rax
 	lea	32(up), up
 	adc	%rdx, w0
 	mul	v0
 	lea	32(rp), rp
 	add	%rax, w3
 	adc	%rdx, w0
-	mov	(up), %rax
+	mov	-8(up), %rax
 	adc	$0, R32(w1)
 	sub	$4, n
-	jg	L(top)
+	ja	L(top)
 
 L(end):	mul	v1
-	add	%rax, w0
 	mov	w3, (rp)
+	add	%rax, w0
 	adc	%rdx, w1
 	mov	w0, 8(rp)
 	mov	w1, %rax
