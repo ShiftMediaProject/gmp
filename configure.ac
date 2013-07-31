@@ -2076,7 +2076,8 @@ case $host in
       gcc_cflags_cpu=""
       gcc_cflags_arch=""
 
-      fat_functions="add_n addmul_1 bdiv_dbm1c com copyd copyi dive_1 divrem_1
+      fat_functions="add_n addmul_1 bdiv_dbm1c com cnd_add_n cnd_sub_n
+		     copyd copyi dive_1 divrem_1
 		     gcd_1 lshift lshiftc mod_1 mod_1_1 mod_1_1_cps mod_1_2
 		     mod_1_2_cps mod_1_4 mod_1_4_cps mod_34lsub1 mode1o mul_1
 		     mul_basecase mullo_basecase pre_divrem_1 pre_mod_1 redc_1

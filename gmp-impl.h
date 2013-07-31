@@ -68,6 +68,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #define DECL_bdiv_dbm1c(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)
+#define DECL_cnd_add_n(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t)
+#define DECL_cnd_sub_n(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t)
 #define DECL_com(name) \
   __GMP_DECLSPEC void name (mp_ptr, mp_srcptr, mp_size_t)
 #define DECL_copyd(name) \
@@ -4591,6 +4595,8 @@ struct cpuvec_t {
   DECL_addmul_1        ((*addmul_1));
   DECL_addmul_2        ((*addmul_2));
   DECL_bdiv_dbm1c      ((*bdiv_dbm1c));
+  DECL_cnd_add_n       ((*cnd_add_n));
+  DECL_cnd_sub_n       ((*cnd_sub_n));
   DECL_com             ((*com));
   DECL_copyd           ((*copyd));
   DECL_copyi           ((*copyi));

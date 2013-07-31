@@ -141,6 +141,8 @@ struct cpuvec_t __gmpn_cpuvec = {
   __MPN(addmul_1_init),
   0,
   __MPN(bdiv_dbm1c_init),
+  __MPN(cnd_add_n_init),
+  __MPN(cnd_sub_n_init),
   __MPN(com_init),
   __MPN(copyd_init),
   __MPN(copyi_init),
