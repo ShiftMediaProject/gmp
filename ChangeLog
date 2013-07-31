@@ -1,3 +1,31 @@
+2013-07-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/mul_1.asm: New file.
+
+	* configure.ac (x86): Add Haswell-specific path.
+
+	* configure.in (fat_functions): Add cnd_add_n, cnd_sub_n..
+	* gmp-impl.h (struct cpuvec_t): Add fields for new fat functions.
+	* gmp-impl.h: Adjust corresponding declarations.
+
+	* mpn/x86_64/x86_64-defs.m4 (CPUVEC_FUNCS_LIST): Add new fat functions.
+	* mpn/x86/x86-defs.m4 (CPUVEC_FUNCS_LIST): Likewise.
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec): Likewise.
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec): Likewise.
+
+2013-07-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/popcount.asm: New file.
+
+2013-07-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bobcat/aors_n.asm: New file.
+
+	* mpn/x86_64/pentium4/aorslshC_n.asm: Remove a spurious emms insn.
+
+	* mpn/x86_64/bd1/aorrlsh1_n.asm: New file.
+	* mpn/x86_64/bd1/sublsh1_n.asm: New file.
+
 2013-07-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/mod_1_1.asm: Handle little-endian mode.
