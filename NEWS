@@ -21,7 +21,7 @@ Changes between GMP version 5.1.* and 5.2.0
   FEATURES
   * Support for new Intel and AMD CPUs.
 
-  * Support for ARM64 alias Aarch64.
+  * Support for ARM64 alias Aarch64 alias ARMv8.
 
   * New functions mpn_cnd_add_n and mpn_cnd_sub_n. Side-channel silent
     conditional addition and subtraction.
@@ -31,6 +31,7 @@ Changes between GMP version 5.1.* and 5.2.0
     See the documentation for mpz_limbs_read and related functions.
 
   MISC
+  * None.
 
 
 Changes between GMP version 5.1.1 and 5.1.2
