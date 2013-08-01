@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_mul_basecase optimised for AMD Bulldozer and Piledriver.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
 
 dnl  This file is part of the GNU MP Library.
@@ -22,12 +24,12 @@ include(`../config.m4')
 C cycles/limb	mul_1		mul_2		mul_3		addmul_2
 C AMD K8,K9
 C AMD K10
-C AMD bull	~4.1		~4.55		-		~4.3
-C AMD pile	~4.5		~4.55		-		~4.55
+C AMD bull	~4.8		~4.55		-		~4.3
+C AMD pile	~4.6		~4.55		-		~4.55
 C AMD bobcat
 C AMD jaguar
 C Intel P4
-C Intel core2
+C Intel core
 C Intel NHM
 C Intel SBR
 C Intel IBR
@@ -40,10 +42,12 @@ C The inner loops of this code are the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
-C  * Merge bull-specific mul_1.
+C  * Merge bull-specific mul_1, if it is not slower the TOOM22 range.
+C    Alternatively, we could tweak the present code (which was loopmixed for a
+C    different CPU).
 C  * Merge faster mul_2.  Current fastest mul_2 code is non-indexed, causing
 C    some structure headaches.
-C  * Micro-optimise to save on the constant and linear terms.
+C  * Further micro-optimise.
 
 C When playing with pointers, set this to $2 to fall back to conservative
 C indexing in wind-dowm code.
@@ -71,7 +75,6 @@ ASM_START()
 PROLOGUE(mpn_mul_basecase)
 	push	%rbx
 	push	%rbp
-	push	%r12
 	mov	un_param, un		C free up rdx
 	neg	un
 
@@ -83,98 +86,88 @@ PROLOGUE(mpn_mul_basecase)
 	mul	v0			C shared for mul_1 and mul_2
 
 	test	$1, R8(vn)
-	jz	do_mul_2
+	jz	L(do_mul_2)
 
-do_mul_1:
+L(do_mul_1):
 	test	$1, R8(un)
 	jnz	L(m1x1)
 
-L(m1x0):test	$2, R8(un)
+L(m1x0):mov	%rax, w0		C un = 2, 4, 6, 8, ...
+	mov	%rdx, w1
+	mov	8(up,un,8), %rax
+	test	$2, R8(un)
 	jnz	L(m110)
 
-L(m100):lea	(un), n			C un = 4, 8, 12, ...
-	mov	%rax, w1
-	mov	%rdx, w0
-	mov	8(up,un,8), %rax
+L(m100):lea	2(un), n		C un = 4, 8, 12, ...
 	jmp	L(m1l0)
 
-L(m1x1):test	$2, R8(un)
+L(m110):lea	(un), n			C un = 2, 6, 10, ...
+	jmp	L(m1l2)
+
+L(m1x1):mov	%rax, w1		C un = 1, 3, 5, 7, ...
+	mov	%rdx, w0
+	test	$2, R8(un)
 	jz	L(m111)
 
-L(m101):lea	1(un), n		C un = 1, 5, 9, ...
-	mov	%rax, (rp,un,8)
+L(m101):lea	3(un), n		C un = 1, 5, 9, ...
 	test	n, n
-	jns	L(n1)
-	mov	%rdx, w1
-	jmp	L(m1l1)
-	
-L(n1):	mov	%rdx, (rp)
-	pop	%r12
+	js	L(m1l1)
+	mov	%rax, -8(rp)
+	mov	%rdx, (rp)
 	pop	%rbp
 	pop	%rbx
 	ret
 
-L(m111):lea	-1(un), n		C un = 3, 7, 11, ...
-	mov	%rax, w0
-	mov	%rdx, w2
+L(m111):lea	1(un), n		C un = 3, 7, 11, ...
 	mov	8(up,un,8), %rax
-	mul	v0
 	jmp	L(m1l3)
 
-	.byte	0x90,0x90,0x90,0x90,0x90,0x90,0x90
-L(m110):lea	2(un), n		C un = 2, 6, 10, ...
-	mov	%rax, w2
-	mov	%rdx, w0
-	mov	8(up,un,8), %rax
-	test	n, n
-	jns	L(m1ed)
-
 	ALIGN(16)
-L(m1tp):mul	v0
-	mov	%rdx, w1
-	add	%rax, w0
-	adc	$0, w1
-	mov	w0, -8(rp,n,8)
-	mov	w2, -16(rp,n,8)
-L(m1l1):mov	(up,n,8), %rax
+L(m1tp):mov	%rdx, w0
+	add	%rax, w1
+L(m1l1):mov	-16(up,n,8), %rax
+	adc	$0, w0
 	mul	v0
+	add	%rax, w0
+	mov	w1, -24(rp,n,8)
+	mov	-8(up,n,8), %rax
+	mov	%rdx, w1
+	adc	$0, w1
+L(m1l0):mul	v0
+	mov	w0, -16(rp,n,8)
 	add	%rax, w1
 	mov	%rdx, w0
+	mov	(up,n,8), %rax
+	adc	$0, w0
+L(m1l3):mul	v0
+	mov	w1, -8(rp,n,8)
+	mov	%rdx, w1
+	add	%rax, w0
 	mov	8(up,n,8), %rax
-	adc	$0, w0
-L(m1l0):mul	v0
-	add	%rax, w0
-	mov	%rdx, w2
-	mov	16(up,n,8), %rax
-	adc	$0, w2
-	mul	v0
-	mov	w1, (rp,n,8)
-L(m1l3):add	%rax, w2
-	mov	w0, 8(rp,n,8)
-	mov	%rdx, w0
-	adc	$0, w0
+	adc	$0, w1
+L(m1l2):mul	v0
+	mov	w0, (rp,n,8)
 	add	$4, n
-L(m1l2):mov	-8(up,n,8), %rax
-	js	L(m1tp)
+	jnc	L(m1tp)
 
-L(m1ed):mul	v0
-	add	%rax, w0
+L(m1ed):add	%rax, w1
 	adc	$0, %rdx
-	mov	w2, I(-16(rp),-16(rp,n,8))
-	mov	w0, I(-8(rp),-8(rp,n,8))
-	mov	%rdx, I((rp),(rp,n,8))
+	mov	w1, I(-8(rp),-24(rp,n,8))
+	mov	%rdx, I((rp),-16(rp,n,8))
 
 	dec	R32(vn)
 	jz	L(ret2)
 
 	lea	8(vp), vp
 	lea	8(rp), rp
+	push	%r12
 	push	%r13
 	push	%r14
-	jmp	do_addmul
+	jmp	L(do_addmul)
 
-do_mul_2:
+L(do_mul_2):
 define(`v1',	`%r14')
+	push	%r12
 	push	%r13
 	push	%r14
 
@@ -248,7 +241,8 @@ L(m2ed):add	%rax, w2
 	lea	16(vp), vp
 	lea	16(rp), rp
 
-do_addmul:
+
+L(do_addmul):
 	push	%r15
 	push	vn			C save vn in new stack slot
 define(`vn',	`(%rsp)')
@@ -398,8 +392,8 @@ L(end):	mul	v0
 	pop	%r15
 L(ret5):pop	%r14
 	pop	%r13
-L(ret2):pop	%r12
-	pop	%rbp
+	pop	%r12
+L(ret2):pop	%rbp
 	pop	%rbx
 	ret
 EPILOGUE()
