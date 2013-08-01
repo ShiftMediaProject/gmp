@@ -29,7 +29,7 @@ C AMD pile
 C AMD bobcat
 C AMD jaguar
 C Intel P4
-C Intel Core
+C Intel core
 C Intel NHM
 C Intel SBR	 2.5		 2.5		 -		 2.95
 C Intel IBR	 2.4		 2.3		 -		 2.68
@@ -79,12 +79,12 @@ PROLOGUE(mpn_mul_basecase)
 	mov	un_param, un		C free up rdx
 	neg	un
 
-	mov	(up), %rax	   	C shared for mul_1 and mul_2
+	mov	(up), %rax		C shared for mul_1 and mul_2
 	lea	(up,un_param,8), up	C point at operand end
 	lea	(rp,un_param,8), rp	C point at rp[un-1]
 
-	mov	(vp), v0	   	C shared for mul_1 and mul_2
-	mul	v0		   	C shared for mul_1 and mul_2
+	mov	(vp), v0		C shared for mul_1 and mul_2
+	mul	v0			C shared for mul_1 and mul_2
 
 	test	$1, R8(vn)
 	jz	L(do_mul_2)
