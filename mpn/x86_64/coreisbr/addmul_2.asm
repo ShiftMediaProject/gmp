@@ -23,21 +23,21 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb	best
-C AMD K8,K9	
-C AMD K10	
-C AMD bull	
-C AMD pile	
-C AMD bobcat	
-C AMD jaguar	
-C Intel P4	
-C Intel core	
+C AMD K8,K9
+C AMD K10
+C AMD bull
+C AMD pile
+C AMD bobcat
+C AMD jaguar
+C Intel P4
+C Intel core
 C Intel NHM
 C Intel SBR	 2.93		this
 C Intel IBR	 2.66		this
 C Intel HWL	 2.5		 2.0
-C Intel BWL	
-C Intel atom	
-C VIA nano	
+C Intel BWL
+C Intel atom
+C VIA nano
 
 C This code is the result of running a code generation and optimisation tool
 C suite written by David Harvey and Torbjorn Granlund.
