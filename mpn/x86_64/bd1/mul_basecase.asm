@@ -69,10 +69,15 @@ define(`w3',	`%r13')
 define(`n',	`%rbp')
 define(`v0',	`%r9')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_basecase)
+	FUNC_ENTRY(4)
+IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%rbx
 	push	%rbp
 	mov	un_param, un		C free up rdx
@@ -116,6 +121,7 @@ L(m101):lea	3(un), n		C un = 1, 5, 9, ...
 	mov	%rdx, (rp)
 	pop	%rbp
 	pop	%rbx
+	FUNC_EXIT()
 	ret
 
 L(m111):lea	1(un), n		C un = 3, 7, 11, ...
@@ -395,5 +401,6 @@ L(ret5):pop	%r14
 	pop	%r12
 L(ret2):pop	%rbp
 	pop	%rbx
+	FUNC_EXIT()
 	ret
 EPILOGUE()
