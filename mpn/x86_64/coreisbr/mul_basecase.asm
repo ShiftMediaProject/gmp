@@ -3,6 +3,7 @@ dnl  AMD64 mpn_mul_basecase optimised for Intel Sandy bridge and Ivy bridge.
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -256,42 +257,36 @@ define(`v1',	`%r8')
 L(outer):
 	mov	(vp), v0
 	mov	8(vp), v1
-
+	mov	(up,un,8), %rax
+	mul	v0
 	test	$1, R8(un)
 	jnz	L(a1x1)
 
 L(a1x0):mov	(rp,un,8), X0
-	mov	(up,un,8), %rax
+	xor	w0, w0
+	mov	%rdx, w1
 	test	$2, R8(un)
 	jnz	L(a110)
 
 L(a100):lea	2(un), n		C un = 4, 8, 12, ...
-	mul	v0
 	add	%rax, X0
-	mov	%rdx, w1
 	adc	$0, w1
 	mov	(up,un,8), %rax
 	mul	v1
-	xor	w3, w3
-	xor	w0, w0
+	mov	-8(rp,n,8), X1
 	jmp	L(lo0)
 
 L(a110):lea	(un), n			C un = 2, 6, 10, ...
-	mul	v0
-	mov	%rdx, w1
 	xor	w3, w3
-	xor	w0, w0
 	jmp	L(lo2)
 
-L(a1x1):mov	(up,un,8), %rax
-	mov	(rp,un,8), X1
+L(a1x1):mov	(rp,un,8), X1
 	xor	w2, w2
 	xor	w1, w1
 	test	$2, R8(un)
 	jz	L(a111)
 
 L(a101):lea	3(un), n		C un = 1, 5, 9, ...
-	mul	v0
 	mov	%rdx, w3
 	add	%rax, X1
 	mov	(up,un,8), %rax
@@ -319,18 +314,18 @@ L(top):	mul	v1
 	mov	-16(up,n,8), %rax
 	mul	v1
 	mov	X1, -24(rp,n,8)		C 3
-L(lo0):	mov	-8(rp,n,8), X1		C 1
+	mov	-8(rp,n,8), X1		C 1
 	add	w3, X0			C 0
 	adc	$0, w1			C 1
-	mov	%rdx, w2		C 2
+L(lo0):	mov	%rdx, w2		C 2
 	mov	X0, -16(rp,n,8)		C 0
 	add	%rax, X1		C 1
 	adc	$0, w2			C 2
 	mov	-8(up,n,8), %rax
 	add	w0, X1			C 1
 	adc	$0, w2			C 2
-L(lo3):	mul	v0
-	add	%rax, X1		C 1
+	mul	v0
+L(lo3):	add	%rax, X1		C 1
 	mov	%rdx, w3		C 2
 	adc	$0, w3			C 2
 	mov	-8(up,n,8), %rax
@@ -359,7 +354,7 @@ L(lo2):	add	%rax, X0		C 2
 	adc	$0, w2			C 4
 	mov	8(up,n,8), %rax
 	mov	X0, (rp,n,8)		C 2
-L(lo1):	mul	v0
+	mul	v0
 	add	w0, X1			C 3
 	mov	%rdx, w3		C 4
 	adc	$0, w2			C 4
