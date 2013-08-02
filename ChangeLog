@@ -1,3 +1,13 @@
+2013-08-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/mul_basecase.asm: Save some O(n) and O(1) cycles.
+
+	* mpn/x86_64/coreisbr/mul_2.asm: New file.
+
+2013-08-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/addmul_2.asm: Complete rewrite.
+
 2013-08-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bd1/mul_basecase.asm: New file.
