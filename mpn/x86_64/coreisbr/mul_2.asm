@@ -1,4 +1,6 @@
-dnl  X86-64 mpn_mul_2 optimised for Intel Sandy Bridge.
+dnl  AMD64 mpn_mul_2 optimised for Intel Sandy Bridge.
+
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
 dnl  Foundation, Inc.
@@ -20,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	     cycles/limb
+C	     cycles/limb	best
 C AMD K8,K9
 C AMD K10
 C AMD bull
@@ -36,6 +38,9 @@ C Intel HWL	 2.02		this (for now)
 C Intel BWL
 C Intel atom
 C VIA nano
+
+C This code is the result of running a code generation and optimisation tool
+C suite written by David Harvey and Torbjorn Granlund.
 
 C When playing with pointers, set this to $2 to fall back to conservative
 C indexing in wind-dowm code.
@@ -55,10 +60,14 @@ define(`w1',	`%r9')
 define(`w2',	`%r10')
 define(`w3',	`%r11')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mul_2)
+	FUNC_ENTRY(4)
 	push	%rbx
 	push	%rbp
 
@@ -139,5 +148,6 @@ L(end):	mul	v0
 
 	pop	%rbp
 	pop	%rbx
+	FUNC_EXIT()
 	ret
 EPILOGUE()
