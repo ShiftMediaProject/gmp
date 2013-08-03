@@ -1,5 +1,10 @@
 2013-08-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreihwl/mulx/mul_2.asm: New file.
+	* mpn/x86_64/coreihwl/mulx/addmul_2.asm: New file.
+
+	* mpn/x86_64/coreinhm/aorsmul_1.asm: New file.
+
 	* mpn/x86_64/coreisbr/mul_basecase.asm: Save some O(n) and O(1) cycles.
 
 	* mpn/x86_64/coreisbr/mul_2.asm: New file.
