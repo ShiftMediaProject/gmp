@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_addmul_1 and mpn_submul_1 optimised for Intel Haswell.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -22,12 +24,13 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	n/a
 C AMD K10	n/a
-C AMD bd1	n/a
-C AMD bd2	 ?
+C AMD bull	n/a
+C AMD pile	n/a
+C AMD steam	 ?
 C AMD bobcat	n/a
 C AMD jaguar	 ?
 C Intel P4	n/a
-C Intel PNR	n/a
+C Intel core	n/a
 C Intel NHM	n/a
 C Intel SBR	n/a
 C Intel IBR	n/a
@@ -37,7 +40,7 @@ C Intel atom	n/a
 C VIA nano	n/a
 
 C The loop of this code is the result of running a code generation and
-C optimisation tool suite written by David Harvey and Torbjorn Granlund.
+C optimisation tool suite written by David Harvey and Torbjörn Granlund.
 
 C TODO
 C  * Handle small n separately, for lower overhead.
