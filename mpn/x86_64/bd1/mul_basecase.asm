@@ -46,8 +46,7 @@ C TODO
 C  * Merge bull-specific mul_1, if it is not slower the TOOM22 range.
 C    Alternatively, we could tweak the present code (which was loopmixed for a
 C    different CPU).
-C  * Merge faster mul_2.  Current fastest mul_2 code is non-indexed, causing
-C    some structure headaches.
+C  * Merge faster mul_2, such as the one in the same directory as this file.
 C  * Further micro-optimise.
 
 C When playing with pointers, set this to $2 to fall back to conservative
