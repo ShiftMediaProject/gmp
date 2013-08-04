@@ -21,7 +21,7 @@ include(`../config.m4')
 
 C P6/13: 3.35 cycles/limb	(separate mpn_sub_n + mpn_lshift needs 4.12)
 
-C (1) The loop is is not scheduled in any way, and scheduling attempts have not
+C (1) The loop is not scheduled in any way, and scheduling attempts have not
 C     improved speed on P6/13.  Presumably, the K7 will want scheduling, if it
 C     at all wants to use MMX.
 C (2) We could save a register by not alternatingly using eax and edx in the
