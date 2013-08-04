@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_mul_2 optimised for AMD Bulldozer.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2008, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -35,7 +37,7 @@ C Intel IBR
 C Intel HWL
 C Intel BWL
 C Intel atom
-C VIA nano	
+C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
