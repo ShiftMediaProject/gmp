@@ -1,3 +1,11 @@
+2013-08-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/mulx/mul_basecase.asm: New file.
+
+	* mpn/x86_64/bd1/mul_2.asm: New file.
+
+	* mpn/x86_64/coreihwl/gmp-mparam.h: New file.
+
 2013-08-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreihwl/mulx/mul_2.asm: New file.
