@@ -33,9 +33,6 @@ C Intel HSW		 1
 C Intel atom		 n/a
 C VIA nano		 n/a
 
-C TODO
-C * Convert to using .byte, or enhance x86_64.asm.
-
 define(`up',		`%rdi')
 define(`n_param',	`%rsi')
 
