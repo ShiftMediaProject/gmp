@@ -34,7 +34,7 @@ C Intel core
 C Intel NHM
 C Intel SBR	 2.93		this
 C Intel IBR	 2.66		this
-C Intel HWL	 2.5		 2.0
+C Intel HWL	 2.5		 2.15
 C Intel BWL
 C Intel atom
 C VIA nano
