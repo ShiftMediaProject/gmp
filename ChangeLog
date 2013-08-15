@@ -1,3 +1,11 @@
+2013-08-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/mulx/sqr_basecase.asm: New file.
+
+2013-08-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/aors_n.asm: Complete rewrite.
+
 2013-08-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreihwl/mulx/mul_basecase.asm: New file.
