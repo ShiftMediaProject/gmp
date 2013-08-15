@@ -42,6 +42,9 @@ C VIA nano	n/a
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjörn Granlund.
 
+C TODO
+C  * Move test and jcc together, for insn fusion.
+
 define(`rp',     `%rdi')
 define(`up',     `%rsi')
 define(`n_param',`%rdx')
