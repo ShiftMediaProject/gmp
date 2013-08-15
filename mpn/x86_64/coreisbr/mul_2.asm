@@ -32,9 +32,9 @@ C AMD jaguar
 C Intel P4
 C Intel core
 C Intel NHM
-C Intel SBR	 2.57		2.52
-C Intel IBR	 2.35		2.32
-C Intel HWL	 2.02		this (for now)
+C Intel SBR	 2.57		 2.52 using 4-way code
+C Intel IBR	 2.35		 2.32 using 4-way code
+C Intel HWL	 2.02		 1.86
 C Intel BWL
 C Intel atom
 C VIA nano
