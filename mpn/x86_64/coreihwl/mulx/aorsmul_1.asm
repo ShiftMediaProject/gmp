@@ -166,16 +166,15 @@ L(lo3):	ADCSBB	%rbx, %rcx
 	jnz	L(top)
 
 L(end):	adc	%rax, %r9
-	lea	32(rp), rp
 	adc	%r8, %r11
-	mov	(rp), %r8
+	mov	32(rp), %r8
 	mov	%r10, %rax
 	adc	$0, %rax
-	mov	8(rp), %r10
+	mov	40(rp), %r10
 	ADDSUB	%r9, %r8
-	mov	%r8, (rp)
+	mov	%r8, 32(rp)
 	ADCSBB	%r11, %r10
-	mov	%r10, 8(rp)
+	mov	%r10, 40(rp)
 	adc	$0, %rax
 
 L(ret):	pop	%r13
