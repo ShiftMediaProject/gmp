@@ -1,4 +1,4 @@
-dnl  X86-64 mpn_copyi optimised for Intel Sandy Bridge.
+dnl  X86-64 mpn_copyi optimised for Intel Atom.
 
 dnl  Copyright 2012 Free Software Foundation, Inc.
 
