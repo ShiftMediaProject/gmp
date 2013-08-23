@@ -113,7 +113,7 @@ L(top):	movdqa	%xmm8, %xmm0
 	jns	L(outer_top)
 L(outer_end):
 
-	test	$4, R32(n)
+	test	$4, R8(n)
 	je	L(b0xx)
 L(b1xx):mov	nents, i
 	mov	tp, %r11
@@ -138,7 +138,7 @@ L(tp4):	movdqa	%xmm8, %xmm0
 	lea	32(%r11), tp
 	lea	32(rp), rp
 
-L(b0xx):test	$2, R32(n)
+L(b0xx):test	$2, R8(n)
 	je	L(b00x)
 L(b01x):mov	nents, i
 	mov	tp, %r11
@@ -158,7 +158,7 @@ L(tp2):	movdqa	%xmm8, %xmm0
 	lea	16(%r11), tp
 	lea	16(rp), rp
 
-L(b00x):test	$1, R32(n)
+L(b00x):test	$1, R8(n)
 	je	L(b000)
 L(b001):mov	nents, i
 	mov	tp, %r11

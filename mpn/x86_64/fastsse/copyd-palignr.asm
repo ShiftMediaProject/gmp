@@ -63,8 +63,8 @@ PROLOGUE(mpn_copyd)
 	cmp	$COPYD_SSE_THRESHOLD, n
 	jbe	L(bc)
 
-	bt	$3, R32(rp)		C is rp 16-byte aligned?
-	jc	L(rp_aligned)		C jump if rp aligned
+	test	$8, R8(rp)		C is rp 16-byte aligned?
+	jnz	L(rp_aligned)		C jump if rp aligned
 
 	mov	(up), %rax		C copy one limb
 	mov	%rax, (rp)
@@ -73,8 +73,8 @@ PROLOGUE(mpn_copyd)
 	dec	n
 
 L(rp_aligned):
-	bt	$3, R32(up)
-	jnc	L(uent)
+	test	$8, R8(up)
+	jz	L(uent)
 
 ifelse(eval(COPYD_SSE_THRESHOLD >= 8),1,
 `	sub	$8, n',
@@ -94,8 +94,8 @@ L(atop):movdqa	-8(up), %xmm0
 L(am):	sub	$8, n
 	jnc	L(atop)
 
-	bt	$2, R32(n)
-	jnc	1f
+	test	$4, R8(n)
+	jz	1f
 	movdqa	-8(up), %xmm0
 	movdqa	-24(up), %xmm1
 	lea	-32(up), up
@@ -103,15 +103,15 @@ L(am):	sub	$8, n
 	movdqa	%xmm1, -24(rp)
 	lea	-32(rp), rp
 
-1:	bt	$1, R32(n)
-	jnc	1f
+1:	test	$2, R8(n)
+	jz	1f
 	movdqa	-8(up), %xmm0
 	lea	-16(up), up
 	movdqa	%xmm0, -8(rp)
 	lea	-16(rp), rp
 
-1:	bt	$0, n
-	jnc	1f
+1:	test	$1, R8(n)
+	jz	1f
 	mov	(up), %r8
 	mov	%r8, (rp)
 
@@ -152,8 +152,8 @@ L(utop):sub	$16, n
 	lea	-128(rp), rp
 	jnc	L(utop)
 
-L(uend):bt	$3, R32(n)
-	jnc	1f
+L(uend):test	$8, R8(n)
+	jz	1f
 	movdqa	-16(up), %xmm1
 	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
@@ -169,8 +169,8 @@ L(uend):bt	$3, R32(n)
 	lea	-64(up), up
 	lea	-64(rp), rp
 
-1:	bt	$2, R32(n)
-	jnc	1f
+1:	test	$4, R8(n)
+	jz	1f
 	movdqa	-16(up), %xmm1
 	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
@@ -180,16 +180,16 @@ L(uend):bt	$3, R32(n)
 	lea	-32(up), up
 	lea	-32(rp), rp
 
-1:	bt	$1, R32(n)
-	jnc	1f
+1:	test	$2, R8(n)
+	jz	1f
 	movdqa	-16(up), %xmm1
 	palignr($8, %xmm1, %xmm0)
 	movdqa	%xmm0, -8(rp)
 	lea	-16(up), up
 	lea	-16(rp), rp
 
-1:	bt	$0, n
-	jnc	1f
+1:	test	$1, R8(n)
+	jz	1f
 	mov	(up), %r8
 	mov	%r8, (rp)
 
@@ -218,14 +218,14 @@ ifelse(eval(COPYD_SSE_THRESHOLD >= 8),1,
 ifelse(eval(COPYD_SSE_THRESHOLD >= 8),1,
 `	jnc	L(top)')
 
-L(end):	bt	$0, R32(n)
-	jnc	1f
+L(end):	test	$1, R8(n)
+	jz	1f
 	mov	(up), %r8
 	mov	%r8, (rp)
 	lea	-8(rp), rp
 	lea	-8(up), up
-1:	bt	$1, R32(n)
-	jnc	1f
+1:	test	$2, R8(n)
+	jz	1f
 	mov	(up), %r8
 	mov	-8(up), %r9
 	mov	%r8, (rp)

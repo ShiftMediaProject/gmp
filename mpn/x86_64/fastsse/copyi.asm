@@ -121,8 +121,8 @@ L(sma):	test	$8, R8(n)
 	lea	16(rp), rp
 	ALIGN(16)
 1:
-L(end):	bt	$0, n
-	jnc	1f
+L(end):	test	$1, R8(n)
+	jz	1f
 	mov	(up), %r8
 	mov	%r8, (rp)
 1:
@@ -144,8 +144,8 @@ L(bc):	sub	$2, n
 	sub	$2, n
 	jnc	1b
 
-	bt	$0, n
-	jnc	L(ret)
+	test	$1, R8(n)
+	jz	L(ret)
 	mov	(up), %rax
 	mov	%rax, (rp)
 L(ret):	FUNC_EXIT()

@@ -69,8 +69,8 @@ PROLOGUE(mpn_rshift)
 	cmp	$3, n
 	jle	L(bc)
 
-	bt	$3, R32(rp)
-	jnc	L(rp_aligned)
+	test	$8, R8(rp)
+	jz	L(rp_aligned)
 
 C Do one initial limb in order to make rp aligned
 	movq	(ap), %xmm0
@@ -134,8 +134,8 @@ L(i34):
 	add	$8, n
 	jl	L(top)
 
-L(end):	bt	$0, R32(n)
-	jc	L(e1)
+L(end):	test	$1, R8(n)
+	jnz	L(e1)
 
 	movdqu	-16(ap), %xmm1
 	movq	-8(ap), %xmm0

@@ -70,8 +70,8 @@ PROLOGUE(mpn_lshift)
 	jle	L(bc)
 
 	lea	(rp,n,8), R32(%rcx)
-	bt	$3, R32(%rcx)
-	jnc	L(rp_aligned)
+	test	$8, R8(%rcx)
+	jz	L(rp_aligned)
 
 C Do one initial limb in order to make rp aligned
 	movq	-8(ap,n,8), %xmm0
@@ -130,8 +130,8 @@ L(i34):
 	sub	$8, n
 	jg	L(top)
 
-L(end):	bt	$0, R32(n)
-	jc	L(end8)
+L(end):	test	$1, R8(n)
+	jnz	L(end8)
 
 	movdqu	(ap), %xmm1
 	pxor	%xmm0, %xmm0
