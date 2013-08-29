@@ -40,6 +40,7 @@ PROLOGUE(mpn_popcount)
 	.prologue
 ifdef(`HAVE_ABI_32',
 `	addp4		up = 0, up		C			M I
+	nop.m		0
 	zxt4		n = n			C			I
 	;;
 ')

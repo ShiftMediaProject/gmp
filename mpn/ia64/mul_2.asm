@@ -109,7 +109,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 .mmi;		ldf8	uy = [up], 8		C			M
 		ldf8	v1 = [vp]		C			M
-		shr.u	n = n, 2		C			I
+		shr.u	n = n, 2		C			I0
 .mmi;		nop	1			C			M
 		cmp.eq	p10, p0 = 1, r14	C			M I
 		cmp.eq	p11, p0 = 2, r14	C			M I

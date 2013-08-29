@@ -53,6 +53,7 @@ PROLOGUE(mpn_add_n_sub_n)
 ifdef(`HAVE_ABI_32',`
 	addp4	sp = 0, sp		C				M I
 	addp4	dp = 0, dp		C				M I
+	nop.i	0
 	addp4	up = 0, up		C				M I
 	addp4	vp = 0, vp		C				M I
 	zxt4	n = n			C				I

@@ -53,8 +53,9 @@ PROLOGUE(mpn_divrem_2)
 ifdef(`HAVE_ABI_32',
 `	addp4		r32 = 0, r32		C M I
 	addp4		r34 = 0, r34		C M I
-	addp4		r36 = 0, r36		C M I
 	zxt4		r35 = r35		C I
+	addp4		r36 = 0, r36		C M I
+	nop.m		0
 	zxt4		r33 = r33		C I
 	;;
 ')

@@ -74,6 +74,8 @@ ifdef(`HAVE_ABI_32',
 `	addp4	rp = 0, rp		C			M I
 	addp4	up = 0, up		C		M I
 	sxt4	n = n			C		M I
+	nop.m		0
+	nop.m		0
 	zxt4	cnt = cnt		C		I
 	;;
 ')
