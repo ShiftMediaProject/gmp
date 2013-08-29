@@ -1,5 +1,12 @@
 2013-08-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/k8/mul_basecase.asm: Move top-level basecase file to k8
+	subdir.
+	* mpn/x86_64/k8/sqr_basecase.asm: Likewise.
+	* mpn/x86_64/k8/redc_1.asm: Likewise.
+	* mpn/x86_64/k8/mullo_basecase.asm: Likewise.
+	* mpn/x86_64/k8/mulmid_basecase.asm: Likewise.
+
 	* mpn/ia64/aors_n.asm: Clean up some bundlings.
 
 	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Support Haswell.
