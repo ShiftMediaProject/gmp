@@ -81,7 +81,9 @@ PROLOGUE(func_nc)
 ifdef(`HAVE_ABI_32',`
 	addp4	rp = 0, rp		C			M I
 	addp4	up = 0, up		C			M I
+	nop.i	0
 	addp4	vp = 0, vp		C			M I
+	nop.m	0
 	zxt4	n = n			C			I
 	;;
 ')
@@ -106,8 +108,7 @@ ifdef(`HAVE_ABI_32',`
    (p7)	br.dptk	.Lc010			C			B
    (p8)	br.dptk	.Lc011			C			B
 	;;
-}
-{.mmi;	cmp.eq	p9, p0 = 4, r14		C			M I
+}{.mmi;	cmp.eq	p9, p0 = 4, r14		C			M I
 	cmp.eq	p10, p0 = 5, r14	C			M I
 	cmp.eq	p11, p0 = 6, r14	C			M I
 }{.bbb
@@ -335,8 +336,8 @@ ifdef(`HAVE_ABI_32',`
 	nop	0
 	;;
 .mmi;	ld8	v0 = [vp], 8		C			M01
-	cmp.CND	p6, p0 = w0, r10	C			M I
 	ld8	u0 = [up], 8		C			M01
+	cmp.CND	p6, p0 = w0, r10	C			M I
 .mbb;	ADDSUB	w1 = u1, v1		C			M I
   (p15)	br	L(c5)			C			B
 	br	L(end)			C			B
@@ -413,7 +414,9 @@ PROLOGUE(func)
 ifdef(`HAVE_ABI_32',`
 	addp4	rp = 0, rp		C			M I
 	addp4	up = 0, up		C			M I
+	nop.i	0
 	addp4	vp = 0, vp		C			M I
+	nop.m	0
 	zxt4	n = n			C			I
 	;;
 ')
@@ -611,7 +614,7 @@ L(gt4):
 .mmi;	add	upadv = PFDIST, up
 	add	vpadv = PFDIST, vp
 	mov	ar.lc = n		C			I0
-	ld8	v1 = [vp], 8		C			M01
+.mmi;	ld8	v1 = [vp], 8		C			M01
 	ld8	u1 = [up], 8		C			M01
 	nop	0
 	;;
@@ -643,7 +646,7 @@ L(gt4):
 .mmi;	add	upadv = PFDIST, up
 	add	vpadv = PFDIST, vp
 	add	rpx = 16, rp		C			M I
-	ld8	v3 = [vp], 8		C			M01
+.mmi;	ld8	v3 = [vp], 8		C			M01
 	ld8	u3 = [up], 8		C			M01
 	nop	0
 	;;
