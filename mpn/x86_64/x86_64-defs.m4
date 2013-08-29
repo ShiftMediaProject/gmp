@@ -280,4 +280,61 @@ eval(0xc0+x86_opcode_regxmm($3)%8*8+x86_opcode_regxmm($2)%8),dnl
 substr($1,1)')
 
 
+dnl  Usage
+dnl  
+dnl    regnum(op)   raw operand index (so slightly misnamed)
+dnl    regnumh(op)  high bit of register operand nimber
+dnl    ix(op)       0 for reg operand, 1 for plain pointer operand.
+dnl  
+
+define(`regnum',
+`ifelse($1,`%rax',  0,	$1,`%rcx',  1,	$1,`%rdx',  2,	$1,`%rbx',  3,
+	$1,`%rsp',  4,	$1,`%rbp',  5,	$1,`%rsi',  6,	$1,`%rdi',  7,
+	$1,`%r8',   8,	$1,`%r9',   9,	$1,`%r10',  10,	$1,`%r11',  11,
+	$1,`%r12',  12,	$1,`%r13',  13,	$1,`%r14',  14,	$1,`%r15',  15,
+	$1,`(%rax)',16,	$1,`(%rcx)',17,	$1,`(%rdx)',18,	$1,`(%rbx)',19,
+	$1,`(%rsp)',20,	$1,`(%rbp)',21,	$1,`(%rsi)',22,	$1,`(%rdi)',23,
+	$1,`(%r8)', 24,	$1,`(%r9)', 25,	$1,`(%r10)',26,	$1,`(%r11)',27,
+	$1,`(%r12)',28,	$1,`(%r13)',29,	$1,`(%r14)',30,	$1,`(%r15)',31)')
+define(`regnumh',`eval(regnum($1)/8 & 1)')
+define(`ix',`eval(regnum($1)/16)')
+
+
+dnl  Usage
+dnl
+dnl     mulx(reg1,reg2,reg3)
+dnl
+dnl  or
+dnl
+dnl     mulx((reg1),reg2,reg3)
+dnl
+dnl  where reg1 is any register but rsp,rbp,r12,r13, or
+dnl
+dnl     mulx(off,(reg1),reg2,reg3)
+dnl
+dnl  where reg1 is any register but rsp,r12.
+dnl
+dnl  The exceptions are due to special coding needed for soe registers; rsp and
+dnl  r12 need an extra byte 0x24 at the end while rbp and r13 lack the offset-
+dnl  less form.
+dnl
+dnl  Other addressing forms are not handled.  Invalid forms are not properly
+dnl  detected.
+
+define(`mulx',`
+ifelse($#,3,
+`.byte	0xc4`'dnl
+,0x`'eval(0xe2^32*regnumh($1)^128*regnumh($3),16)`'dnl
+,0x`'eval(0xfb-8*regnum($2),16)`'dnl
+,0xf6`'dnl
+,0x`'eval(0xc0+(7 & regnum($1))+8*(7 & regnum($3))-0xc0*ix($1),16)`'dnl
+',$#,4,
+`.byte	0xc4`'dnl
+,0x`'eval(0xe2^32*regnumh($2)^128*regnumh($4),16)`'dnl
+,0x`'eval(0xfb-8*regnum($3),16)`'dnl
+,0xf6`'dnl
+,0x`'eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)),16)`'dnl
+,0x`'eval($1,16)`'dnl
+')')
+
 divert`'dnl
