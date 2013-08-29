@@ -59,6 +59,7 @@ static struct {
   { "coreinhm",   "GenuineIntel", MAKE_FMS (6, 0x1a) },
   { "coreiwsm",   "GenuineIntel", MAKE_FMS (6, 0x25) },
   { "coreisbr",   "GenuineIntel", MAKE_FMS (6, 0x2a) },
+  { "coreihwl",   "GenuineIntel", MAKE_FMS (6, 0x3c) },
   { "atom",       "GenuineIntel", MAKE_FMS (6, 0x1c) },
   { "pentium4",   "GenuineIntel", MAKE_FMS (15, 3) },
 
@@ -259,10 +260,15 @@ __gmpn_cpuvec_init (void)
 	    case 0x2a:		/* SB */
 	    case 0x2d:		/* SBC-EP */
 	    case 0x3a:		/* IBR */
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreinhm;
+	      CPUVEC_SETUP_coreisbr;
+	      break;
 	    case 0x3c:		/* Haswell */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
+	      CPUVEC_SETUP_coreihwl;
 	      break;
 	    }
 	  break;
