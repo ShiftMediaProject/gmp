@@ -52,7 +52,7 @@ C  * Optimise sqr_diag_addlsh1 loop.  (This could save O(n) cycles.)
 C  * Implement larger final corners (xit/tix).  Also stop loops earlier
 C    suppressing writes of upper-most rp[] values.  (This could save 10-20
 C    cycles for n > 4.)
-C  * Is the branch really faster than discrete branches?
+C  * Is the branch table really faster than discrete branches?
 
 define(`rp',      r0)
 define(`up',      r1)
