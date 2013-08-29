@@ -1737,13 +1737,13 @@ case $host in
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
-	path_64="x86_64/coreihwl/mulx x86_64/coreihwl x86_64/mulx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
+	path_64="x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
       coreibwl)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
-	path_64="x86_64/mulx/adx x86_64/mulx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
+	path_64="x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
 	;;
       atom)
@@ -2104,7 +2104,7 @@ case $host in
 	fat_path="x86_64 x86_64/fat
 		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat
 		  x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr
-		  x86_64/atom x86_64/nano"
+		  x86_64/coreihwl x86_64/atom x86_64/nano"
 	fat_functions="$fat_functions addmul_2 addlsh1_n addlsh2_n sublsh1_n"
       fi
 
