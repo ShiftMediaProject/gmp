@@ -141,8 +141,7 @@ IFSTD(`	pop	%rdi		')
 	jmp	L(nent)
 
 	ALIGN(16)
-L(ntop):				C	    K8-K10  P6-CNR P6-NHM  P4
-	mov	(up,un,8), %r10		C
+L(ntop):mov	(up,un,8), %r10		C	    K8-K10  P6-CNR P6-NHM  P4
 	mul	dinv			C	      0,13   0,20   0,18   0,45
 	add	%r10, %rax		C	      4      8      3     12
 	adc	%rbp, %rdx		C	      5      9     10     13
