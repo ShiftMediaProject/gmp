@@ -28,7 +28,7 @@ C 744x,745x (G4+)	 6
 C power4/ppc970		 ?
 C power5		 ?
 
-C This has been feebly optimised for 7447 but ot for any other CPU.
+C This has been feebly optimised for 7447 but not for any other CPU.
 
 define(`rp',	r3)
 define(`tp',	r4)
@@ -45,6 +45,7 @@ PROLOGUE(mpn_sqr_diag_addlsh1)
 	mullw	r7, r0, r0
 	stw	r7, 0(rp)
 	mulhwu	r6, r0, r0
+	addic	r31, r31, 0	C clear CF
 
 	ALIGN(16)
 L(top):	lwzu	r0, 4(up)
