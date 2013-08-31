@@ -43,7 +43,7 @@ C This code is the result of running a code generation and optimisation tool
 C suite written by David Harvey and Torbjorn Granlund.
 
 C When playing with pointers, set this to $2 to fall back to conservative
-C indexing in wind-dowm code.
+C indexing in wind-down code.
 define(`I',`$1')
 
 define(`rp',      `%rdi')   C rcx

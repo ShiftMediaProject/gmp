@@ -51,7 +51,7 @@ C  * Adjoin a mul_3.
 C  * Further micro-optimise.
 
 C When playing with pointers, set this to $2 to fall back to conservative
-C indexing in wind-dowm code.
+C indexing in wind-down code.
 define(`I',`$1')
 
 

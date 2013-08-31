@@ -38,7 +38,7 @@ C Intel atom	15
 C VIA nano	 4
 
 C When playing with pointers, set this to $2 to fall back to conservative
-C indexing in wind-dowm code.
+C indexing in wind-down code.
 define(`I',`$1')
 
 define(`rp',     `%rdi')
