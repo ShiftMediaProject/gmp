@@ -1,0 +1,103 @@
+dnl  AMD64 mpn_sqr_diag_addlsh1
+
+dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
+
+dnl  This file is part of the GNU MP Library.
+
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 3 of the License, or (at
+dnl  your option) any later version.
+
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
+
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
+
+include(`../config.m4')
+
+C	     cycles/limb
+C AMD K8,K9	 2.5
+C AMD K10	 2.5
+C AMD bull	 3.5
+C AMD pile	 3.5
+C AMD steam	 ?
+C AMD bobcat	 4
+C AMD jaguar	 ?
+C Intel P4	 ?
+C Intel core	 4
+C Intel NHM	 4.75
+C Intel SBR	 3.13
+C Intel IBR	 3.1
+C Intel HWL	 2.5
+C Intel BWL	 ?
+C Intel atom	15
+C VIA nano	 4
+
+C When playing with pointers, set this to $2 to fall back to conservative
+C indexing in wind-dowm code.
+define(`I',`$1')
+
+define(`rp',     `%rdi')
+define(`tp',     `%rsi')
+define(`up_arg', `%rdx')
+define(`n',      `%rcx')
+
+define(`up',     `%r11')
+
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
+ASM_START()
+	TEXT
+	ALIGN(32)
+PROLOGUE(mpn_sqr_diag_addlsh1)
+	FUNC_ENTRY(4)
+	push	%rbx
+
+	dec	n
+	shl	n
+
+	mov	(up_arg), %rax
+
+	lea	(rp,n,8), rp
+	lea	(tp,n,8), tp
+	lea	(up_arg,n,4), up
+	neg	n
+
+	mul	%rax
+	mov	%rax, (rp,n,8)
+
+	xor	R32(%rbx), R32(%rbx)
+	jmp	L(mid)
+
+	ALIGN(16)
+L(top):	add	%r10, %r8
+	adc	%rax, %r9
+	mov	%r8, -8(rp,n,8)
+	mov	%r9, (rp,n,8)
+L(mid):	mov	(tp,n,8), %r8
+	mov	8(tp,n,8), %r9
+	adc	%r8, %r8
+	adc	%r9, %r9
+	lea	(%rdx,%rbx), %r10
+	setc	R8(%rbx)
+	mov	8(up,n,4), %rax
+	mul	%rax
+	add	$2, n
+	js	L(top)
+
+L(end):	add	%r10, %r8
+	adc	%rax, %r9
+	mov	%r8, I(-8(rp),-8(rp,n,8))
+	mov	%r9, I((rp),(rp,n,8))
+	adc	%rbx, %rdx
+	mov	%rdx, I(8(rp),8(rp,n,8))
+
+	pop	%rbx
+	FUNC_EXIT()
+	ret
+EPILOGUE()
