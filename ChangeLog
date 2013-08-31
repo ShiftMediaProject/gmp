@@ -1,3 +1,16 @@
+2013-08-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/sqr_basecase.asm: New file.
+
+	* mpn/x86_64/sqr_diag_addlsh1.asm: New file.
+
+2013-08-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/mul_basecase.c: New file.
+	* mpn/x86_64/fat/sqr_basecase.c: New file.
+	* mpn/x86_64/fat/mullo_basecase.c: New file.
+	* mpn/x86_64/fat/redc_1.c: New file.
+
 2013-08-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/k8/mul_basecase.asm: Move top-level basecase file to k8
