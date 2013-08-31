@@ -29,13 +29,13 @@ C AMD bobcat	 4
 C AMD jaguar	 ?
 C Intel P4	 ?
 C Intel core	 4
-C Intel NHM	 4.75
-C Intel SBR	 3.13
-C Intel IBR	 3.1
-C Intel HWL	 2.5
+C Intel NHM	 3.6
+C Intel SBR	 3.15
+C Intel IBR	 3.2
+C Intel HWL	 2.6
 C Intel BWL	 ?
-C Intel atom	15
-C VIA nano	 4
+C Intel atom	14
+C VIA nano	 3.5
 
 C When playing with pointers, set this to $2 to fall back to conservative
 C indexing in wind-down code.
@@ -79,13 +79,13 @@ L(top):	add	%r10, %r8
 	adc	%rax, %r9
 	mov	%r8, -8(rp,n,8)
 	mov	%r9, (rp,n,8)
-L(mid):	mov	(tp,n,8), %r8
+L(mid):	mov	8(up,n,4), %rax
+	mov	(tp,n,8), %r8
 	mov	8(tp,n,8), %r9
 	adc	%r8, %r8
 	adc	%r9, %r9
 	lea	(%rdx,%rbx), %r10
 	setc	R8(%rbx)
-	mov	8(up,n,4), %rax
 	mul	%rax
 	add	$2, n
 	js	L(top)
