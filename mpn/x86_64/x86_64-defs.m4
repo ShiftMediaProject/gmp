@@ -281,11 +281,11 @@ substr($1,1)')
 
 
 dnl  Usage
-dnl  
+dnl
 dnl    regnum(op)   raw operand index (so slightly misnamed)
 dnl    regnumh(op)  high bit of register operand nimber
 dnl    ix(op)       0 for reg operand, 1 for plain pointer operand.
-dnl  
+dnl
 
 define(`regnum',
 `ifelse($1,`%rax',  0,	$1,`%rcx',  1,	$1,`%rdx',  2,	$1,`%rbx',  3,
@@ -314,12 +314,12 @@ dnl     mulx(off,(reg1),reg2,reg3)
 dnl
 dnl  where reg1 is any register but rsp,r12.
 dnl
-dnl  The exceptions are due to special coding needed for soe registers; rsp and
-dnl  r12 need an extra byte 0x24 at the end while rbp and r13 lack the offset-
-dnl  less form.
+dnl  The exceptions are due to special coding needed for some registers; rsp
+dnl  and r12 need an extra byte 0x24 at the end while rbp and r13 lack the
+dnl  offset-less form.
 dnl
 dnl  Other addressing forms are not handled.  Invalid forms are not properly
-dnl  detected.
+dnl  detected.  Offsets that don't fit one byte are not handled correctly.
 
 define(`mulx',`
 ifelse($#,3,
@@ -334,7 +334,7 @@ ifelse($#,3,
 ,0x`'eval(0xfb-8*regnum($3),16)`'dnl
 ,0xf6`'dnl
 ,0x`'eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)),16)`'dnl
-,0x`'eval($1,16)`'dnl
+,0x`'eval(($1 + 256) % 256,16)`'dnl
 ')')
 
 divert`'dnl
