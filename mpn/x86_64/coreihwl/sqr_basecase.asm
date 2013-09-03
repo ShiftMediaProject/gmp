@@ -44,13 +44,17 @@ C optimisation tool suite written by David Harvey and Torbjörn Granlund, except
 C that the sqr_diag_addlsh1 loop was manually written.
 
 C TODO
-C  * Implement larger "corner", at least +1 but perhaps +2.
 C  * Replace current unoptimised sqr_diag_addlsh1 loop.
+C  * Consider splitting outer loop into 2, one for n = 1 (mod 2) and one for
+C    n = 0 (mod 2).  These loops could fall into specific "corner" code.
+C  * Consider splitting outer loop into 4.
 C  * Streamline pointer updates.
 C  * Perhaps suppress a few more xor insns in feed-in code.
 C  * Make sure we write no dead registers in feed-in code.
 C  * We might use 32-bit size ops, since n >= 2^32 is non-terminating.  Watch
 C    out for negative sizes being zero-extended, though.
+C  * Provide straight-line code for n = 4; then look for simplifications in
+C    main code.
 
 define(`rp',	  `%rdi')
 define(`up',	  `%rsi')
@@ -97,8 +101,7 @@ L(gt1):	jne	L(gt2)
 	FUNC_EXIT()
 	ret
 
-L(gt2):
-	cmp	$4, un_param
+L(gt2):	cmp	$4, un_param
 	jae	L(gt3)
 define(`v0', `%r8')
 define(`v1', `%r9')
@@ -106,8 +109,8 @@ define(`w0', `%r10')
 define(`w2', `%r11')
 
 	mov	(up), v0
-	mov	8(up), v1
-	mov	v1, %rdx
+	mov	8(up), %rdx
+	mov	%rdx, v1
 	mulx(	v0, w2, %rax)
 	mov	16(up), %rdx
 	mulx(	v0, w0, %rcx)
@@ -148,6 +151,7 @@ define(`w2', `%r11')
 	mov	%rdx, 40(rp)
 	FUNC_EXIT()
 	ret
+
 L(gt3):
 
 define(`v0', `%r8')
@@ -162,57 +166,52 @@ define(`n',  `%rcx')
 define(`X0', `%r13')
 define(`X1', `%r14')
 
-
+L(do_mul_2):
 	push	%rbx
 	push	%rbp
 	push	%r12
 	push	%r13
 	push	%r14
-	mov	un_param, un		C free up rdx
-	neg	un
+	mov	$0, R32(un)
+	sub	un_param, un		C free up rdx
 	push	un
-	lea	8(up), up		C offset up (for now)
-
-L(do_mul_2):
-	mov	-8(up), v0
-	mov	(up), v1
-	lea	8(rp), rp
-
+	mov	(up), v0
+	mov	8(up), %rdx
 	lea	2(un), n
-	sar	$2, n
+	sar	$2, n			C FIXME: suppress, change loop?
 	inc	un			C decrement |un|
+	mov	%rdx, v1
 
-	mov	v1, %rdx
 	test	$1, R8(un)
 	jnz	L(mx1)
 
 L(mx0):	mulx(	v0, w2, w1)
-	mov	8(up), %rdx
-	mov	w2, (rp)
+	mov	16(up), %rdx
+	mov	w2, 8(rp)
 	xor	w2, w2
 	mulx(	v0, w0, w3)
 	test	$2, R8(un)
-	jz	L(mlo0)
+	jz	L(m00)
 
-L(m10):	lea	-16(rp), rp
-	lea	-16(up), up
+L(m10):	lea	-8(rp), rp
+	lea	-8(up), up
 	jmp	L(mlo2)
 
+L(m00):	lea	8(up), up
+	lea	8(rp), rp
+	jmp	L(mlo0)
+
 L(mx1):	mulx(	v0, w0, w3)
-	mov	8(up), %rdx
-	mov	w0, (rp)
+	mov	16(up), %rdx
+	mov	w0, 8(rp)
 	xor	w0, w0
-	test	$2, R8(un)
 	mulx(	v0, w2, w1)
-	jz	L(m11)
+	test	$2, R8(un)
+	jz	L(mlo3)
 
-L(m01):	lea	8(rp), rp
-	lea	8(up), up
+L(m01):	lea	16(rp), rp
+	lea	16(up), up
 	jmp	L(mlo1)
-
-L(m11):	lea	-8(rp), rp
-	lea	-8(up), up
-	jmp	L(mlo3)
 
 	ALIGN(32)
 L(mtop):mulx(	v1, %rax, w0)
@@ -279,13 +278,13 @@ L(outer):
 	mov	-8(up), v0		C shared between addmul_2 and corner
 
 	add	$2, un			C decrease |un|
-	cmp	$-1, un			C FIXME: stop earlier
+	cmp	$-2, un
 	jge	L(corner)
 
 	mov	(up), v1
 
 	lea	1(un), n
-	sar	$2, n
+	sar	$2, n			C FIXME: suppress, change loop?
 
 	mov	v1, %rdx
 	test	$1, R8(un)
@@ -404,42 +403,61 @@ L(ex):	add	%rax, X1
 	adc	$0, w3
 	add	w2, %rdx
 	adc	$0, %rax
-	add	w3, %rdx
-	mov	%rdx, 16(rp)
+	add	%rdx, w3
+	mov	w3, 16(rp)
 	adc	$0, %rax
 	mov	%rax, 24(rp)
 
 	jmp	L(outer)		C loop until a small corner remains
 
 L(corner):
-	jg	L(small_corner)
-	mov	(rp), X1
+	pop	un
 	mov	(up), %rdx
+	jg	L(small_corner)
+
+	mov	%rdx, v1
+	mov	(rp), X0
+	mov	%rax, X1		C Tricky rax reuse of last iteration
+	mulx(	v0, %rax, w1)
+	add	%rax, X0
+	adc	$0, w1
+	mov	X0, (rp)
+	mov	8(up), %rdx
 	mulx(	v0, %rax, w3)
 	add	%rax, X1
+	adc	$0, w3
+	mulx(	v1, %rdx, %rax)
+	add	w1, X1
+	mov	X1, 8(rp)
+	adc	$0, w3
+	add	w3, %rdx
+	mov	%rdx, 16(rp)
+	adc	$0, %rax
+	mov	%rax, 24(rp)
+	lea	32(rp), rp
+	lea	16(up), up
+	jmp	L(com)
+
+L(small_corner):
+	mulx(	v0, X1, w3)
+	add	%rax, X1		C Tricky rax reuse of last iteration
 	adc	$0, w3
 	mov	X1, (rp)
 	mov	w3, 8(rp)
 	lea	16(rp), rp
 	lea	8(up), up
 
-L(small_corner):
-
+L(com):
 
 L(sqr_diag_addlsh1):
-	pop	un
-
-	lea	(up,un,8), up		C put back up at its very beginning
+	lea	8(up,un,8), up		C put back up at its very beginning
 	lea	(rp,un,8), rp
 	lea	(rp,un,8), rp		C put back rp at its very beginning
-	lea	1(un), n
+	inc	un
 
-	xor	%r10, %r10		C clear CF as side effect
-
-	mov	(up), %rdx
-	lea	8(up), up
-	mulx(	%rdx, %rax, %rbx)
-
+	mov	-8(up), %rdx
+	xor	R32(%rbx), R32(%rbx)	C clear CF as side effect
+	mulx(	%rdx, %rax, %r10)
 	mov	%rax, 8(rp)
 	mov	16(rp), %r8
 	mov	24(rp), %r9
@@ -449,21 +467,21 @@ L(sqr_diag_addlsh1):
 L(dtop):mov	32(rp), %r8
 	mov	40(rp), %r9
 	lea	16(rp), rp
-	lea	(%rdx,%r10), %rbx
+	lea	(%rdx,%rbx), %r10
 L(dm):	adc	%r8, %r8
 	adc	%r9, %r9
-	setc	R8(%r10)
+	setc	R8(%rbx)
 	mov	(up), %rdx
 	lea	8(up), up
 	mulx(	%rdx, %rax, %rdx)
-	add	%rbx, %r8
+	add	%r10, %r8
 	adc	%rax, %r9
 	mov	%r8, 16(rp)
 	mov	%r9, 24(rp)
-	inc	n
+	inc	un
 	jnz	L(dtop)
 
-L(dend):adc	%r10, %rdx
+L(dend):adc	%rbx, %rdx
 	mov	%rdx, 32(rp)
 
 	pop	%r14
