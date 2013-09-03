@@ -1,3 +1,14 @@
+2013-09-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/sqr_basecase.asm: Implement larger "corner".
+	Misc tuning.
+
+2013-09-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/redc_1.asm: New file.
+
+	* mpn/x86_64/x86_64-defs.m4 (mulx): Handle negative offsets.
+
 2013-08-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/sqr_basecase.asm: New file.
