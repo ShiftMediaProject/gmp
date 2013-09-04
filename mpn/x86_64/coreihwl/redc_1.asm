@@ -192,9 +192,9 @@ C Special code for n = 1 since general code cannot handle it
 
 L(o1b):	lea	24(mp), mp
 L(o1):	lea	1(n), i			C inner loop induction var
-	`mulx'	-24(mp), %r11, %r10
-	`mulx'	-16(mp), %r13, %r12
-	`mulx'	-8(mp), %rbx, %rax
+	mulx(	-24,(mp), %r11, %r10)
+	mulx(	-16,(mp), %r13, %r12)
+	mulx(	-8,(mp), %rbx, %rax)
 	sar	$2, i
 	add	%r10, %r13
 	adc	%r12, %rbx
@@ -281,7 +281,7 @@ L(n3):	mulx(	(mp), %rbx, %rax)
 
 L(o3b):	lea	8(mp), mp
 L(o3):	lea	4(n), i			C inner loop induction var
-	`mulx'	-8(mp), %rbx, %rax
+	mulx(	-8,(mp), %rbx, %rax)
 	mulx(	(mp), %r9, %r8)
 	mov	(up), %rbp
 	mulx(	8,(mp), %r11, %r10)
@@ -341,7 +341,7 @@ L(ed3):	mov	64(up,n,8), %rdx	C next iteration up[0]
 L(o0b):	lea	16(mp), mp
 L(o0):	mov	n, i			C inner loop induction var
 	mulx(	-16,(mp), %r13, %r12)
-	`mulx'	-8(mp), %rbx, %rax
+	mulx(	-8,(mp), %rbx, %rax)
 	sar	$2, i
 	add	%r12, %rbx
 	adc	$0, %rax
@@ -400,7 +400,7 @@ L(cj):
 IFSTD(`	mov	8(%rsp), %rdi		C param 1: rp
 	lea	16(%rsp), %rsp		C deallocate two slots
 	lea	(up,n,8), %rdx		C param 3: up - n
-	neg	R32(n)		')
+	neg	R32(n)		')	C param 4: n
 
 IFDOS(`	mov	up, %rdx		C param 2: up
 	lea	(up,n,8), %r8		C param 3: up - n
