@@ -97,7 +97,7 @@ L(b00):	mulx(	(up), %r13, %r12)
 	mulx(	16,(up), %r9, %r8)
 	lea	-16(rp), rp
 	lea	16(up), up
-	clc				C break false cf dependency
+	ADDSUB	%r13, %r12
 	jmp	L(lo0)
 
 L(bx1):	shr	$2, n
@@ -120,7 +120,7 @@ L(gt1):	mulx(	8,(up), %r13, %r12)
 	mov	8(rp), %r12
 	mov	16(rp), %rcx
 	lea	-8(rp), rp
-	clc				C break false cf dependency
+	ADDSUB	%r11, %r10
 	jmp	L(lo1)
 
 L(b11):	mulx(	(up), %rbx, %rax)
@@ -128,7 +128,8 @@ L(b11):	mulx(	(up), %rbx, %rax)
 	mulx(	8,(up), %r9, %r8)
 	lea	8(up), up
 	lea	-24(rp), rp
-	add	$1, n			C adjust n, clear cf as side-effect
+	inc	n			C adjust n
+	ADDSUB	%rbx, %rcx
 	jmp	L(lo3)
 
 L(b10):	mulx(	(up), %r9, %r8)
@@ -154,13 +155,13 @@ L(top):	adc	%rax, %r9
 	ADDSUB	%r9, %r8
 	mov	24(rp), %rcx
 	mov	%r8, (rp)
-L(lo1):	ADCSBB	%r11, %r10
-	mulx(	(up), %r9, %r8)
+	ADCSBB	%r11, %r10
+L(lo1):	mulx(	(up), %r9, %r8)
 	mov	%r10, 8(rp)
-L(lo0):	ADCSBB	%r13, %r12
-	mov	%r12, 16(rp)
-L(lo3):	ADCSBB	%rbx, %rcx
-	mulx(	8,(up), %r11, %r10)
+	ADCSBB	%r13, %r12
+L(lo0):	mov	%r12, 16(rp)
+	ADCSBB	%rbx, %rcx
+L(lo3):	mulx(	8,(up), %r11, %r10)
 	mov	%rcx, 24(rp)
 	dec	n
 	jnz	L(top)
