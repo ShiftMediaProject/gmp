@@ -228,11 +228,11 @@ L(top):	mov	(up), %r8
 	lea	32(up), up
 	mov	%r8, -24(rp)
 	mov	%r9, -16(rp)
-ifelse(eval(1 || COPYI_SSE_THRESHOLD >= 8),1,
+ifelse(eval(COPYI_SSE_THRESHOLD >= 8),1,
 `	sub	$4, R32(n)')
 	mov	%r10, -8(rp)
 	mov	%r11, (rp)
-ifelse(eval(1 || COPYI_SSE_THRESHOLD >= 8),1,
+ifelse(eval(COPYI_SSE_THRESHOLD >= 8),1,
 `	jnc	L(top)')
 
 L(end):	test	$1, R8(n)
