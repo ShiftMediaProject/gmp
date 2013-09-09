@@ -25,14 +25,19 @@ C	     cycles/limb     cycles/limb     cycles/limb      good
 C              aligned	      unaligned	      best seen	     for cpu?
 C AMD K8,K9	 2.0		 illop		1.0/1.0		N
 C AMD K10	 0.85		 illop				Y/N
-C AMD bd1	 1.39		 1.40				Y
-C AMD bobcat	 1.97		 8.35		1.5/1.5		N
+C AMD bull	 0.70		 0.70				Y
+C AMD pile	 0.68		 0.68				Y
+C AMD steam	 ?		 ?
+C AMD bobcat	 1.97		 8.24		1.5/1.5		N
+C AMD jaguar	 ?		 ?
 C Intel P4	 2.26		 illop				Y/N
-C Intel core2	 0.52		0.68-0.80	opt/0.68	Y
+C Intel core	 0.52		0.68-0.80	opt/0.64	Y
 C Intel NHM	 0.52		 0.64		opt/opt		Y
-C Intel SBR	 0.51		 0.54		opt/0.51	Y
+C Intel SBR	 0.51		 0.51		opt/0.51	Y
+C Intel IBR	 ?		 ?				Y
+C Intel HWL	 0.51		 0.51		0.25/0.25	N
 C Intel atom	 1.16		 1.66		opt/opt		Y
-C VIA nano	 1.09		 1.07		opt/opt		Y
+C VIA nano	 1.08		 1.06		opt/opt		Y
 
 C We use only 16-byte operations, except for unaligned top-most and bottom-most
 C limbs.  We use the SSSE3 palignr instruction when rp - up = 8 (mod 16).
