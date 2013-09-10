@@ -28,15 +28,15 @@ C AMD K10	 0.85		 illop				Y/N
 C AMD bull	 0.70		 0.66				Y
 C AMD pile	 0.68		 0.66				Y
 C AMD steam	 ?		 ?
-C AMD bobcat	 1.97		 8.28		1.5/1.5		N
+C AMD bobcat	 1.97		 8.16		1.5/1.5		N
 C AMD jaguar	 ?		 ?
 C Intel P4	 2.26		 illop				Y/N
 C Intel core	 0.52		 0.64		opt/opt		Y
 C Intel NHM	 0.52		 0.71		opt/?		Y
-C Intel SBR	 0.51		 0.57		opt/0.51	Y
+C Intel SBR	 0.51		 0.54		opt/0.51	Y
 C Intel IBR	 ?		 ?				Y
 C Intel HWL	 0.51		 0.52		0.25/0.25	N
-C Intel atom	 1.16		 1.66		opt/opt		Y
+C Intel atom	 1.16		 1.61		opt/opt		Y
 C VIA nano	 1.09		 1.08		opt/opt		Y
 
 C We use only 16-byte operations, except for unaligned top-most and bottom-most
@@ -54,7 +54,7 @@ define(`n',  `%rdx')
 
 C There are three instructions for loading an aligned 128-bit quantity.  We use
 C movaps, since it has the shortest coding.
-define(`movdqa', ``movaps'')
+dnl define(`movdqa', ``movaps'')
 
 ifdef(`COPYI_SSE_THRESHOLD',`',`define(`COPYI_SSE_THRESHOLD', 7)')
 
@@ -125,52 +125,50 @@ C Code handling up - rp = 8 (mod 16)
 	cmp	$16, n
 	jc	L(ued0)
 
-	movdqa	120(up), %xmm7
-	movdqa	104(up), %xmm6
-	movdqa	88(up), %xmm5
-	movdqa	72(up), %xmm4
-	movdqa	56(up), %xmm3
+	movaps	120(up), %xmm7
+	movaps	104(up), %xmm6
+	movaps	88(up), %xmm5
+	movaps	72(up), %xmm4
+	movaps	56(up), %xmm3
+	movaps	40(up), %xmm2
 	lea	128(up), up
 	sub	$32, n
 	jc	L(ued1)
 
 	ALIGN(16)
-L(utop):
-	movdqa	-88(up), %xmm2
+L(utop):movaps	-104(up), %xmm1
 	sub	$16, n
-	movdqa	-104(up), %xmm1
+	movaps	-120(up), %xmm0
 	palignr($8, %xmm6, %xmm7)
+	movaps	-136(up), %xmm8
 	movdqa	%xmm7, 112(rp)
-	movdqa	-120(up), %xmm0
 	palignr($8, %xmm5, %xmm6)
+	movaps	120(up), %xmm7
 	movdqa	%xmm6, 96(rp)
-	movdqa	-136(up), %xmm8
 	palignr($8, %xmm4, %xmm5)
+	movaps	104(up), %xmm6
 	movdqa	%xmm5, 80(rp)
-	movdqa	120(up), %xmm7
 	palignr($8, %xmm3, %xmm4)
+	movaps	88(up), %xmm5
 	movdqa	%xmm4, 64(rp)
-	movdqa	104(up), %xmm6
 	palignr($8, %xmm2, %xmm3)
+	movaps	72(up), %xmm4
 	movdqa	%xmm3, 48(rp)
-	movdqa	88(up), %xmm5
 	palignr($8, %xmm1, %xmm2)
+	movaps	56(up), %xmm3
 	movdqa	%xmm2, 32(rp)
-	movdqa	72(up), %xmm4
 	palignr($8, %xmm0, %xmm1)
+	movaps	40(up), %xmm2
 	movdqa	%xmm1, 16(rp)
-	movdqa	56(up), %xmm3
 	palignr($8, %xmm8, %xmm0)
-	movdqa	%xmm0, (rp)
 	lea	128(up), up
+	movdqa	%xmm0, (rp)
 	lea	128(rp), rp
 	jnc	L(utop)
 
-L(ued1):
-	movdqa	-88(up), %xmm2
-	movdqa	-104(up), %xmm1
-	movdqa	-120(up), %xmm0
-	movdqa	-136(up), %xmm8
+L(ued1):movaps	-104(up), %xmm1
+	movaps	-120(up), %xmm0
+	movaps	-136(up), %xmm8
 	palignr($8, %xmm6, %xmm7)
 	movdqa	%xmm7, 112(rp)
 	palignr($8, %xmm5, %xmm6)
@@ -191,11 +189,11 @@ L(ued1):
 
 L(ued0):test	$8, R8(n)
 	jz	1f
-	movdqa	56(up), %xmm3
-	movdqa	40(up), %xmm2
-	movdqa	24(up), %xmm1
-	movdqa	8(up), %xmm0
-	movdqa	-8(up), %xmm8
+	movaps	56(up), %xmm3
+	movaps	40(up), %xmm2
+	movaps	24(up), %xmm1
+	movaps	8(up), %xmm0
+	movaps	-8(up), %xmm8
 	palignr($8, %xmm2, %xmm3)
 	movdqa	%xmm3, 48(rp)
 	palignr($8, %xmm1, %xmm2)
@@ -209,10 +207,10 @@ L(ued0):test	$8, R8(n)
 
 1:	test	$4, R8(n)
 	jz	1f
-	movdqa	24(up), %xmm1
-	movdqa	8(up), %xmm0
+	movaps	24(up), %xmm1
+	movaps	8(up), %xmm0
 	palignr($8, %xmm0, %xmm1)
-	movdqa	-8(up), %xmm3
+	movaps	-8(up), %xmm3
 	movdqa	%xmm1, 16(rp)
 	palignr($8, %xmm3, %xmm0)
 	lea	32(up), up
