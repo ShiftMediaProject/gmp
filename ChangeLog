@@ -1,3 +1,28 @@
+2013-09-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/com-palignr.asm: Implement temp fix to properly
+	handle overlap.
+
+2013-09-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/copyi-palignr.asm: Rewrite rp != up (mod 16) code
+	to make it handle any allowed overlap.
+
+2013-09-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/com.asm: New file, grabbing fastsse code.
+
+	* mpn/x86_64/bd1/copyi.asm: New file, grabbing fastsse code.
+	* mpn/x86_64/bd1/copyd.asm: Likewise.
+	* mpn/x86_64/bd1/com.asm: Likewise.
+
+	* mpn/x86_64/fastavx/copyi.asm: New file.
+	* mpn/x86_64/fastavx/copyd.asm: New file.
+
+2013-09-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreihwl/aorsmul_1.asm: Streamline.
+
 2013-09-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreihwl/sqr_basecase.asm: Implement larger "corner".
