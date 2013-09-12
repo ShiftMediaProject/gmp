@@ -3,7 +3,7 @@ dnl  Itanium-2 mpn_gcd_1 -- mpn by 1 gcd.
 dnl  Contributed to the GNU project by Kevin Ryde, innerloop by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2002, 2003, 2004, 2005, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003, 2004, 2005, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -25,7 +25,7 @@ include(`../config.m4')
 
 C           cycles/bitpair (1x1 gcd)
 C Itanium:       ?
-C Itanium 2:     5.8  (trimmable to 5.64 with huge ctz_table)
+C Itanium 2:     5.1
 
 
 C mpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y);
@@ -93,6 +93,7 @@ deflit(MAXSHIFT, 7)
 deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
 	.section	".rodata"
+	ALIGN(m4_lshift(1,MAXSHIFT))	C align table to allow using dep
 ctz_table:
 	.byte	MAXSHIFT
 forloop(i,1,MASK,
@@ -175,27 +176,26 @@ ifdef(`HAVE_ABI_32',
 }		;;
 
 		addl	r22 = @ltoffx(ctz_table#), r1
+		mov	r25 = m4_lshift(MASK, MAXSHIFT)
 		;;
 		ld8.mov r22 = [r22], ctz_table#
 		br	L(ent)
 
-
 		ALIGN(32)
 L(top):		.pred.rel "mutex", p6,p7
-.mmi;		and	r20 = MASK, r19
-	(p7)	mov	y = x
+.mmi;	(p7)	mov	y = x
 	(p6)	sub	x = x, y
-.mmi;	(p7)	mov	x = r19
-		nop	0
+		dep	r21 = r19, r22, 0, MAXSHIFT	C concat(table,lowbits)
+.mmi;		and	r20 = MASK, r19
+	(p7)	mov	x = r19
 		nop	0
 		;;
 L(mid):
-.mmb;		add	r21 = r22, r20
+.mmb;		ld1	r16 = [r21]
 		cmp.eq	p10,p0 = 0, r20
 	(p10)	br.spnt.few.clr	 L(shift_alot)
 		;;
-.mmi;		ld1	r16 = [r21]
-		;;
+.mmi;		nop	0
 		nop	0
 		shr.u	x = x, r16
 		;;
@@ -215,7 +215,9 @@ L(done_y):
 		br.ret.sptk.many b0
 
 L(shift_alot):
-		extr.u	r20 = x, MAXSHIFT, MAXSHIFT
+		and	r20 = x, r25
 		shr.u	x = x, MAXSHIFT
+		;;
+		dep	r21 = x, r22, 0, MAXSHIFT
 		br	L(mid)
 EPILOGUE()
