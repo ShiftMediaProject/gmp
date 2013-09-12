@@ -250,7 +250,7 @@ L(bc):	lea	-8(rp), rp
 	sub	$4, R32(n)
 	jc	L(end)
 
-ifelse(eval(COM_SSE_THRESHOLD >= 8),1,
+ifelse(eval(1 || COM_SSE_THRESHOLD >= 8),1,
 `	ALIGN(16)')
 L(top):	mov	(up), %r8
 	mov	8(up), %r9
@@ -264,11 +264,11 @@ L(top):	mov	(up), %r8
 	not	%r11
 	mov	%r8, -24(rp)
 	mov	%r9, -16(rp)
-ifelse(eval(COM_SSE_THRESHOLD >= 8),1,
+ifelse(eval(1 || COM_SSE_THRESHOLD >= 8),1,
 `	sub	$4, R32(n)')
 	mov	%r10, -8(rp)
 	mov	%r11, (rp)
-ifelse(eval(COM_SSE_THRESHOLD >= 8),1,
+ifelse(eval(1 || COM_SSE_THRESHOLD >= 8),1,
 `	jnc	L(top)')
 
 L(end):	test	$1, R8(n)
