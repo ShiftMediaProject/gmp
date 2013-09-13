@@ -1029,7 +1029,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     ASSERT ((x) != 0);							\
     __asm__ ("bsfq %1,%q0" : "=r" (count) : "rm" ((UDItype)(x)));	\
   } while (0)
-#endif /* x86_64 */
+#endif /* __amd64__ */
 
 #if defined (__i860__) && W_TYPE_SIZE == 32
 #define rshift_rhlc(r,h,l,c) \
