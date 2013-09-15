@@ -22,8 +22,8 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 2.5
 C AMD K10	 2.5
-C AMD bull	 3.5
-C AMD pile	 3.5
+C AMD bull	 3.6
+C AMD pile	 3.6
 C AMD steam	 ?
 C AMD bobcat	 4
 C AMD jaguar	 ?
