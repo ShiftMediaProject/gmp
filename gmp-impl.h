@@ -4587,7 +4587,8 @@ __GMP_DECLSPEC int __gmp_doscan (const struct gmp_doscan_funs_t *, void *, const
 
 #if WANT_FAT_BINARY && (HAVE_HOST_CPU_FAMILY_x86 || HAVE_HOST_CPU_FAMILY_x86_64)
 /* NOTE: The function pointers in this struct are also in CPUVEC_FUNCS_LIST
-   in mpn/x86/x86-defs.m4.  Be sure to update that when changing here.  */
+   in mpn/x86/x86-defs.m4 and mpn/x86_64/x86_64-defs.m4.  Be sure to update
+   those when changing here.  */
 struct cpuvec_t {
   DECL_add_n           ((*add_n));
   DECL_addlsh1_n       ((*addlsh1_n));
