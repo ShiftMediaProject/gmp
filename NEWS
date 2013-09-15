@@ -16,7 +16,11 @@ Changes between GMP version 5.1.* and 5.2.0
   * Major speedup for ARM, in particular ARM Cortex-A15, thanks to improved
     assembly.
 
-  * Major speedup for SPARC T4/T5 and speedup also for T3.
+  * Major speedup for SPARC T4/T5 and speedup also for T3, thanks to much new
+    assembly.
+
+  * Speedup for Intel Sandy Bridge, Ivy Bridge, Haswell, thanks to rewritten
+    and vastly expanded assembly support.
 
   FEATURES
   * Support for new Intel and AMD CPUs.
@@ -26,9 +30,9 @@ Changes between GMP version 5.1.* and 5.2.0
   * New functions mpn_cnd_add_n and mpn_cnd_sub_n. Side-channel silent
     conditional addition and subtraction.
 
-  * Better support for applications which use the mpz_t type, but
-    nevertheless need to call some of the lower-level mpn functions.
-    See the documentation for mpz_limbs_read and related functions.
+  * Better support for applications which use the mpz_t type, but nevertheless
+    need to call some of the lower-level mpn functions.  See the documentation
+    for mpz_limbs_read and related functions.
 
   MISC
   * None.
