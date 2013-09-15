@@ -1,4 +1,14 @@
+2013-09-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/tabselect.asm: Use R8 for bit testing.
+
+	* mpn/x86_64/coreihwl/mul_basecase.asm: Replace mul_1 code.
+
+	* mpn/x86_64/coreisbr/aorsmul_1.asm: Rewrite.
+
 2013-09-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/ia64/gcd_1.asm: Use dep for combining table base and low bits.
 
 	* mpn/x86_64/fastsse/com-palignr.asm: Implement temp fix to properly
 	handle overlap.
