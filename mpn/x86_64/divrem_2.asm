@@ -20,12 +20,20 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		c/l
+C	     cycles/limb	best
 C AMD K8,K9	18
 C AMD K10	18
+C AMD bull
+C AMD pile
+C AMD bobcat
+C AMD jaguar
 C Intel P4	68
-C Intel core2	34
-C Intel corei	30.5
+C Intel core	34
+C Intel NHM	30.25
+C Intel SBR	21.3
+C Intel IBR	21.4
+C Intel HWL	20.6
+C Intel BWL
 C Intel atom	73
 C VIA nano	33
 
