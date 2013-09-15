@@ -32,7 +32,7 @@ C AMD bobcat	 1.97		 8.16		1.5/1.5		N
 C AMD jaguar	 ?		 ?
 C Intel P4	 2.26		 illop				Y/N
 C Intel core	 0.52		 0.64		opt/opt		Y
-C Intel NHM	 0.52		 0.71		opt/?		Y
+C Intel NHM	 0.52		 0.71		opt/opt		Y
 C Intel SBR	 0.51		 0.54		opt/0.51	Y
 C Intel IBR	 ?		 ?				Y
 C Intel HWL	 0.51		 0.52		0.25/0.25	N
