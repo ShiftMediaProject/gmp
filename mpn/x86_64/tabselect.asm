@@ -113,7 +113,7 @@ L(top):	sub	$1, %rbx
 	jns	L(outer_top)
 L(outer_end):
 
-	test	$2, R32(n)
+	test	$2, R8(n)
 	jz	L(b0x)
 L(b1x):	mov	nents, i
 	push	tp
@@ -138,7 +138,7 @@ L(tp2):	sub	$1, %rbx
 	lea	16(tp), tp
 	lea	16(rp), rp
 
-L(b0x):	test	$1, R32(n)
+L(b0x):	test	$1, R8(n)
 	jz	L(b00)
 L(b01):	mov	nents, i
 	xor	R32(%r12), R32(%r12)
