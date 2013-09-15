@@ -23,37 +23,29 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C cycles/limb	mul_1		mul_2		mul_3		addmul_2
-C AMD K8,K9	 ?		n/a		 -		n/a
-C AMD K10	 ?		n/a		 -		n/a
-C AMD bull	 ?		n/a		 -		n/a
-C AMD pile	 ?		n/a		 -		n/a
-C AMD steam	 ?		 ?		 ?		 ?
-C AMD bobcat	 ?		n/a		 -		n/a
-C AMD jaguar	 ?		 ?		 ?		 ?
-C Intel P4	 ?		n/a		 -		n/a
-C Intel core	 ?		n/a		 -		n/a
-C Intel NHM	 ?		n/a		 -		n/a
-C Intel SBR	 ?		n/a		 -		n/a
-C Intel IBR	 ?		n/a		 -		n/a
-C Intel HWL	 2.45		 1.86		 -		 2.15
-C Intel BWL	 ?		 ?		 ?		 ?
-C Intel atom	 ?		n/a		 -		n/a
-C VIA nano	 ?		n/a		 -		n/a
+C AMD K8,K9	n/a		n/a		 -		n/a
+C AMD K10	n/a		n/a		 -		n/a
+C AMD bull	n/a		n/a		 -		n/a
+C AMD pile	n/a		n/a		 -		n/a
+C AMD steam	 ?		 ?		 -		 ?
+C AMD bobcat	n/a		n/a		 -		n/a
+C AMD jaguar	 ?		 ?		 -		 ?
+C Intel P4	n/a		n/a		 -		n/a
+C Intel core	n/a		n/a		 -		n/a
+C Intel NHM	n/a		n/a		 -		n/a
+C Intel SBR	n/a		n/a		 -		n/a
+C Intel IBR	n/a		n/a		 -		n/a
+C Intel HWL	 1.77		 1.86		 -		 2.15
+C Intel BWL	 ?		 ?		 -		 ?
+C Intel atom	n/a		n/a		 -		n/a
+C VIA nano	n/a		n/a		 -		n/a
 
 C The inner loops of this code are the result of running a code generation and
-C optimisation tool suite written by David Harvey and Torbjorn Granlund.
+C optimisation tool suite written by David Harvey and Torbjörn Granlund.
 
 C TODO
-C  * Merge Haswell-specific mul_1, then, if new code does not use indexing,
-C    clean up pointer updates.  Current Haswell mul_1.asm uses an unfortunate
-C    number of regs, thus awkward to use here.
 C  * Adjoin a mul_3.
 C  * Further micro-optimise.
-
-C When playing with pointers, set this to $2 to fall back to conservative
-C indexing in wind-down code.
-define(`I',`$1')
-
 
 define(`rp',      `%rdi')
 define(`up',      `%rsi')
@@ -81,107 +73,114 @@ PROLOGUE(mpn_mul_basecase)
 IFDOS(`	mov	56(%rsp), %r8d	')
 	push	%rbx
 	push	%rbp
+	push	%r12
+	push	%r13
+	push	%r14
 	mov	un_param, un		C free up rdx
 	neg	un
 
-	mov	(up), %rax		C shared for mul_1 and mul_2
-	lea	(up,un_param,8), up	C point at operand end
-	lea	(rp,un_param,8), rp	C point at rp[un-1]
-
-	mov	(vp), v0		C shared for mul_1 and mul_2
-	mul	v0			C shared for mul_1 and mul_2
+	mov	un_param, n		C FIXME: share
+	sar	$2, n			C FIXME: share
 
 	test	$1, R8(vn)
 	jz	L(do_mul_2)
+
+define(`w4',	`%r9')
+define(`w5',	`%r14')
+
+	mov	(vp), %rdx
 
 L(do_mul_1):
 	test	$1, R8(un)
 	jnz	L(m1x1)
 
-L(m1x0):mov	%rax, w0		C un = 2, 4, 6, 8, ...
-	mov	%rdx, w1
-	mov	8(up,un,8), %rax
-	test	$2, R8(un)
+L(m1x0):test	$2, R8(un)
 	jnz	L(m110)
 
-L(m100):lea	2(un), n		C un = 4, 8, 12, ...
+L(m100):
+	mulx(	(up), w5, w2)
+	mulx(	8,(up), w1, w3)
+	lea	-24(rp), rp
 	jmp	L(m1l0)
 
-L(m110):lea	(un), n			C un = 2, 6, 10, ...
+L(m110):
+	mulx(	(up), w3, w4)
+	mulx(	8,(up), w1, w5)
+	lea	-8(rp), rp
+	test	n, n
+	jz	L(cj2)
+	mulx(	16,(up), w0, w2)
+	lea	16(up), up
 	jmp	L(m1l2)
 
-L(m1x1):mov	%rax, w1		C un = 1, 3, 5, 7, ...
-	mov	%rdx, w0
-	test	$2, R8(un)
+L(m1x1):test	$2, R8(un)
 	jz	L(m111)
 
-L(m101):lea	3(un), n		C un = 1, 5, 9, ...
+L(m101):
+	mulx(	(up), w4, w5)
+	lea	-16(rp), rp
 	test	n, n
-	js	L(m1l1)
-	mov	%rax, -8(rp)
-	mov	%rdx, (rp)
-	pop	%rbp
-	pop	%rbx
-	FUNC_EXIT()
-	ret
+	jz	L(cj1)
+	mulx(	8,(up), w0, w2)
+	lea	8(up), up
+	jmp	L(m1l1)
 
-L(m111):lea	1(un), n		C un = 3, 7, 11, ...
-	mov	8(up,un,8), %rax
+L(m111):
+	mulx(	(up), w2, w3)
+	mulx(	8,(up), w0, w4)
+	mulx(	16,(up), w1, w5)
+	lea	24(up), up
+	test	n, n
+	jnz	L(gt3)
+	add	w0, w3
+	jmp	L(cj3)
+L(gt3):	add	w0, w3
 	jmp	L(m1l3)
 
-	ALIGN(16)		C FIXME?
-L(m1tp):mov	%rdx, w0
-	add	%rax, w1
-L(m1l1):mov	-16(up,n,8), %rax
-	adc	$0, w0
-	mul	v0
-	add	%rax, w0
-	mov	w1, -24(rp,n,8)
-	mov	-8(up,n,8), %rax
-	mov	%rdx, w1
-	adc	$0, w1
-L(m1l0):mul	v0
-	mov	w0, -16(rp,n,8)
-	add	%rax, w1
-	mov	%rdx, w0
-	mov	(up,n,8), %rax
-	adc	$0, w0
-L(m1l3):mul	v0
-	mov	w1, -8(rp,n,8)
-	mov	%rdx, w1
-	add	%rax, w0
-	mov	8(up,n,8), %rax
-	adc	$0, w1
-L(m1l2):mul	v0
-	mov	w0, (rp,n,8)
-	add	$4, n
-	jnc	L(m1tp)
+	ALIGN(32)
+L(m1tp):lea	32(rp), rp
+L(m1l3):mov	w2, (rp)
+	mulx(	(up), w0, w2)
+L(m1l2):mov	w3, 8(rp)
+	adc	w1, w4
+L(m1l1):adc	w0, w5
+	mov	w4, 16(rp)
+	mulx(	8,(up), w1, w3)
+L(m1l0):mov	w5, 24(rp)
+	mulx(	16,(up), w0, w4)
+	adc	w1, w2
+	mulx(	24,(up), w1, w5)
+	adc	w0, w3
+	lea	32(up), up
+	dec	n
+	jnz	L(m1tp)
 
-L(m1ed):add	%rax, w1
-	adc	$0, %rdx
-	mov	w1, I(-8(rp),-24(rp,n,8))
-	mov	%rdx, I((rp),-16(rp,n,8))
+L(m1ed):lea	32(rp), rp
+L(cj3):	mov	w2, (rp)
+L(cj2):	mov	w3, 8(rp)
+	adc	w1, w4
+L(cj1):	mov	w4, 16(rp)
+	adc	$0, w5
+	mov	w5, 24(rp)
 
 	dec	R32(vn)
-	jz	L(ret2)
+	jz	L(ret5)
 
 	lea	8(vp), vp
-	lea	8(rp), rp
-	push	%r12
-	push	%r13
-	push	%r14
+	lea	32(rp), rp
+C	push	%r12
+C	push	%r13
+C	push	%r14
 	jmp	L(do_addmul)
 
 L(do_mul_2):
 define(`v1',	`%r14')
-	push	%r12
-	push	%r13
-	push	%r14
+C	push	%r12
+C	push	%r13
+C	push	%r14
 
+	mov	(vp), v0
 	mov	8(vp), v1
-
-	lea	(rp,un,8), rp		C FIXME when merging mul_1
-	lea	(up,un,8), up		C FIXME when merging mul_1
 
 	lea	(un), n
 	sar	$2, n
@@ -215,46 +214,46 @@ L(m211):lea	-8(rp), rp
 
 	ALIGN(16)
 L(m2tp):mulx(	v1, %rax, w0)
-	add	%rax, w2		C 0
+	add	%rax, w2
 	mov	(up), %rdx
 	mulx(	v0, %rax, w1)
-	adc	$0, w0			C 1
-	add	%rax, w2		C 0
-	adc	$0, w1			C 1
-	add	w3, w2			C 0
-L(m2l0):mov	w2, (rp)		C 0
-	adc	$0, w1			C 1
+	adc	$0, w0
+	add	%rax, w2
+	adc	$0, w1
+	add	w3, w2
+L(m2l0):mov	w2, (rp)
+	adc	$0, w1
 	mulx(	v1, %rax, w2)
-	add	%rax, w0		C 1
+	add	%rax, w0
 	mov	8(up), %rdx
-	adc	$0, w2			C 2
+	adc	$0, w2
 	mulx(	v0, %rax, w3)
-	add	%rax, w0		C 1
-	adc	$0, w3			C 2
-	add	w1, w0			C 1
-L(m2l3):mov	w0, 8(rp)		C 1
-	adc	$0, w3			C 2
+	add	%rax, w0
+	adc	$0, w3
+	add	w1, w0
+L(m2l3):mov	w0, 8(rp)
+	adc	$0, w3
 	mulx(	v1, %rax, w0)
-	add	%rax, w2		C 2
+	add	%rax, w2
 	mov	16(up), %rdx
 	mulx(	v0, %rax, w1)
-	adc	$0, w0			C 3
-	add	%rax, w2		C 2
-	adc	$0, w1			C 3
-	add	w3, w2			C 2
-L(m2l2):mov	w2, 16(rp)		C 2
-	adc	$0, w1			C 3
+	adc	$0, w0
+	add	%rax, w2
+	adc	$0, w1
+	add	w3, w2
+L(m2l2):mov	w2, 16(rp)
+	adc	$0, w1
 	mulx(	v1, %rax, w2)
-	add	%rax, w0		C 3
+	add	%rax, w0
 	mov	24(up), %rdx
-	adc	$0, w2			C 4
+	adc	$0, w2
 	mulx(	v0, %rax, w3)
-	add	%rax, w0		C 3
-	adc	$0, w3			C 4
-	add	w1, w0			C 3
+	add	%rax, w0
+	adc	$0, w3
+	add	w1, w0
 	lea	32(up), up
-L(m2l1):mov	w0, 24(rp)		C 3
-	adc	$0, w3			C 4
+L(m2l1):mov	w0, 24(rp)
+	adc	$0, w3
 	inc	n
 	lea	32(rp), rp
 	jnz	L(m2tp)
@@ -288,7 +287,7 @@ L(outer):
 	mov	(vp), v0
 	mov	8(vp), v1
 
-	lea	1(un), n
+	lea	2(un), n
 	sar	$2, n
 
 	mov	(up), %rdx
@@ -304,16 +303,17 @@ L(bx0):	mov	(rp), X0
 	mov	X0, (rp)
 	add	%rax, X1
 	adc	$0, w2
+	mov	8(up), %rdx
 	test	$2, R8(un)
 	jnz	L(b10)
 
-L(b00):	mov	8(up), %rdx
-	lea	16(up), up
+L(b00):	lea	16(up), up
 	lea	16(rp), rp
 	jmp	L(lo0)
 
 L(b10):	mov	16(rp), X0
-	xor	w0, w0
+	lea	32(up), up
+	mulx(	v0, %rax, w3)
 	jmp	L(lo2)
 
 L(bx1):	mov	(rp), X1
@@ -343,7 +343,7 @@ L(b11):	lea	8(rp), rp
 L(top):	mulx(	v0, %rax, w3)
 	add	w0, X1
 	adc	$0, w2
-	add	%rax, X1
+L(lo2):	add	%rax, X1
 	adc	$0, w3
 	mulx(	v1, %rax, w0)
 	add	%rax, X0
@@ -392,7 +392,7 @@ L(lo3):	add	%rax, X0
 	adc	$0, w1
 	add	%rax, X1
 	adc	$0, w2
-L(lo2):	mov	8(up), %rdx
+	mov	8(up), %rdx
 	lea	32(up), up
 	inc	n
 	jnz	L(top)
@@ -422,8 +422,8 @@ L(end):	mulx(	v0, %rax, w3)
 	pop	%rax		C deallocate vn slot
 	pop	%r15
 L(ret5):pop	%r14
-	pop	%r13
-	pop	%r12
+L(ret4):pop	%r13
+L(ret3):pop	%r12
 L(ret2):pop	%rbp
 	pop	%rbx
 	FUNC_EXIT()
