@@ -125,6 +125,11 @@ C Code handling up - rp = 8 (mod 16)
 	cmp	$16, n
 	jc	L(ued0)
 
+IFDOS(`	add	$-48, %rsp	')
+IFDOS(`	movdqa	%xmm6, (%rsp)	')
+IFDOS(`	movdqa	%xmm7, 16(%rsp)	')
+IFDOS(`	movdqa	%xmm8, 32(%rsp)	')
+
 	movaps	120(up), %xmm7
 	movaps	104(up), %xmm6
 	movaps	88(up), %xmm5
@@ -187,20 +192,25 @@ L(ued1):movaps	-104(up), %xmm1
 	movdqa	%xmm0, (rp)
 	lea	128(rp), rp
 
+IFDOS(`	movdqa	(%rsp), %xmm6	')
+IFDOS(`	movdqa	16(%rsp), %xmm7	')
+IFDOS(`	movdqa	32(%rsp), %xmm8	')
+IFDOS(`	add	$48, %rsp	')
+
 L(ued0):test	$8, R8(n)
 	jz	1f
 	movaps	56(up), %xmm3
 	movaps	40(up), %xmm2
 	movaps	24(up), %xmm1
 	movaps	8(up), %xmm0
-	movaps	-8(up), %xmm8
+	movaps	-8(up), %xmm4
 	palignr($8, %xmm2, %xmm3)
 	movdqa	%xmm3, 48(rp)
 	palignr($8, %xmm1, %xmm2)
 	movdqa	%xmm2, 32(rp)
 	palignr($8, %xmm0, %xmm1)
 	movdqa	%xmm1, 16(rp)
-	palignr($8, %xmm8, %xmm0)
+	palignr($8, %xmm4, %xmm0)
 	lea	64(up), up
 	movdqa	%xmm0, (rp)
 	lea	64(rp), rp
