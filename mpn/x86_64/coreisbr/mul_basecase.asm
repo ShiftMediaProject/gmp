@@ -27,6 +27,7 @@ C AMD K8,K9
 C AMD K10
 C AMD bull
 C AMD pile
+C AMD steam
 C AMD bobcat
 C AMD jaguar
 C Intel P4
@@ -181,46 +182,49 @@ define(`v1',	`%r14')
 
 	mov	8(vp), v1
 
-	xor	w0, w0	C FIXME
-	xor	w2, w2	C FIXME
 	test	$1, R8(un)
 	jnz	L(m2b1)
 
 L(m2b0):lea	(un), n
-	xor	w3, w3	C FIXME
+	xor	w0, w0
+	mov	%rax, w2
+	mov	%rdx, w1
 	jmp	L(m2l0)
 
 L(m2b1):lea	1(un), n
-	xor	w1, w1	C FIXME
+	xor	w1, w1
+	xor	w2, w2
+	mov	%rax, w0
+	mov	%rdx, w3
 	jmp	L(m2l1)
 
 	ALIGN(32)
 L(m2tp):mul	v0
-L(m2l1):add	%rax, w0		C 1
-	mov	%rdx, w3		C 2
-	adc	$0, w3			C 2
-	mov	-8(up,n,8), %rax
+	add	%rax, w0
+	mov	%rdx, w3
+	adc	$0, w3
+L(m2l1):mov	-8(up,n,8), %rax
 	mul	v1
-	add	w1, w0			C 1
-	adc	$0, w3			C 2
-	add	%rax, w2		C 2
-	mov	w0, -8(rp,n,8)		C 1
-	mov	%rdx, w0		C 3
-	adc	$0, w0			C 3
+	add	w1, w0
+	adc	$0, w3
+	add	%rax, w2
+	mov	w0, -8(rp,n,8)
+	mov	%rdx, w0
+	adc	$0, w0
 	mov	(up,n,8), %rax
 	mul	v0
-L(m2l0):add	%rax, w2		C 2
-	mov	%rdx, w1		C 3
-	adc	$0, w1			C 3
-	add	w3, w2			C 2
-	mov	(up,n,8), %rax
-	adc	$0, w1			C 1
+	add	%rax, w2
+	mov	%rdx, w1
+	adc	$0, w1
+	add	w3, w2
+L(m2l0):mov	(up,n,8), %rax
+	adc	$0, w1
 	mul	v1
-	mov	w2, (rp,n,8)		C 2
-	add	%rax, w0		C 3
-	mov	%rdx, w2		C 4
+	mov	w2, (rp,n,8)
+	add	%rax, w0
+	mov	%rdx, w2
 	mov	8(up,n,8), %rax
-	adc	$0, w2			C 4
+	adc	$0, w2
 	add	$2, n
 	jnc	L(m2tp)
 
@@ -273,7 +277,7 @@ L(a100):lea	2(un), n		C un = 4, 8, 12, ...
 	adc	$0, w1
 	mov	(up,un,8), %rax
 	mul	v1
-	mov	-8(rp,n,8), X1
+	mov	8(rp,un,8), X1		C FIXME: Use un
 	jmp	L(lo0)
 
 L(a110):lea	(un), n			C un = 2, 6, 10, ...
@@ -299,69 +303,69 @@ L(a111):lea	1(un), n		C un = 3, 7, 11, ...
 
 	ALIGN(32)
 L(top):	mul	v1
-	mov	%rdx, w0		C 1
-	add	%rax, X0		C 0
-	adc	$0, w0			C 1
-	add	w1, X1			C 3
-	adc	$0, w3			C 0
-	add	w2, X0			C 0
-	adc	$0, w0			C 1
+	mov	%rdx, w0
+	add	%rax, X0
+	adc	$0, w0
+	add	w1, X1
+	adc	$0, w3
+	add	w2, X0
+	adc	$0, w0
 	mov	-16(up,n,8), %rax
 	mul	v0
-	add	%rax, X0		C 0
-	mov	%rdx, w1		C 1
-	adc	$0, w1			C 1
+	add	%rax, X0
+	mov	%rdx, w1
+	adc	$0, w1
 	mov	-16(up,n,8), %rax
 	mul	v1
-	mov	X1, -24(rp,n,8)		C 3
-	mov	-8(rp,n,8), X1		C 1
-	add	w3, X0			C 0
-	adc	$0, w1			C 1
-L(lo0):	mov	%rdx, w2		C 2
-	mov	X0, -16(rp,n,8)		C 0
-	add	%rax, X1		C 1
-	adc	$0, w2			C 2
+	mov	X1, -24(rp,n,8)
+	mov	-8(rp,n,8), X1
+	add	w3, X0
+	adc	$0, w1
+L(lo0):	mov	%rdx, w2
+	mov	X0, -16(rp,n,8)
+	add	%rax, X1
+	adc	$0, w2
 	mov	-8(up,n,8), %rax
-	add	w0, X1			C 1
-	adc	$0, w2			C 2
+	add	w0, X1
+	adc	$0, w2
 	mul	v0
-L(lo3):	add	%rax, X1		C 1
-	mov	%rdx, w3		C 2
-	adc	$0, w3			C 2
+L(lo3):	add	%rax, X1
+	mov	%rdx, w3
+	adc	$0, w3
 	mov	-8(up,n,8), %rax
 	mul	v1
-	add	w1, X1			C 1
-	mov	(rp,n,8), X0		C 2
-	adc	$0, w3			C 2
-	mov	%rdx, w0		C 3
-	add	%rax, X0		C 2
-	adc	$0, w0			C 3
+	add	w1, X1
+	mov	(rp,n,8), X0
+	adc	$0, w3
+	mov	%rdx, w0
+	add	%rax, X0
+	adc	$0, w0
 	mov	(up,n,8), %rax
 	mul	v0
-	add	w2, X0			C 2
-	mov	X1, -8(rp,n,8)		C 1
-	mov	%rdx, w1		C 3
-	adc	$0, w0			C 3
-L(lo2):	add	%rax, X0		C 2
-	adc	$0, w1			C 3
+	add	w2, X0
+	mov	X1, -8(rp,n,8)
+	mov	%rdx, w1
+	adc	$0, w0
+L(lo2):	add	%rax, X0
+	adc	$0, w1
 	mov	(up,n,8), %rax
-	add	w3, X0			C 2
-	adc	$0, w1			C 3
+	add	w3, X0
+	adc	$0, w1
 	mul	v1
-	mov	8(rp,n,8), X1		C 3
-	add	%rax, X1		C 3
-	mov	%rdx, w2		C 4
-	adc	$0, w2			C 4
+	mov	8(rp,n,8), X1
+	add	%rax, X1
+	mov	%rdx, w2
+	adc	$0, w2
 	mov	8(up,n,8), %rax
-	mov	X0, (rp,n,8)		C 2
+	mov	X0, (rp,n,8)
 	mul	v0
-	add	w0, X1			C 3
-	mov	%rdx, w3		C 4
-	adc	$0, w2			C 4
-	add	%rax, X1		C 3
+	add	w0, X1
+	mov	%rdx, w3
+	adc	$0, w2
+	add	%rax, X1
 	mov	8(up,n,8), %rax
-	mov	16(rp,n,8), X0		C 0  useless but harmless in final iter
-	adc	$0, w3			C 4
+	mov	16(rp,n,8), X0		C useless but harmless in final iter
+	adc	$0, w3
 	add	$4, n
 	jnc	L(top)
 
