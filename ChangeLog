@@ -1,3 +1,15 @@
+2013-09-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/core2/mul_basecase.asm: New file.
+	* mpn/x86_64/core2/sqr_basecase.asm: New file.
+
+	* mpn/x86_64/coreihwl/mullo_basecase.asm: New file.
+	* mpn/x86_64/coreisbr/mullo_basecase.asm: New file.
+
+2013-09-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/copyi-palignr.asm: Preserve xmm6-xmm8 under DOS.
+
 2013-09-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/tabselect.asm: Use R8 for bit testing.
