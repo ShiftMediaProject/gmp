@@ -321,7 +321,7 @@ dnl
 dnl  Other addressing forms are not handled.  Invalid forms are not properly
 dnl  detected.  Offsets that don't fit one byte are not handled correctly.
 
-define(`mulx',`
+define(`mulx',`dnl
 ifelse($#,3,
 `.byte	0xc4`'dnl
 ,0x`'eval(0xe2^32*regnumh($1)^128*regnumh($3),16)`'dnl
