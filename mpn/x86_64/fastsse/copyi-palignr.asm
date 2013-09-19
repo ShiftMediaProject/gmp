@@ -125,7 +125,7 @@ C Code handling up - rp = 8 (mod 16)
 	cmp	$16, n
 	jc	L(ued0)
 
-IFDOS(`	add	$-48, %rsp	')
+IFDOS(`	add	$-56, %rsp	')
 IFDOS(`	movdqa	%xmm6, (%rsp)	')
 IFDOS(`	movdqa	%xmm7, 16(%rsp)	')
 IFDOS(`	movdqa	%xmm8, 32(%rsp)	')
@@ -195,7 +195,7 @@ L(ued1):movaps	-104(up), %xmm1
 IFDOS(`	movdqa	(%rsp), %xmm6	')
 IFDOS(`	movdqa	16(%rsp), %xmm7	')
 IFDOS(`	movdqa	32(%rsp), %xmm8	')
-IFDOS(`	add	$48, %rsp	')
+IFDOS(`	add	$56, %rsp	')
 
 L(ued0):test	$8, R8(n)
 	jz	1f
