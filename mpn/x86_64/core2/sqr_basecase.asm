@@ -117,7 +117,7 @@ define(`ALIGNx', `ALIGN(16)')
 
 define(`N', 85)
 ifdef(`N',,`define(`N',0)')
-define(`MOV', `ifelse(eval(N & $3),0,`mov       $1, $2',`lea    ($1), $2')')
+define(`MOV', `ifelse(eval(N & $3),0,`mov	$1, $2',`lea	($1), $2')')
 
 ASM_START()
 	TEXT
