@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_sqr_diag_addlsh1
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

@@ -1,5 +1,7 @@
 dnl  AMD64 mpn_mul_1 using mulx optimised for Intel Haswell.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

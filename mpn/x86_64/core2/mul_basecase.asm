@@ -1,6 +1,8 @@
 dnl  X86-64 mpn_mul_basecase optimised for Intel Nehalem/Westmere.
 dnl  It also seems good for Conroe/Wolfdale.
 
+dnl  Contributed to the GNU project by Torbjörn Granlund.
+
 dnl  Copyright 2008, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -47,9 +49,9 @@ C
 C               m_1(0m4)        m_1(1m4)        m_1(2m4)        m_1(3m4)
 C                  |               |               |               |
 C        m_2(0m4)  |     m_2(1m4)  |     m_2(2m4)  |     m_2(3m4)  |
-C           |      /        |      /         |     /         |     /
-C           |     /         |     /          |    /          |    /
-C           |    /          |    /           |   /           |   /
+C           |      /        |      /        |      /        |      /
+C           |     /         |     /         |     /         |     /
+C           |    /          |    /          |    /          |    /
 C          \|/ |/_         \|/ |/_         \|/ |/_         \|/ |/_
 C             _____           _____           _____           _____        
 C           /      \        /      \        /      \        /      \      
