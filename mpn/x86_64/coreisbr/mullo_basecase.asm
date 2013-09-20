@@ -45,6 +45,7 @@ C optimisation tool suite written by David Harvey and Torbjörn Granlund.
 C TODO
 C   * Implement proper cor2, replacing current cor0.
 C   * Offset n by 2 in order to avoid the outer loop cmp.  (And sqr_basecase?)
+C   * Micro-optimise.
 
 C When playing with pointers, set this to $2 to fall back to conservative
 C indexing in wind-down code.
@@ -94,8 +95,6 @@ PROLOGUE(mpn_mullo_basecase)
 	push	%r13
 	mul	v0
 	mov	8(vp), v1
-	push	%r14			C FIXME: could suppress if am2 not used
-	push	%r15			C FIXME: could suppress if am2 not used
 
 	test	$1, R8(n)
 	jnz	L(m2b1)
@@ -147,7 +146,15 @@ L(m2ed):imul	v0, %rax
 	add	w0, %rax
 	add	w1, %rax
 	mov	%rax, I(-8(rp),-8(rp,i,8))
-	jmp	L(oend)
+
+	add	$2, n
+	lea	16(vp), vp
+	lea	-16(up), up
+	cmp	$-2, n
+	jge	L(cor1)
+
+	push	%r14
+	push	%r15
 
 L(outer):
 	mov	(vp), v0
@@ -273,16 +280,18 @@ L(end):	imul	v1, %rax
 	add	w3, %rax
 	mov	%rax, I(-8(rp),-16(rp,i,8))
 
-L(oend):add	$2, n
+	add	$2, n
 	lea	16(vp), vp
 	lea	-16(up), up
 	cmp	$-2, n
 	jl	L(outer)
 
-	jnz	cor0
+	pop	%r15
+	pop	%r14
 
-cor1:	C u0 x v2   LO(u1 x v2)   LO(u0 x v3)
-	mov	(vp), v0
+	jnz	L(cor0)
+
+L(cor1):mov	(vp), v0
 	mov	8(vp), v1
 	mov	-16(up), %rax
 	mul	v0			C u0 x v2
@@ -295,9 +304,7 @@ cor1:	C u0 x v2   LO(u1 x v2)   LO(u0 x v3)
 	mov	%rax, -16(rp)
 	add	%r10, %r11
 	add	%rdx, %r11
-ret6:	mov	%r11, -8(rp)
-	pop	%r15
-	pop	%r14
+	mov	%r11, -8(rp)
 	pop	%r13
 	pop	%r12
 	pop	%rbp
@@ -305,10 +312,16 @@ ret6:	mov	%r11, -8(rp)
 	FUNC_EXIT()
 	ret
 
-cor0:	mov	(vp), %r11
+L(cor0):mov	(vp), %r11
 	imul	-8(up), %r11
 	add	%rax, %r11
-	jmp	ret6
+	mov	%r11, -8(rp)
+	pop	%r13
+	pop	%r12
+	pop	%rbp
+	pop	%rbx
+	FUNC_EXIT()
+	ret
 
 	ALIGN(16)
 L(small):
