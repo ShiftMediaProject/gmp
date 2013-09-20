@@ -35,7 +35,7 @@ C Intel NHM	n/a		n/a
 C Intel SBR	n/a		n/a
 C Intel IBR	n/a		n/a
 C Intel HWL	 1.86		 2.15
-C Intel BWL
+C Intel BWL	 ?		 ?
 C Intel atom	n/a		n/a
 C VIA nano	n/a		n/a
 
@@ -184,7 +184,7 @@ L(m2ed):mulx(	v1, %rax, w0)
 	lea	16(vp), vp
 	lea	8(rp,n,8), rp		C put back rp to old rp + 2
 	add	$2, n
-	jge	L(oend)
+	jge	L(cor1)
 
 	push	%r14
 	push	%r15
@@ -331,7 +331,6 @@ L(cj3):	add	%rax, X1
 	pop	%r15
 	pop	%r14
 
-L(oend):
 	jnz	L(cor0)
 
 L(cor1):mov	(vp), v0
