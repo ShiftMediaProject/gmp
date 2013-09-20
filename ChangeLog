@@ -1,3 +1,16 @@
+2013-09-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/k8/redc_1.asm: Complete rewrite.
+
+	* mpn/x86_64/coreisbr/mullo_basecase.asm: Postpone pushes, short-
+	circuit a branch.
+
+	* mpn/x86_64/core2/mullo_basecase.asm: New file.
+
+2013-09-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fastsse/copyi-palignr.asm: Allocate more stack under DOS.
+
 2013-09-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/mul_basecase.asm: New file.
