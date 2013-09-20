@@ -1,9 +1,12 @@
 2013-09-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/coreisbr/redc_1.asm: New file.
+
 	* mpn/x86_64/k8/redc_1.asm: Complete rewrite.
 
 	* mpn/x86_64/coreisbr/mullo_basecase.asm: Postpone pushes, short-
 	circuit a branch.
+	* mpn/x86_64/coreihwl/mullo_basecase.asm: Short-circuit a branch.
 
 	* mpn/x86_64/core2/mullo_basecase.asm: New file.
 
