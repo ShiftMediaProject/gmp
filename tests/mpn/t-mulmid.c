@@ -78,7 +78,7 @@ main (int argc, char **argv)
       if (mpn_cmp (refp, rp, rn))
 	{
 	  printf ("ERROR in test %d, an = %d, bn = %d, rn = %d\n",
-		  test, an, bn, rn);
+		  test, (int) an, (int) bn, (int) rn);
 	  printf("a: "); mpn_dump (ap, an);
 	  printf("b: "); mpn_dump (bp, bn);
 	  printf("r:   "); mpn_dump (rp, rn);

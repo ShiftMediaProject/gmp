@@ -1,3 +1,8 @@
+2013-09-21  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/mpn/t-mulmid.c: Cast arguments of printf to int to match %d.
+	* tests/rand/t-urbui.c: Use 1UL for unsigned constant.
+
 2013-09-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/coreisbr/redc_1.asm: New file.

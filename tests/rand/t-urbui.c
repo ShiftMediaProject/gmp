@@ -35,7 +35,7 @@ check_one (const char *name, gmp_randstate_ptr rstate)
   for (bits = 0; bits < BITS_PER_ULONG; bits++)
     {
       /* will demand got < limit */
-      limit = (1L << bits);
+      limit = (1UL << bits);
 
       for (i = 0; i < 5; i++)
         {
