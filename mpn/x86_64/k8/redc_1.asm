@@ -160,7 +160,7 @@ L(2):	mov	(mp_param), %rax
 	jmp	L(ret)
 
 
-L(3):	mov	-24(mp_param), %rax
+L(3):	mov	(mp_param), %rax
 	mul	q0
 	mov	%rax, %rbx
 	mov	%rdx, %r10
