@@ -2,6 +2,7 @@
 
 	* tests/mpn/t-mulmid.c: Cast arguments of printf to int to match %d.
 	* tests/rand/t-urbui.c: Use 1UL for unsigned constant.
+	* mpn/generic/get_str.c: Avoid temporarily pointing outside an array.
 
 2013-09-20  Torbjorn Granlund  <tege@gmplib.org>
 

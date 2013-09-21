@@ -535,7 +535,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
   /* Using our precomputed powers, now in powtab[], convert our number.  */
   tmp = TMP_BALLOC_LIMBS (mpn_dc_get_str_itch (un));
-  out_len = mpn_dc_get_str (str, 0, up, un, powtab - 1 + pi, tmp) - str;
+  out_len = mpn_dc_get_str (str, 0, up, un, powtab + (pi - 1), tmp) - str;
   TMP_FREE;
 
   return out_len;
