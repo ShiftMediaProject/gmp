@@ -264,7 +264,7 @@ IFSTD(`	lea	(up,n,8), up		C param 2: up
 	lea	(up,n,8), %rdx		C param 3: up - n
 	neg	R32(n)		')	C param 4: n
 
-IFDOS(`	lea	(up,n,8), %rdx	C param 2: up
+IFDOS(`	lea	(up,n,8), %rdx		C param 2: up
 	lea	(%rdx,n,8), %r8		C param 3: up - n
 	neg	R32(n)
 	mov	n, %r9			C param 4: n
