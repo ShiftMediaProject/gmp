@@ -450,7 +450,7 @@ L(ed2):	mul	q0
 	jnz	L(otp2)
 	jmp	L(cj)
 
-L(n1):	mov	-16(mp), %rax
+L(n1):	mov	(mp_param), %rax
 	mul	q0
 	add	-16(up), %rax
 	adc	-8(up), %rdx
@@ -459,7 +459,7 @@ L(n1):	mov	-16(mp), %rax
 	adc	R32(%rax), R32(%rax)
 	jmp	L(ret)
 
-L(n2):	mov	-24(mp), %rax
+L(n2):	mov	(mp_param), %rax
 	mov	-24(up), %rbp
 	mul	q0
 	add	%rax, %rbp
