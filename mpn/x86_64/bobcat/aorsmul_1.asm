@@ -32,9 +32,6 @@ C Intel SBR	 3.92
 C Intel atom	23
 C VIA nano	 5.63
 
-C The loop of this code is the result of running a code generation and
-C optimisation tool suite written by David Harvey and Torbjorn Granlund.
-
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
