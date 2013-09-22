@@ -36,25 +36,25 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BMOD_1_TO_MOD_1_THRESHOLD           25
 
 #define MUL_TOOM22_THRESHOLD                22
-#define MUL_TOOM33_THRESHOLD                66
-#define MUL_TOOM44_THRESHOLD               193
+#define MUL_TOOM33_THRESHOLD                67
+#define MUL_TOOM44_THRESHOLD               196
 #define MUL_TOOM6H_THRESHOLD               274
-#define MUL_TOOM8H_THRESHOLD               381
+#define MUL_TOOM8H_THRESHOLD               393
 
-#define MUL_TOOM32_TO_TOOM43_THRESHOLD     121
-#define MUL_TOOM32_TO_TOOM53_THRESHOLD     131
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD     129
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD     138
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD     127
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD     131
-#define MUL_TOOM43_TO_TOOM54_THRESHOLD     178
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD     183
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 34
 #define SQR_TOOM3_THRESHOLD                117
 #define SQR_TOOM4_THRESHOLD                336
-#define SQR_TOOM6_THRESHOLD                422
+#define SQR_TOOM6_THRESHOLD                430
 #define SQR_TOOM8_THRESHOLD                  0  /* always */
 
-#define MULMID_TOOM42_THRESHOLD             44
+#define MULMID_TOOM42_THRESHOLD             42
 
 #define MULMOD_BNM1_THRESHOLD               14
 #define SQRMOD_BNM1_THRESHOLD               17
@@ -152,42 +152,42 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_THRESHOLD                 3264
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
-#define MULLO_DC_THRESHOLD                  61
-#define MULLO_MUL_N_THRESHOLD             8397
+#define MULLO_DC_THRESHOLD                  67
+#define MULLO_MUL_N_THRESHOLD             8907
 
-#define DC_DIV_QR_THRESHOLD                 60
-#define DC_DIVAPPR_Q_THRESHOLD             195
-#define DC_BDIV_QR_THRESHOLD                60
-#define DC_BDIV_Q_THRESHOLD                152
+#define DC_DIV_QR_THRESHOLD                 63
+#define DC_DIVAPPR_Q_THRESHOLD             198
+#define DC_BDIV_QR_THRESHOLD                56
+#define DC_BDIV_Q_THRESHOLD                143
 
-#define INV_MULMOD_BNM1_THRESHOLD           42
-#define INV_NEWTON_THRESHOLD               202
-#define INV_APPR_THRESHOLD                 197
+#define INV_MULMOD_BNM1_THRESHOLD           46
+#define INV_NEWTON_THRESHOLD               197
+#define INV_APPR_THRESHOLD                 195
 
-#define BINV_NEWTON_THRESHOLD              236
-#define REDC_1_TO_REDC_2_THRESHOLD          48
-#define REDC_2_TO_REDC_N_THRESHOLD          72
+#define BINV_NEWTON_THRESHOLD              240
+#define REDC_1_TO_REDC_2_THRESHOLD          46
+#define REDC_2_TO_REDC_N_THRESHOLD          63
 
 #define MU_DIV_QR_THRESHOLD               1470
 #define MU_DIVAPPR_Q_THRESHOLD            1589
-#define MUPI_DIV_QR_THRESHOLD               82
+#define MUPI_DIV_QR_THRESHOLD               78
 #define MU_BDIV_QR_THRESHOLD              1442
-#define MU_BDIV_Q_THRESHOLD               1470
+#define MU_BDIV_Q_THRESHOLD               1528
 
-#define POWM_SEC_TABLE  4,20,219,572,905
+#define POWM_SEC_TABLE  2,24,195,322,1168,1604
 
-#define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                     105
+#define MATRIX22_STRASSEN_THRESHOLD         16
+#define HGCD_THRESHOLD                     119
 #define HGCD_APPR_THRESHOLD                 50
 #define HGCD_REDUCE_THRESHOLD             2479
-#define GCD_DC_THRESHOLD                   812
-#define GCDEXT_DC_THRESHOLD                435
+#define GCD_DC_THRESHOLD                   767
+#define GCDEXT_DC_THRESHOLD                411
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                12
 #define GET_STR_PRECOMPUTE_THRESHOLD        19
-#define SET_STR_DC_THRESHOLD              1562
-#define SET_STR_PRECOMPUTE_THRESHOLD      2649
+#define SET_STR_DC_THRESHOLD              1502
+#define SET_STR_PRECOMPUTE_THRESHOLD      2923
 
 #define FAC_DSC_THRESHOLD                  692
 #define FAC_ODD_THRESHOLD                    0  /* always */

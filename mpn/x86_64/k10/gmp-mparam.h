@@ -186,8 +186,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define INV_APPR_THRESHOLD                 214
 
 #define BINV_NEWTON_THRESHOLD              324
-#define REDC_1_TO_REDC_2_THRESHOLD          19
-#define REDC_2_TO_REDC_N_THRESHOLD          71
+#define REDC_1_TO_REDC_2_THRESHOLD          31
+#define REDC_2_TO_REDC_N_THRESHOLD          66
 
 #define MU_DIV_QR_THRESHOLD               1718
 #define MU_DIVAPPR_Q_THRESHOLD            1652
@@ -195,20 +195,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD              1528
 #define MU_BDIV_Q_THRESHOLD               1589
 
-#define POWM_SEC_TABLE  2,23,322,2080
+#define POWM_SEC_TABLE  2,23,130,572,1358
 
 #define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                     144
-#define HGCD_APPR_THRESHOLD                175
-#define HGCD_REDUCE_THRESHOLD             3389
-#define GCD_DC_THRESHOLD                   501
-#define GCDEXT_DC_THRESHOLD                465
+#define HGCD_THRESHOLD                     135
+#define HGCD_APPR_THRESHOLD                171
+#define HGCD_REDUCE_THRESHOLD             4455
+#define GCD_DC_THRESHOLD                   555
+#define GCDEXT_DC_THRESHOLD                469
 #define JACOBI_BASE_METHOD                   4
 
-#define GET_STR_DC_THRESHOLD                14
-#define GET_STR_PRECOMPUTE_THRESHOLD        29
-#define SET_STR_DC_THRESHOLD               248
-#define SET_STR_PRECOMPUTE_THRESHOLD      1648
+#define GET_STR_DC_THRESHOLD                19
+#define GET_STR_PRECOMPUTE_THRESHOLD        32
+#define SET_STR_DC_THRESHOLD               357
+#define SET_STR_PRECOMPUTE_THRESHOLD      1781
 
-#define FAC_DSC_THRESHOLD                 1105
-#define FAC_ODD_THRESHOLD                   30
+#define FAC_DSC_THRESHOLD                  760
+#define FAC_ODD_THRESHOLD                   23
