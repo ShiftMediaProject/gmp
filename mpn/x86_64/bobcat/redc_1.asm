@@ -402,21 +402,21 @@ L(ed2):	add	w0, I(-16(up),-16(up,i,8))
 
 L(n1):	mov	(mp_param), %rax
 	mul	q0
-	add	-16(up), %rax
-	adc	-8(up), %rdx
+	add	-8(up), %rax
+	adc	(up), %rdx
 	mov	%rdx, (rp)
 	mov	$0, R32(%rax)
 	adc	R32(%rax), R32(%rax)
 	jmp	L(ret)
 
 L(n2):	mov	(mp_param), %rax
-	mov	-24(up), %rbp
+	mov	-16(up), %rbp
 	mul	q0
 	add	%rax, %rbp
 	mov	%rdx, %r9
 	adc	$0, %r9
-	mov	-16(mp), %rax
-	mov	-16(up), %r10
+	mov	-8(mp), %rax
+	mov	-8(up), %r10
 	mul	q0
 	add	%rax, %r10
 	mov	%rdx, %r11
@@ -425,13 +425,13 @@ L(n2):	mov	(mp_param), %rax
 	adc	$0, %r11
 	mov	%r10, q0
 	imul	u0inv, q0		C next q0
-	mov	-24(mp), %rax
+	mov	-16(mp), %rax
 	mul	q0
 	add	%rax, %r10
 	mov	%rdx, %r9
 	adc	$0, %r9
-	mov	-16(mp), %rax
-	mov	-8(up), %r14
+	mov	-8(mp), %rax
+	mov	(up), %r14
 	mul	q0
 	add	%rax, %r14
 	adc	$0, %rdx
@@ -439,28 +439,28 @@ L(n2):	mov	(mp_param), %rax
 	adc	$0, %rdx
 	xor	R32(%rax), R32(%rax)
 	add	%r11, %r14
-	adc	(up), %rdx
+	adc	8(up), %rdx
 	mov	%r14, (rp)
 	mov	%rdx, 8(rp)
 	adc	R32(%rax), R32(%rax)
 	jmp	L(ret)
 
 	ALIGNx
-L(n3):	mov	-32(mp), %rax
-	mov	-32(up), %r10
+L(n3):	mov	-24(mp), %rax
+	mov	-24(up), %r10
 	mul	q0
 	add	%rax, %r10
-	mov	-24(mp), %rax
+	mov	-16(mp), %rax
 	mov	%rdx, %r11
 	adc	$0, %r11
-	mov	-24(up), %rbp
+	mov	-16(up), %rbp
 	mul	q0
 	add	%rax, %rbp
 	mov	%rdx, %r9
 	adc	$0, %r9
-	mov	-16(mp), %rax
+	mov	-8(mp), %rax
 	add	%r11, %rbp
-	mov	-16(up), %r10
+	mov	-8(up), %r10
 	adc	$0, %r9
 	mul	q0
 	mov	%rbp, q0
@@ -468,14 +468,25 @@ L(n3):	mov	-32(mp), %rax
 	add	%rax, %r10
 	mov	%rdx, %r11
 	adc	$0, %r11
-	mov	%rbp, -24(up)
+	mov	%rbp, -16(up)
 	add	%r9, %r10
 	adc	$0, %r11
-	mov	%r10, -16(up)
-	mov	%r11, -32(up)		C up[0]
+	mov	%r10, -8(up)
+	mov	%r11, -24(up)		C up[0]
 	lea	8(up), up		C up++
 	dec	j
 	jnz	L(n3)
-	jmp	L(cj)
+
+	mov	-48(up), %rdx
+	mov	-40(up), %rbx
+	xor	R32(%rax), R32(%rax)
+	add	%rbp, %rdx
+	adc	%r10, %rbx
+	adc	-8(up), %r11
+	mov	%rdx, (rp)
+	mov	%rbx, 8(rp)
+	mov	%r11, 16(rp)
+	adc	R32(%rax), R32(%rax)
+	jmp	L(ret)
 EPILOGUE()
 ASM_END()
