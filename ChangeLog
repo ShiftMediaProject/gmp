@@ -1,3 +1,19 @@
+2013-09-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bobcat/redc_1.asm: Make the code for 1 <= n <= 3 work.
+
+2013-09-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreisbr/redc_1.asm: Slightly tweak basecase code.
+
+	* mpn/x86_64/core2/redc_1.asm: New file.
+
+	* mpn/x86_64/bobcat/redc_1.asm: New file.
+
+2013-09-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/coreinhm/redc_1.asm: New file.
+
 2013-09-21  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/mpn/t-mulmid.c: Cast arguments of printf to int to match %d.
