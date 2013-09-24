@@ -1,3 +1,7 @@
+2013-09-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/redc_1.asm: New file.
+
 2013-09-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bobcat/redc_1.asm: Make the code for 1 <= n <= 3 work.
