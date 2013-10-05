@@ -1148,6 +1148,16 @@ gcc  -m32
 @end example
 
 (In GCC 2.95 and earlier there's no @samp{-m32} option, it's the only mode.)
+
+@item @samp{ABI=x32}
+The x32 ABI uses 64-bit limbs but 32-bit pointers.  Like the 64-bit ABI, it
+makes full use of the chip's arithmetic capabilities.  This ABI is not
+supported by all operating systems.
+
+@example
+gcc  -mx32
+@end example
+
 @end table
 
 @sp 1
