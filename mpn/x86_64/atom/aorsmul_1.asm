@@ -96,9 +96,9 @@ L(b10):	mov	$3, R32(n)
 	mov	-8(up,n,8), %rax
 	mov	%rdx, %r10
 	mul	v0
-	mov	%rax, %r8
 	test	n, n
 	jns	L(cj2)
+	mov	%rax, %r8
 	mov	(up,n,8), %rax
 	mov	%rdx, %r9
 	jmp	L(lo2)
@@ -109,9 +109,9 @@ L(bx1):	test	$2, R8(n_param)
 L(b01):	mov	$2, R32(n)
 	sub	n_param, n
 	mul	v0
-	mov	%rax, %r8
 	test	n, n
 	jns	L(cj1)
+	mov	%rax, %r8
 	mov	(up,n,8), %rax
 	mov	%rdx, %r9
 	mul	v0
@@ -165,13 +165,12 @@ L(lo3):	add	$4, n
 
 L(end):	mul	v0
 	ADDSUB	%r8, -16(rp,n,8)
-	mov	%rax, %r8
 	adc	%r9, %r11
 	adc	$0, %r10
 L(cj2):	ADDSUB	%r11, -8(rp,n,8)
-	adc	%r10, %r8
+	adc	%r10, %rax
 	adc	$0, %rdx
-L(cj1):	ADDSUB	%r8, (rp,n,8)
+L(cj1):	ADDSUB	%rax, (rp,n,8)
 	mov	$0, R32(%rax)
 	adc	%rdx, %rax
 	pop	%rbx
