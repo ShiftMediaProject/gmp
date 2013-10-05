@@ -38,9 +38,9 @@ ASM_START()
 	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_divexact_1)
 	save	%sp, -176, %sp
-	cmp	%i2, 1
+	cmp	n, 1
 	bne,pt	%xcc, L(gt1)
-	 ldx	[%i1], %o5
+	 ldx	[ap], %o5
 	udivx	%o5, d, %g1
 	stx	%g1, [qp]
 	return	%i7+8
