@@ -42,7 +42,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BMOD_1_TO_MOD_1_THRESHOLD           15
 
 #define MUL_TOOM22_THRESHOLD                12
-#define MUL_TOOM33_THRESHOLD                66
+#define MUL_TOOM33_THRESHOLD                74
 #define MUL_TOOM44_THRESHOLD               118
 #define MUL_TOOM6H_THRESHOLD               157
 #define MUL_TOOM8H_THRESHOLD               212
@@ -51,18 +51,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD      91
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD      81
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD      80
-#define MUL_TOOM43_TO_TOOM54_THRESHOLD      58
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD     106
 
-#define SQR_BASECASE_THRESHOLD               5
-#define SQR_TOOM2_THRESHOLD                 22
-#define SQR_TOOM3_THRESHOLD                 57
-#define SQR_TOOM4_THRESHOLD                178
-#define SQR_TOOM6_THRESHOLD                189
-#define SQR_TOOM8_THRESHOLD                248
+#define SQR_BASECASE_THRESHOLD               6
+#define SQR_TOOM2_THRESHOLD                 24
+#define SQR_TOOM3_THRESHOLD                 50
+#define SQR_TOOM4_THRESHOLD                196
+#define SQR_TOOM6_THRESHOLD                  0
+#define SQR_TOOM8_THRESHOLD                242
 
 #define MULMID_TOOM42_THRESHOLD             16
 
-#define MULMOD_BNM1_THRESHOLD               10
+#define MULMOD_BNM1_THRESHOLD                7
 #define SQRMOD_BNM1_THRESHOLD               11
 
 #define MUL_FFT_MODF_THRESHOLD             252  /* k = 5 */
@@ -139,7 +139,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define INV_APPR_THRESHOLD                 150
 
 #define BINV_NEWTON_THRESHOLD              197
-#define REDC_1_TO_REDC_2_THRESHOLD           4
+#define REDC_1_TO_REDC_2_THRESHOLD          24
 #define REDC_2_TO_REDC_N_THRESHOLD          43
 
 #define MU_DIV_QR_THRESHOLD                855
@@ -148,7 +148,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD               762
 #define MU_BDIV_Q_THRESHOLD                807
 
-#define POWM_SEC_TABLE  4,14,79,453,1358
+#define POWM_SEC_TABLE  2,24,140,453,1487
 
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                     104
