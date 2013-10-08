@@ -3,6 +3,14 @@
 	* doc/mdate-sh, doc/texinfo.tex, install-sh, missing, ylwrap: Remove.
 	* .bootstrap: Use autoreconf (and in particular automake -a).
 
+2013-10-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/atom/aorsmul_1.asm: Slight tweak.
+
+	* doc/gmp.texi (ABI and ISA): Document x32.
+
+	* mpn/sparc64/ultrasparct3/dive_1.asm: Use our register names.
+
 2013-09-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/redc_1.asm: New file.
