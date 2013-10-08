@@ -66,8 +66,6 @@ const char *dss_func_names[] =
 
 typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
 
-/* The order matters. For mpf_mul_2exp and the functions after it,
-   we use a small number in the tests since it represents an exponent.  */
 dsi_func dsi_funcs[] =
 {
   mpf_div_ui, mpf_add_ui, mpf_mul_ui, mpf_sub_ui,
@@ -150,18 +148,22 @@ main (int argc, char **argv)
       in2i = urandom ();
       for (i = 0; i < sizeof (dsi_funcs) / sizeof (dsi_func); i++)
 	{
+	  unsigned long this_in2i = in2i;
+
 	  /* Don't divide by 0.  */
-	  if (strcmp (dsi_func_names[i], "mpf_div_ui") == 0 && in2i == 0)
+	  if (dsi_funcs[i] == mpf_div_ui && this_in2i == 0)
 	    continue;
 
-	  /* Avoid overflows in the exponent.  */
-	  if (strcmp (dsi_func_names[i], "mpf_mul_2exp") == 0)
-	    in2i %= 64;
+	  /* Avoid overflow/underflow in the exponent.  */
+	  if (dsi_funcs[i] == mpf_mul_2exp || dsi_funcs[i] == mpf_div_2exp)
+	    this_in2i %= 0x100000;
+	  else if (dsi_funcs[i] == mpf_pow_ui)
+	    this_in2i %= 0x1000;
 
-	  (dsi_funcs[i]) (res1, in1, in2i);
+	  (dsi_funcs[i]) (res1, in1, this_in2i);
 
 	  mpf_set (out1, in1);
-	  (dsi_funcs[i]) (out1, out1, in2i);
+	  (dsi_funcs[i]) (out1, out1, this_in2i);
 	  mpf_set (res2, out1);
 
 	  if (mpf_cmp (res1, res2) != 0)
@@ -172,7 +174,7 @@ main (int argc, char **argv)
       for (i = 0; i < sizeof (dis_funcs) / sizeof (dis_func); i++)
 	{
 	  /* Don't divide by 0.  */
-	  if (strcmp (dis_func_names[i], "mpf_ui_div") == 0
+	  if (dis_funcs[i] == mpf_ui_div
 	      && mpf_cmp_ui (in2, 0) == 0)
 	    continue;
 

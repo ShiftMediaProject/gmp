@@ -1,3 +1,9 @@
+2013-10-08  Torbjorn Granlund  <tege@gmplib.org>
+	    Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/mpf/reuse.c (main): Compare addresses instead of names.
+	Use larger numbers for exponents.
+
 2013-10-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* doc/mdate-sh, doc/texinfo.tex, install-sh, missing, ylwrap: Remove.
