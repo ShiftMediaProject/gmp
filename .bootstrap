@@ -1,14 +1,11 @@
 #! /bin/sh
 
-# FIXME: Use automake -a? Then we could remove various
-# automake-supplied files from the repository.
-
 # We need to remove the "cache", else things are not regenerated properly
 rm -rf autom4te.cache
 
-# Stick to automake-1.8, since later versions require the ylwrap
-# script.
-aclocal && libtoolize && autoconf && autoheader && automake
+# for warnings, add: -v -W all
+autoreconf -i -s
+# aclocal && libtoolize && autoconf && autoheader && automake -a
 
 cat >doc/version.texi <<EOF
 @set UPDATED 19 January 2038

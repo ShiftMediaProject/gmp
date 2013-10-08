@@ -1,3 +1,8 @@
+2013-10-08  Marc Glisse  <marc.glisse@inria.fr>
+
+	* doc/mdate-sh, doc/texinfo.tex, install-sh, missing, ylwrap: Remove.
+	* .bootstrap: Use autoreconf (and in particular automake -a).
+
 2013-09-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/redc_1.asm: New file.
