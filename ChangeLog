@@ -5,6 +5,8 @@
 
 	* gmp-h.in: Remove __need_size_t.
 
+	* tests/mpf/reuse.c (main): Use small numbers as exponents.
+
 2013-10-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aorsmul_1.asm: Slight tweak.

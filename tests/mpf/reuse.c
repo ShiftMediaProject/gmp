@@ -66,6 +66,8 @@ const char *dss_func_names[] =
 
 typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
 
+/* The order matters. For mpf_mul_2exp and the functions after it,
+   we use a small number in the tests since it represents an exponent.  */
 dsi_func dsi_funcs[] =
 {
   mpf_div_ui, mpf_add_ui, mpf_mul_ui, mpf_sub_ui,
@@ -151,6 +153,10 @@ main (int argc, char **argv)
 	  /* Don't divide by 0.  */
 	  if (strcmp (dsi_func_names[i], "mpf_div_ui") == 0 && in2i == 0)
 	    continue;
+
+	  /* Avoid overflows in the exponent.  */
+	  if (strcmp (dsi_func_names[i], "mpf_mul_2exp") == 0)
+	    in2i %= 64;
 
 	  (dsi_funcs[i]) (res1, in1, in2i);
 
