@@ -3,7 +3,7 @@
 	* doc/mdate-sh, doc/texinfo.tex, install-sh, missing, ylwrap: Remove.
 	* .bootstrap: Use autoreconf (and in particular automake -a).
 
-	* gmp-h.in: Remove __need_size_t.
+	* gmp-h.in: Remove __need_size_t. Include <stddef.h>, not <cstddef>.
 
 	* tests/mpf/reuse.c (main): Use small numbers as exponents.
 

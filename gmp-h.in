@@ -46,11 +46,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef __GNU_MP__
 #define __GNU_MP__ 5
 
-#if defined (__cplusplus)
-#include <cstddef>     /* for size_t */
-#else
 #include <stddef.h>    /* for size_t */
-#endif
 
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
