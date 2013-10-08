@@ -3,6 +3,8 @@
 	* doc/mdate-sh, doc/texinfo.tex, install-sh, missing, ylwrap: Remove.
 	* .bootstrap: Use autoreconf (and in particular automake -a).
 
+	* gmp-h.in: Remove __need_size_t.
+
 2013-10-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aorsmul_1.asm: Slight tweak.
