@@ -95,7 +95,7 @@ L(first):
 	mov	-8(ap), %eax
 	adc	%edx, %eax
 	sbb	r2, r2
-	sub	$3, n
+	subl	$3, n
 	lea	-16(ap), ap
 	jz	L(reduce_three)
 
