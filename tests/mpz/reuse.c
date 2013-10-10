@@ -469,7 +469,7 @@ main (int argc, char **argv)
 	    FAIL2 (mpz_rootrem, in1, in2, NULL);
 	}
 
-      if (size_range < 18)	/* run fewer tests since gcdext lots of time */
+      if (size_range < 18)	/* run fewer tests since gcdext is slow */
 	{
 	  mpz_gcdext (ref1, ref2, ref3, in1, in2);
 	  MPZ_CHECK_FORMAT (ref1);
