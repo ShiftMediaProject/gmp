@@ -1,3 +1,8 @@
+2013-10-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac (X86_64_PATTERN): Append "cc" to cclist_64 and
+	cclist_x32.
+
 2013-10-08  Torbjorn Granlund  <tege@gmplib.org>
 	    Marc Glisse  <marc.glisse@inria.fr>
 
