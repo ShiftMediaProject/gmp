@@ -1768,14 +1768,14 @@ case $host in
 
     case $host in
       X86_64_PATTERN)
-	cclist_64="gcc"
+	cclist_64="gcc cc"
 	gcc_64_cflags="$gcc_cflags -m64"
 	gcc_64_cflags_optlist="cpu arch"
 	CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
 	SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
 	cyclecounter_size_64=2
 
-	cclist_x32="gcc"
+	cclist_x32="gcc cc"
 	gcc_x32_cflags="$gcc_cflags -mx32"
 	gcc_x32_cflags_optlist="$gcc_64_cflags_optlist"
 	CALLING_CONVENTIONS_OBJS_x32="$CALLING_CONVENTIONS_OBJS_64"
@@ -1794,7 +1794,6 @@ case $host in
 	case $host in
 	  *-*-solaris*)
 	    # Sun cc.
-	    cclist_64="$cclist_64 cc"
 	    cc_64_cflags="-xO3 -m64"
 	    ;;
 	  *-*-mingw* | *-*-cygwin)
