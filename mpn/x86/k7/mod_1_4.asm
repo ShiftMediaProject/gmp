@@ -124,7 +124,7 @@ L(top):	mov	(%esi), %eax
 	mov	%ecx, %edi
 L(m0):	add	%eax, %ebp
 	adc	%edx, %edi
-L(m1):	sub	$4, 52(%esp)
+L(m1):	subl	$4, 52(%esp)
 	ja	L(top)
 
 L(end):	mov	4(%esp), %eax
