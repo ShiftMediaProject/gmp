@@ -1,5 +1,8 @@
 2013-10-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/k7/mod_1_1.asm: Use 'subl' form to avoid ambiguity.
+	* mpn/x86/k7/mod_1_4.asm: Likewise.
+
 	* configure.ac (X86_64_PATTERN): Append "cc" to cclist_64 and
 	cclist_x32.
 
