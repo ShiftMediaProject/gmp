@@ -1,3 +1,10 @@
+2013-10-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/alpha/default.m4 (DATASTART): Use RODATA instead of DATA;
+	accept optional align parameter.
+	* mpn/alpha/invert_limb.asm: Align table.
+	* mpn/alpha/ev5/diveby3.asm: Likewise.
+
 2013-10-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/mod_1_1.asm: Use 'subl' form to avoid ambiguity.
