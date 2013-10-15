@@ -76,7 +76,7 @@ ifdef(`BWX',`
 	subq	r0, r3, r0
 	ret	r31, (r26), 1
 EPILOGUE()
-DATASTART(approx_tab)
+DATASTART(approx_tab,2)
 forloop(i,256,512-1,dnl
 `	.word	eval(0x7fd00/i)
 ')dnl
