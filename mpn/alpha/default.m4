@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for alpha assembler (everywhere except unicos).
 
 
-dnl  Copyright 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003, 2004, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -90,12 +90,13 @@ forloop(i,0,31,`defreg(`r'i,$i)')
 forloop(i,0,31,`deflit(`f'i,``$f''i)')
 
 
-dnl  Usage: DATASTART(name)
+dnl  Usage: DATASTART(name,align)  or  DATASTART(name)
 dnl         DATAEND()
 
 define(`DATASTART',
-m4_assert_numargs(1)
-`	DATA
+m4_assert_numargs_range(1,2)
+`	RODATA
+	ALIGN(ifelse($#,1,2,$2))
 $1:')
 define(`DATAEND',
 m4_assert_numargs(0)
