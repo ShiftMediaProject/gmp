@@ -37,11 +37,10 @@ PROLOGUE(mpn_invert_limb,gp)
 	bic	r1, 1, r7
 	lda	r4, 1(r4)
 	srl	r16, 1, r3
-ifdef(`BWX',`
 	addq	r7, r2, r1
+ifelse(bwx_available_p,1,`
 	ldwu	r0, -512(r1)
 ',`
-	addq	r1, r2, r1
 	ldq_u	r0, -512(r1)
 	extwl	r0, r7, r0
 ')
@@ -76,9 +75,11 @@ ifdef(`BWX',`
 	subq	r0, r3, r0
 	ret	r31, (r26), 1
 EPILOGUE()
-DATASTART(approx_tab,2)
+DATASTART(approx_tab,8)
 forloop(i,256,512-1,dnl
 `	.word	eval(0x7fd00/i)
 ')dnl
+	SIZE(approx_tab, 512)
+	TYPE(approx_tab, object)
 DATAEND()
 ASM_END()
