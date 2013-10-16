@@ -1,3 +1,13 @@
+2013-10-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Let AMD64 cpuid bit override pessimistic cpu guesses.
+
+	* mpn/alpha/unicos.m4 (DATASTART): Accept optional align parameter.
+	* mpn/alpha/divrem_2.asm: Use provided gp mechanisms.
+	* mpn/alpha/default.m4 (PROLOGUE): Provide "..ng" post-gp label.
+	* mpn/alpha/invert_limb.asm: Align table to 8-byte boundary.  Make code
+	work if table is not fully aligned.  Properly test for BWX.
+
 2013-10-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/default.m4 (DATASTART): Use RODATA instead of DATA;
