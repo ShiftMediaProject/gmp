@@ -747,6 +747,7 @@ main ()
   int family, model, stepping;
   const char *modelstr;
   int cpu_64bit = 0;
+  int cpuid_64bit;
 
   CPUID (vendor_string, 0);
   vendor_string[12] = 0;
@@ -857,11 +858,15 @@ main ()
 	}
     }
 
-  /* If our cpuid-based exact guess is more conservative than the previous
-     guess, revert.  This is of course wrong, but it can happen in an emulator,
-     so this workaround allows for successful 64-bit builds.  */
-  if (strcmp ("$guess_cpu", "x86_64") == 0 && ! cpu_64bit)
-    modelstr = "$guess_cpu";
+  CPUID (dummy_string, 0x80000001);
+  cpuid_64bit = (dummy_string[7] >> 5) & 1;
+
+  /* If our cpuid-based CPU identification thinks this is a 32-bit CPU but
+     cpuid claims AMD64 capabilities, then revert to the generic "x86_64".
+     This is of course wrong, but it can happen in some emulators, so this
+     workaround allows for successful 64-bit builds.  */
+  if (cpuid_64bit && ! cpu_64bit)
+    modelstr = "x86_64";
 
   printf ("%s", modelstr);
   return 0;
