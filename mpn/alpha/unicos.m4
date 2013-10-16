@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for alpha assembler on unicos.
 
 
-dnl  Copyright 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003, 2004, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -75,8 +75,9 @@ m4_assert_numargs(1)
 `	.extern	$1')
 
 define(`DATASTART',
-m4_assert_numargs(1)
+m4_assert_numargs_range(1,2)
 `	.psect	$1@crud,data
+	ALIGN(ifelse($#,1,2,$2))
 $1:')
 
 define(`DATAEND',
