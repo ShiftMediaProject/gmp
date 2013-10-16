@@ -53,8 +53,9 @@ ifelse(`$2',noalign,,`	ALIGN(16)')
 	.globl	$1
 	.ent	$1
 $1:
-ifelse(`$2',gp,`	ldgp	r29,0(r27)')
-	.frame r30,0,r26
+	.frame r30,0,r26,0
+ifelse(`$2',gp,`	ldgp	r29, 0(r27)
+`$'$1..ng:')
 	.prologue ifelse(`$2',gp,1,0)')
 
 define(`EPILOGUE_cpu',
@@ -105,7 +106,7 @@ m4_assert_numargs(0)
 dnl  Load a symbolic address into a register
 define(`LEA',
 m4_assert_numargs(2)
-`lda   $1,  $2')
+`lda	$1, $2')
 
 dnl  Usage: ASM_END()
 define(`ASM_END',
