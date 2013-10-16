@@ -1,6 +1,6 @@
 dnl  Alpha mpn_divrem_2 -- Divide an mpn number by a normalized 2-limb number.
 
-dnl  Copyright 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2008, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -41,8 +41,7 @@ define(`un_param',	`r19')
 define(`dp',		`r20')
 
 ASM_START()
-PROLOGUE(mpn_divrem_2)
-	ldgp	r29, 0(r27)
+PROLOGUE(mpn_divrem_2,gp)
 	lda	r30, -80(r30)
 	stq	r26, 0(r30)
 	stq	r9, 8(r30)
@@ -80,7 +79,7 @@ L(L8):	stq	r3, 72(r30)
 	blt	r19, L(L10)
 	bis	r31, r12, r16
 	jsr	r26, mpn_invert_limb
-	ldgp	r29, 0(r26)
+	LDGP(	r29, 0(r26))
 	mulq	r0, r12, r4		C t0 = LO(di * d1)
 	umulh	r0, r10, r2		C s1 = HI(di * d0)
 	addq	r4, r10, r4		C t0 += d0
