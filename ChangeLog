@@ -1,3 +1,7 @@
+2013-10-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac (alpha): Pass -mieee via gcc_cflags_maybe.
+
 2013-10-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Let AMD64 cpuid bit override pessimistic cpu guesses.
