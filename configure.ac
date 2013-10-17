@@ -467,6 +467,7 @@ case $host in
     esac
     extra_functions="cntlz"
     gcc_cflags_optlist="asm cpu oldas" # need asm ahead of cpu, see below
+    gcc_cflags_maybe="-mieee"
     gcc_cflags_oldas="-Wa,-oldas"     # see GMP_GCC_WA_OLDAS.
 
     # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
