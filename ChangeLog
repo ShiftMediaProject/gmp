@@ -1,5 +1,12 @@
 2013-10-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/x86_64/div_qr_1n_pi1.asm: New file.
+
+	* tune/div_qr_1_tune.c (__gmpn_div_qr_1n_pi1): Check
+	div_qr_1n_pi1_method only when !HAVE_NATIVE_mpn_div_qr_1n_pi1.
+
+	* mpn/asm-defs.m4 (define_mpn): Add div_qr_1n_pi1.
+
 	* tune/common.c (speed_mpn_div_qr_1): New function, replacing...
 	(speed_mpn_div_qr_1n, speed_mpn_div_qr_1u): ... deleted functions
 	(speed_mpn_div_qr_1n_pi1, speed_mpn_div_qr_1n_pi1_1)

@@ -25,8 +25,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 mp_limb_t mpn_div_qr_1n_pi1_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t);
 mp_limb_t mpn_div_qr_1n_pi1_2 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t);
 
+#if !HAVE_NATIVE_mpn_div_qr_1n_pi1
 #define __gmpn_div_qr_1n_pi1 \
   (div_qr_1n_pi1_method == 1 ? mpn_div_qr_1n_pi1_1 : mpn_div_qr_1n_pi1_2)
+#endif
 
 #undef mpn_div_qr_1
 #define mpn_div_qr_1 mpn_div_qr_1_tune
