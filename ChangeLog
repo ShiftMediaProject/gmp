@@ -1,5 +1,11 @@
 2013-10-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/speed.c (routine): Added mpn_div_qr_1n and mpn_div_qr_1u.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DIV_QR_1): New macro.
+	(speed_mpn_div_qr_1n, speed_mpn_div_qr_1u): Declare.
+	* tune/common.c (speed_mpn_div_qr_1n, speed_mpn_div_qr_1u): New
+	functions.
+
 	* gmp-impl.h (mpn_div_qr_1n_pi1): Declare function.
 	* gmp-h.in (mpn_div_qr_1): Declare function.
 	* configure.ac (gmp_mpn_functions): Added div_qr_1 and

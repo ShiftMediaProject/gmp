@@ -237,6 +237,9 @@ const struct routine_t {
   { "mpn_divrem_2_div",  speed_mpn_divrem_2_div,    },
   { "mpn_divrem_2_inv",  speed_mpn_divrem_2_inv,    },
 
+  { "mpn_div_qr_1n",     speed_mpn_div_qr_1n,       },
+  { "mpn_div_qr_1u",     speed_mpn_div_qr_1u,       },
+
   { "mpn_div_qr_2n",     speed_mpn_div_qr_2n,       },
   { "mpn_div_qr_2u",     speed_mpn_div_qr_2u,       },
 
