@@ -1491,6 +1491,9 @@ __GMP_DECLSPEC mp_limb_t mpn_divrem_1 (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, 
 #define mpn_divrem_2 __MPN(divrem_2)
 __GMP_DECLSPEC mp_limb_t mpn_divrem_2 (mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr);
 
+#define mpn_div_qr_1 __MPN(div_qr_1)
+__GMP_DECLSPEC mp_limb_t mpn_div_qr_1 (mp_ptr, mp_limb_t *, mp_srcptr, mp_size_t, mp_limb_t);
+
 #define mpn_div_qr_2 __MPN(div_qr_2)
 __GMP_DECLSPEC mp_limb_t mpn_div_qr_2 (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr);
 

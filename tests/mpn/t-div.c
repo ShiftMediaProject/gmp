@@ -456,6 +456,16 @@ main (int argc, char **argv)
 	  qp[nn - 2] = qh;
 	  check_one (qp, rp, np, nn, dup + dn - 2, 2, "mpn_div_qr_2", 0);
 	}
+      if (dn >= 1 && nn >= 1)
+	{
+	  /* mpn_div_qr_1 */
+	  mp_limb_t qh;
+	  qp[nn-1] = qran1;
+	  rp[0] = mpn_div_qr_1 (qp, &qh, np, nn, dnp[dn-1]);
+	  ASSERT_ALWAYS (qp[-1] = qran0); ASSERT_ALWAYS (qp[nn-1] == qran1);
+	  qp[nn-1] = qh;
+	  check_one (qp, rp, np, nn,  dnp + dn - 1, 1, "mpn_div_qr_1", 0);
+	}
     }
 
   __GMP_FREE_FUNC_LIMBS (scratch, alloc);

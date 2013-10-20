@@ -1,3 +1,14 @@
+2013-10-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (mpn_div_qr_1n_pi1): Declare function.
+	* gmp-h.in (mpn_div_qr_1): Declare function.
+	* configure.ac (gmp_mpn_functions): Added div_qr_1 and
+	div_qr_1n_pi1.
+	* mpn/generic/div_qr_1.c (mpn_div_qr_1): New file and function.
+	* mpn/generic/div_qr_1n_pi1.c (mpn_div_qr_1n_pi1): New file and
+	function.
+	* tests/mpn/t-div.c (main): Test mpn_div_qr_1.
+
 2013-10-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac (alpha): Pass -mieee via gcc_cflags_maybe.
