@@ -1,5 +1,26 @@
 2013-10-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c (speed_mpn_div_qr_1): New function, replacing...
+	(speed_mpn_div_qr_1n, speed_mpn_div_qr_1u): ... deleted functions
+	(speed_mpn_div_qr_1n_pi1, speed_mpn_div_qr_1n_pi1_1)
+	(speed_mpn_div_qr_1n_pi1_2): New functions.
+	* gmp-impl.h [TUNE_PROGRAM_BUILD]: Declare div_qr_1-related tuning
+	variables.
+	* tune/tuneup.c (speed_mpn_div_qr_1_tune, tune_div_qr_1): New
+	functions.
+	(div_qr_1n_pi1_method, div_qr_1_norm_threshold)
+	(div_qr_1_unnorm_threshold): New globals.
+	* tune/speed.c (routine): Replaced mpn_div_qr_1n and mpn_div_qr_1u
+	by mpn_div_qr_1, requiring ".r" parameter. Added mpn_div_qr_1n_pi1
+	and variants.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DIV_QR_1): Use the "r" parameter
+	as divisor.
+	* tune/div_qr_1n_pi1_2.c: New file.
+	* tune/div_qr_1n_pi1_1.c: New file.
+	* tune/div_qr_1_tune.c: New file.
+	* tune/Makefile.am (libspeed_la_SOURCES): Added div_qr_1n_pi1_1.c,
+	div_qr_1n_pi1_2.c, and div_qr_1_tune.c.
+
 	* tune/speed.c (routine): Added mpn_div_qr_1n and mpn_div_qr_1u.
 	* tune/speed.h (SPEED_ROUTINE_MPN_DIV_QR_1): New macro.
 	(speed_mpn_div_qr_1n, speed_mpn_div_qr_1u): Declare.

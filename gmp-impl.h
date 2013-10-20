@@ -4907,6 +4907,18 @@ extern mp_size_t			gcd_dc_threshold;
 #define GCDEXT_DC_THRESHOLD		gcdext_dc_threshold
 extern mp_size_t			gcdext_dc_threshold;
 
+#undef  DIV_QR_1N_PI1_METHOD
+#define DIV_QR_1N_PI1_METHOD		div_qr_1n_pi1_method
+extern int				div_qr_1n_pi1_method;
+
+#undef  DIV_QR_1_NORM_THRESHOLD
+#define DIV_QR_1_NORM_THRESHOLD		div_qr_1_norm_threshold
+extern mp_size_t			div_qr_1_norm_threshold;
+
+#undef  DIV_QR_1_UNNORM_THRESHOLD
+#define DIV_QR_1_UNNORM_THRESHOLD	div_qr_1_unnorm_threshold
+extern mp_size_t			div_qr_1_unnorm_threshold;
+
 #undef  DIVREM_1_NORM_THRESHOLD
 #define DIVREM_1_NORM_THRESHOLD		divrem_1_norm_threshold
 extern mp_size_t			divrem_1_norm_threshold;

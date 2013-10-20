@@ -198,6 +198,9 @@ mp_size_t  hgcd_appr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  hgcd_reduce_threshold        = MP_SIZE_T_MAX;
 mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  gcdext_dc_threshold          = MP_SIZE_T_MAX;
+int	   div_qr_1n_pi1_method		= 0;
+mp_size_t  div_qr_1_norm_threshold      = MP_SIZE_T_MAX;
+mp_size_t  div_qr_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
@@ -249,6 +252,9 @@ struct param_t {
 #endif
 #ifndef HAVE_NATIVE_mpn_divexact_1
 #define HAVE_NATIVE_mpn_divexact_1 0
+#endif
+#ifndef HAVE_NATIVE_mpn_div_qr_1n_pi1
+#define HAVE_NATIVE_mpn_div_qr_1n_pi1 0
 #endif
 #ifndef HAVE_NATIVE_mpn_divrem_1
 #define HAVE_NATIVE_mpn_divrem_1 0
@@ -367,9 +373,10 @@ analyze_dat (int final)
 }
 
 
-/* Measuring for recompiled mpn/generic/divrem_1.c, mpn/generic/mod_1.c
- * and mpz/fac_ui.c */
+/* Measuring for recompiled mpn/generic/div_qr_1.c,
+ * mpn/generic/divrem_1.c, mpn/generic/mod_1.c and mpz/fac_ui.c */
 
+mp_limb_t mpn_div_qr_1_tune (mp_ptr, mp_limb_t *, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_divrem_1_tune (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_mod_1_tune (mp_srcptr, mp_size_t, mp_limb_t);
 void mpz_fac_ui_tune (mpz_ptr, unsigned long);
@@ -389,7 +396,11 @@ speed_mpz_fac_ui_tune (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_FAC_UI (mpz_fac_ui_tune);
 }
-
+double
+speed_mpn_div_qr_1_tune (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIV_QR_1 (mpn_div_qr_1_tune);
+}
 
 double
 tuneup_measure (speed_function_t fun,
@@ -2026,6 +2037,51 @@ tune_divrem_1 (void)
   }
 }
 
+void
+tune_div_qr_1 (void)
+{
+  static struct param_t  param;
+  double            t1, t2;
+
+  if (!HAVE_NATIVE_mpn_div_qr_1n_pi1)
+    {
+      static struct param_t  param;
+      double   t1, t2;
+
+      s.size = 10;
+      s.r = randlimb_norm ();
+
+      t1 = tuneup_measure (speed_mpn_div_qr_1n_pi1_1, &param, &s);
+      t2 = tuneup_measure (speed_mpn_div_qr_1n_pi1_2, &param, &s);
+
+      if (t1 == -1.0 || t2 == -1.0)
+	{
+	  printf ("Oops, can't measure all mpn_div_qr_1n_pi1 methods at %ld\n",
+		  (long) s.size);
+	  abort ();
+	}
+      div_qr_1n_pi1_method = (t1 < t2) ? 1 : 2;
+      print_define ("DIV_QR_1N_PI1_METHOD", div_qr_1n_pi1_method);
+    }
+
+  {
+    static struct param_t  param;
+    param.name = "DIV_QR_1_NORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_div_qr_1_tune;
+    one (&div_qr_1_norm_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "DIV_QR_1_UNNORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_half();
+    param.function = speed_mpn_div_qr_1_tune;
+    one (&div_qr_1_unnorm_threshold, &param);
+  }
+}
+
 
 void
 tune_mod_1 (void)
@@ -2722,6 +2778,7 @@ all (void)
   tune_divrem_1 ();
   tune_mod_1 ();
   tune_preinv_divrem_1 ();
+  tune_div_qr_1 ();
 #if 0
   tune_divrem_2 ();
 #endif

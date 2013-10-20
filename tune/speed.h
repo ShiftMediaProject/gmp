@@ -193,8 +193,10 @@ double speed_mpn_divrem_1f_inv (struct speed_params *);
 double speed_mpn_divrem_2 (struct speed_params *);
 double speed_mpn_divrem_2_div (struct speed_params *);
 double speed_mpn_divrem_2_inv (struct speed_params *);
-double speed_mpn_div_qr_1n (struct speed_params *);
-double speed_mpn_div_qr_1u (struct speed_params *);
+double speed_mpn_div_qr_1n_pi1 (struct speed_params *);
+double speed_mpn_div_qr_1n_pi1_1 (struct speed_params *);
+double speed_mpn_div_qr_1n_pi1_2 (struct speed_params *);
+double speed_mpn_div_qr_1 (struct speed_params *);
 double speed_mpn_div_qr_2n (struct speed_params *);
 double speed_mpn_div_qr_2u (struct speed_params *);
 double speed_mpn_fib2_ui (struct speed_params *);
@@ -465,6 +467,9 @@ extern int  speed_option_addrs;
 extern int  speed_option_verbose;
 extern int  speed_option_cycles_broken;
 void speed_option_set (const char *);
+
+mp_limb_t mpn_div_qr_1n_pi1_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t);
+mp_limb_t mpn_div_qr_1n_pi1_2 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, mp_limb_t);
 
 mp_limb_t mpn_divrem_1_div (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_divrem_1_inv (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
@@ -3116,10 +3121,10 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     return t;								\
   }
 
-#define SPEED_ROUTINE_MPN_DIV_QR_1(function, norm)			\
+#define SPEED_ROUTINE_MPN_DIV_QR_1(function)				\
   {									\
     mp_ptr    wp, xp;							\
-    mp_limb_t y;							\
+    mp_limb_t d;							\
     mp_limb_t r;							\
     unsigned  i;							\
     double    t;							\
@@ -3130,16 +3135,9 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
 									\
-    /* divisor must be normalized */					\
-    y = s->yp_block[0];							\
-    if (norm)								\
-      y |= GMP_NUMB_HIGHBIT;						\
-    else								\
-      {									\
-	y &= ~GMP_NUMB_HIGHBIT;						\
-	if (y == 0)							\
-	  y = 1;							\
-      }									\
+    d = s->r;								\
+    if (d == 0)								\
+      d = 1;								\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_dst (s, wp, s->size);					\
     speed_cache_fill (s);						\
@@ -3147,7 +3145,40 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      r = function (wp, wp+s->size-1,s->xp, s->size, y);		\
+      r = function (wp, wp+s->size-1, s->xp, s->size, d);		\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_DIV_QR_1N_PI1(function)			\
+  {									\
+    mp_ptr    wp, xp;							\
+    mp_limb_t d, dinv;							\
+    mp_limb_t r;							\
+    unsigned  i;							\
+    double    t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
+									\
+    d = s->r;								\
+    /* divisor must be normalized */					\
+    SPEED_RESTRICT_COND (d & GMP_NUMB_HIGHBIT);				\
+    invert_limb (dinv, d);						\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_dst (s, wp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      r = function (wp, s->xp, s->size, 0, d, dinv);			\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\
