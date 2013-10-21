@@ -1,3 +1,8 @@
+2013-10-21  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/div_qr_1n_pi1.c (mpn_div_qr_1n_pi1): Fix typos
+	affecting ASSERT.
+
 2013-10-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_1n_pi1.asm: New file.

@@ -187,7 +187,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
 
   ASSERT (d & GMP_LIMB_HIGHBIT);
   ASSERT (n > 0);
-  ASSERT (uh < d);
+  ASSERT (u1 < d);
 
   if (n == 1)
     {
@@ -240,7 +240,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
       /* Final q update */
       add_ssaaaa (q2, q1, q2, q1, 0, cy);
       qp[j+1] = q1;
-      MPN_INCR_U (qp+j+2, un-j-3, q2);
+      MPN_INCR_U (qp+j+2, n-j-3, q2);
 
       add_mssaaaa (u2, u1, u0, u0, up[j], p1, p0);
     }
@@ -255,7 +255,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
   udiv_qrnnd_preinv (t, u0, u1, u0, d, dinv);
   add_ssaaaa (q1, q0, q1, q0, 0, t);
 
-  MPN_INCR_U (qp + 1, un-2, q1);
+  MPN_INCR_U (qp + 1, n-2, q1);
 
   qp[0] = q0;
   return u0;
