@@ -3382,6 +3382,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_com
 #undef HAVE_NATIVE_mpn_copyd
 #undef HAVE_NATIVE_mpn_copyi
+#undef HAVE_NATIVE_mpn_div_qr_1n_pi1
 #undef HAVE_NATIVE_mpn_div_qr_2
 #undef HAVE_NATIVE_mpn_divexact_1
 #undef HAVE_NATIVE_mpn_divexact_by3c
