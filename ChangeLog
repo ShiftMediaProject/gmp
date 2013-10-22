@@ -1,5 +1,7 @@
 2013-10-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/devel/try.c: Support mpn_div_qr_1n_pi1.
+
 	* mpn/x86_64/k8/div_qr_1n_pi1.asm: Moved the below k10 file here.
 	Applied tweak from Torbjörn to get it to run well on k8.
 

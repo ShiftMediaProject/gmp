@@ -362,6 +362,7 @@ struct try_t {
 #define DATA_SRC1_HIGHBIT     7
 #define DATA_MULTIPLE_DIVISOR 8
 #define DATA_UDIV_QRNND       9
+#define DATA_DIV_QR_1        10
   char  data;
 
 /* Default is allow full overlap. */
@@ -540,6 +541,40 @@ validate_modexact_1_odd (void)
   validate_modexact_1c_odd ();
 }
 
+void
+validate_div_qr_1_pi1 (void)
+{
+  mp_srcptr up = ref.s[0].p;
+  mp_size_t un = size;
+  mp_size_t uh = ref.s[1].p[0];
+  mp_srcptr qp = fun.d[0].p;
+  mp_limb_t r = fun.retval;
+  mp_limb_t cy;
+  int cmp;  
+  mp_ptr tp;
+  if (r >= divisor)
+    {
+      gmp_printf ("Bad remainder %Md, d = %Md\n", r, divisor);
+      validate_fail ();
+    }
+  tp = refmpn_malloc_limbs (un);
+  cy = refmpn_mul_1 (tp, qp, un, divisor);
+  cy += refmpn_add_1 (tp, tp, un, r);
+  if (cy != uh || refmpn_cmp (tp, up, un) != 0)
+    {
+      gmp_printf ("Incorrect result, size %ld.\n"
+		  "d = %Mx, u = %Mx, %Nx\n"
+		  "got: r = %Mx, q = %Nx\n"
+		  "q d + r = %Mx, %Nx",
+		  (long) un,
+		  divisor, uh, up, un,
+		  r, qp, un,
+		  cy, tp, un);
+      validate_fail ();
+    }
+  free (tp);    
+}
+
 
 void
 validate_sqrtrem (void)
@@ -626,6 +661,7 @@ enum {
 
   TYPE_MOD_1, TYPE_MOD_1C, TYPE_DIVMOD_1, TYPE_DIVMOD_1C, TYPE_DIVREM_1,
   TYPE_DIVREM_1C, TYPE_PREINV_DIVREM_1, TYPE_DIVREM_2, TYPE_PREINV_MOD_1,
+  TYPE_DIV_QR_1N_PI1,
   TYPE_MOD_34LSUB1, TYPE_UDIV_QRNND, TYPE_UDIV_QRNND_R,
 
   TYPE_DIVEXACT_1, TYPE_BDIV_Q_1, TYPE_DIVEXACT_BY3, TYPE_DIVEXACT_BY3C,
@@ -1106,6 +1142,17 @@ param_init (void)
   COPY (TYPE_DIVREM_1);
   p->size = SIZE_YES; /* ie. no size==0 */
   REFERENCE (refmpn_preinv_divrem_1);
+
+  p = &param[TYPE_DIV_QR_1N_PI1];
+  p->retval = 1;
+  p->src[0] = 1;
+  p->src[1] = 1;
+  /* SIZE_1 not supported. Always uses low limb only. */
+  p->size2 = 1; 
+  p->dst[0] = 1;
+  p->divisor = DIVISOR_NORM;
+  p->data = DATA_DIV_QR_1;
+  VALIDATE (validate_div_qr_1_pi1);
 
   p = &param[TYPE_PREINV_MOD_1];
   p->retval = 1;
@@ -1830,6 +1877,7 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mod_1c
   { TRY(mpn_mod_1c),       TYPE_MOD_1C },
 #endif
+  { TRY(mpn_div_qr_1n_pi1), TYPE_DIV_QR_1N_PI1 },
 #if GMP_NUMB_BITS % 4 == 0
   { TRY(mpn_mod_34lsub1),  TYPE_MOD_34LSUB1 },
 #endif
@@ -2554,6 +2602,14 @@ call (struct each_t *e, tryfun_t function)
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor, refmpn_invert_limb (divisor));
     break;
+  case TYPE_DIV_QR_1N_PI1:
+    {
+      mp_limb_t dinv = refmpn_invert_limb (divisor);
+      e->retval = CALLING_CONVENTIONS (function)
+	(e->d[0].p, e->s[0].p, size, e->s[1].p[0], divisor, dinv);
+      break;
+    }
+      
   case TYPE_MOD_34LSUB1:
     e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
     break;
@@ -3077,6 +3133,10 @@ try_one (void)
 
       case DATA_UDIV_QRNND:
 	s[i].p[1] %= divisor;
+	break;
+      case DATA_DIV_QR_1:
+	if (i == 1)
+	  s[i].p[0] %= divisor;
 	break;
       }
 
