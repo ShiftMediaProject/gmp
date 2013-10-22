@@ -25,7 +25,7 @@ include(`../config.m4')
 
 
 C		c/l
-C AMD K10	11.25
+C AMD K8,K10	11
 
 C INPUT Parameters
 define(`QP', `%rdi')
@@ -117,15 +117,16 @@ L(first):
 	dec	UN
 	mov	U1, %rax
 	jz	L(final)
-	
+	mov	$0, R32(Q1)
+
 	ALIGN(16)
 
-	C Loop is 28 instructions, 30 decoder slots, should run in 10 cycles.
-	C At entry, %rax holds an extra copy of U1, and carry holds an extra copy of U2.
+	C Loop is 28 instructions, 30 K8/K10 decoder slots, should run
+	C in 10 cycles. At entry, %rax holds an extra copy of U1, Q1
+	C is zero, and carry holds an extra copy of U2.
 L(loop):
 	C {Q2, Q1, Q0} <-- DINV * U1 + B (Q0 + U2 DINV) + B^2 U2
 	C Remains to add in B (U1 + c)
-	mov	$0, Q1
 	cmovc	DINV, Q1
 	mov	U2, Q2
 	neg	Q2
@@ -147,13 +148,14 @@ L(loop):
 	C {QP+UN, ...} <-- {QP+UN, ...} + {Q2, Q1} + U1 + c
 	adc	U1, Q1
 	mov	-8(UP, UN, 8), U0
-	adc	Q2,8(QP, UN, 8)
+	adc	Q2, 8(QP, UN, 8)
 	jc	L(q_incr)
 L(q_incr_done):
 	add	%rax, U0
 	mov	T, %rax
 	adc	%rdx, %rax
 	mov	Q1, (QP, UN, 8)
+	mov	$0, R32(Q1)
 	sbb 	U2, U2
 	dec	UN
 	mov	%rax, U1 
