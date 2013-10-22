@@ -25,6 +25,13 @@ include(`../config.m4')
 
 
 C		c/l
+C AMD K8	13
+C AMD K10	13
+C Intel core2	19
+C Intel sbr	14.5-15
+C Intel nehalem	18
+C VIA nano	19
+	
 C INPUT Parameters
 define(`QP', `%rdi')
 define(`UP', `%rsi')
@@ -132,15 +139,15 @@ L(loop):
 	adc	$0, Q2
 	add	Q0, Q1
 	mov 	%rax, Q0
-	mov	U1, %rax	C 0  7
-	lea	(B2md, U0), T	C    6
+	mov	B2, %rax
+	lea	(B2md, U0), T
 	adc	$0, Q2
 
 	C {U2, U1, U0} <-- (U0 + U2 B2 -c U) B + U1 B2 + u
-	mul	B2		C 1  8
-	and	B2, U2		C    8
-	add	U2, U0		C    9
-	cmovnc	U0, T		C   10
+	mul	U1
+	and	B2, U2
+	add	U2, U0
+	cmovnc	U0, T
 
 	C {QP+UN, ...} <-- {QP+UN, ...} + {Q2, Q1} + U1 + c
 	adc	U1, Q1
@@ -148,11 +155,11 @@ L(loop):
 	adc	Q2,8(QP, UN, 8)
 	jc	L(q_incr)
 L(q_incr_done):
-	add	%rax, U0	C 5 11
+	add	%rax, U0
 	mov	T, %rax
-	adc	%rdx, %rax	C 6 12
+	adc	%rdx, %rax
 	mov	Q1, (QP, UN, 8)
-	sbb 	U2, U2		C 7 13
+	sbb 	U2, U2
 	dec	UN
 	mov	%rax, U1 
 	jnz	L(loop)

@@ -1,3 +1,8 @@
+2013-10-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86_64/div_qr_1n_pi1.asm: Reordered arguments to second mul.
+	Deleted misleading cycle annotations.
+
 2013-10-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.ac: Add HAVE_NATIVE_mpn_div_qr_1n_pi1 to config.in.
