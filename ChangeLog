@@ -1,5 +1,8 @@
 2013-10-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/x86_64/k10/div_qr_1n_pi1.asm: New file. Differs from generic
+	x86_64 version by using cmov.
+
 	* mpn/x86_64/div_qr_1n_pi1.asm: Reordered arguments to second mul.
 	Deleted misleading cycle annotations.
 
