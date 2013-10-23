@@ -34,7 +34,7 @@ C Intel core	n/a		n/a			n/a
 C Intel NHM	n/a		n/a			n/a
 C Intel SBR	n/a		n/a			n/a
 C Intel IBR	n/a		n/a			n/a
-C Intel HWL	 1.86		 2.15			 ?
+C Intel HWL	 1.86		 2.15			~2.5
 C Intel BWL	 ?		 ?			 ?
 C Intel atom	n/a		n/a			n/a
 C VIA nano	n/a		n/a			n/a
@@ -44,7 +44,8 @@ C optimisation tool suite written by David Harvey and Torbjörn Granlund, except
 C that the sqr_diag_addlsh1 loop was manually written.
 
 C TODO
-C  * Replace current unoptimised sqr_diag_addlsh1 loop.
+C  * Replace current unoptimised sqr_diag_addlsh1 loop; 1.75 c/l might be
+C    possible.
 C  * Consider splitting outer loop into 2, one for n = 1 (mod 2) and one for
 C    n = 0 (mod 2).  These loops could fall into specific "corner" code.
 C  * Consider splitting outer loop into 4.
@@ -85,7 +86,7 @@ L(gt1):	jne	L(gt2)
 	mov	(up), %rdx
 	mov	8(up), %rcx
 	mulx(	%rcx, %r9, %r10)	C v0 * v1	W 1 2
-	mulx(	%rdx, %rax, %r8)		C v0 * v0	W 0 1
+	mulx(	%rdx, %rax, %r8)	C v0 * v0	W 0 1
 	mov	%rcx, %rdx
 	mulx(	%rdx, %r11, %rdx)	C v1 * v1	W 2 3
 	add	%r9, %r9		C		W 1
