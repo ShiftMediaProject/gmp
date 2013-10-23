@@ -1,3 +1,8 @@
+2013-10-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/x86_64-defs.m4 (oplist): New define, data from `regnum'.
+	(regnum): Use x86_lookup, feed oplist.
+
 2013-10-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/devel/try.c: Support mpn_div_qr_1n_pi1.
