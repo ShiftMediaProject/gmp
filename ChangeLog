@@ -1,3 +1,8 @@
+2013-10-24  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/div_qr_1n_pi1.c (mpn_div_qr_1n_pi1): Bug fixes,
+	off-by-one MPN_INCR_U, and support for overlap operation.
+
 2013-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/fat/fat.c (fake_cpuid_table): Add Haswell.
