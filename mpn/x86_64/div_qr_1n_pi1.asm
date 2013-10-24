@@ -42,7 +42,7 @@ C Intel BWL	 ?
 C Intel atom	52	very poor
 C VIA nano	19
 
-	
+
 C INPUT Parameters
 define(`QP', `%rdi')
 define(`UP', `%rsi')
@@ -84,6 +84,7 @@ IFDOS(`	mov	64(%rsp), %r9	')
 	mov	(UP), U0
 	add	U0, %rax
 	adc	T, %rdx
+	mov	%rdx, T
 	imul	D, %rdx
 	sub	%rdx, U0
 	cmp	U0, %rax
@@ -121,12 +122,13 @@ L(first):
 	mul	U1
 	mov	%rax, Q0
 	add	U1, %rdx
-	mov	%rdx, (QP, UN, 8)
+	mov	%rdx, T
 
 	mov	B2, %rax
 	mul	U1
 	mov	-8(UP, UN, 8), U0
 	mov	(UP, UN, 8), U1
+	mov	T, (QP, UN, 8)
 	add	%rax, U0
 	adc	%rdx, U1
 	sbb	U2, U2
