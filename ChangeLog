@@ -1,3 +1,7 @@
+2013-10-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/fat/fat.c (fake_cpuid_table): Add Haswell.
+
 2013-10-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/x86_64-defs.m4 (oplist): New define, data from `regnum'.
