@@ -25,12 +25,23 @@ include(`../config.m4')
 
 
 C		c/l
-C AMD K8	13
+C AMD K8,K9	13
 C AMD K10	13
-C Intel core2	19
-C Intel sbr	14.5-15
-C Intel nehalem	18
+C AMD bull	16.5
+C AMD pile	15
+C AMD steam	 ?
+C AMD bobcat	16
+C AMD jaguar	 ?
+C Intel P4	47	poor
+C Intel core	19.25
+C Intel NHM	18
+C Intel SBR	15	poor
+C Intel IBR	13
+C Intel HWL	11.7
+C Intel BWL	 ?
+C Intel atom	52	very poor
 C VIA nano	19
+
 	
 C INPUT Parameters
 define(`QP', `%rdi')
@@ -101,7 +112,7 @@ L(first):
 	neg	B2
 	mov	B2, B2md
 	sub	D, B2md
-	
+
 	C D not needed until final reduction
 	push	D
 	mov	UN_INPUT, UN	C Clobbers D
@@ -122,7 +133,7 @@ L(first):
 	dec	UN
 	mov	U1, %rax
 	jz	L(final)
-	
+
 	ALIGN(16)
 
 	C Loop is 28 instructions, 30 decoder slots, should run in 10 cycles.
@@ -134,7 +145,7 @@ L(loop):
 	mov	U2, Q2
 	and	U2, Q1
 	neg	Q2
-	mul	DINV 
+	mul	DINV
 	add	%rdx, Q1
 	adc	$0, Q2
 	add	Q0, Q1
@@ -152,7 +163,7 @@ L(loop):
 	C {QP+UN, ...} <-- {QP+UN, ...} + {Q2, Q1} + U1 + c
 	adc	U1, Q1
 	mov	-8(UP, UN, 8), U0
-	adc	Q2,8(QP, UN, 8)
+	adc	Q2, 8(QP, UN, 8)
 	jc	L(q_incr)
 L(q_incr_done):
 	add	%rax, U0
@@ -161,7 +172,7 @@ L(q_incr_done):
 	mov	Q1, (QP, UN, 8)
 	sbb 	U2, U2
 	dec	UN
-	mov	%rax, U1 
+	mov	%rax, U1
 	jnz	L(loop)
 
 L(final):
@@ -192,7 +203,7 @@ L(final):
 	jc	L(div_done)
 	sub	D, %rax
 	add	$1, T
-L(div_done):	
+L(div_done):
 	add	T, Q0
 	mov	Q0, (QP)
 	adc	Q1, 8(QP)
