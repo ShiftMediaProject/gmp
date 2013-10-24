@@ -25,7 +25,23 @@ include(`../config.m4')
 
 
 C		c/l
-C AMD K8,K10	11
+C AMD K8,K9	11
+C AMD K10	11
+C AMD bull	16
+C AMD pile	14.25
+C AMD steam	 ?
+C AMD bobcat	16
+C AMD jaguar	 ?
+C Intel P4	47.5	poor
+C Intel core	28.5	very poor
+C Intel NHM	29	very poor
+C Intel SBR	16	poor
+C Intel IBR	13.5
+C Intel HWL	12
+C Intel BWL	 ?
+C Intel atom	53	very poor
+C VIA nano	19
+
 
 C INPUT Parameters
 define(`QP', `%rdi')
@@ -96,7 +112,7 @@ L(first):
 	neg	B2
 	mov	B2, B2md
 	sub	D, B2md
-	
+
 	C D not needed until final reduction
 	push	D
 	mov	UN_INPUT, UN	C Clobbers D
@@ -130,11 +146,11 @@ L(loop):
 	cmovc	DINV, Q1
 	mov	U2, Q2
 	neg	Q2
-	mul	DINV 
+	mul	DINV
 	add	%rdx, Q1
 	adc	$0, Q2
 	add	Q0, Q1
-	mov 	%rax, Q0
+	mov	%rax, Q0
 	mov	B2, %rax
 	lea	(B2md, U0), T
 	adc	$0, Q2
@@ -156,9 +172,9 @@ L(q_incr_done):
 	adc	%rdx, %rax
 	mov	Q1, (QP, UN, 8)
 	mov	$0, R32(Q1)
-	sbb 	U2, U2
+	sbb	U2, U2
 	dec	UN
-	mov	%rax, U1 
+	mov	%rax, U1
 	jnz	L(loop)
 
 L(final):
@@ -189,7 +205,7 @@ L(final):
 	jc	L(div_done)
 	sub	D, %rax
 	add	$1, T
-L(div_done):	
+L(div_done):
 	add	T, Q0
 	mov	Q0, (QP)
 	adc	Q1, 8(QP)
