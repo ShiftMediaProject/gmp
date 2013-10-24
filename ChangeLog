@@ -2,6 +2,7 @@
 
 	* mpn/x86_64/div_qr_1n_pi1.asm: Bugfixes, for case n == 1 and
 	in-place operation.
+	* mpn/x86_64/k8/div_qr_1n_pi1.asm: Likewise.
 
 	* mpn/generic/div_qr_1n_pi1.c (mpn_div_qr_1n_pi1): Bug fixes,
 	off-by-one MPN_INCR_U, and support for in-place operation.
