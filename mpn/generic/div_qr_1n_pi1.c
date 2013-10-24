@@ -194,7 +194,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
       udiv_qrnnd_preinv (qp[0], u1, u1, up[0], d, dinv);
       return u1;
     }
-  
+
   /* FIXME: Could be precomputed */
   B2 = -d*dinv;
 
@@ -251,7 +251,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
   t = (u1 >= d);
   q1 += t;
   u1 -= (-t) & d;
-    
+
   udiv_qrnnd_preinv (t, u0, u1, u0, d, dinv);
   add_ssaaaa (q1, q0, q1, q0, 0, t);
 
