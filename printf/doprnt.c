@@ -182,7 +182,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #endif
   alloc_fmt = __GMP_ALLOCATE_FUNC_TYPE (alloc_fmt_size, char);
   fmt = alloc_fmt;
-  strcpy (fmt, orig_fmt);
+  memcpy (fmt, orig_fmt, alloc_fmt_size);
 
   /* last_fmt and last_ap are just after the last output, and hence where
      the next output will begin, when that's done */
