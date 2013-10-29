@@ -1,3 +1,7 @@
+2013-10-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* printf/doprnt.c (__gmp_doprnt): Use memcpy instead of strcpy.
+
 2013-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/div_qr_1u_pi2.c: New file.
