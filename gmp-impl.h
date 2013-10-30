@@ -1095,9 +1095,6 @@ __GMP_DECLSPEC void mpn_mullo_n (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 __GMP_DECLSPEC void mpn_mullo_basecase (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 #endif
 
-#define mpn_sqr __MPN(sqr)
-__GMP_DECLSPEC void mpn_sqr (mp_ptr, mp_srcptr, mp_size_t);
-
 #ifndef mpn_sqr_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_sqr_basecase __MPN(sqr_basecase)
 __GMP_DECLSPEC void mpn_sqr_basecase (mp_ptr, mp_srcptr, mp_size_t);
