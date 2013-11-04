@@ -3567,6 +3567,8 @@ if test "$gmp_asm_syntax_testing" != no; then
 	      GMP_INCLUDE_MPN(x86_64/darwin.m4) ;;
 	    *-*-mingw* | *-*-cygwin)
 	      GMP_INCLUDE_MPN(x86_64/dos64.m4) ;;
+	    *-openbsd*)
+	      GMP_DEFINE_RAW(["define(<OPENBSD>,1)"]) ;;
 	  esac
           ;;
       esac

@@ -3,7 +3,7 @@ dnl  x86 fat binary entrypoints.
 dnl  Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
 dnl  Torbjorn Granlund (port to x86_64)
 
-dnl  Copyright 2003, 2009, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -33,15 +33,16 @@ dnl  "instrument" profiling scheme anyway.
 define(`WANT_PROFILING',no)
 
 
-dnl  We define PIC_OR_DARWIN as a helper symbol, the use it for suppressing
-dnl  normal, fast call code, since that triggers problems on darwin.
-dnl
-dnl  FIXME: There might be a more elegant solution, adding less overhead.
+dnl  We define PRETEND_PIC as a helper symbol, the use it for suppressing
+dnl  normal, fast call code, since that triggers problems on Darwin and
+dnl  OpenBSD.
 
 ifdef(`DARWIN',
-`define(`PIC_OR_DARWIN')')
+`define(`PRETEND_PIC')')
+ifdef(`OPENBSD',
+`define(`PRETEND_PIC')')
 ifdef(`PIC',
-`define(`PIC_OR_DARWIN')')
+`define(`PRETEND_PIC')')
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
@@ -81,7 +82,7 @@ EPILOGUE()
 ',
 `	ALIGN(ifdef(`PIC',16,8))
 `'PROLOGUE($1)
-ifdef(`PIC_OR_DARWIN',
+ifdef(`PRETEND_PIC',
 `	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %rax)
 	jmp	*$2(%rax)
 ',`dnl non-PIC
@@ -160,7 +161,7 @@ IFSTD(`	push	%rsi	')
 	pop	%rdx
 IFSTD(`	pop	%rsi	')
 IFSTD(`	pop	%rdi	')
-ifdef(`PIC_OR_DARWIN',`
+ifdef(`PRETEND_PIC',`
 	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %r10)
 	jmp	*(%r10,%rax,8)
 ',`dnl non-PIC

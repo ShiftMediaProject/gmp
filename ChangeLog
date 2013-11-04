@@ -1,3 +1,10 @@
+2013-11-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Set symbol OPENBSD for x86-openbsd hosts.
+	* mpn/x86_64/fat/fat_entry.asm (PRETEND_PIC): New name for
+	PIC_OR_DARWIN.
+	(PRETEND_PIC): Set also for OPENBSD.
+
 2013-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* printf/doprnt.c (__gmp_doprnt): Use memcpy instead of strcpy.
