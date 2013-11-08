@@ -182,9 +182,12 @@ define(`R8',
 dnl  Usage: CALL(funcname)
 dnl
 
+define(`CALL',`dnl
 ifdef(`PIC',
-  `define(`CALL',`call	GSYM_PREFIX`'$1@PLT')',
-  `define(`CALL',`call	GSYM_PREFIX`'$1')')
+	`call	GSYM_PREFIX`'$1@PLT'
+,
+	`call	GSYM_PREFIX`'$1'
+)')
 
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
