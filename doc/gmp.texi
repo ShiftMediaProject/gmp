@@ -501,11 +501,11 @@ For up-to-date information on GMP, please see the GMP web pages at
 The latest version of the library is available at
 
 @display
-@uref{ftp://ftp.gnu.org/gnu/gmp/}
+@uref{https://ftp.gnu.org/gnu/gmp/}
 @end display
 
 Many sites around the world mirror @samp{ftp.gnu.org}, please use a mirror
-near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
+near you, see @uref{https://www.gnu.org/order/ftp.html} for a full list.
 
 @cindex Mailing lists
 There are three public mailing lists of interest.  One for release
@@ -2626,7 +2626,7 @@ For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
 @item Checker
 @cindex Checker
 @cindex GCC Checker
-The GCC checker (@uref{http://savannah.nongnu.org/projects/checker/}) can be
+The GCC checker (@uref{https://savannah.nongnu.org/projects/checker/}) can be
 used with GMP@.  It contains a stub library which means GMP applications
 compiled with checker can use a normal GMP build.
 
@@ -7219,16 +7219,13 @@ than C, though perhaps with varying levels of functionality and efficiency.
 GMP C++ class interface, @pxref{C++ Class Interface} @* Straightforward
 interface, expression templates to eliminate temporaries.
 @item
-ALP @spaceuref{http://www-sop.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
+ALP @spaceuref{https://www-sop.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
 polynomials using templates.
 @item
 Arithmos @spaceuref{http://cant.ua.ac.be/old/arithmos/} @* Rationals
 with infinities and square roots.
 @item
 CLN @spaceuref{http://www.ginac.de/CLN/} @* High level classes for arithmetic.
-@item
-LiDIA @spaceuref{http://www.cdc.informatik.tu-darmstadt.de/TI/LiDIA/} @* A C++
-library for computational number theory.
 @item
 Linbox @spaceuref{http://www.linalg.org/} @* Sparse vectors and matrices.
 @item
@@ -7247,31 +7244,29 @@ NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 Eiffelroom @spaceuref{http://www.eiffelroom.org/node/442}
 @end itemize
 
-@item Fortran
-@itemize @bullet
-@item
-Omni F77 @spaceuref{http://phase.hpcc.jp/Omni/home.html} @* Arbitrary
-precision floats.
-@end itemize
+@c @item Fortran
+@c @itemize @bullet
+@c @item
+@c Omni F77 @spaceuref{http://phase.hpcc.jp/Omni/home.html} @* Arbitrary
+@c precision floats.
+@c @end itemize
 
 @item Haskell
 @itemize @bullet
 @item
-Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc/}
+Glasgow Haskell Compiler @spaceuref{https://www.haskell.org/ghc/}
 @end itemize
 
 @item Java
 @itemize @bullet
 @item
-Kaffe @spaceuref{http://www.kaffe.org/}
-@item
-Kissme @spaceuref{http://kissme.sourceforge.net/}
+Kaffe @spaceuref{https://github.com/kaffe/kaffe}
 @end itemize
 
 @item Lisp
 @itemize @bullet
 @item
-GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html}
+GNU Common Lisp @spaceuref{https://www.gnu.org/software/gcl/gcl.html}
 @item
 Librep @spaceuref{http://librep.sourceforge.net/}
 @item
@@ -7299,7 +7294,7 @@ MLton compiler @spaceuref{http://mlton.org/}
 @item Objective Caml
 @itemize @bullet
 @item
-MLGMP @spaceuref{http://www.di.ens.fr/~monniaux/programmes.html.en}
+MLGMP @spaceuref{http://opam.ocamlpro.com/pkg/mlgmp.20120224.html}
 @item
 Numerix @spaceuref{http://pauillac.inria.fr/~quercia/} @* Optionally using
 GMP.
@@ -7308,7 +7303,7 @@ GMP.
 @item Oz
 @itemize @bullet
 @item
-Mozart @spaceuref{http://www.mozart-oz.org/}
+Mozart @spaceuref{http://mozart.github.io/}
 @end itemize
 
 @item Pascal
@@ -7351,7 +7346,7 @@ Arbitrary precision floats.
 @item Python
 @itemize @bullet
 @item
-GMPY @uref{http://code.google.com/p/gmpy/}
+GMPY @uref{https://code.google.com/p/gmpy/}
 @end itemize
 
 @item Ruby
@@ -7363,11 +7358,11 @@ http://rubygems.org/gems/gmp
 @item Scheme
 @itemize @bullet
 @item
-GNU Guile (upcoming 1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html}
+GNU Guile @spaceuref{https://www.gnu.org/software/guile/guile.html}
 @item
 RScheme @spaceuref{http://www.rscheme.org/}
 @item
-STklos @spaceuref{http://www.stklos.org/}
+STklos @spaceuref{http://www.stklos.net/}
 @c
 @c  For reference, MzScheme uses some of gmp, but (as of version 205) it only
 @c  has copies of some of the generic C code, and we don't consider that a
@@ -7384,7 +7379,7 @@ GNU Smalltalk @spaceuref{http://www.smalltalk.org/versions/GNUSmalltalk.html}
 @item Other
 @itemize @bullet
 @item
-Axiom @uref{http://savannah.nongnu.org/projects/axiom} @* Computer algebra
+Axiom @uref{https://savannah.nongnu.org/projects/axiom} @* Computer algebra
 using GCL.
 @item
 DrGenius @spaceuref{http://drgenius.seul.org/} @* Geometry system and
@@ -7392,17 +7387,17 @@ mathematical programming language.
 @item
 GiNaC @spaceuref{http://www.ginac.de/} @* C++ computer algebra using CLN.
 @item
-GOO @spaceuref{http://www.googoogaga.org/} @* Dynamic object oriented
+GOO @spaceuref{https://www.eecs.berkeley.edu/~jrb/goo/} @* Dynamic object oriented
 language.
 @item
-Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
+Maxima @uref{https://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
 computer algebra using GCL.
-@item
-Q @spaceuref{http://q-lang.sourceforge.net/} @* Equational programming system.
+@c @item
+@c Q @spaceuref{http://q-lang.sourceforge.net/} @* Equational programming system.
 @item
 Regina @spaceuref{http://regina.sourceforge.net/} @* Topological calculator.
 @item
-Yacas @spaceuref{yacas.sourceforge.net} @* Yet another computer algebra system.
+Yacas @spaceuref{http://yacas.sourceforge.net} @* Yet another computer algebra system.
 @end itemize
 
 @end table
@@ -10558,8 +10553,8 @@ Applied Cryptography'', @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 @item
 Richard M. Stallman and the GCC Developer Community, ``Using the GNU Compiler
 Collection'', Free Software Foundation, 2008, available online
-@uref{http://gcc.gnu.org/onlinedocs/}, and in the GCC package
-@uref{ftp://ftp.gnu.org/gnu/gcc/}
+@uref{https://gcc.gnu.org/onlinedocs/}, and in the GCC package
+@uref{https://ftp.gnu.org/gnu/gcc/}
 @end itemize
 
 @section Papers
