@@ -1,3 +1,9 @@
+2013-11-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/div_qr_2.c: Test HAVE_HOST_CPU_FAMILY_x86, not i386.
+
+	* doc/gmp.texi: Update many URLs.
+
 2013-11-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Set symbol OPENBSD for x86-openbsd hosts.
