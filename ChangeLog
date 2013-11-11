@@ -1,4 +1,10 @@
+2013-11-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/dos64.m4 (CALL): Provide to override default.
+
 2013-11-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/x86_64-defs.m4 (CALL): Swap PIC test and macro defn.
 
 	* mpn/generic/div_qr_2.c: Test HAVE_HOST_CPU_FAMILY_x86, not i386.
 
