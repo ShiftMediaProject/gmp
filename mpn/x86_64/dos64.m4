@@ -1,5 +1,5 @@
 divert(-1)
-dnl  Copyright 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -28,6 +28,13 @@ define(`PIC')
 define(`LEA',`
 	lea	$1(%rip), $2
 ')
+
+
+dnl  Usage: CALL(funcname)
+dnl
+dnl  Simply override the definition in x86_64-defs.m4.
+
+define(`CALL',`call	GSYM_PREFIX`'$1')
 
 
 dnl  Usage: JUMPTABSECT
