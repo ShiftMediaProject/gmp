@@ -1,6 +1,6 @@
 /* Test mp*_class binary expressions.
 
-Copyright 2001, 2002, 2003, 2008, 2012 Free Software Foundation, Inc.
+Copyright 2001-2003, 2008, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

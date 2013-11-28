@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2000, 2001, 2002, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

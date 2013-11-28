@@ -3,8 +3,7 @@ dnl  ARM v6t2 mpn_gcd_1.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for ARM by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012, 2013 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

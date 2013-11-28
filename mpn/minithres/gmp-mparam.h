@@ -1,7 +1,7 @@
 /* Minimal values gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000, 2006, 2008, 2009, 2010, 2012 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2006, 2008-2010, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

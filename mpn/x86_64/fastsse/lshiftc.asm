@@ -2,7 +2,7 @@ dnl  AMD64 mpn_lshiftc optimised for CPUs with fast SSE.
 
 dnl  Contributed to the GNU project by David Harvey and Torbjorn Granlund.
 
-dnl  Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2010-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

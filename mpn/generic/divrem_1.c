@@ -1,6 +1,6 @@
 /* mpn_divrem_1 -- mpn by limb division.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000, 2002, 2003 Free Software
+Copyright 1991, 1993, 1994, 1996, 1998-2000, 2002, 2003 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

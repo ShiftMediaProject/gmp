@@ -1,6 +1,5 @@
 /*
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2004, 2007 Free Software
-Foundation, Inc.
+Copyright 1996-2002, 2004, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

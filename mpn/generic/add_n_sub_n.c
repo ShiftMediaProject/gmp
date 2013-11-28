@@ -4,7 +4,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 1999, 2000, 2001, 2006 Free Software Foundation, Inc.
+Copyright 1999-2001, 2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  IBM POWER mpn_lshift -- Shift a number left.
 
-dnl  Copyright 1992, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 1999-2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

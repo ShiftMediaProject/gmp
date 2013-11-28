@@ -1,7 +1,7 @@
 /* Test conversion using mpz_get_str and mpz_set_str.
 
-Copyright 1993, 1994, 1996, 1999, 2000, 2001, 2002, 2006, 2007 Free Software
-Foundation, Inc.
+Copyright 1993, 1994, 1996, 1999-2002, 2006, 2007 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library test suite.
 

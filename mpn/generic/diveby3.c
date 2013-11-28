@@ -1,6 +1,6 @@
 /* mpn_divexact_by3c -- mpn exact division by 3.
 
-Copyright 2000, 2001, 2002, 2003, 2008 Free Software Foundation, Inc.
+Copyright 2000-2003, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

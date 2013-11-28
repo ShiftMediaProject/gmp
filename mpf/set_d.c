@@ -1,7 +1,6 @@
 /* mpf_set_d -- Assign a float from a double.
 
-Copyright 1993, 1994, 1995, 1996, 2001, 2003, 2004 Free Software Foundation,
-Inc.
+Copyright 1993-1996, 2001, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

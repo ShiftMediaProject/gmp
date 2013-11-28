@@ -2,7 +2,7 @@ dnl  x86-64 mpn_add_n/mpn_sub_n optimized for Pentium 4.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2007, 2008, 2010, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2008, 2010-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

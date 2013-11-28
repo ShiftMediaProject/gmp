@@ -1,6 +1,6 @@
 dnl  x86 pentium time stamp counter access routine.
 
-dnl  Copyright 1999, 2000, 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2003-2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

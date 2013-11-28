@@ -2,8 +2,7 @@ dnl  AMD64 mpn_copyd optimised for CPUs with fast AVX.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2003, 2005, 2007, 2011, 2012, 2013 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2003, 2005, 2007, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- schoolbook Hensel division by
 dnl  1-limb divisor, returning quotient only.
 
-dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2009, 2011, 2012 Free Software
+dnl  Copyright 2001, 2002, 2004-2006, 2009, 2011, 2012 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

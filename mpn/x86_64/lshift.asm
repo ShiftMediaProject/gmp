@@ -2,7 +2,7 @@ dnl  AMD64 mpn_lshift -- mpn left shift.
 
 dnl  Copyright 2003, 2005, 2007, 2009, 2011, 2012 Free Software Foundation,
 dnl  Inc.
-dnl
+
 dnl  This file is part of the GNU MP Library.
 
 dnl  The GNU MP Library is free software; you can redistribute it and/or modify

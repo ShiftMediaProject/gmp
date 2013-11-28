@@ -1,8 +1,8 @@
 /* mpz_cmp(u,v) -- Compare U, V.  Return positive, zero, or negative
    based on if U > V, U == V, or U < V.
 
-Copyright 1991, 1993, 1994, 1996, 2001, 2002, 2011 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001, 2002, 2011 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

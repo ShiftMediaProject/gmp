@@ -1,7 +1,7 @@
 dnl  HP-PA 2.0 32-bit mpn_add_n -- Add two limb vectors of the same length > 0
 dnl  and store sum in a third limb vector.
 
-dnl  Copyright 1997, 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1997, 1998, 2000-2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

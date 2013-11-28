@@ -1,7 +1,6 @@
 dnl  AMD K6 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2007 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1999-2003, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -1,6 +1,6 @@
 dnl  HP-PA 2.0 64-bit mpn_sqr_diagonal.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001-2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

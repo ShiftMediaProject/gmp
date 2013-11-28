@@ -1,8 +1,7 @@
 dnl  PowerPC-32 mpn_addmul_1 -- Multiply a limb vector with a limb and add the
 dnl  result to a second limb vector.
 
-dnl  Copyright 1995, 1997, 1998, 2000, 2001, 2002, 2003, 2005 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1995, 1997, 1998, 2000-2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

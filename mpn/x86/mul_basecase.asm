@@ -1,8 +1,7 @@
 dnl  x86 mpn_mul_basecase -- Multiply two limb vectors and store the result
 dnl  in a third limb vector.
 
-dnl  Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1996-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -1,7 +1,6 @@
 dnl  PowerPC-32 mpn_mod_34lsub1 -- mpn remainder mod 2^24-1.
 
-dnl  Copyright 2002, 2003, 2005, 2006, 2007, 2012 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2002, 2003, 2005-2007, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

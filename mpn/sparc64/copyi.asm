@@ -1,6 +1,6 @@
 dnl  SPARC v9 mpn_copyi -- Copy a limb vector, incrementing.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999-2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

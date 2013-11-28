@@ -3,7 +3,7 @@ dnl  x86 fat binary entrypoints.
 dnl  Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
 dnl  Torbjorn Granlund (port to x86_64)
 
-dnl  Copyright 2003, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2009, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* POWER4/PowerPC970 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2008-2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

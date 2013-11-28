@@ -1,7 +1,7 @@
 dnl  SPARC v9 64-bit mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 1998, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000-2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

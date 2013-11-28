@@ -1,8 +1,7 @@
 dnl  HP-PA 1.1 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1992, 1993, 1994, 2000, 2001, 2002 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1992-1994, 2000-2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

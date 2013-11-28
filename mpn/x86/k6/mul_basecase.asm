@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999-2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

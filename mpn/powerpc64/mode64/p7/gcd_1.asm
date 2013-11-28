@@ -1,7 +1,6 @@
 dnl  PowerPC-64 mpn_gcd_1.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012, 2013 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

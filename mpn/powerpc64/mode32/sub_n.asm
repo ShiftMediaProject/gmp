@@ -1,7 +1,7 @@
 dnl  PowerPC-64/mode32 mpn_sub_n -- Subtract two limb vectors of the same
 dnl  length and store difference in a third limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

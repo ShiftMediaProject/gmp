@@ -1,7 +1,6 @@
 dnl  x86-64 mpn_addmul_1 and mpn_submul_1, optimized for "Core 2".
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009, 2011, 2012 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2003-2005, 2007-2009, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

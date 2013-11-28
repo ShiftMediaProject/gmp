@@ -1,6 +1,6 @@
 dnl  x86 mpn_copyd -- copy limb vector, decrementing.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

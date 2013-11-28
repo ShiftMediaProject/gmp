@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_cnd_add_n/mpn_cnd_sub_n.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007, 2011, 2012 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003-2005, 2007, 2011, 2012 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,8 +1,7 @@
 dnl  x86 __gmpn_addmul_1 (for 386 and 486) -- Multiply a limb vector with a
 dnl  limb and add the result to a second limb vector.
 
-dnl  Copyright 1992, 1994, 1997, 1999, 2000, 2001, 2002, 2005 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1992, 1994, 1997, 1999-2002, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

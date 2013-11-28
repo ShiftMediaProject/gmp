@@ -1,6 +1,6 @@
 dnl  mc68020 mpn_umul_ppmm -- limb by limb multiplication
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999-2001 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

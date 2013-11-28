@@ -1,7 +1,6 @@
 dnl  AMD64 mpn_addmul_1/mpn_submul_1 optimised for Intel Atom.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2003-2005, 2007, 2008, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

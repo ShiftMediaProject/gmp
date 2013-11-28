@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

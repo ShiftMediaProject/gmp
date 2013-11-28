@@ -1,7 +1,7 @@
 dnl  PowerPC-64/mode32 mpn_add_n -- Add two limb vectors of the same length > 0
 dnl  and store sum in a third limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

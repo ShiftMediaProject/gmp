@@ -1,7 +1,7 @@
 dnl  SPARC v8 mpn_addmul_1 -- Multiply a limb vector with a limb and
 dnl  add the result to a second limb vector.
 
-dnl  Copyright 1992, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1992-1995, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

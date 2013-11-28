@@ -7,8 +7,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2000, 2001, 2002, 2003, 2005, 2006, 2007, 2009 Free Software
-Foundation, Inc.
+Copyright 2000-2003, 2005-2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

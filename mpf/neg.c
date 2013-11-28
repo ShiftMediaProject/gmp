@@ -1,6 +1,6 @@
 /* mpf_neg -- Negate a float.
 
-Copyright 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1993-1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -2,8 +2,8 @@ dnl  PowerPC-64 mpn_sqr_basecase.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2008, 2010, 2011 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003-2006, 2008, 2010, 2011 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 

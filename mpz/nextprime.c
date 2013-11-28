@@ -1,6 +1,6 @@
 /* mpz_nextprime(p,t) - compute the next prime > t and store that in p.
 
-Copyright 1999, 2000, 2001, 2008, 2009, 2012 Free Software Foundation, Inc.
+Copyright 1999-2001, 2008, 2009, 2012 Free Software Foundation, Inc.
 
 Contributed to the GNU project by Niels Möller and Torbjorn Granlund.
 

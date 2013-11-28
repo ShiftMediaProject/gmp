@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for alpha assembler on unicos.
 
 
-dnl  Copyright 2000, 2002, 2003, 2004, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002-2004, 2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

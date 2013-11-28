@@ -6,8 +6,7 @@
    positive is (1/4)**reps, where reps is the number of internal passes of the
    probabilistic algorithm.  Knuth indicates that 25 passes are reasonable.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2005 Free
-Software Foundation, Inc.  Miller-Rabin code contributed by John Amanatides.
+Copyright 1991, 1993, 1994, 1996-2002, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

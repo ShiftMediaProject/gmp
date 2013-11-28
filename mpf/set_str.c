@@ -2,8 +2,8 @@
    in base BASE to a float in dest.  If BASE is zero, the leading characters
    of STRING is used to figure out the base.
 
-Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2007,
-2008, 2011, 2013 Free Software Foundation, Inc.
+Copyright 1993-1997, 2000-2003, 2005, 2007, 2008, 2011, 2013 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

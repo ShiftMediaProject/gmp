@@ -1,7 +1,7 @@
 dnl  Intel Pentium 4 mpn_popcount, mpn_hamdist -- population count and
 dnl  hamming distance.
 
-dnl  Copyright 2000, 2001, 2002, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

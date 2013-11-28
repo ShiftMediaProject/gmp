@@ -1,7 +1,7 @@
 /* Cray PVP/IEEE mpn_addmul_1 -- multiply a limb vector with a limb and add the
    result to a second limb vector.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,7 +1,6 @@
 dnl  PowerPC-64 mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 2004, 2005, 2006, 2008, 2010, 2013 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2004-2006, 2008, 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

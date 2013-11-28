@@ -2,7 +2,7 @@ dnl  IA-64 mpn_mod_34lsub1
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2003, 2004, 2005, 2010 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

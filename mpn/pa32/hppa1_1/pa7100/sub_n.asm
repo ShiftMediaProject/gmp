@@ -2,8 +2,7 @@ dnl  HP-PA mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 dnl  store difference in a third limb vector.  Optimized for the PA7100, where
 dnl  is runs at 4.25 cycles/limb.
 
-dnl  Copyright 1992, 1994, 2000, 2001, 2002, 2003 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1992, 1994, 2000-2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

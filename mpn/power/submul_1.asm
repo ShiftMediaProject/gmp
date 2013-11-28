@@ -1,7 +1,7 @@
 dnl  IBM POWER mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1992, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 1999-2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

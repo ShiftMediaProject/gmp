@@ -1,6 +1,6 @@
 /* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2013 Free Software Foundation, Inc.
+Copyright 1999-2004, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

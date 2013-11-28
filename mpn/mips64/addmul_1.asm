@@ -1,8 +1,7 @@
 dnl  MIPS64 mpn_addmul_1 -- Multiply a limb vector with a single limb and add
 dnl  the product to a second limb vector.
 
-dnl  Copyright 1992, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1992, 1994, 1995, 2000-2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

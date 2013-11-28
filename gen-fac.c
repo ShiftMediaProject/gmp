@@ -1,6 +1,6 @@
 /* Generate data for combinatorics: fac_ui, bin_uiui, ...
 
-Copyright 2002, 2011, 2012, 2013 Free Software Foundation, Inc.
+Copyright 2002, 2011-2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

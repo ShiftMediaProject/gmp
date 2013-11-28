@@ -3,8 +3,8 @@
    Return the single-limb remainder.
    There are no constraints on the value of the divisor.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2002, 2007, 2008, 2009, 2012 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2002, 2007-2009, 2012 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

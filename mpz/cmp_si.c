@@ -1,8 +1,7 @@
 /* mpz_cmp_si(u,v) -- Compare an integer U with a single-word int V.
    Return positive, zero, or negative based on if U > V, U == V, or U < V.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 2000, 2001, 2002, 2012, 2013 Free
-Software Foundation, Inc.
+Copyright 1991, 1993-1996, 2000-2002, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  mc68020 mpn_udiv_qrnnd -- 2x1 limb division
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999-2001 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

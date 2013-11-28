@@ -1,7 +1,6 @@
 dnl  X86-64 mpn_rsh1add_n, mpn_rsh1sub_n optimised for Intel Sandy Bridge.
 
-dnl  Copyright 2003, 2005, 2009, 2010, 2011, 2012 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2003, 2005, 2009-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -2,8 +2,7 @@ dnl  AMD64 mpn_addmul_2 optimised for Intel Sandy Bridge.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2011, 2012, 2013 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2003-2005, 2007, 2008, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

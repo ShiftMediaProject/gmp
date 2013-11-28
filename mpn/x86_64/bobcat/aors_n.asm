@@ -1,7 +1,6 @@
 dnl  AMD64 mpn_add_n, mpn_sub_n optimised for bobcat.
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2010, 2011, 2012, 2013 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 2003-2005, 2007, 2008, 2010-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

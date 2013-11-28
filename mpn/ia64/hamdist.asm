@@ -2,7 +2,7 @@ dnl  IA-64 mpn_hamdist -- mpn hamming distance.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

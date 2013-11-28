@@ -1,7 +1,7 @@
 /* Test mpn_and, mpn_ior, mpn_xor, mpn_andn, mpn_iorn, mpn_xnor, mpn_nand, and
    mpn_nior.
 
-Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
+Copyright 2011-2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

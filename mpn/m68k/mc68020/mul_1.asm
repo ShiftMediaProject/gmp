@@ -1,7 +1,6 @@
 dnl  mc68020 mpn_mul_1 -- mpn by limb multiply
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001, 2002 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1992, 1994, 1996, 1999-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

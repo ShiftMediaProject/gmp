@@ -1,5 +1,5 @@
 divert(-1)
-dnl  Copyright 2011, 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2011-2013 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -1,7 +1,6 @@
 dnl  PowerPC-32 mpn_rshift -- Shift a number right.
 
-dnl  Copyright 1995, 1998, 2000, 2002, 2003, 2004, 2005 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1995, 1998, 2000, 2002-2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

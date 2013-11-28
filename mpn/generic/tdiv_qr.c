@@ -11,7 +11,7 @@
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
 
-Copyright 1997, 2000, 2001, 2002, 2005, 2009 Free Software Foundation, Inc.
+Copyright 1997, 2000-2002, 2005, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

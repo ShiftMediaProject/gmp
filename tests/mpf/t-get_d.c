@@ -1,6 +1,6 @@
 /* Test mpf_get_d and mpf_set_d.
 
-Copyright 1996, 1999, 2000, 2001, 2009 Free Software Foundation, Inc.
+Copyright 1996, 1999-2001, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

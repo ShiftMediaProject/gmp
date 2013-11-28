@@ -1,6 +1,6 @@
 # GMP perl module
 
-# Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+# Copyright 2001-2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -624,7 +624,7 @@ Some assertion checking is available as a compile-time option.
 
 =head1 COPYRIGHT
 
-Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright 2001-2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* mpz_abs(dst, src) -- Assign the absolute value of SRC to DST.
 
-Copyright 1991, 1993, 1994, 1995, 2001, 2012 Free Software Foundation, Inc.
+Copyright 1991, 1993-1995, 2001, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

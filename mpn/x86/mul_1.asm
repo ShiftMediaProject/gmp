@@ -1,8 +1,7 @@
 dnl  x86 mpn_mul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
 dnl  with a limb and store the result in a second limb vector.
 
-dnl  Copyright 1992, 1994, 1997, 1998, 1999, 2000, 2001, 2002, 2005 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 1997-2002, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

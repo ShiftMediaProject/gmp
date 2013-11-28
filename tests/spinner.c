@@ -1,7 +1,7 @@
 /* A stupid little spinning wheel designed to make it look like useful work
    is being done.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999-2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

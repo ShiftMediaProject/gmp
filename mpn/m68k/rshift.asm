@@ -1,7 +1,6 @@
 dnl  mc68020 mpn_rshift -- mpn right shift.
 
-dnl  Copyright 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1996, 1999-2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

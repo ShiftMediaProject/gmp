@@ -1,6 +1,6 @@
 /* Test mpz_set_si and mpz_init_set_si.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

@@ -1,7 +1,7 @@
 /* mpf_size(x) -- return the number of limbs currently used by the
    value of the float X.
 
-Copyright 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1993-1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

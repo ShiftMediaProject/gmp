@@ -1,7 +1,7 @@
 dnl  HP-PA  __udiv_qrnnd division support, used from longlong.h.
 dnl  This version runs fast on pre-PA7000 CPUs.
 
-dnl  Copyright 1993, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1993, 1994, 2000-2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

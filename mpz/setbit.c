@@ -1,6 +1,6 @@
 /* mpz_setbit -- set a specified bit.
 
-Copyright 1991, 1993, 1994, 1995, 1997, 1999, 2001, 2002, 2012 Free Software
+Copyright 1991, 1993-1995, 1997, 1999, 2001, 2002, 2012 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

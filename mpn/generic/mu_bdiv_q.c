@@ -8,7 +8,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+Copyright 2005-2007, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

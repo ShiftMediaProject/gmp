@@ -1,7 +1,7 @@
 dnl  HP-PA 7100/7200 mpn_addmul_1 -- Multiply a limb vector with a limb and
 dnl  add the result to a second limb vector.
 
-dnl  Copyright 1995, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1995, 2000-2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

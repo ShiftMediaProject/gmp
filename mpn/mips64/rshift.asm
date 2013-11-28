@@ -1,6 +1,6 @@
 dnl  MIPS64 mpn_rshift -- Right shift.
 
-dnl  Copyright 1995, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1995, 2000-2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

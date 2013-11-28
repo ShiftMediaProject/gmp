@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for 68k assembler.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001-2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

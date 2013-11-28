@@ -1,7 +1,6 @@
 /* mpn_add_n -- Add equal length limb vectors.
 
-Copyright 1992, 1993, 1994, 1996, 2000, 2002, 2009 Free Software Foundation,
-Inc.
+Copyright 1992-1994, 1996, 2000, 2002, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

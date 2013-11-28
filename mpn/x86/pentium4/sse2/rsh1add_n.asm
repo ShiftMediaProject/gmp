@@ -1,6 +1,6 @@
 dnl  Intel Pentium-4 mpn_rsh1add_n -- mpn (x+y)/2
 
-dnl  Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2001-2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

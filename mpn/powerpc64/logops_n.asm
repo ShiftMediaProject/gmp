@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
 dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

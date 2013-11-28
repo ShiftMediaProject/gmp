@@ -1,7 +1,6 @@
 dnl  PowerPC-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007, 2011 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1999-2001, 2003-2005, 2007, 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

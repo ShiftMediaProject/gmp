@@ -2,8 +2,7 @@ dnl  Table used for mpn_invert_limb
 
 dnl  Contributed to the GNU project by Torbjorn Granlund and Niels Möller.
 
-dnl  Copyright 2004, 2007, 2008, 2009, 2011, 2012, 2013 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2004, 2007-2009, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

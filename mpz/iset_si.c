@@ -1,8 +1,7 @@
 /* mpz_init_set_si(dest,val) -- Make a new multiple precision in DEST and
    assign VAL to the new number.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2012 Free Software
-Foundation, Inc.
+Copyright 1991, 1993-1995, 2000-2002, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

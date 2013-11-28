@@ -1,6 +1,6 @@
 dnl  Generic x86 mpn_mod_34lsub1 -- mpn remainder modulo 2^24-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

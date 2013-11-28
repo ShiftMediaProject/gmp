@@ -2,7 +2,7 @@ dnl  IA-64 mpn_addlsh1_n, mpn_sublsh1_n, mpn_rsblsh1_n
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2003, 2004, 2005, 2010, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005, 2010, 2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

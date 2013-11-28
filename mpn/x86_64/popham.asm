@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_popcount, mpn_hamdist -- population count and hamming distance.
 
-dnl  Copyright 2004, 2005, 2007, 2010, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2007, 2010-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

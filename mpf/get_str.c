@@ -4,8 +4,7 @@
    example, the number 3.1416 would be returned as "31416" in DIGIT_PTR and
    1 in EXP.
 
-Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2006, 2011
-Free Software Foundation, Inc.
+Copyright 1993-1997, 2000-2003, 2005, 2006, 2011 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

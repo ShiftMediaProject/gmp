@@ -1,7 +1,6 @@
 dnl  PowerPC-64 mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2010, 2011, 2012
-dnl  Free Software Foundation, Inc.
+dnl  Copyright 1999-2001, 2003-2006, 2010-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

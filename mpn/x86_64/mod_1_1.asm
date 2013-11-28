@@ -2,7 +2,7 @@ dnl  AMD64 mpn_mod_1_1p
 
 dnl  Contributed to the GNU project by Torbjörn Granlund and Niels Möller.
 
-dnl  Copyright 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2009-2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

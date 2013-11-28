@@ -1,7 +1,7 @@
 /* gmp_randinit_lc_2exp_size -- initialize a random state with a linear
    congruential generator of a requested size.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999-2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

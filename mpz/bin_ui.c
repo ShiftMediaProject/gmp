@@ -1,7 +1,6 @@
 /* mpz_bin_ui - compute n over k.
 
-Copyright 1998, 1999, 2000, 2001, 2002, 2012, 2013 Free Software
-Foundation, Inc.
+Copyright 1998-2002, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

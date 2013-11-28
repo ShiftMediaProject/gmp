@@ -4,8 +4,8 @@
    the base in the C standard way, i.e.  0xhh...h means base 16,
    0oo...o means base 8, otherwise assume base 10.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000, 2001, 2002, 2003, 2005,
-2011, 2012, 2013 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996-1998, 2000-2003, 2005, 2011-2013 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

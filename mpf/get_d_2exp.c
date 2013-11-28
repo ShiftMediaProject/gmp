@@ -1,6 +1,6 @@
 /* double mpf_get_d_2exp (signed long int *exp, mpf_t src).
 
-Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright 2001-2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

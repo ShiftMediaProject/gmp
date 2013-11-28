@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2000-2003, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

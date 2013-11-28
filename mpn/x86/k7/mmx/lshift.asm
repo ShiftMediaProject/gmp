@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_lshift -- mpn left shift.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

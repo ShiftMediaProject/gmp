@@ -1,6 +1,6 @@
 dnl  Intel Pentium MMX mpn_mul_1 -- mpn by limb multiplication.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_add_n/mpn_sub_n -- mpn add or subtract.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999-2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

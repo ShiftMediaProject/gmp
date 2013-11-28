@@ -1,6 +1,6 @@
 dnl  Intel mpn_add_n/mpn_sub_n optimised for Conroe, Nehalem.
 
-dnl  Copyright 2006, 2007, 2011, 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2007, 2011-2013 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

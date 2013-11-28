@@ -1,7 +1,6 @@
 dnl  x86-64 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 2004, 2005, 2007, 2008, 2009, 2010, 2012 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2004, 2005, 2007-2010, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

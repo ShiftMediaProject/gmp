@@ -1,6 +1,6 @@
 dnl  Intel Pentium mpn_mul_basecase -- mpn by mpn multiplication.
 
-dnl  Copyright 1996, 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1996, 1998-2000, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

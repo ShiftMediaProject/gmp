@@ -1,7 +1,6 @@
 /* Test mpz_setbit, mpz_clrbit, mpz_tstbit.
 
-Copyright 1997, 2000, 2001, 2002, 2003, 2012, 2013 Free Software
-Foundation, Inc.
+Copyright 1997, 2000-2003, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

@@ -1,6 +1,6 @@
 dnl  AMD K6-2 mpn_com -- mpn bitwise one's complement.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

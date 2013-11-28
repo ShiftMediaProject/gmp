@@ -1,8 +1,7 @@
 /* Reference mpn functions, designed to be simple, portable and independent
    of the normal gmp code.  Speed isn't a consideration.
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2011, 2012, 2013 Free Software Foundation, Inc.
+Copyright 1996-2009, 2011-2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

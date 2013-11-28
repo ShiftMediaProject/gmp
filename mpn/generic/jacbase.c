@@ -3,7 +3,7 @@
    THIS INTERFACE IS PRELIMINARY AND MIGHT DISAPPEAR OR BE SUBJECT TO
    INCOMPATIBLE CHANGES IN A FUTURE RELEASE OF GMP.
 
-Copyright 1999, 2000, 2001, 2002, 2010 Free Software Foundation, Inc.
+Copyright 1999-2002, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

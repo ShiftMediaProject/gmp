@@ -3,8 +3,7 @@ dnl  AMD64 mpn_gcd_1 optimised for Intel C2, NHM, SBR and AMD K10, BD.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000, 2001, 2002, 2005, 2009, 2011, 2012 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

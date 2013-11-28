@@ -1,7 +1,6 @@
 dnl  AMD64 mpn_modexact_1_odd -- Hensel norm remainder.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2011, 2012 Free
-dnl  Software Foundation, Inc.
+dnl  Copyright 2000-2006, 2011, 2012 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

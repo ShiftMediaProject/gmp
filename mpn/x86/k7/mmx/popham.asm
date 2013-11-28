@@ -1,7 +1,7 @@
 dnl  AMD K7 mpn_popcount, mpn_hamdist -- population count and hamming
 dnl  distance.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

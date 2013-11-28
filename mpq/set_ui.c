@@ -1,7 +1,7 @@
 /* mpq_set_ui(dest,ulong_num,ulong_den) -- Set DEST to the rational number
    ULONG_NUM/ULONG_DEN.
 
-Copyright 1991, 1994, 1995, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2001-2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

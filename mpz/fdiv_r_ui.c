@@ -1,7 +1,7 @@
 /* mpz_fdiv_r_ui -- Division rounding the quotient towards -infinity.
    The remainder gets the same sign as the denominator.
 
-Copyright 1994, 1995, 1996, 2001, 2002, 2004, 2005, 2012 Free Software Foundation,
+Copyright 1994-1996, 2001, 2002, 2004, 2005, 2012 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

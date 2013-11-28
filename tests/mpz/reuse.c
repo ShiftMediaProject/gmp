@@ -6,8 +6,7 @@
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
 
-Copyright 1996, 1999, 2000, 2001, 2002, 2009, 2012, 2013 Free Software
-Foundation, Inc.
+Copyright 1996, 1999-2002, 2009, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

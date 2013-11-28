@@ -1,6 +1,6 @@
 /* mpz_get_ui(integer) -- Return the least significant digit from INTEGER.
 
-Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993-1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
