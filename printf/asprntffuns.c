@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
+along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 /* These routines are in a separate file so that the mpz_t, mpq_t and mpf_t

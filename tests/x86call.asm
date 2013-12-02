@@ -16,7 +16,7 @@ dnl  Public License for more details.
 
 dnl  You should have received a copy of the GNU General Public License along
 dnl  with the GNU MP Library test suite.  If not, see
-dnl  http://www.gnu.org/licenses/.
+dnl  https://www.gnu.org/licenses/.
 
 
 dnl  The current version of the code attempts to keep the call/return

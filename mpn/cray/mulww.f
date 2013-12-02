@@ -15,7 +15,7 @@ c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c     Lesser General Public License for more details.
 
 c     You should have received a copy of the GNU Lesser General Public License
-c     along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
+c     along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 
 c     p1[] = hi(a[]*s); the upper limbs of each product
 c     p0[] = low(a[]*s); the corresponding lower limbs

@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
+dnl  along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 
 
 dnl  This code runs at 7.25 cycles/limb on PA8000 and 7.75 cycles/limb on
