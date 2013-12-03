@@ -1,3 +1,21 @@
+2013-12-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/div_qr_1.c: Make constant args asm inlines become limbs.
+	* mpn/generic/div_qr_1n_pi1.c: Likewise.
+	* mpn/generic/div_qr_2.c: Likewise.
+	* mpn/generic/div_qr_2.c: Likewise.
+	* mpn/generic/mod_1_1.c: Likewise.
+	* mpn/generic/mod_1_2.c: Likewise.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+	* mpn/generic/mulmid_basecase.c: Likewise.
+	* mpn/generic/mulmod_bnm1.c: Likewise.
+	* mpn/generic/sqrmod_bnm1.c: Likewise.
+	* mpn/sparc64/divrem_1.c: Likewise.
+	* mpn/sparc64/mod_1_4.c: Likewise.
+
+	* mpn/generic/toom_interpolate_7pts.c (BINVERT_15): Fix typo.
+
 2013-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/dos64.m4 (CALL): Provide to override default.
@@ -810,6 +828,9 @@
 
 	* mpn/arm/dive_1.asm: Rewrite count-trailing-zeros code, using private
 	table.
+
+	* mpn/arm: Canonicalise arm assembly to use old style "mov ... lsl" for
+	shift ops.
 
 2013-04-07  Torbjorn Granlund  <tege@gmplib.org>
 
