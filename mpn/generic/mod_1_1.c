@@ -191,7 +191,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t bmodb[4])
 
   rl = ap[n - 1];
   umul_ppmm (ph, pl, rl, B1modb);
-  add_ssaaaa (rh, rl, ph, pl, 0, ap[n - 2]);
+  add_ssaaaa (rh, rl, ph, pl, CNST_LIMB(0), ap[n - 2]);
 
   for (i = n - 3; i >= 0; i -= 1)
     {
@@ -200,7 +200,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t bmodb[4])
 	    + HI(rr)  * (B^2 mod b)		<= (B-1)(b-1)
       */
       umul_ppmm (ph, pl, rl, B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[i]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[i]);
 
       umul_ppmm (rh, rl, rh, B2modb);
       add_ssaaaa (rh, rl, rh, rl, ph, pl);

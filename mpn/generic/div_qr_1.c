@@ -82,7 +82,7 @@ mpn_div_qr_1 (mp_ptr qp, mp_limb_t *qh, mp_srcptr up, mp_size_t n,
 	  && BELOW_THRESHOLD (n, DIV_QR_1_UNNORM_THRESHOLD))
 	{
 	  uh = up[--n];
-	  udiv_qrnnd (*qh, uh, 0, uh, d);
+	  udiv_qrnnd (*qh, uh, CNST_LIMB(0), uh, d);
 	  cnt = 0;
 	  goto plain;
 	}

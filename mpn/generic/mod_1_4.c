@@ -96,7 +96,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
     {
     case 0:
       umul_ppmm (ph, pl, ap[n - 3], B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 4]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[n - 4]);
       umul_ppmm (ch, cl, ap[n - 2], B2modb);
       add_ssaaaa (ph, pl, ph, pl, ch, cl);
       umul_ppmm (rh, rl, ap[n - 1], B3modb);
@@ -115,7 +115,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
       break;
     case 3:
       umul_ppmm (ph, pl, ap[n - 2], B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 3]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[n - 3]);
       umul_ppmm (rh, rl, ap[n - 1], B2modb);
       add_ssaaaa (rh, rl, rh, rl, ph, pl);
       n -= 3;
@@ -132,7 +132,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 	    + HI(rr)  * (B^5 mod b)		<= (B-1)(b-1)
       */
       umul_ppmm (ph, pl, ap[i + 1], B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[i + 0]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[i + 0]);
 
       umul_ppmm (ch, cl, ap[i + 2], B2modb);
       add_ssaaaa (ph, pl, ph, pl, ch, cl);
@@ -148,7 +148,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
     }
 
   umul_ppmm (rh, cl, rh, B1modb);
-  add_ssaaaa (rh, rl, rh, rl, 0, cl);
+  add_ssaaaa (rh, rl, rh, rl, CNST_LIMB(0), cl);
 
   cnt = cps[1];
   bi = cps[0];

@@ -221,7 +221,7 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	 the rsh1add was a simple rshift: the top bit is 0. cy=1 => hi=0. */
 #endif
 #if GMP_NAIL_BITS == 0
-      add_ssaaaa(cy, rp[n-1], cy, rp[n-1], 0, hi);
+      add_ssaaaa(cy, rp[n-1], cy, rp[n-1], CNST_LIMB(0), hi);
 #else
       cy += (hi & rp[n-1]) >> (GMP_NUMB_BITS-1);
       rp[n-1] ^= hi;

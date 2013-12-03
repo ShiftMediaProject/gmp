@@ -97,7 +97,7 @@ mpn_mod_1s_2p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[5])
 	}
 
       umul_ppmm (ph, pl, ap[n - 2], B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 3]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[n - 3]);
       umul_ppmm (rh, rl, ap[n - 1], B2modb);
       add_ssaaaa (rh, rl, rh, rl, ph, pl);
       n--;
@@ -116,7 +116,7 @@ mpn_mod_1s_2p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[5])
 	    + HI(rr)  * (B^3 mod b)		<= (B-1)(b-1)
       */
       umul_ppmm (ph, pl, ap[i + 1], B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[i + 0]);
+      add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[i + 0]);
 
       umul_ppmm (ch, cl, rl, B2modb);
       add_ssaaaa (ph, pl, ph, pl, ch, cl);
@@ -126,7 +126,7 @@ mpn_mod_1s_2p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[5])
     }
 
   umul_ppmm (rh, cl, rh, B1modb);
-  add_ssaaaa (rh, rl, rh, rl, 0, cl);
+  add_ssaaaa (rh, rl, rh, rl, CNST_LIMB(0), cl);
 
   cnt = cps[1];
   bi = cps[0];

@@ -228,9 +228,9 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
        *    +---+---+---+
       */
       umul_ppmm (p1, t, u1, dinv);
-      add_ssaaaa (q2, q1, -u2, u2 & dinv, 0, u1);
-      add_ssaaaa (q2, q1, q2, q1, 0, p1);
-      add_ssaaaa (q2, q1, q2, q1, 0, q0);
+      add_ssaaaa (q2, q1, -u2, u2 & dinv, CNST_LIMB()0, u1);
+      add_ssaaaa (q2, q1, q2, q1, CNST_LIMB(0), p1);
+      add_ssaaaa (q2, q1, q2, q1, CNST_LIMB(0), q0);
       q0 = t;
 
       umul_ppmm (p1, p0, u1, B2);
@@ -238,7 +238,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
       u0 -= (-cy) & d;
 
       /* Final q update */
-      add_ssaaaa (q2, q1, q2, q1, 0, cy);
+      add_ssaaaa (q2, q1, q2, q1, CNST_LIMB(0), cy);
       qp[j+1] = q1;
       MPN_INCR_U (qp+j+2, n-j-2, q2);
 
@@ -253,7 +253,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
   u1 -= (-t) & d;
 
   udiv_qrnnd_preinv (t, u0, u1, u0, d, dinv);
-  add_ssaaaa (q1, q0, q1, q0, 0, t);
+  add_ssaaaa (q1, q0, q1, q0, CNST_LIMB(0), t);
 
   MPN_INCR_U (qp+1, n-1, q1);
 

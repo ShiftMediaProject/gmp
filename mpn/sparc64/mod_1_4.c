@@ -53,16 +53,16 @@ mpn_mod_1s_4p_cps (mp_limb_t cps[7], mp_limb_t b)
   ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   cps[2] = B1modb >> cnt;
 
-  udiv_rnnd_preinv (B2modb, B1modb, 0, b, bi);
+  udiv_rnnd_preinv (B2modb, B1modb, CNST_LIMB(0), b, bi);
   cps[3] = B2modb >> cnt;
 
-  udiv_rnnd_preinv (B3modb, B2modb, 0, b, bi);
+  udiv_rnnd_preinv (B3modb, B2modb, CNST_LIMB(0), b, bi);
   cps[4] = B3modb >> cnt;
 
-  udiv_rnnd_preinv (B4modb, B3modb, 0, b, bi);
+  udiv_rnnd_preinv (B4modb, B3modb, CNST_LIMB(0), b, bi);
   cps[5] = B4modb >> cnt;
 
-  udiv_rnnd_preinv (B5modb, B4modb, 0, b, bi);
+  udiv_rnnd_preinv (B5modb, B4modb, CNST_LIMB(0), b, bi);
   cps[6] = B5modb >> cnt;
 
 #if WANT_ASSERT
@@ -100,7 +100,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 	{
 	case 0:
 	  umul_ppmm_s (ph, pl, ap[n - 3], B1modb);
-	  add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 4]);
+	  add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[n - 4]);
 	  umul_ppmm_s (ch, cl, ap[n - 2], B2modb);
 	  add_ssaaaa (ph, pl, ph, pl, ch, cl);
 	  umul_ppmm_s (rh, rl, ap[n - 1], B3modb);
@@ -119,7 +119,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 	  break;
 	case 3:
 	  umul_ppmm_s (ph, pl, ap[n - 2], B1modb);
-	  add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 3]);
+	  add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[n - 3]);
 	  umul_ppmm_s (rh, rl, ap[n - 1], B2modb);
 	  add_ssaaaa (rh, rl, rh, rl, ph, pl);
 	  n -= 3;
@@ -136,7 +136,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 		+ HI(rr)  * (B^5 mod b)		<= (B-1)(b-1)
 	  */
 	  umul_ppmm_s (ph, pl, ap[i + 1], B1modb);
-	  add_ssaaaa (ph, pl, ph, pl, 0, ap[i + 0]);
+	  add_ssaaaa (ph, pl, ph, pl, CNST_LIMB(0), ap[i + 0]);
 
 	  umul_ppmm_s (ch, cl, ap[i + 2], B2modb);
 	  add_ssaaaa (ph, pl, ph, pl, ch, cl);
@@ -152,7 +152,7 @@ mpn_mod_1s_4p (mp_srcptr ap, mp_size_t n, mp_limb_t b, const mp_limb_t cps[7])
 	}
 
       umul_ppmm_s (rh, cl, rh, B1modb);
-      add_ssaaaa (rh, rl, rh, rl, 0, cl);
+      add_ssaaaa (rh, rl, rh, rl, CNST_LIMB(0), cl);
     }
   else
     {

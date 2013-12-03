@@ -58,7 +58,7 @@ mpn_mulmid_basecase (mp_ptr rp,
     {
       up--, vp++;
       cy = mpn_addmul_1 (rp, up, un, vp[0]);
-      add_ssaaaa (hi, lo, hi, lo, 0, cy);
+      add_ssaaaa (hi, lo, hi, lo, CNST_LIMB(0), cy);
     }
 
   /* store final limbs */
