@@ -228,7 +228,7 @@ mpn_div_qr_1n_pi1 (mp_ptr qp, mp_srcptr up, mp_size_t n, mp_limb_t u1,
        *    +---+---+---+
       */
       umul_ppmm (p1, t, u1, dinv);
-      add_ssaaaa (q2, q1, -u2, u2 & dinv, CNST_LIMB()0, u1);
+      add_ssaaaa (q2, q1, -u2, u2 & dinv, CNST_LIMB(0), u1);
       add_ssaaaa (q2, q1, q2, q1, CNST_LIMB(0), p1);
       add_ssaaaa (q2, q1, q2, q1, CNST_LIMB(0), q0);
       q0 = t;
