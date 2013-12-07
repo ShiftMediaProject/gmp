@@ -21,6 +21,10 @@ Changes between GMP version 5.1.* and 5.2.0
   * Speedup for Intel Sandy Bridge, Ivy Bridge, Haswell, thanks to rewritten
     and vastly expanded assembly support.
 
+  * Faster mixed arithmetic between mpq_class and double.
+
+  * With g++, optimize more operations when one argument is a simple constant.
+
   FEATURES
   * Support for new Intel and AMD CPUs.
 
