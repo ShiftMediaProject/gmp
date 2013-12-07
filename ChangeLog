@@ -1,3 +1,8 @@
+2013-12-07  Niels Möller  <nisse@lysator.liu.se>
+
+	* configfsf.sub: Updated to version 2013-10-01, from gnulib.
+	* configfsf.guess: Updated to version 2013-11-29, from gnulib.
+
 2013-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/div_qr_1.c: Make constant args asm inlines become limbs.
