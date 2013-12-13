@@ -41,7 +41,7 @@ ASM_START()
 
 EXTERN(binvert_limb_table)
 
-PROLOGUE(mpn_modexact_1c_odd)
+PROLOGUE(mpn_modexact_1c_odd,toc)
 	addic.	n, n, -1		C set carry as side effect
 	ld	r8, 0(up)
 	bne	cr0, L(2)

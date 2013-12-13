@@ -36,7 +36,7 @@ EXTERN_FUNC(mpn_mod_1)
 EXTERN_FUNC(mpn_modexact_1c_odd)
 
 ASM_START()
-PROLOGUE(mpn_gcd_1)
+PROLOGUE(mpn_gcd_1,toc)
 	mflr	r0
 	std	r30, -16(r1)
 	std	r31, -8(r1)

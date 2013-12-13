@@ -45,7 +45,7 @@ ASM_START()
 
 EXTERN_FUNC(mpn_invert_limb)
 
-PROLOGUE(mpn_divrem_1)
+PROLOGUE(mpn_divrem_1,toc)
 
 	mfcr	r12
 	add.	r10, r6, r4

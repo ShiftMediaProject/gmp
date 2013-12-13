@@ -42,7 +42,7 @@ ASM_START()
 
 EXTERN(binvert_limb_table)
 
-PROLOGUE(mpn_divexact_1)
+PROLOGUE(mpn_divexact_1,toc)
 	addic.	n, n, -1
 	ld	r12, 0(up)
 	bne	cr0, L(2)

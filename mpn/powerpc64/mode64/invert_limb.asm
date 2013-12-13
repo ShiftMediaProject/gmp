@@ -27,7 +27,7 @@ C POWER6               170
 C POWER7                66
 
 ASM_START()
-PROLOGUE(mpn_invert_limb)
+PROLOGUE(mpn_invert_limb,toc)
 	LEAL(	r12, approx_tab)
 	srdi	r9, r3, 32
 	rlwinm	r9, r9, 10, 23, 30	C (d >> 55) & 0x1fe

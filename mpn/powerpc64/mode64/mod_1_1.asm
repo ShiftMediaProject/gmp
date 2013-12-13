@@ -106,7 +106,7 @@ L(10):	subf	r3, r5, r3
 	blr
 EPILOGUE()
 
-PROLOGUE(mpn_mod_1_1p_cps)
+PROLOGUE(mpn_mod_1_1p_cps,toc)
 	mflr	r0
 	std	r29, -24(r1)
 	std	r30, -16(r1)

@@ -41,7 +41,7 @@ define(`retval',`r3')
 define(`rp',  `r7')
 
 ASM_START()
-PROLOGUE(mpn_rshift)
+PROLOGUE(mpn_rshift,toc)
 
 ifdef(`HAVE_ABI_mode32',`
 	rldicl	n, n, 0,32		C FIXME: avoid this zero extend

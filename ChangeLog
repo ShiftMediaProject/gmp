@@ -1,3 +1,28 @@
+2013-12-09  Ulrich Weigand  <Ulrich.Weigand@de.ibm.com>
+
+	* configure.ac: Check for ELFv2 ABI on PowerPC.
+	* mpn/powerpc64/elf.m4: Set assembler ABI version for ELFv2
+	and use appropriate PROLOGUE_cpu/EPILOGUE_cpu sequences.
+	Support optional 'toc' parameter to PROLOGUE_cpu.
+	* mpn/powerpc64/aix.m4: Allow (and ignore) optional
+	'toc' parameter to PROLOGUE_cpu.
+	* mpn/powerpc64/darwin.m4: Likewise.
+
+	* mpn/powerpc64/mode64/dive_1.asm (mpn_divexact_1): Add 'toc'
+	parameter to PROLOGUE.
+	* mpn/powerpc64/mode64/divrem_1.asm (mpn_divrem_1): Likewise.
+	* mpn/powerpc64/mode64/divrem_2.asm (mpn_divrem_2): Likewise.
+	* mpn/powerpc64/mode64/gcd_1.asm (mpn_gcd_1): Likewise.
+	* mpn/powerpc64/mode64/invert_limb.asm (mpn_invert_limb): Likewise.
+	* mpn/powerpc64/mode64/mod_1_1.asm (mpn_mod_1_1p_cps): Likewise.
+	* mpn/powerpc64/mode64/mod_1_4.asm (mpn_mod_1s_4p_cps): Likewise.
+	* mpn/powerpc64/mode64/mode1o.asm (mpn_modexact_1c_odd): Likewise.
+	* mpn/powerpc64/mode64/p7/gcd_1.asm (mpn_gcd_1): Likewise.
+	* mpn/powerpc64/p6/lshift.asm (mpn_lshift): Likewise.
+	* mpn/powerpc64/p6/lshiftc.asm (mpn_lshiftc): Likewise.
+	* mpn/powerpc64/p6/rshift.asm (mpn_rshift): Likewise.
+	* mpn/powerpc64/vmx/popcount.asm (mpn_popcount): Likewise.
+
 2013-12-07  Niels Möller  <nisse@lysator.liu.se>
 
 	* configfsf.sub: Updated to version 2013-10-01, from gnulib.

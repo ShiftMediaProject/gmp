@@ -18,15 +18,33 @@ dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 
-define(`ASM_START',`')
+define(`ASM_START',
+`ifdef(`ELFv2_ABI',
+`
+	.abiversion 2
+')')
 
-dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,toc])
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 
 define(`PROLOGUE_cpu',
-m4_assert_numargs(1)
-	`
+m4_assert_numargs_range(1,2)
+`ifelse(`$2',toc,,
+`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter')')')dnl
+ifdef(`ELFv2_ABI',
+`
+	.globl	$1
+	.type	$1, @function
+	.section	".text"
+	.align	5
+$1:
+ifelse(`$2',toc,`
+0:	addis	2, 12, (.TOC.-0b)@ha
+	addi	2, 2, (.TOC.-0b)@l
+	.localentry $1, .-$1
+',)
+',`
 	.globl	$1
 	.globl	.$1
 	.section	".opd","aw"
@@ -37,11 +55,16 @@ $1:
 	.type	.$1, @function
 	.section	".text"
 	.align	5
-.$1:')
+.$1:
+')')
 
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
-`	.size	.$1, .-.$1')
+`ifdef(`ELFv2_ABI',`
+	.size	$1, .-$1
+',`
+	.size	.$1, .-.$1
+')')
 
 define(`TOC_ENTRY', `')
 

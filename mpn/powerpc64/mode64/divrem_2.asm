@@ -42,7 +42,7 @@ ASM_START()
 
 EXTERN_FUNC(mpn_invert_limb)
 
-PROLOGUE(mpn_divrem_2)
+PROLOGUE(mpn_divrem_2,toc)
 	mflr	r0
 	std	r23, -72(r1)
 	std	r24, -64(r1)

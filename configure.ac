@@ -3504,6 +3504,14 @@ if test "$gmp_asm_syntax_testing" != no; then
       GMP_ASM_POWERPC_PIC_ALWAYS
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
+
+      # Check for Linux ELFv2 ABI
+      AC_EGREP_CPP(yes,
+[#if _CALL_ELF == 2
+yes
+#endif],
+      [GMP_DEFINE_RAW(["define(<ELFv2_ABI>)"])])
+
       case $host in
         *-*-aix*)
 	  case $ABI in

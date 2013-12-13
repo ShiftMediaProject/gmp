@@ -22,14 +22,15 @@ define(`ASM_START',
 	`.machine	"any"
 	.toc')
 
-dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,toc])
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 dnl  Don't want ELF style .size in the epilogue.
 
 define(`PROLOGUE_cpu',
-m4_assert_numargs(1)
-	`
+m4_assert_numargs_range(1,2)
+`ifelse(`$2',toc,,
+`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter')')')dnl
 	.globl	$1
 	.globl	.$1
 	.csect	[DS], 3

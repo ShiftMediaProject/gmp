@@ -186,7 +186,7 @@ L(16):	subf	r0, d, r0
 	b	L(10)
 EPILOGUE()
 
-PROLOGUE(mpn_mod_1s_4p_cps)
+PROLOGUE(mpn_mod_1s_4p_cps,toc)
 	mflr	r0
 	std	r29, -24(r1)
 	std	r30, -16(r1)

@@ -55,7 +55,7 @@ define(`LIMBS_PER_CHUNK', 0x1000)
 define(`LIMBS_CHUNK_THRES', 0x1001)
 
 ASM_START()
-PROLOGUE(mpn_popcount)
+PROLOGUE(mpn_popcount,toc)
 	mfspr	r10, 256
 	oris	r0, r10, 0xfffc		C Set VRSAVE bit 0-13
 	mtspr	256, r0
