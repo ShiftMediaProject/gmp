@@ -20,13 +20,14 @@ dnl  along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 
 define(`ASM_START',`')
 
-dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,toc])
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 
 define(`PROLOGUE_cpu',
-m4_assert_numargs(1)
-	`
+m4_assert_numargs_range(1,2)
+`ifelse(`$2',toc,,
+`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter')')')dnl
 	.section	".text"
 	.align	3
 	.globl	$1

@@ -1,3 +1,9 @@
+2013-12-14  Ulrich Weigand  <Ulrich.Weigand@de.ibm.com>
+
+	* mpn/powerpc32/darwin.m4: Allow (and ignore) optional
+	'toc' parameter to PROLOGUE_cpu.
+	* mpn/powerpc32/elf.m4: Likewise.
+
 2013-12-09  Ulrich Weigand  <Ulrich.Weigand@de.ibm.com>
 
 	* configure.ac: Check for ELFv2 ABI on PowerPC.
