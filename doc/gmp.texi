@@ -5544,14 +5544,15 @@ Convert bytes @{@var{str},@var{strsize}@} in the given @var{base} to limbs at
 be a value in the range 0 to @math{@var{base}-1}, not an ASCII character.
 @var{base} can vary from 2 to 256.
 
-The return value is the number of limbs written to @var{rp}.  If the most
-significant input byte is non-zero then the high limb at @var{rp} will be
-non-zero, and only that exact number of limbs will be required there.
+The return value is the number of valid limbs written to @var{rp}.  Iff the
+input string has no leading zero digits, the value at
+@var{rp}[@var{retval}@minus{}1] will be non-zero, else
+@var{rp}[@var{retval}@minus{}1] and subsequent limbs may be zero.
 
-If the most significant input byte is zero then there may be high zero limbs
-written to @var{rp} and included in the return value.
+The area at @var{rp} has to have space for the largest possible number with
+@var{strsize} digits in the chosen base, plus one extra limb.
 
-@var{strsize} must be at least 1, and no overlap is permitted between
+The input must have at least one byte, and no overlap is permitted between
 @{@var{str},@var{strsize}@} and the result at @var{rp}.
 @end deftypefun
 
