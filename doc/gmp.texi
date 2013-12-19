@@ -5539,15 +5539,15 @@ represented by a @var{s1n} long limb array, plus one extra character.
 Convert bytes @{@var{str},@var{strsize}@} in the given @var{base} to limbs at
 @var{rp}.
 
-@math{@var{str}[0]} is the most significant byte and
-@math{@var{str}[@var{strsize}-1]} is the least significant.  Each byte should
-be a value in the range 0 to @math{@var{base}-1}, not an ASCII character.
-@var{base} can vary from 2 to 256.
+@math{@var{str}[0]} is the most significant input byte and
+@math{@var{str}[@var{strsize}-1]} is the least significant input byte.  Each
+byte should be a value in the range 0 to @math{@var{base}-1}, not an ASCII
+character.  @var{base} can vary from 2 to 256.
 
-The return value is the number of valid limbs written to @var{rp}.  Iff the
-input string has no leading zero digits, the value at
-@var{rp}[@var{retval}@minus{}1] will be non-zero, else
-@var{rp}[@var{retval}@minus{}1] and subsequent limbs may be zero.
+The converted value is @{@var{rp},@var{rn}@} where @var{rn} is the return
+value.  If the most significant input byte @math{@var{str}[0]} is non-zero,
+then @math{@var{rp}[@var{rn}-1]} will be non-zero, else
+@math{@var{rp}[@var{rn}-1]} and some number of subsequent limbs may be zero.
 
 The area at @var{rp} has to have space for the largest possible number with
 @var{strsize} digits in the chosen base, plus one extra limb.
