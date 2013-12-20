@@ -1,3 +1,7 @@
+2013-12-20  Mark Sofroniou  <marks@wolfram.com>
+
+	* mpn/generic/mul_fft.c: Major overhaul of types.
+
 2013-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions): Rewrite mpn_set_str docs.
