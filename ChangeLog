@@ -1,3 +1,9 @@
+2013-12-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm_sec.c (redcify): Use passed scratch instead of
+	locally allocated.
+	(mpn_powm_sec_itch): Accommodate mpn_sb_div_r_sec's scratch needs.
+
 2013-12-20  Mark Sofroniou  <marks@wolfram.com>
 
 	* mpn/generic/mul_fft.c: Major overhaul of types.

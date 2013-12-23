@@ -42,12 +42,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
      That will simplify the code using getbits.  (Perhaps make getbits' sibling
      getbit then have similar form, for symmetry.)
 
-   * Write an itch function.  Or perhaps get rid of tp parameter since the huge
-     pp area is allocated locally anyway?
-
    * Choose window size without looping.  (Superoptimize or think(tm).)
-
-   * Call side-channel silent division function for converting to REDC residue.
 
    * REDC_1_TO_REDC_2_THRESHOLD might actually represent the cutoff between
      redc_1 and redc_n.  On such systems, we will switch to redc_2 causing
@@ -232,29 +227,11 @@ win_size (mp_bitcnt_t eb)
 static void
 redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
-#if 0
-  mp_ptr qp;
-
-  qp = tp + un + n;		/* un + n - n + 1 = un + 1 limbs */
-
   MPN_ZERO (tp, n);
   MPN_COPY (tp + n, up, un);
 
-  mpn_tdiv_qr (qp, rp, 0L, tp, un + n, mp, n);
-#else
-  /* FIXME: Use passed scratch space instead of allocating our own!  */
-  mp_ptr scratch;
-  TMP_DECL;
-  TMP_MARK;
-
-  MPN_ZERO (tp, n);
-  MPN_COPY (tp + n, up, un);
-
-  scratch = TMP_ALLOC_LIMBS ((un + n) + 2 * n + 2);
-  mpn_sb_div_r_sec (tp, un + n, mp, n, scratch);
+  mpn_sb_div_r_sec (tp, un + n, mp, n, tp + un + n);
   MPN_COPY (rp, tp, n);
-  TMP_FREE;
-#endif
 }
 
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
@@ -435,8 +412,9 @@ mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
   windowsize = win_size (en * GMP_NUMB_BITS); /* slight over-estimate of exp */
 
   /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
-     the 2bn + n + 1 term is due to redcify's own usage.  */
-  redcify_itch = (2 * n) + (2 * bn + n + 1);
+     the (bn + n) term is due to redcify's own usage, and the rest is due to
+     mpn_sb_div_r_sec's usage when called from redcify.  */
+  redcify_itch = (2 * n) + (bn + n) + ((bn + n) + 2 * n + 2);
 
   /* The n * 2^windowsize term is due to the power table, the 4n term is due to
      scratch needs of squaring/multiplication in the exponentiation loop.  */
