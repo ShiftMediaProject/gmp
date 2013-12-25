@@ -133,7 +133,7 @@ TUNE_MPN_SRCS_BASIC = div_qr_2.c bdiv_q.c bdiv_qr.c			\
   invertappr.c invert.c binvert.c divrem_2.c gcd.c gcdext.c		\
   get_str.c set_str.c matrix22_mul.c					\
   hgcd.c hgcd_appr.c hgcd_reduce.c					\
-  mul_n.c sqr.c powm_sec.c						\
+  mul_n.c sqr.c sec_powm.c						\
   mullo_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c sqrmod_bnm1.c	\
   mulmid.c mulmid_n.c toom42_mulmid.c					\
   nussbaumer_mul.c toom6h_mul.c toom8h_mul.c toom6_sqr.c toom8_sqr.c	\

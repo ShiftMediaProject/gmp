@@ -2830,11 +2830,11 @@ gmp_mpn_functions="$extra_functions					   \
   dcpi1_bdiv_q dcpi1_bdiv_qr						   \
   mu_bdiv_q mu_bdiv_qr							   \
   bdiv_q bdiv_qr broot brootinv bsqrt bsqrtinv				   \
-  divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo powm_sec		   \
-  sb_div_qr_sec sb_div_r_sec sbpi1_div_qr_sec sbpi1_div_r_sec		   \
+  divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo sec_powm		   \
+  sec_div_qr sec_div_r sec_pi1_div_qr sec_pi1_div_r			   \
   trialdiv remove							   \
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \
-  copyi copyd zero tabselect						   \
+  copyi copyd zero sec_tabselect					   \
   comb_tables								   \
   $gmp_mpn_functions_optional"
 
@@ -2878,10 +2878,10 @@ case $tmp_fn in
 		     tmp_mulfunc="aorrlsh_n sorrlsh_n aorsorrlsh_n";;
   rsh1add_n|rsh1sub_n)
 		     tmp_mulfunc="rsh1aors_n";;
-  sb_div_qr_sec|sb_div_r_sec)
-		     tmp_mulfunc="sb_div_sec";;
-  sbpi1_div_qr_sec|sbpi1_div_r_sec)
-		     tmp_mulfunc="sbpi1_div_sec";;
+  sec_div_qr|sec_div_r)
+		     tmp_mulfunc="sec_div";;
+  sec_pi1_div_qr|sec_pi1_div_r)
+		     tmp_mulfunc="sec_pi1_div";;
 esac
 ])
 

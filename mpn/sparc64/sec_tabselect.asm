@@ -1,4 +1,4 @@
-dnl  SPARC v9 mpn_tabselect.
+dnl  SPARC v9 mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund and David Miller.
 
@@ -53,7 +53,7 @@ define(`t3',     `%l7')
 ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	save	%sp, -176, %sp
 
 	sllx	n, 3, stride

@@ -416,7 +416,7 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_copyd
   { "mpn_copyd",         speed_mpn_copyd            },
 #endif
-  { "mpn_tabselect",     speed_mpn_tabselect, FLAG_R_OPTIONAL },
+  { "mpn_sec_tabselect", speed_mpn_sec_tabselect, FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_addlsh1_n == 1
   { "mpn_addlsh1_n",     speed_mpn_addlsh1_n, FLAG_R_OPTIONAL },
 #endif

@@ -1,4 +1,4 @@
-dnl  X86 MMX mpn_tabselect.
+dnl  X86 MMX mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -50,7 +50,7 @@ define(`j',      `%ebx')
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	push	%ebx
 	push	%esi
 	push	%edi

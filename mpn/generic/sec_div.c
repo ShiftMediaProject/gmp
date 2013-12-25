@@ -1,4 +1,4 @@
-/* mpn_sb_div_qr_sec, mpn_sb_div_r_sec -- Compute Q = floor(U / V), U = U mod
+/* mpn_sec_div_qr, mpn_sec_div_r -- Compute Q = floor(U / V), U = U mod
    V.  Side-channel silent under the assumption that the used instructions are
    side-channel silent.
 
@@ -29,17 +29,17 @@ with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if OPERATION_sb_div_qr_sec
-/* Needs (nn + dn + 1) + mpn_sbpi1_div_qr_sec's needs of (2nn' - dn + 1) for a
-   total of 3nn + 4 limbs at tp.  Note that mpn_sbpi1_div_qr_sec's nn is one
+#if OPERATION_sec_div_qr
+/* Needs (nn + dn + 1) + mpn_sec_pi1_div_qr's needs of (2nn' - dn + 1) for a
+   total of 3nn + 4 limbs at tp.  Note that mpn_sec_pi1_div_qr's nn is one
    greater than ours, therefore +4 and not just +2.  */
-#define FNAME mpn_sb_div_qr_sec
+#define FNAME mpn_sec_div_qr
 #define Q(q) q,
 #endif
-#if OPERATION_sb_div_r_sec
-/* Needs (nn + dn + 1) + mpn_sbpi1_div_r_sec's needs of (dn + 1) for a total of
+#if OPERATION_sec_div_r
+/* Needs (nn + dn + 1) + mpn_sec_pi1_div_r's needs of (dn + 1) for a total of
    nn + 2dn + 2 limbs at tp.  */
-#define FNAME mpn_sb_div_r_sec
+#define FNAME mpn_sec_div_r
 #define Q(q)
 #endif
 
@@ -75,8 +75,8 @@ FNAME (Q(mp_ptr qp)
   else
     {
       /* FIXME: Consider copying np->np2 here, adding a 0-limb at the top.
-	 That would simplify the underlying sbpi1 function, since then it
-	 could assume nn > dn.  */
+	 That would simplify the underlying pi1 function, since then it could
+	 assume nn > dn.  */
       dp2 = (mp_ptr) dp;
       np2 = np;
     }
@@ -87,10 +87,10 @@ FNAME (Q(mp_ptr qp)
 
   /* We add nn + dn to tp here, not nn + 1 + dn, as expected.  This is since nn
      here will have been incremented.  */
-#if OPERATION_sb_div_qr_sec
-  qh = mpn_sbpi1_div_qr_sec (qp, np2, nn, dp2, dn, inv32, tp + nn + dn);
+#if OPERATION_sec_div_qr
+  qh = mpn_sec_pi1_div_qr (qp, np2, nn, dp2, dn, inv32, tp + nn + dn);
 #else
-  mpn_sbpi1_div_r_sec (np2, nn, dp2, dn, inv32, tp + nn + dn);
+  mpn_sec_pi1_div_r (np2, nn, dp2, dn, inv32, tp + nn + dn);
 #endif
 
   if (cnt == 0)
@@ -98,7 +98,7 @@ FNAME (Q(mp_ptr qp)
   else
     mpn_rshift (np, np2, dn, cnt);
 
-#if OPERATION_sb_div_qr_sec
+#if OPERATION_sec_div_qr
   if (cnt == 0)
     qp[nn - dn] = qh;
 #endif

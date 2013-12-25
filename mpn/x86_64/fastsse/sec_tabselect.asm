@@ -1,4 +1,4 @@
-dnl  AMD64 SSE mpn_tabselect.
+dnl  AMD64 SSE mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -60,7 +60,7 @@ ABI_SUPPORT(STD64)
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
 

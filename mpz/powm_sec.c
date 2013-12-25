@@ -65,14 +65,14 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
     }
 
   TMP_MARK;
-  tp = TMP_ALLOC_LIMBS (n + mpn_powm_sec_itch (bn, en, n));
+  tp = TMP_ALLOC_LIMBS (n + mpn_sec_powm_itch (bn, en, n));
 
   rp = tp;  tp += n;
 
   bp = PTR(b);
   ep = PTR(e);
 
-  mpn_powm_sec (rp, bp, bn, ep, en, mp, n, tp);
+  mpn_sec_powm (rp, bp, bn, ep, en, mp, n, tp);
 
   rn = n;
 

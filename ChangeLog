@@ -1,3 +1,39 @@
+2013-12-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.ac: Rename mpn_blah_sec to mpn_sec_blah.
+	* gmp-impl.h: Corresponding changes.
+	* mpn/asm-defs.m4: Corresponding changes.
+	* tune/Makefile.am: Corresponding changes.
+	* tune/common.c: Corresponding changes.
+	* tune/speed.c: Corresponding changes.
+	* tune/speed.h: Corresponding changes.
+	* tune/tuneup.c: Corresponding changes.
+	* mpz/powm_sec.c: Update calls.
+	* tests/mpn/t-div.c: Likewise.
+
+	* mpn/generic/sec_powm.c: New name for mpn/generic/powm_sec.c.
+	* mpn/generic/sec_div.c: New name for mpn/generic/sb_div_sec.c.
+	* mpn/generic/sec_pi1_div.c: New name for mpn/generic/sbpi1_div_sec.c.
+	* mpn/generic/sec_tabselect.c: New name for mpn/generic/tabselect.c.
+
+	* mpn/alpha/sec_tabselect.asm: New name for tabselect.asm.
+	* mpn/arm/neon/sec_tabselect.asm: New name for tabselect.asm.
+	* mpn/arm/sec_tabselect.asm: New name for tabselect.asm.
+	* mpn/ia64/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/powerpc32/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/powerpc64/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/sparc64/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86/mmx/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/bd1/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/core2/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/coreinhm/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/coreisbr/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/fastsse/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/k10/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/pentium4/sec_tabselect.asm: New name for tabselect.asm
+	* mpn/x86_64/sec_tabselect.asm: New name for tabselect.asm
+
 2013-12-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/powm_sec.c: Handle 0^e mod m specially.

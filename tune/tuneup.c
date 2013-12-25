@@ -1870,7 +1870,7 @@ tune_powm_sec (void)
   k = 1;
 
   winsize = 10;			/* the itch function needs this */
-  itch = mpn_powm_sec_itch (n_max, n_max, n_max);
+  itch = mpn_sec_powm_itch (n_max, n_max, n_max);
 
   rp = TMP_ALLOC_LIMBS (n_max);
   bp = TMP_ALLOC_LIMBS (n_max);
@@ -1918,7 +1918,7 @@ tune_powm_sec (void)
       for (i = 0; i < n_measurements; i++)
 	{
 	  speed_starttime ();
-	  mpn_powm_sec (rp, bp, n, ep, n, mp, n, tp);
+	  mpn_sec_powm (rp, bp, n, ep, n, mp, n, tp);
 	  ttab[i] = speed_endtime ();
 	}
       tk = median (ttab, n_measurements);
@@ -1928,7 +1928,7 @@ tune_powm_sec (void)
       for (i = 0; i < n_measurements; i++)
 	{
 	  speed_starttime ();
-	  mpn_powm_sec (rp, bp, n, ep, n, mp, n, tp);
+	  mpn_sec_powm (rp, bp, n, ep, n, mp, n, tp);
 	  ttab[i] = speed_endtime ();
 	}
       tkp1 = median (ttab, n_measurements);

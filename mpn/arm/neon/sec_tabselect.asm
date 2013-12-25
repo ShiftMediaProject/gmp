@@ -1,4 +1,4 @@
-dnl  ARM Neon mpn_tabselect.
+dnl  ARM Neon mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -43,7 +43,7 @@ define(`maskq',  `q10')
 define(`maskd',  `d20')
 
 ASM_START()
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	push	{r4-r5}
 
 	add	  r4, sp, #8

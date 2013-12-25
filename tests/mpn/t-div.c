@@ -295,7 +295,7 @@ main (int argc, char **argv)
 	      check_one (qp, NULL, np, nn, dnp, dn, "mpn_sbpi1_div_q", 0);
 	    }
 
-	  /* Test mpn_sb_div_qr_sec */
+	  /* Test mpn_sec_div_qr */
 	  itch = 3 * nn + 4;
 	  if (itch + 1 > alloc)
 	    {
@@ -306,11 +306,11 @@ main (int argc, char **argv)
 	  MPN_COPY (rp, np, nn);
 	  if (nn >= dn)
 	    MPN_COPY (qp, junkp, nn - dn + 1);
-	  mpn_sb_div_qr_sec (qp, rp, nn, dup, dn, scratch);
+	  mpn_sec_div_qr (qp, rp, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
-	  check_one (qp, rp, np, nn, dup, dn, "mpn_sb_div_qr_sec", 0);
+	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_qr", 0);
 
-	  /* Test mpn_sb_div_r_sec */
+	  /* Test mpn_sec_div_r */
 	  itch = nn + 2 * dn + 2;
 	  if (itch + 1 > alloc)
 	    {
@@ -319,11 +319,11 @@ main (int argc, char **argv)
 	    }
 	  scratch[itch] = ran;
 	  MPN_COPY (rp, np, nn);
-	  mpn_sb_div_r_sec (rp, nn, dup, dn, scratch);
+	  mpn_sec_div_r (rp, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  /* Note: Since check_one cannot cope with random-only functions, we
-	     pass qp[] from the previous function, mpn_sb_div_qr_sec.  */
-	  check_one (qp, rp, np, nn, dup, dn, "mpn_sb_div_r_sec", 0);
+	     pass qp[] from the previous function, mpn_sec_div_qr.  */
+	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_r", 0);
 	}
 
       /* Test mpn_dcpi1_div_qr */

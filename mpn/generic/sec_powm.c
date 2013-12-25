@@ -1,4 +1,4 @@
-/* mpn_powm_sec -- Compute R = U^E mod M.  Secure variant, side-channel silent
+/* mpn_sec_powm -- Compute R = U^E mod M.  Secure variant, side-channel silent
    under the assumption that the multiply instruction is side channel silent.
 
    Contributed to the GNU project by Torbjörn Granlund.
@@ -230,16 +230,16 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_pt
   MPN_ZERO (tp, n);
   MPN_COPY (tp + n, up, un);
 
-  mpn_sb_div_r_sec (tp, un + n, mp, n, tp + un + n);
+  mpn_sec_div_r (tp, un + n, mp, n, tp + un + n);
   MPN_COPY (rp, tp, n);
 }
 
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
    Requires that mp[n-1..0] is odd.
    Requires that ep[en-1..0] > 1.
-   Uses scratch space at tp as defined by mpn_powm_sec_itch.  */
+   Uses scratch space at tp as defined by mpn_sec_powm_itch.  */
 void
-mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
+mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	      mp_srcptr ep, mp_size_t en,
 	      mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
@@ -279,7 +279,6 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   binvert_limb (mip[0], mp[0]);
   mip[0] = -mip[0];
 #endif
-
 
   pp = tp;
   tp += (n << windowsize);	/* put tp after power table */
@@ -322,7 +321,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   else
     ebi -= windowsize;
 
-  mpn_tabselect (rp, pp, n, 1 << windowsize, expbits);
+  mpn_sec_tabselect (rp, pp, n, 1 << windowsize, expbits);
 
   /* Main exponentiation loop.  */
   /* scratch: |   n   |   n   | ...  |                    |     3n-4n     |  */
@@ -349,7 +348,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	}								\
       while (this_windowsize != 0);					\
 									\
-      mpn_tabselect (tp + 2*n, pp, n, 1 << windowsize, expbits);	\
+      mpn_sec_tabselect (tp + 2*n, pp, n, 1 << windowsize, expbits);	\
       mpn_mul_basecase (tp, rp, n, tp + 2*n, n);			\
 									\
       MPN_REDUCE (rp, tp, mp, n, mip);					\
@@ -402,7 +401,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 }
 
 mp_size_t
-mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
+mpn_sec_powm_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
 {
   int windowsize;
   mp_size_t redcify_itch, itch;
@@ -416,7 +415,7 @@ mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
 
   /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
      the (bn + n) term is due to redcify's own usage, and the rest is due to
-     mpn_sb_div_r_sec's usage when called from redcify.  */
+     mpn_sec_div_r's usage when called from redcify.  */
   redcify_itch = (2 * n) + (bn + n) + ((bn + n) + 2 * n + 2);
 
   /* The n * 2^windowsize term is due to the power table, the 4n term is due to

@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_tabselect.
+dnl  PowerPC-32 mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -22,11 +22,13 @@ dnl  along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C                   cycles/limb
-C POWER3/PPC630		 1.75
-C POWER4/PPC970		 2.0
-C POWER5		 ?
-C POWER6		 5.0
-C POWER7		 1.75
+C 603e:			 ?
+C 604e:			 ?
+C 75x (G3):		 ?
+C 7400,7410 (G4):	 2.5
+C 744x,745x (G4+):	 2.0
+C power4/ppc970:	 2.0
+C power5:		 ?
 
 define(`rp',     `r3')
 define(`tp',     `r4')
@@ -41,14 +43,10 @@ define(`mask',   `r11')
 
 
 ASM_START()
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	addic.	j, n, -4		C outer loop induction variable
-	std	r31, -8(r1)
-	std	r30, -16(r1)
-	std	r29, -24(r1)
-	std	r28, -32(r1)
-	std	r27, -40(r1)
-	sldi	stride, n, 3
+	stmw	r27, -32(r1)
+	slwi	stride, n, 2
 
 	blt	cr0, L(outer_end)
 L(outer_top):
@@ -64,14 +62,14 @@ L(outer_top):
 	ALIGN(16)
 L(top):	addic	i, i, -1		C set carry iff i != 0
 	subfe	mask, mask, mask
-	ld	r0, 0(tp)
-	ld	r27, 8(tp)
+	lwz	r0, 0(tp)
+	lwz	r27, 4(tp)
 	and	r0, r0, mask
 	and	r27, r27, mask
 	or	r28, r28, r0
 	or	r29, r29, r27
-	ld	r0, 16(tp)
-	ld	r27, 24(tp)
+	lwz	r0, 8(tp)
+	lwz	r27, 12(tp)
 	and	r0, r0, mask
 	and	r27, r27, mask
 	or	r30, r30, r0
@@ -79,16 +77,16 @@ L(top):	addic	i, i, -1		C set carry iff i != 0
 	add	tp, tp, stride
 	bdnz	L(top)
 
-	std	r28, 0(rp)
-	std	r29, 8(rp)
-	std	r30, 16(rp)
-	std	r31, 24(rp)
-	addi	tp, r10, 32
-	addi	rp, rp, 32
+	stw	r28, 0(rp)
+	stw	r29, 4(rp)
+	stw	r30, 8(rp)
+	stw	r31, 12(rp)
+	addi	tp, r10, 16
+	addi	rp, rp, 16
 	bge	cr0, L(outer_top)
 L(outer_end):
 
-	rldicl.	r0, n, 63, 63
+	andi.	r0, n, 2
 	beq	cr0, L(b0x)
 L(b1x):	mtctr	nents
 	mr	r10, tp
@@ -98,20 +96,20 @@ L(b1x):	mtctr	nents
 	ALIGN(16)
 L(tp2):	addic	i, i, -1
 	subfe	mask, mask, mask
-	ld	r0, 0(tp)
-	ld	r27, 8(tp)
+	lwz	r0, 0(tp)
+	lwz	r27, 4(tp)
 	and	r0, r0, mask
 	and	r27, r27, mask
 	or	r28, r28, r0
 	or	r29, r29, r27
 	add	tp, tp, stride
 	bdnz	L(tp2)
-	std	r28, 0(rp)
-	std	r29, 8(rp)
-	addi	tp, r10, 16
-	addi	rp, rp, 16
+	stw	r28, 0(rp)
+	stw	r29, 4(rp)
+	addi	tp, r10, 8
+	addi	rp, rp, 8
 
-L(b0x):	rldicl.	r0, n, 0, 63
+L(b0x):	andi.	r0, n, 1
 	beq	cr0, L(b00)
 L(b01):	mtctr	nents
 	mr	r10, tp
@@ -120,17 +118,13 @@ L(b01):	mtctr	nents
 	ALIGN(16)
 L(tp1):	addic	i, i, -1
 	subfe	mask, mask, mask
-	ld	r0, 0(tp)
+	lwz	r0, 0(tp)
 	and	r0, r0, mask
 	or	r28, r28, r0
 	add	tp, tp, stride
 	bdnz	L(tp1)
-	std	r28, 0(rp)
+	stw	r28, 0(rp)
 
-L(b00):	ld	r31, -8(r1)
-	ld	r30, -16(r1)
-	ld	r29, -24(r1)
-	ld	r28, -32(r1)
-	ld	r27, -40(r1)
+L(b00):	lmw	r27, -32(r1)
 	blr
 EPILOGUE()

@@ -175,7 +175,7 @@ double speed_mpn_copyi (struct speed_params *);
 double speed_MPN_COPY (struct speed_params *);
 double speed_MPN_COPY_DECR (struct speed_params *);
 double speed_MPN_COPY_INCR (struct speed_params *);
-double speed_mpn_tabselect (struct speed_params *);
+double speed_mpn_sec_tabselect (struct speed_params *);
 double speed_mpn_divexact_1 (struct speed_params *);
 double speed_mpn_divexact_by3 (struct speed_params *);
 double speed_mpn_bdiv_q_1 (struct speed_params *);

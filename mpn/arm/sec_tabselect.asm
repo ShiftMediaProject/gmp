@@ -1,4 +1,4 @@
-dnl  ARM mpn_tabselect
+dnl  ARM mpn_sec_tabselect
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -45,7 +45,7 @@ define(`c',     `r14')
 define(`mask',  `r7')
 
 ASM_START()
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	push	{r4-r11, r14}
 
 	subs	j, n, #3

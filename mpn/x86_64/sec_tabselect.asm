@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_tabselect.
+dnl  AMD64 mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -40,7 +40,7 @@ C    be too bad, though.
 C  * Using SSE2/AVX2 could result in many-fold speedup.
 C  * WORKS FOR n mod 4 = 0 ONLY!
 
-C mpn_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
+C mpn_sec_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
 define(`rp',     `%rdi')
 define(`tp',     `%rsi')
 define(`n',      `%rdx')
@@ -59,7 +59,7 @@ ABI_SUPPORT(STD64)
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	FUNC_ENTRY(4)
 IFDOS(`	mov	56(%rsp), %r8d	')
 

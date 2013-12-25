@@ -1,4 +1,4 @@
-dnl  X86-64 mpn_tabselect.
+dnl  X86-64 mpn_sec_tabselect.
 
 dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
 
@@ -22,5 +22,5 @@ include(`../config.m4')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-MULFUNC_PROLOGUE(mpn_tabselect)
-include_mpn(`x86_64/fastsse/tabselect.asm')
+MULFUNC_PROLOGUE(mpn_sec_tabselect)
+include_mpn(`x86_64/fastsse/sec_tabselect.asm')

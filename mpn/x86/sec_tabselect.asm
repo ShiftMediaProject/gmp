@@ -1,4 +1,4 @@
-dnl  x86 mpn_tabselect.
+dnl  x86 mpn_sec_tabselect.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -41,7 +41,7 @@ C  * This has not been tuned for any specific processor.  Its speed should not
 C    be too bad, though.
 C  * Using SSE2 could result in many-fold speedup.
 
-C mpn_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
+C mpn_sec_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
 define(`rp',     `%edi')
 define(`tp',     `%esi')
 define(`n',      `%ebx')
@@ -55,7 +55,7 @@ define(`maskn',  `32(%esp)')
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	push	%edi
 	push	%esi
 	push	%ebx

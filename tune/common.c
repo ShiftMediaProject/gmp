@@ -463,9 +463,9 @@ speed_mpn_com (struct speed_params *s)
   SPEED_ROUTINE_MPN_COPY (mpn_com);
 }
 double
-speed_mpn_tabselect (struct speed_params *s)
+speed_mpn_sec_tabselect (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_TABSELECT (mpn_tabselect);
+  SPEED_ROUTINE_MPN_TABSELECT (mpn_sec_tabselect);
 }
 
 

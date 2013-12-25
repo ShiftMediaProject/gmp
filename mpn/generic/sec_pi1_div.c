@@ -1,8 +1,8 @@
-/* mpn_sbpi1_div_qr_sec, mpn_sbpi1_div_r_sec -- Compute Q = floor(U / V), U = U
+/* mpn_sec_pi1_div_qr, mpn_sec_pi1_div_r -- Compute Q = floor(U / V), U = U
    mod V.  Side-channel silent under the assumption that the used instructions
    are side-channel silent.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjörn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -51,15 +51,15 @@ with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
    partial remainder, we use an inverse which is slightly smaller than usually.
 */
 
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
 /* Needs (dn + 1) + (nn - dn) + (nn - dn) = 2nn - dn + 1 limbs at tp. */
-#define FNAME mpn_sbpi1_div_qr_sec
+#define FNAME mpn_sec_pi1_div_qr
 #define Q(q) q,
 #define RETTYPE mp_limb_t
 #endif
-#if OPERATION_sbpi1_div_r_sec
+#if OPERATION_sec_pi1_div_r
 /* Needs (dn + 1) limbs at tp.  */
-#define FNAME mpn_sbpi1_div_r_sec
+#define FNAME mpn_sec_pi1_div_r
 #define Q(q)
 #define RETTYPE void
 #endif
@@ -74,7 +74,7 @@ FNAME (Q(mp_ptr qp)
   mp_limb_t nh, cy, q1h, q0h, dummy, cnd;
   mp_size_t i;
   mp_ptr hp;
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   mp_limb_t qh;
   mp_ptr qlp, qhp;
 #endif
@@ -87,7 +87,7 @@ FNAME (Q(mp_ptr qp)
     {
       cy = mpn_sub_n (np, np, dp, dn);
       mpn_cnd_add_n (cy, np, np, dp, dn);
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
       return 1 - cy;
 #else
       return;
@@ -98,7 +98,7 @@ FNAME (Q(mp_ptr qp)
   hp = tp;					/* (dn + 1) limbs */
   hp[dn] = mpn_lshift (hp, dp, dn, GMP_NUMB_BITS / 2);
 
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   qlp = tp + (dn + 1);				/* (nn - dn) limbs */
   qhp = tp + (nn + 1);				/* (nn - dn) limbs */
 #endif
@@ -113,7 +113,7 @@ FNAME (Q(mp_ptr qp)
       nh = (nh << GMP_NUMB_BITS/2) + (np[dn] >> GMP_NUMB_BITS/2);
       umul_ppmm (q1h, dummy, nh, dinv);
       q1h += nh;
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
       qhp[i] = q1h;
 #endif
       mpn_submul_1 (np, hp, dn + 1, q1h);
@@ -121,7 +121,7 @@ FNAME (Q(mp_ptr qp)
       nh = np[dn];
       umul_ppmm (q0h, dummy, nh, dinv);
       q0h += nh;
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
       qlp[i] = q0h;
 #endif
       nh -= mpn_submul_1 (np, dp, dn, q0h);
@@ -129,7 +129,7 @@ FNAME (Q(mp_ptr qp)
 
   /* 1st adjustment depends on extra high remainder limb.  */
   cnd = nh != 0;				/* FIXME: cmp-to-int */
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   qlp[0] += cnd;
 #endif
   nh -= mpn_cnd_sub_n (cnd, np, np, dp, dn);
@@ -138,19 +138,19 @@ FNAME (Q(mp_ptr qp)
      extra remainder limb was nullified by previous subtract.  */
   cy = mpn_sub_n (np, np, dp, dn);
   cy = cy - nh;
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   qlp[0] += 1 - cy;
 #endif
   mpn_cnd_add_n (cy, np, np, dp, dn);
 
   /* 3rd adjustment depends on remainder/divisor comparison.  */
   cy = mpn_sub_n (np, np, dp, dn);
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   qlp[0] += 1 - cy;
 #endif
   mpn_cnd_add_n (cy, np, np, dp, dn);
 
-#if OPERATION_sbpi1_div_qr_sec
+#if OPERATION_sec_pi1_div_qr
   /* Combine quotient halves into final quotient.  */
   qh = mpn_lshift (qhp, qhp, nn - dn, GMP_NUMB_BITS/2);
   qh += mpn_add_n (qp, qhp, qlp, nn - dn);

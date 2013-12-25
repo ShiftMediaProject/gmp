@@ -1,4 +1,4 @@
-dnl  Alpha mpn_tabselect.
+dnl  Alpha mpn_sec_tabselect.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -40,7 +40,7 @@ define(`k',      `r25')
 
 
 ASM_START()
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	subq	n, 4, j			C outer loop induction variable
 
 	blt	j, L(outer_end)

@@ -1,4 +1,4 @@
-dnl  IA-64 mpn_tabselect.
+dnl  IA-64 mpn_sec_tabselect.
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -28,7 +28,7 @@ C  * Using software pipelining could trivially yield 2 c/l without unrolling,
 C    or 1+epsilon with unrolling.  (This code was modelled after the powerpc64
 C    code, for simplicity.)
 
-C mpn_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
+C mpn_sec_tabselect (mp_limb_t *rp, mp_limb_t *tp, mp_size_t n, mp_size_t nents, mp_size_t which)
 define(`rp',     `r32')
 define(`tp',     `r33')
 define(`n',      `r34')
@@ -45,7 +45,7 @@ define(`tp2',     `r15')
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_tabselect)
+PROLOGUE(mpn_sec_tabselect)
 	.prologue
 	.save	ar.lc, r2
 	.body
