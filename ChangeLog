@@ -1,3 +1,8 @@
+2013-12-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/powm_sec.c: Handle 0^e mod m specially.
+	* mpn/generic/powm_sec.c: ASSERT that the base is non-zero.
+
 2013-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm_sec.c (redcify): Use passed scratch instead of

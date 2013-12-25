@@ -1,7 +1,7 @@
 /* mpn_powm_sec -- Compute R = U^E mod M.  Secure variant, side-channel silent
    under the assumption that the multiply instruction is side channel silent.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjörn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -253,6 +253,9 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   ASSERT (en > 1 || (en == 1 && ep[0] > 0));
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
+  /* The code works for bn = 0, but the defined scratch space is 2 limbs
+     greater than we supply, when converting 1 to redc form .  */
+  ASSERT (bn >= 1);
 
   MPN_SIZEINBASE_2EXP(ebi, ep, en, 1);
 

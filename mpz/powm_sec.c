@@ -54,9 +54,15 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 	}
       DIVIDE_BY_ZERO;
     }
-
   en = es;
+
   bn = ABSIZ(b);
+
+  if (UNLIKELY (bn == 0))
+    {
+      SIZ(r) = 0;
+      return;
+    }
 
   TMP_MARK;
   tp = TMP_ALLOC_LIMBS (n + mpn_powm_sec_itch (bn, en, n));
