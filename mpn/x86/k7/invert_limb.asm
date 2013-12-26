@@ -1,6 +1,6 @@
 dnl  x86 mpn_invert_limb
 
-dnl  Contributed to the GNU project by Niels Möller
+dnl  Contributed to the GNU project by Niels MÃ¶ller
 
 dnl  Copyright 2009, 2011 Free Software Foundation, Inc.
 dnl

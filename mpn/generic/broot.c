@@ -1,6 +1,6 @@
 /* mpn_broot -- Compute hensel sqrt
 
-   Contributed to the GNU project by Niels Möller
+   Contributed to the GNU project by Niels MÃ¶ller
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST

@@ -1,7 +1,7 @@
 /* mpn_mod_1_1p (ap, n, b, cps)
    Divide (ap,,n) by b.  Return the single-limb remainder.
 
-   Contributed to the GNU project by Torbjorn Granlund and Niels Möller.
+   Contributed to the GNU project by Torbjorn Granlund and Niels MÃ¶ller.
    Based on a suggestion by Peter L. Montgomery.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY

@@ -2,7 +2,7 @@ dnl  x86-64 mpn_div_qr_1n_pi1
 dnl  -- Divide an mpn number by a normalized single-limb number,
 dnl     using a single-limb inverse.
 
-dnl  Contributed to the GNU project by Niels Möller
+dnl  Contributed to the GNU project by Niels MÃ¶ller
 
 dnl  Copyright 2013 Free Software Foundation, Inc.
 

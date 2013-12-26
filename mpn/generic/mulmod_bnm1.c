@@ -1,6 +1,6 @@
 /* mulmod_bnm1.c -- multiplication mod B^n-1.
 
-   Contributed to the GNU project by Niels Möller, Torbjorn Granlund and
+   Contributed to the GNU project by Niels MÃ¶ller, Torbjorn Granlund and
    Marco Bodrato.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY

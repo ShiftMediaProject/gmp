@@ -1,6 +1,6 @@
 /* mpn_div_qr_1 -- mpn by limb division.
 
-   Contributed to the GNU project by Niels Möller and Torbjörn Granlund
+   Contributed to the GNU project by Niels MÃ¶ller and TorbjÃ¶rn Granlund
 
 Copyright 1991, 1993, 1994, 1996, 1998-2000, 2002, 2003, 2013 Free Software
 Foundation, Inc.

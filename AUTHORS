@@ -1,6 +1,6 @@
 Authors of GNU MP (in chronological order of initial contribution)
 
-Torbjörn Granlund	Main author
+TorbjÃ¶rn Granlund	Main author
 
 John Amanatides		Original version of mpz/pprime_p.c
 
@@ -30,7 +30,7 @@ Pedro Gimeno		Mersenne Twister random generator, other random number
 
 Jason Moxham		Previous versions of mpz/fac_ui.c and gen-fac_ui.c
 
-Niels Möller		gen-jacobitab.c,
+Niels MÃ¶ller		gen-jacobitab.c,
 			mpn/generic/hgcd2.c, hgcd.c, hgcd_step.c,
 			hgcd_appr.c, hgcd_matrix.c, hgcd_reduce.c,
 			gcd.c, gcdext.c, matrix22_mul.c,

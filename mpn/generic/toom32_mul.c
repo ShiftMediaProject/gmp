@@ -2,7 +2,7 @@
    times as large as bn.  Or more accurately, bn < an < 3bn.
 
    Contributed to the GNU project by Torbjorn Granlund.
-   Improvements by Marco Bodrato and Niels Möller.
+   Improvements by Marco Bodrato and Niels MÃ¶ller.
 
    The idea of applying toom to unbalanced multiplication is due to Marco
    Bodrato and Alberto Zanoni.

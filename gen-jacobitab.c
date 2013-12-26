@@ -1,6 +1,6 @@
 /* gen-jacobi.c
 
-   Contributed to the GNU project by Niels Möller.
+   Contributed to the GNU project by Niels MÃ¶ller.
 
 Copyright 2010 Free Software Foundation, Inc.
 

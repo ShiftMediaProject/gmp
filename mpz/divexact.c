@@ -1,6 +1,6 @@
 /* mpz_divexact -- finds quotient when known that quot * den == num && den != 0.
 
-Contributed to the GNU project by Niels Möller.
+Contributed to the GNU project by Niels MÃ¶ller.
 
 Copyright 1991, 1993-1998, 2000-2002, 2005-2007, 2009, 2012 Free Software
 Foundation, Inc.

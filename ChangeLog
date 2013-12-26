@@ -84,7 +84,7 @@
 	* mpn/powerpc64/p6/rshift.asm (mpn_rshift): Likewise.
 	* mpn/powerpc64/vmx/popcount.asm (mpn_popcount): Likewise.
 
-2013-12-07  Niels Möller  <nisse@lysator.liu.se>
+2013-12-07  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configfsf.sub: Updated to version 2013-10-01, from gnulib.
 	* configfsf.guess: Updated to version 2013-11-29, from gnulib.
@@ -135,7 +135,7 @@
 	* mpn/generic/div_qr_1u_pi2.c: New file.
 	* mpn/generic/div_qr_1n_pi2.c: New file.
 
-2013-10-24  Niels Möller  <nisse@lysator.liu.se>
+2013-10-24  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_1n_pi1.asm: Bugfixes, for case n == 1 and
 	in-place operation.
@@ -153,12 +153,12 @@
 	* mpn/x86_64/x86_64-defs.m4 (oplist): New define, data from `regnum'.
 	(regnum): Use x86_lookup, feed oplist.
 
-2013-10-22  Niels Möller  <nisse@lysator.liu.se>
+2013-10-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/devel/try.c: Support mpn_div_qr_1n_pi1.
 
 	* mpn/x86_64/k8/div_qr_1n_pi1.asm: Moved the below k10 file here.
-	Applied tweak from Torbjörn to get it to run well on k8.
+	Applied tweak from TorbjÃ¶rn to get it to run well on k8.
 
 	* mpn/x86_64/k10/div_qr_1n_pi1.asm: New file (renamed above).
 	Differs from generic x86_64 version by using cmov.
@@ -166,14 +166,14 @@
 	* mpn/x86_64/div_qr_1n_pi1.asm: Reordered arguments to second mul.
 	Deleted misleading cycle annotations.
 
-2013-10-21  Niels Möller  <nisse@lysator.liu.se>
+2013-10-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configure.ac: Add HAVE_NATIVE_mpn_div_qr_1n_pi1 to config.in.
 
 	* mpn/generic/div_qr_1n_pi1.c (mpn_div_qr_1n_pi1): Fix typos
 	affecting ASSERT.
 
-2013-10-20  Niels Möller  <nisse@lysator.liu.se>
+2013-10-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_1n_pi1.asm: New file.
 
@@ -884,7 +884,7 @@
 	* mpn/sparc32/sparc-defs.m4 (LEA): Remove unused local label.
 	(LEA_LEAF): Likewise.
 
-2013-04-11  Niels Möller  <nisse@lysator.liu.se>
+2013-04-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/arm/v6/submul_1.asm: New file, using the corresponding
 	addmul_1 loop + complement trick.
@@ -1018,7 +1018,7 @@
 	* mpn/x86_64/mulx/aorsmul_1.asm: New file.
 	* mpn/x86_64/mulx/addmul_1.asm: Remove.
 
-2013-03-26  Niels Möller  <nisse@lysator.liu.se>
+2013-03-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	Make mpn_cnd_add_n and mpn_cnd_sub_n public.
 	* doc/gmp.texi (Low-level Functions): Document mpn_cnd_add_n and
@@ -1166,7 +1166,7 @@
 	* mini-gmp/mini-gmp.c: Likewise.
 	* gmp-impl.h (mpz_zero_p): Likewise.
 
-2013-03-12  Niels Möller  <nisse@lysator.liu.se>
+2013-03-12  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	New names mpn_cnd_add_n and mpn_cnd_sub_n.
 	* mpn/generic/cnd_add_n.c (mpn_cnd_add_n): Renamed file and
@@ -1210,7 +1210,7 @@
 
 	* mpz/powm_ui.c (mod): Adhere to mpn_mu_div_qr's overlap requirements.
 
-2013-03-10  Niels Möller  <nisse@lysator.liu.se>
+2013-03-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_sec.c: Update calls of mpn_addcnd_n and
 	mpn_subcnd_n.
@@ -1317,7 +1317,7 @@
 
 	* config.guess: Rework tmp file handling to resemble configfsf.guess's.
 
-2013-03-03  Niels Möller  <nisse@lysator.liu.se>
+2013-03-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Integer Special Functions): Document
 	mpz_limbs_read, mpz_limbs_write, mpz_limbs_modify,
@@ -1325,7 +1325,7 @@
 
 	* mpz/roinit_n.c (mpz_roinit_n): Normalize the input.
 
-2013-02-27  Niels Möller  <nisse@lysator.liu.se>
+2013-02-27  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_measure): Increase repetition count if we
 	get a zero measurement.
@@ -1340,12 +1340,12 @@
 	* mini-gmp/mini-gmp.h (mpn_scan0, mpn_scan1): New declarations.
 	* mini-gmp/tests/t-scan.c: Test also mpn_scan0 and mpn_scan1.
 
-2013-02-26  Niels Möller  <nisse@lysator.liu.se>
+2013-02-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-limbs.c (check_roinit): Test MPZ_ROINIT_N only if
 	compiler supports c99.
 
-2013-02-25  Niels Möller  <nisse@lysator.liu.se>
+2013-02-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-double.c (testmain): Declare double variables
 	as volatile, to drop extended precision.
@@ -1373,7 +1373,7 @@
 	* configure.ac: Fix typo in adx/mulx path stripping code.
 	* config.sub: Match coreibwl.
 
-2013-02-20  Niels Möller  <nisse@lysator.liu.se>
+2013-02-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpq/t-get_d.c (check_random): Rewrote to make test less
 	dependent on float operations. Fixes problem with m68k-linux and
@@ -1546,7 +1546,7 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Use operands from struct s.
 	* tune/README: Document new parameter syntax mpn_mul.<#> .
 
-2013-02-06  Niels Möller  <nisse@lysator.liu.se>
+2013-02-06  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): Rewrote. Now uses a
 	more efficient method for generating the test inputs.
@@ -1623,7 +1623,7 @@
 
 	* Makefile.am (check-mini-gmp): Fix typo in last change.
 
-2013-01-22  Niels Möller  <nisse@lysator.liu.se>
+2013-01-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpz_cmp_d): Simplified, just sort out
 	signs, then call mpz_cmpabs_d.
@@ -1638,7 +1638,7 @@
 	* mini-gmp/mini-gmp.c (mpz_cmpabs_d): New function.
 	* mini-gmp/mini-gmp.h: Declare it.
 
-2013-01-21  Niels Möller  <nisse@lysator.liu.se>
+2013-01-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (testmain): Test mpz_out_str, using
 	the tmpfile function for i/o.
@@ -1687,7 +1687,7 @@
 
 	* tests/mpz/t-remove.c: Test removal of 1.
 
-2013-01-18  Niels Möller  <nisse@lysator.liu.se>
+2013-01-18  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (test_small): New function, exercising
 	parsing of whitespace and base prefixes.
@@ -1740,7 +1740,7 @@
 	* mini-gmp/mini-gmp.c (mpz_set_str): Handle the empty string.
 	* mini-gmp/tests/t-str.c: Test base <= 0.
 
-2013-01-15  Niels Möller  <nisse@lysator.liu.se>
+2013-01-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (main): Use x->_mp_d rather than x[0]._mp_d.
 	* mini-gmp/tests/t-invert.c (main): Likewise.
@@ -1768,7 +1768,7 @@
 	From Mike Frysinger:
 	* configure.ac: Add x32 ABI for x86_64.
 
-2013-01-14  Niels Möller  <nisse@lysator.liu.se>
+2013-01-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-str.c (main): Added tests for mpn_get_str and
 	mpn_set_str.
@@ -1827,7 +1827,7 @@
 
 	* mini-gmp/mini-gmp.c (mpz_export): Support op=0 countp=NULL.
 
-2013-01-08  Niels Möller  <nisse@lysator.liu.se>
+2013-01-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-import.c: New test program, testing both
 	mpz_import and mpz_export.
@@ -1968,7 +1968,7 @@
 	* mpz/neg.c: Likewise.
 	* mpz/com.c: Reduce branches.
 
-2012-12-05  Niels Möller  <nisse@lysator.liu.se>
+2012-12-05  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/brootinv.c (mpn_brootinv): Make valgrind happier, at
 	the cost of a redundant MPN_ZERO.
@@ -2047,7 +2047,7 @@
 	* tests/mpn/t-get_d.c (check_onebit): Get vax bounds right.
 	(main): Switch off check_rand for vax.
 
-2012-11-22  Niels Möller  <nisse@lysator.liu.se>
+2012-11-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/run-tests: Copied latest version from GNU Nettle.
 	Minor fix to the use of $EMULATOR, and proper copyright notice.
@@ -2079,7 +2079,7 @@
 
 	* mpz/powm_ui.c: Rewrite.
 
-2012-11-01  Niels Möller  <nisse@lysator.liu.se>
+2012-11-01  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/brootinv.c (mpn_brootinv): Input size in limbs
 	rather than bits. Use single-precision iterations for the first
@@ -2095,7 +2095,7 @@
 	* mpz/combit.c (mpz_combit): Rewrite, optimizing for the common
 	case.
 
-2012-10-31  Niels Möller  <nisse@lysator.liu.se>
+2012-10-31  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-brootinv.
 	* tests/mpn/t-brootinv.c: New file
@@ -2127,7 +2127,7 @@
 
 	* tests/mpn/t-broot.c: Add a forgotten TMP_MARK.
 
-2012-10-28  Niels Möller  <nisse@lysator.liu.se>
+2012-10-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/broot.c (mpn_broot): New file and function.
 	* configure.in (gmp_mpn_functions): Add broot.
@@ -2248,7 +2248,7 @@
 
 	* mpn/powerpc64/aix.m4 (ASM_START): Claim machine type "any".
 
-2012-06-03  Niels Möller  <nisse@lysator.liu.se>
+2012-06-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (mpn_gcdext): Deleted code for handling
 	impossible case u1 == 0, Simplified test for unlikely case u0 == 0.
@@ -2304,7 +2304,7 @@
 
 	* mpn/arm/v5/mod_1_1.asm: New file.
 
-2012-05-28  Niels Möller  <nisse@lysator.liu.se>
+2012-05-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (compute_v): Simplified carry handling a
 	bit, reduced stated scratch need from 2n+1 to 2n. Also comment and
@@ -2777,7 +2777,7 @@
 
 	* mpn/x86_64/fastsse/lshift.asm: Simplify to very basic form.
 
-2012-04-11  Niels Möller  <nisse@lysator.liu.se>
+2012-04-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): Pass -I../.. in EXTRA_CFLAGS, to
 	locate gmp.h.
@@ -3049,7 +3049,7 @@
 
 	* gmpxx.h (std::numeric_limits): New partial specialization.
 
-2012-02-29  Niels Möller  <nisse@lysator.liu.se>
+2012-02-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-reuse.c: New test case, based on
 	tests/mpz/reuse.c.
@@ -3069,7 +3069,7 @@
 	(clean-local, distclean-local): New automake targets. Depend on
 	clean-mini-gmp.
 
-2012-02-28  Niels Möller  <nisse@lysator.liu.se>
+2012-02-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): New target, for running the
 	mini-gmp testsuite.
@@ -3081,7 +3081,7 @@
 
 	* mini-gmp/mini-gmp.c (mpz_abs_add): Don't cache limb pointers
 	over MPZ_REALLOC, since that breaks in-place operation. Bug
-	spotted by Torbjörn.
+	spotted by TorbjÃ¶rn.
 	(mpz_and, mpz_ior, mpz_xor): Likewise.
 	(mpz_cmp): Fixed comparison of negative numbers.
 
@@ -3118,7 +3118,7 @@
 
 	* mpz/oddfac_1.c (mpz_oddfac_1): Use umul_ppmm when size = 2.
 
-2012-02-26  Niels Möller  <nisse@lysator.liu.se>
+2012-02-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mini-gmp: New subdirectory. For use by GMP bootstrap, and as a
 	fallback for applications needing bignums but not high
@@ -3206,7 +3206,7 @@
 	* mpq/set_d.c: Likewise.
 	* mpq/set_f.c: Likewise.
 
-2012-02-24  Niels Möller  <nisse@lysator.liu.se>
+2012-02-24  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/core2/aorsmul_1.asm: Added mpn_addmul_1c and
 	mpn_submul_1c entry points.
@@ -3317,7 +3317,7 @@
 	becomes tmp=c*d, e=a*b, e-=tmp.
 	* tests/cxx/t-binary.cc: More variable reuse tests.
 
-2012-02-15  Niels Möller  <nisse@lysator.liu.se>
+2012-02-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (mul_toom43_to_toom54_threshold): New global.
 	(tune_mul): Added tuning of MUL_TOOM43_TO_TOOM54_THRESHOLD.
@@ -3334,7 +3334,7 @@
 	(MUL_TOOM43_TO_TOOM54_THRESHOLD): New threshold. Default value and
 	tuning setup.
 
-2012-02-14  Niels Möller  <nisse@lysator.liu.se>
+2012-02-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom54_mul.c: New file, originally contributed by
 	Marco.
@@ -3343,7 +3343,7 @@
 	* tests/mpn/t-toom54.c: New file.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom54.
 
-2012-02-13  Niels Möller  <nisse@lysator.liu.se>
+2012-02-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configure.in: Display summary of options.
 
@@ -3357,7 +3357,7 @@
 	(Multiplication Algorithms): Add Toom[68]'n'half, (too) shortly.
 	* gmp-impl.h (ASSERT_ALWAYS): Consider failures UNLIKELY.
 
-2012-02-10  Niels Möller  <nisse@lysator.liu.se>
+2012-02-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (gcdext_valid_p): Enforce slightly stricter
 	bound for cofactors.
@@ -3394,17 +3394,17 @@
 	* mpn/powerpc32/divrem_2.asm: Fix off-by-one condition in invert_limb
 	code.
 
-2012-02-08  Niels Möller  <nisse@lysator.liu.se>
+2012-02-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_gcdext): Clarified corner cases in cofactor
 	canonicalization.
 
-2012-02-07  Niels Möller  <nisse@lysator.liu.se>
+2012-02-07  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (mpn_gcdext): Fixed assert, related to the
 	special case A = (2k+1) G, B = 2 G. Fix copied from gmp-5.0 repo.
 
-2012-02-06  Niels Möller  <nisse@lysator.liu.se>
+2012-02-06  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_matrix.c (hgcd_matrix_update_q): Fixed carry
 	handling bug. Fix copied from gmp-5.0 repo, where the function is
@@ -3456,7 +3456,7 @@
 
 	* gmpxx.h: Remove check for g++ older than 2.91.
 
-2012-02-01  Niels Möller  <nisse@lysator.liu.se>
+2012-02-01  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mul.c: Added diagram on where toom functions can be
 	called.
@@ -3539,7 +3539,7 @@
 	* mpn/minithres/gmp-mparam.h: Correct minimum for FAC_DSC_.
 	* tune/tuneup.c (tune_fac_ui): Likewise.
 
-2012-01-15  Niels Möller  <nisse@lysator.liu.se>
+2012-01-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/scan0.c (mpz_scan0): Use ~(mp_bitcnt_t) 0, rather than
 	ULONG_MAX, when returning "infinity".
@@ -3649,7 +3649,7 @@
 
 	* mpz/fac_ui.c: Rewrite.
 
-2011-12-06  Niels Möller  <nisse@lysator.liu.se>
+2011-12-06  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd): Use hgcd_reduce for first
 	recursive call.
@@ -3811,7 +3811,7 @@
 	(SPEED_ROUTINE_MPN_COPY): Just invoke SPEED_ROUTINE_MPN_COPY_CALL.
 	(SPEED_ROUTINE_MPN_TABSELECT): New macro.
 
-2011-11-17  Niels Möller  <nisse@lysator.liu.se>
+2011-11-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_hgcd_appr): Increase stop_since_change.
 
@@ -3821,7 +3821,7 @@
 
 	* mpn/powerpc64/mode64/aorscnd_n.asm: New file.
 
-2011-11-15  Niels Möller  <nisse@lysator.liu.se>
+2011-11-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (speed_mpn_hgcd_appr_lehmer): New prototype.
 	(mpn_hgcd_lehmer_itch): Likewise.
@@ -3883,7 +3883,7 @@
 	* mpn/generic/powm_sec.c (win_size): Define only when
 	TUNE_PROGRAM_BUILD is not set.
 
-2011-11-13  Niels Möller  <nisse@lysator.liu.se>
+2011-11-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_hgcd_appr): Use default min_size.
 	(tune_hgcd_reduce): Increase max_size and step_factor, to 7000
@@ -3893,7 +3893,7 @@
 
 	* mpn/powerpc64/mode64/sqr_diag_addlsh1.asm: Remove.
 
-2011-11-11  Niels Möller  <nisse@lysator.liu.se>
+2011-11-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/hgcd_reduce_2.c: New file.
 	* tune/hgcd_reduce_1.c: New file.
@@ -4024,7 +4024,7 @@
 
 	* mpn/s390_64/logops_n.asm: Fix rp=up code.  Remove a leftover insn.
 
-2011-10-26  Niels Möller  <nisse@lysator.liu.se>
+2011-10-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (mpn_hgcd_reduce, mpn_hgcd_reduce_itch): Added
 	prototypes.
@@ -4147,7 +4147,7 @@
 
 	* mpn/s390_64/copyd.asm: New file.
 
-2011-10-10  Niels Möller  <nisse@lysator.liu.se>
+2011-10-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_appr.c: Deleted debugging code.
 
@@ -4171,7 +4171,7 @@
 	From Marco Trudel:
 	* tests/mpz/t-scan.c (check_ref): Fix loop end bound.
 
-2011-10-10  Niels Möller  <nisse@lysator.liu.se>
+2011-10-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h: (HGCD_APPR_THRESHOLD): New threshold.
 
@@ -4202,12 +4202,12 @@
 	(s390x count_leading_zeros): Disable until we support z10 specifically.
 	(s390x add_ssaaaa): Remove algsi/slgsi until we support z10.
 
-2011-10-09  Niels Möller  <nisse@lysator.liu.se>
+2011-10-09  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd_matrix.c (mpn_hgcd_matrix_adjust): Declare
 	matrix argument const.
 
-2011-10-08  Niels Möller  <nisse@lysator.liu.se>
+2011-10-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-hgcd_appr.c (hgcd_appr_valid_p): Adjusted the
 	allowed margin of non-minimality for hgcd_appr.
@@ -4223,7 +4223,7 @@
 	* longlong.h (s390): Add 32-bit zarch umul_ppmm and udiv_qrnnd.
 	(s390): Overhaul 32-bit and 64-bit code.
 
-2011-10-07  Niels Möller  <nisse@lysator.liu.se>
+2011-10-07  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (speed_mpn_hgcd_appr): New prototype.
 	(SPEED_ROUTINE_MPN_HGCD_APPR_CALL): New macro.
@@ -4289,7 +4289,7 @@
 	* mpn/s390_32/esame/addmul_1.asm: New file.
 	* mpn/s390_32/esame/bdiv_dbm1c.asm: New file.
 
-2011-10-03  Niels Möller  <nisse@lysator.liu.se>
+2011-10-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-mulmid.
 	* tests/mpn/t-mulmid.c: New file.
@@ -4377,7 +4377,7 @@
 	(MULMID_TOOM42_THRESHOLD): New threshold.
 	(mpn_toom42_mulmid_itch): New macro.
 
-2011-10-03  Niels Möller  <nisse@lysator.liu.se>
+2011-10-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tune-gcd-p.c (main): Fixed broken loop conditions.
 
@@ -4500,12 +4500,12 @@
 
 	* configure.in: Surround tr ranges with [] for portability.
 
-2011-05-25  Niels Möller  <nisse@lysator.liu.se>
+2011-05-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tune-gcd-p.c (search): New function to search for minimum.
 	(main): Replaced slow linear search.
 
-2011-05-24  Niels Möller  <nisse@lysator.liu.se>
+2011-05-24  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/Makefile.am (EXTRA_PROGRAMS): Added tune-gcd-p. Also added
 	related automake variables.
@@ -4517,18 +4517,18 @@
 	* mpn/generic/gcd.c: Deleted the corresponding code, including
 	main function.
 
-2011-05-23  Niels Möller  <nisse@lysator.liu.se>
+2011-05-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Simplified by swapping operands when
 	needed, to get asize >= bsize. Use the reciprocity law generalized
 	to work when one operand is even.
 
-2011-05-22  Niels Möller  <nisse@lysator.liu.se>
+2011-05-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Another bugfix for the asize == 1
 	case. Sometimes, powers of two in b were taken into account twice.
 
-2011-05-21  Niels Möller  <nisse@lysator.liu.se>
+2011-05-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): The handling of asize == 1 was
 	broken. Rewrote it.
@@ -4538,7 +4538,7 @@
 	(check_data): Added some test cases related to the asize == 1 case
 	in mpz_jacobi.
 
-2011-05-20  Niels Möller  <nisse@lysator.liu.se>
+2011-05-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h: Jacobi-related prototypes.
 
@@ -4564,7 +4564,7 @@
 
 	* mpn/generic/hgcd.c (hgcd_hook): Avoid using NULL.
 
-2011-05-19  Niels Möller  <nisse@lysator.liu.se>
+2011-05-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/hgcd_lehmer.c (__gmpn_hgcd_itch): Don't rename symbols for
 	the functions moved to hgcd_matrix.c.
@@ -4593,7 +4593,7 @@
 	(mpn_gcdext_hook): Added some ASSERTs.
 	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_lehmer): Likewise.
 
-2011-05-17  Niels Möller  <nisse@lysator.liu.se>
+2011-05-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpn_gcd, mpn_gcdext): Document input requirements:
 	Must have un >= vn > 0, and V normalized.
@@ -4616,12 +4616,12 @@
 	* tests/cxx/t-iostream.cc: New file.
 	* tests/cxx/Makefile.am: Added t-iostream.
 
-2011-05-10  Niels Möller  <nisse@lysator.liu.se>
+2011-05-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_gcd): Document that gcd(0,0) = 0.
 	(mpz_gcdext): Document range for cofactors.
 
-2011-05-09  Niels Möller  <nisse@lysator.liu.se>
+2011-05-09  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Increased sp allocation to bsize+1 limbs.
 	* doc/gmp.texi (mpn_gcdext): Fixed documentation of allocation
@@ -4674,7 +4674,7 @@
 	* mpn/x86_64/fat/fat_entry.asm (PIC_OR_DARWIN): New symbol.  Use it to
 	work around Darwin problems.
 
-2011-05-04  Niels Möller  <nisse@lysator.liu.se>
+2011-05-04  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Reduced temporary allocations. Use
 	mpz_divexact when computing the second cofactor.
@@ -4691,14 +4691,14 @@
 	* configfsf.guess: Update to version of 2011-02-02.
 	* configfsf.sub: Update to version of 2011-03-23.
 
-2011-05-02  Niels Möller  <nisse@lysator.liu.se>
+2011-05-02  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/gcdext.c (mpz_gcdext): Don't allocate extra limbs at the end
 	of mpn_gcdext parameters.
 
 	* doc/gmp.texi (mpn_gcdext): Updated doc.
 
-2011-05-01  Niels Möller  <nisse@lysator.liu.se>
+2011-05-01  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/div_qr_2u_pi1.c (mpn_div_qr_2u_pi1): Fixed ASSERT.
 
@@ -4747,7 +4747,7 @@
 	* acinclude.m4 (GMP_ASM_RODATA): Make 'foo' larger to avoid clang
 	problems.
 
-2011-04-12  Niels Möller  <nisse@lysator.liu.se>
+2011-04-12  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/invert_limb.asm [PIC]: Declare mpn_invert_limb_table
 	as .protected.
@@ -4759,7 +4759,7 @@
 
 	* mpn/asm-defs.m4 (define_mpn): Use deflit.
 
-2011-04-10  Niels Möller  <nisse@lysator.liu.se>
+2011-04-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/asm-defs.m4 (define_mpn): Added invert_limb_table.
 
@@ -4773,7 +4773,7 @@
 	file. Extracted approximation table from invert_limb.asm, renamed
 	and made global.
 
-2011-03-30  Niels Möller  <nisse@lysator.liu.se>
+2011-03-30  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2u_pi1.asm: New file.
 
@@ -4817,7 +4817,7 @@
 
 	* mpn/asm-defs.m4: Renamed div_qr_2-functions to new names.
 
-2011-03-29  Niels Möller  <nisse@lysator.liu.se>
+2011-03-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2_pi1_norm.asm: Updated to use a separate rp
 	argument.
@@ -4834,7 +4834,7 @@
 	(mpn_div_qr_2): Likewise.
 	* mpn/generic/div_qr_2_pi1_norm.c (mpn_div_qr_2_pi1_norm): Likewise.
 
-2011-03-29  Niels Möller  <nisse@lysator.liu.se>
+2011-03-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86/k7/invert_limb.asm: Use mov rather than push and pop.
 	Earlier load of divisor from stack.
@@ -4844,7 +4844,7 @@
 	* mpn/x86/k7/invert_limb.asm: Protect movzwl register parameters from
 	being interpreted as m4 macro parameters.
 
-2011-03-22  Niels Möller  <nisse@lysator.liu.se>
+2011-03-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/div_qr_2_pi1_norm.asm: Copied optimized inner loop
 	from divrem_2.asm.
@@ -4874,7 +4874,7 @@
 	Make powerpc add_sssaaaa work for 32-bit case, and use less strict
 	constraints.
 
-2011-03-21  Niels Möller  <nisse@lysator.liu.se>
+2011-03-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (div_qr_2_pi2_threshold): New global variable.
 	(tune_div_qr_2): New function.
@@ -4884,7 +4884,7 @@
 
 	* gmp-impl.h (DIV_QR_2_PI2_THRESHOLD): Setup for tuning.
 
-	New 4/2 division loop, based on Torbjörn's work:
+	New 4/2 division loop, based on TorbjÃ¶rn's work:
 	* mpn/generic/div_qr_2.c (add_sssaaaa, add_csaac): New macros.
 	(udiv_qr_4by2): New macro.
 	(invert_4by2): New function.
@@ -4930,7 +4930,7 @@
 	(__gmp_binary_greater_equal): Remove, use !__gmp_binary_less.
 	* tests/cxx/t-ops2.cc: Typo.
 
-2011-03-20  Niels Möller  <nisse@lysator.liu.se>
+2011-03-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_div_qr_2_norm): New function.
 	(speed_mpn_div_qr_2_unnorm): New function.
@@ -4954,7 +4954,7 @@
 	* mpz/fac_ui.c (mpz_fac_ui): Use MPZ_REALLOC for standard, conditional
 	reallocation.
 
-2011-03-19  Niels Möller  <nisse@lysator.liu.se>
+2011-03-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/divrem_2.c (mpn_divrem_2): Fixed comment and assert
 	regarding q and n overlap.
@@ -5139,7 +5139,7 @@
 	* mpn/x86_64/coreinhm/aorrlsh_n.asm: Likewise.
 	* mpn/x86_64/coreisbr/aorrlsh2_n.asm: Likewise.
 
-2011-03-03  Niels Möller  <nisse@lysator.liu.se>
+2011-03-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): For x86 and x86_64, treat m
 	as in output operand only. Added sparc32 implementation. Also
@@ -5161,7 +5161,7 @@
 	* mpn/x86_64/coreinhm/aorrlsh_n.asm: New file.
 	* mpn/x86_64/coreisbr/aorrlsh_n.asm: New file.
 
-2011-03-01  Niels Möller  <nisse@lysator.liu.se>
+2011-03-01  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p_cps): Eliminated a neg and
 	two mov instructions.
@@ -5187,7 +5187,7 @@
 	(udiv_rnnd_preinv): Likewise.
 	* mpn/generic/mod_1_1.c (mpn_mod_1_1p): Likewise.
 
-2011-02-28  Niels Möller  <nisse@lysator.liu.se>
+2011-02-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mod_1_1.c (add_mssaaaa): Typo fix, define
 	add_mssaaaa, not add_sssaaaa.
@@ -5252,7 +5252,7 @@
 
 	* mpn/x86/atom/sse2/mul_1.asm: New code.
 
-2011-02-27  Niels Möller  <nisse@lysator.liu.se>
+2011-02-27  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_rnnd_preinv): New macro.
 
@@ -5303,7 +5303,7 @@
 	* mpn/x86/p6/sse2/mod_1_1.asm: New file.
 	* mpn/x86/p6/sse2/mod_1_4.asm: Fix typo in MULFUNC_PROLOGUE.
 
-2011-02-24  Niels Möller  <nisse@lysator.liu.se>
+2011-02-24  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86/k7/mod_1_1.asm (mpn_mod_1_1p): Rewrite using the same
 	algorithm as the x86_64 version.
@@ -5312,7 +5312,7 @@
 
 	* mpn/x86/atom/logops_n.asm: New file (same loop as aors_n).
 
-2011-02-23  Niels Möller  <nisse@lysator.liu.se>
+2011-02-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Shaved off one
 	instruction and one register in the inner loop. Rearranged
@@ -5327,7 +5327,7 @@
 	* mpn/x86_64/nano/gmp-mparam.h (SHLD_SLOW, SHRD_SLOW): Define.
 	* mpn/x86_64/atom/gmp-mparam.h (SHLD_SLOW, SHRD_SLOW): Define.
 
-2011-02-22  Niels Möller  <nisse@lysator.liu.se>
+2011-02-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/mod_1_1.asm (mpn_mod_1_1p): Rewrite.
 
@@ -5482,7 +5482,7 @@
 	* mpn/x86/atom/mode1o.asm: New file, grabbing another asm file.
 	* mpn/x86/atom/mul_1.asm: Claim mul_1c.
 
-2011-02-02  Niels Möller  <nisse@lysator.liu.se>
+2011-02-02  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD_CALL): Fixed one
 	speed_operand_dst call.
@@ -5922,7 +5922,7 @@
 	* mpn/x86_64/pentium4/aorslshC_n.asm: Likewise.
 	* mpn/x86/k7/gcd_1.asm: Likewise.
 
-2010-08-20  Niels Möller  <nisse@lysator.liu.se>
+2010-08-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	Suggested by Ozkan Sezer:
 	* configure.in: If $M4 is already set in the environment, don't
@@ -5937,7 +5937,7 @@
 
 	* mpn/x86_64/divrem_2.asm: Tune.
 
-2010-06-19  Niels Möller  <nisse@lysator.liu.se>
+2010-06-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MOD_1_1): Pass normalized
 	divisor to the benchmarked function.
@@ -5962,7 +5962,7 @@
 
 	* mpn/x86/k7/invert_limb.asm: Moved from mpn/x86/invert_limb.asm.
 
-2010-06-15  Niels Möller  <nisse@lysator.liu.se>
+2010-06-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-mod_1.
 	* tests/mpn/t-mod_1.c: New file.
@@ -6044,7 +6044,7 @@
 
 	* mpn/x86_64/pentium4/gmp-mparam.h: Disable mpn_addlsh_n, mpn_rsblsh_n.
 
-2010-05-12  Niels Möller  <nisse@lysator.liu.se>
+2010-05-12  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Fixed off-by-one error in use of
 	scratch space.
@@ -6064,7 +6064,7 @@
 
 	* mpn/x86_64/pentium4/lshiftc.asm: New file.
 
-2010-05-11  Niels Möller  <nisse@lysator.liu.se>
+2010-05-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): Deleted old implementation.
 	Reorganized new implementation, to handle small inputs efficiently.
@@ -6136,7 +6136,7 @@
 	* mpn/generic/mod_1_1.c: Undo last change.
 	* mpn/x86_64/mod_1_1.asm: Likewise.
 
-2010-05-03  Niels Möller  <nisse@lysator.liu.se>
+2010-05-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/jacobi_lehmer.c (jacobi_hook): New function.
 	(mpn_jacobi_subdiv_step): Deleted function.
@@ -6192,12 +6192,12 @@
 	* mpn/powerpc64/aix.m4 (PROLOGUE_cpu): Use "named csect" making
 	requested alignment actually honoured.
 
-2010-04-30  Niels Möller  <nisse@lysator.liu.se>
+2010-04-30  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/jacobi_lehmer.c (mpn_jacobi_2): Fixed handling of
 	the case bl == 1. Fixed missing application of reciprocity.
 
-2010-04-29  Niels Möller  <nisse@lysator.liu.se>
+2010-04-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Deleted gcdext_subdiv_step.
 
@@ -6235,7 +6235,7 @@
 	* mpn/powerpc64/darwin.m4: Likewise.
 	* mpn/powerpc64/elf.m4: Likewise.
 
-2010-04-28  Niels Möller  <nisse@lysator.liu.se>
+2010-04-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_data): Added some more test cases.
 
@@ -6246,7 +6246,7 @@
 
 	* mpn/powerpc64/mode64/p6/mul_basecase.asm: New file.
 
-2010-04-23  Niels Möller  <nisse@lysator.liu.se>
+2010-04-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (MPN_GCD_LEHMER_N_ITCH): Deleted.
 	(mpn_gcd_lehmer_n): Deleted declaration.
@@ -6276,7 +6276,7 @@
 	* mpn/powerpc64/mode64/aorslshC_n.asm: Swap ldx operands as a temporary
 	workaround for POWER6 pipeline glitch.
 
-2010-04-19  Niels Möller  <nisse@lysator.liu.se>
+2010-04-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/jacobi.c (mpz_jacobi): New implementation using
 	mpn_jacobi_lehmer. Currently #if:ed out.
@@ -6295,7 +6295,7 @@
 
 	* configure.in (gmp_mpn_functions): Added jacobi_lehmer.
 
-2010-04-14  Niels Möller  <nisse@lysator.liu.se>
+2010-04-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Added
 	matrix22_mul1_inverse_vector.
@@ -6449,7 +6449,7 @@
 	* mpn/powerpc64/mode64/addmul_1.asm: Remove.
 	* mpn/powerpc64/mode64/submul_1.asm: Remove.
 
-2010-03-11  Niels Möller  <nisse@lysator.liu.se>
+2010-03-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_lehmer.c (gcd_2): Use sub_ddmmss.
 
@@ -6468,7 +6468,7 @@
 
 	* doc/gmp.texi (Language Bindings): Update Python site, add Ruby.
 
-2010-03-10  Niels Möller  <nisse@lysator.liu.se>
+2010-03-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_jacobi_base): Consider mpn_jacobi_base_4.
 	* tune/speed.c (routine): Added mpn_jacobi_base_4.
@@ -6480,7 +6480,7 @@
 	* mpn/generic/jacbase.c (mpn_jacobi_base): New function, for
 	JACOBI_BASE_METHOD 4.
 
-2010-03-09  Niels Möller  <nisse@lysator.liu.se>
+2010-03-09  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): Also generate inputs
 	with large quotients and a large gcd.
@@ -6508,14 +6508,14 @@
 
 	* mpn/x86_64/core2/divrem_1.asm: New file.
 
-2010-02-26  Niels Möller  <nisse@lysator.liu.se>
+2010-02-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.c (routine): Added udiv_qrnnd_preinv3.
 
 	* tune/common.c (speed_udiv_qrnnd_preinv3): New function.
 	* tune/speed.h: Added prototype for it.
 
-2010-02-26  Niels Möller  <nisse@lysator.liu.se>
+2010-02-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (check_large_quotients): New test. Currently
 	disabled, since it's quite slow.
@@ -6525,7 +6525,7 @@
 
 	* mpn/pa64/aors_n.asm: Fix typo in last change.
 
-2010-02-25  Niels Möller  <nisse@lysator.liu.se>
+2010-02-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-jac.c (ref_jacobi): New reference implementation,
 	using factorization and legendre symbols computed by powm.
@@ -6569,7 +6569,7 @@
 
 	* mpn/generic/sqrtrem.c: Use CNST_LIMB.
 
-2010-02-20  Niels Möller  <nisse@lysator.liu.se>
+2010-02-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (mpn_gcd_accel): Deleted prototype.
 	(mpn_hgcd_lehmer): New prototype.
@@ -6586,7 +6586,7 @@
 	around hgcd_step.
 	(mpn_hgcd_itch): Substitute n for MPN_HGCD_LEHMER_ITCH (n).
 
-2010-02-19  Niels Möller  <nisse@lysator.liu.se>
+2010-02-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* Makefile.am (mpn/jacobitab.h): Added the rules needed to
 	generate this file.
@@ -6598,12 +6598,12 @@
 	* mpn/generic/powm.c: Honour SQR_BASECASE_THRESHOLD in innerloop
 	expansions.
 
-2010-02-16  Niels Möller  <nisse@lysator.liu.se>
+2010-02-16  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/time.c (cgt_works_p): Added rudimentary sanity check for
 	clock_gettime working.
 
-2010-02-15  Niels Möller  <nisse@lysator.liu.se>
+2010-02-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/time.c (speed_time_init): Make use of cycle counter
 	configurable, via the speed_option_cycles_broken flag.
@@ -6614,7 +6614,7 @@
 	counter on linux. Needs to be replaced by something more
 	selective.
 
-2010-02-11  Niels Möller  <nisse@lysator.liu.se>
+2010-02-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/time.c (speed_time_init): Fix speed_time_string when using
 	clock_gettime.
@@ -6737,7 +6737,7 @@
 	* tune/common.c: Whitespace cleanup.
 	(speed_mpn_matrix22_mul): Rewrite.
 
-2010-01-21  Niels Möller  <nisse@lysator.liu.se>
+2010-01-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/nussbaumer_mul.c (mpn_nussbaumer_mul): Take
 	advantage of new mpn_mulmod_bnm1 interface, to reduce allocation.
@@ -6858,7 +6858,7 @@
 	* perfpow.c (mpn_perfect_power_p): Call mpn_divexact instead of
 	mpn_bdiv_q (with too little scratch space!).
 
-	From Niels Möller:
+	From Niels MÃ¶ller:
 	* tests/mpn/t-div.c (check_one): Get rid of the poorly managed variable
 	tn.
 
@@ -6867,7 +6867,7 @@
 	* mpn/generic/div_q.c: Use SB division for small quotients as well as
 	small divisors.  Fix typo in itch call.
 
-2010-01-06  Niels Möller  <nisse@lysator.liu.se>
+2010-01-06  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-div.c (check_one): Checking based on multiplication,
 	refmpn_mul, rather than refmpn_tdiv_qr.
@@ -7124,7 +7124,7 @@
 	* mpn/generic/toom22_mul.c (TOOM22_MUL_REC): New name for
 	TOOM22_MUL_MN_REC.
 
-2009-12-26  Niels Möller  <nisse@lysator.liu.se>
+2009-12-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Relax
 	requirements a bit.
@@ -7147,7 +7147,7 @@
 	(mpn_toom8_sqr_itch): Rename to mpn_toom8_mul_n_itch and redefine.
 	* mpn/generic/mul_n.c: Use renamed _itch macros.
 
-2009-12-25  Niels Möller  <nisse@lysator.liu.se>
+2009-12-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Tightened requirements.
 	* gmp-impl.h (mpn_toom32_mul_itch): Updated. Less scratch needed
@@ -7268,7 +7268,7 @@
 
 	* mpn/generic/mu_div_q.c (mpn_mu_div_q_itch): New function.
 
-2009-12-22  Niels Möller  <nisse@lysator.liu.se>
+2009-12-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_q.c: Use udiv_qr_3by2.  Intended to change
 	nothing after preprocessing.
@@ -7295,7 +7295,7 @@
 	* mpn/generic/bdiv_qr.c (mpn_bdiv_qr): Simplify, don't allocate.
 	(mpn_bdiv_qr_itch): Conditionalise on MU_BDIV_QR_THRESHOLD.
 
-2009-12-18  Niels Möller  <nisse@lysator.liu.se>
+2009-12-18  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-bdiv.c: Add red-zones.
 
@@ -7419,7 +7419,7 @@
 	* configure.in: Add corresponding HAVE_NATIVEs.
 	* mpn/x86_64/rsh1aors_n.asm: Add _nc entry point.
 
-2009-12-18  Niels Möller  <nisse@lysator.liu.se>
+2009-12-18  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/divexact.c: Rewrite to use mpn_divexact.
 
@@ -7472,7 +7472,7 @@
 
 	* gmp-impl.h: Renew default values for all THRESHOLDs.
 
-2009-12-17  Niels Möller  <nisse@lysator.liu.se>
+2009-12-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/divexact.c (mpn_divexact): Don't require that the
 	dividend is normalized. Use MPN_DIVREM_OR_PREINV_DIVREM_1. When
@@ -7538,7 +7538,7 @@
 	non-WANT_REDC_2 INNERLOOP expansion code.
 	* mpn/generic/powm_sec.c: Use mp_bitcnt_t for bit counts.
 
-2009-12-16  Niels Möller  <nisse@lysator.liu.se>
+2009-12-16  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (main): Added test case to exercise the
 	unlikely u0 == u1 case in mpn_gcdext_lehmer_n.
@@ -7569,7 +7569,7 @@
 
 	* mpn/generic/gcdext_subdiv_step.c: Get an ASSERT right.
 
-2009-12-15  Niels Möller  <nisse@lysator.liu.se>
+2009-12-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_qr.c (mpn_sbpi1_div_qr): A very small step
 	towards nail support.
@@ -7579,7 +7579,7 @@
 	* gmp-impl.h (mpn_ni_invertappr): Added prototype and name-mangling.
 	* mpn/generic/mulmod_bnm1.c: Comment representation of class [0].
 
-2009-12-14  Niels Möller  <nisse@lysator.liu.se>
+2009-12-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): Use
 	udiv_qr_3by2.
@@ -7596,11 +7596,11 @@
 	* mpn/generic/invert.c: Improved comments.
 	(mpn_bc_invertappr): Conditionally re-enable mpn_dcpi1_divappr_q.
 
-2009-12-14  Niels Möller  <nisse@lysator.liu.se>
+2009-12-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_qr_3by2): Fix typo in argument list.
 
-2009-12-13  Niels Möller  <nisse@lysator.liu.se>
+2009-12-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_qr_3by2): New macro.
 	* mpn/generic/sbpi1_div_qr.c (mpn_sbpi1_div_qr): Use udiv_qr_3by2.
@@ -7618,7 +7618,7 @@
 
 	* mpz/powm.c: Rework buffer handling.
 
-2009-12-13  Niels Möller  <nisse@lysator.liu.se>
+2009-12-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/toom-shared.h (main): Use refmpn_mul_basecase to check
 	results (slow!). Iteration counts of all toom tests reduced
@@ -7684,7 +7684,7 @@
 
 	* mpn/*/gmp-mparam.h: Regenerate many of these files.
 
-2009-12-10  Niels Möller  <nisse@lysator.liu.se>
+2009-12-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (mpn_divexact): Removed scratch pointer from
 	prototype.
@@ -7719,10 +7719,10 @@
 
 	* mpn/generic/mulmod_bnm1.c (mpn_bc_mulmod_bnm1,
 	mpn_bc_mulmod_bnp1): Added a parameter for scratch area, possibly
-	same as result area (as suggested by Niels Möller).
+	same as result area (as suggested by Niels MÃ¶ller).
 	(mpn_mulmod_bnm1): Calls changed accordingly.
 
-2009-12-08  Niels Möller  <nisse@lysator.liu.se>
+2009-12-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Use
 	table lookup for count_trailing_zeros. Binary algorithm still
@@ -7853,7 +7853,7 @@
 
 	* mpn/generic/gcdext.c: Add a TMP_FREE.
 
-2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+2009-12-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]:
 	Added various masking tricks.
@@ -7886,7 +7886,7 @@
 	(refmpn_rsblsh1_n): Use generic refmpn_rsblsh_n.
 	* tests/tests.h: Declare new functions.
 
-2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+2009-12-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_subdiv_step.c (mpn_gcdext_subdiv_step):
 	Select the right cofactor in the cases A == B or A == 2B.
@@ -7896,7 +7896,7 @@
 	Select the right cofactor in the case ap[0] == bp[0].
 	* mpn/generic/gcdext.c (mpn_gcdext): Analogous changes.
 
-2009-12-02  Niels Möller  <nisse@lysator.liu.se>
+2009-12-02  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-h.in (mpn_gcdext_1): Updated prototype.
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Updated for
@@ -7954,7 +7954,7 @@
 
 	* tune/speed.h (SPEED_ROUTINE_REDC_N): Set min size properly.
 
-2009-12-01  Niels Möller  <nisse@lysator.liu.se>
+2009-12-01  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.c (routine): Added mpn_toom42_mul and mpn_redc_n.
 	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM42_MUL): New macro.
@@ -8090,7 +8090,7 @@
 
 	* tune/speed.c (routine): Add entry related to mpn_mulmod_bnm1.
 
-2009-11-19  Niels Möller  <nisse@lysator.liu.se>
+2009-11-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom_eval_dgr3_pm2.c (mpn_toom_eval_dgr3_pm2)
 	[HAVE_NATIVE_mpn_add_n_sub_n]: Fixed typo in mpn_add_n_sub_n call
@@ -8104,7 +8104,7 @@
 	* mpn/asm-defs.m4 (define_mpn): Add addlsh_n.
 	* gmp-impl.h (mpn_addlsh_n): Added prototype and name-mangling.
 
-2009-11-19  Niels Möller  <nisse@lysator.liu.se>
+2009-11-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom_eval_pm2.c (mpn_toom_eval_pm2): New file.
 	* mpn/generic/toom53_mul.c (mpn_toom53_mul): Use mpn_toom_eval_pm2.
@@ -8300,7 +8300,7 @@
 	  SQR_KARATSUBA_THRESHOLD => SQR_TOOM2_THRESHOLD,
 	and associated names analogously.
 
-2009-10-31  Niels Möller  <nisse@lysator.liu.se>
+2009-10-31  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom_interpolate_7pts.c: Changed evaluation points,
 	replacing -1/2 by -2.
@@ -8322,13 +8322,13 @@
 
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add toom2* and toom3* files.
 
-2009-10-30  Niels Möller  <nisse@lysator.liu.se>
+2009-10-30  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Added toom_eval_dgr3_pm2.
 	* gmp-impl.h: Added prototype for mpn_toom_eval_dgr3_pm2.
 	* mpn/generic/toom_eval_dgr3_pm2.c: New file.
 
-2009-10-29  Niels Möller  <nisse@lysator.liu.se>
+2009-10-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom43_mul.c (mpn_toom43_mul): Use
 	mpn_toom_eval_dgr3_pm1.
@@ -8346,7 +8346,7 @@
 	* mpn/generic/mul_fft.c (mpn_mul_fft): Make it return high limb.
 	(mpn_mul_fft_internal): Likewise.
 
-	* mpn/generic/mulmod_bnm1.c: New file, by Niels Möller.
+	* mpn/generic/mulmod_bnm1.c: New file, by Niels MÃ¶ller.
 	* configure.in (gmp_mpn_functions): Add mulmod_bnm1.
 	* gmp-impl.h: Add related declarations.
 	* tune/tuneup.c: Tune MULMOD_BNM1_THRESHOLD.
@@ -8366,7 +8366,7 @@
 	* tune/speed.h: Likewise.
 	* tests/devel/try.c: Test new mul/sqr functions, remove old tests.
 
-2009-10-29  Niels Möller  <nisse@lysator.liu.se>
+2009-10-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.c: Added support for mpn_toom4_sqr,
 
@@ -8379,7 +8379,7 @@
 	declarations.
 	(mpn_toom2_sqr_itch): Add margin for recursive calls.
 
-2009-10-28  Niels Möller  <nisse@lysator.liu.se>
+2009-10-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mul_n.c (mpn_kara_mul_n): Deleted old Karatsuba
 	implementation.
@@ -8445,7 +8445,7 @@
 	(gmp_pi1_t, gmp_pi2_t): New types.
 	(invert_pi1): New macro for computing 2/1 and 3/2 inverses.
 
-2009-10-23  Niels Möller  <nisse@lysator.liu.se>
+2009-10-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (mpn_toom62_mul_itch): New function.
 
@@ -8457,7 +8457,7 @@
 	* mpn/generic/get_d.c: Fix code handling denorms for 64-bit machines.
 	* tests/mpf/t-get_d.c (test_denorms): New function.
 
-2009-10-23  Niels Möller  <nisse@lysator.liu.se>
+2009-10-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom52_mul.c (mpn_toom52_mul): Use supplied scratch
 	space, not TMP_ALLOC. Interface change, now requires input sizes
@@ -8471,7 +8471,7 @@
 
 	* mpn/x86_64/sqr_basecase.asm: Tune for speed and a 7% size decrease.
 
-2009-10-22  Niels Möller  <nisse@lysator.liu.se>
+2009-10-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-toom44.c: New test program.
 	* tests/mpn/t-toom33.c: New test program.
@@ -8493,7 +8493,7 @@
 	* tests/refmpn.c (refmpn_mullow_n): New function.
 	* tests/tests.h: Declare it.
 
-2009-10-21  Niels Möller  <nisse@lysator.liu.se>
+2009-10-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/toom-shared.h (main): Check for writes outside of the
 	product or scratch area.
@@ -8504,7 +8504,7 @@
 	space, not TMP_ALLOC. Interface change, now requires input sizes
 	such that s + t >= 5.
 
-2009-10-20  Niels Möller  <nisse@lysator.liu.se>
+2009-10-20  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/toom-shared.h (MIN_BLOCK): New constant, which can be
 	overridden by users. Needed by t-toom42 and t-toom43.
@@ -8520,7 +8520,7 @@
 	* tests/mpn/toom-shared.h: New file. Test framework for Toom
 	functions.
 
-2009-10-14  Niels Möller  <nisse@lysator.liu.se>
+2009-10-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_itch): Thanks to the new
 	mpn_matrix22_mul_strassen, the scratch need is reduced by 16%.
@@ -8548,17 +8548,17 @@
 	TOOM22_MUL_N_REC.  Unconditionally call the generic mpn_mul_n.
 	* mpn/generic/toom32_mul.c: Analogous changes.
 
-2009-09-28  Niels Möller  <nisse@lysator.liu.se>
+2009-09-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/invert_limb.asm: Rewrite. Exploit cancellation in the
 	Newton iteration.
 
-2009-09-27  Niels Möller  <nisse@lysator.liu.se>
+2009-09-27  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86/invert_limb.asm: Reduce register usage. Eliminated $1
 	arguments to add, sub and shift.
 
-2009-09-25  Niels Möller  <nisse@lysator.liu.se>
+2009-09-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86/invert_limb.asm: New file.
 
@@ -8635,7 +8635,7 @@
 	* mpf/set_str.c: Likewise.
 	* mpz/set_str.c: Likewise.
 
-2009-07-03  Niels Möller  <nisse@lysator.liu.se>
+2009-07-03  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_1.c (mpn_gcd_1): Use masking tricks to reduce
 	the number of branches in the loop.
@@ -8762,7 +8762,7 @@
 	* dumbmp.c (isprime): Replace with slightly less inefficient code.
 	(mpz_tdiv_r): New function.
 
-2009-06-11  Niels Möller  <nisse@lysator.liu.se>
+2009-06-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	Support for mpn_toom32_mul in speed:
 	* tune/speed.c (routine): Added mpn_toom32_mul.
@@ -8790,7 +8790,7 @@
 	* mpn/x86/p6/mod_1.asm: Likewise.
 	* mpn/x86/pentium/mod_1.asm: Likewise.
 
-2009-06-08  Niels Möller  <nisse@lysator.liu.se>
+2009-06-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom4_sqr.c (mpn_toom4_sqr): Reorganized, to reduce
 	the need for scratch space, and get rid of TMP_ALLOC. Also use
@@ -8813,7 +8813,7 @@
 	FFT_TABLE2_SIZE if they are defined.
 	(struct nk): Use bit field.
 
-2009-06-05  Niels Möller  <nisse@lysator.liu.se>
+2009-06-05  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom44_mul.c (mpn_toom44_mult): Use
 	mpn_toom_eval_dgr3_pm1.
@@ -9218,7 +9218,7 @@
 	* tests/mpz/t-nextprime.c: New test file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-nextprime.
 
-	From Niels Möller:
+	From Niels MÃ¶ller:
 	* mpz/nextprime.c: Handle large prime gaps by limiting incr.
 
 2009-01-04  Torbjorn Granlund  <tege@gmplib.org>
@@ -9230,7 +9230,7 @@
 
 	* mpn/x86/fat/diveby3.c: New file.
 
-2008-12-30  Niels Möller  <nisse@lysator.liu.se>
+2008-12-30  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Greatest Common Divisor Algorithms): Updated
 	section on GCD algorithms.
@@ -9541,7 +9541,7 @@
 
 	* mpn/x86/k7/mod_34lsub1.asm: Use movzb for masking low 8 bits.
 
-2008-10-31  Niels Möller  <nisse@lysator.liu.se>
+2008-10-31  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd2.c (div1): New function (taken from old gcdext
 	implementation)
@@ -9577,7 +9577,7 @@
 
 	* gmp-h.in (mpn_gcdext_1): Remove bogus __GMP_ATTRIBUTE_PURE.
 
-2008-10-27  Niels Möller  <nisse@lysator.liu.se>
+2008-10-27  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd): Call mpn_hgcd_matrix_init once
 	for each call to mpn_hgcd.
@@ -9599,7 +9599,7 @@
 
 	* mpz/nextprime.c: Move declarations to function beginning.
 
-2008-10-23  Niels Möller  <nisse@lysator.liu.se>
+2008-10-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (DECL_gcdext_1): Deleted.
 
@@ -9610,7 +9610,7 @@
 
 2008-10-21  Torbjorn Granlund  <tege@gmplib.org>
 
-	With Neils Möller:
+	With Neils MÃ¶ller:
 	* mpz/nextprime.c: Rewrite.
 
 	* tests/devel/try.c (main): Use strtol for 's' and 'S' optargs.
@@ -9622,7 +9622,7 @@
 
 	* configure.in: Set up specific path for x86_64/atom.
 
-2008-10-21  Niels Möller  <nisse@lysator.liu.se>
+2008-10-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Removed
 	qstack.c.
@@ -9669,7 +9669,7 @@
 	* mpn/x86_64/mul_basecase.asm: Use lea directly for loading entry point
 	addresses.
 
-2008-10-09  Niels Möller  <nisse@lysator.liu.se>
+2008-10-09  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/x86/k7/gmp-mparam.h: Updated GCD-related values.
 
@@ -9690,7 +9690,7 @@
 
 	* mpn/minithres/gmp-mparam.h: Update FFT values.
 
-2008-10-02  Niels Möller  <nisse@lysator.liu.se>
+2008-10-02  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* hgcd.c (mpn_hgcd_matrix_mul): Fixed normalization bug.
 
@@ -9709,7 +9709,7 @@
 
 	* tune/common.c: Corresponding changes.
 
-2008-09-22  Niels Möller  <nisse@lysator.liu.se>
+2008-09-22  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (hgcd_mul_matrix_vector): New function,
 	replaces addmul2_n. Needs less copying.
@@ -9738,7 +9738,7 @@
 	modification in place still need to copy one of the inputs.
 	(mpn_hgcd_mul_matrix1_inverse_vector): Likewise.
 
-2008-09-22  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+2008-09-22  Niels MÃ¶ller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
 	* mpn/generic/hgcd.c (hgcd_matrix_mul_1): Use mpn_addaddmul_1msb0.
 	* mpn/generic/hgcd2.c (mpn_hgcd_mul_matrix1_vector): Likewise.
@@ -9783,14 +9783,14 @@
 	(DIVEXACT_BY3_METHOD): Don't default to 0 if
 	HAVE_NATIVE_mpn_divexact_by3c.
 
-2008-09-18  Niels Möller  <nisse@lysator.liu.se>
+2008-09-18  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd.c (main): Added code for tuning of CHOOSE_P.
 
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_mul): Assert that inputs are
 	normalized.
 
-2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+2008-09-17  Niels MÃ¶ller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
 	* mpn/generic/gcdext.c (mpn_gcdext): p = n/5 caused a
 	slowdown for large inputs. As a compromise, use p = n/2 for the
@@ -9841,7 +9841,7 @@
 	Choose function depending on DIVEXACT_BY3_METHOD.
 	* gmp-impl.h (DIVEXACT_BY3_METHOD): Provide default.
 
-2008-09-16  Niels Möller  <nisse@lysator.liu.se>
+2008-09-16  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_addmul2_n): Moved function to
 	gcdext.c, where it is used.
@@ -9867,7 +9867,7 @@
 
 	* mpn/generic/gcd.c (mpn_gcd): Use mpn_zero_p.
 
-2008-09-15  Niels Möller  <nisse@lysator.liu.se>
+2008-09-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_init): Updated for deleted
 	tp pointer.
@@ -9879,7 +9879,7 @@
 	(MPN_HGCD_MATRIX_INIT_ITCH): Reduced storage.
 	(mpn_hgcd_step, MPN_HGCD_STEP_ITCH): Deleted declarations.
 
-2008-09-15  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+2008-09-15  Niels MÃ¶ller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
 	* mpn/x86_64/gmp-mparam.h (MATRIX22_STRASSEN_THRESHOLD): New
 	threshold.
@@ -9891,7 +9891,7 @@
 	* mpn/generic/gcd.c (mpn_gcd): Fixed calculation of scratch space,
 	and use mpn_hgcd_itch.
 
-2008-09-15  Niels Möller  <nisse@lysator.liu.se>
+2008-09-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_matrix22_mul): New function.
 	(all): Use it.
@@ -9916,14 +9916,14 @@
 	* tests/mpn/t-matrix22.c: New file.
 	* mpn/generic/matrix22_mul.c: New file.
 
-2008-09-11  Niels Möller  <nisse@king.swox.se>
+2008-09-11  Niels MÃ¶ller  <nisse@king.swox.se>
 
 	* tune/tuneup.c: Updated tuning of gcdext.
 
 	* mpn/x86_64/gmp-mparam.h (GCDEXT_DC_THRESHOLD): Reduced threshold
 	from 713 to 409.
 
-2008-09-11  Niels Möller  <nisse@lysator.liu.se>
+2008-09-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h: Updated for gcdext changes.
 	(GCDEXT_DC_THRESHOLD): New constant, renamed from
@@ -9955,7 +9955,7 @@
 
 	* gmp-h.in: Unconditionally include <cstdio>.
 
-2008-09-10  Niels Möller  <nisse@lysator.liu.se>
+2008-09-10  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c: #if:ed out speed_mpn_gcd_binary and
 	speed_mpn_gcd_accel.
@@ -9987,7 +9987,7 @@
 
 	* doc/gmp.texi: Fix a typo and clarify mpn_gcdext docs.
 
-2008-09-09  Niels Möller  <nisse@lysator.liu.se>
+2008-09-09  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer): Adapted
 	to new hgcd interface.
@@ -10040,7 +10040,7 @@
 
 	* mpn/generic/mul_toom22.c: Compute s and t more cleverly.
 
-2008-09-08  Niels Möller  <nisse@lysator.liu.se>
+2008-09-08  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-hgcd.c: Updated tests. Rewrite of hgcd_ref.
 
@@ -10078,7 +10078,7 @@
 
 	* configure.in: Handle core2 separately from athlon64.
 
-2008-09-05  Niels Möller  <nisse@lysator.liu.se>
+2008-09-05  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* */Makefile.in, configure, aclocal.m4, config.in: Removed files
 	from repository. They're instead generated by automake and
@@ -11268,7 +11268,7 @@
 	* gmp-impl.h (mpn_nand_n, mpn_iorn_n, mpn_nior_n, mpn_xnor_n):
 	Handle nails.
 
-2005-06-13  Niels Möller  <nisse@lysator.liu.se>
+2005-06-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (gcdext_schoenhage): Check for the
 	(unlikely) case that one of the hgcd/euclid steps results in two
@@ -11564,7 +11564,7 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_CALL): Simplify and correct code
 	for generating test operands.
 
-2005-03-17  Niels Möller  <nisse@lysator.liu.se>
+2005-03-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (qstack_adjust): New argument d, saying how much
 	to adjust the top quotient.
@@ -11575,7 +11575,7 @@
 	* tests/mpz/t-gcd.c (MAX_SCHOENHAGE_THRESHOLD): Set to largest of
 	gcd,gcdext thresholds.
 
-2005-03-15  Niels Möller  <nisse@lysator.liu.se>
+2005-03-15  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (gcdext_schoenhage): When calling gcdext_lehmer,
 	reuse all temporary limb storage, including the storage used for the
@@ -11947,14 +11947,14 @@
 2004-06-03  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (memset): Use a local char* pointer, in case parameter is
-	something else (eg. tune/common.c).  Reported by Emmanuel Thomé.
+	something else (eg. tune/common.c).  Reported by Emmanuel ThomÃ©.
 
 2004-06-01  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (i?86-*-*): Avoid "Illegal instruction" message which
 	goes to stdout on 80386 freebsd4.9.
 
-2004-05-23  Niels Möller  <nisse@lysator.liu.se>
+2004-05-23  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (gcdext_1_u): New function.
 	(mpn_gcdext): Use it.
@@ -11992,7 +11992,7 @@
 	(tune_gcdext): Remove function.
 	(all): Corresponding changes.
 
-2004-05-21  Niels Möller  <nisse@lysator.liu.se>
+2004-05-21  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c: Complete rewrite.  Uses fast Lehmer code for
 	small operands, and Schoenhage code for large operands.
@@ -12106,7 +12106,7 @@
 2004-05-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mullow_n.c, mpn/generic/mullow_basecase.c: New files
-	(mainly by Niels Möller).
+	(mainly by Niels MÃ¶ller).
 	* configure.in, mpn/Makefile.am: Add them.
 
 	* gmp-impl.h (MULLOW_BASECASE_THRESHOLD, MULLOW_DC_THRESHOLD,
@@ -12236,7 +12236,7 @@
 
 	* doc/gmp.texi (Reentrancy, Random State Initialization): Note
 	gmp_randinit use of gmp_errno is not thread safe.  Reported by Vincent
-	Lefèvre.
+	LefÃ¨vre.
 
 	* doc/gmp.texi (Random State Initialization): Add index entries for
 	gmp_errno and constants.
@@ -12488,7 +12488,7 @@
 
 2004-03-01  Torbjorn Granlund  <tege@swox.com>
 
-	With Karl Hasselström:
+	With Karl HasselstrÃ¶m:
 	* mpn/generic/dc_divrem_n.c (mpn_dc_div_2_by_1): New function, with
 	meat from old mpn_dc_divrem_n.  Accept scratch parameter.  Rewrite to
 	avoid a recursive call.
@@ -12555,7 +12555,7 @@
 	* configure.in (sparc64-*-*bsd*): Amend -m32 setup for ABI=32, so it's
 	not used in ABI=64 on the BSD systems.
 
-2004-02-18  Niels Möller  <nisse@lysator.liu.se>
+2004-02-18  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (gcdext_valid_p): New function.
 	(ref_mpz_gcd): Deleted function.
@@ -12665,11 +12665,11 @@
 	From Kevin:
 	* config.guess: Recognize AMD's hammer processors, return x86_64.
 
-2004-01-31  Niels Möller  <nisse@lysator.liu.se>
+2004-01-31  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_cmp_sum3): Declare static.
 
-2004-01-25  Niels Möller  <nisse@lysator.liu.se>
+2004-01-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-hgcd.
 
@@ -12686,7 +12686,7 @@
 
 	* mpn/generic/gcd.c: Reenable Schoenhage code.
 
-	With Niels Möller:
+	With Niels MÃ¶ller:
 	* mpn/generic/hgcd.c: Add const and inline to several functions.
 	(qstack_push_start qstack_push_end qstack_push_quotient): Remove.
 	(euclid_step): Insert removed functions here.
@@ -12742,7 +12742,7 @@
 
 	* mpn/amd64/README: Add reference to ABI spec.
 
-2004-01-17  Niels Möller  <nisse@lysator.liu.se>
+2004-01-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (hgcd_adjust): Backed out mpn_addlsh1_n
 	change for now.
@@ -12766,7 +12766,7 @@
 	* gmp-h.in (_GMP_H_HAVE_FILE): Add _MSL_STDIO_H for Metrowerks.
 	Reported by Tomas Zahradnicky.
 
-2004-01-16  Niels Möller  <nisse@lysator.liu.se>
+2004-01-16  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Use MPN_DECR_U.
 	(hgcd_adjust): Use mpn_addlsh1_n when available.
@@ -12782,7 +12782,7 @@
 	* configure.in (--with-readline=detect): Check for readline/readline.h
 	and readline/history.h.  Report result of detection.
 
-2004-01-14  Niels Möller  <nisse@lysator.liu.se>
+2004-01-14  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/speed.c (routine): Disabled speed_mpn_hgcd_lehmer.
 	* tune/common.c (speed_mpn_hgcd_lehmer): Disabled function.
@@ -12825,7 +12825,7 @@
 	(hgcd_final): Special handling of the case hgcd2 returning 1. Now
 	uses hgcd_adjust, instead of a full Euclid division.
 
-2004-01-13  Niels Möller  <nisse@lysator.liu.se>
+2004-01-13  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (euclid_step, hgcd_case0): Merged into a
 	single function euclid_step.
@@ -12849,7 +12849,7 @@
 	(one_test): Use hgcd_ref. Don't use mpn_hgcd_lehmer.
 	(main): Skip one_step if both input values are zero.
 
-2004-01-12  Niels Möller  <nisse@lysator.liu.se>
+2004-01-12  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (hgcd_final): Rewritten, now uses Lehmer
 	steps instead of a division loop.
@@ -12862,7 +12862,7 @@
 	* tests/mpn/t-hgcd.c: Try the same kind of random inputs as for
 	mpz/t-gcd.
 
-2004-01-11  Niels Möller  <nisse@lysator.liu.se>
+2004-01-11  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_lehmer): Rewritten, after some more
 	analysis of the size reduction for one Lehmer step.
@@ -12871,7 +12871,7 @@
 
 2004-01-11  Torbjorn Granlund  <tege@swox.com>
 
-	With Niels Möller:
+	With Niels MÃ¶ller:
 	* mpn/generic/hgcd.c (hgcd_normalize): Fix ASSERTs.
 	(hgcd_mul): Normalize R[1].uvp[1].  Add some more ASSERTs.
 	(hgcd_update_uv): Streamline.  ASSERT that input and output is
@@ -13055,7 +13055,7 @@
 
 	* doc/gmp.texi (Integer Logic and Bit Fiddling): Say "bitwise" in
 	mpz_and, mpz_ior and mpz_xor, to avoid any confusion with what C means
-	by "logical".  Reported by Rüdiger Schütz.
+	by "logical".  Reported by RÃ¼diger SchÃ¼tz.
 
 	* gmp-h.in (_GMP_H_HAVE_FILE): Note why defined(EOF) is not good.
 
@@ -13096,7 +13096,7 @@
 	(GMP_H_EXTERN_INLINE): Use AC_C_INLINE.
 	(GMP_PROG_AR): Comment on automake $ARFLAGS.
 
-2003-12-19  Niels Möller  <nisse@lysator.liu.se>
+2003-12-19  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Rewrote function. Tried
 	to explain how it works.
@@ -13124,7 +13124,7 @@
 
 	* mpn/generic/get_d.c: Make ONE_LIMB case actually work for nails.
 
-2003-12-18  Niels Möller  <niels@lysator.liu.se>
+2003-12-18  Niels MÃ¶ller  <niels@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (hgcd_update_r): Assert that the output r2 is
 	smaller than the input r1.
@@ -13144,7 +13144,7 @@
 	include() from automake 1.8 aclocal.
 	* acinclude.m4: Quote names in AC_DEFUN, for automake 1.8 aclocal.
 
-2003-12-17  Niels Möller  <nisse@lysator.liu.se>
+2003-12-17  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer) [nails]:
 	Enabled code also for GMP_NAIL_BITS > 0.
@@ -13152,7 +13152,7 @@
 	speed_mpn_hgcd_lehmer.
 	* tune/tuneup.c (tune_hgcd) [nails]: Likewise.
 
-	* mpn/generic/gcd.c [nails]: Use Schönhage's algorithm also for
+	* mpn/generic/gcd.c [nails]: Use SchÃ¶nhage's algorithm also for
 	GMP_NAIL_BITS > 0.
 
 	* mpn/generic/hgcd.c [nails]: Enable the code for GMP_NAIL_BITS > 0.
@@ -13204,7 +13204,7 @@
 	can be used to locate the most significant bit.  Reword a bit for
 	clarity.
 
-2003-12-12  Niels Möller  <niels@lysator.liu.se>
+2003-12-12  Niels MÃ¶ller  <niels@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (__gmpn_hgcd_sanity): Fixed stack buffer
 	overrun.
@@ -13310,7 +13310,7 @@
 	* mpn/generic/get_str.c (mpn_get_str, POW2_P case):
 	Don't append extra '\0' byte.
 
-2003-12-05  Niels Möller  <niels@lysator.liu.se>
+2003-12-05  Niels MÃ¶ller  <niels@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd_lehmer, speed_mpn_hgcd):
 	Updated for the renaming hgcd_sanity -> ASSERT_HGCD.
@@ -13374,7 +13374,7 @@
 	(Build Options): Add cpu types alphaev7 and amd64.  Update texinfo
 	html cross reference.
 
-2003-11-28  Niels Möller  <nisse@lysator.liu.se>
+2003-11-28  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_hgcd): Disable if GMP_NAIL_BITS > 0.
 	* tune/speed.c (routine): Likewise.
@@ -13428,12 +13428,12 @@
 	* gmp-impl.h (GCD_LEHMER_THRESHOLD): #if:ed out this macro.
 	(mpn_hgcd2_lehmer_step): Added prototype.
 
-2003-11-27  Niels Möller  <nisse@lysator.liu.se>
+2003-11-27  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (gcd_values): Moved definition, so that we
 	don't need to forward declare the array.
 
-2003-11-26  Niels Möller  <nisse@lysator.liu.se>
+2003-11-26  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd2_fix): Deleted duplicate definition
 	(the function belongs to hgcd2.c).
@@ -13444,7 +13444,7 @@
 	decrease # of test to 1000.
 	(gcd_values): Remove oversize test case.
 
-2003-11-26  Niels Möller  <niels@lysator.liu.se>
+2003-11-26  Niels MÃ¶ller  <niels@lysator.liu.se>
 
 	* gmp-impl.h: Added name mangling for hgcd-related functions. Also
 	use __GMP_PROTO.
@@ -13455,7 +13455,7 @@
 	* tests/mpz/t-gcd.c (main): Added some tests with non-random
 	input.
 
-2003-11-25  Niels Möller  <nisse@lysator.liu.se>
+2003-11-25  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (MPN_LEQ_P, MPN_EXTRACT_LIMB): New macros.
 	(struct qstack, struct hgcd2_row, struct hgcd2, struct hgcd_row)
@@ -14638,7 +14638,7 @@
 
 	* tests/mpz/bit.c (check_single): Correction to a diagnostic print.
 
-2003-07-24  Niels Möller  <nisse@lysator.liu.se>
+2003-07-24  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* mpz/combit.c: New file.
 	* Makefile.am, mpz/Makefile.am: Add it.
@@ -15294,7 +15294,7 @@
 
 	* Makefile.am: Put gmp.h and mp.h under $(exec_prefix)/include.
 	* gmp.texi (Build Options): Add notes on this.
-	Reported by Vincent Lefèvre.
+	Reported by Vincent LefÃ¨vre.
 
 2003-03-06  Kevin Ryde  <kevin@swox.se>
 

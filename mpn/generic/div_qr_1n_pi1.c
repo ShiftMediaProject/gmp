@@ -1,6 +1,6 @@
 /* mpn_div_qr_1n_pi1
 
-   Contributed to the GNU project by Niels Möller
+   Contributed to the GNU project by Niels MÃ¶ller
 
    THIS FILE CONTAINS INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST

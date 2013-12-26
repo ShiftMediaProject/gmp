@@ -3024,7 +3024,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb (mp_limb_t) ATTRIBUTE_CONST;
   } while (0)
 
 
-/* udiv_qrnnd_preinv -- Based on work by Niels Möller and Torbjörn Granlund.
+/* udiv_qrnnd_preinv -- Based on work by Niels MÃ¶ller and TorbjÃ¶rn Granlund.
    We write things strangely below, to help gcc.  A more straightforward
    version:
 	_r = (nl) - _qh * (d);
