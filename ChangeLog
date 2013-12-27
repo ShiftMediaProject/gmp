@@ -1,3 +1,9 @@
+2013-12-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Update many file's encoding to UTF-8.
+	* doc/tasks.html: Update <meta content> accordingly.
+	* doc/projects.html: Likewise.
+
 2013-12-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Rename mpn_blah_sec to mpn_sec_blah.
