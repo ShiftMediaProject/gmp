@@ -18,6 +18,12 @@ Makefile\.in
 ^stamp-h1
 Makefile
 
+^doc/mdate-sh
+^doc/texinfo\.tex
+^install-sh
+^missing
+^ylwrap
+
 ^gmp-mparam\.h
 
 ^gen-bases
