@@ -7,7 +7,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007-2009, 2011, 2012 Free Software Foundation, Inc.
+Copyright 2007-2009, 2011, 2012, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -251,7 +251,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   long i;
   int cnd;
 
-  ASSERT (en > 1 || (en == 1 && ep[0] > 0));
+  ASSERT (en > 0 && ep[en - 1] != 0);
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
   /* The code works for bn = 0, but the defined scratch space is 2 limbs
      greater than we supply, when converting 1 to redc form .  */
