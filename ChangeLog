@@ -1,5 +1,7 @@
 2013-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/sec_powm.c: Fix an ASSERT.
+
 	* gmp-h.in (mpn_sec_mul, mpn_sec_mul_itch): New declarations.
 	* gmp-h.in (mpn_sec_sqr, mpn_sec_sqr_itch): Likewise.
 	* mpn/generic/sec_mul.c: New file.
