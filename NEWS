@@ -30,15 +30,25 @@ Changes between GMP version 5.1.* and 5.2.0
 
   * Support for ARM64 alias Aarch64 alias ARMv8.
 
-  * New functions mpn_cnd_add_n and mpn_cnd_sub_n. Side-channel silent
+  * New functions mpn_cnd_add_n and mpn_cnd_sub_n.  Side-channel silent
     conditional addition and subtraction.
+
+  * New function mpn_sec_powm, implementing side-channel silent modexp.
+
+  * New functions mpn_sec_mul and mpn_sec_sqr, implementing side-channel silent
+    multiplication and squaring.
+
+  * New functions mpn_sec_div_qr and mpn_sec_div_r, implementing side-channel
+    silent division.
 
   * Better support for applications which use the mpz_t type, but nevertheless
     need to call some of the lower-level mpn functions.  See the documentation
     for mpz_limbs_read and related functions.
 
   MISC
-  * None.
+  * This release will not work on FreeBSD amd64 7.x, 8.x or 9 series before 9.3
+    with a Haswell CPU or any other CPU which supports the BMI2 instructions.
+    The reason is that the FreeBSD m4 command is not correctly implemented.
 
 
 Changes between GMP version 5.1.1 and 5.1.2
