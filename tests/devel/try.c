@@ -549,7 +549,7 @@ validate_div_qr_1_pi1 (void)
   mp_srcptr qp = fun.d[0].p;
   mp_limb_t r = fun.retval;
   mp_limb_t cy;
-  int cmp;  
+  int cmp;
   mp_ptr tp;
   if (r >= divisor)
     {
@@ -571,7 +571,7 @@ validate_div_qr_1_pi1 (void)
 		  cy, tp, un);
       validate_fail ();
     }
-  free (tp);    
+  free (tp);
 }
 
 
@@ -1147,7 +1147,7 @@ param_init (void)
   p->src[0] = 1;
   p->src[1] = 1;
   /* SIZE_1 not supported. Always uses low limb only. */
-  p->size2 = 1; 
+  p->size2 = 1;
   p->dst[0] = 1;
   p->divisor = DIVISOR_NORM;
   p->data = DATA_DIV_QR_1;
@@ -2608,7 +2608,7 @@ call (struct each_t *e, tryfun_t function)
 	(e->d[0].p, e->s[0].p, size, e->s[1].p[0], divisor, dinv);
       break;
     }
-      
+
   case TYPE_MOD_34LSUB1:
     e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
     break;

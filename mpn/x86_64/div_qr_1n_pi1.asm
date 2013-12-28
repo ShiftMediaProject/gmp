@@ -151,7 +151,7 @@ L(loop):
 	add	%rdx, Q1
 	adc	$0, Q2
 	add	Q0, Q1
-	mov 	%rax, Q0
+	mov	%rax, Q0
 	mov	B2, %rax
 	lea	(B2md, U0), T
 	adc	$0, Q2
@@ -172,7 +172,7 @@ L(q_incr_done):
 	mov	T, %rax
 	adc	%rdx, %rax
 	mov	Q1, (QP, UN, 8)
-	sbb 	U2, U2
+	sbb	U2, U2
 	dec	UN
 	mov	%rax, U1
 	jnz	L(loop)
