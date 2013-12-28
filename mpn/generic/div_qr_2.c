@@ -40,7 +40,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 /* Define some longlong.h-style macros, but for wider operations.
    * add_sssaaaa is like longlong.h's add_ssaaaa but the propagating
-     carry-out into an additional sum opeand.
+     carry-out into an additional sum operand.
    * add_csaac accepts two addends and a carry in, and generates a sum
      and a carry out.  A little like a "full adder".
 */

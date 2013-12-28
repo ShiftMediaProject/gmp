@@ -459,7 +459,7 @@ freq_sunos_sysinfo (int help)
 
 
 /* "/etc/hw -r cpu" for SCO OpenUnix 8, printing a line like
-	The speed of the CPU is approximately 450Mhz
+	The speed of the CPU is approximately 450MHz
  */
 static int
 freq_sco_etchw (int help)
@@ -480,7 +480,7 @@ freq_sco_etchw (int help)
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
           end = 0;
-          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz%n",
+          if (sscanf (buf, " The speed of the CPU is approximately %lfMHz%n",
                       &val, &end) == 1 && end != 0)
             {
               speed_cycletime = 1e-6 / val;

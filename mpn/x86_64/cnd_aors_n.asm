@@ -34,7 +34,7 @@ C VIA nano	 3
 C NOTES
 C  * It might seem natural to use the cmov insn here, but since this function
 C    is supposed to have the exact same execution pattern for cnd true and
-C    false, and since cmov's documentation is not clear about wheather it
+C    false, and since cmov's documentation is not clear about whether it
 C    actually reads both source operands and writes the register for a false
 C    condition, we cannot use it.
 C  * Two cases could be optimised: (1) cnd_add_n could use ADCSBB-from-memory

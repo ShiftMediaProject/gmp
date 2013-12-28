@@ -19,8 +19,7 @@ dnl  along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.
 dnl  Optimizations:
 dnl  * Avoid skip instructions
 dnl  * Put carry-generating and carry-consuming insns consecutively
-dnl  * Don't allocate any stack, "home" positions for parameteters could be
-dnl    used.
+dnl  * Don't allocate any stack, "home" positions for parameters could be used.
 
 include(`../config.m4')
 

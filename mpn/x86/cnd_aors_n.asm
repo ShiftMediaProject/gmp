@@ -67,7 +67,7 @@ PROLOGUE(func)
 	sbb	%eax, %eax
 	mov	%eax, cnd
 
-	C load paramaters into registers
+	C load parameters into registers
 	mov	24(%esp), rp
 	mov	28(%esp), up
 	mov	32(%esp), vp

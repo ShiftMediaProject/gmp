@@ -59,7 +59,7 @@ invert_valid (mp_srcptr ip, mp_srcptr dp, mp_size_t n)
 }
 
 /*
-  Chech the result of the mpn_invert function in the library.
+  Check the result of the mpn_invert function in the library.
 */
 
 int

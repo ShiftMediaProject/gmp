@@ -1,4 +1,4 @@
-/* mpz_prodlimps(RESULT, V, LEN) -- Set RESULT to V[0]*V[1]*...*V[LEN-1].
+/* mpz_prodlimbs(RESULT, V, LEN) -- Set RESULT to V[0]*V[1]*...*V[LEN-1].
 
 Contributed to the GNU project by Marco Bodrato.
 

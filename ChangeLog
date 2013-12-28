@@ -9872,14 +9872,14 @@
 	Deleted rn argument.
 	(mpn_gcdext): Updated calls to addmul2_n, and added assertions.
 
-	* gmp-impl.h (MPN_HGCD_MATRIX_INIT_ITCH): Increased storage by four limbs.
+	* gmp-impl.h (MPN_HGCD_MATRIX_INIT_ITCH): Increased storage by 4 limbs.
 	(MPN_HGCD_LEHMER_ITCH): Reduced storage by one limb.
 	(MPN_GCD_SUBDIV_STEP_ITCH): Likewise.
 	(MPN_GCD_LEHMER_N_ITCH): Likewise.
 
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_init): Use two extra limbs.
 	(hgcd_step): Use overlapping arguments to mpn_tdiv_qr.
-	(mpn_hgcd_matrix_mul): Deleted normalization code. Tigher bounds
+	(mpn_hgcd_matrix_mul): Deleted normalization code. Tighter bounds
 	for the element size of the product. Needs two extra limbs of
 	storage for the elements.
 	(mpn_hgcd_itch): Updated storage calculation.
@@ -14797,7 +14797,7 @@
 	* mpn/sparc32/v9/udiv.asm: Amend heading, this file is for sparc v9.
 
 	* tests/cxx/Makefile.am (TESTS_ENVIRONMENT): In libtool openbsd hack,
-	disard error messages from cp, for the benefit of --disable-shared or
+	discard error messages from cp, for the benefit of --disable-shared or
 	systems not using names libgmp.so.*.
 
 	* tests/devel/try.c (try_one): When overlapping, copy source data
@@ -31312,7 +31312,7 @@ Sun Apr 25 18:40:26 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
 	Use mpn_divmod for division; corresponding changes in return value
 	convention.
 	* mpz/powm.c: `carry_digit' => `carry_limb'.
-	* bsd/sdiv.c: Clearify comment.
+	* bsd/sdiv.c: Clarify comment.
 
 Sun Apr 25 00:31:28 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
 
@@ -32140,7 +32140,7 @@ Tue Jul  9 18:40:30 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
 	* gmp.h: Add declaration of mpq_clear.
 
-	* dist-Makefile: Chack if "ranlib" exists, before using it.
+	* dist-Makefile: Check if "ranlib" exists, before using it.
 	* dist-Makefile: Add mpz_sqrtrem.c and mpz_size.c.
 	* mpz_powm: Fix typo, "pow" instead of "mpz_powm".
 
@@ -32288,7 +32288,7 @@ Thu May 23 15:28:24 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 Thu May 22 20:25:29 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
 	* Add manual to distribution.
-	* Fold in many missing routines descibed in the manual.
+	* Fold in many missing routines described in the manual.
 	* Update Makefile.
 
 Wed May 22 13:48:46 1991  Torbjorn Granlund  (tege@zevs.sics.se)

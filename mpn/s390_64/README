@@ -69,7 +69,7 @@ mpn_mul_2, mpn_addmul_2
 
 At least for older machines (z900, z990) with very slow MLGR, we
 should use Karatsuba's algorithm on 2-limb units, making mul_2 and
-addmul_2 the main multiplicaton primitives.  The newer machines might
+addmul_2 the main multiplication primitives.  The newer machines might
 benefit less from this approach, perhaps in particular z10, where MLGR
 clustering is more important.
 

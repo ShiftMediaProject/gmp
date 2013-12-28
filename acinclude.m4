@@ -674,7 +674,7 @@ main ()
 
 GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization 2],
 [/* The following is mis-compiled by Intel ia-64 icc version 1.8 under
-    "icc -O3",  After several calls, the function writes parial garbage to
+    "icc -O3",  After several calls, the function writes partial garbage to
     the result vector.  Perhaps relates to the chk.a.nc insn.  This code needs
     to be run to show the problem, but that's fine, the offending cc is a
     native-only compiler so we don't have to worry about cross compiling.  */

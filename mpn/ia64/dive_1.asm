@@ -38,7 +38,7 @@ C This code is a bit messy, and not as similar to mode1o.asm as desired.
 
 C The critical path during initialization is for computing the inverse of the
 C divisor.  Since odd divisors are probably common, we conditionally execute
-C the initial count_traling_zeros code and the downshift.
+C the initial count_trailing_zeros code and the downshift.
 
 C Possible improvement: Merge more of the feed-in code into the inverse
 C computation.

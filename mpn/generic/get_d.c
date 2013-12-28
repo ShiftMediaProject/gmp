@@ -78,7 +78,7 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    should come out nice and compact.
 
    The generic code used to work one bit at a time, which was not only slow,
-   but implicitly relied upon denoms for intermediates, since the lowest bits'
+   but implicitly relied upon denorms for intermediates, since the lowest bits'
    weight of a perfectly valid fp number underflows in non-denorm.  Therefore,
    the generic code now works limb-per-limb, initially creating a number x such
    that 1 <= x <= BASE.  (BASE is reached only as result of rounding.)  Then
