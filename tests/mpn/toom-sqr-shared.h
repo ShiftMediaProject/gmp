@@ -29,7 +29,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
  * MIN_AN, MAX_AN and then include this file. */
 
 #ifndef COUNT
-#define COUNT 500
+#define COUNT 2000
 #endif
 
 int
