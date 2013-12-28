@@ -2831,7 +2831,7 @@ gmp_mpn_functions="$extra_functions					   \
   mu_bdiv_q mu_bdiv_qr							   \
   bdiv_q bdiv_qr broot brootinv bsqrt bsqrtinv				   \
   divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo sec_powm		   \
-  sec_div_qr sec_div_r sec_pi1_div_qr sec_pi1_div_r			   \
+  sec_mul sec_sqr sec_div_qr sec_div_r sec_pi1_div_qr sec_pi1_div_r	   \
   trialdiv remove							   \
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \
   copyi copyd zero sec_tabselect					   \

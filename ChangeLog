@@ -1,3 +1,17 @@
+2013-12-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-h.in (mpn_sec_mul, mpn_sec_mul_itch): New declarations.
+	* gmp-h.in (mpn_sec_sqr, mpn_sec_sqr_itch): Likewise.
+	* mpn/generic/sec_mul.c: New file.
+	* mpn/generic/sec_sqr.c: New file.
+
+	* gmp-h.in (mpn_sec_powm, mpn_sec_powm_itch): New declarations.
+	* gmp-h.in (mpn_sec_div_qr, mpn_sec_div_qr_itch): Likewise.
+	* gmp-h.in (mpn_sec_div_r, mpn_sec_div_r_itch): Likewise.
+	* gmp-impl: Remove declarations of above functions.
+
+	* configure.ac (gmp_mpn_functions): Add sec_mul and sec_sqr.
+
 2013-12-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Update many file's encoding to UTF-8.
@@ -4688,7 +4702,7 @@
 2011-05-03  David Harvey  <dmharvey@cims.nyu.edu>
 
 	* configure.in: make invert_limb_table work correctly with
-	--disable-assembly (from Niels Moller)
+	--disable-assembly (from Niels Möller)
 
 2011-05-02  Marc Glisse  <marc.glisse@inria.fr>
 

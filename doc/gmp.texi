@@ -3412,7 +3412,7 @@ If an inverse doesn't exist then a divide by zero is raised.
 @end deftypefun
 
 @deftypefun void mpz_powm_sec (mpz_t @var{rop}, const mpz_t @var{base}, const mpz_t @var{exp}, const mpz_t @var{mod})
-Set @var{rop} to @m{base^{exp} \bmod mod, (@var{base} raised to @var{exp})
+Set @var{rop} to @m{base^{exp} \bmod @var{mod}, (@var{base} raised to @var{exp})
 modulo @var{mod}}.
 
 It is required that @math{@var{exp} > 0} and that @var{mod} is odd.
@@ -5656,18 +5656,140 @@ Copy from @{@var{s1p}, @var{n}@} to @{@var{rp}, @var{n}@}, decreasingly.
 Zero @{@var{rp}, @var{n}@}.
 @end deftypefun
 
-@deftypefun void mpn_cnd_add_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
-@deftypefunx void mpn_cnd_sub_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
-These functions do conditional addition and subtraction, and are intended for
-cryptographic applications where resilience to side-channel attacks is
-desired. If @var{cnd} is non-zero, they produce the same result as a regular
-@code{mpn_add_n} or @code{mpn_sub_n}, and if @var{cnd} is zero, they copy
-@{@var{s1p},@var{n}@} to the result area and return zero. The functions are
-designed to have timing and memory access patterns depending only on size and
-location of the data areas, but independent of the condition @var{cnd}. Like
-for @code{mpn_add_n} and @code{mpn_sub_n}, on most machines, the timing will
-also be independent of the actual limb values.
+@sp 1
+@section Low-level functions for cryptography
+@cindex Low-level functions for cryptography
+@cindex Cryptography functions, low-level
+
+The functions prefixed with @code{mpn_sec_} and @code{mpn_cnd} are designed to
+perform the exact same low-level operations and have the same cache access
+patterns for any two same-size arguments, assuming that function arguments are
+placed at the same position and that the machine state is identical upon
+function entry.  These functions are intended for cryptographic purposes, where
+resilience to side-channel attacks is desired.
+
+These functions are less efficient than their ``leaky'' counterparts; their
+performance for operands of the sizes typically used for cryptographic
+applications is between 15% and 100% worse.  For larger operands, these
+functions might be inadequate, since they rely on asymptotically elementary
+algorithms.
+
+These functions do not make any explicit allocations.  Those of these functions
+that need scratch space accept a scratch space operand.  This convention allows
+callers to keep sensitive data in designated memory areas.  Note however that
+compilers may choose to spill scalar values used within these functions to
+their stack frame and that such scalars may contain sensitive data.
+
+@deftypefun mp_limb_t mpn_cnd_add_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+@deftypefunx mp_limb_t mpn_cnd_sub_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+These functions do conditional addition and subtraction.  If @var{cnd} is
+non-zero, they produce the same result as a regular @code{mpn_add_n} or
+@code{mpn_sub_n}, and if @var{cnd} is zero, they copy @{@var{s1p},@var{n}@} to
+the result area and return zero.  The functions are designed to have timing and
+memory access patterns depending only on size and location of the data areas,
+but independent of the condition @var{cnd}.  Like for @code{mpn_add_n} and
+@code{mpn_sub_n}, on most machines, the timing will also be independent of the
+actual limb values.
 @end deftypefun
+
+@deftypefun void mpn_sec_mul (mp_ptr @var{rp}, mp_srcptr @var{ap}, mp_size_t @var{an}, mp_srcptr @var{bp}, mp_size_t @var{bn}, mp_ptr @var{tp})
+@deftypefunx mp_size_t mpn_sec_mul_itch (mp_size_t @var{an}, mp_size_t @var{bn})
+Set @var{R} to @math{A @times B}, where @var{A} = @{@var{ap},@var{an}@},
+@var{B} = @{@var{bp},@var{bn}@}, and @var{R} =
+@{@var{rp},@math{@var{an}+@var{bn}}@}.
+
+It is required that @math{@var{an} @ge @var{bn} > 0}.
+
+No overlapping between @var{R} and the input operands is allowed.  For
+@math{@var{A} = @var{B}}, use @code{mpn_sec_sqr} for optimal performance.
+
+This function requires scratch space of @code{mpn_sec_mul_itch(@var{an},
+@var{bn})} limbs to be passed in the @var{tp} parameter.  The scratch space
+requirements are guaranteed to increase monotonously in the operand sizes.
+@end deftypefun
+
+
+@deftypefun void mpn_sec_sqr (mp_ptr @var{rp}, mp_srcptr @var{ap}, mp_size_t @var{an}, mp_ptr @var{tp})
+@deftypefunx mp_size_t mpn_sec_sqr_itch (mp_size_t @var{an})
+Set @var{R} to @math{A^2}, where @var{A} = @{@var{ap},@var{an}@}, and @var{R} =
+@{@var{rp},@math{2@var{an}}@}.
+
+It is required that @math{@var{an} > 0}.
+
+No overlapping between @var{R} and the input operands is allowed.
+
+This function requires scratch space of @code{mpn_sec_sqr_itch(@var{an})} limbs
+to be passed in the @var{tp} parameter.  The scratch space requirements are
+guaranteed to increase monotonously in the operand size.
+@end deftypefun
+
+
+@deftypefun void mpn_sec_powm (mp_ptr @var{rp}, mp_srcptr @var{bp}, mp_size_t @var{bn}, mp_srcptr @var{ep}, mp_size_t @var{en},  mp_srcptr @var{mp}, mp_size_t @var{n}, mp_ptr @var{tp})
+@deftypefunx mp_size_t mpn_sec_powm_itch (mp_size_t @var{bn}, mp_size_t @var{en}, size_t @var{n})
+Set @var{R} to @m{B^E \bmod @var{M}, (@var{B} raised to @var{E}) modulo
+@var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{M} = @{@var{mp},@var{n}@},
+and @var{E} = @{@var{ep},@var{en}@}.
+
+It is required that @math{@var{B} > 0}, that @math{@var{E} > 0} specifically
+with @m{@var{ep}[@var{en}-1] @neq 0, @var{ep}[@var{en}-1] != 0}, and that
+@math{@var{M} > 0} is odd.
+
+No overlapping between @var{R} and the input operands is allowed.
+
+This function requires scratch space of @code{mpn_sec_powm_itch(@var{bn},
+@var{en}, @var{n})} limbs to be passed in the @var{tp} parameter.  The scratch
+space requirements are guaranteed to increase monotonously in the operand
+sizes.
+@end deftypefun
+
+@deftypefun void mpn_sec_tabselect (mp_ptr @var{rp}, mp_srcptr @var{tab}, mp_size_t @var{n}, mp_size_t @var{nents}, mp_size_t @var{which})
+Select entry @var{which} from table @var{tab}, which has @var{nents} entries, each @var{n}
+limbs.  Store the selected entry at @var{rp}.
+
+This function reads the entire table to avoid side-channel information leaks.
+@end deftypefun
+
+@deftypefun void mpn_sec_div_qr (mp_ptr @var{qp}, mp_ptr @var{np}, mp_size_t @var{nn}, mp_srcptr @var{dp}, mp_size_t @var{dn}, mp_ptr @var{tp})
+@deftypefunx mp_size_t mpn_sec_div_qr_itch (mp_size_t @var{nn}, mp_size_t @var{dn})
+@strong{This function's interface is preliminary.}
+
+Set @var{Q} to @m{\lfloor @var{N} / @var{D}\rfloor, the truncated quotient
+@var{N} / @var{D}} and @var{R} to @m{@var{N} \bmod @var{D}, @var{N} modulo
+@var{D}}, where @var{N} = @{@var{np},@var{nn}@}, @var{D} =
+@{@var{dp},@var{dn}@}, @var{Q} = @{@var{qp},@var{nn-dn+1}@}, and @var{R} =
+@{@var{np},@var{dn}@}.
+
+It is required that @math{@var{nn} @ge @var{dn} @ge 1}, and that
+@m{@var{dp}[@var{dn}-1] @neq 0, @var{dp}[@var{dn}-1] != 0}.  This does not
+imply that @math{@var{N} @ge @var{D}} since @var{N} might be zero-padded.
+
+Note the overlapping between @var{N} and @var{R}.  No other operand overlapping
+is allowed.  The entire space occupied by @var{N} is overwritten.
+
+This function requires scratch space of @code{mpn_sec_div_qr_itch(@var{nn},
+@var{dn})} limbs to be passed in the @var{tp} parameter.
+@end deftypefun
+
+@deftypefun void mpn_sec_div_r (mp_ptr @var{np}, mp_size_t @var{nn}, mp_srcptr @var{dp}, mp_size_t @var{dn}, mp_ptr @var{tp})
+@deftypefunx mp_size_t mpn_sec_div_r_itch (mp_size_t @var{nn}, mp_size_t @var{dn})
+@strong{This function's interface is preliminary.}
+
+Set @var{R} to @m{@var{N} \bmod @var{D}, @var{N} modulo @var{D}}, where @var{N}
+= @{@var{np},@var{nn}@}, @var{D} = @{@var{dp},@var{dn}@}, and @var{R} =
+@{@var{np},@var{dn}@}.
+
+It is required that @math{@var{nn} @ge @var{dn} @ge 1}, and that
+@m{@var{dp}[@var{dn}-1] @neq 0, @var{dp}[@var{dn}-1] != 0}.  This does not
+imply that @math{@var{N} @ge @var{D}} since @var{N} might be zero-padded.
+
+Note the overlapping between @var{N} and @var{R}.  No other operand overlapping
+is allowed.  The entire space occupied by @var{N} is overwritten.
+
+This function requires scratch space of @code{mpn_sec_div_r_itch(@var{nn},
+@var{dn})} limbs to be passed in the @var{tp} parameter.
+@end deftypefun
+
+
 
 @sp 1
 @section Nails

@@ -2,7 +2,7 @@
    V.  Side-channel silent under the assumption that the used instructions are
    side-channel silent.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjörn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -30,18 +30,31 @@ with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #if OPERATION_sec_div_qr
+#define FNAME mpn_sec_div_qr
+#define FNAME_itch mpn_sec_div_qr_itch
+#define Q(q) q,
+#endif
+#if OPERATION_sec_div_r
+#define FNAME mpn_sec_div_r
+#define FNAME_itch mpn_sec_div_r_itch
+#define Q(q)
+#endif
+
+mp_size_t
+FNAME_itch (mp_size_t nn, mp_size_t dn)
+{
+#if OPERATION_sec_div_qr
 /* Needs (nn + dn + 1) + mpn_sec_pi1_div_qr's needs of (2nn' - dn + 1) for a
    total of 3nn + 4 limbs at tp.  Note that mpn_sec_pi1_div_qr's nn is one
    greater than ours, therefore +4 and not just +2.  */
-#define FNAME mpn_sec_div_qr
-#define Q(q) q,
+  return 3 * nn + 4;
 #endif
 #if OPERATION_sec_div_r
 /* Needs (nn + dn + 1) + mpn_sec_pi1_div_r's needs of (dn + 1) for a total of
    nn + 2dn + 2 limbs at tp.  */
-#define FNAME mpn_sec_div_r
-#define Q(q)
+  return nn + 2 * dn + 2;
 #endif
+}
 
 void
 FNAME (Q(mp_ptr qp)
@@ -74,7 +87,7 @@ FNAME (Q(mp_ptr qp)
     }
   else
     {
-      /* FIXME: Consider copying np->np2 here, adding a 0-limb at the top.
+      /* FIXME: Consider copying np => np2 here, adding a 0-limb at the top.
 	 That would simplify the underlying pi1 function, since then it could
 	 assume nn > dn.  */
       dp2 = (mp_ptr) dp;

@@ -1551,19 +1551,9 @@ __GMP_DECLSPEC mp_limb_t mpn_bdiv_dbm1c (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t
 __GMP_DECLSPEC void      mpn_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_powlo __MPN(powlo)
 __GMP_DECLSPEC void      mpn_powlo (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr);
-#define   mpn_sec_powm __MPN(sec_powm)
-__GMP_DECLSPEC void      mpn_sec_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
-#define   mpn_sec_powm_itch __MPN(sec_powm_itch)
-__GMP_DECLSPEC mp_size_t mpn_sec_powm_itch (mp_size_t, mp_size_t, mp_size_t);
-#define   mpn_sec_tabselect __MPN(sec_tabselect)
-__GMP_DECLSPEC void      mpn_sec_tabselect (volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);
 
-#define mpn_sec_div_qr __MPN(sec_div_qr)
-__GMP_DECLSPEC void mpn_sec_div_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define mpn_sec_pi1_div_qr __MPN(sec_pi1_div_qr)
 __GMP_DECLSPEC mp_limb_t mpn_sec_pi1_div_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
-#define mpn_sec_div_r __MPN(sec_div_r)
-__GMP_DECLSPEC void mpn_sec_div_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define mpn_sec_pi1_div_r __MPN(sec_pi1_div_r)
 __GMP_DECLSPEC void mpn_sec_pi1_div_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
 

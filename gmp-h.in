@@ -1626,6 +1626,34 @@ __GMP_DECLSPEC mp_limb_t mpn_cnd_add_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr,
 #define mpn_cnd_sub_n __MPN(cnd_sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_cnd_sub_n (mp_limb_t, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
 
+#define mpn_sec_mul __MPN(sec_mul)
+__GMP_DECLSPEC void mpn_sec_mul (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sec_mul_itch __MPN(sec_mul_itch)
+__GMP_DECLSPEC mp_size_t mpn_sec_mul_itch (mp_size_t, mp_size_t);
+
+#define mpn_sec_sqr __MPN(sec_sqr)
+__GMP_DECLSPEC void mpn_sec_sqr (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sec_sqr_itch __MPN(sec_sqr_itch)
+__GMP_DECLSPEC mp_size_t mpn_sec_sqr_itch (mp_size_t);
+
+#define mpn_sec_powm __MPN(sec_powm)
+__GMP_DECLSPEC void mpn_sec_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sec_powm_itch __MPN(sec_powm_itch)
+__GMP_DECLSPEC mp_size_t mpn_sec_powm_itch (mp_size_t, mp_size_t, mp_size_t);
+
+#define mpn_sec_tabselect __MPN(sec_tabselect)
+__GMP_DECLSPEC void mpn_sec_tabselect (volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);
+
+#define mpn_sec_div_qr __MPN(sec_div_qr)
+__GMP_DECLSPEC void mpn_sec_div_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sec_div_qr_itch __MPN(sec_div_qr_itch)
+__GMP_DECLSPEC mp_size_t mpn_sec_div_qr_itch (mp_size_t, mp_size_t);
+#define mpn_sec_div_r __MPN(sec_div_r)
+__GMP_DECLSPEC void mpn_sec_div_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define mpn_sec_div_r_itch __MPN(sec_div_r_itch)
+__GMP_DECLSPEC mp_size_t mpn_sec_div_r_itch (mp_size_t, mp_size_t);
+
+
 /**************** mpz inlines ****************/
 
 /* The following are provided as inlines where possible, but always exist as
