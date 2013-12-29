@@ -1,3 +1,16 @@
+2013-12-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-minvert.
+	* tests/mpn/t-minvert.c: New file.
+
+	* configure.ac (gmp_mpn_functions): Added sec_minvert.
+	* gmp-h.in (mpn_sec_minvert, mpn_sec_minvert_itch): New
+	declarations.
+	* mpn/generic/sec_minvert.c (mpn_sec_minvert)
+	(mpn_sec_minvert_itch): New functions.
+	(mpn_sec_add_1, mpn_cnd_neg, mpn_cnd_swap, mpn_sec_eq_ui): New
+	helper functions.
+
 2013-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/sec_powm.c: Fix an ASSERT.
