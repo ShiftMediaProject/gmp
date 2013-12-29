@@ -1,4 +1,4 @@
-2013-12-29  Niels Möller  <nisse@lysator.liu.se>
+2013-12-29  Niels MÃ¶ller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-minvert.
 	* tests/mpn/t-minvert.c: New file.
