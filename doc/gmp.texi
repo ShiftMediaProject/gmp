@@ -5661,7 +5661,7 @@ Zero @{@var{rp}, @var{n}@}.
 @cindex Low-level functions for cryptography
 @cindex Cryptography functions, low-level
 
-The functions prefixed with @code{mpn_sec_} and @code{mpn_cnd} are designed to
+The functions prefixed with @code{mpn_sec_} and @code{mpn_cnd_} are designed to
 perform the exact same low-level operations and have the same cache access
 patterns for any two same-size arguments, assuming that function arguments are
 placed at the same position and that the machine state is identical upon
@@ -5705,7 +5705,7 @@ but independent of the condition @var{cnd}.  Like for @code{mpn_add_n} and
 actual limb values.
 @end deftypefun
 
-@deftypefun void mpn_sec_mul (mp_ptr @var{rp}, mp_srcptr @var{ap}, mp_size_t @var{an}, mp_srcptr @var{bp}, mp_size_t @var{bn}, mp_ptr @var{tp})
+@deftypefun void mpn_sec_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_mul_itch (mp_size_t @var{an}, mp_size_t @var{bn})
 Set @var{R} to @math{A @times B}, where @var{A} = @{@var{ap},@var{an}@},
 @var{B} = @{@var{bp},@var{bn}@}, and @var{R} =
@@ -5722,7 +5722,7 @@ requirements are guaranteed to increase monotonously in the operand sizes.
 @end deftypefun
 
 
-@deftypefun void mpn_sec_sqr (mp_ptr @var{rp}, mp_srcptr @var{ap}, mp_size_t @var{an}, mp_ptr @var{tp})
+@deftypefun void mpn_sec_sqr (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_sqr_itch (mp_size_t @var{an})
 Set @var{R} to @math{A^2}, where @var{A} = @{@var{ap},@var{an}@}, and @var{R} =
 @{@var{rp},@math{2@var{an}}@}.
@@ -5737,7 +5737,7 @@ guaranteed to increase monotonously in the operand size.
 @end deftypefun
 
 
-@deftypefun void mpn_sec_powm (mp_ptr @var{rp}, mp_srcptr @var{bp}, mp_size_t @var{bn}, mp_srcptr @var{ep}, mp_size_t @var{en},  mp_srcptr @var{mp}, mp_size_t @var{n}, mp_ptr @var{tp})
+@deftypefun void mpn_sec_powm (mp_limb_t *@var{rp}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, const mp_limb_t *@var{ep}, mp_size_t @var{en},  const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_powm_itch (mp_size_t @var{bn}, mp_size_t @var{en}, size_t @var{n})
 Set @var{R} to @m{B^E \bmod @var{M}, (@var{B} raised to @var{E}) modulo
 @var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{M} = @{@var{mp},@var{n}@},
@@ -5755,14 +5755,14 @@ space requirements are guaranteed to increase monotonously in the operand
 sizes.
 @end deftypefun
 
-@deftypefun void mpn_sec_tabselect (mp_ptr @var{rp}, mp_srcptr @var{tab}, mp_size_t @var{n}, mp_size_t @var{nents}, mp_size_t @var{which})
+@deftypefun void mpn_sec_tabselect (mp_limb_t *@var{rp}, const mp_limb_t *@var{tab}, mp_size_t @var{n}, mp_size_t @var{nents}, mp_size_t @var{which})
 Select entry @var{which} from table @var{tab}, which has @var{nents} entries, each @var{n}
 limbs.  Store the selected entry at @var{rp}.
 
 This function reads the entire table to avoid side-channel information leaks.
 @end deftypefun
 
-@deftypefun void mpn_sec_div_qr (mp_ptr @var{qp}, mp_ptr @var{np}, mp_size_t @var{nn}, mp_srcptr @var{dp}, mp_size_t @var{dn}, mp_ptr @var{tp})
+@deftypefun void mpn_sec_div_qr (mp_limb_t *@var{qp}, mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_div_qr_itch (mp_size_t @var{nn}, mp_size_t @var{dn})
 @strong{This function's interface is preliminary.}
 
@@ -5783,7 +5783,7 @@ This function requires scratch space of @code{mpn_sec_div_qr_itch(@var{nn},
 @var{dn})} limbs to be passed in the @var{tp} parameter.
 @end deftypefun
 
-@deftypefun void mpn_sec_div_r (mp_ptr @var{np}, mp_size_t @var{nn}, mp_srcptr @var{dp}, mp_size_t @var{dn}, mp_ptr @var{tp})
+@deftypefun void mpn_sec_div_r (mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_div_r_itch (mp_size_t @var{nn}, mp_size_t @var{dn})
 @strong{This function's interface is preliminary.}
 
