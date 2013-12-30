@@ -7,6 +7,7 @@ medium, provided this notice is preserved.
 Changes between GMP version 5.1.* and 5.2.0
 
   BUGS FIXED
+  * Contains all fixes from release 5.1.2.
 
   SPEEDUPS
   * Plain division of large operands is faster and more monotonous in operand
