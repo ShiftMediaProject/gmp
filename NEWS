@@ -7,7 +7,7 @@ medium, provided this notice is preserved.
 Changes between GMP version 5.1.* and 5.2.0
 
   BUGS FIXED
-  * Contains all fixes from release 5.1.2.
+  * Contains all fixes from release 5.1.3.
 
   SPEEDUPS
   * Plain division of large operands is faster and more monotonous in operand
@@ -24,7 +24,7 @@ Changes between GMP version 5.1.* and 5.2.0
 
   * Faster mixed arithmetic between mpq_class and double.
 
-  * With g++, optimize more operations when one argument is a simple constant.
+  * With g++, optimise more operations when one argument is a simple constant.
 
   FEATURES
   * Support for new Intel and AMD CPUs.
@@ -50,6 +50,30 @@ Changes between GMP version 5.1.* and 5.2.0
   * This release will not work on FreeBSD amd64 7.x, 8.x or 9 series before 9.3
     with a Haswell CPU or any other CPU which supports the BMI2 instructions.
     The reason is that the FreeBSD m4 command is not correctly implemented.
+
+
+Changes between GMP version 5.1.2 and 5.1.3
+
+  BUGS FIXED
+  * The internal functions mpn_sbpi1_div_qr_sec mpn_sbpi1_div_r_sec could
+    compute garbage with a low probability.  They are now rewritten, and the
+    test code has been improved.
+
+  * A bug in the ia64 implementation of mpn_divrem_2, clobbering some
+    callee-save registers, has been fixed. This is an internal
+    function, with the bug manifesting itself as miscomputation in,
+    e.g., mpn_sqrtrem.
+
+  * The documentation now correctly says 'const' for input arguments.
+
+  SPEEDUPS
+  * None.
+
+  FEATURES
+  * None.
+
+  MISC
+  * None.
 
 
 Changes between GMP version 5.1.1 and 5.1.2
