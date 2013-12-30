@@ -155,7 +155,7 @@ ldfp8 with all alignment headache that implies.
 ================================================================
 mpn_addmul_N
 
-For best speed, we need to give up using mpn_addmul_1 as the main multiply
+For best speed, we need to give up using mpn_addmul_2 as the main multiply
 building block, and instead take multiple v limbs per loop.  For the Itanium
 1, we need to take about 8 limbs at a time for full speed.  For the Itanium
 2, something like mpn_addmul_4 should be enough.
