@@ -5680,6 +5680,19 @@ callers to keep sensitive data in designated memory areas.  Note however that
 compilers may choose to spill scalar values used within these functions to
 their stack frame and that such scalars may contain sensitive data.
 
+In addition to these specially crafted functions, the following @code{mpn}
+functions are naturally side-channel resistant: @code{mpn_add_n},
+@code{mpn_sub_n}, @code{mpn_lshift}, @code{mpn_rshift}, @code{mpn_zero},
+@code{mpn_copyi}, @code{mpn_copyd}, @code{mpn_com}, and the logical function
+(@code{mpn_and_n}, etc).
+
+There are some exceptions from the side-channel resilience: (1) Some assembly
+implementations of @code{mpn_lshift} identify shift-by-one as a special case.
+This is a problem iff the shift count is a function of sensitive data.  (2)
+Alpha ev6 and Pentium4 using 64-bit limbs have leaky @code{mpn_add_n} and
+@code{mpn_sub_n}.  (3) Alpha ev6 has a leaky @code{mpn_mul_1} which also makes
+@code{mpn_sec_mul} on those systems unsafe.
+
 @deftypefun mp_limb_t mpn_cnd_add_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 @deftypefunx mp_limb_t mpn_cnd_sub_n (mp_limb_t @var{cnd}, mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 These functions do conditional addition and subtraction.  If @var{cnd} is
