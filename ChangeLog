@@ -1,3 +1,7 @@
+2013-12-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Low-level Functions for cryptography): New section.
+
 2013-12-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-minvert.
