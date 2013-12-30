@@ -489,7 +489,7 @@ There is also assembly code for many obsolete CPUs.
 For up-to-date information on GMP, please see the GMP web pages at
 
 @display
-@uref{http://gmplib.org/}
+@uref{https://gmplib.org/}
 @end display
 
 @cindex Latest version of GMP
@@ -511,7 +511,7 @@ announcements, one for general questions and discussions about usage of the GMP
 library and one for bug reports.  For more information, see
 
 @display
-@uref{http://gmplib.org/mailman/listinfo/}.
+@uref{https://gmplib.org/mailman/listinfo/}.
 @end display
 
 The proper place for bug reports is @email{gmp-bugs@@gmplib.org}.  See
@@ -1648,7 +1648,7 @@ Install a recent @command{gas} if MMX code is wanted on these systems.
 @c This section is more or less meant for known build problems that are not
 @c otherwise worked around and require some sort of manual intervention.
 
-You might find more up-to-date information at @uref{http://gmplib.org/}.
+You might find more up-to-date information at @uref{https://gmplib.org/}.
 
 @table @asis
 @item Compiler link options
@@ -2785,7 +2785,7 @@ found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, ,
-  [AC_MSG_ERROR([GNU MP not found, see http://gmplib.org/])])
+  [AC_MSG_ERROR([GNU MP not found, see https://gmplib.org/])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2795,7 +2795,7 @@ GMP 3.1,
 @example
 AC_CHECK_LIB(gmp, __gmpz_mul_si, ,
   [AC_MSG_ERROR(
-  [GNU MP not found, or not 3.1 or up, see http://gmplib.org/])])
+  [GNU MP not found, or not 3.1 or up, see https://gmplib.org/])])
 @end example
 
 An alternative would be to test the version number in @file{gmp.h} using say
@@ -2855,7 +2855,7 @@ much to ask you to report the bugs you find.
 
 Before you report a bug, check it's not already addressed in @ref{Known Build
 Problems}, or perhaps @ref{Notes for Particular Systems}.  You may also want
-to check @uref{http://gmplib.org/} for patches for this release.
+to check @uref{https://gmplib.org/} for patches for this release.
 
 Please include the following in any report,
 
@@ -4241,6 +4241,7 @@ void foo (mpz_t x)
   mpz_add (x, x, y);
 @}
 @end example
+
 
 @node Rational Number Functions, Floating-point Functions, Integer Functions, Top
 @comment  node-name,  next,  previous,  up
@@ -10708,12 +10709,12 @@ Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
 @item
 Torbj@"orn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
 using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
-1994.  Also available @uref{http://gmplib.org/~tege/divcnst-pldi94.pdf}.
+1994.  Also available @uref{https://gmplib.org/~tege/divcnst-pldi94.pdf}.
 
 @item
 Niels M@"oller and Torbj@"orn Granlund, ``Improved division by invariant
 integers'', IEEE Transactions on Computers, 11 June 2010.
-@uref{http://gmplib.org/~tege/division-paper.pdf}
+@uref{https://gmplib.org/~tege/division-paper.pdf}
 
 @item
 Torbj@"orn Granlund and Niels M@"oller, ``Division of integers large and
