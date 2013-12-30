@@ -75,7 +75,7 @@ mpn_sec_eq_ui (mp_srcptr ap, mp_size_t n, mp_limb_t b)
   ASSERT (n > 0);
 
   d = ap[0] ^ b;
-  
+
   while (--n > 0)
     d |= ap[n];
 
@@ -107,7 +107,7 @@ mpn_sec_minvert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
 #define bp (scratch + n)
 #define up (scratch + 2*n)
 #define m1hp (scratch + 3*n)
-  
+
   /* Maintain
 
        a = u * orig_a (mod m)
@@ -127,11 +127,11 @@ mpn_sec_minvert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
 
   ASSERT_CARRY (mpn_rshift (m1hp, mp, n, 1));
   ASSERT_NOCARRY (mpn_sec_add_1 (m1hp, m1hp, n, 1, scratch));
-  
+
   while (bit_size-- > 0)
     {
       mp_limb_t odd, swap, cy;
-      
+
       /* Always maintain b odd. The logic of the iteration is as
 	 follows. For a, b:
 
@@ -142,7 +142,7 @@ mpn_sec_minvert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
 	       b += a, assigns old a
 	       a = B^n-a
 	     }
-	   
+
 	   a /= 2
 
 	 For u, v:
@@ -161,10 +161,9 @@ mpn_sec_minvert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
 
 	   (bitsize of a) + (bitsize of b)
 
-	 is reduced by at least one bit per iteration, hence after
-         (bit_size of orig_a) + (bit_size of m) - 1 iterations we
-         surely have a = 0. Then b = gcd(orig_a, m) and if b = 1 then
-         also v = orig_a^{-1} (mod m)
+	 is reduced by at least one bit per iteration, hence after (bit_size of
+	 orig_a) + (bit_size of m) - 1 iterations we surely have a = 0. Then b
+	 = gcd(orig_a, m) and if b = 1 then also v = orig_a^{-1} (mod m).
       */
 
       ASSERT (bp[0] & 1);

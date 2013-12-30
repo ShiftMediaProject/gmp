@@ -45,7 +45,7 @@ mpz_eq_mpn (mp_ptr ap, mp_size_t an, const mpz_t b)
 	  && mpn_cmp (ap, mpz_limbs_read (b), bn) == 0
 	  && mpn_zero_p (ap + bn, an - bn));
 }
- 
+
 int
 main (int argc, char **argv)
 {
@@ -93,7 +93,7 @@ main (int argc, char **argv)
       mp_size_t n;
 
       bits = urandom () % (GMP_NUMB_BITS * MAX_SIZE) + 1;
-      
+
       if (test & 1)
 	mpz_rrandomb (m, rands, bits);
       else
@@ -158,7 +158,7 @@ main (int argc, char **argv)
 	  abort ();
 	}
     }
-  
+
   TMP_FREE;
 
   mpz_clear (m);
