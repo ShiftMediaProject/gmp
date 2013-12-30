@@ -10436,7 +10436,10 @@ evaluating it,
 @example
 struct __gmp_binary_plus
 @{
-  static void eval(mpf_t f, const mpf_t g, const mpf_t h) @{ mpf_add(f, g, h); @}
+  static void eval(mpf_t f, const mpf_t g, const mpf_t h)
+  @{
+    mpf_add(f, g, h);
+  @}
 @};
 @end example
 

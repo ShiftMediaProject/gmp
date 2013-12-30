@@ -1,3 +1,7 @@
+2013-12-30  Marc Glisse  <marc.glisse@inria.fr>
+
+	* doc/gmp.texi (C++ interface internals): Break long line.
+
 2013-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions for cryptography): New section.
