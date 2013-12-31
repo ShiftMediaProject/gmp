@@ -10632,6 +10632,13 @@ operations where one argument is a small compile-time constant, replace
 some heap allocations by stack allocations.  He also fixed the eofbit
 handling of C++ streams, and removed one division from @file{mpq/aors.c}.
 
+David S Miller wrote assembly code for SPARC T3 and T4.
+
+Mark Sofroniou cleaned up the types of mul_fft.c, letting it work for huge
+operands.
+
+Ulrich Weigand ported GMP to the powerpc64le ABI.
+
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell
 @email{gmp-devel@@gmplib.org} about the omission!)
@@ -10640,8 +10647,11 @@ The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
 System SOlving).
 
-The development of GMP 2, 3, and 4 was supported in part by the IDA Center for
-Computing Sciences.
+The development of GMP 2, 3, and 4.0 was supported in part by the IDA Center
+for Computing Sciences.
+
+The development of GMP 4.3, 5.0, and 5.1 was supported in part by the Swedish
+Foundation for Strategic Research.
 
 Thanks go to Hans Thorsen for donating an SGI system for the GMP test system
 environment.
