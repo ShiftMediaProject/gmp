@@ -1,3 +1,8 @@
+2013-12-31  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Low-level Functions for cryptography): Document
+	mpn_sec_minvert.
+
 2013-12-30  Marc Glisse  <marc.glisse@inria.fr>
 
 	* doc/gmp.texi (C++ interface internals): Break long line.

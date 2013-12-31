@@ -5803,6 +5803,23 @@ This function requires scratch space of @code{mpn_sec_div_r_itch(@var{nn},
 @var{dn})} limbs to be passed in the @var{tp} parameter.
 @end deftypefun
 
+@deftypefun int (mp_limb_t *@var{rp}, mp_limb_t *@var{ap}, const mp_limb_t
+*@var{mp}, mp_size_t @var{n}, mp_bitcnt_t @var{bit_size}, mp_limb_t *@var{tp})
+@deftypefunx mp_size_t mpn_sec_minvert_itch (mp_size_t @var{n})
+Set @var{R} to the inverse of @var{A} modulo @var{M}, where @var{R} =
+@{@var{rp},@var{n}@}, @var{A} = @{@var{ap},@var{n}@}, and @var{M} = @{@var{mp},@var{n}@}.
+@strong{This function's interface is preliminary.}
+
+If an inverse exists, returns 1, otherwise returns 0 and leaves @var{R}
+undefined. In either case, the input @var{A} is destroyed.
+
+It is required that @var{M} is odd, and that @var{bit_size} is no smaller than
+the sum of the bit sizes of @var{A} and @var{M}. E.g, @var{bit_size} = 2 *
+@var{n} * @code{GMP_NUMB_BITS} is always a safe choice, but smaller values can
+be used if @var{M} or @var{A} are known to have leading zero bits.
+
+This function requires scratch space of @code{mpn_sec_minvert_itch(@var{n})} limbs to be passed in the @var{tp} parameter.
+@end deftypefun
 
 
 @sp 1
