@@ -37,7 +37,7 @@ mpn_sec_add_1 (mp_limb_t *rp, mp_limb_t *ap, mp_size_t n, mp_limb_t b,
   return mpn_add_n (rp, ap, scratch, n);
 }
 
-mp_size_t
+static mp_size_t
 mpn_cnd_neg_itch (mp_size_t n)
 {
   return n;
