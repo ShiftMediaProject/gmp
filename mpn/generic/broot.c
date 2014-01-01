@@ -142,11 +142,10 @@ mpn_broot_invm1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t k)
     {
       /* Compute x^{k+1}. */
       mpn_sqr (ep, rp, rn); /* For odd n, writes n+1 limbs in the
-			       final iteration.*/
+			       final iteration. */
       mpn_powlo (rnp, ep, &kp1h, 1, sizes[i], tp);
 
-      /* Multiply by a^{k-1}. Can use wraparound; low part equals
-	 r. */
+      /* Multiply by a^{k-1}. Can use wraparound; low part equals r. */
 
       mpn_mullo_n (ep, rnp, akm1, sizes[i]);
       ASSERT (mpn_cmp (ep, rp, rn) == 0);
