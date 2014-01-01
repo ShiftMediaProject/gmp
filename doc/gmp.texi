@@ -5786,7 +5786,6 @@ This function requires scratch space of @code{mpn_sec_div_qr_itch(@var{nn},
 
 @deftypefun void mpn_sec_div_r (mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_div_r_itch (mp_size_t @var{nn}, mp_size_t @var{dn})
-@strong{This function's interface is preliminary.}
 
 Set @var{R} to @m{@var{N} \bmod @var{D}, @var{N} modulo @var{D}}, where @var{N}
 = @{@var{np},@var{nn}@}, @var{D} = @{@var{dp},@var{dn}@}, and @var{R} =
