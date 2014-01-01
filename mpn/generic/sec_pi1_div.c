@@ -31,7 +31,7 @@ with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 /* This side-channel silent division algorithm reduces the partial remainder by
    GMP_NUMB_BITS/2 bits at a time, compared to GMP_NUMB_BITS for the main
-   division algorithm.  We actually do not insists on reducing by exactly
+   division algorithm.  We actually do not insist on reducing by exactly
    GMP_NUMB_BITS/2, but may leave a partial remainder that is D*B^i to 3D*B^i
    too large (B is the limb base, D is the divisor, and i is the induction
    variable); the subsequent step will handle the extra partial remainder bits.
