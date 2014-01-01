@@ -1,5 +1,8 @@
 2014-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* doc/gmp.texi (Low-level Functions for cryptography): Update interface
+	for mpn_sec_div_qr and fix typos in mpn_sec_minvert text.
+
 	* mpn/generic/sec_div.c: Rewrite to make mpn_sec_div_qr return high
 	quotient limb.
 	* gmp-h.in (mpn_sec_div_qr): Update declaration.
