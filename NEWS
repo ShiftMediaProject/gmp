@@ -82,7 +82,7 @@ Changes between GMP version 5.1.1 and 5.1.2
   * A bug in mpz_powm_ui triggered by base arguments of at least 15000 decimal
     digits or mod arguments of at least 7500 decimal digits has been fixed.
 
-  * A AMD Bulldozer specific bug affecting the 64-bit Windows ABI has been
+  * An AMD Bulldozer specific bug affecting the 64-bit Windows ABI has been
     fixed.  This bug was in a key function (mpn_mul_1) and made both Bulldozer
     specific builds and fat builds run on Bulldozer completely non-functional.
 
