@@ -1,6 +1,6 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
-Copyright 1991, 1993-1997, 1999-2013 Free Software Foundation, Inc.
+Copyright 1991, 1993-1997, 1999-2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1645,7 +1645,7 @@ __GMP_DECLSPEC mp_size_t mpn_sec_powm_itch (mp_size_t, mp_size_t, mp_size_t);
 __GMP_DECLSPEC void mpn_sec_tabselect (volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);
 
 #define mpn_sec_div_qr __MPN(sec_div_qr)
-__GMP_DECLSPEC void mpn_sec_div_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+__GMP_DECLSPEC mp_limb_t mpn_sec_div_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define mpn_sec_div_qr_itch __MPN(sec_div_qr_itch)
 __GMP_DECLSPEC mp_size_t mpn_sec_div_qr_itch (mp_size_t, mp_size_t);
 #define mpn_sec_div_r __MPN(sec_div_r)

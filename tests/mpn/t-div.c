@@ -1,4 +1,4 @@
-/* Copyright 2006, 2007, 2009, 2010, 2013 Free Software Foundation, Inc.
+/* Copyright 2006, 2007, 2009, 2010, 2013, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -306,7 +306,7 @@ main (int argc, char **argv)
 	  MPN_COPY (rp, np, nn);
 	  if (nn >= dn)
 	    MPN_COPY (qp, junkp, nn - dn + 1);
-	  mpn_sec_div_qr (qp, rp, nn, dup, dn, scratch);
+	  qp[nn - dn] = mpn_sec_div_qr (qp, rp, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_qr", 0);
 
