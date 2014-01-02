@@ -5521,6 +5521,13 @@ A return value of zero indicates a perfect square.  See also
 @code{mpn_perfect_square_p}.
 @end deftypefun
 
+@deftypefun size_t mpn_sizeinbase (const mp_limb_t *@var{xp}, mp_size_t @var{n}, int @var{base})
+Return the size of @{@var{xp},@var{n}@} measured in number of digits in the
+given @var{base}.  @var{base} can vary from 2 to 62.  Requires @math{@var{n} > 0}
+and @math{@var{xp}[@var{n}-1] > 0}.  The result will be either exact or
+1 too big.  If @var{base} is a power of 2, the result is always exact.
+@end deftypefun
+
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
 Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array at @var{str} in
 base @var{base}, and return the number of characters produced.  There may be

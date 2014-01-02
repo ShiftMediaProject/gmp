@@ -1,5 +1,7 @@
 2014-01-02  Niels Möller  <nisse@lysator.liu.se>
 
+	* doc/gmp.texi (Low-level Functions): Document mpn_sizeinbase.
+
 	Enable previously unused mpn_sizeinbase function.
 	* configure.ac (gmp_mpn_functions): Added sizeinbase.
 	* gmp-h.in (mpn_sizeinbase): New prototype.
