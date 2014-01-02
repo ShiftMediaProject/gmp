@@ -1,3 +1,9 @@
+2014-01-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/invert.c: Rely on gcdext for all operands, removing faulty
+	special case.
+	* tests/mpz/t-invert.c: Enforce correct behaviour for |mod| = 1.
+
 2014-01-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_sizeinbase.
