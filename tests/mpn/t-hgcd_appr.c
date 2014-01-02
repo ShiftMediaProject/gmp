@@ -512,7 +512,7 @@ hgcd_appr_valid_p (mpz_t a, mpz_t b, mp_size_t res0,
     fprintf (stderr, "n = %u: sbits = %u: ref #(r0-r1): %u, appr #(r0-r1): %u excess: %d, margin: %u\n",
 	     (unsigned) n, (unsigned) s*GMP_NUMB_BITS,
 	     (unsigned) dbits, (unsigned) abits,
-	     (int) abits - s * GMP_NUMB_BITS, (unsigned) margin);
+	     (int) (abits - s * GMP_NUMB_BITS), (unsigned) margin);
 
   if (abits > s*GMP_NUMB_BITS + margin)
     {

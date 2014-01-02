@@ -8,6 +8,8 @@
 	* tests/t-constants.c: Adapt printf strings.
 	* tests/t-gmpmax.c: Likewise.
 
+	* tests/mpn/t-hgcd_appr.c (hgcd_appr_valid_p): Add parentheses.
+
 2014-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions for cryptography): Update interface
