@@ -1,3 +1,8 @@
+2014-01-02  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-impl.h: Always include <limits.h>.
+	* tests/mpn/t-get_d.c: Remove comment about <limits.h>
+
 2014-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions for cryptography): Update interface

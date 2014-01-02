@@ -36,9 +36,9 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include <intrinsics.h>  /* for _popcnt */
 #endif
 
-/* limits.h is not used in general, since it's an ANSI-ism, and since on
-   solaris gcc 2.95 under -mcpu=ultrasparc in ABI=32 ends up getting wrong
-   values (the ABI=64 values).
+/* For INT_MAX, etc. We used to avoid it because of a bug (on solaris,
+   gcc 2.95 under -mcpu=ultrasparc in ABI=32 ends up getting wrong
+   values (the ABI=64 values)), but it should be safe now.
 
    On Cray vector systems, however, we need the system limits.h since sizes
    of signed and unsigned types can differ there, depending on compiler
@@ -46,9 +46,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
    reference, int can be 46 or 64 bits, whereas uint is always 64 bits; and
    short can be 24, 32, 46 or 64 bits, and different for ushort.  */
 
-#if defined _CRAY
 #include <limits.h>
-#endif
 
 /* For fat.h and other fat binary stuff.
    No need for __GMP_ATTRIBUTE_PURE or __GMP_NOTHROW, since functions
@@ -544,7 +542,9 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 
    #ifndef's are used since on some systems (HP?) header files other than
    limits.h setup these defines.  We could forcibly #undef in that case, but
-   there seems no need to worry about that.  */
+   there seems no need to worry about that.
+ 
+   Now that we include <limits.h> we should be able to remove all this.  */
 
 #ifndef ULONG_MAX
 #define ULONG_MAX   __GMP_ULONG_MAX

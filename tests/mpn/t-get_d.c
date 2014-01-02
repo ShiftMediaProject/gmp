@@ -17,12 +17,6 @@ Public License for more details.
 You should have received a copy of the GNU General Public License along with
 the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
-/* Note that we don't use <limits.h> for LONG_MIN, but instead our own
-   definition in gmp-impl.h.  In gcc 2.95.4 (debian 3.0) under
-   -mcpu=ultrasparc, limits.h sees __sparc_v9__ defined and assumes that
-   means long is 64-bit long, but it's only 32-bits, causing fatal compile
-   errors.  */
-
 #include "config.h"
 
 #include <setjmp.h>
