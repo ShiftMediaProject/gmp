@@ -562,7 +562,7 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
    treats the plain decimal values in <limits.h> as signed.  */
 #define ULONG_HIGHBIT      (ULONG_MAX ^ ((unsigned long) ULONG_MAX >> 1))
 #define UINT_HIGHBIT       (UINT_MAX ^ ((unsigned) UINT_MAX >> 1))
-#define USHRT_HIGHBIT      ((unsigned short) (USHRT_MAX ^ ((unsigned short) USHRT_MAX >> 1)))
+#define USHRT_HIGHBIT      (USHRT_MAX ^ ((unsigned short) USHRT_MAX >> 1))
 #define GMP_LIMB_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
 
 #ifndef LONG_MIN
@@ -580,10 +580,10 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 #endif
 
 #ifndef SHRT_MIN
-#define SHRT_MIN           ((short) USHRT_HIGHBIT)
+#define SHRT_MIN           ((int) (short) USHRT_HIGHBIT)
 #endif
 #ifndef SHRT_MAX
-#define SHRT_MAX           ((short) (-(SHRT_MIN+1)))
+#define SHRT_MAX           (-(SHRT_MIN+1))
 #endif
 
 #if __GMP_MP_SIZE_T_INT

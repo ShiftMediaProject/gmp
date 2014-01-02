@@ -3,6 +3,11 @@
 	* gmp-impl.h: Always include <limits.h>.
 	* tests/mpn/t-get_d.c: Remove comment about <limits.h>
 
+	* gmp-h.in (__GMP_USHRT_MAX): Use the promoted type.
+	* gmp-impl.h (USHRT_HIGHBIT, SHRT_MIN, SHRT_MAX): Likewise.
+	* tests/t-constants.c: Adapt printf strings.
+	* tests/t-gmpmax.c: Likewise.
+
 2014-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions for cryptography): Update interface

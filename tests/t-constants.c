@@ -329,10 +329,10 @@ main (int argc, char *argv[])
       printf ("INT_MAX        %X\n", INT_MAX);
       printf ("INT_MIN        %X\n", INT_MIN);
 
-      printf ("USHRT_MAX      %hX\n", USHRT_MAX);
-      printf ("USHRT_HIGHBIT  %hX\n", USHRT_HIGHBIT);
-      printf ("SHRT_MAX       %hX\n", SHRT_MAX);
-      printf ("SHRT_MIN       %hX\n", SHRT_MIN);
+      printf ("USHRT_MAX      %X\n", USHRT_MAX);
+      printf ("USHRT_HIGHBIT  %X\n", USHRT_HIGHBIT);
+      printf ("SHRT_MAX       %X\n", SHRT_MAX);
+      printf ("SHRT_MIN       %X\n", SHRT_MIN);
 
       printf ("\n");
       printf ("Bits\n");

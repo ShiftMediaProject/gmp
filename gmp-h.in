@@ -437,10 +437,10 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_MAX(h,i) ((h) > (i) ? (h) : (i))
 
 /* __GMP_USHRT_MAX is not "~ (unsigned short) 0" because short is promoted
-   to int by "~".  */
+   to int by "~". It still needs to have the promoted type.  */
 #define __GMP_UINT_MAX   (~ (unsigned) 0)
 #define __GMP_ULONG_MAX  (~ (unsigned long) 0)
-#define __GMP_USHRT_MAX  ((unsigned short) ~0)
+#define __GMP_USHRT_MAX  (0 + (unsigned short) ~0)
 
 
 /* __builtin_expect is in gcc 3.0, and not in 2.95. */
