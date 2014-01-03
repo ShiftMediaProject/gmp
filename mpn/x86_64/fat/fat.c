@@ -7,7 +7,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2009, 2011-2013 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2009, 2011-2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -253,6 +253,8 @@ __gmpn_cpuvec_init (void)
 	    case 0x2c:		/* WSM Gulftown */
 	    case 0x2e:		/* NHM Beckton */
 	    case 0x2f:		/* WSM Eagleton */
+	    case 0x37:		/* Atom Silvermont */
+	    case 0x4d:		/* Atom Silvermont/Avoton */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      break;
@@ -260,11 +262,18 @@ __gmpn_cpuvec_init (void)
 	    case 0x2a:		/* SB */
 	    case 0x2d:		/* SBC-EP */
 	    case 0x3a:		/* IBR */
+	    case 0x3e:		/* IBR Ivytown */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
 	      break;
-	    case 0x3c:		/* Haswell */
+	    case 0x3c:		/* Haswell client */
+	    case 0x3d:		/* Broadwell */
+	    case 0x3f:		/* Haswell server */
+	    case 0x45:		/* Haswell ULT */
+	    case 0x46:		/* Crystal Well */
+	    case 0x4f:		/* Broadwell server */
+	    case 0x56:		/* Broadwell microserver */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
