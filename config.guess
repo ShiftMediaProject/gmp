@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2013 Free Software Foundation, Inc.
+# Copyright 2000-2006, 2008, 2011-2014 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -771,29 +771,38 @@ main ()
 	  else if (model >= 4)	modelstr = "pentiummmx";
 	  break;
 	case 6:
-	  if (model <= 1)		modelstr = "pentiumpro";
-	  else if (model <= 6)		modelstr = "pentium2";
-	  else if (model <= 8)		modelstr = "pentium3";
-	  else if (model <= 9)		modelstr = "pentiumm";
-	  else if (model <= 0x0c)	modelstr = "pentium3";
-	  else if (model <= 0x0e)	modelstr = "pentiumm";
-	  else if (model <= 0x19)	cpu_64bit = 1, modelstr = "core2";
-	  else if (model == 0x1a)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Gainestown */
-	  else if (model == 0x1c)	cpu_64bit = 1, modelstr = "atom";  /* Silverthorne */
-	  else if (model == 0x1d)	cpu_64bit = 1, modelstr = "core2"; /* PNR Dunnington */
-	  else if (model == 0x1e)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Lynnfield/Jasper */
-	  else if (model == 0x25)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Clarkdale/Arrandale */
-	  else if (model == 0x26)	cpu_64bit = 1, modelstr = "atom";  /* Lincroft */
-	  else if (model == 0x27)	cpu_64bit = 1, modelstr = "atom";  /* Saltwell */
-	  else if (model == 0x2a)	cpu_64bit = 1, modelstr = "coreisbr"; /* SB */
-	  else if (model == 0x2c)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Gulftown */
-	  else if (model == 0x2d)	cpu_64bit = 1, modelstr = "coreisbr"; /* SBC-EP */
-	  else if (model == 0x2e)	cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
-	  else if (model == 0x2f)	cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
-	  else if (model == 0x3a)	cpu_64bit = 1, modelstr = "coreisbr"; /* IBR */
-	  else if (model == 0x3c)	cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell */
-	  else if (model == 0x36)	cpu_64bit = 1, modelstr = "atom";  /* Cedarview/Saltwell */
-	  else cpu_64bit = 1, modelstr = "corei"; /* default */
+          if (model <= 1)                        modelstr = "pentiumpro";
+          else if (model <= 6)                   modelstr = "pentium2";
+          else if (model <= 8)                   modelstr = "pentium3";
+          else if (model <= 9)                   modelstr = "pentiumm";
+          else if (model <= 0x0c)                modelstr = "pentium3";
+          else if (model <= 0x0e)                modelstr = "pentiumm";
+          else if (model <= 0x19) cpu_64bit = 1, modelstr = "core2";
+          else if (model == 0x1a) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Gainestown */
+          else if (model == 0x1c) cpu_64bit = 1, modelstr = "atom";     /* Silverthorne */
+          else if (model == 0x1d) cpu_64bit = 1, modelstr = "core2";    /* PNR Dunnington */
+          else if (model == 0x1e) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Lynnfield/Jasper */
+          else if (model == 0x25) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Clarkdale/Arrandale */
+          else if (model == 0x26) cpu_64bit = 1, modelstr = "atom";     /* Lincroft */
+          else if (model == 0x27) cpu_64bit = 1, modelstr = "atom";     /* Saltwell */
+          else if (model == 0x2a) cpu_64bit = 1, modelstr = "coreisbr"; /* SB */
+          else if (model == 0x2c) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Gulftown */
+          else if (model == 0x2d) cpu_64bit = 1, modelstr = "coreisbr"; /* SBC-EP */
+          else if (model == 0x2e) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
+          else if (model == 0x2f) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
+          else if (model == 0x36) cpu_64bit = 1, modelstr = "atom";     /* Cedarview/Saltwell */
+          else if (model == 0x37) cpu_64bit = 1, modelstr = "coreinhm"; /* Atom Silvermont */
+          else if (model == 0x3a) cpu_64bit = 1, modelstr = "coreisbr"; /* IBR */
+          else if (model == 0x3c) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell client */
+          else if (model == 0x3d) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell */
+          else if (model == 0x3e) cpu_64bit = 1, modelstr = "coreisbr"; /* Ivytown */
+          else if (model == 0x3f) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell server */
+          else if (model == 0x45) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell ULT */
+          else if (model == 0x46) cpu_64bit = 1, modelstr = "coreihwl"; /* Crystal Well */
+          else if (model == 0x4d) cpu_64bit = 1, modelstr = "coreinhm"; /* Silvermont/Avoton */
+          else if (model == 0x4f) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell server */
+          else if (model == 0x56) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell microserver */
+          else cpu_64bit = 1, modelstr = "corei"; /* default */
 	  break;
 	case 15:
 	  cpu_64bit = 1, modelstr = "pentium4";
