@@ -1,5 +1,10 @@
 2014-01-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* config.guess: Support newer haswell, broadwell, silvermont.
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Likewise.
+
+	* acinclude.m4 (GMP_PROG_M4): Check that eval's radix argument work.
+
 	* mpz/invert.c: Rely on gcdext for all operands, removing faulty
 	special case.
 	* tests/mpz/t-invert.c: Enforce correct behaviour for |mod| = 1.
