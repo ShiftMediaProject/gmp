@@ -309,7 +309,9 @@ dnl  macros.
 ``bad: $][# not supported (SunOS /usr/bin/m4)
 '')ifelse(eval(89),89,`define(t2,Y)',
 `bad: eval() doesnt support 8 or 9 in a constant (OpenBSD 2.6 m4)
-')ifelse(t1`'t2,YY,`good
+')ifelse(eval(0xdeed,16),deed,`define(t3,Y)',
+`bad: eval() doesnt support radix in eval (FreeBSD 8.x,9.0,9.1,9.2 m4)
+')ifelse(t1`'t2`'t3,YYY,`good
 ')]
 EOF
 dnl ' <- balance the quotes for emacs sh-mode
