@@ -53,22 +53,23 @@ Changes between GMP version 5.1.* and 5.2.0
     for mpz_limbs_read and related functions.
 
   MISC
-  * This release will not work on FreeBSD/amd64 7.x, 8.x or 9 series before 9.3
-    with a Haswell CPU or any other CPU which supports the BMI2 instructions.
-    The reason is that the FreeBSD m4 command is not correctly implemented.
-    (Workaround: Use an older GMP release, or install GNU m4 from /usr/ports
-    and tell GMP to use it.)
+  * This release will not work on NetBSD 5.x, FreeBSD 7.x, 8.x or 9 series
+    before 9.3.  The reason is that the FreeBSD m4 command is not correctly
+    implemented.  (Workaround: Use an older GMP release, or install GNU m4 from
+    /usr/ports and tell GMP to use it.)
 
-  * This release will not work on FreeBSD/amd64 before version 10 using the
-    32-bit ABI.  The reason is broken limits.h and broken dynamic linking.
-    (Workaround: Use an older GMP release if using the 32-bit ABI on these
-    FreeBSD releases is important.)
+  * This release will not build properly on FreeBSD/amd64 before version 10
+    using the 32-bit ABI (once a working m4 is installed).  The reason is
+    broken limits.h.  (Workaround: Use an older GMP release if using the 32-bit
+    ABI on these FreeBSD releases is important.)
 
-  * This release will not work on FreeBSD/amd64 10.0 using the 32-bit ABI.  The
-    reason is bugs in the compiler 'clang'.  (Workaround: Compiling gcc from
-    /usr/ports might work, except that gcc depends on GMP; we have not been
-    able to test that workaround since FreeBSD/i386 10.0 does not work for us
-    under KVM or Xen.)
+  * This release will not work reliably on version 10.0 of FreeBSD/i386 or
+    FreeBSD/amd64 using the 32-bit ABI.  The reason is bugs in the compiler
+    'clang'.  Depending on CPU-dependent compiler flags, GMP may or may not be
+    miscompiled in a particular build.  (Workaround: Compiling gcc from
+    /usr/ports should work, except that gcc circularly depends on GMP; we have
+    not been able to test that workaround due to FreeBSD 10.0 bugs affecting
+    its ability to run under under KVM and Xen.)
 
 
 Changes between GMP version 5.1.2 and 5.1.3
