@@ -1,3 +1,7 @@
+2014-01-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (GMP_PROG_M4): Avoid hex output, since case varies.
+
 2014-01-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Support newer haswell, broadwell, silvermont.
