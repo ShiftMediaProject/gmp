@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2013 Free Software Foundation, Inc.
+Copyright 1996-2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -464,7 +464,9 @@ case $host in
       *)
         path="alpha" ;;
     esac
-    extra_functions="cntlz"
+    if test "$enable_assembly" = "yes" ; then
+       extra_functions="cntlz"
+    fi
     gcc_cflags_optlist="asm cpu oldas" # need asm ahead of cpu, see below
     gcc_cflags_maybe="-mieee"
     gcc_cflags_oldas="-Wa,-oldas"     # see GMP_GCC_WA_OLDAS.
