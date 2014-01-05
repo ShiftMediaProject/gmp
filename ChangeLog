@@ -1,3 +1,13 @@
+2014-01-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi: Improve doc for several functions.
+
+	* mpn/generic/sec_tabselect.c: Declare input arg using 'const'.
+	* gmp-h.in: Analogous change.
+
+	* gmp-h.in: Declare all itch functions using __GMP_ATTRIBUTE_PURE.
+	* gmp-impl.h: Likewise.
+
 2014-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/t-minvert.c: Always compare with mpz_invert results,
