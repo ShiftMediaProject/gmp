@@ -1,4 +1,4 @@
-/* Copyright 2013 Free Software Foundation, Inc.
+/* Copyright 2013, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -119,14 +119,7 @@ main (int argc, char **argv)
 	      }
 	}
 
-      if (mpz_cmp_ui (m, 1) == 0)
-	{
-	  /* mpn_sec_minvert considers a^{-1} = 0 (mod 1) for all a */
-	  rres = 1;
-	  mpz_set_ui (r, 0);
-	}
-      else
-	rres = mpz_invert (r, a, m);
+      rres = mpz_invert (r, a, m);
       if ( (test & 4) && !rres)
 	{
 	  gmp_fprintf (stderr, "test %d: Not invertible!\n"
