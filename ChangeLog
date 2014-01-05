@@ -1,5 +1,9 @@
 2014-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.ac (alpha): Set extra_functions conditionally.
+
+	* gmp-h.in (mpn_sec_minvert): Remove formal parameters.
+
 	* doc/gmp.texi: Improve doc for several functions.
 
 	* mpn/generic/sec_tabselect.c: Declare input arg using 'const'.
