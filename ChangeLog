@@ -1,3 +1,7 @@
+2014-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h: Declare all _itch functions using ATTRIBUTE_CONST.
+
 2014-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac (alpha): Set extra_functions conditionally.
