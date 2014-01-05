@@ -57,11 +57,13 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
      so much time that the slowness of this code will be negligible.  */
   par = 0;
   cnt = GMP_LIMB_BITS;
-  for (x = exp; x != 0; x >>= 1)
+  x = exp;
+  do
     {
-      par ^= x & 1;
+      par ^= x;
       cnt--;
-    }
+      x >>= 1;
+    } while (x != 0);
   exp <<= cnt;
 
   if (bn == 1)
