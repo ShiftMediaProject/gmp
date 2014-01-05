@@ -1445,19 +1445,19 @@ __GMP_DECLSPEC mp_limb_t mpn_dcpi1_divappr_q_n (mp_ptr, mp_ptr, mp_srcptr, mp_si
 #define   mpn_mu_div_qr __MPN(mu_div_qr)
 __GMP_DECLSPEC mp_limb_t mpn_mu_div_qr (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_mu_div_qr_itch __MPN(mu_div_qr_itch)
-__GMP_DECLSPEC mp_size_t mpn_mu_div_qr_itch (mp_size_t, mp_size_t, int);
+__GMP_DECLSPEC mp_size_t mpn_mu_div_qr_itch (mp_size_t, mp_size_t, int) __GMP_ATTRIBUTE_PURE;
 #define   mpn_mu_div_qr_choose_in __MPN(mu_div_qr_choose_in)
 __GMP_DECLSPEC mp_size_t mpn_mu_div_qr_choose_in (mp_size_t, mp_size_t, int);
 
 #define   mpn_preinv_mu_div_qr __MPN(preinv_mu_div_qr)
 __GMP_DECLSPEC mp_limb_t mpn_preinv_mu_div_qr (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_preinv_mu_div_qr_itch __MPN(preinv_mu_div_qr_itch)
-__GMP_DECLSPEC mp_size_t mpn_preinv_mu_div_qr_itch (mp_size_t, mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_preinv_mu_div_qr_itch (mp_size_t, mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_mu_divappr_q __MPN(mu_divappr_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_divappr_q (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_mu_divappr_q_itch __MPN(mu_divappr_q_itch)
-__GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_itch (mp_size_t, mp_size_t, int);
+__GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_itch (mp_size_t, mp_size_t, int) __GMP_ATTRIBUTE_PURE;
 #define   mpn_mu_divappr_q_choose_in __MPN(mu_divappr_q_choose_in)
 __GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_choose_in (mp_size_t, mp_size_t, int);
 
@@ -1467,7 +1467,7 @@ __GMP_DECLSPEC mp_limb_t mpn_preinv_mu_divappr_q (mp_ptr, mp_srcptr, mp_size_t, 
 #define   mpn_mu_div_q __MPN(mu_div_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_div_q (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_mu_div_q_itch __MPN(mu_div_q_itch)
-__GMP_DECLSPEC mp_size_t mpn_mu_div_q_itch (mp_size_t, mp_size_t, int);
+__GMP_DECLSPEC mp_size_t mpn_mu_div_q_itch (mp_size_t, mp_size_t, int) __GMP_ATTRIBUTE_PURE;
 
 #define  mpn_div_q __MPN(div_q)
 __GMP_DECLSPEC void mpn_div_q (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
@@ -1502,42 +1502,42 @@ __GMP_DECLSPEC void      mpn_sbpi1_bdiv_q (mp_ptr, mp_ptr, mp_size_t, mp_srcptr,
 #define   mpn_dcpi1_bdiv_qr __MPN(dcpi1_bdiv_qr)
 __GMP_DECLSPEC mp_limb_t mpn_dcpi1_bdiv_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 #define   mpn_dcpi1_bdiv_qr_n_itch __MPN(dcpi1_bdiv_qr_n_itch)
-__GMP_DECLSPEC mp_size_t mpn_dcpi1_bdiv_qr_n_itch (mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_dcpi1_bdiv_qr_n_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_dcpi1_bdiv_qr_n __MPN(dcpi1_bdiv_qr_n)
 __GMP_DECLSPEC mp_limb_t mpn_dcpi1_bdiv_qr_n (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
 #define   mpn_dcpi1_bdiv_q __MPN(dcpi1_bdiv_q)
 __GMP_DECLSPEC void      mpn_dcpi1_bdiv_q (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 
-#define   mpn_dcpi1_bdiv_q_n_itch __MPN(dcpi1_bdiv_q_n_itch)
-__GMP_DECLSPEC mp_size_t mpn_dcpi1_bdiv_q_n_itch (mp_size_t);
 #define   mpn_dcpi1_bdiv_q_n __MPN(dcpi1_bdiv_q_n)
 __GMP_DECLSPEC void      mpn_dcpi1_bdiv_q_n (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr);
+#define   mpn_dcpi1_bdiv_q_n_itch __MPN(dcpi1_bdiv_q_n_itch)
+__GMP_DECLSPEC mp_size_t mpn_dcpi1_bdiv_q_n_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_mu_bdiv_qr __MPN(mu_bdiv_qr)
 __GMP_DECLSPEC mp_limb_t mpn_mu_bdiv_qr (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_mu_bdiv_qr_itch __MPN(mu_bdiv_qr_itch)
-__GMP_DECLSPEC mp_size_t mpn_mu_bdiv_qr_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_mu_bdiv_qr_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_mu_bdiv_q __MPN(mu_bdiv_q)
 __GMP_DECLSPEC void      mpn_mu_bdiv_q (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_mu_bdiv_q_itch __MPN(mu_bdiv_q_itch)
-__GMP_DECLSPEC mp_size_t mpn_mu_bdiv_q_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_mu_bdiv_q_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_bdiv_qr __MPN(bdiv_qr)
 __GMP_DECLSPEC mp_limb_t mpn_bdiv_qr (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_bdiv_qr_itch __MPN(bdiv_qr_itch)
-__GMP_DECLSPEC mp_size_t mpn_bdiv_qr_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_bdiv_qr_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_bdiv_q __MPN(bdiv_q)
 __GMP_DECLSPEC void      mpn_bdiv_q (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_bdiv_q_itch __MPN(bdiv_q_itch)
-__GMP_DECLSPEC mp_size_t mpn_bdiv_q_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_bdiv_q_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define   mpn_divexact __MPN(divexact)
 __GMP_DECLSPEC void      mpn_divexact (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 #define   mpn_divexact_itch __MPN(divexact_itch)
-__GMP_DECLSPEC mp_size_t mpn_divexact_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_divexact_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #ifndef mpn_bdiv_dbm1c  /* if not done with cpuvec in a fat binary */
 #define   mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
@@ -4114,7 +4114,7 @@ __GMP_DECLSPEC void      mpn_matrix22_mul (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_si
 #define   mpn_matrix22_mul_strassen __MPN(matrix22_mul_strassen)
 __GMP_DECLSPEC void      mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_matrix22_mul_itch __MPN(matrix22_mul_itch)
-__GMP_DECLSPEC mp_size_t mpn_matrix22_mul_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_matrix22_mul_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #ifndef MATRIX22_STRASSEN_THRESHOLD
 #define MATRIX22_STRASSEN_THRESHOLD 30
@@ -4194,16 +4194,16 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_step (mp_size_t, mp_ptr, mp_ptr, mp_size_t, st
 __GMP_DECLSPEC mp_size_t mpn_hgcd_reduce (struct hgcd_matrix *, mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_ptr);
 
 #define mpn_hgcd_reduce_itch __MPN(hgcd_reduce_itch)
-__GMP_DECLSPEC mp_size_t mpn_hgcd_reduce_itch (mp_size_t, mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_hgcd_reduce_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_hgcd_itch __MPN (hgcd_itch)
-__GMP_DECLSPEC mp_size_t mpn_hgcd_itch (mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_hgcd_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_hgcd __MPN (hgcd)
 __GMP_DECLSPEC mp_size_t mpn_hgcd (mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr);
 
 #define mpn_hgcd_appr_itch __MPN (hgcd_appr_itch)
-__GMP_DECLSPEC mp_size_t mpn_hgcd_appr_itch (mp_size_t);
+__GMP_DECLSPEC mp_size_t mpn_hgcd_appr_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_hgcd_appr __MPN (hgcd_appr)
 __GMP_DECLSPEC int mpn_hgcd_appr (mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr);
