@@ -58,10 +58,13 @@ main (int argc, char **argv)
   mp_ptr scratch;
   mpz_t m, a, r, g;
   int test;
+  mp_limb_t ran;
+  mp_size_t itch;
+  TMP_DECL;
+
   tests_start ();
   rands = RANDS;
 
-  TMP_DECL;
 
   TMP_MARK;
   mpz_init (m);
@@ -84,7 +87,7 @@ main (int argc, char **argv)
   ap = TMP_ALLOC_LIMBS (MAX_SIZE);
   vp = TMP_ALLOC_LIMBS (MAX_SIZE);
   tp = TMP_ALLOC_LIMBS (MAX_SIZE);
-  scratch = TMP_ALLOC_LIMBS (mpn_sec_minvert_itch (MAX_SIZE));
+  scratch = TMP_ALLOC_LIMBS (mpn_sec_minvert_itch (MAX_SIZE) + 1);
 
   for (test = 0; test < count; test++)
     {
@@ -131,13 +134,15 @@ main (int argc, char **argv)
 
       n = (bits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
       ASSERT_ALWAYS (n <= MAX_SIZE);
+      itch = mpn_sec_minvert_itch (n);
+      scratch[itch] = ran = urandom ();
 
       mpz_to_mpn (ap, n, a);
       mpz_to_mpn (mp, n, m);
       tres = mpn_sec_minvert (tp,
 			      ap, mp, n, 2*bits, scratch);
 
-      if (rres != tres || (rres == 1 && !mpz_eq_mpn (tp, n, r)))
+      if (rres != tres || (rres == 1 && !mpz_eq_mpn (tp, n, r)) || ran != scratch[itch])
 	{
 	  gmp_fprintf (stderr, "Test %d failed.\n"
 		       "m = %Zd\n"
@@ -148,6 +153,8 @@ main (int argc, char **argv)
 	    gmp_fprintf (stderr, "ref: %Zd\n", r);
 	  if (tres)
 	    gmp_fprintf (stderr, "got: %Nd\n", tp, n);
+	  if (ran != scratch[itch])
+	    fprintf (stderr, "scratch[itch] changed.\n");
 	  abort ();
 	}
     }
