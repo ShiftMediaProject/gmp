@@ -3,6 +3,7 @@
 	* tests/mpn/t-minvert.c: Always compare with mpz_invert results.
 	* tests/mpn/t-sizeinbase.c: New test.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-sizeinbase.c .
+	* tests/mpn/t-div.c: Use mpn_sec_div_*_itch().
 
 	* mpn/generic/pow_1.c: Micro-optimisation.
 
