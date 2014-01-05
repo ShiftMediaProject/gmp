@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001-2003, 2009-2012 Free Software Foundation, Inc.
+# Copyright 2001-2003, 2009-2014 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library test suite.
 #
@@ -28,7 +28,7 @@ check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-mod_1 t-fat t-get_d	\
   t-toom2-sqr t-toom3-sqr t-toom4-sqr t-toom6-sqr t-toom8-sqr		\
   t-mul t-mullo t-mulmod_bnm1 t-sqrmod_bnm1 t-mulmid			\
   t-hgcd t-hgcd_appr t-matrix22 t-invert t-div t-bdiv			\
-  t-broot t-brootinv t-minvert
+  t-broot t-brootinv t-minvert t-sizeinbase
 
 EXTRA_DIST = toom-shared.h toom-sqr-shared.h
 
