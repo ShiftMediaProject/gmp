@@ -1,9 +1,6 @@
 /* mpn_sec_tabselect.
 
-   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
-   SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
-
-Copyright 2007-2009, 2011 Free Software Foundation, Inc.
+Copyright 2007-2009, 2011, 2013 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,7 +25,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
    limbs.  Store the selected entry at rp.  Reads entire table to avoid
    side-channel information leaks.  O(n*nents).  */
 void
-mpn_sec_tabselect (volatile mp_limb_t *rp, volatile mp_limb_t *tab,
+mpn_sec_tabselect (volatile mp_limb_t *rp, volatile const mp_limb_t *tab,
 		   mp_size_t n, mp_size_t nents, mp_size_t which)
 {
   mp_size_t k, i;
