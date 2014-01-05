@@ -1,8 +1,10 @@
-2013-12-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2014-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/t-minvert.c: Always compare with mpz_invert results.
 	* tests/mpn/t-sizeinbase.c: New test.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-sizeinbase.c .
+
+	* mpn/generic/pow_1.c: Micro-optimisation.
 
 2014-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
