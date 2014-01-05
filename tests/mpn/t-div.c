@@ -296,7 +296,7 @@ main (int argc, char **argv)
 	    }
 
 	  /* Test mpn_sec_div_qr */
-	  itch = 3 * nn + 4;
+	  itch = mpn_sec_div_qr_itch (nn, dn);
 	  if (itch + 1 > alloc)
 	    {
 	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
@@ -311,7 +311,7 @@ main (int argc, char **argv)
 	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_qr", 0);
 
 	  /* Test mpn_sec_div_r */
-	  itch = nn + 2 * dn + 2;
+	  itch = mpn_sec_div_r_itch (nn, dn);
 	  if (itch + 1 > alloc)
 	    {
 	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
