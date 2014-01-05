@@ -4851,9 +4851,9 @@ Convert @var{op} to a @code{double}, truncating if necessary (i.e.@: rounding
 towards zero), and with an exponent returned separately.
 
 The return value is in the range @math{0.5@le{}@GMPabs{@var{d}}<1} and the
-exponent is stored to @code{*@var{exp}}.  @m{@var{d} * 2^{exp}, @var{d} *
-2^@var{exp}} is the (truncated) @var{op} value.  If @var{op} is zero, the
-return is @math{0.0} and 0 is stored to @code{*@var{exp}}.
+exponent is stored to @code{*@var{exp}}.  @m{@var{d} \times 2^{exp},
+@var{d} * 2^@var{exp}} is the (truncated) @var{op} value.  If @var{op} is zero,
+the return is @math{0.0} and 0 is stored to @code{*@var{exp}}.
 
 @cindex @code{frexp}
 This is similar to the standard C @code{frexp} function (@pxref{Normalization
@@ -5295,7 +5295,7 @@ This function requires that @var{s1n} is greater than or equal to @var{s2n}.
 Compute the square of @{@var{s1p}, @var{n}@} and write the 2*@var{n}-limb
 result to @var{rp}.
 
-The destination has to have space for 2*@var{n} limbs, even if the result's
+The destination has to have space for 2@var{n} limbs, even if the result's
 most significant limb is zero.  No overlap is permitted between the
 destination and the source.
 @end deftypefun
@@ -5715,7 +5715,7 @@ actual limb values.
 
 @deftypefun void mpn_sec_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_mul_itch (mp_size_t @var{an}, mp_size_t @var{bn})
-Set @var{R} to @math{A @times B}, where @var{A} = @{@var{ap},@var{an}@},
+Set @var{R} to @math{A @times{} B}, where @var{A} = @{@var{ap},@var{an}@},
 @var{B} = @{@var{bp},@var{bn}@}, and @var{R} =
 @{@var{rp},@math{@var{an}+@var{bn}}@}.
 
@@ -5809,7 +5809,7 @@ This function requires scratch space of @code{mpn_sec_div_r_itch(@var{nn},
 @var{dn})} limbs to be passed in the @var{tp} parameter.
 @end deftypefun
 
-@deftypefun int mpn_sec_minvert (mp_limb_t *@var{rp}, mp_limb_t *@var{ap}, const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_bitcnt_t @var{bit_size}, mp_limb_t *@var{tp})
+@deftypefun int mpn_sec_minvert (mp_limb_t *@var{rp}, mp_limb_t *@var{ap}, const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_bitcnt_t @var{nbcnt}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_minvert_itch (mp_size_t @var{n})
 Set @var{R} to @m{@var{A}^{-1} \bmod @var{M}, the inverse of @var{A} modulo
 @var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{A} = @{@var{ap},@var{n}@},
@@ -5819,10 +5819,11 @@ preliminary.}
 If an inverse exists, return 1, otherwise return 0 and leave @var{R}
 undefined. In either case, the input @var{A} is destroyed.
 
-It is required that @var{M} is odd, and that @var{bit_size} is no smaller than
-the sum of the bit sizes of @var{A} and @var{M}. E.g, @var{bit_size} = 2 *
-@var{n} * @code{GMP_NUMB_BITS} is always a safe choice, but smaller values can
-be used if @var{M} or @var{A} are known to have leading zero bits.
+It is required that @var{M} is odd, and that @math{@var{nbcnt} @ge
+@GMPceil{\log(@var{A}+1)} + @GMPceil{\log(@var{M}+1)}}.  A safe choice is
+@m{@var{nbcnt} = 2@var{n} @times{} @code{GMP\_NUMB\_BITS}, @var{nbcnt} = 2
+@times{} @var{n} @times{} GMP_NUMB_BITS}, but a smaller value might improve
+performance if @var{M} or @var{A} are known to have leading zero bits.
 
 This function requires scratch space of @code{mpn_sec_minvert_itch(@var{n})}
 limbs to be passed in the @var{tp} parameter.
