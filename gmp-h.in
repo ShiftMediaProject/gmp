@@ -1657,8 +1657,7 @@ __GMP_DECLSPEC void mpn_sec_div_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_p
 __GMP_DECLSPEC mp_size_t mpn_sec_div_r_itch (mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_sec_minvert __MPN(sec_minvert)
-__GMP_DECLSPEC int mpn_sec_minvert (mp_ptr, mp_ptr ap, mp_srcptr mp,
-				    mp_size_t, mp_bitcnt_t, mp_ptr);
+__GMP_DECLSPEC int mpn_sec_minvert (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_bitcnt_t, mp_ptr);
 #define mpn_sec_minvert_itch __MPN(sec_minvert_itch)
 __GMP_DECLSPEC mp_size_t mpn_sec_minvert_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
