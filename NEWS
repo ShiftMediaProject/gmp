@@ -54,7 +54,7 @@ Changes between GMP version 5.1.* and 5.2.0
 
   MISC
   * This release will not work on NetBSD 5.x, FreeBSD 7.x, 8.x or 9 series
-    before 9.3.  The reason is that the FreeBSD m4 command is not correctly
+    before 9.3.  The reason is that the m4 command is not correctly
     implemented.  (Workaround: Use an older GMP release, or install GNU m4 from
     /usr/ports and tell GMP to use it.)
 
@@ -63,13 +63,19 @@ Changes between GMP version 5.1.* and 5.2.0
     broken limits.h.  (Workaround: Use an older GMP release if using the 32-bit
     ABI on these FreeBSD releases is important.)
 
-  * This release will not work reliably on version 10.0 of FreeBSD/i386 or
-    FreeBSD/amd64 using the 32-bit ABI.  The reason is bugs in the compiler
-    'clang'.  Depending on CPU-dependent compiler flags, GMP may or may not be
-    miscompiled in a particular build.  (Workaround: Compiling gcc from
-    /usr/ports should work, except that gcc circularly depends on GMP; we have
-    not been able to test that workaround due to FreeBSD 10.0 bugs affecting
-    its ability to run under under KVM and Xen.)
+  * This release will not work reliably on FreeBSD 10.0 for i386 or amd64 using
+    the 32-bit ABI.  The reason is bugs in the compiler 'clang'.  Depending on
+    CPU-dependent compiler flags, GMP may or may not be miscompiled in a
+    particular build.  (Workaround: Compiling gcc from /usr/ports should work,
+    except that gcc circularly depends on GMP; we have not been able to test
+    that workaround due to FreeBSD 10.0 bugs affecting its ability to run under
+    under KVM and Xen.)
+
+  * This release will not compile on FreeBSD before version 10 for i386,
+    targeting any modern AMD processor.  The reason is bugs in the old gcc
+    bundled with FreeBSD.  (Workaround: install a less obsolete gcc from
+    /usr/ports and tel GMP to use it, or override the -march=amdfam10 configure
+    command line argument.)
 
 
 Changes between GMP version 5.1.2 and 5.1.3
