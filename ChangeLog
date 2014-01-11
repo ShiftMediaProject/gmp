@@ -1,3 +1,9 @@
+2014-01-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Notes for Particular Systems): Add items about old
+	NetBSD and current FreeBSD m4 problems.  Add item about FreeBSD's
+	broken limits.h.
+
 2014-01-05 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h: Declare all _itch functions using ATTRIBUTE_CONST.
