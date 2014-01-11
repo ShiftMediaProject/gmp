@@ -1508,6 +1508,21 @@ involving a @code{double} cannot be expected to operate to their full
 precision when the hardware is in single precision mode.  Of course this
 affects all code, including application code, not just GMP.
 
+@item FreeBSD 7.x, 8.x, 9.0, 9.1, 9.2
+@cindex FreeBSD
+@command{m4} in these releases of FreeBSD has an eval function which ignores
+its 2nd and 3rd arguments, which makes it unsuitable for @file{.asm} file
+processing.  @samp{./configure} will detect the problem and either abort or
+choose another m4 in the @env{PATH}.  The bug is fixed in FreeBSD 9.3 and 10.0,
+so either upgrade or use GNU m4.  Note that the FreeBSD package system installs
+GNU m4 under the name @samp{gm4}, which GMP cannot guess.
+
+@item FreeBSD 7.x, 8.x, 9.x
+@cindex FreeBSD
+GMP releases starting with 5.2 do not support @samp{ABI=32} on FreeBSD/amd64
+prior to release 10.0 of the system.  The cause is a broken @code{limits.h},
+which GMP no longer works around.
+
 @item MS-DOS and MS Windows
 @cindex MS-DOS
 @cindex MS Windows
@@ -1567,6 +1582,15 @@ to the application.
 performance boost on applicable CPUs.  @samp{m68360} can be used for CPU32
 series chips.  @samp{m68302} can be used for ``Dragonball'' series chips,
 though this is merely a synonym for @samp{m68000}.
+
+@item NetBSD 5.x
+@cindex NetBSD
+@command{m4} in these releases of NetBSD has an eval function which ignores its
+2nd and 3rd arguments, which makes it unsuitable for @file{.asm} file
+processing.  @samp{./configure} will detect the problem and either abort or
+choose another m4 in the @env{PATH}.  The bug is fixed in NetBSD 6, so either
+upgrade or use GNU m4.  Note that the NetBSD package system installs GNU m4
+under the name @samp{gm4}, which GMP cannot guess.
 
 @item OpenBSD 2.6
 @cindex OpenBSD
