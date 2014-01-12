@@ -98,6 +98,10 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #define MPEXPR_TYPE_OPERATOR       0x2000
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*mpexpr_fun_t) (void);
 
 struct mpexpr_operator_t {
@@ -119,5 +123,9 @@ int mpq_expr (mpq_ptr, int, const char *, ...);
 int mpz_expr_a (const struct mpexpr_operator_t *, mpz_ptr, int,
 		const char *, size_t, mpz_srcptr [26]);
 int mpz_expr (mpz_ptr, int, const char *, ...);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif
