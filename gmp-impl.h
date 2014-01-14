@@ -543,7 +543,7 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
    #ifndef's are used since on some systems (HP?) header files other than
    limits.h setup these defines.  We could forcibly #undef in that case, but
    there seems no need to worry about that.
- 
+
    Now that we include <limits.h> we should be able to remove all this.  */
 
 #ifndef ULONG_MAX
