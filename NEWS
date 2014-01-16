@@ -42,6 +42,9 @@ Changes between GMP version 5.1.* and 5.2.0
 
   * New function mpn_sec_powm, implementing side-channel silent modexp.
 
+  * New function mpn_sec_minvert, implementing side-channel silent
+    modular inversion.
+
   * New functions mpn_sec_mul and mpn_sec_sqr, implementing side-channel silent
     multiplication and squaring.
 
