@@ -225,6 +225,8 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
     (y) = __mpz_srcptr_swap__tmp;					\
   } while (0)
 
+const int mp_bits_per_limb = GMP_LIMB_BITS;
+
 
 /* Memory allocation and other helper functions. */
 static void

@@ -64,6 +64,8 @@ typedef __mpz_struct mpz_t[1];
 typedef __mpz_struct *mpz_ptr;
 typedef const __mpz_struct *mpz_srcptr;
 
+extern const int mp_bits_per_limb;
+
 void mpn_copyi (mp_ptr, mp_srcptr, mp_size_t);
 void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
 
