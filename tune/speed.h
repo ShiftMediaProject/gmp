@@ -291,6 +291,7 @@ double speed_mpn_brootinv (struct speed_params *);
 double speed_mpn_invert (struct speed_params *);
 double speed_mpn_invertappr (struct speed_params *);
 double speed_mpn_ni_invertappr (struct speed_params *);
+double speed_mpn_sec_minvert (struct speed_params *s);
 double speed_mpn_binvert (struct speed_params *);
 double speed_mpn_redc_1 (struct speed_params *);
 double speed_mpn_redc_2 (struct speed_params *);
@@ -2283,6 +2284,43 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     i = s->reps;							\
     do									\
       function (ip, up, s->size, tp);					\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_SEC_MINVERT(function,itchfn)			\
+  {									\
+    long  i;								\
+    mp_ptr    up, mp, tp, ip;						\
+    double    t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ip, s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (up, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (mp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, itchfn (s->size), s->align_wp);		\
+									\
+    speed_operand_src (s, up, s->size);					\
+    speed_operand_dst (s, tp, s->size);					\
+    speed_operand_dst (s, ip, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    MPN_COPY (mp, s->yp, s->size);					\
+    /* Must be odd */							\
+    mp[0] |= 1;								\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      {									\
+	MPN_COPY (up, s->xp, s->size);					\
+	function (ip, up, mp, s->size, 2*s->size*GMP_NUMB_BITS, tp);	\
+      }									\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

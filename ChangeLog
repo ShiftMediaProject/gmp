@@ -1,5 +1,10 @@
 2014-01-16  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c (speed_mpn_sec_minvert): New function.
+	* tune/speed.h: Declare it.
+	(SPEED_ROUTINE_MPN_SEC_MINVERT): New macro.
+	* tune/speed.c (routine): Added mpn_sec_minvert.
+
 	* mini-gmp/mini-gmp.c (mp_bits_per_limb): New const value.
 	* mini-gmp/mini-gmp.h: Declare it.
 

@@ -361,6 +361,7 @@ const struct routine_t {
   { "mpn_invertappr",          speed_mpn_invertappr          },
   { "mpn_ni_invertappr",       speed_mpn_ni_invertappr       },
   { "mpn_binvert",             speed_mpn_binvert             },
+  { "mpn_sec_minvert",         speed_mpn_sec_minvert         },
 
   { "mpn_sbpi1_div_qr",        speed_mpn_sbpi1_div_qr,    FLAG_R_OPTIONAL},
   { "mpn_dcpi1_div_qr",        speed_mpn_dcpi1_div_qr,    FLAG_R_OPTIONAL},
