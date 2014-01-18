@@ -1,5 +1,4 @@
 dnl  Pentium-4 mpn_copyi -- copy limb vector, incrementing.
-dnl
 
 dnl  Copyright 1999-2001 Free Software Foundation, Inc.
 

@@ -1,7 +1,7 @@
 dnl  Intel Atom mpn_mul_1.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
-dnl
+
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
