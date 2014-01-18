@@ -1,3 +1,7 @@
+2014-01-18  Marc Glisse  <marc.glisse@inria.fr>
+
+	* doc/gmp.texi (C++ Interface Limitations): Warn against C++11 auto.
+
 2014-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/t-parity.c: Use 1UL to generate unsigned constants.

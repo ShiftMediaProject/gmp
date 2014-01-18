@@ -7271,6 +7271,31 @@ void fun (T f, T g)
   fun2 (f, T(f+g));  // Good
 @}
 @end example
+
+@item C++11
+C++11 provides several new ways in which types can be inferred: @code{auto},
+@code{decltype}, etc. While they can be very convenient, they don't mix well
+with expression templates. In this example, the addition is performed twice,
+as if we had defined @code{sum} as a macro.
+
+@example
+mpz_class z = 33;
+auto sum = z + z;
+mpz_class prod = sum * sum;
+@end example
+
+This other example may crash, though some compilers might make it look like
+it is working, because the expression @code{z+z} goes out of scope before it
+is evaluated.
+
+@example
+mpz_class z = 33;
+auto sum = z + z + z;
+mpz_class prod = sum * 2;
+@end example
+
+It is thus strongly recommended to avoid @code{auto} anywhere a GMP C++
+expression may appear.
 @end table
 
 
