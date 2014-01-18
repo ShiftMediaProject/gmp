@@ -1,7 +1,7 @@
 dnl  x86-32 mpn_mod_1s_4p, requiring cmov.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
-dnl
+
 dnl  Copyright 2009, 2010 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.

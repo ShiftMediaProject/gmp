@@ -1,7 +1,7 @@
 dnl x86-32 mpn_addmul_1 and mpn_submul_1 optimised for Intel Atom.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
-dnl
+
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
