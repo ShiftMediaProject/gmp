@@ -1,3 +1,15 @@
+2014-01-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/sec_aors_1.c (mpn_sec_add_1, mpn_sec_sub_1): New
+	file.
+
+	* mpn/generic/sec_minvert.c (mpn_sec_add_1_itch, mpn_sec_add_1):
+	Deleted static definitions.
+	(mpn_cnd_swap): Use volatile.
+
+	* configure.ac (gmp_mpn_functions): sec_add_1 and sec_sub_1.
+	(GMP_MULFUNC_CHOICES): Set up for sec_aors_1.
+
 2014-01-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_sec_minvert): New function.

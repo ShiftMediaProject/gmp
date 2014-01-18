@@ -2835,7 +2835,7 @@ gmp_mpn_functions="$extra_functions					   \
   bdiv_q bdiv_qr broot brootinv bsqrt bsqrtinv				   \
   divexact bdiv_dbm1c redc_1 redc_2 redc_n powm powlo sec_powm		   \
   sec_mul sec_sqr sec_div_qr sec_div_r sec_pi1_div_qr sec_pi1_div_r	   \
-  sec_minvert								   \
+  sec_add_1 sec_sub_1 sec_minvert					   \
   trialdiv remove							   \
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \
   copyi copyd zero sec_tabselect					   \
@@ -2854,6 +2854,7 @@ case $tmp_fn in
   add_err3_n|sub_err3_n)
 		     tmp_mulfunc="aors_err3_n" ;;
   cnd_add_n|cnd_sub_n) tmp_mulfunc="cnd_aors_n"   ;;
+  sec_add_1|sec_sub_1) tmp_mulfunc="sec_aors_1"   ;;
   addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
   mul_2|addmul_2)    tmp_mulfunc="aormul_2" ;;
   mul_3|addmul_3)    tmp_mulfunc="aormul_3" ;;

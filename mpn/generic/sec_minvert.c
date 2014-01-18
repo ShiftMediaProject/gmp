@@ -23,21 +23,6 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 static mp_size_t
-mpn_sec_add_1_itch (mp_size_t n)
-{
-  return n;
-}
-
-static mp_limb_t
-mpn_sec_add_1 (mp_limb_t *rp, mp_limb_t *ap, mp_size_t n, mp_limb_t b,
-	       mp_ptr scratch)
-{
-  scratch[0] = b;
-  MPN_ZERO (scratch + 1, n-1);
-  return mpn_add_n (rp, ap, scratch, n);
-}
-
-static mp_size_t
 mpn_cnd_neg_itch (mp_size_t n)
 {
   return n;
@@ -53,9 +38,10 @@ mpn_cnd_neg (int cnd, mp_limb_t *rp, const mp_limb_t *ap, mp_size_t n,
 }
 
 static void
-mpn_cnd_swap (int cnd, mp_limb_t *ap, mp_limb_t *bp, mp_size_t n)
+mpn_cnd_swap (int cnd, volatile mp_limb_t *ap, volatile mp_limb_t *bp,
+	      mp_size_t n)
 {
-  mp_limb_t mask = - (mp_limb_t) (cnd != 0);
+  volatile mp_limb_t mask = - (mp_limb_t) (cnd != 0);
   mp_size_t i;
   for (i = 0; i < n; i++)
     {
