@@ -218,8 +218,8 @@ main (int argc, char *argv[])
   CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long,  "0x%lX");
   CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int,   "0x%X");
   CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short, "0x%hX");
-  CHECK_HIGHBIT (LONG_HIGHBIT,      long,           "0x%lX");
 #if 0 /* Bad! */
+  CHECK_HIGHBIT (LONG_HIGHBIT,      long,           "0x%lX");
   CHECK_HIGHBIT (INT_HIGHBIT,       int,            "0x%X");
   CHECK_HIGHBIT (SHRT_HIGHBIT,      short,          "0x%hX");
 #endif

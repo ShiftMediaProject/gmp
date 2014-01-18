@@ -50,7 +50,7 @@ check_various (void)
   check_one (1, 0x3111L);
 
   for (i = 0; i < BITS_PER_ULONG; i++)
-    check_one (1, 1L << i);
+    check_one (1, 1UL << i);
 }
 
 
