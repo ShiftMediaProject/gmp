@@ -1,3 +1,8 @@
+2014-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/t-parity.c: Use 1UL to generate unsigned constants.
+	* tests/t-constants.c: Disable a non portable (unneeded) check.
+
 2014-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sec_aors_1.c (mpn_sec_add_1, mpn_sec_sub_1): New
