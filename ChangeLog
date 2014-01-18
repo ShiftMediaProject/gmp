@@ -1,3 +1,10 @@
+2014-01-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-aors_1.c: Test also mpn_sec_add_1 and mpn_sec_sub_1.
+
+	* tests/mpn/t-minvert.c (main): Pass smallest allowed bit_size
+	argument to mpn_sec_minvert.
+
 2014-01-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* doc/gmp.texi (C++ Interface Limitations): Warn against C++11 auto.

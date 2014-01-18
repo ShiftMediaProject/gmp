@@ -46,6 +46,13 @@ mpz_eq_mpn (mp_ptr ap, mp_size_t an, const mpz_t b)
 	  && mpn_zero_p (ap + bn, an - bn));
 }
 
+static mp_bitcnt_t
+bit_size (mp_srcptr xp, mp_size_t n)
+{
+  MPN_NORMALIZE (xp, n);
+  return n > 0 ? mpn_sizeinbase (xp, n, 2) : 0;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -140,7 +147,9 @@ main (int argc, char **argv)
       mpz_to_mpn (ap, n, a);
       mpz_to_mpn (mp, n, m);
       tres = mpn_sec_minvert (tp,
-			      ap, mp, n, 2*bits, scratch);
+			      ap, mp, n,
+			      bit_size (ap, n) + bit_size (mp, n),
+			      scratch);
 
       if (rres != tres || (rres == 1 && !mpz_eq_mpn (tp, n, r)) || ran != scratch[itch])
 	{
