@@ -25,8 +25,9 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
        faulty or strange.  */
 
 
-#include <stdarg.h>
+#include "config.h"	/* needed for the HAVE_, could also move gmp incls */
 
+#include <stdarg.h>
 #include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
 #include <stdlib.h>
