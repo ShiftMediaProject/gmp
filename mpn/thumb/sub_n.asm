@@ -5,9 +5,9 @@ dnl  Copyright 1997, 2000, 2012 Free Software Foundation, Inc.
 dnl  This file is part of the GNU MP Library.
 
 dnl  The GNU MP Library is free software; you can redistribute it and/or modify
-dnl  it under the terms of the GNU Lesser General Public License as published by
-dnl  the Free Software Foundation; either version 3 of the License, or (at your
-dnl  option) any later version.
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 3 of the License, or (at
+dnl  your option) any later version.
 
 dnl  The GNU MP Library is distributed in the hope that it will be useful, but
 dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
