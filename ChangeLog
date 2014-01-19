@@ -1,3 +1,9 @@
+2014-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpn_popcount): New function.
+	(mpz_popcount): Use it.
+	* mini-gmp/mini-gmp.h: Declare it.
+
 2014-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-aors_1.c: Test also mpn_sec_add_1 and mpn_sec_sub_1.
