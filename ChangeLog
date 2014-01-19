@@ -2,7 +2,8 @@
 
 	* mini-gmp/mini-gmp.c (mpn_popcount): New function.
 	(mpz_popcount): Use it.
-	* mini-gmp/mini-gmp.h: Declare it.
+	(mpz_addmul_ui, mpz_addmul, mpz_submul_ui, mpz_submul): Added.
+	* mini-gmp/mini-gmp.h: Declare them.
 
 2014-01-18  Niels Möller  <nisse@lysator.liu.se>
 
