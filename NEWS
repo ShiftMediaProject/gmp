@@ -37,19 +37,19 @@ Changes between GMP version 5.1.* and 5.2.0
 
   * Support for ARM64 alias Aarch64 alias ARMv8.
 
-  * New functions mpn_cnd_add_n and mpn_cnd_sub_n.  Side-channel silent
+  * New public functions mpn_sec_mul and mpn_sec_sqr, implementing side-channel
+    silent multiplication and squaring.
+
+  * New public functions mpn_sec_div_qr and mpn_sec_div_r, implementing
+    side-channel silent division.
+
+  * New public functions mpn_cnd_add_n and mpn_cnd_sub_n.  Side-channel silent
     conditional addition and subtraction.
 
-  * New function mpn_sec_powm, implementing side-channel silent modexp.
+  * New public function mpn_sec_powm, implementing side-channel silent modexp.
 
-  * New function mpn_sec_minvert, implementing side-channel silent
+  * New public function mpn_sec_invert, implementing side-channel silent
     modular inversion.
-
-  * New functions mpn_sec_mul and mpn_sec_sqr, implementing side-channel silent
-    multiplication and squaring.
-
-  * New functions mpn_sec_div_qr and mpn_sec_div_r, implementing side-channel
-    silent division.
 
   * Better support for applications which use the mpz_t type, but nevertheless
     need to call some of the lower-level mpn functions.  See the documentation
