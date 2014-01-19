@@ -23,12 +23,12 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 void
 mpz_array_init (mpz_ptr arr, mp_size_t arr_size, mp_size_t nbits)
 {
-  register mp_ptr p;
-  register mp_size_t i;
+  mp_ptr p;
+  mp_size_t i;
   mp_size_t nlimbs;
 
-  nlimbs = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
-  p = (mp_ptr) (*__gmp_allocate_func) (arr_size * nlimbs * BYTES_PER_MP_LIMB);
+  nlimbs = nbits / GMP_NUMB_BITS + 1;
+  p = (mp_ptr) (*__gmp_allocate_func) ((size_t) arr_size * nlimbs * BYTES_PER_MP_LIMB);
 
   for (i = 0; i < arr_size; i++)
     {
