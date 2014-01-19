@@ -2021,6 +2021,46 @@ mpz_mul_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bits)
   r->_mp_size = (u->_mp_size < 0) ? - rn : rn;
 }
 
+void
+mpz_addmul_ui (mpz_t r, const mpz_t u, unsigned long int v)
+{
+  mpz_t t;
+  mpz_init (t);
+  mpz_mul_ui (t, u, v);
+  mpz_add (r, r, t);
+  mpz_clear (t);
+}
+
+void
+mpz_submul_ui (mpz_t r, const mpz_t u, unsigned long int v)
+{
+  mpz_t t;
+  mpz_init (t);
+  mpz_mul_ui (t, u, v);
+  mpz_sub (r, r, t);
+  mpz_clear (t);
+}
+
+void
+mpz_addmul (mpz_t r, const mpz_t u, const mpz_t v)
+{
+  mpz_t t;
+  mpz_init (t);
+  mpz_mul (t, u, v);
+  mpz_add (r, r, t);
+  mpz_clear (t);
+}
+
+void
+mpz_submul (mpz_t r, const mpz_t u, const mpz_t v)
+{
+  mpz_t t;
+  mpz_init (t);
+  mpz_mul (t, u, v);
+  mpz_sub (r, r, t);
+  mpz_clear (t);
+}
+
 
 /* MPZ division */
 enum mpz_div_round_mode { GMP_DIV_FLOOR, GMP_DIV_CEIL, GMP_DIV_TRUNC };

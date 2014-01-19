@@ -131,6 +131,10 @@ void mpz_mul_si (mpz_t, const mpz_t, long int);
 void mpz_mul_ui (mpz_t, const mpz_t, unsigned long int);
 void mpz_mul (mpz_t, const mpz_t, const mpz_t);
 void mpz_mul_2exp (mpz_t, const mpz_t, mp_bitcnt_t);
+void mpz_addmul_ui (mpz_t, const mpz_t, unsigned long int);
+void mpz_addmul (mpz_t, const mpz_t, const mpz_t);
+void mpz_submul_ui (mpz_t, const mpz_t, unsigned long int);
+void mpz_submul (mpz_t, const mpz_t, const mpz_t);
 
 void mpz_cdiv_qr (mpz_t, mpz_t, const mpz_t, const mpz_t);
 void mpz_fdiv_qr (mpz_t, mpz_t, const mpz_t, const mpz_t);
