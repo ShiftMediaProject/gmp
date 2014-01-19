@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpq_canonicalize (MP_RAT *op)
+mpq_canonicalize (mpq_t op)
 {
   mpz_t gcd;
   TMP_DECL;

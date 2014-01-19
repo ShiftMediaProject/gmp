@@ -21,7 +21,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpq_init (MP_RAT *x)
+mpq_init (mpq_t x)
 {
   ALLOC(NUM(x)) = 1;
   PTR(NUM(x)) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);

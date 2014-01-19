@@ -90,7 +90,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
    like to have helping everywhere that uses a quotient-only division. */
 
 double
-mpq_get_d (const MP_RAT *src)
+mpq_get_d (const mpq_t src)
 {
   double res;
   mp_srcptr np, dp;

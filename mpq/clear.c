@@ -1,4 +1,4 @@
-/* mpq_clear -- free the space occupied by a MP_RAT.
+/* mpq_clear -- free the space occupied by a mpq_t.
 
 Copyright 1991, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
@@ -21,7 +21,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpq_clear (MP_RAT *m)
+mpq_clear (mpq_t m)
 {
   (*__gmp_free_func) (PTR(NUM(m)),
 		    (size_t) ALLOC(NUM(m)) * GMP_LIMB_BYTES);
