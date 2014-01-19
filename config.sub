@@ -3,7 +3,7 @@
 # GMP config.sub wrapper.
 
 
-# Copyright 2000-2003, 2006, 2009-2013 Free Software Foundation, Inc.
+# Copyright 2000-2003, 2006, 2009-2014 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -91,7 +91,7 @@ itanium | itanium2)
   test_cpu=ia64 ;;
 pentium | pentiummmx | pentiumpro | pentium[234m] | k[567] | k6[23] | geode | athlon | viac3*)
   test_cpu=i386 ;;
-athlon64 | atom | core2 | corei | coreinhm | coreiwsm | coreisbr | coreihwl | coreibwl | opteron | k[89] | k10 | bobcat | bulldozer | nano)
+athlon64 | atom | core2 | corei | coreinhm | coreiwsm | coreisbr | coreihwl | coreibwl | opteron | k[89] | k10 | bobcat | jaguar | bulldozer | piledriver | steamroller | excavator | nano)
   test_cpu=x86_64 ;;
 power[2-9] | power2sc)
   test_cpu=power ;;

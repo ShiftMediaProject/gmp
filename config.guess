@@ -843,10 +843,18 @@ main ()
 	  cpu_64bit = 1, modelstr = "bobcat";
 	  break;
 	case 21:		/* Bulldozer */
-	  cpu_64bit = 1, modelstr = "bulldozer";
+	  cpu_64bit = 1;
+	  if (model == 1)
+	    modelstr = "bulldozer";
+	  else if (model == 2)
+	    modelstr = "piledriver";
+	  else if (model == 3)
+	    modelstr = "steamroller";
+	  else /* if (model < 0x9) */
+	    modelstr = "excavator";
 	  break;
-	case 22:		/* jaguar, an improved bobcat */
-	  cpu_64bit = 1, modelstr = "bobcat";
+	case 22:		/* Jaguar, an improved bobcat */
+	  cpu_64bit = 1, modelstr = "jaguar";
 	  break;
 	}
     }
