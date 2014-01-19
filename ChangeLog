@@ -4,6 +4,7 @@
 	jaguar).
 	* config.sub: Corresponding updates.
 	* configure.ac: Likewise.
+	* acinclude.m4 (X86_64_PATTERN): Likewise.
 
 	* Rename mpn_sec_minvert => mpn_sec_invert, many files affected.
 	* mpn/generic/sec_invert.c: New name for sec_minvert.c.
