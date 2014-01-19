@@ -1853,10 +1853,10 @@ are only provided if @code{<stdio.h>} is included too.
 @end example
 
 @cindex @code{stdarg.h}
-Likewise @code{<stdarg.h>} (or @code{<varargs.h>}) is required for prototypes
-with @code{va_list} parameters, such as @code{gmp_vprintf}.  And
-@code{<obstack.h>} for prototypes with @code{struct obstack} parameters, such
-as @code{gmp_obstack_printf}, when available.
+Likewise @code{<stdarg.h>} is required for prototypes with @code{va_list}
+parameters, such as @code{gmp_vprintf}.  And @code{<obstack.h>} for prototypes
+with @code{struct obstack} parameters, such as @code{gmp_obstack_printf}, when
+available.
 
 @cindex Libraries
 @cindex Linking
@@ -4113,57 +4113,7 @@ The functions in this section are for various special purposes.  Most
 applications will not need them.
 
 @deftypefun void mpz_array_init (mpz_t @var{integer_array}, mp_size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
-This is a special type of initialization.  @strong{Fixed} space of
-@var{fixed_num_bits} is allocated to each of the @var{array_size} integers in
-@var{integer_array}.  There is no way to free the storage allocated by this
-function.  Don't call @code{mpz_clear}!
-
-The @var{integer_array} parameter is the first @code{mpz_t} in the array.  For
-example,
-
-@example
-mpz_t  arr[20000];
-mpz_array_init (arr[0], 20000, 512);
-@end example
-
-@c  In case anyone's wondering, yes this parameter style is a bit anomalous,
-@c  it'd probably be nicer if it was "arr" instead of "arr[0]".  Obviously the
-@c  two differ only in the declaration, not the pointer value, but changing is
-@c  not possible since it'd provoke warnings or errors in existing sources.
-
-This function is only intended for programs that create a large number
-of integers and need to reduce memory usage by avoiding the overheads of
-allocating and reallocating lots of small blocks.  In normal programs this
-function is not recommended.
-
-The space allocated to each integer by this function will not be automatically
-increased, unlike the normal @code{mpz_init}, so an application must ensure it
-is sufficient for any value stored.  The following space requirements apply to
-various routines,
-
-@itemize @bullet
-@item
-@code{mpz_abs}, @code{mpz_neg}, @code{mpz_set}, @code{mpz_set_si} and
-@code{mpz_set_ui} need room for the value they store.
-
-@item
-@code{mpz_add}, @code{mpz_add_ui}, @code{mpz_sub} and @code{mpz_sub_ui} need
-room for the larger of the two operands, plus an extra
-@code{mp_bits_per_limb}.
-
-@item
-@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_si} need room for the sum
-of the number of bits in their operands, but each rounded up to a multiple of
-@code{mp_bits_per_limb}.
-
-@item
-@code{mpz_swap} can be used between two array variables, but not between an
-array and a normal variable.
-@end itemize
-
-For other functions, or if in doubt, the suggestion is to calculate in a
-regular @code{mpz_init} variable and copy the result to an array variable with
-@code{mpz_set}.
+@strong{This is an obsolete function.  Do not use it.}
 @end deftypefun
 
 @deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
