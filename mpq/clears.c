@@ -1,6 +1,6 @@
 /* mpq_clears() -- Clear multiple mpq_t variables.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -49,7 +49,10 @@ mpq_clears (va_alist)
 
   while (x != NULL)
     {
-      mpq_clear (x);
+      (*__gmp_free_func) (PTR(NUM(x)),
+			  (size_t) ALLOC(NUM(x)) * BYTES_PER_MP_LIMB);
+      (*__gmp_free_func) (PTR(DEN(x)),
+			  (size_t) ALLOC(DEN(x)) * BYTES_PER_MP_LIMB);
       x = va_arg (ap, mpq_ptr);
     }
   va_end (ap);
