@@ -1,5 +1,7 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Use mpq_t in favour of MP_RAT.
+
 	* Get rid of BYTES_PER_MP_LIMB, most files affected.
 
 	* mpz/iset.c: Avoid overflow in allocation computation.
