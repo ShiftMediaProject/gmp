@@ -72,13 +72,13 @@ main (int argc, char **argv)
   mp_size_t n;
   mp_limb_t refcy, cy;
 
-  a1 = malloc ((SIZE + 2) * BYTES_PER_MP_LIMB);
-  a2 = malloc ((SIZE + 2) * BYTES_PER_MP_LIMB);
-  a3 = malloc ((SIZE + 2) * BYTES_PER_MP_LIMB);
-  a4 = malloc ((SIZE + 2) * BYTES_PER_MP_LIMB);
+  a1 = malloc ((SIZE + 2) * GMP_LIMB_BYTES);
+  a2 = malloc ((SIZE + 2) * GMP_LIMB_BYTES);
+  a3 = malloc ((SIZE + 2) * GMP_LIMB_BYTES);
+  a4 = malloc ((SIZE + 2) * GMP_LIMB_BYTES);
 
-  ref1p = malloc (SIZE * BYTES_PER_MP_LIMB);
-  ref2p = malloc (SIZE * BYTES_PER_MP_LIMB);
+  ref1p = malloc (SIZE * GMP_LIMB_BYTES);
+  ref2p = malloc (SIZE * GMP_LIMB_BYTES);
 
   for (test = 0; ; test++)
     {

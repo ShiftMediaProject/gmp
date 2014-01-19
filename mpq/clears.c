@@ -50,9 +50,9 @@ mpq_clears (va_alist)
   while (x != NULL)
     {
       (*__gmp_free_func) (PTR(NUM(x)),
-			  (size_t) ALLOC(NUM(x)) * BYTES_PER_MP_LIMB);
+			  (size_t) ALLOC(NUM(x)) * GMP_LIMB_BYTES);
       (*__gmp_free_func) (PTR(DEN(x)),
-			  (size_t) ALLOC(DEN(x)) * BYTES_PER_MP_LIMB);
+			  (size_t) ALLOC(DEN(x)) * GMP_LIMB_BYTES);
       x = va_arg (ap, mpq_ptr);
     }
   va_end (ap);

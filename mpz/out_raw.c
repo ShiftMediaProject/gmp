@@ -40,8 +40,8 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
     mp_limb_t  __limb = (limb);                                         \
     char      *__p = (char *) (dst);                                    \
     int        __i;                                                     \
-    for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)                       \
-      __p[__i] = (char) (__limb >> ((BYTES_PER_MP_LIMB-1 - __i) * 8));  \
+    for (__i = 0; __i < GMP_LIMB_BYTES; __i++)                       \
+      __p[__i] = (char) (__limb >> ((GMP_LIMB_BYTES-1 - __i) * 8));  \
   } while (0)
 #endif
 
@@ -59,10 +59,10 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
   xsize = SIZ(x);
   abs_xsize = ABS (xsize);
   bytes = (abs_xsize * GMP_NUMB_BITS + 7) / 8;
-  tsize = ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB) + bytes;
+  tsize = ROUND_UP_MULTIPLE ((unsigned) 4, GMP_LIMB_BYTES) + bytes;
 
   tp = __GMP_ALLOCATE_FUNC_TYPE (tsize, char);
-  bp = tp + ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB);
+  bp = tp + ROUND_UP_MULTIPLE ((unsigned) 4, GMP_LIMB_BYTES);
 
   if (bytes != 0)
     {
@@ -78,7 +78,7 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
 #endif
 	  do
 	    {
-	      bp -= BYTES_PER_MP_LIMB;
+	      bp -= GMP_LIMB_BYTES;
 	      xlimb = *xp;
 	      HTON_LIMB_STORE ((mp_ptr) bp, xlimb);
 	      xp++;

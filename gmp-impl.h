@@ -206,10 +206,9 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 /* if not provided by gmp-mparam.h */
-#ifndef BYTES_PER_MP_LIMB
-#define BYTES_PER_MP_LIMB  SIZEOF_MP_LIMB_T
+#ifndef GMP_LIMB_BYTES
+#define GMP_LIMB_BYTES  SIZEOF_MP_LIMB_T
 #endif
-#define GMP_LIMB_BYTES  BYTES_PER_MP_LIMB
 #ifndef GMP_LIMB_BITS
 #define GMP_LIMB_BITS  (8 * SIZEOF_MP_LIMB_T)
 #endif
@@ -3481,7 +3480,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
     mp_limb_t  __bswapl_src = (src);					\
     mp_limb_t  __dstl = 0;						\
     int	       __i;							\
-    for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)			\
+    for (__i = 0; __i < GMP_LIMB_BYTES; __i++)			\
       {									\
 	__dstl = (__dstl << 8) | (__bswapl_src & 0xFF);			\
 	__bswapl_src >>= 8;						\

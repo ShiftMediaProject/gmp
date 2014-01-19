@@ -19,7 +19,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 #define GMP_LIMB_BITS 32
-#define BYTES_PER_MP_LIMB 4
+#define GMP_LIMB_BYTES 4
 
 
 /* NOTE: In a fat binary build SQR_TOOM2_THRESHOLD here cannot be more than the

@@ -25,7 +25,7 @@ void
 mpz_init_set_d (mpz_ptr dest, double val)
 {
   ALLOC (dest) = 1;
-  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
   SIZ (dest) = 0;
   mpz_set_d (dest, val);
 }

@@ -24,10 +24,10 @@ void
 mpq_init (MP_RAT *x)
 {
   ALLOC(NUM(x)) = 1;
-  PTR(NUM(x)) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR(NUM(x)) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
   SIZ(NUM(x)) = 0;
   ALLOC(DEN(x)) = 1;
-  PTR(DEN(x)) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR(DEN(x)) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
   PTR(DEN(x))[0] = 1;
   SIZ(DEN(x)) = 1;
 

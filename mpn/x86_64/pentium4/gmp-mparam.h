@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define GMP_LIMB_BITS 64
-#define BYTES_PER_MP_LIMB 8
+#define GMP_LIMB_BYTES 8
 
 /* These routines exists for all x86_64 chips, but they are slower on Pentium4
    than separate add/sub and shift.  Make sure they are not really used.  */

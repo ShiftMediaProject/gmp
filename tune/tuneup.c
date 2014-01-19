@@ -2595,7 +2595,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   ASSERT_ALWAYS (mpn_set_str (wp, str, s->size, base) <= wn);
   */
 
-  speed_operand_src (s, (mp_ptr) str, s->size/BYTES_PER_MP_LIMB);
+  speed_operand_src (s, (mp_ptr) str, s->size/GMP_LIMB_BYTES);
   speed_operand_dst (s, wp, wn);
   speed_cache_fill (s);
 

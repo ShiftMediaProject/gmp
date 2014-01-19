@@ -210,11 +210,11 @@ int  option_data = DATA_TRAND;
 
 
 mp_size_t  pagesize;
-#define PAGESIZE_LIMBS  (pagesize / BYTES_PER_MP_LIMB)
+#define PAGESIZE_LIMBS  (pagesize / GMP_LIMB_BYTES)
 
 /* must be a multiple of the page size */
 #define REDZONE_BYTES   (pagesize * 16)
-#define REDZONE_LIMBS   (REDZONE_BYTES / BYTES_PER_MP_LIMB)
+#define REDZONE_LIMBS   (REDZONE_BYTES / GMP_LIMB_BYTES)
 
 
 #define MAX3(x,y,z)   (MAX (x, MAX (y, z)))
@@ -2040,12 +2040,12 @@ malloc_region (struct region_t *r, mp_size_t n)
   mp_ptr  p;
   size_t  nbytes;
 
-  ASSERT ((pagesize % BYTES_PER_MP_LIMB) == 0);
+  ASSERT ((pagesize % GMP_LIMB_BYTES) == 0);
 
   n = round_up_multiple (n, PAGESIZE_LIMBS);
   r->size = n;
 
-  nbytes = n*BYTES_PER_MP_LIMB + 2*REDZONE_BYTES + pagesize;
+  nbytes = n*GMP_LIMB_BYTES + 2*REDZONE_BYTES + pagesize;
 
 #if defined (MAP_ANONYMOUS) && ! defined (MAP_ANON)
 #define MAP_ANON  MAP_ANONYMOUS
@@ -3398,7 +3398,7 @@ Error, error, cannot get page size
 	printf ("s[%d] %p to %p (0x%lX bytes)\n",
 		i, (void *) (s[i].region.ptr),
 		(void *) (s[i].region.ptr + s[i].region.size),
-		(long) s[i].region.size * BYTES_PER_MP_LIMB);
+		(long) s[i].region.size * GMP_LIMB_BYTES);
       }
 
 #define INIT_EACH(e,es)                                                 \
@@ -3408,7 +3408,7 @@ Error, error, cannot get page size
 	printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
 		es, i, (void *) (e.d[i].region.ptr),			\
 		(void *)  (e.d[i].region.ptr + e.d[i].region.size),	\
-		(long) e.d[i].region.size * BYTES_PER_MP_LIMB);         \
+		(long) e.d[i].region.size * GMP_LIMB_BYTES);         \
       }
 
     INIT_EACH(ref, "ref");

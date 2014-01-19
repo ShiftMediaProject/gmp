@@ -347,7 +347,7 @@ void
 __gmp_randclear_mt (gmp_randstate_t rstate)
 {
   (*__gmp_free_func) ((void *) RNG_STATE (rstate),
-		      ALLOC (rstate->_mp_seed) * BYTES_PER_MP_LIMB);
+		      ALLOC (rstate->_mp_seed) * GMP_LIMB_BYTES);
 }
 
 void __gmp_randiset_mt (gmp_randstate_ptr, gmp_randstate_srcptr);
@@ -362,7 +362,7 @@ static const gmp_randfnptr_t Mersenne_Twister_Generator_Noseed = {
 void
 __gmp_randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
 {
-  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / BYTES_PER_MP_LIMB) + 1;
+  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / GMP_LIMB_BYTES) + 1;
   gmp_rand_mt_struct *dstp, *srcp;
   mp_size_t i;
 
@@ -385,7 +385,7 @@ __gmp_randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
 void
 __gmp_randinit_mt_noseed (gmp_randstate_ptr dst)
 {
-  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / BYTES_PER_MP_LIMB) + 1;
+  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / GMP_LIMB_BYTES) + 1;
   gmp_rand_mt_struct *dstp;
   mp_size_t i;
 

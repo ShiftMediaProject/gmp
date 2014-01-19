@@ -1,5 +1,7 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Get rid of BYTES_PER_MP_LIMB, most files affected.
+
 	* mpz/iset.c: Avoid overflow in allocation computation.
 	* mpz/mul.c: Likewise.
 	* mpf/init.c: Likewise.

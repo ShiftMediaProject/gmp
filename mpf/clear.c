@@ -24,5 +24,5 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 void
 mpf_clear (mpf_ptr m)
 {
-  (*__gmp_free_func) (m->_mp_d, (size_t) (m->_mp_prec + 1) * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) (m->_mp_d, (size_t) (m->_mp_prec + 1) * GMP_LIMB_BYTES);
 }

@@ -38,7 +38,7 @@ __gmp_default_allocate (size_t size)
   void *ret;
 #ifdef DEBUG
   size_t req_size = size;
-  size += 2 * BYTES_PER_MP_LIMB;
+  size += 2 * GMP_LIMB_BYTES;
 #endif
   ret = malloc (size);
   if (ret == 0)
@@ -52,8 +52,8 @@ __gmp_default_allocate (size_t size)
     mp_ptr p = ret;
     p++;
     p[-1] = (0xdeadbeef << 31) + 0xdeafdeed;
-    if (req_size % BYTES_PER_MP_LIMB == 0)
-      p[req_size / BYTES_PER_MP_LIMB] = ~((0xdeadbeef << 31) + 0xdeafdeed);
+    if (req_size % GMP_LIMB_BYTES == 0)
+      p[req_size / GMP_LIMB_BYTES] = ~((0xdeadbeef << 31) + 0xdeafdeed);
     ret = p;
   }
 #endif
@@ -76,8 +76,8 @@ __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
 	  fprintf (stderr, "gmp: (realloc) data clobbered before allocation block\n");
 	  abort ();
 	}
-      if (old_size % BYTES_PER_MP_LIMB == 0)
-	if (p[old_size / BYTES_PER_MP_LIMB] != ~((0xdeadbeef << 31) + 0xdeafdeed))
+      if (old_size % GMP_LIMB_BYTES == 0)
+	if (p[old_size / GMP_LIMB_BYTES] != ~((0xdeadbeef << 31) + 0xdeafdeed))
 	  {
 	    fprintf (stderr, "gmp: (realloc) data clobbered after allocation block\n");
 	    abort ();
@@ -85,7 +85,7 @@ __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
       oldptr = p - 1;
     }
 
-  new_size += 2 * BYTES_PER_MP_LIMB;
+  new_size += 2 * GMP_LIMB_BYTES;
 #endif
 
   ret = realloc (oldptr, new_size);
@@ -100,8 +100,8 @@ __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
     mp_ptr p = ret;
     p++;
     p[-1] = (0xdeadbeef << 31) + 0xdeafdeed;
-    if (req_size % BYTES_PER_MP_LIMB == 0)
-      p[req_size / BYTES_PER_MP_LIMB] = ~((0xdeadbeef << 31) + 0xdeafdeed);
+    if (req_size % GMP_LIMB_BYTES == 0)
+      p[req_size / GMP_LIMB_BYTES] = ~((0xdeadbeef << 31) + 0xdeafdeed);
     ret = p;
   }
 #endif
@@ -121,8 +121,8 @@ __gmp_default_free (void *blk_ptr, size_t blk_size)
 	    fprintf (stderr, "gmp: (free) data clobbered before allocation block\n");
 	    abort ();
 	  }
-	if (blk_size % BYTES_PER_MP_LIMB == 0)
-	  if (p[blk_size / BYTES_PER_MP_LIMB] != ~((0xdeadbeef << 31) + 0xdeafdeed))
+	if (blk_size % GMP_LIMB_BYTES == 0)
+	  if (p[blk_size / GMP_LIMB_BYTES] != ~((0xdeadbeef << 31) + 0xdeafdeed))
 	    {
 	      fprintf (stderr, "gmp: (free) data clobbered after allocation block\n");
 	      abort ();

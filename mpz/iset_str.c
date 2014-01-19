@@ -29,7 +29,7 @@ int
 mpz_init_set_str (mpz_ptr x, const char *str, int base)
 {
   ALLOC (x) = 1;
-  PTR (x) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR (x) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
 
   /* if str has no digits mpz_set_str leaves x->_mp_size unset */
   SIZ (x) = 0;

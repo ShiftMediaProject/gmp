@@ -24,7 +24,7 @@ void
 mpz_init (mpz_ptr x)
 {
   ALLOC (x) = 1;
-  PTR (x) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR (x) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
   SIZ (x) = 0;
 
 #ifdef __CHECKER__

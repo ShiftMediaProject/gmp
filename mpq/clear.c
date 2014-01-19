@@ -24,7 +24,7 @@ void
 mpq_clear (MP_RAT *m)
 {
   (*__gmp_free_func) (PTR(NUM(m)),
-		    (size_t) ALLOC(NUM(m)) * BYTES_PER_MP_LIMB);
+		    (size_t) ALLOC(NUM(m)) * GMP_LIMB_BYTES);
   (*__gmp_free_func) (PTR(DEN(m)),
-		    (size_t) ALLOC(DEN(m)) * BYTES_PER_MP_LIMB);
+		    (size_t) ALLOC(DEN(m)) * GMP_LIMB_BYTES);
 }

@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define GMP_LIMB_BITS 32
-#define BYTES_PER_MP_LIMB 4
+#define GMP_LIMB_BYTES 4
 
 
 /* This file is supposed to be used for 604, 604e, 744x/745x/747x (G4+), i.e.,

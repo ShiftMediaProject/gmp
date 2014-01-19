@@ -60,10 +60,10 @@ main (int argc, char **argv)
     }
 
   alloc_size = max_size + 32;
-  s1 = malloc (alloc_size * BYTES_PER_MP_LIMB);
-  s2 = malloc (alloc_size * BYTES_PER_MP_LIMB);
-  dx = malloc (alloc_size * BYTES_PER_MP_LIMB);
-  dy = malloc (alloc_size * BYTES_PER_MP_LIMB);
+  s1 = malloc (alloc_size * GMP_LIMB_BYTES);
+  s2 = malloc (alloc_size * GMP_LIMB_BYTES);
+  dx = malloc (alloc_size * GMP_LIMB_BYTES);
+  dy = malloc (alloc_size * GMP_LIMB_BYTES);
 
   cumul_size = 0;
   for (pass = 0; pass < n_passes; pass++)

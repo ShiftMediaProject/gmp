@@ -55,7 +55,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 */
 #define CACHE_LINE_SIZE   64 /* bytes */
 
-#define SPEED_TMP_ALLOC_ADJUST_MASK  (CACHE_LINE_SIZE/BYTES_PER_MP_LIMB - 1)
+#define SPEED_TMP_ALLOC_ADJUST_MASK  (CACHE_LINE_SIZE/GMP_LIMB_BYTES - 1)
 
 /* Set ptr to a TMP_ALLOC block of the given limbs, with the given limb
    alignment.  */
@@ -64,7 +64,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
     mp_ptr     __ptr;							\
     mp_size_t  __ptr_align, __ptr_add;					\
 									\
-    ASSERT ((CACHE_LINE_SIZE % BYTES_PER_MP_LIMB) == 0);		\
+    ASSERT ((CACHE_LINE_SIZE % GMP_LIMB_BYTES) == 0);		\
     __ptr = TMP_ALLOC_LIMBS ((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK);	\
     __ptr_align = (__ptr - (mp_ptr) NULL);				\
     __ptr_add = ((align) - __ptr_align) & SPEED_TMP_ALLOC_ADJUST_MASK;	\
@@ -721,7 +721,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, s->xp, s->size * BYTES_PER_MP_LIMB);		\
+      function (wp, s->xp, s->size * GMP_LIMB_BYTES);		\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\
@@ -3391,7 +3391,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_dst (s, xp, s->size);					\
-    speed_operand_dst (s, (mp_ptr) wp, wn/BYTES_PER_MP_LIMB);		\
+    speed_operand_dst (s, (mp_ptr) wp, wn/GMP_LIMB_BYTES);		\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
@@ -3439,7 +3439,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     ASSERT_ALWAYS (mpn_set_str (wp, xp, s->size, base) <= wn);		\
     */									\
 									\
-    speed_operand_src (s, (mp_ptr) xp, s->size/BYTES_PER_MP_LIMB);	\
+    speed_operand_src (s, (mp_ptr) xp, s->size/GMP_LIMB_BYTES);	\
     speed_operand_dst (s, wp, wn);					\
     speed_cache_fill (s);						\
 									\

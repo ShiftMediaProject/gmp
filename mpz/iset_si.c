@@ -28,7 +28,7 @@ mpz_init_set_si (mpz_ptr dest, signed long int val)
   mp_limb_t vl;
 
   ALLOC (dest) = 1;
-  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+  PTR (dest) = (mp_ptr) (*__gmp_allocate_func) (GMP_LIMB_BYTES);
 
   vl = (mp_limb_t) ABS_CAST (unsigned long int, val);
 

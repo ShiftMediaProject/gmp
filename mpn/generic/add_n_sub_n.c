@@ -28,7 +28,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 #define L1_CACHE_SIZE 8192	/* only 68040 has less than this */
 #endif
 
-#define PART_SIZE (L1_CACHE_SIZE / BYTES_PER_MP_LIMB / 6)
+#define PART_SIZE (L1_CACHE_SIZE / GMP_LIMB_BYTES / 6)
 
 
 /* mpn_add_n_sub_n.
@@ -142,10 +142,10 @@ main (int argc, char **argv)
 
   n = strtol (argv[1], 0, 0);
 
-  r1p = malloc (n * BYTES_PER_MP_LIMB);
-  r2p = malloc (n * BYTES_PER_MP_LIMB);
-  s1p = malloc (n * BYTES_PER_MP_LIMB);
-  s2p = malloc (n * BYTES_PER_MP_LIMB);
+  r1p = malloc (n * GMP_LIMB_BYTES);
+  r2p = malloc (n * GMP_LIMB_BYTES);
+  s1p = malloc (n * GMP_LIMB_BYTES);
+  s2p = malloc (n * GMP_LIMB_BYTES);
   TIME (t,(mpn_add_n(r1p,s1p,s2p,n),mpn_sub_n(r1p,s1p,s2p,n)));
   printf ("              separate add and sub: %.3f\n", t);
   TIME (t,mpn_add_n_sub_n(r1p,r2p,s1p,s2p,n));

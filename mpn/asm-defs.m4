@@ -1232,10 +1232,10 @@ dnl  definitions.  If COUNT is redefined, the LOG2, MASK and BYTES follow
 dnl  the new definition automatically.
 dnl
 dnl  LOG2 is the log base 2 of COUNT.  MASK is COUNT-1, which can be used as
-dnl  a bit mask.  BYTES is BYTES_PER_MP_LIMB*COUNT, the number of bytes
+dnl  a bit mask.  BYTES is GMP_LIMB_BYTES*COUNT, the number of bytes
 dnl  processed in each unrolled loop.
 dnl
-dnl  BYTES_PER_MP_LIMB is defined in a CPU specific m4 include file.  It
+dnl  GMP_LIMB_BYTES is defined in a CPU specific m4 include file.  It
 dnl  exists only so the BYTES definitions here can be common to all CPUs.
 dnl  In the actual code for a given CPU, an explicit 4 or 8 may as well be
 dnl  used because the code is only for a particular CPU, it doesn't need to
@@ -1272,8 +1272,8 @@ m4_assert_defined(`UNROLL_COUNT')
 
 deflit(UNROLL_BYTES,
 m4_assert_defined(`UNROLL_COUNT')
-m4_assert_defined(`BYTES_PER_MP_LIMB')
-`eval(UNROLL_COUNT * BYTES_PER_MP_LIMB)')
+m4_assert_defined(`GMP_LIMB_BYTES')
+`eval(UNROLL_COUNT * GMP_LIMB_BYTES)')
 
 deflit(CHUNK_LOG2,
 m4_assert_defined(`CHUNK_COUNT')
@@ -1285,8 +1285,8 @@ m4_assert_defined(`CHUNK_COUNT')
 
 deflit(CHUNK_BYTES,
 m4_assert_defined(`CHUNK_COUNT')
-m4_assert_defined(`BYTES_PER_MP_LIMB')
-`eval(CHUNK_COUNT * BYTES_PER_MP_LIMB)')
+m4_assert_defined(`GMP_LIMB_BYTES')
+`eval(CHUNK_COUNT * GMP_LIMB_BYTES)')
 
 
 dnl  Usage: MPN(name)

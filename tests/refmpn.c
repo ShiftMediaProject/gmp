@@ -68,8 +68,8 @@ byte_overlap_p (const void *v_xp, mp_size_t xsize,
 int
 refmpn_overlap_p (mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
 {
-  return byte_overlap_p (xp, xsize * BYTES_PER_MP_LIMB,
-			 yp, ysize * BYTES_PER_MP_LIMB);
+  return byte_overlap_p (xp, xsize * GMP_LIMB_BYTES,
+			 yp, ysize * GMP_LIMB_BYTES);
 }
 
 /* Check overlap for a routine defined to work low to high. */
@@ -108,7 +108,7 @@ refmpn_malloc_limbs (mp_size_t size)
   ASSERT (size >= 0);
   if (size == 0)
     size = 1;
-  p = (mp_ptr) malloc ((size_t) (size * BYTES_PER_MP_LIMB));
+  p = (mp_ptr) malloc ((size_t) (size * GMP_LIMB_BYTES));
   ASSERT (p != NULL);
   return p;
 }
@@ -2352,7 +2352,7 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
 
   MPN_SIZEINBASE (dsize, src, size, base);
   ASSERT (dsize >= 1);
-  ASSERT (! byte_overlap_p (dst, (mp_size_t) dsize, src, size * BYTES_PER_MP_LIMB));
+  ASSERT (! byte_overlap_p (dst, (mp_size_t) dsize, src, size * GMP_LIMB_BYTES));
 
   if (size == 0)
     {
@@ -2398,7 +2398,7 @@ ref_bswap_limb (mp_limb_t src)
   int        i;
 
   dst = 0;
-  for (i = 0; i < BYTES_PER_MP_LIMB; i++)
+  for (i = 0; i < GMP_LIMB_BYTES; i++)
     {
       dst = (dst << 8) + (src & 0xFF);
       src >>= 8;

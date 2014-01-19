@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define GMP_LIMB_BITS 64
-#define BYTES_PER_MP_LIMB 8
+#define GMP_LIMB_BYTES 8
 
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */

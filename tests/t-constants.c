@@ -208,7 +208,7 @@ main (int argc, char *argv[])
 {
   int  error = 0;
 
-  CHECK_INT (BYTES_PER_MP_LIMB, (int) sizeof(mp_limb_t));
+  CHECK_INT (GMP_LIMB_BYTES, (int) sizeof(mp_limb_t));
   CHECK_INT (mp_bits_per_limb, GMP_LIMB_BITS);
 
   CHECK_BITS (GMP_LIMB_BITS, mp_limb_t);

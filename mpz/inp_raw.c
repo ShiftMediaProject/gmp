@@ -40,7 +40,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
     mp_limb_t  __limb;                                          \
     int        __i;                                             \
     __limb = 0;                                                 \
-    for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)               \
+    for (__i = 0; __i < GMP_LIMB_BYTES; __i++)               \
       __limb = (__limb << 8) | __p[__i];                        \
     (limb) = __limb;                                            \
   } while (0)

@@ -1865,7 +1865,7 @@ speed_noop_wxys (struct speed_params *s)
 double
 speed_malloc_free (struct speed_params *s)
 {
-  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  size_t  bytes = s->size * GMP_LIMB_BYTES;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
 			    p = malloc (bytes);
 			    free (p));
@@ -1874,9 +1874,9 @@ speed_malloc_free (struct speed_params *s)
 double
 speed_malloc_realloc_free (struct speed_params *s)
 {
-  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  size_t  bytes = s->size * GMP_LIMB_BYTES;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
-			    p = malloc (BYTES_PER_MP_LIMB);
+			    p = malloc (GMP_LIMB_BYTES);
 			    p = realloc (p, bytes);
 			    free (p));
 }
@@ -1884,7 +1884,7 @@ speed_malloc_realloc_free (struct speed_params *s)
 double
 speed_gmp_allocate_free (struct speed_params *s)
 {
-  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  size_t  bytes = s->size * GMP_LIMB_BYTES;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
 			    p = (*__gmp_allocate_func) (bytes);
 			    (*__gmp_free_func) (p, bytes));
@@ -1893,11 +1893,11 @@ speed_gmp_allocate_free (struct speed_params *s)
 double
 speed_gmp_allocate_reallocate_free (struct speed_params *s)
 {
-  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  size_t  bytes = s->size * GMP_LIMB_BYTES;
   SPEED_ROUTINE_ALLOC_FREE
     (void *p,
-     p = (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-     p = (*__gmp_reallocate_func) (p, bytes, BYTES_PER_MP_LIMB);
+     p = (*__gmp_allocate_func) (GMP_LIMB_BYTES);
+     p = (*__gmp_reallocate_func) (p, bytes, GMP_LIMB_BYTES);
      (*__gmp_free_func) (p, bytes));
 }
 

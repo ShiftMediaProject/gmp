@@ -40,7 +40,7 @@ dnl     This is only a problem in macro definitions, not in ordinary text,
 dnl     and not in macro parameters like text passed to forloop() or ifdef().
 
 
-deflit(BYTES_PER_MP_LIMB, 4)
+deflit(GMP_LIMB_BYTES, 4)
 
 
 dnl  Libtool gives -DPIC -DDLL_EXPORT to indicate a cygwin or mingw DLL.  We

@@ -100,7 +100,7 @@ mpq_get_d (const MP_RAT *src)
   mp_size_t qsize, prospective_qsize, zeros, chop, tsize;
   mp_size_t sign_quotient = nsize;
   long exp;
-#define N_QLIMBS (1 + (sizeof (double) + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB)
+#define N_QLIMBS (1 + (sizeof (double) + GMP_LIMB_BYTES-1) / GMP_LIMB_BYTES)
   mp_limb_t qarr[N_QLIMBS + 1];
   mp_ptr qp = qarr;
   TMP_DECL;
