@@ -1,6 +1,13 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
-	* Use mpq_t in favour of MP_RAT.
+	* doc/gmp.texi: Undocument mpz_array_init.
+
+	* acinclude.m4 (GMP_C_STDARG): Comment out.
+	* configure.ac: Suppress GMP_C_STDARG invocation.
+
+	* Get rid of varargs code and references, many file affected.
+
+	* Use mpq_t in favour of MP_RAT, many mpq files affected.
 
 	* Get rid of BYTES_PER_MP_LIMB, most files affected.
 
