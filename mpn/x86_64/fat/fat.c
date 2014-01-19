@@ -67,6 +67,10 @@ static struct {
   { "k10",        "AuthenticAMD", MAKE_FMS (16, 0) },
   { "bobcat",     "AuthenticAMD", MAKE_FMS (20, 1) },
   { "bulldozer",  "AuthenticAMD", MAKE_FMS (21, 1) },
+  { "piledriver", "AuthenticAMD", MAKE_FMS (21, 2) },
+  { "steamroller","AuthenticAMD", MAKE_FMS (21, 3) },
+  { "excavator",  "AuthenticAMD", MAKE_FMS (21, 4) },
+  { "jaguar",     "AuthenticAMD", MAKE_FMS (22, 1) },
 
   { "nano",       "CentaurHauls", MAKE_FMS (6, 15) },
 };
@@ -306,12 +310,13 @@ __gmpn_cpuvec_init (void)
 	  break;
 
 	case 0x14:		/* bobcat */
+	case 0x16:		/* jaguar */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bobcat;
 	  break;
 
-	case 0x15:		/* bulldozer */
+	case 0x15:	    /* bulldozer, piledriver, steamroller, excavator */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bd1;
