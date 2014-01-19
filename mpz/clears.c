@@ -49,7 +49,7 @@ mpz_clears (va_alist)
 
   while (x != NULL)
     {
-      (*__gmp_free_func) (PTR (m), (size_t) ALLOC (m) * BYTES_PER_MP_LIMB);
+      (*__gmp_free_func) (PTR (x), (size_t) ALLOC (x) * BYTES_PER_MP_LIMB);
       x = va_arg (ap, mpz_ptr);
     }
   va_end (ap);
