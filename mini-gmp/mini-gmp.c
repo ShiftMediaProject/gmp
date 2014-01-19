@@ -3587,20 +3587,28 @@ gmp_popcount_limb (mp_limb_t x)
 }
 
 mp_bitcnt_t
+mpn_popcount (mp_srcptr p, mp_size_t n)
+{
+  mp_size_t i;
+  mp_bitcnt_t c;
+
+  for (c = 0, i = 0; i < n; i++)
+    c += gmp_popcount_limb (p[i]);
+
+  return c;
+}
+
+mp_bitcnt_t
 mpz_popcount (const mpz_t u)
 {
-  mp_size_t un, i;
-  mp_bitcnt_t c;
+  mp_size_t un;
 
   un = u->_mp_size;
 
   if (un < 0)
     return ~(mp_bitcnt_t) 0;
 
-  for (c = 0, i = 0; i < un; i++)
-    c += gmp_popcount_limb (u->_mp_d[i]);
-
-  return c;
+  return mpn_popcount (u->_mp_d, un);
 }
 
 mp_bitcnt_t
