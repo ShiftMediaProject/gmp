@@ -29,5 +29,5 @@ mpf_init2 (mpf_ptr r, mp_bitcnt_t prec_in_bits)
   r->_mp_size = 0;
   r->_mp_exp = 0;
   r->_mp_prec = prec;
-  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
+  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((size_t) (prec + 1) * BYTES_PER_MP_LIMB);
 }
