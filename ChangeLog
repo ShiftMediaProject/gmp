@@ -1,5 +1,7 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/s390_64/z10/gmp-mparam.h: New file.
+
 	* mpz/clears.c: Call __gmp_free_func ourselves instead of via
 	mpz_clears.
 
