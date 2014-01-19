@@ -3470,7 +3470,7 @@ esac
 
 dnl  GMP_C_STDARG
 dnl  ------------
-dnl  Test whether to use <stdarg.h> or <varargs.h>.
+dnl  Test whether to use <stdarg.h>.
 dnl
 dnl  Notice the AC_DEFINE here is HAVE_STDARG to avoid clashing with
 dnl  HAVE_STDARG_H which could arise from AC_CHECK_HEADERS.
@@ -3480,26 +3480,26 @@ dnl  to be ANSI or K&R and the two can be differentiated by AC_PROG_CC_STDC
 dnl  or very likely by the setups for _PROTO in gmp.h.  On the other hand
 dnl  this test is nice and direct, being what we're going to actually use.
 
-AC_DEFUN([GMP_C_STDARG],
-[AC_CACHE_CHECK([whether <stdarg.h> exists and works],
-                gmp_cv_c_stdarg,
-[AC_TRY_COMPILE(
-[#include <stdarg.h>
-int foo (int x, ...)
-{
-  va_list  ap;
-  int      y;
-  va_start (ap, x);
-  y = va_arg (ap, int);
-  va_end (ap);
-  return y;
-}],,
-gmp_cv_c_stdarg=yes, gmp_cv_c_stdarg=no)
-])
-if test $gmp_cv_c_stdarg = yes; then
-  AC_DEFINE(HAVE_STDARG, 1, [Define to 1 if <stdarg.h> exists and works])
-fi
-])
+dnl  AC_DEFUN([GMP_C_STDARG],
+dnl  [AC_CACHE_CHECK([whether <stdarg.h> exists and works],
+dnl                  gmp_cv_c_stdarg,
+dnl  [AC_TRY_COMPILE(
+dnl  [#include <stdarg.h>
+dnl  int foo (int x, ...)
+dnl  {
+dnl    va_list  ap;
+dnl    int      y;
+dnl    va_start (ap, x);
+dnl    y = va_arg (ap, int);
+dnl    va_end (ap);
+dnl    return y;
+dnl  }],,
+dnl  gmp_cv_c_stdarg=yes, gmp_cv_c_stdarg=no)
+dnl  ])
+dnl  if test $gmp_cv_c_stdarg = yes; then
+dnl    AC_DEFINE(HAVE_STDARG, 1, [Define to 1 if <stdarg.h> exists and works])
+dnl  fi
+dnl  ])
 
 
 dnl  GMP_FUNC_ALLOCA
@@ -3653,8 +3653,7 @@ dnl  not sure which 2.0.x does which), but still puts the correct null
 dnl  terminated result into the buffer.
 
 AC_DEFUN([GMP_FUNC_VSNPRINTF],
-[AC_REQUIRE([GMP_C_STDARG])
-AC_CHECK_FUNC(vsnprintf,
+[AC_CHECK_FUNC(vsnprintf,
               [gmp_vsnprintf_exists=yes],
               [gmp_vsnprintf_exists=no])
 if test "$gmp_vsnprintf_exists" = no; then
@@ -3668,11 +3667,7 @@ else
 #include <string.h>  /* for strcmp */
 #include <stdio.h>   /* for vsnprintf */
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 int
 #if HAVE_STDARG
