@@ -1,11 +1,27 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/iset.c: Avoid overflow in allocation computation.
+	* mpz/mul.c: Likewise.
+	* mpf/init.c: Likewise.
+	* mpf/init2.c: Likewise.
+	* mpf/iset.c: Likewise.
+	* mpf/iset_d.c: Likewise.
+	* mpf/iset_si.c: Likewise.
+	* mpf/iset_str.c: Likewise.
+	* mpf/iset_ui.c: Likewise.
+
+	* mpz/array_init.c: Avoid two overflow scenarios in allocation
+	computation.
+
 	* mpn/s390_64/z10/gmp-mparam.h: New file.
 
 	* mpz/clears.c: Call __gmp_free_func ourselves instead of via
 	mpz_clears.
+	* mpf/clears.c: Analogous change.
+	* mpq/clears.c: Analogous change.
 
 	* mpz/clear.c: Add cast to avoid overflow of (later ignored) argument.
+	* mpf/clear.c: Likewise.
 
 2014-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
