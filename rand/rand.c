@@ -17,39 +17,16 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#include <stdio.h> /* for NULL */
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
 
 void
-#if HAVE_STDARG
-gmp_randinit (gmp_randstate_t rstate,
-	      gmp_randalg_t alg,
-	      ...)
-#else
-gmp_randinit (va_alist)
-     va_dcl
-#endif
+gmp_randinit (gmp_randstate_t rstate, gmp_randalg_t alg, ...)
 {
   va_list ap;
-#if HAVE_STDARG
   va_start (ap, alg);
-#else
-  __gmp_randstate_struct *rstate;
-  gmp_randalg_t alg;
-  va_start (ap);
-  rstate = va_arg (ap, __gmp_randstate_struct *);
-  alg = va_arg (ap, gmp_randalg_t);
-#endif
 
   switch (alg) {
   case GMP_RAND_ALG_LC:

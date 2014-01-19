@@ -17,14 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <string.h>    /* for strlen */
 
 #include "gmp.h"

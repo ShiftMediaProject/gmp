@@ -17,14 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <string.h>    /* for strlen */
 
 #include "gmp.h"
@@ -32,12 +25,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 int
-#if HAVE_STDARG
 gmp_sprintf (char *buf, const char *fmt, ...)
-#else
-gmp_sprintf (va_alist)
-     va_dcl
-#endif
 {
 #if WANT_ASSERT
   int      fmtlen = strlen(fmt);
@@ -45,15 +33,7 @@ gmp_sprintf (va_alist)
   va_list  ap;
   int      ret;
 
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  char       *buf;
-  const char *fmt;
-  va_start (ap);
-  buf = va_arg (ap, char *);
-  fmt = va_arg (ap, const char *);
-#endif
 
   ret = __gmp_doprnt (&__gmp_sprintf_funs, &buf, fmt, ap);
   va_end (ap);

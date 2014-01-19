@@ -28,12 +28,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define _GNU_SOURCE   /* ask glibc <stdio.h> for obstack_vprintf */
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <stdio.h>    /* for obstack_vprintf */
 #include <string.h>
 #include <obstack.h>

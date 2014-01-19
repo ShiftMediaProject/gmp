@@ -21,12 +21,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #if HAVE_OBSTACK_VPRINTF
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <obstack.h>
 #include <string.h>
 
@@ -35,25 +30,12 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 int
-#if HAVE_STDARG
 gmp_obstack_printf (struct obstack *ob, const char *fmt, ...)
-#else
-gmp_obstack_printf (va_alist)
-     va_dcl
-#endif
 {
   va_list  ap;
   int      ret;
 
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  struct obstack *ob;
-  const char     *fmt;
-  va_start (ap);
-  ob = va_arg (ap, struct obstack *);
-  fmt = va_arg (ap, const char *);
-#endif
 
   ASSERT (! MEM_OVERLAP_P (obstack_base(ob), obstack_object_size(ob),
                            fmt, strlen(fmt)+1));

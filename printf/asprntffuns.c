@@ -22,14 +22,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
    operator<< routines can avoid dragging vsnprintf into the link (via
    __gmp_asprintf_format).  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

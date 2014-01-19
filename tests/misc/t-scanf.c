@@ -29,13 +29,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
    seem like too much trouble. */
 
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
@@ -129,25 +123,12 @@ int   fromstring_next_c;
 
 /* Call gmp_fscanf, reading the "input" string data provided. */
 int
-#if HAVE_STDARG
 fromstring_gmp_fscanf (const char *input, const char *fmt, ...)
-#else
-fromstring_gmp_fscanf (va_alist)
-     va_dcl
-#endif
 {
   va_list  ap;
   FILE     *fp;
   int      ret;
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  const char    *input;
-  const char    *fmt;
-  va_start (ap);
-  input = va_arg (ap, const char *);
-  fmt = va_arg (ap, const char *);
-#endif
 
   fp = fopen (TEMPFILE, "w+");
   ASSERT_ALWAYS (fp != NULL);

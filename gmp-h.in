@@ -268,16 +268,14 @@ typedef __mpq_struct *mpq_ptr;
 #define _GMP_H_HAVE_OBSTACK 1
 #endif
 
-/* The prototypes for gmp_vprintf etc are provided only if va_list is
-   available, via an application having included <stdarg.h> or <varargs.h>.
-   Usually va_list is a typedef so can't be tested directly, but C99
-   specifies that va_start is a macro (and it was normally a macro on past
-   systems too), so look for that.
+/* The prototypes for gmp_vprintf etc are provided only if va_list is defined,
+   via an application having included <stdarg.h>.  Usually va_list is a typedef
+   so can't be tested directly, but C99 specifies that va_start is a macro.
 
    <stdio.h> will define some sort of va_list for vprintf and vfprintf, but
    let's not bother trying to use that since it's not standard and since
    application uses for gmp_vprintf etc will almost certainly require the
-   whole <stdarg.h> or <varargs.h> anyway.  */
+   whole <stdarg.h> anyway.  */
 
 #ifdef va_start
 #define _GMP_H_HAVE_VA_LIST 1

@@ -21,12 +21,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #if HAVE_OBSTACK_VPRINTF
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <obstack.h>
 #include <string.h>
 

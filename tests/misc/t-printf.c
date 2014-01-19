@@ -25,13 +25,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
        faulty or strange.  */
 
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
@@ -73,12 +67,7 @@ FILE  *check_vfprintf_fp;
 
 
 void
-#if HAVE_STDARG
 check_plain (const char *want, const char *fmt_orig, ...)
-#else
-check_plain (va_alist)
-     va_dcl
-#endif
 {
   char        got[MAX_OUTPUT];
   int         got_len, want_len;
@@ -86,15 +75,7 @@ check_plain (va_alist)
   char        *fmt, *q;
   const char  *p;
   va_list     ap;
-#if HAVE_STDARG
   va_start (ap, fmt_orig);
-#else
-  const char  *want;
-  const char  *fmt_orig;
-  va_start (ap);
-  want = va_arg (ap, const char *);
-  fmt_orig = va_arg (ap, const char *);
-#endif
 
   if (! option_check_printf)
     return;
@@ -318,23 +299,10 @@ check_obstack_vprintf (const char *want, const char *fmt, va_list ap)
 
 
 void
-#if HAVE_STDARG
 check_one (const char *want, const char *fmt, ...)
-#else
-check_one (va_alist)
-     va_dcl
-#endif
 {
   va_list ap;
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  const char  *want;
-  const char  *fmt;
-  va_start (ap);
-  want = va_arg (ap, const char *);
-  fmt = va_arg (ap, const char *);
-#endif
 
   /* simplest first */
   check_vsprintf (want, fmt, ap);

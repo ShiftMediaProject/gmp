@@ -90,7 +90,7 @@ hex when base==0.
 White space, as indicated by <ctype.h> isspace(), is ignored except for the
 purpose of separating tokens.
 
-Variables can be included in expressions by putting them in the varargs list
+Variables can be included in expressions by putting them in the stdarg list
 after the string.  "a", "b", "c" etc in the expression string designate
 those values.  For example,
 

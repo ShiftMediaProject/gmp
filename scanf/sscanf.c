@@ -17,14 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <stdio.h>
 
 #include "gmp.h"
@@ -32,24 +25,11 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 int
-#if HAVE_STDARG
 gmp_sscanf (const char *s, const char *fmt, ...)
-#else
-gmp_sscanf (va_alist)
-     va_dcl
-#endif
 {
   va_list  ap;
   int      ret;
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  const char *s;
-  const char *fmt;
-  va_start (ap);
-  s = va_arg (ap, const char *);
-  fmt = va_arg (ap, const char *);
-#endif
 
 #if SSCANF_WRITABLE_INPUT
   /* let gmp_vsscanf handle the copying */

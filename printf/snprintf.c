@@ -17,14 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <string.h>    /* for strlen */
 
 #include "gmp.h"
@@ -32,29 +25,15 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 
 int
-#if HAVE_STDARG
 gmp_snprintf (char *buf, size_t size, const char *fmt, ...)
-#else
-gmp_snprintf (va_alist)
-     va_dcl
-#endif
 {
   struct gmp_snprintf_t d;
   va_list  ap;
   int      ret;
 
-#if HAVE_STDARG
   va_start (ap, fmt);
   d.buf = buf;
   d.size = size;
-
-#else
-  const char *fmt;
-  va_start (ap);
-  d.buf = va_arg (ap, char *);
-  d.size = va_arg (ap, size_t);
-  fmt = va_arg (ap, const char *);
-#endif
 
   ASSERT (! MEM_OVERLAP_P (buf, size, fmt, strlen(fmt)+1));
 

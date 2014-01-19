@@ -23,14 +23,9 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define _GNU_SOURCE    /* for DECIMAL_POINT in glibc langinfo.h */
 
-#include "config.h"
+#include "config.h"	/* needed for the HAVE_, could also move gmp incls */
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <ctype.h>     /* for isdigit */
 #include <stddef.h>    /* for ptrdiff_t */
 #include <string.h>

@@ -26,12 +26,8 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
   || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
   || defined (_MSC_VER)                                 \
   || defined (_WIN32)
-#define HAVE_STDARG 1
+
 #include <stdarg.h>
-#else
-#define HAVE_STDARG 0
-#include <varargs.h>
-#endif
 
 #include "expr.h"
 

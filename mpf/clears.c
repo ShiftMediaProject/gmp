@@ -17,35 +17,17 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-#include "config.h"
-
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <stdio.h>		/* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 
 void
-#if HAVE_STDARG
 mpf_clears (mpf_ptr x, ...)
-#else
-mpf_clears (va_alist)
-     va_dcl
-#endif
 {
   va_list  ap;
 
-#if HAVE_STDARG
   va_start (ap, x);
-#else
-  mpf_ptr x;
-  va_start (ap);
-  x = va_arg (ap, mpf_ptr);
-#endif
 
   while (x != NULL)
     {

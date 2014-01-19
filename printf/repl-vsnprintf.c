@@ -29,12 +29,7 @@ along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
 #define _GNU_SOURCE    /* for strnlen prototype */
 
-#if HAVE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <ctype.h>     /* for isdigit */
 #include <stddef.h>    /* for ptrdiff_t */
 #include <string.h>
