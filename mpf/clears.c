@@ -49,7 +49,7 @@ mpf_clears (va_alist)
 
   while (x != NULL)
     {
-      mpf_clear (x);
+      (*__gmp_free_func) (x->_mp_d, (size_t) (x->_mp_prec + 1) * BYTES_PER_MP_LIMB);
       x = va_arg (ap, mpf_ptr);
     }
   va_end (ap);
