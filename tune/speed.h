@@ -291,7 +291,7 @@ double speed_mpn_brootinv (struct speed_params *);
 double speed_mpn_invert (struct speed_params *);
 double speed_mpn_invertappr (struct speed_params *);
 double speed_mpn_ni_invertappr (struct speed_params *);
-double speed_mpn_sec_minvert (struct speed_params *s);
+double speed_mpn_sec_invert (struct speed_params *s);
 double speed_mpn_binvert (struct speed_params *);
 double speed_mpn_redc_1 (struct speed_params *);
 double speed_mpn_redc_2 (struct speed_params *);

@@ -1,4 +1,4 @@
-/* mpn_sec_minvert
+/* mpn_sec_invert
 
    Contributed to the GNU project by Niels Möller
 
@@ -69,7 +69,7 @@ mpn_sec_eq_ui (mp_srcptr ap, mp_size_t n, mp_limb_t b)
 }
 
 mp_size_t
-mpn_sec_minvert_itch (mp_size_t n)
+mpn_sec_invert_itch (mp_size_t n)
 {
   return 4*n;
 }
@@ -82,9 +82,9 @@ mpn_sec_minvert_itch (mp_size_t n)
    M = 2^521 - 1 and A < M, bit_size can be any bound on the sum of
    the bit sizes of A and M. */
 int
-mpn_sec_minvert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
-		 mp_size_t n, mp_bitcnt_t bit_size,
-		 mp_ptr scratch)
+mpn_sec_invert (mp_ptr vp, mp_ptr ap, mp_srcptr mp,
+		mp_size_t n, mp_bitcnt_t bit_size,
+		mp_ptr scratch)
 {
   ASSERT (n > 0);
   ASSERT (bit_size > 0);

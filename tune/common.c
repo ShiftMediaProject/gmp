@@ -931,9 +931,9 @@ speed_mpn_ni_invertappr (struct speed_params *s)
 }
 
 double
-speed_mpn_sec_minvert (struct speed_params *s)
+speed_mpn_sec_invert (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SEC_MINVERT (mpn_sec_minvert, mpn_sec_minvert_itch);
+  SPEED_ROUTINE_MPN_SEC_MINVERT (mpn_sec_invert, mpn_sec_invert_itch);
 }
 
 double

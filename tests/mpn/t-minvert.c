@@ -94,7 +94,7 @@ main (int argc, char **argv)
   ap = TMP_ALLOC_LIMBS (MAX_SIZE);
   vp = TMP_ALLOC_LIMBS (MAX_SIZE);
   tp = TMP_ALLOC_LIMBS (MAX_SIZE);
-  scratch = TMP_ALLOC_LIMBS (mpn_sec_minvert_itch (MAX_SIZE) + 1);
+  scratch = TMP_ALLOC_LIMBS (mpn_sec_invert_itch (MAX_SIZE) + 1);
 
   for (test = 0; test < count; test++)
     {
@@ -141,15 +141,14 @@ main (int argc, char **argv)
 
       n = (bits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
       ASSERT_ALWAYS (n <= MAX_SIZE);
-      itch = mpn_sec_minvert_itch (n);
+      itch = mpn_sec_invert_itch (n);
       scratch[itch] = ran = urandom ();
 
       mpz_to_mpn (ap, n, a);
       mpz_to_mpn (mp, n, m);
-      tres = mpn_sec_minvert (tp,
-			      ap, mp, n,
-			      bit_size (ap, n) + bit_size (mp, n),
-			      scratch);
+      tres = mpn_sec_invert (tp, ap, mp, n,
+			     bit_size (ap, n) + bit_size (mp, n),
+			     scratch);
 
       if (rres != tres || (rres == 1 && !mpz_eq_mpn (tp, n, r)) || ran != scratch[itch])
 	{

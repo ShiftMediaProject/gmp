@@ -5783,8 +5783,8 @@ This function requires scratch space of @code{mpn_sec_div_r_itch(@var{nn},
 @var{dn})} limbs to be passed in the @var{tp} parameter.
 @end deftypefun
 
-@deftypefun int mpn_sec_minvert (mp_limb_t *@var{rp}, mp_limb_t *@var{ap}, const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_bitcnt_t @var{nbcnt}, mp_limb_t *@var{tp})
-@deftypefunx mp_size_t mpn_sec_minvert_itch (mp_size_t @var{n})
+@deftypefun int mpn_sec_invert (mp_limb_t *@var{rp}, mp_limb_t *@var{ap}, const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_bitcnt_t @var{nbcnt}, mp_limb_t *@var{tp})
+@deftypefunx mp_size_t mpn_sec_invert_itch (mp_size_t @var{n})
 Set @var{R} to @m{@var{A}^{-1} \bmod @var{M}, the inverse of @var{A} modulo
 @var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{A} = @{@var{ap},@var{n}@},
 and @var{M} = @{@var{mp},@var{n}@}.  @strong{This function's interface is
@@ -5799,7 +5799,7 @@ It is required that @var{M} is odd, and that @math{@var{nbcnt} @ge
 @times{} @var{n} @times{} GMP_NUMB_BITS}, but a smaller value might improve
 performance if @var{M} or @var{A} are known to have leading zero bits.
 
-This function requires scratch space of @code{mpn_sec_minvert_itch(@var{n})}
+This function requires scratch space of @code{mpn_sec_invert_itch(@var{n})}
 limbs to be passed in the @var{tp} parameter.
 @end deftypefun
 

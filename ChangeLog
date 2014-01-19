@@ -1,5 +1,8 @@
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Rename mpn_sec_minvert => mpn_sec_invert, many files affected.
+	* mpn/generic/sec_invert.c: New name for sec_minvert.c.
+
 	* doc/gmp.texi: Undocument mpz_array_init.
 
 	* acinclude.m4 (GMP_C_STDARG): Comment out.
