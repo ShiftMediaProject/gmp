@@ -1,6 +1,6 @@
 /* mpz_clears() -- Clear multiple mpz_t variables.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -49,7 +49,7 @@ mpz_clears (va_alist)
 
   while (x != NULL)
     {
-      mpz_clear (x);
+      (*__gmp_free_func) (PTR (m), (size_t) ALLOC (m) * BYTES_PER_MP_LIMB);
       x = va_arg (ap, mpz_ptr);
     }
   va_end (ap);
