@@ -1,9 +1,7 @@
-/* mpz_init_set_str(string, base) -- Convert the \0-terminated string
-   STRING in base BASE to a multiple precision integer.  Return a MP_INT
-   structure representing the integer.  Allow white space in the
-   string.  If BASE == 0 determine the base in the C standard way,
-   i.e.  0xhh...h means base 16, 0oo...o means base 8, otherwise
-   assume base 10.
+/* mpz_init_set_str(string, base) -- Convert the \0-terminated string STRING in
+   base BASE to a multiple precision integer.  Allow white space in the string.
+   If BASE == 0 determine the base in the C standard way, i.e.  0xhh...h means
+   base 16, 0oo...o means base 8, otherwise assume base 10.
 
 Copyright 1991, 1993-1995, 2000-2002, 2012 Free Software Foundation, Inc.
 
