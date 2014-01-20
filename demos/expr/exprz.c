@@ -177,27 +177,12 @@ const struct mpexpr_operator_t * const mpz_expr_standard_table
 
 
 int
-#if HAVE_STDARG
 mpz_expr (mpz_ptr res, int base, const char *e, ...)
-#else
-mpz_expr (va_alist)
-     va_dcl
-#endif
 {
   mpz_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if HAVE_STDARG
   va_start (ap, e);
-#else
-  mpz_ptr     res;
-  int         base;
-  const char  *e;
-  va_start (ap);
-  res  = va_arg (ap, mpz_ptr);
-  base = va_arg (ap, int);
-  e    = va_arg (ap, const char *);
-#endif
 
   TRACE (printf ("mpz_expr(): base %d, %s\n", base, e));
   ret = mpexpr_va_to_var ((void **) var, ap);

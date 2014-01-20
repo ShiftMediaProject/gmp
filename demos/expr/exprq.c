@@ -126,27 +126,12 @@ const struct mpexpr_operator_t * const mpq_expr_standard_table
 
 
 int
-#if HAVE_STDARG
 mpq_expr (mpq_ptr res, int base, const char *e, ...)
-#else
-mpq_expr (va_alist)
-     va_dcl
-#endif
 {
   mpq_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if HAVE_STDARG
   va_start (ap, e);
-#else
-  mpq_ptr     res;
-  int         base;
-  const char  *e;
-  va_start (ap);
-  res  = va_arg (ap, mpq_ptr);
-  base = va_arg (ap, int);
-  e    = va_arg (ap, const char *);
-#endif
 
   TRACE (printf ("mpq_expr(): base %d, %s\n", base, e));
   ret = mpexpr_va_to_var ((void **) var, ap);
