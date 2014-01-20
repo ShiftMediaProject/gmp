@@ -17,16 +17,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see https://www.gnu.org/licenses/.  */
 
-
-/* Same tests as gmp.h. */
-#if  defined (__STDC__)                                 \
-  || defined (__cplusplus)                              \
-  || defined (_AIX)                                     \
-  || defined (__DECC)                                   \
-  || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
-  || defined (_MSC_VER)                                 \
-  || defined (_WIN32)
-
 #include <stdarg.h>
 
 #include "expr.h"
