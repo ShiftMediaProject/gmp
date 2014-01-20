@@ -298,7 +298,6 @@ __gmpn_cpuvec_init (void)
 	case 0x0f:		/* k8 */
 	case 0x11:		/* "fam 11h", mix of k8 and k10 */
 	case 0x13:
-	case 0x16:
 	case 0x17:
 	  CPUVEC_SETUP_k8;
 	  break;

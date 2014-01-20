@@ -1,5 +1,8 @@
 2014-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Fix duplicate entries for
+	AMD "jaguar".
+
 	* demos/expr: Get rid of varargs code and references.
 
 2014-01-19  Torbjorn Granlund  <tege@gmplib.org>
