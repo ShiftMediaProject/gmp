@@ -42,7 +42,7 @@ main (int argc, char *argv[])
   unsigned int n;
   mpz_t a, m;
   mpf_t res[GMP_SPECT_MAXT], res_min[GMP_SPECT_MAXT], f_tmp;
-  register int f;
+  int f;
 
 
   mpz_init (a);

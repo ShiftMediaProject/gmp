@@ -142,7 +142,7 @@ usage: t-rand [function nbits]\n\
   enum { Z, F } func = Z;
   int nbits = 1;
   int verify_mode_flag = 1;
-  register int i;
+  int i;
   struct rt *a;
 
 
