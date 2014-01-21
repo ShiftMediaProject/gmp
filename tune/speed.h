@@ -2291,7 +2291,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     return t;								\
   }
 
-#define SPEED_ROUTINE_MPN_SEC_MINVERT(function,itchfn)			\
+#define SPEED_ROUTINE_MPN_SEC_INVERT(function,itchfn)			\
   {									\
     long  i;								\
     mp_ptr    up, mp, tp, ip;						\
