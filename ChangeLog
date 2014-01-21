@@ -1,3 +1,7 @@
+2014-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Get rid of varargs.
+
 2014-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Fix duplicate entries for
