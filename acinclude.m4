@@ -3670,24 +3670,13 @@ else
 #include <stdarg.h>
 
 int
-#if HAVE_STDARG
 check (const char *fmt, ...)
-#else
-check (va_alist)
-     va_dcl
-#endif
 {
   static char  buf[128];
   va_list  ap;
   int      ret;
 
-#if HAVE_STDARG
   va_start (ap, fmt);
-#else
-  char *fmt;
-  va_start (ap);
-  fmt = va_arg (ap, char *);
-#endif
 
   ret = vsnprintf (buf, 4, fmt, ap);
 
