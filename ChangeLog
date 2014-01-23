@@ -3,6 +3,9 @@
 	* printf/repl-vsnprintf.c: Feed case 'z' in switch (type) with case 'z'
 	in switch (fchar).
 
+	* mini-gmp/tests/t-aorsmul.c: New file, test for mpz_{add,sub}mul{,_ui}
+	* mini-gmp/tests/Makefile: Add t-aorsmul.
+
 2014-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Get rid of varargs.
