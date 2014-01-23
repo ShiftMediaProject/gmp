@@ -1,6 +1,6 @@
 # Note: Requires GNU make
 
-# Copyright 2011, 2012 Free Software Foundation, Inc.
+# Copyright 2011, 2012, 2014 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library test suite.
 #
