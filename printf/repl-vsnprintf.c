@@ -261,6 +261,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
 	  case 'L':  /* long long or long double */
 	  case 'q':  /* quad_t */
 	  case 't':  /* ptrdiff_t */
+	  case 'z':  /* size_t */
 	  set_type:
 	    type = fchar;
 	    break;
