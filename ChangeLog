@@ -1,3 +1,8 @@
+2014-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* printf/repl-vsnprintf.c: Feed case 'z' in switch (type) with case 'z'
+	in switch (fchar).
+
 2014-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Get rid of varargs.
