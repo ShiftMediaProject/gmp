@@ -1,3 +1,15 @@
+2014-01-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Use proper steamroller and
+	excavator values.
+
+	* config.guess: Amend last AMD change.
+
+	* mpn/s390_64/lshift.asm: Align loop.
+	* mpn/s390_64/rshift.asm: Likewise.
+	* mpn/s390_64/lshiftc.asm: Likewise.
+	* mpn/s390_64: Add z10 cycle numbers.
+
 2014-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* printf/repl-vsnprintf.c: Feed case 'z' in switch (type) with case 'z'
