@@ -68,8 +68,8 @@ static struct {
   { "bobcat",     "AuthenticAMD", MAKE_FMS (20, 1) },
   { "bulldozer",  "AuthenticAMD", MAKE_FMS (21, 1) },
   { "piledriver", "AuthenticAMD", MAKE_FMS (21, 2) },
-  { "steamroller","AuthenticAMD", MAKE_FMS (21, 3) },
-  { "excavator",  "AuthenticAMD", MAKE_FMS (21, 4) },
+  { "steamroller","AuthenticAMD", MAKE_FMS (21, 0x30) },
+  { "excavator",  "AuthenticAMD", MAKE_FMS (21, 0x60) },
   { "jaguar",     "AuthenticAMD", MAKE_FMS (22, 1) },
 
   { "nano",       "CentaurHauls", MAKE_FMS (6, 15) },
