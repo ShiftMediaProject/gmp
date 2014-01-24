@@ -844,13 +844,13 @@ main ()
 	  break;
 	case 21:		/* Bulldozer */
 	  cpu_64bit = 1;
-	  if (model == 1)
+	  if (model <= 1)
 	    modelstr = "bulldozer";
-	  else if (model == 2)
+	  else if (model < 0x20)	/* really 2, [0x10-0x20) */
 	    modelstr = "piledriver";
-	  else if (model == 3)
+	  else if (model < 0x40)	/* really [0x30-0x40) */
 	    modelstr = "steamroller";
-	  else /* if (model < 0x9) */
+	  else				/* really [0x60-0x70) */
 	    modelstr = "excavator";
 	  break;
 	case 22:		/* Jaguar, an improved bobcat */
