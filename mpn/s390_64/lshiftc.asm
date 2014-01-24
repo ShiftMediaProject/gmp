@@ -1,6 +1,6 @@
 dnl  S/390-64 mpn_lshiftc.
 
-dnl  Copyright 2011 Free Software Foundation, Inc.
+dnl  Copyright 2011, 2014 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,7 +23,7 @@ C            cycles/limb
 C z900		 9
 C z990           3.5
 C z9		 ?
-C z10		 ?
+C z10		 7
 C z196		 ?
 
 C NOTES
@@ -146,7 +146,7 @@ L(b0):	lg	%r8, 48(up)
 	la	up, 24(up)
 	j	L(lm0)
 
-C	ALIGN(16)
+	ALIGN(8)
 L(top):	srlg	%r4, %r8, 0(tnc)
 	sllg	%r13, %r8, 0(cnt)
 	ogr	%r11, %r4
