@@ -23,7 +23,7 @@ C            cycles/limb
 C z900		35
 C z990		24
 C z9		 ?
-C z10		 ?
+C z10		28
 C z196		 ?
 
 C INPUT PARAMETERS

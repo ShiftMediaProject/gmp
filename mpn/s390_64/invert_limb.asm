@@ -25,7 +25,7 @@ C            cycles/limb
 C z900	       142
 C z990          86
 C z9		 ?
-C z10		 ?
+C z10	       120
 C z196		 ?
 
 ASM_START()

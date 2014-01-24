@@ -1,4 +1,4 @@
-dnl  S/390-64 mpn_addmul_1
+dnl  S/390-64 mpn_mod_34lsub1
 
 dnl  Copyright 2011 Free Software Foundation, Inc.
 
@@ -23,7 +23,7 @@ C            cycles/limb
 C z900		 5.8
 C z990           2
 C z9		 ?
-C z10		 ?
+C z10		 4.5
 C z196		 ?
 
 C TODO

@@ -24,7 +24,7 @@ C            cycles/limb
 C z900		 2.67
 C z990           1.5
 C z9		 ?
-C z10		 ?
+C z10		 1.8
 C z196		 ?
 
 C FIXME:

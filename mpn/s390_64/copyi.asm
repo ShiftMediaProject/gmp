@@ -24,7 +24,7 @@ C            cycles/limb
 C z900		 1.25
 C z990           0.75
 C z9		 ?
-C z10		 ?
+C z10		 1
 C z196		 ?
 
 C NOTE

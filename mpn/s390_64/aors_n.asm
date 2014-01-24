@@ -23,7 +23,7 @@ C            cycles/limb
 C z900		 5.5
 C z990		 3
 C z9		 ?
-C z10		 ?
+C z10		 6
 C z196		 ?
 
 C TODO

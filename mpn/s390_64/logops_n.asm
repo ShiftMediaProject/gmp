@@ -24,7 +24,7 @@ C	        rp!=up  rp=up
 C z900		 4.5	 2.25		 5.5		 5.5
 C z990		 2.75	 2		 3.25		 3.25
 C z9		 ?			 ?		 ?
-C z10		 ?			 ?		 ?
+C z10		 3.25			 3.75		 3.75
 C z196		 ?			 ?		 ?
 
 C INPUT PARAMETERS
