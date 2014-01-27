@@ -148,7 +148,9 @@ check_add_1 (void)
       VERIFY ("check_add_1 (in-place)");
 
       SETUP ();
+      scratch [mpn_sec_add_1_itch(data[i].size)] = MAGIC;
       got_c = mpn_sec_add_1 (got, data[i].src, data[i].size, data[i].n, scratch);
+      got_c ^= scratch [mpn_sec_add_1_itch(data[i].size)] ^ MAGIC;
       VERIFY ("check_sec_add_1 (separate)");
 
       SETUP_INPLACE ();
@@ -247,7 +249,9 @@ check_sub_1 (void)
       VERIFY ("check_sub_1 (in-place)");
 
       SETUP ();
+      scratch [mpn_sec_sub_1_itch(data[i].size)] = MAGIC;
       got_c = mpn_sec_sub_1 (got, data[i].src, data[i].size, data[i].n, scratch);
+      got_c ^= scratch [mpn_sec_sub_1_itch(data[i].size)] ^ MAGIC;
       VERIFY ("check_sec_sub_1 (separate)");
 
       SETUP_INPLACE ();
