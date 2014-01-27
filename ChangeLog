@@ -1,3 +1,7 @@
+2014-01-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpn/t-aors_1.c: Check sec_aors_1 red zones (not smart).
+
 2014-01-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Use proper steamroller and
