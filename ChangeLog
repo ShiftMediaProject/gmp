@@ -2,6 +2,9 @@
 
 	* tests/mpn/t-aors_1.c: Check sec_aors_1 red zones (not smart).
 
+	* mpn/generic/sec_aors_1.c: Mark the 2nd argument as const.
+	* gmp-h.in (mpn_sec_add_1, mpn_sec_sub_1): Likewise.
+
 2014-01-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Use proper steamroller and
