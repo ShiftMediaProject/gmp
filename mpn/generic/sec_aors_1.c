@@ -41,8 +41,7 @@ FNAME_itch (mp_size_t n)
 }
 
 mp_limb_t
-FNAME (mp_limb_t *rp, mp_limb_t *ap, mp_size_t n, mp_limb_t b,
-       mp_ptr scratch)
+FNAME (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_ptr scratch)
 {
   scratch[0] = b;
   MPN_ZERO (scratch + 1, n-1);
