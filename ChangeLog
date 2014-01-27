@@ -1,3 +1,7 @@
+2014-01-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Update library files license to use LGPL3+ and GPL2+.
+
 2014-01-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/t-aors_1.c: Check sec_aors_1 red zones (not smart).
