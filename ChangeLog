@@ -1,5 +1,12 @@
 2014-01-29  Niels Möller  <nisse@lysator.liu.se>
 
+	* README: Don't refer to specific COPYING* files, instead refer to
+	manual for details.
+
+	* COPYING.LIB: Renamed, to...
+	* COPYING.LESSERv3: ... new name.
+	* COPYING: Renamed, to...
+	* COPYINGv3: ... new name.
 	* COPYINGv2: New file, GPLv2.
 
 	* doc/gmp.texi (Copying): Document dual licensing.

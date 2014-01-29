@@ -444,8 +444,8 @@ have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
 More precisely, the GNU MP library is dual licensed, under the conditions of
-the GNU Lesser General Public License version 3 (LGPLv3, see
-@file{COPYING.LIB}), or the GNU General Public License version 2 (GPLv2, see
+the GNU Lesser General Public License version 3 (see
+@file{COPYING.LESSERv3}), or the GNU General Public License version 2 (see
 @file{COPYINGv2}). This is the recipient's choice, and the recipient also has
 the additional option of applying later versions of these licenses. (The
 reason for this dual licensing is to make it possible to use the library with
@@ -454,7 +454,7 @@ other reasons do not allow use under later versions of the GPL).
 
 Programs which are not part of the library itself, such as demonstration
 programs and the GMP testsuite, are licensed under the terms of the GNU
-General Public License version 3 (GPLv3, see @file{COPYING}), or any later
+General Public License version 3 (see @file{COPYINGv3}), or any later
 version.
 
 

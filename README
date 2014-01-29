@@ -49,8 +49,8 @@ increases with operand sizes for certain operations, since GNU MP in many
 cases has asymptotically faster algorithms.
 
 GNU MP is free software and may be freely copied on the terms contained in the
-files COPYING.LIB and COPYING (most of GNU MP is under the former, some under
-the latter).
+files COPYING* (see the manual for information on which license(s) applies to
+which components of GNU MP).
 
 
 
