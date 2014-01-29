@@ -4563,7 +4563,7 @@ The exponent of each float is a fixed precision, one machine word on most
 systems.  In the current implementation the exponent is a count of limbs, so
 for example on a 32-bit system this means a range of roughly
 @math{2^@W{-68719476768}} to @math{2^@W{68719476736}}, or on a 64-bit system
-this will be greater.  Note however @code{mpf_get_str} can only return an
+this will be greater.  Note however that @code{mpf_get_str} can only return an
 exponent which fits an @code{mp_exp_t} and currently @code{mpf_set_str}
 doesn't accept exponents bigger than a @code{long}.
 
@@ -4576,21 +4576,19 @@ Each function is defined to calculate with ``infinite precision'' followed by
 a truncation to the destination precision, but of course the work done is only
 what's needed to determine a result under that definition.
 
-The precision selected for a variable is a minimum value, GMP may increase it
-a little to facilitate efficient calculation.  Currently this means rounding
-up to a whole limb, and then sometimes having a further partial limb,
-depending on the high limb of the mantissa.  But applications shouldn't be
-concerned by such details.
+The precision selected by the user for a variable is a minimum value, GMP may
+increase it a little to facilitate efficient calculation.  Currently this means
+rounding up to a whole limb, and then sometimes having a further partial limb,
+depending on the high limb of the mantissa.
 
-The mantissa is stored in binary, as might be imagined from the fact
-precisions are expressed in bits.  One consequence of this is that decimal
+The mantissa is stored in binary.  One consequence of this is that decimal
 fractions like @math{0.1} cannot be represented exactly.  The same is true of
 plain IEEE @code{double} floats.  This makes both highly unsuitable for
 calculations involving money or other values that should be exact decimal
 fractions.  (Suitably scaled integers, or perhaps rationals, are better
 choices.)
 
-@code{mpf} functions and variables have no special notion of infinity or
+The @code{mpf} functions and variables have no special notion of infinity or
 not-a-number, and applications must take care not to overflow the exponent or
 results will be unpredictable.  This might change in a future release.
 
@@ -4598,6 +4596,10 @@ Note that the @code{mpf} functions are @emph{not} intended as a smooth
 extension to IEEE P754 arithmetic.  In particular results obtained on one
 computer often differ from the results on a computer with a different word
 size.
+
+The GMP extension library MPFR (@url{http://mpfr.org}) is an alternative to
+GMP's @code{mpf} functions.  MPFR provides well-defined precision and accurate
+rounding, and thereby naturally extends IEEE P754.
 
 @menu
 * Initializing Floats::
