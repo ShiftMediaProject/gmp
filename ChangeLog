@@ -1,5 +1,7 @@
 2014-01-29  Niels Möller  <nisse@lysator.liu.se>
 
+	* COPYINGv2: New file, GPLv2.
+
 	* doc/gmp.texi (Copying): Document dual licensing.
 
 2014-01-27  Torbjorn Granlund  <tege@gmplib.org>
