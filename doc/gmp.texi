@@ -4573,7 +4573,7 @@ up to a whole limb, and then sometimes having a further partial limb,
 depending on the high limb of the mantissa.  But applications shouldn't be
 concerned by such details.
 
-The mantissa in stored in binary, as might be imagined from the fact
+The mantissa is stored in binary, as might be imagined from the fact
 precisions are expressed in bits.  One consequence of this is that decimal
 fractions like @math{0.1} cannot be represented exactly.  The same is true of
 plain IEEE @code{double} floats.  This makes both highly unsuitable for
