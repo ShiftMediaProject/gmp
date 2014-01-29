@@ -1,3 +1,7 @@
+2014-01-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* doc/gmp.texi (Floating-point Functions): Revise.
+
 2014-01-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* README: Don't refer to specific COPYING* files, instead refer to
