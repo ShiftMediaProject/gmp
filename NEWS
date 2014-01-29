@@ -214,7 +214,7 @@ Changes between GMP version 5.0.* and 5.1.0
     This is more consistent with other powerpc systems.
 
   * The coverage of the testsuite has been improved, using the lcov tool.  See
-    also http://gmplib.org/devel/lcov/.
+    also https://gmplib.org/devel/lcov/.
 
   * It is now possible to compile GMP using a C++ compiler.
 
@@ -588,7 +588,7 @@ Changes between GMP version 4.2.1 and 4.2.2
   Features:
   * New support for x86_64-solaris
   * New, rudimentary support for x86-apple-darwin and x86_64-apple-darwin.
-    (Please see http://gmplib.org/macos.html for more information.)
+    (Please see https://gmplib.org/macos.html for more information.)
 
 
 Changes between GMP version 4.2 and 4.2.1

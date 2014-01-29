@@ -37,7 +37,7 @@ AH_TOP(/*GMP_COPYRIGHT*/)
 
 AC_REVISION($Revision$)
 AC_PREREQ(2.59)
-AC_INIT(GNU MP, GMP_VERSION, [gmp-bugs@gmplib.org, see http://gmplib.org/manual/Reporting-Bugs.html], gmp)
+AC_INIT(GNU MP, GMP_VERSION, [gmp-bugs@gmplib.org, see https://gmplib.org/manual/Reporting-Bugs.html], gmp)
 AC_CONFIG_SRCDIR(gmp-impl.h)
 m4_pattern_forbid([^[ \t]*GMP_])
 m4_pattern_allow(GMP_LDFLAGS)

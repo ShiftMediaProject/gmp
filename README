@@ -98,7 +98,7 @@ the INSTALL file in this directory.
 
 If you find a bug in the library, please make sure to tell us about it!
 
-You should first check the GNU MP web pages at http://gmplib.org/, under
+You should first check the GNU MP web pages at https://gmplib.org/, under
 "Status of the current release".  There will be patches for all known serious
 bugs there.
 

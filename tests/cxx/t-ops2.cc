@@ -190,7 +190,7 @@ void checkf (){
   ASSERT_ALWAYS(sqrt(mpf_class(7))<2.65);
   ASSERT_ALWAYS(sqrt(mpf_class(0))==0);
   // TODO: add some consistency checks, as described in
-  // http://gmplib.org/list-archives/gmp-bugs/2013-February/002940.html
+  // https://gmplib.org/list-archives/gmp-bugs/2013-February/002940.html
   CHECK1(mpf_class,1.9,trunc);
   CHECK1(mpf_class,1.9,floor);
   CHECK1(mpf_class,1.9,ceil);
