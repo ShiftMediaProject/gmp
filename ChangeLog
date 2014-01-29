@@ -1,3 +1,7 @@
+2014-01-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Copying): Document dual licensing.
+
 2014-01-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Update library files license to use LGPL3+ and GPL2+.

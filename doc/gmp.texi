@@ -443,10 +443,19 @@ someone else and passed on, we want their recipients to know that what they
 have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
-The precise conditions of the license for the GNU MP library are found in the
-Lesser General Public License version 3 that accompanies the source code,
-see @file{COPYING.LIB}.  Certain demonstration programs are provided under the
-terms of the plain General Public License version 3, see @file{COPYING}.
+More precisely, the GNU MP library is dual licensed, under the conditions of
+the GNU Lesser General Public License version 3 (LGPLv3, see
+@file{COPYING.LIB}), or the GNU General Public License version 2 (GPLv2, see
+@file{COPYINGv2}). This is the recipient's choice, and the recipient also has
+the additional option of applying later versions of these licenses. (The
+reason for this dual licensing is to make it possible to use the library with
+programs which are licensed under GPL version 2, but which for historical or
+other reasons do not allow use under later versions of the GPL). 
+
+Programs which are not part of the library itself, such as demonstration
+programs and the GMP testsuite, are licensed under the terms of the GNU
+General Public License version 3 (GPLv3, see @file{COPYING}), or any later
+version.
 
 
 @node Introduction to GMP, Installing GMP, Copying, Top
