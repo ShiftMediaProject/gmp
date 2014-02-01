@@ -79,6 +79,7 @@ extern const int mp_bits_per_limb;
 
 void mpn_copyi (mp_ptr, mp_srcptr, mp_size_t);
 void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
+void mpn_zero (mp_ptr, mp_size_t);
 
 int mpn_cmp (mp_srcptr, mp_srcptr, mp_size_t);
 

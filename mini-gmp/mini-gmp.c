@@ -380,6 +380,15 @@ mpn_normalized_size (mp_srcptr xp, mp_size_t n)
 
 #define mpn_zero_p(xp, n) (mpn_normalized_size ((xp), (n)) == 0)
 
+void
+mpn_zero (mp_ptr rp, mp_size_t n)
+{
+  mp_size_t i;
+
+  for (i = 0; i < n; i++)
+    rp[i] = 0;
+}
+
 mp_limb_t
 mpn_add_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b)
 {
