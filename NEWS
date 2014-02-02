@@ -72,7 +72,7 @@ Changes between GMP version 5.1.* and 5.2.0
     particular build.  (Workaround: Compiling gcc from /usr/ports should work,
     except that gcc circularly depends on GMP; we have not been able to test
     that workaround due to FreeBSD 10.0 bugs affecting its ability to run under
-    under KVM and Xen.)
+    KVM and Xen.)
 
   * This release will not compile on FreeBSD before version 10 for i386,
     targeting any modern AMD processor.  The reason is bugs in the old gcc
