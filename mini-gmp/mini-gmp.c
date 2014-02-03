@@ -3148,7 +3148,8 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
     gmp_die ("mpz_rootrem: Zeroth root.");
 
   if (mpz_cmpabs_ui (y, 1) <= 0) {
-    mpz_set (x, y);
+    if (x)
+      mpz_set (x, y);
     if (r)
       r->_mp_size = 0;
     return;
@@ -3192,7 +3193,8 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
     mpz_pow_ui (t, u, z);
     mpz_sub (r, y, t);
   }
-  mpz_swap (x, u);
+  if (x)
+    mpz_swap (x, u);
   mpz_clear (u);
   mpz_clear (t);
 }
@@ -3224,6 +3226,14 @@ mpz_sqrt (mpz_t s, const mpz_t u)
   mpz_rootrem (s, NULL, u, 2);
 }
 
+int
+mpz_perfect_square_p (const mpz_t u)
+{
+  if (u->_mp_size <= 0)
+    return (u->_mp_size == 0);
+  else
+    return mpz_root (NULL, u, 2);
+}
 
 /* Combinatorics */
 
