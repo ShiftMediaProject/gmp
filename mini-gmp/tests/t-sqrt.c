@@ -70,6 +70,20 @@ testmain (int argc, char **argv)
   mpz_init (s);
   mpz_init (r);
 
+  mpz_set_si (u, -1);
+  if (mpz_perfect_square_p (u))
+    {
+      fprintf (stderr, "mpz_perfect_square_p failed on -1.\n");
+      abort ();
+    }
+
+  mpz_set_ui (u, 0);
+  if (!mpz_perfect_square_p (u))
+    {
+      fprintf (stderr, "mpz_perfect_square_p failed on 0.\n");
+      abort ();
+    }
+
   for (i = 0; i < COUNT; i++)
     {
       mini_rrandomb (u, MAXBITS);
@@ -83,6 +97,27 @@ testmain (int argc, char **argv)
 	  dump ("rem", r);
 	  abort ();
 	}
+
+      if (mpz_sgn (r) == 0) {
+	mpz_neg (u, u);
+	mpz_sub_ui (u, u, 1);
+      }
+
+      if (mpz_perfect_square_p (u))
+	{
+	  fprintf (stderr, "mpz_perfect_square_p failed on non square:\n");
+	  dump ("u", u);
+	  abort ();
+	}
+
+      mpz_mul (u, s, s);
+      if (!mpz_perfect_square_p (u))
+	{
+	  fprintf (stderr, "mpz_perfect_square_p failed on square:\n");
+	  dump ("u", u);
+	  abort ();
+	}
+
     }
   mpz_clear (u);
   mpz_clear (s);
