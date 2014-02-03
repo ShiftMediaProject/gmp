@@ -46,7 +46,7 @@ rootrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r, unsigned long z)
   else
     mpz_pow_ui (t, s, z);
   mpz_sub (t, u, t);
-  if (mpz_sgn (t) != mpz_sgn(u) || mpz_cmp (t, r) != 0)
+  if ((mpz_sgn (t) != mpz_sgn(u) && mpz_sgn (t) != 0) || mpz_cmp (t, r) != 0)
     {
       mpz_clear (t);
       return 0;
@@ -82,7 +82,7 @@ testmain (int argc, char **argv)
     {
       mini_rrandomb (u, MAXBITS);
       mini_rrandomb (bs, 12);
-      e = mpz_getlimbn (bs, 0) % mpz_sizeinbase (u, 2) + 2;
+      e = mpz_getlimbn (bs, 0) % mpz_sizeinbase (u, 2) + 1;
       if ((e & 1) && (mpz_getlimbn (bs, 0) & (1L<<10)))
 	mpz_neg (u, u);
       mpz_rootrem (s, r, u, e);
