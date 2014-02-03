@@ -1,3 +1,14 @@
+2014-02-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpn_rootrem): Allow NULL argument.
+
+	* mini-gmp/mini-gmp.c (mpn_zero): New function.
+	(mpz_perfect_square_t): New function.
+	* mini-gmp/mini-gmp.h: Declare them.
+
+	* mini-gmp/tests/t-sqrt.c: test mpz_perfect_square_p
+	* mini-gmp/tests/t-root.c: test also 1-th root, allow perfect powers.
+
 2014-01-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Floating-point Functions): Revise.
