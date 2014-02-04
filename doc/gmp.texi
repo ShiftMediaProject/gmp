@@ -5698,6 +5698,19 @@ but independent of the condition @var{cnd}.  Like for @code{mpn_add_n} and
 actual limb values.
 @end deftypefun
 
+@deftypefun mp_limb_t mpn_sec_add_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{n}, mp_limb_t @var{b}, mp_limb_t *@var{tp})
+@deftypefunx mp_limb_t mpn_sec_sub_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{n}, mp_limb_t @var{b}, mp_limb_t *@var{tp})
+Set @var{R} to @var{A} + @var{b} or @var{A} - @var{b}, respectively, where
+@var{R} = @{@var{rp},@var{n}@}, @var{A} = @{@var{ap},@var{n}@}, and @var{b} is
+a single limb. Returns carry.
+
+These functions take @math{O(N)} time, unlike the leaky functions
+@code{mpn_add_1} which are @math{O(1)} on average. They require scratch space
+of @code{mpn_sec_add_1_itch(@var{n})} and @code{mpn_sec_sub_1_itch(@var{n})}
+limbs, respectively, to be passed in the @var{tp} parameter. The scratch space
+requirements are guaranteed to increase monotonously in the operand size.
+@end deftypefun
+
 @deftypefun void mpn_sec_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, mp_limb_t *@var{tp})
 @deftypefunx mp_size_t mpn_sec_mul_itch (mp_size_t @var{an}, mp_size_t @var{bn})
 Set @var{R} to @math{A @times{} B}, where @var{A} = @{@var{ap},@var{an}@},

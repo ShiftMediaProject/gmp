@@ -1,3 +1,8 @@
+2014-02-04  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Low-level Functions): Document mpn_sec_add_1 and
+	mpn_sec_sub_1.
+
 2014-02-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (mpn_rootrem): Allow NULL argument.
