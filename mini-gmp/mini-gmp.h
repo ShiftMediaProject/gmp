@@ -235,6 +235,15 @@ double mpz_get_d (const mpz_t);
 size_t mpz_size (const mpz_t);
 mp_limb_t mpz_getlimbn (const mpz_t, mp_size_t);
 
+void mpz_realloc2 (mpz_t, mp_bitcnt_t);
+mp_srcptr mpz_limbs_read (mpz_srcptr);
+mp_ptr mpz_limbs_modify (mpz_t, mp_size_t);
+mp_ptr mpz_limbs_write (mpz_t, mp_size_t);
+void mpz_limbs_finish (mpz_t, mp_size_t);
+mpz_srcptr mpz_roinit_n (mpz_t, mp_srcptr, mp_size_t);
+
+#define MPZ_ROINIT_N(xp, xs) {{0, (xs),(xp) }}
+
 void mpz_set_si (mpz_t, signed long int);
 void mpz_set_ui (mpz_t, unsigned long int);
 void mpz_set (mpz_t, const mpz_t);

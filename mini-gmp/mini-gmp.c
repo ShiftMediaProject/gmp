@@ -1527,6 +1527,48 @@ mpz_getlimbn (const mpz_t u, mp_size_t n)
     return 0;
 }
 
+void
+mpz_realloc2 (mpz_t x, mp_bitcnt_t n)
+{
+  mpz_realloc (x, 1 + (n - (n != 0)) / GMP_LIMB_BITS);
+}
+
+mp_srcptr
+mpz_limbs_read (mpz_srcptr x)
+{
+  return x->_mp_d;;
+}
+
+mp_ptr
+mpz_limbs_modify (mpz_t x, mp_size_t n)
+{
+  assert (n > 0);
+  return MPZ_REALLOC (x, n);
+}
+
+mp_ptr
+mpz_limbs_write (mpz_t x, mp_size_t n)
+{
+  return mpz_limbs_modify (x, n);
+}
+
+void
+mpz_limbs_finish (mpz_t x, mp_size_t xs)
+{
+  mp_size_t xn;
+  xn = mpn_normalized_size (x->_mp_d, GMP_ABS (xs));
+  x->_mp_size = xs < 0 ? -xn : xn;
+}
+
+mpz_srcptr
+mpz_roinit_n (mpz_t x, mp_srcptr xp, mp_size_t xs)
+{
+  x->_mp_alloc = 0;
+  x->_mp_d = (mp_ptr) xp;
+  mpz_limbs_finish (x, xs);
+  return x;
+}
+
 
 /* Conversions and comparison to double. */
 void
