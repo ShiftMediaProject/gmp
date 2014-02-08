@@ -67,12 +67,12 @@ testmain (int argc, char **argv)
 	}
       if (mpz_size (a) == mpz_size (b))
 	{
-	  memset (t, 0, sizeof(t));
+	  memset (t, 0x55, sizeof(t));
 	  an = mpz_size (a);
 	  if (an > 0)
 	    {
 	      mpn_mul_n (t, a->_mp_d, b->_mp_d, an);
-	      rn = 2*an - (res->_mp_d[2*an-1] == 0);
+	      rn = 2*an - (t[2*an-1] == 0);
 	      if (rn != mpz_size (ref) || mpn_cmp (t, ref->_mp_d, rn))
 		{
 		  fprintf (stderr, "mpn_mul_n failed:\n");
@@ -99,7 +99,7 @@ testmain (int argc, char **argv)
       an = mpz_size (a);
       if (an > 0)
 	{
-	  memset (t, 0, sizeof(t));
+	  memset (t, 0x33, sizeof(t));
 	  mpn_sqr (t, a->_mp_d, an);
 
 	  rn = 2*an - (t[2*an-1] == 0);
