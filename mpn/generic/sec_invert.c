@@ -33,11 +33,15 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if 0
+/* Currently unused. Should be resurrected once mpn_cnd_neg is
+   advertised. */
 static mp_size_t
 mpn_cnd_neg_itch (mp_size_t n)
 {
   return n;
 }
+#endif
 
 /* FIXME: Ought to return carry */
 static void
