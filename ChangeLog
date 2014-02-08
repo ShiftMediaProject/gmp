@@ -1,3 +1,8 @@
+2014-02-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-div.c (main): Test mpn_sec_div_qr and mpn_sec_div_r
+	with normalized d.
+
 2014-02-04  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_sec_add_1 and

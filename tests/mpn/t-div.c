@@ -308,7 +308,7 @@ main (int argc, char **argv)
 	    MPN_COPY (qp, junkp, nn - dn + 1);
 	  qp[nn - dn] = mpn_sec_div_qr (qp, rp, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
-	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_qr", 0);
+	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_qr (unnorm)", 0);
 
 	  /* Test mpn_sec_div_r */
 	  itch = mpn_sec_div_r_itch (nn, dn);
@@ -321,9 +321,30 @@ main (int argc, char **argv)
 	  MPN_COPY (rp, np, nn);
 	  mpn_sec_div_r (rp, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
-	  /* Note: Since check_one cannot cope with random-only functions, we
+	  /* Note: Since check_one cannot cope with remainder-only functions, we
 	     pass qp[] from the previous function, mpn_sec_div_qr.  */
-	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_r", 0);
+	  check_one (qp, rp, np, nn, dup, dn, "mpn_sec_div_r (unnorm)", 0);
+
+	  /* Normalised case, mpn_sec_div_qr */
+	  itch = mpn_sec_div_qr_itch (nn, dn);
+	  scratch[itch] = ran;
+	  
+	  MPN_COPY (rp, np, nn);
+	  if (nn >= dn)
+	    MPN_COPY (qp, junkp, nn - dn + 1);
+	  qp[nn - dn] = mpn_sec_div_qr (qp, rp, nn, dnp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  check_one (qp, rp, np, nn, dnp, dn, "mpn_sec_div_qr (norm)", 0);
+
+	  /* Normalised case, mpn_sec_div_r */
+	  itch = mpn_sec_div_r_itch (nn, dn);
+	  scratch[itch] = ran;
+	  MPN_COPY (rp, np, nn);
+	  mpn_sec_div_r (rp, nn, dnp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  /* Note: Since check_one cannot cope with remainder-only functions, we
+	     pass qp[] from the previous function, mpn_sec_div_qr.  */
+	  check_one (qp, rp, np, nn, dnp, dn, "mpn_sec_div_r (norm)", 0);
 	}
 
       /* Test mpn_dcpi1_div_qr */
