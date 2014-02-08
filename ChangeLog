@@ -1,5 +1,7 @@
 2014-02-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/sec_div.c: Simplified code for the normalized case.
+
 	* tests/mpn/t-div.c (main): Test mpn_sec_div_qr and mpn_sec_div_r
 	with normalized d.
 

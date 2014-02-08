@@ -71,12 +71,10 @@ FNAME (Q(mp_ptr qp)
        mp_srcptr dp, mp_size_t dn,
        mp_ptr tp)
 {
-  mp_limb_t d1, d0, qh;
+  mp_limb_t d1, d0;
   unsigned int cnt;
-  mp_ptr np2, dp2;
   gmp_pi1_t dinv;
   mp_limb_t inv32;
-  mp_limb_t cy;
 
   ASSERT (dn >= 1);
   ASSERT (nn >= dn);
@@ -87,6 +85,8 @@ FNAME (Q(mp_ptr qp)
 
   if (cnt != 0)
     {
+      mp_limb_t qh, cy;
+      mp_ptr np2, dp2;
       dp2 = tp;					/* dn limbs */
       mpn_lshift (dp2, dp, dn, cnt);
 
@@ -110,29 +110,24 @@ FNAME (Q(mp_ptr qp)
 #endif
 
       mpn_rshift (np, np2, dn, cnt);
+
+#if OPERATION_sec_div_qr
+      return qh;
+#endif
     }
   else
     {
       /* FIXME: Consider copying np => np2 here, adding a 0-limb at the top.
 	 That would simplify the underlying pi1 function, since then it could
 	 assume nn > dn.  */
-      dp2 = (mp_ptr) dp;
-      np2 = np;
-
-      d0 = dp2[dn - 1];
+      d0 = dp[dn - 1];
       d0 += (~d0 != 0);
       invert_limb (inv32, d0);
 
-      /* We add nn + dn to tp here, not nn + 1 + dn, as expected.  This is
-	 since nn here will have been incremented.  */
 #if OPERATION_sec_div_qr
-      qh = mpn_sec_pi1_div_qr (qp, np2, nn, dp2, dn, inv32, tp + nn + dn);
+      return mpn_sec_pi1_div_qr (qp, np, nn, dp, dn, inv32, tp);
 #else
-      mpn_sec_pi1_div_r (np2, nn, dp2, dn, inv32, tp + nn + dn);
+      mpn_sec_pi1_div_r (np, nn, dp, dn, inv32, tp);
 #endif
     }
-
-#if OPERATION_sec_div_qr
-  return qh;
-#endif
 }
