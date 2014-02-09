@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2014, Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -42,9 +42,9 @@ void
 testmain (int argc, char **argv)
 {
   unsigned i;
-  mpz_t a, b, res, res_ui, ref;
+  mpz_t a, b, res, res_ui, ref, tz;
   mp_limb_t t[2*MAXLIMBS];
-  mp_size_t an, rn;
+  mp_size_t an;
 
   mpz_init (a);
   mpz_init (b);
@@ -72,8 +72,9 @@ testmain (int argc, char **argv)
 	  if (an > 0)
 	    {
 	      mpn_mul_n (t, a->_mp_d, b->_mp_d, an);
-	      rn = 2*an - (t[2*an-1] == 0);
-	      if (rn != mpz_size (ref) || mpn_cmp (t, ref->_mp_d, rn))
+
+	      mpz_roinit_n (tz, t, 2*an);
+	      if (mpz_cmpabs (tz, ref))
 		{
 		  fprintf (stderr, "mpn_mul_n failed:\n");
 		  dump ("a", a);
@@ -100,10 +101,10 @@ testmain (int argc, char **argv)
       if (an > 0)
 	{
 	  memset (t, 0x33, sizeof(t));
-	  mpn_sqr (t, a->_mp_d, an);
+	  mpn_sqr (t, mpz_limbs_read (a), an);
 
-	  rn = 2*an - (t[2*an-1] == 0);
-	  if (rn != mpz_size (ref) || mpn_cmp (t, ref->_mp_d, rn))
+	  mpz_roinit_n (tz, t, 2*an);
+	  if (mpz_cmp (tz, ref))
 	    {
 	      fprintf (stderr, "mpn (squaring) failed:\n");
 	      dump ("a", a);
