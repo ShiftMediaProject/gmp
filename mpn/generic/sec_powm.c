@@ -183,6 +183,9 @@ mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
 #define getbit(p,bi) \
   ((p[(bi - 1) / GMP_NUMB_BITS] >> (bi - 1) % GMP_NUMB_BITS) & 1)
 
+/* FIXME: Maybe some things would get simpler if all callers ensure
+   that bi >= nbits. As far as I understand, with the current code bi
+   < nbits can happen only for the final iteration. */
 static inline mp_limb_t
 getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
 {
@@ -222,9 +225,15 @@ static inline int
 win_size (mp_bitcnt_t eb)
 {
   int k;
-  static mp_bitcnt_t x[] = {0,POWM_SEC_TABLE,~(mp_bitcnt_t)0};
+  /* Find k, such that x[k-1] < eb <= x[k].
+
+     We require that x[k] >= k, then it follows that eb > x[k-1] >=
+     k-1, which implies k <= eb.
+  */
+  static const mp_bitcnt_t x[] = {0,POWM_SEC_TABLE,~(mp_bitcnt_t)0};
   for (k = 1; eb > x[k]; k++)
     ;
+  ASSERT (k <= eb);
   return k;
 }
 #endif
@@ -323,10 +332,8 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     }
 
   expbits = getbits (ep, ebi, windowsize);
-  if (ebi < windowsize)
-    ebi = 0;
-  else
-    ebi -= windowsize;
+  ASSERT_ALWAYS (ebi >= windowsize);
+  ebi -= windowsize;
 
   mpn_sec_tabselect (rp, pp, n, 1 << windowsize, expbits);
 
