@@ -1,3 +1,13 @@
+2014-02-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpz_realloc2, mpz_limbs_read, mpz_limbs_modify
+	mpz_limbs_write, mpz_limbs_finish, mpz_roinit_n): New functions.
+	(mpn_perfect_square_p): New function.
+	* mini-gmp/mini-gmp.h: Declare them.
+
+	* mini-gmp/tests/t-mul.c: Use roinit and limbs_read to test mpn.
+	* mini-gmp/tests/t-sqrt.c: Test also mpn_perfect_square_p.
+
 2014-02-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sec_invert.c (mpn_cnd_neg_itch): #if:ed out unused
@@ -21,8 +31,8 @@
 	(mpz_perfect_square_p): New function.
 	* mini-gmp/mini-gmp.h: Declare them.
 
-	* mini-gmp/tests/t-sqrt.c: test mpz_perfect_square_p
-	* mini-gmp/tests/t-root.c: test also 1-th root, allow perfect powers.
+	* mini-gmp/tests/t-sqrt.c: Test mpz_perfect_square_p.
+	* mini-gmp/tests/t-root.c: Test also 1-th root, allow perfect powers.
 
 2014-01-29  Torbjorn Granlund  <tege@gmplib.org>
 
