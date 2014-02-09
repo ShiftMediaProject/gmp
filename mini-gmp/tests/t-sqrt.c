@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, Free Software Foundation, Inc.
+Copyright 2012, 2014, Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -103,17 +103,23 @@ testmain (int argc, char **argv)
 	mpz_sub_ui (u, u, 1);
       }
 
-      if (mpz_perfect_square_p (u))
+      if ((mpz_sgn (u) <= 0 || (i & 1)) ?
+	  mpz_perfect_square_p (u) :
+	  mpn_perfect_square_p (mpz_limbs_read (u), mpz_size (u)))
 	{
-	  fprintf (stderr, "mpz_perfect_square_p failed on non square:\n");
+	  fprintf (stderr, "mp%s_perfect_square_p failed on non square:\n",
+		   (mpz_sgn (u) <= 0 || (i & 1)) ? "z" : "n");
 	  dump ("u", u);
 	  abort ();
 	}
 
       mpz_mul (u, s, s);
-      if (!mpz_perfect_square_p (u))
+      if (!((mpz_sgn (u) <= 0 || (i & 1)) ?
+	    mpz_perfect_square_p (u) :
+	    mpn_perfect_square_p (mpz_limbs_read (u), mpz_size (u))))
 	{
-	  fprintf (stderr, "mpz_perfect_square_p failed on square:\n");
+	  fprintf (stderr, "mp%s_perfect_square_p failed on square:\n",
+		   (mpz_sgn (u) <= 0 || (i & 1)) ? "z" : "n");
 	  dump ("u", u);
 	  abort ();
 	}
