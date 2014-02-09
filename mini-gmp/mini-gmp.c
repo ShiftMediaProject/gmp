@@ -3276,6 +3276,16 @@ mpz_perfect_square_p (const mpz_t u)
   else
     return mpz_root (NULL, u, 2);
 }
+
+int
+mpn_perfect_square_p (mp_srcptr p, mp_size_t n)
+{
+  mpz_t t;
+
+  assert (n > 0);
+  assert (p [n-1] != 0);
+  return mpz_root (NULL, mpz_roinit_n (t, p, n), 2);
+}
 
 /* Combinatorics */
 
