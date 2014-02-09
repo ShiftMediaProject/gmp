@@ -1911,7 +1911,10 @@ tune_powm_sec (void)
 
   printf ("#define POWM_SEC_TABLE  ");
 
-  for (nbits = 1; nbits <= n_max * GMP_NUMB_BITS; )
+  /* For nbits == 1, we should always use k == 1, so no need to tune
+     that. Starting with nbits == 2 also ensure that nbits always is
+     larger than the windowsize k+1. */
+  for (nbits = 2; nbits <= n_max * GMP_NUMB_BITS; )
     {
       n = (nbits - 1) / GMP_NUMB_BITS + 1;
 
@@ -1952,6 +1955,10 @@ tune_powm_sec (void)
 	  if (possible_nbits_cutoff)
 	    {
 	      /* Two consecutive sizes indicate k increase, obey.  */
+
+	      /* Must always have x[k] >= k */
+	      ASSERT_ALWAYS (possible_nbits_cutoff >= k);
+
 	      if (k > 1)
 		printf (",");
 	      printf ("%ld", (long) possible_nbits_cutoff);
@@ -1962,7 +1969,10 @@ tune_powm_sec (void)
 	    {
 	      /* One measurement indicate k increase, save nbits for further
 		 consideration.  */
-	      possible_nbits_cutoff = nbits;
+	      /* The new larger k gets used for sizes > the cutoff
+		 value, hence the cutoff should be one less than the
+		 smallest size where it gives a speedup. */
+	      possible_nbits_cutoff = nbits - 1;
 	    }
 	}
       else

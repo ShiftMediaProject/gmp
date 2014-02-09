@@ -1,3 +1,9 @@
+2014-02-09  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_powm_sec): Avoid timing of the nonsensical
+	parameters nbits = 1, winsize = 2. Decrement tabulated values, to
+	better match the > comparison when the table is used.
+
 2014-02-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (mpz_realloc2, mpz_limbs_read, mpz_limbs_modify
