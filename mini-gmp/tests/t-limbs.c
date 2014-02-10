@@ -83,6 +83,26 @@ testmain (int argc, char **argv)
 	  dump ("ref", ref);
 	  abort ();
 	}
+      if (mpz_getlimbn (res, mpz_size(a)) != mpz_limbs_read (res) [mpz_size(a)])
+	{
+	  fprintf (stderr, "getlimbn - limbs_read differ.\n");
+	  abort ();
+	}
+      if ((i % 4 == 0) && mpz_size (res) > 1)
+	{
+	  mpz_realloc2 (res, 1);
+	  if (mpz_cmp_ui (res, 0))
+	    {
+	      fprintf (stderr, "mpz_realloc2 did not clear res.\n");
+	      abort ();
+	    }
+	  mpz_limbs_finish (ref, 0);
+	  if (mpz_cmp_d (ref, 0))
+	    {
+	      fprintf (stderr, "mpz_limbs_finish did not clear res.\n");
+	      abort ();
+	    }
+	}
     }
   mpz_clear (a);
   mpz_clear (b);
