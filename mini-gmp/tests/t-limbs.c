@@ -83,7 +83,10 @@ testmain (int argc, char **argv)
 	  dump ("ref", ref);
 	  abort ();
 	}
-      if (mpz_getlimbn (res, mpz_size(a)) != mpz_limbs_read (res) [mpz_size(a)])
+      /* The following test exploits a side-effect of my_mpz_mul: res
+	 points to a buffer with at least an+bn limbs, and the limbs
+	 above the result are zeroed. */
+      if (mpz_size (b) > 0 && mpz_getlimbn (res, mpz_size(a)) != mpz_limbs_read (res) [mpz_size(a)])
 	{
 	  fprintf (stderr, "getlimbn - limbs_read differ.\n");
 	  abort ();
