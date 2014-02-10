@@ -1,3 +1,8 @@
+2014-02-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/tests/t-limbs.c: New test for mpz_limbs_*.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Add it.
+
 2014-02-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_powm_sec): Avoid timing of the nonsensical
