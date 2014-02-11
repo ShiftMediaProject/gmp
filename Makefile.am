@@ -108,7 +108,9 @@ LIBGMPXX_LT_AGE      = 3
 
 SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
 
-EXTRA_DIST = configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
+EXTRA_DIST = configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf \
+	     COPYING.LESSERv3 COPYINGv2 COPYINGv3
+
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h

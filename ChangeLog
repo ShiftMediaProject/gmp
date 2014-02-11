@@ -1,5 +1,8 @@
 2014-02-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* Makefile.am (EXTRA_DIST): Distribute COPYING.LESSERv3,
+	COPYINGv2, and COPYINGv3.
+
 	* doc/gmp.texi (Low-level Functions): Updated mpn_sec_powm docs.
 
 	* mpn/generic/sec_powm.c (mpn_sec_powm): Replaced exponent limb
