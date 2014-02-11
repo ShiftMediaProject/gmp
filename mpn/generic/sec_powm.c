@@ -222,18 +222,18 @@ getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
 extern int win_size (mp_bitcnt_t);
 #else
 static inline int
-win_size (mp_bitcnt_t eb)
+win_size (mp_bitcnt_t enb)
 {
   int k;
-  /* Find k, such that x[k-1] < eb <= x[k].
+  /* Find k, such that x[k-1] < enb <= x[k].
 
-     We require that x[k] >= k, then it follows that eb > x[k-1] >=
-     k-1, which implies k <= eb.
+     We require that x[k] >= k, then it follows that enb > x[k-1] >=
+     k-1, which implies k <= enb.
   */
   static const mp_bitcnt_t x[] = {0,POWM_SEC_TABLE,~(mp_bitcnt_t)0};
-  for (k = 1; eb > x[k]; k++)
+  for (k = 1; enb > x[k]; k++)
     ;
-  ASSERT (k <= eb);
+  ASSERT (k <= enb);
   return k;
 }
 #endif
@@ -256,7 +256,7 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_pt
    Uses scratch space at tp as defined by mpn_sec_powm_itch.  */
 void
 mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
-	      mp_srcptr ep, mp_bitcnt_t ebi,
+	      mp_srcptr ep, mp_bitcnt_t enb,
 	      mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
   mp_limb_t ip[2], *mip;
@@ -266,13 +266,13 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   long i;
   int cnd;
 
-  ASSERT (ebi > 0);
+  ASSERT (enb > 0);
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
   /* The code works for bn = 0, but the defined scratch space is 2 limbs
      greater than we supply, when converting 1 to redc form .  */
   ASSERT (bn >= 1);
 
-  windowsize = win_size (ebi);
+  windowsize = win_size (enb);
 
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
@@ -328,9 +328,9 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #endif
     }
 
-  expbits = getbits (ep, ebi, windowsize);
-  ASSERT_ALWAYS (ebi >= windowsize);
-  ebi -= windowsize;
+  expbits = getbits (ep, enb, windowsize);
+  ASSERT_ALWAYS (enb >= windowsize);
+  enb -= windowsize;
 
   mpn_sec_tabselect (rp, pp, n, 1 << windowsize, expbits);
 
@@ -339,17 +339,17 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   /*          | pp[0] | pp[1] | ...  | pp[2^windowsize-1] |  loop scratch |  */
 
 #define INNERLOOP							\
-  while (ebi != 0)							\
+  while (enb != 0)							\
     {									\
-      expbits = getbits (ep, ebi, windowsize);				\
+      expbits = getbits (ep, enb, windowsize);				\
       this_windowsize = windowsize;					\
-      if (ebi < windowsize)						\
+      if (enb < windowsize)						\
 	{								\
-	  this_windowsize -= windowsize - ebi;				\
-	  ebi = 0;							\
+	  this_windowsize -= windowsize - enb;				\
+	  enb = 0;							\
 	}								\
       else								\
-	ebi -= windowsize;						\
+	enb -= windowsize;						\
 									\
       do								\
 	{								\
@@ -412,7 +412,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 }
 
 mp_size_t
-mpn_sec_powm_itch (mp_size_t bn, mp_bitcnt_t eb, mp_size_t n)
+mpn_sec_powm_itch (mp_size_t bn, mp_bitcnt_t enb, mp_size_t n)
 {
   int windowsize;
   mp_size_t redcify_itch, itch;
@@ -422,7 +422,7 @@ mpn_sec_powm_itch (mp_size_t bn, mp_bitcnt_t eb, mp_size_t n)
      is 3n or 4n depending on if we use mpn_local_sqr or a native
      mpn_sqr_basecase.  We assume 4n always for now.) */
 
-  windowsize = win_size (eb);
+  windowsize = win_size (enb);
 
   /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
      the (bn + n) term is due to redcify's own usage, and the rest is due to
