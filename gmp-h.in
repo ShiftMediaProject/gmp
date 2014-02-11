@@ -1659,9 +1659,9 @@ __GMP_DECLSPEC void mpn_sec_sqr (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
 __GMP_DECLSPEC mp_size_t mpn_sec_sqr_itch (mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_sec_powm __MPN(sec_powm)
-__GMP_DECLSPEC void mpn_sec_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+__GMP_DECLSPEC void mpn_sec_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_bitcnt_t, mp_srcptr, mp_size_t, mp_ptr);
 #define mpn_sec_powm_itch __MPN(sec_powm_itch)
-__GMP_DECLSPEC mp_size_t mpn_sec_powm_itch (mp_size_t, mp_size_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
+__GMP_DECLSPEC mp_size_t mpn_sec_powm_itch (mp_size_t, mp_bitcnt_t, mp_size_t) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_sec_tabselect __MPN(sec_tabselect)
 __GMP_DECLSPEC void mpn_sec_tabselect (volatile mp_limb_t *, volatile const mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);

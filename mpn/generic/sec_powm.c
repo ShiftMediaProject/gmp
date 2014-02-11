@@ -256,24 +256,21 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_pt
    Uses scratch space at tp as defined by mpn_sec_powm_itch.  */
 void
 mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
-	      mp_srcptr ep, mp_size_t en,
+	      mp_srcptr ep, mp_bitcnt_t ebi,
 	      mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
   mp_limb_t ip[2], *mip;
-  mp_bitcnt_t ebi;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
   mp_ptr pp, this_pp;
   long i;
   int cnd;
 
-  ASSERT (en > 0 && ep[en - 1] != 0);
+  ASSERT (ebi > 0);
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
   /* The code works for bn = 0, but the defined scratch space is 2 limbs
      greater than we supply, when converting 1 to redc form .  */
   ASSERT (bn >= 1);
-
-  MPN_SIZEINBASE_2EXP(ebi, ep, en, 1);
 
   windowsize = win_size (ebi);
 
@@ -415,7 +412,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 }
 
 mp_size_t
-mpn_sec_powm_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
+mpn_sec_powm_itch (mp_size_t bn, mp_bitcnt_t eb, mp_size_t n)
 {
   int windowsize;
   mp_size_t redcify_itch, itch;
@@ -425,7 +422,7 @@ mpn_sec_powm_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
      is 3n or 4n depending on if we use mpn_local_sqr or a native
      mpn_sqr_basecase.  We assume 4n always for now.) */
 
-  windowsize = win_size (en * GMP_NUMB_BITS); /* slight over-estimate of exp */
+  windowsize = win_size (eb);
 
   /* The 2n term is due to pp[0] and pp[1] at the time of the 2nd redcify call,
      the (bn + n) term is due to redcify's own usage, and the rest is due to

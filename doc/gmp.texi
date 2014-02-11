@@ -5743,20 +5743,18 @@ guaranteed to increase monotonously in the operand size.
 @end deftypefun
 
 
-@deftypefun void mpn_sec_powm (mp_limb_t *@var{rp}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, const mp_limb_t *@var{ep}, mp_size_t @var{en},  const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_limb_t *@var{tp})
-@deftypefunx mp_size_t mpn_sec_powm_itch (mp_size_t @var{bn}, mp_size_t @var{en}, size_t @var{n})
+@deftypefun void mpn_sec_powm (mp_limb_t *@var{rp}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, const mp_limb_t *@var{ep}, mp_bitcnt_t @var{ebits},  const mp_limb_t *@var{mp}, mp_size_t @var{n}, mp_limb_t *@var{tp})
+@deftypefunx mp_size_t mpn_sec_powm_itch (mp_size_t @var{bn}, mp_bitcnt_t @var{ebits}, size_t @var{n})
 Set @var{R} to @m{B^E \bmod @var{M}, (@var{B} raised to @var{E}) modulo
 @var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{M} = @{@var{mp},@var{n}@},
-and @var{E} = @{@var{ep},@var{en}@}.
+and @var{E} consists of the least @var{ebits} in the area pointed to by @var{ep}.
 
-It is required that @math{@var{B} > 0}, that @math{@var{E} > 0} specifically
-with @m{@var{ep}[@var{en}-1] @neq 0, @var{ep}[@var{en}-1] != 0}, and that
-@math{@var{M} > 0} is odd.
+It is required that @math{@var{B} > 0}, and that @math{@var{M} > 0} is odd.
 
 No overlapping between @var{R} and the input operands is allowed.
 
 This function requires scratch space of @code{mpn_sec_powm_itch(@var{bn},
-@var{en}, @var{n})} limbs to be passed in the @var{tp} parameter.  The scratch
+@var{ebits}, @var{n})} limbs to be passed in the @var{tp} parameter.  The scratch
 space requirements are guaranteed to increase monotonously in the operand
 sizes.
 @end deftypefun

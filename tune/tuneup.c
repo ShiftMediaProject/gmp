@@ -1881,7 +1881,7 @@ tune_powm_sec (void)
   k = 1;
 
   winsize = 10;			/* the itch function needs this */
-  itch = mpn_sec_powm_itch (n_max, n_max, n_max);
+  itch = mpn_sec_powm_itch (n_max, n_max * GMP_NUMB_BITS, n_max);
 
   rp = TMP_ALLOC_LIMBS (n_max);
   bp = TMP_ALLOC_LIMBS (n_max);
@@ -1923,16 +1923,11 @@ tune_powm_sec (void)
       for (i = 0; i < n; i++)
 	ep[i] = ~CNST_LIMB(0);
 
-      /* Truncate E to be exactly nbits large.  */
-      if (nbits % GMP_NUMB_BITS != 0)
-	mpn_rshift (ep, ep, n, GMP_NUMB_BITS - nbits % GMP_NUMB_BITS);
-      ep[n - 1] |= CNST_LIMB(1) << (nbits - 1) % GMP_NUMB_BITS;
-
       winsize = k;
       for (i = 0; i < n_measurements; i++)
 	{
 	  speed_starttime ();
-	  mpn_sec_powm (rp, bp, n, ep, n, mp, n, tp);
+	  mpn_sec_powm (rp, bp, n, ep, nbits, mp, n, tp);
 	  ttab[i] = speed_endtime ();
 	}
       tk = median (ttab, n_measurements);
@@ -1942,7 +1937,7 @@ tune_powm_sec (void)
       for (i = 0; i < n_measurements; i++)
 	{
 	  speed_starttime ();
-	  mpn_sec_powm (rp, bp, n, ep, n, mp, n, tp);
+	  mpn_sec_powm (rp, bp, n, ep, nbits, mp, n, tp);
 	  ttab[i] = speed_endtime ();
 	}
       tkp1 = median (ttab, n_measurements);

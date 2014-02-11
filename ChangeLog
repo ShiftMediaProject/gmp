@@ -1,3 +1,17 @@
+2014-02-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Low-level Functions): Updated mpn_sec_powm docs.
+
+	* mpn/generic/sec_powm.c (mpn_sec_powm): Replaced exponent limb
+	count argument by bit count. Don't leak high exponent bits, and
+	drop the requirement that the most significant exponent limb is
+	non-zero.
+	(mpn_sec_powm_itch): Analogous interface change.
+	* gmp-h.in: Updated prototypes.
+	* mpz/powm_sec.c (mpz_powm_sec): Update mpn_sec_powm* calls.
+	* tune/tuneup.c (tune_powm_sec): Likewise. Also deleted code
+	fiddling with the high exponent bits.
+
 2014-02-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/tests/t-limbs.c: New test for mpz_limbs_*.
