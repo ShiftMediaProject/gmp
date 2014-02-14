@@ -5747,9 +5747,11 @@ guaranteed to increase monotonously in the operand size.
 @deftypefunx mp_size_t mpn_sec_powm_itch (mp_size_t @var{bn}, mp_bitcnt_t @var{enb}, size_t @var{n})
 Set @var{R} to @m{B^E \bmod @var{M}, (@var{B} raised to @var{E}) modulo
 @var{M}}, where @var{R} = @{@var{rp},@var{n}@}, @var{M} = @{@var{mp},@var{n}@},
-and @var{E} consists of the least @var{enb} in the area pointed to by @var{ep}.
+and @var{E} = @{@var{ep},@math{@GMPceil{@var{enb} /
+@code{GMP\_NUMB\_BITS}}}@}.
 
-It is required that @math{@var{B} > 0}, and that @math{@var{M} > 0} is odd.
+It is required that @math{@var{B} > 0}, that @math{@var{M} > 0} is odd, and
+that @m{@var{E} < 2@GMPraise{@var{enb}}, @var{E} < 2^@var{enb}}.
 
 No overlapping between @var{R} and the input operands is allowed.
 
