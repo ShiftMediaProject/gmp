@@ -2187,8 +2187,7 @@ mpz_div_qr (mpz_t q, mpz_t r,
       mp_size_t qn, rn;
       mpz_t tq, tr;
 
-      mpz_init (tr);
-      mpz_set (tr, n);
+      mpz_init_set (tr, n);
       np = tr->_mp_d;
 
       qn = nn - dn + 1;
