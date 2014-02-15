@@ -4192,7 +4192,8 @@ void foo (mpz_t x)
 @deftypefun mpz_srcptr mpz_roinit_n (mpz_t @var{x}, const mp_limb_t *@var{xp}, mp_size_t @var{xs})
 Special initialization of @var{x}, using the given limb array and size.
 @var{x} should be treated as read-only: it can be passed safely as input to
-any mpz function, but not as an output. The size of the array is
+any mpz function, but not as an output. The array @var{xp} must point to at
+least a readable limb, its size is
 @math{@GMPabs{@var{xs}}}, and the sign of @var{x} is the sign of @var{xs}. For
 convenience, the function returns @var{x}, but cast to a const pointer type.
 @end deftypefun
@@ -4208,7 +4209,8 @@ void foo (mpz_t x)
 
 @deftypefn Macro mpz_t MPZ_ROINIT_N (mp_limb_t *@var{xp}, mp_size_t @var{xs})
 This macro expands to an initializer which can be assigned to an mpz_t
-variable. Unlike the @code{mpz_roinit_n} function, the limb array must be
+variable. The limb array @var{xp} must point to at least a readable limb,
+moreover, unlike the @code{mpz_roinit_n} function, the array must be
 normalized: if @var{xs} is non-zero, then
 @code{@var{xp}[@math{@GMPabs{@var{xs}}-1}]} must be non-zero. Intended
 primarily for constant values. Using it for non-constant values requires a C
