@@ -6,6 +6,7 @@
 
 	* doc/gmp.texi (mpz_roinit_n, MPZ_ROINIT_N): Document that
 	at least a readable limb is required.
+	* mini-gmp/mini-gmp.c (mpz_div_qr): init + set = init_set .
 
 2014-02-14  Niels Möller  <nisse@lysator.liu.se>
 
