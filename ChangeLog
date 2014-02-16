@@ -1,3 +1,7 @@
+2014-02-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/div_qr_1.c: Disallow DIV_QR_1_NORM_THRESHOLD==0.
+
 2014-02-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-div.c: Fix typo.
