@@ -70,7 +70,7 @@ mpn_div_qr_1 (mp_ptr qp, mp_limb_t *qh, mp_srcptr up, mp_size_t n,
       *qh = q;
       uh -= (-q) & d;
 
-      if (BELOW_THRESHOLD (n, DIV_QR_1_NORM_THRESHOLD))
+      if (BELOW_THRESHOLD (n, DIV_QR_1_NORM_THRESHOLD | (DIV_QR_1_NORM_THRESHOLD==0)))
 	{
 	  cnt = 0;
 	plain:
