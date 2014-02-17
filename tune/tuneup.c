@@ -2083,6 +2083,8 @@ tune_div_qr_1 (void)
     static struct param_t  param;
     param.name = "DIV_QR_1_NORM_THRESHOLD";
     DIV_1_PARAMS;
+    param.min_size = 1;
+    param.min_is_always = 0;
     s.r = randlimb_norm ();
     param.function = speed_mpn_div_qr_1_tune;
     one (&div_qr_1_norm_threshold, &param);
@@ -2091,6 +2093,8 @@ tune_div_qr_1 (void)
     static struct param_t  param;
     param.name = "DIV_QR_1_UNNORM_THRESHOLD";
     DIV_1_PARAMS;
+    param.min_size = 1;
+    param.min_is_always = 0;
     s.r = randlimb_half();
     param.function = speed_mpn_div_qr_1_tune;
     one (&div_qr_1_unnorm_threshold, &param);

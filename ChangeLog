@@ -1,3 +1,8 @@
+2014-02-17  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/tuneup.c (tune_div_qr_1): Ensure DIV_QR_1_NORM_THRESHOLD,
+	DIV_QR_1_UNNORM_THRESHOLD >= 1.
+
 2014-02-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/div_qr_1.c: Disallow DIV_QR_1_NORM_THRESHOLD==0.
