@@ -1,5 +1,8 @@
 2014-02-17  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/s390_64/gmp-mparam.h (DIV_QR_1_NORM_THRESHOLD): Up to 1.
+	* mpn/s390_64/z10/gmp-mparam.h (DIV_QR_1_NORM_THRESHOLD): Up to 1.
+
 	* tune/tuneup.c (tune_div_qr_1): Ensure DIV_QR_1_NORM_THRESHOLD,
 	DIV_QR_1_UNNORM_THRESHOLD >= 1.
 

@@ -45,7 +45,7 @@ see https://www.gnu.org/licenses/.  */
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     17
 #define USE_PREINV_DIVREM_1                  1
 #define DIV_QR_1N_PI1_METHOD                 1
-#define DIV_QR_1_NORM_THRESHOLD              0  /* always */
+#define DIV_QR_1_NORM_THRESHOLD              1
 #define DIV_QR_1_UNNORM_THRESHOLD        MP_SIZE_T_MAX  /* never */
 #define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always */
