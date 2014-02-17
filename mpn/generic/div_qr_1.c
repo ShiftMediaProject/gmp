@@ -35,7 +35,6 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* FIXME: Add proper tuning */
 #ifndef DIV_QR_1_NORM_THRESHOLD
 #define DIV_QR_1_NORM_THRESHOLD 3
 #endif
@@ -70,7 +69,7 @@ mpn_div_qr_1 (mp_ptr qp, mp_limb_t *qh, mp_srcptr up, mp_size_t n,
       *qh = q;
       uh -= (-q) & d;
 
-      if (BELOW_THRESHOLD (n, DIV_QR_1_NORM_THRESHOLD | (DIV_QR_1_NORM_THRESHOLD==0)))
+      if (BELOW_THRESHOLD (n, DIV_QR_1_NORM_THRESHOLD))
 	{
 	  cnt = 0;
 	plain:

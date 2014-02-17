@@ -1,5 +1,8 @@
 2014-02-17  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/div_qr_1.c (mpn_div_qr_1): Revert yesterday's fix.
+	Hopefully no longer needed.
+
 	* mpn/s390_64/gmp-mparam.h (DIV_QR_1_NORM_THRESHOLD): Up to 1.
 	* mpn/s390_64/z10/gmp-mparam.h (DIV_QR_1_NORM_THRESHOLD): Up to 1.
 
