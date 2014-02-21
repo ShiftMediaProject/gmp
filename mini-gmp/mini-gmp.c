@@ -3285,6 +3285,27 @@ mpn_perfect_square_p (mp_srcptr p, mp_size_t n)
   assert (p [n-1] != 0);
   return mpz_root (NULL, mpz_roinit_n (t, p, n), 2);
 }
+
+mp_size_t
+mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr p, mp_size_t n)
+{
+  mpz_t s, r, u;
+  mp_size_t res;
+
+  assert (n > 0);
+  assert (p [n-1] != 0);
+
+  mpz_init (r);
+  mpz_init (s);
+  mpz_rootrem (s, r, mpz_roinit_n (u, p, n), 2);
+  mpn_copyd (sp, s->_mp_d, s->_mp_size);
+  mpz_clear (s);
+  res = r->_mp_size;
+  if (rp)
+    mpn_copyd (rp, r->_mp_d, res);
+  mpz_clear (r);
+  return res;
+}
 
 /* Combinatorics */
 
