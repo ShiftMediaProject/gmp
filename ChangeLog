@@ -1,3 +1,9 @@
+2014-02-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (mpn_sqrtrem): New function.
+	* mini-gmp/mini-gmp.h: Declare it.
+	* mini-gmp/tests/t-sqrt.c: Test it.
+
 2014-02-17  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/div_qr_1.c (mpn_div_qr_1): Revert yesterday's fix.
