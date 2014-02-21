@@ -24,7 +24,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include "testutils.h"
 
 #define MAXBITS 400
-#define COUNT 10000
+#define COUNT 9000
 
 static void
 dump (const char *label, const mpz_t x)
@@ -61,24 +61,71 @@ sqrtrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r)
 }
 
 void
+mpz_mpn_sqrtrem (mpz_t s, mpz_t r, const mpz_t u)
+{
+  mp_limb_t *sp, *rp;
+  mp_size_t un, sn, ret;
+
+  un = mpz_size (u);
+
+  mpz_xor (s, s, u);
+  sn = (un + 1) / 2;
+  sp = mpz_limbs_write (s, sn + 1);
+  sp [sn] = 11;
+
+  if (un & 1)
+    rp = NULL; /* Exploits the fact that r already is correct. */
+  else {
+    mpz_add (r, u, s);
+    rp = mpz_limbs_write (r, un + 1);
+    rp [un] = 19;
+  }
+
+  ret = mpn_sqrtrem (sp, rp, mpz_limbs_read (u), un);
+
+  if (sp [sn] != 11)
+    {
+      fprintf (stderr, "mpn_sqrtrem buffer overrun on sp.\n");
+      abort ();
+    }
+  if (un & 1) {
+    if ((ret != 0) != (mpz_size (r) != 0)) {
+      fprintf (stderr, "mpn_sqrtrem wrong return value with NULL.\n");
+      abort ();
+    }
+  } else {
+    mpz_limbs_finish (r, ret);
+    if (ret != mpz_size (r)) {
+      fprintf (stderr, "mpn_sqrtrem wrong return value.\n");
+      abort ();
+    }
+    if (rp [un] != 19)
+      {
+	fprintf (stderr, "mpn_sqrtrem buffer overrun on rp.\n");
+	abort ();
+      }
+  } 
+  
+  mpz_limbs_finish (s, (un + 1) / 2);
+}
+
+void
 testmain (int argc, char **argv)
 {
   unsigned i;
   mpz_t u, s, r;
 
-  mpz_init (u);
   mpz_init (s);
   mpz_init (r);
 
-  mpz_set_si (u, -1);
+  mpz_init_set_si (u, -1);
   if (mpz_perfect_square_p (u))
     {
       fprintf (stderr, "mpz_perfect_square_p failed on -1.\n");
       abort ();
     }
 
-  mpz_set_ui (u, 0);
-  if (!mpz_perfect_square_p (u))
+  if (!mpz_perfect_square_p (s))
     {
       fprintf (stderr, "mpz_perfect_square_p failed on 0.\n");
       abort ();
@@ -86,12 +133,23 @@ testmain (int argc, char **argv)
 
   for (i = 0; i < COUNT; i++)
     {
-      mini_rrandomb (u, MAXBITS);
+      mini_rrandomb (u, MAXBITS - (i & 0xFF));
       mpz_sqrtrem (s, r, u);
 
       if (!sqrtrem_valid_p (u, s, r))
 	{
 	  fprintf (stderr, "mpz_sqrtrem failed:\n");
+	  dump ("u", u);
+	  dump ("sqrt", s);
+	  dump ("rem", r);
+	  abort ();
+	}
+
+      mpz_mpn_sqrtrem (s, r, u);
+
+      if (!sqrtrem_valid_p (u, s, r))
+	{
+	  fprintf (stderr, "mpn_sqrtrem failed:\n");
 	  dump ("u", u);
 	  dump ("sqrt", s);
 	  dump ("rem", r);
