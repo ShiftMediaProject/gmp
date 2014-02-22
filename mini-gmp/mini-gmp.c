@@ -3298,6 +3298,8 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr p, mp_size_t n)
   mpz_init (r);
   mpz_init (s);
   mpz_rootrem (s, r, mpz_roinit_n (u, p, n), 2);
+
+  assert (s->_mp_size == (n+1)/2);
   mpn_copyd (sp, s->_mp_d, s->_mp_size);
   mpz_clear (s);
   res = r->_mp_size;
