@@ -22,8 +22,8 @@ Changes between GMP version 5.1.* and 5.2.0
   * Major speedup for ARM, in particular ARM Cortex-A15, thanks to improved
     assembly.
 
-  * Major speedup for SPARC T4/T5 and speedup also for T3, thanks to much new
-    assembly.
+  * Major speedup for SPARC T4/T5 and speedup also for T3, thanks to a lot of
+    new assembly.
 
   * Speedup for Intel Sandy Bridge, Ivy Bridge, Haswell, thanks to rewritten
     and vastly expanded assembly support.
@@ -77,8 +77,8 @@ Changes between GMP version 5.1.* and 5.2.0
   * This release will not compile on FreeBSD before version 10 for i386,
     targeting any modern AMD processor.  The reason is bugs in the old gcc
     bundled with FreeBSD.  (Workaround: install a less obsolete gcc from
-    /usr/ports and tel GMP to use it, or override the -march=amdfam10 configure
-    command line argument.)
+    /usr/ports and tell GMP to use it, or override the -march=amdfam10
+    configure command line argument.)
 
 
 Changes between GMP version 5.1.2 and 5.1.3
