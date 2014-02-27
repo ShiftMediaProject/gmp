@@ -292,7 +292,11 @@ __gmpn_cpuvec_init (void)
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
-	      CPUVEC_SETUP_coreihwl;
+	      /* Some Haswells lack BMI2.  Let them appear as Sandybridges for
+		 now.  */
+	      __gmpn_cpuid (dummy_string, 7);
+	      if ((dummy_string[0 + 8 / 8] & (1 << (8 % 8))) != 0)
+		CPUVEC_SETUP_coreihwl;
 	      break;
 	    }
 	  break;
