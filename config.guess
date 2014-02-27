@@ -814,6 +814,16 @@ main ()
           else if (model == 0x4f) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell server */
           else if (model == 0x56) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell microserver */
           else cpu_64bit = 1, modelstr = "corei"; /* default */
+
+	  if (strcmp (modelstr, "coreihwl") == 0)
+	    {
+	      /* Some Haswells lack BMI2.  Let them appear as Sandybridges for
+		 now.  */
+	      CPUID (dummy_string, 7);
+	      if ((dummy_string[0 + 8 / 8] & (1 << (8 % 8))) == 0)
+		modelstr = "coreisbr";
+	    }
+
 	  break;
 	case 15:
 	  cpu_64bit = 1, modelstr = "pentium4";
@@ -900,6 +910,9 @@ main ()
 }
 EOF
 
+# The rcx/ecx zeroing here and in the variant below is needed for the BMI2
+# check.
+
   cat <<EOF >${dummy}0.s
 	.globl cpuid
 	.globl _cpuid
@@ -908,6 +921,7 @@ _cpuid:
 	push	%rbx
 	mov	%rdx, %r8
 	mov	%ecx, %eax
+	xor	%ecx, %ecx
 	.byte	0x0f
 	.byte	0xa2
 	mov	%ebx, (%r8)
@@ -939,6 +953,7 @@ _cpuid:
 	pushl %esi
 	pushl %ebx
 	movl 24(%esp),%eax
+	xor	%ecx, %ecx
 	.byte 0x0f
 	.byte 0xa2
 	movl 20(%esp),%esi
