@@ -1,3 +1,16 @@
+2014-02-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/fat/fat_entry.asm: Zero ecx for the benefit of new BMI2
+	feature test.
+
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Run CPUVEC_SETUP_coreihwl
+	conditionally on BMI2 availability.
+
+	* config.guess: Revert "coreihwl" to "coreisbr" if cpuid indicates that
+	BMI2 is missing.
+	(x86 cpuid, 2 variants): Zero ecx for the benefit of new BMI2 feature
+	test.
+
 2014-02-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (mpn_sqrtrem): New function.
