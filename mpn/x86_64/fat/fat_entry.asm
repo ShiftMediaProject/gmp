@@ -3,7 +3,7 @@ dnl  x86 fat binary entrypoints.
 dnl  Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
 dnl  Torbjorn Granlund (port to x86_64)
 
-dnl  Copyright 2003, 2009, 2011-2013 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2009, 2011-2014 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -183,7 +183,8 @@ ifdef(`PRETEND_PIC',`
 C long __gmpn_cpuid (char dst[12], int id);
 C
 C This is called only 3 times, so just something simple and compact is fine.
-
+C
+C The rcx/ecx zeroing here is needed for the BMI2 check.
 
 define(`rp',  `%rdi')
 define(`idx', `%rsi')
@@ -192,6 +193,7 @@ PROLOGUE(__gmpn_cpuid)
 	FUNC_ENTRY(2)
 	mov	%rbx, %r8
 	mov	R32(idx), R32(%rax)
+	xor	%ecx, %ecx
 	cpuid
 	mov	%ebx, (rp)
 	mov	%edx, 4(rp)
