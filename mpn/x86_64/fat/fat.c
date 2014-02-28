@@ -118,6 +118,10 @@ fake_cpuid (char dst[12], unsigned int id)
     return 0;
   case 1:
     return fake_cpuid_table[i].fms;
+  case 7:
+    dst[0] = 0xff;				/* BMI1, AVX2, etc */
+    dst[1] = 0xff;				/* BMI2, etc */
+    return 0;
   case 0x80000001:
     dst[4 + 29 / 8] = (1 << (29 % 8));		/* "long" mode */
     return 0;
