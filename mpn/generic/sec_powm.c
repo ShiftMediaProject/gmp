@@ -250,9 +250,9 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_pt
   MPN_COPY (rp, tp, n);
 }
 
-/* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
-   Requires that mp[n-1..0] is odd.
-   Requires that ep[en-1..0] > 1.
+/* {rp, n} <-- {bp, bn} ^ {ep, en} mod {mp, n},
+   where en = ceil (enb / GMP_NUMB_BITS)
+   Requires that {mp, n} is odd (and hence also mp[0] odd).
    Uses scratch space at tp as defined by mpn_sec_powm_itch.  */
 void
 mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
@@ -267,10 +267,11 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   int cnd;
 
   ASSERT (enb > 0);
-  ASSERT (n >= 1 && ((mp[0] & 1) != 0));
+  ASSERT (n > 0);
   /* The code works for bn = 0, but the defined scratch space is 2 limbs
      greater than we supply, when converting 1 to redc form .  */
-  ASSERT (bn >= 1);
+  ASSERT (bn > 0);
+  ASSERT ((mp[0] & 1) != 0);
 
   windowsize = win_size (enb);
 

@@ -1,3 +1,8 @@
+2014-03-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/sec_powm.c (mpn_sec_powm): Clarify comment and
+	asserts.
+
 2014-02-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid): Handle id 7, make bold claims.
