@@ -2,6 +2,9 @@
 
 	* mini-gmp/tests/testutils.c (dump): New function. Deleted static
 	functions in other files.
+	(mpz_set_str_or_abort): Moved function here, from...
+	* mini-gmp/tests/t-cmp_d.c: ... old location.
+
 	* mini-gmp/tests/t-reuse.c (dump3): Renamed, from ...
 	(dump): ...old name.
 

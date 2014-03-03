@@ -64,18 +64,6 @@ check_one (const char *name, mpz_srcptr x, double y, int cmp, int cmpabs)
     }
 }
 
-static void
-mpz_set_str_or_abort (mpz_ptr z, const char *str, int base)
-{
-  if (mpz_set_str (z, str, base) != 0)
-    {
-      fprintf (stderr, "ERROR: mpz_set_str failed\n");
-      fprintf (stderr, "   str  = \"%s\"\n", str);
-      fprintf (stderr, "   base = %d\n", base);
-      abort();
-    }
-}
-
 void
 check_data (void)
 {

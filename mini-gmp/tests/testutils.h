@@ -32,3 +32,6 @@ void testfree (void *p);
 
 void
 dump (const char *label, const mpz_t x);
+
+void
+mpz_set_str_or_abort (mpz_ptr z, const char *str, int base);

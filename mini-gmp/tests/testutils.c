@@ -159,3 +159,15 @@ dump (const char *label, const mpz_t x)
   fprintf (stderr, "%s: %s\n", label, buf);
   testfree (buf);
 }
+
+void
+mpz_set_str_or_abort (mpz_ptr z, const char *str, int base)
+{
+  if (mpz_set_str (z, str, base) != 0)
+    {
+      fprintf (stderr, "ERROR: mpz_set_str failed\n");
+      fprintf (stderr, "   str  = \"%s\"\n", str);
+      fprintf (stderr, "   base = %d\n", base);
+      abort();
+    }
+}
