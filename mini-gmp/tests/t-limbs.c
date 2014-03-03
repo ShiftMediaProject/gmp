@@ -27,14 +27,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #define MAXBITS 400
 #define COUNT 100
 
-static void
-dump (const char *label, const mpz_t x)
-{
-  char *buf = mpz_get_str (NULL, 16, x);
-  fprintf (stderr, "%s: %s\n", label, buf);
-  testfree (buf);
-}
-
 void
 my_mpz_mul (mpz_t r, mpz_srcptr a,  mpz_srcptr b)
 {

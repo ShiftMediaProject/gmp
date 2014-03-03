@@ -25,7 +25,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 #define COUNT 100
 
-void dump (const char *, mpz_t, mpz_t, mpz_t);
+void dump3 (const char *, mpz_t, mpz_t, mpz_t);
 void mpz_check_format (const mpz_t);
 
 typedef void (*dss_func) (mpz_t, const mpz_t, const mpz_t);
@@ -133,12 +133,12 @@ const char *ds_func_names[] =
 #define FAIL(class,indx,op1,op2,op3) \
   do {									\
   class##_funcs[indx] = 0;						\
-  dump (class##_func_names[indx], op1, op2, op3);			\
+  dump3 (class##_func_names[indx], op1, op2, op3);			\
   failures++;								\
   } while (0)
 #define FAIL2(fname,op1,op2,op3) \
   do {									\
-  dump (#fname, op1, op2, op3);						\
+  dump3 (#fname, op1, op2, op3);						\
   failures++;								\
   } while (0)
 
@@ -625,7 +625,7 @@ testmain (int argc, char **argv)
 }
 
 void
-dump (const char *name, mpz_t in1, mpz_t in2, mpz_t in3)
+dump3 (const char *name, mpz_t in1, mpz_t in2, mpz_t in3)
 {
   printf ("failure in %s (", name);
   mpz_out_str (stdout, -16, in1);

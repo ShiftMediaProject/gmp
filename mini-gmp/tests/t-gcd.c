@@ -26,14 +26,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #define MAXBITS 400
 #define COUNT 10000
 
-static void
-dump (const char *label, const mpz_t x)
-{
-  char *buf = mpz_get_str (NULL, 16, x);
-  fprintf (stderr, "%s: %s\n", label, buf);
-  testfree (buf);
-}
-
 /* Called when g is supposed to be gcd(a,b), and g = s a + t b. */
 static int
 gcdext_valid_p (const mpz_t a, const mpz_t b,

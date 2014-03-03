@@ -1,6 +1,6 @@
 /*
 
-Copyright 2013, Free Software Foundation, Inc.
+Copyright 2013, 2014, Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -150,4 +150,12 @@ testhalves (int count, void (*tested_fun) (int))
   mp_set_memory_functions (NULL, NULL, NULL);
   (*tested_fun) (count / 2);
   mp_set_memory_functions (allocfunc, reallocfunc, freefunc);
+}
+
+void
+dump (const char *label, const mpz_t x)
+{
+  char *buf = mpz_get_str (NULL, 16, x);
+  fprintf (stderr, "%s: %s\n", label, buf);
+  testfree (buf);
 }

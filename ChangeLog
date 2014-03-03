@@ -1,3 +1,10 @@
+2014-03-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/tests/testutils.c (dump): New function. Deleted static
+	functions in other files.
+	* mini-gmp/tests/t-reuse.c (dump3): Renamed, from ...
+	(dump): ...old name.
+
 2014-03-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sec_powm.c (mpn_sec_powm): Clarify comment and

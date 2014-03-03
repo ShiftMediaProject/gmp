@@ -26,14 +26,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #define MAXBITS 400
 #define COUNT 9000
 
-static void
-dump (const char *label, const mpz_t x)
-{
-  char *buf = mpz_get_str (NULL, 16, x);
-  fprintf (stderr, "%s: %s\n", label, buf);
-  testfree (buf);
-}
-
 /* Called when s is supposed to be floor(sqrt(u)), and r = u - s^2 */
 static int
 sqrtrem_valid_p (const mpz_t u, const mpz_t s, const mpz_t r)
