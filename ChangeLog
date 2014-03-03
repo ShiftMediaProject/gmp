@@ -1,5 +1,10 @@
 2014-03-03  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/mini-gmp.c (mpz_congruent_p): New function.
+	* mini-gmp/mini-gmp.h: Declare it.
+	* mini-gmp/tests/t-cong.c: New file, based on tests/mpz/t-cong.c.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-cong.
+
 	* mini-gmp/tests/testutils.c (dump): New function. Deleted static
 	functions in other files.
 	(mpz_set_str_or_abort): Moved function here, from...

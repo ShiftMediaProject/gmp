@@ -2490,6 +2490,24 @@ mpz_divisible_p (const mpz_t n, const mpz_t d)
   return mpz_div_qr (NULL, NULL, n, d, GMP_DIV_TRUNC) == 0;
 }
 
+int
+mpz_congruent_p (const mpz_t a, const mpz_t b, const mpz_t m)
+{
+  mpz_t t;
+  int res;
+
+  /* a == b (mod 0) iff a == b */
+  if (mpz_sgn (m) == 0)
+    return (mpz_cmp (a, b) == 0);
+
+  mpz_init (t);
+  mpz_sub (t, a, b);
+  res = mpz_divisible_p (t, m);
+  mpz_clear (t);
+
+  return res;
+}
+
 static unsigned long
 mpz_div_qr_ui (mpz_t q, mpz_t r,
 	       const mpz_t n, unsigned long d, enum mpz_div_round_mode mode)

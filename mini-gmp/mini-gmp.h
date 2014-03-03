@@ -172,6 +172,7 @@ void mpz_mod (mpz_t, const mpz_t, const mpz_t);
 void mpz_divexact (mpz_t, const mpz_t, const mpz_t);
 
 int mpz_divisible_p (const mpz_t, const mpz_t);
+int mpz_congruent_p (const mpz_t, const mpz_t, const mpz_t);
 
 unsigned long mpz_cdiv_qr_ui (mpz_t, mpz_t, const mpz_t, unsigned long);
 unsigned long mpz_fdiv_qr_ui (mpz_t, mpz_t, const mpz_t, unsigned long);
