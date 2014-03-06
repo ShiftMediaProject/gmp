@@ -126,6 +126,7 @@ check_composites (void)
 
       mini_urandomb (bs, 32);
       size_range = mpz_get_ui (bs) % 12 + 1; /* 0..4096 bit operands */
+      mini_rrandomb (b, size);
 
       /* Exclude trivial factors */
       if (mpz_cmp_ui (a, 1) == 0)
