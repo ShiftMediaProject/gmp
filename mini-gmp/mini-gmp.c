@@ -3358,6 +3358,99 @@ mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
 }
 
 
+/* Primality testing */
+static int
+gmp_millerrabin (const mpz_t n, const mpz_t nm1, mpz_t y,
+		 const mpz_t q, mp_bitcnt_t k)
+{
+  mp_bitcnt_t i;
+
+  /* Caller must initialize y to the base. */
+  mpz_powm (y, y, q, n);
+
+  if (mpz_cmp_ui (y, 1) == 0 || mpz_cmp (y, nm1) == 0)
+    return 1;
+
+  for (i = 1; i < k; i++)
+    {
+      mpz_powm_ui (y, y, 2, n);
+      if (mpz_cmp (y, nm1) == 0)
+	return 1;
+      if (mpz_cmp_ui (y, 1) == 0)
+	return 0;
+    }
+  return 0;
+}
+
+/* This product is 0xc0cfd797, and fits in 32 bits. */
+#define GMP_PRIME_PRODUCT \
+  (3UL*5UL*7UL*11UL*13UL*17UL*19UL*23UL*29UL)
+
+/* Bit (p+1)/2 is set, for each odd prime <= 61 */
+#define GMP_PRIME_MASK 0xc96996dcUL
+
+int
+mpz_probab_prime_p (const mpz_t n, int reps)
+{
+  mpz_t nm1;
+  mpz_t q;
+  mpz_t y;
+  mp_bitcnt_t k;
+  int is_prime;
+  int j;
+
+  /* Note that we use the absolute value of n only, for compatibility
+     with the real GMP. */
+  if (mpz_even_p (n))
+    return (mpz_cmpabs_ui (n, 2) == 0) ? 2 : 0;
+
+  /* Above test excludes n == 0 */
+  assert (n->_mp_size != 0);
+  
+  if (mpz_cmpabs_ui (n, 64) < 0)
+    return (GMP_PRIME_MASK >> (n->_mp_d[0] >> 1)) & 2;
+
+  if (mpz_gcd_ui (NULL, n, GMP_PRIME_PRODUCT) != 1)
+    return 0;
+
+  /* All prime factors are >= 31. */
+  if (mpz_cmpabs_ui (n, 31*31) < 0)
+    return 2;
+  
+  /* Use Miller-Rabin, with a deterministic sequence of bases, a[j] =
+     j^2 + j + 41 using Euler's polynomial. We potentially stop early,
+     if a[j] >= n - 1. Since n >= 31*31, this can happen only if reps >
+     30 (a[30] == 971 > 31*31 == 961). */
+
+  mpz_init (nm1);
+  mpz_init (q);
+  mpz_init (y);
+
+  /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
+  mpz_abs (nm1, n);
+  mpz_sub_ui (nm1, nm1, 1);
+  k = mpz_scan1 (nm1, 0);
+  mpz_tdiv_q_2exp (q, nm1, k);
+  
+  for (j = 0, is_prime = 1; is_prime && j < reps; j++)
+    {
+      mpz_set_ui (y, (unsigned long) j*j+j+41);
+      if (mpz_cmp (y, nm1) >= 0)
+	{
+	  /* Don't try any further bases. */
+	  assert (j >= 30);
+	  break;
+	}
+      is_prime &= gmp_millerrabin (n, nm1, y, q, k);
+    }
+  mpz_clear (nm1);
+  mpz_clear (q);
+  mpz_clear (y);
+    
+  return is_prime;
+}
+
+
 /* Logical operations and bit manipulation. */
 
 /* Numbers are treated as if represented in two's complement (and

@@ -1,3 +1,11 @@
+2014-03-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (gmp_millerrabin): New internal function.
+	(mpz_probab_prime_p): New function.
+	* mini-gmp/mini-gmp.h (mpz_probab_prime_p): Declare it.
+	* mini-gmp/tests/t-pprime_p.c: New test program.
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-pprime_p.
+
 2014-03-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpz_congruent_p): New function.
