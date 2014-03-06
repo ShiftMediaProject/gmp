@@ -1,5 +1,9 @@
 2014-03-06  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpz/t-pprime_p.c (check_composites): New function.
+	(check_primes): New function.
+	(main): Call them. Also use TESTS_REPS.
+
 	* mini-gmp/mini-gmp.c (gmp_millerrabin): New internal function.
 	(mpz_probab_prime_p): New function.
 	* mini-gmp/mini-gmp.h (mpz_probab_prime_p): Declare it.
