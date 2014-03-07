@@ -2182,7 +2182,7 @@ GMP I/O functions using them will not be reentrant either.
 
 @item
 It's safe for two threads to read from the same GMP variable simultaneously,
-but it's not safe for one to read while the another might be writing, nor for
+but it's not safe for one to read while another might be writing, nor for
 two threads to write simultaneously.  It's not safe for two threads to
 generate a random number from the same @code{gmp_randstate_t} simultaneously,
 since this involves an update of that variable.
