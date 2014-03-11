@@ -38,10 +38,12 @@ see https://www.gnu.org/licenses/.  */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD          4
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          3
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD        10
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        28
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     11
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        26
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     10
 #define USE_PREINV_DIVREM_1                  1  /* native */
-#define DIV_QR_2_PI2_THRESHOLD              35
+#define DIV_QR_1_NORM_THRESHOLD              1
+#define DIV_QR_1_UNNORM_THRESHOLD        MP_SIZE_T_MAX  /* never */
+#define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           25
 
@@ -62,7 +64,7 @@ see https://www.gnu.org/licenses/.  */
 #define SQR_TOOM3_THRESHOLD                117
 #define SQR_TOOM4_THRESHOLD                336
 #define SQR_TOOM6_THRESHOLD                430
-#define SQR_TOOM8_THRESHOLD                  0  /* always */
+#define SQR_TOOM8_THRESHOLD                562
 
 #define MULMID_TOOM42_THRESHOLD             42
 

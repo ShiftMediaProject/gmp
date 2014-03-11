@@ -42,10 +42,12 @@ see https://www.gnu.org/licenses/.  */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD          3
 #define MOD_1U_TO_MOD_1_1_THRESHOLD          2
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD        19
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        22
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD        17
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        28
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD      7
 #define USE_PREINV_DIVREM_1                  1  /* native */
+#define DIV_QR_1_NORM_THRESHOLD              1
+#define DIV_QR_1_UNNORM_THRESHOLD        MP_SIZE_T_MAX  /* never */
 #define DIV_QR_2_PI2_THRESHOLD           MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           15
@@ -53,74 +55,72 @@ see https://www.gnu.org/licenses/.  */
 #define MUL_TOOM22_THRESHOLD                28
 #define MUL_TOOM33_THRESHOLD                81
 #define MUL_TOOM44_THRESHOLD               242
-#define MUL_TOOM6H_THRESHOLD               369
-#define MUL_TOOM8H_THRESHOLD               482
+#define MUL_TOOM6H_THRESHOLD               321
+#define MUL_TOOM8H_THRESHOLD               430
 
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD      97
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD     155
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD     149
 #define MUL_TOOM42_TO_TOOM63_THRESHOLD     163
-#define MUL_TOOM43_TO_TOOM54_THRESHOLD     226
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD     142
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 34
-#define SQR_TOOM3_THRESHOLD                113
-#define SQR_TOOM4_THRESHOLD                336
-#define SQR_TOOM6_THRESHOLD                446
-#define SQR_TOOM8_THRESHOLD                597
+#define SQR_TOOM3_THRESHOLD                117
+#define SQR_TOOM4_THRESHOLD                387
+#define SQR_TOOM6_THRESHOLD                466
+#define SQR_TOOM8_THRESHOLD                547
 
 #define MULMID_TOOM42_THRESHOLD             36
 
-#define MULMOD_BNM1_THRESHOLD               15
-#define SQRMOD_BNM1_THRESHOLD               18
+#define MULMOD_BNM1_THRESHOLD               17
+#define SQRMOD_BNM1_THRESHOLD               17
 
-#define MUL_FFT_MODF_THRESHOLD             570  /* k = 5 */
+#define MUL_FFT_MODF_THRESHOLD             565  /* k = 5 */
 #define MUL_FFT_TABLE3                                      \
-  { {    570, 5}, {     25, 6}, {     13, 5}, {     27, 6}, \
-    {     27, 7}, {     14, 6}, {     29, 7}, {     15, 6}, \
-    {     31, 7}, {     16, 6}, {     33, 7}, {     29, 8}, \
-    {     15, 7}, {     33, 8}, {     17, 7}, {     36, 8}, \
+  { {    565, 5}, {     25, 6}, {     27, 7}, {     14, 6}, \
+    {     29, 7}, {     15, 6}, {     31, 7}, {     29, 8}, \
+    {     15, 7}, {     31, 8}, {     17, 7}, {     35, 8}, \
     {     19, 7}, {     39, 8}, {     21, 7}, {     43, 8}, \
     {     23, 7}, {     47, 8}, {     25, 7}, {     51, 8}, \
     {     29, 9}, {     15, 8}, {     35, 9}, {     19, 8}, \
     {     43, 9}, {     23, 8}, {     51, 9}, {     27, 8}, \
-    {     55,10}, {     15, 9}, {     31, 8}, {     65, 9}, \
+    {     55,10}, {     15, 9}, {     31, 8}, {     63, 9}, \
     {     43,10}, {     23, 9}, {     55,10}, {     31, 9}, \
     {     67,10}, {     39, 9}, {     83,10}, {     47, 9}, \
     {     95,10}, {     55,11}, {     31,10}, {     87,11}, \
     {     47,10}, {    111,12}, {     31,11}, {     63,10}, \
-    {    135,11}, {     79,10}, {    167,11}, {     95,10}, \
-    {    191,11}, {    111,12}, {     63,11}, {    143,10}, \
-    {    287, 9}, {    575,11}, {    175,12}, {     95,11}, \
-    {    207,13}, {   8192,14}, {  16384,15}, {  32768,16}, \
-    {  65536,17}, { 131072,18}, { 262144,19}, { 524288,20}, \
-    {1048576,21}, {2097152,22}, {4194304,23}, {8388608,24} }
-#define MUL_FFT_TABLE3_SIZE 76
-#define MUL_FFT_THRESHOLD                 7808
-
-#define SQR_FFT_MODF_THRESHOLD             472  /* k = 5 */
-#define SQR_FFT_TABLE3                                      \
-  { {    472, 5}, {     23, 6}, {     12, 5}, {     25, 6}, \
-    {     13, 5}, {     27, 6}, {     29, 7}, {     15, 6}, \
-    {     31, 7}, {     16, 6}, {     33, 7}, {     29, 8}, \
-    {     15, 7}, {     32, 8}, {     17, 7}, {     35, 8}, \
-    {     19, 7}, {     39, 8}, {     21, 7}, {     43, 8}, \
-    {     23, 7}, {     47, 8}, {     29, 9}, {     15, 8}, \
-    {     35, 9}, {     19, 8}, {     43, 9}, {     23, 8}, \
-    {     51, 9}, {     27, 8}, {     55,10}, {     15, 9}, \
-    {     31, 8}, {     65, 9}, {     43,10}, {     23, 9}, \
-    {     55,11}, {     15,10}, {     31, 9}, {     67,10}, \
-    {     39, 9}, {     83,10}, {     47, 9}, {     95,10}, \
-    {     55,11}, {     31,10}, {     79,11}, {     47,10}, \
-    {    103,12}, {     31,11}, {     63,10}, {    135,11}, \
-    {     79,10}, {    159,11}, {    111,12}, {     63,10}, \
-    {    255,11}, {    143,10}, {    287,11}, {    159,12}, \
-    {     95,11}, {    191,10}, {    383, 9}, {    767,10}, \
-    {    399,11}, {    207,13}, {   8192,14}, {  16384,15}, \
+    {    135,11}, {     79,10}, {    167,11}, {    111,12}, \
+    {     63,11}, {    143,10}, {    287, 9}, {    575,11}, \
+    {    159,12}, {     95,11}, {    191,10}, {    383,11}, \
+    {    207,10}, {    415,13}, {   8192,14}, {  16384,15}, \
     {  32768,16}, {  65536,17}, { 131072,18}, { 262144,19}, \
     { 524288,20}, {1048576,21}, {2097152,22}, {4194304,23}, \
     {8388608,24} }
-#define SQR_FFT_TABLE3_SIZE 77
+#define MUL_FFT_TABLE3_SIZE 73
+#define MUL_FFT_THRESHOLD                 7808
+
+#define SQR_FFT_MODF_THRESHOLD             468  /* k = 5 */
+#define SQR_FFT_TABLE3                                      \
+  { {    468, 5}, {     21, 6}, {     11, 5}, {     23, 6}, \
+    {     12, 5}, {     25, 6}, {     29, 7}, {     15, 6}, \
+    {     31, 7}, {     29, 8}, {     15, 7}, {     32, 8}, \
+    {     17, 7}, {     35, 8}, {     19, 7}, {     39, 8}, \
+    {     21, 7}, {     43, 8}, {     25, 7}, {     51, 8}, \
+    {     29, 9}, {     15, 8}, {     35, 9}, {     19, 8}, \
+    {     43, 9}, {     23, 8}, {     51, 9}, {     27, 8}, \
+    {     55,10}, {     15, 9}, {     31, 8}, {     63, 9}, \
+    {     43,10}, {     23, 9}, {     55,11}, {     15,10}, \
+    {     31, 9}, {     67,10}, {     39, 9}, {     83,10}, \
+    {     47, 9}, {     95,10}, {     55,11}, {     31,10}, \
+    {     79,11}, {     47,10}, {    103,12}, {     31,11}, \
+    {     63,10}, {    135,11}, {     79,10}, {    159,11}, \
+    {    111,12}, {     63,11}, {    127,10}, {    255,11}, \
+    {    143, 9}, {    575,11}, {    175,12}, {     95,11}, \
+    {    207,13}, {   8192,14}, {  16384,15}, {  32768,16}, \
+    {  65536,17}, { 131072,18}, { 262144,19}, { 524288,20}, \
+    {1048576,21}, {2097152,22}, {4194304,23}, {8388608,24} }
+#define SQR_FFT_TABLE3_SIZE 72
 #define SQR_FFT_THRESHOLD                 5568
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
