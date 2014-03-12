@@ -1,3 +1,8 @@
+2014-03-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/bd2/gmp-mparam.h: New file.
+	* mpn/x86_64/bd2/gmp-mparam.h: New file.
+
 2014-03-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-pprime_p.c (check_composites): New function.
