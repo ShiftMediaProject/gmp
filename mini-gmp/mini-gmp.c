@@ -3376,6 +3376,9 @@ gmp_millerrabin (const mpz_t n, const mpz_t nm1, mpz_t y,
       mpz_powm_ui (y, y, 2, n);
       if (mpz_cmp (y, nm1) == 0)
 	return 1;
+      /* y == 1 means that the previous y was a non-trivial square root
+	 of 1 (mod n). y == 0 means that n is a power of the base.
+	 In either case, n is not prime. */
       if (mpz_cmp_ui (y, 1) <= 0)
 	return 0;
     }
@@ -3436,7 +3439,8 @@ mpz_probab_prime_p (const mpz_t n, int reps)
       mpz_set_ui (y, (unsigned long) j*j+j+41);
       if (mpz_cmp (y, nm1) >= 0)
 	{
-	  /* Don't try any further bases. */
+	  /* Don't try any further bases. This "early" break does not affect
+	     the result for any reasonable reps value (<=5000 was tested) */
 	  assert (j >= 30);
 	  break;
 	}
