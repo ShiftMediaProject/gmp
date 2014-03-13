@@ -93,7 +93,7 @@ check_small (void)
 
   mpz_init (n);
 
-  for (i = 0; i < 300; i++)
+  for (i = 0; i < 1700; i++)
     {
       mpz_set_si (n, i);
       check_pn (n, isprime (i));
