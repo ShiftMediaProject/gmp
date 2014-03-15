@@ -3363,7 +3363,7 @@ static int
 gmp_millerrabin (const mpz_t n, const mpz_t nm1, mpz_t y,
 		 const mpz_t q, mp_bitcnt_t k)
 {
-  mp_bitcnt_t i;
+  assert (k > 0);
 
   /* Caller must initialize y to the base. */
   mpz_powm (y, y, q, n);
@@ -3371,12 +3371,15 @@ gmp_millerrabin (const mpz_t n, const mpz_t nm1, mpz_t y,
   if (mpz_cmp_ui (y, 1) == 0 || mpz_cmp (y, nm1) == 0)
     return 1;
 
-  for (i = 1; i < k; i++)
+  while (--k > 0)
     {
       mpz_powm_ui (y, y, 2, n);
       if (mpz_cmp (y, nm1) == 0)
 	return 1;
-      if (mpz_cmp_ui (y, 1) == 0)
+      /* y == 1 means that the previous y was a non-trivial square root
+	 of 1 (mod n). y == 0 means that n is a power of the base.
+	 In either case, n is not prime. */
+      if (mpz_cmp_ui (y, 1) <= 0)
 	return 0;
     }
   return 0;
@@ -3427,21 +3430,21 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   mpz_init (y);
 
   /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
-  mpz_abs (nm1, n);
-  mpz_sub_ui (nm1, nm1, 1);
+  nm1->_mp_size = mpz_abs_sub_ui (nm1, n, 1);
   k = mpz_scan1 (nm1, 0);
   mpz_tdiv_q_2exp (q, nm1, k);
   
-  for (j = 0, is_prime = 1; is_prime && j < reps; j++)
+  for (j = 0, is_prime = 1; is_prime & (j < reps); j++)
     {
       mpz_set_ui (y, (unsigned long) j*j+j+41);
       if (mpz_cmp (y, nm1) >= 0)
 	{
-	  /* Don't try any further bases. */
+	  /* Don't try any further bases. This "early" break does not affect
+	     the result for any reasonable reps value (<=5000 was tested) */
 	  assert (j >= 30);
 	  break;
 	}
-      is_prime &= gmp_millerrabin (n, nm1, y, q, k);
+      is_prime = gmp_millerrabin (n, nm1, y, q, k);
     }
   mpz_clear (nm1);
   mpz_clear (q);

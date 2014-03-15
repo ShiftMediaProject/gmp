@@ -215,8 +215,7 @@ int mpz_root (mpz_t, const mpz_t, unsigned long);
 void mpz_fac_ui (mpz_t, unsigned long);
 void mpz_bin_uiui (mpz_t, unsigned long, unsigned long);
 
-int
-mpz_probab_prime_p (const mpz_t, int);
+int mpz_probab_prime_p (const mpz_t, int);
 
 int mpz_tstbit (const mpz_t, mp_bitcnt_t);
 void mpz_setbit (mpz_t, mp_bitcnt_t);
