@@ -458,11 +458,6 @@ AC_SUBST(HAVE_HOST_CPU_FAMILY_powerpc,0)
 
 case $host in
 
-  a29k*-*-*)
-    path="a29k"
-    ;;
-
-
   alpha*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_alpha)
     case $host_cpu in
@@ -678,11 +673,6 @@ case $host in
     ;;
 
 
-  clipper*-*-*)
-    path="clipper"
-    ;;
-
-
   # Fujitsu
   [f30[01]-fujitsu-sysv*])
     cclist="gcc vcc"
@@ -792,11 +782,6 @@ case $host in
     ;;
 
 
-  i960*-*-*)
-    path="i960"
-    ;;
-
-
   IA64_PATTERN)
     abilist="64"
     GMP_INCLUDE_MPN(ia64/ia64-defs.m4)
@@ -901,12 +886,6 @@ case $host in
   m88110*-*-*)
     gcc_cflags="$gcc_cflags -m88110"
     path="m88k/mc88110 m88k"
-    ;;
-
-
-  # National Semiconductor 32k
-  ns32k*-*-*)
-    path="ns32k"
     ;;
 
 
@@ -1225,11 +1204,6 @@ case $host in
       xlc_cflags="-O2 -qarch=pwr -qmaxmem=20000"
       ;;
     esac
-    ;;
-
-
-  pyramid-*-*)
-    path="pyr"
     ;;
 
 
@@ -1842,18 +1816,6 @@ case $host in
 	esac
 	;;
     esac
-    ;;
-
-
-  # FIXME: z8kx won't get through config.sub.  Could make 16 versus 32 bit
-  # limb an ABI option perhaps.
-  z8kx*-*-*)
-    path="z8000x"
-    extra_functions="udiv_w_sdiv"
-    ;;
-  z8k*-*-*)
-    path="z8000"
-    extra_functions="udiv_w_sdiv"
     ;;
 
 

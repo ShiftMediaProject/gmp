@@ -837,16 +837,10 @@ x86 family:
 
 @item
 Other:
-@nisamp{a29k},
 @nisamp{arm},
-@nisamp{clipper},
-@nisamp{i960},
-@nisamp{ns32k},
-@nisamp{pyramid},
 @nisamp{sh},
 @nisamp{sh2},
 @nisamp{vax},
-@nisamp{z8k}
 @end itemize
 
 CPUs not listed will use generic C code.

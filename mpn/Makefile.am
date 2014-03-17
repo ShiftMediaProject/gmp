@@ -39,9 +39,9 @@ nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
-TARG_DIST = a29k alpha arm arm64 clipper cray generic i960 ia64 lisp m68k m88k \
-  minithres mips32 mips64 ns32k pa32 pa64 power powerpc32 powerpc64 pyr \
-  s390_32 s390_64 sh sparc32 sparc64 thumb vax x86 x86_64 z8000
+TARG_DIST = alpha arm arm64 cray generic ia64 lisp m68k m88k \
+  minithres mips32 mips64 pa32 pa64 power powerpc32 powerpc64 \
+  s390_32 s390_64 sh sparc32 sparc64 thumb vax x86 x86_64
 
 EXTRA_DIST = asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
 
