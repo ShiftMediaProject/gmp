@@ -135,7 +135,7 @@ check_composites (void)
 	mpz_set_ui (b, 2);
 
       mpz_mul (n, a, b);
-      
+
       check_pn (n, 0);
     }
   mpz_clear (a);
@@ -150,7 +150,7 @@ check_primes (void)
   static const char * const primes[] = {
     "2", "17", "65537",
     /* diffie-hellman-group1-sha1, also "Well known group 2" in RFC
-       2412, 2^1024 - 2^960 - 1 + 2^64 * { [2^894 pi] + 129093 } */  
+       2412, 2^1024 - 2^960 - 1 + 2^64 * { [2^894 pi] + 129093 } */
     "0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1"
     "29024E088A67CC74020BBEA63B139B22514A08798E3404DD"
     "EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245"
@@ -170,7 +170,7 @@ check_primes (void)
       mpz_set_str_or_abort (n, primes[i], 0);
       check_one (n, 1);
     }
-  mpz_clear (n);  
+  mpz_clear (n);
 }
 
 void
