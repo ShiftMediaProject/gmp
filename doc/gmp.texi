@@ -450,7 +450,7 @@ the GNU Lesser General Public License version 3 (see
 the additional option of applying later versions of these licenses. (The
 reason for this dual licensing is to make it possible to use the library with
 programs which are licensed under GPL version 2, but which for historical or
-other reasons do not allow use under later versions of the GPL). 
+other reasons do not allow use under later versions of the GPL).
 
 Programs which are not part of the library itself, such as demonstration
 programs and the GMP testsuite, are licensed under the terms of the GNU
@@ -4579,7 +4579,7 @@ a truncation to the destination precision, but of course the work done is only
 what's needed to determine a result under that definition.
 
 The precision selected by the user for a variable is a minimum value, GMP may
-increase it a little to facilitate efficient calculation.  Currently this means
+increase it to facilitate efficient calculation.  Currently this means
 rounding up to a whole limb, and then sometimes having a further partial limb,
 depending on the high limb of the mantissa.
 
