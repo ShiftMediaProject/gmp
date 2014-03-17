@@ -96,8 +96,8 @@ mpz_mpn_sqrtrem (mpz_t s, mpz_t r, const mpz_t u)
 	fprintf (stderr, "mpn_sqrtrem buffer overrun on rp.\n");
 	abort ();
       }
-  } 
-  
+  }
+
   mpz_limbs_finish (s, (un + 1) / 2);
 }
 
