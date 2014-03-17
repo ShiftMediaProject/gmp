@@ -328,7 +328,7 @@ main (int argc, char **argv)
 	  /* Normalised case, mpn_sec_div_qr */
 	  itch = mpn_sec_div_qr_itch (nn, dn);
 	  scratch[itch] = ran;
-	  
+
 	  MPN_COPY (rp, np, nn);
 	  if (nn >= dn)
 	    MPN_COPY (qp, junkp, nn - dn + 1);
