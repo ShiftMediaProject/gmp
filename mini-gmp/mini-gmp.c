@@ -3409,7 +3409,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
 
   /* Above test excludes n == 0 */
   assert (n->_mp_size != 0);
-  
+
   if (mpz_cmpabs_ui (n, 64) < 0)
     return (GMP_PRIME_MASK >> (n->_mp_d[0] >> 1)) & 2;
 
@@ -3419,7 +3419,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   /* All prime factors are >= 31. */
   if (mpz_cmpabs_ui (n, 31*31) < 0)
     return 2;
-  
+
   /* Use Miller-Rabin, with a deterministic sequence of bases, a[j] =
      j^2 + j + 41 using Euler's polynomial. We potentially stop early,
      if a[j] >= n - 1. Since n >= 31*31, this can happen only if reps >
@@ -3433,7 +3433,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   nm1->_mp_size = mpz_abs_sub_ui (nm1, n, 1);
   k = mpz_scan1 (nm1, 0);
   mpz_tdiv_q_2exp (q, nm1, k);
-  
+
   for (j = 0, is_prime = 1; is_prime & (j < reps); j++)
     {
       mpz_set_ui (y, (unsigned long) j*j+j+41);
@@ -3449,7 +3449,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   mpz_clear (nm1);
   mpz_clear (q);
   mpz_clear (y);
-    
+
   return is_prime;
 }
 
