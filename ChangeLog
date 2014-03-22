@@ -1,3 +1,10 @@
+2014-03-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 6.0.0 released.
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+	* gmp-h.in: Bump version.
+
 2014-03-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.ac: Remove clipper, i960, ns32k, pyr, a29k, z8000.
@@ -10,7 +17,7 @@
 	* mpn/Makefile.am (TARG_DIST): Purge removed directories.
 	* doc/gmp.texi: Remove special mentions of removed architectures.
 
-2014-02-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2014-03-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (mpz_probab_prime_p): Micro-optimisation.
 
