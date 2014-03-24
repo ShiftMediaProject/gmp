@@ -26,7 +26,8 @@ Changes between GMP version 5.1.* and 5.2.0
     new assembly.
 
   * Speedup for Intel Sandy Bridge, Ivy Bridge, Haswell, thanks to rewritten
-    and vastly expanded assembly support.
+    and vastly expanded assembly support.  Speedup also for the older Core 2
+    and Nehalem.
 
   * Faster mixed arithmetic between mpq_class and double.
 
@@ -78,7 +79,7 @@ Changes between GMP version 5.1.* and 5.2.0
     targeting any modern AMD processor.  The reason is bugs in the old gcc
     bundled with FreeBSD.  (Workaround: install a less obsolete gcc from
     /usr/ports and tell GMP to use it, or override the -march=amdfam10
-    configure command line argument.)
+    GMP configure command line argument.)
 
 
 Changes between GMP version 5.1.2 and 5.1.3
