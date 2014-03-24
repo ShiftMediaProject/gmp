@@ -197,12 +197,14 @@ see https://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD                      61
 #define HGCD_APPR_THRESHOLD                 60
 #define HGCD_REDUCE_THRESHOLD             3810
-/* Parameters beyond this point are not properly measured */
-#define GCD_DC_THRESHOLD                   278
-#define GCDEXT_DC_THRESHOLD                298
+#define GCD_DC_THRESHOLD                   263
+#define GCDEXT_DC_THRESHOLD                278
 #define JACOBI_BASE_METHOD                   4
 
 #define GET_STR_DC_THRESHOLD                11
-#define GET_STR_PRECOMPUTE_THRESHOLD        23
-#define SET_STR_DC_THRESHOLD               438
-#define SET_STR_PRECOMPUTE_THRESHOLD      1206
+#define GET_STR_PRECOMPUTE_THRESHOLD        21
+#define SET_STR_DC_THRESHOLD               527
+#define SET_STR_PRECOMPUTE_THRESHOLD      1178
+
+#define FAC_DSC_THRESHOLD                  187
+#define FAC_ODD_THRESHOLD                   34
