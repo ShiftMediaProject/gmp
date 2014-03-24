@@ -1,6 +1,8 @@
-2014-03-22  Torbjorn Granlund  <tege@gmplib.org>
+2014-03-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 6.0.0 released.
+
+2014-03-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
 	* gmp-h.in: Bump version.
