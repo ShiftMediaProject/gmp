@@ -2,6 +2,8 @@
 
 	* Version 6.0.0 released.
 
+	* mpn: Update countless gmp-mparam.h files.
+
 2014-03-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
