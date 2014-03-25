@@ -1522,7 +1522,7 @@ GNU m4 under the name @samp{gm4}, which GMP cannot guess.
 
 @item FreeBSD 7.x, 8.x, 9.x
 @cindex FreeBSD
-GMP releases starting with 5.2 do not support @samp{ABI=32} on FreeBSD/amd64
+GMP releases starting with 6.0 do not support @samp{ABI=32} on FreeBSD/amd64
 prior to release 10.0 of the system.  The cause is a broken @code{limits.h},
 which GMP no longer works around.
 
@@ -1977,14 +1977,14 @@ functions in this class.  (@pxref{Integer Functions})
 
 @item
 Functions for rational number arithmetic, with names beginning with
-@code{mpq_}.  The associated type is @code{mpq_t}.  There are about 40
+@code{mpq_}.  The associated type is @code{mpq_t}.  There are about 35
 functions in this class, but the integer functions can be used for arithmetic
 on the numerator and denominator separately.  (@pxref{Rational Number
 Functions})
 
 @item
 Functions for floating-point arithmetic, with names beginning with
-@code{mpf_}.  The associated type is @code{mpf_t}.  There are about 60
+@code{mpf_}.  The associated type is @code{mpf_t}.  There are about 70
 functions is this class.  (@pxref{Floating-point Functions})
 
 @item
@@ -1992,7 +1992,7 @@ Fast low-level functions that operate on natural numbers.  These are used by
 the functions in the preceding groups, and you can also call them directly
 from very time-critical user programs.  These functions' names begin with
 @code{mpn_}.  The associated type is array of @code{mp_limb_t}.  There are
-about 30 (hard-to-use) functions in this class.  (@pxref{Low-level Functions})
+about 60 (hard-to-use) functions in this class.  (@pxref{Low-level Functions})
 
 @item
 Miscellaneous functions.  Functions for setting up custom allocation and
