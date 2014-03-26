@@ -1,3 +1,8 @@
+2014-03-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/gcd_1.asm: Provide default for
+	BMOD_1_TO_MOD_1_THRESHOLD.
+
 2014-03-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 6.0.0 released.
