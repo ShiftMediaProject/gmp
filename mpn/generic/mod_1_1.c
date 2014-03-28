@@ -129,7 +129,7 @@ see https://www.gnu.org/licenses/.  */
 	     "%2" ((UDItype)(a0)), "r" ((UDItype)(b0)) __CLOBBER_CC)
 #endif
 
-#if defined (__arm__) && W_TYPE_SIZE == 32
+#if defined (__arm__) && !defined (__thumb__) && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, sh, sl, ah, al, bh, bl)				\
   __asm__ (  "adds	%2, %5, %6\n\t"					\
 	     "adcs	%1, %3, %4\n\t"					\
