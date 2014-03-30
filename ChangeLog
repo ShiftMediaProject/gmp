@@ -1,3 +1,7 @@
+2014-03-30  Marc Glisse  <marc.glisse@inria.fr>
+
+	* README: Remove mention to Berkeley MP compatibility.
+
 2014-03-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/gcd_1.asm: Provide default for
