@@ -3817,7 +3817,7 @@ cat >conftest.c <<EOF
 int
 main ()
 {
-  exit(0);
+  return 0;
 }
 EOF
 gmp_compile="$1 conftest.c"
@@ -3891,7 +3891,7 @@ AC_CACHE_CHECK([for build system executable suffix],
 int
 main ()
 {
-  exit (0);
+  return 0;
 }
 EOF
 for i in .exe ,ff8 ""; do
@@ -3927,7 +3927,7 @@ AC_CACHE_CHECK([whether build system compiler is ANSI],
 int
 main (int argc, char **argv)
 {
-  exit(0);
+  return 0;
 }
 EOF
 gmp_compile="$CC_FOR_BUILD conftest.c"
@@ -3961,7 +3961,7 @@ AC_CACHE_CHECK([for build system compiler math library],
 int
 main ()
 {
-  exit(0);
+  return 0;
 }
 double d;
 double

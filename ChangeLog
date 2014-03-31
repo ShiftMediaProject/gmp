@@ -2,6 +2,9 @@
 
 	* mpn/arm/dive_1.asm, mpn/arm/invert_limb.asm: Use RODATA.
 	* acinclude.m4 ([long long reliability tests]): Declare functions.
+	(GMP_PROG_CC_FOR_BUILD_WORKS, GMP_PROG_EXEEXT_FOR_BUILD,
+	GMP_C_FOR_BUILD_ANSI, GMP_CHECK_LIBM_FOR_BUILD): Replace exit(0) with
+	return 0, no declaration needed.
 
 2014-03-30  Marc Glisse  <marc.glisse@inria.fr>
 
