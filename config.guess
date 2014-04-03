@@ -755,9 +755,9 @@ main ()
   char dummy_string[12];
   long fms;
   int family, model, stepping;
-  const char *modelstr;
+  const char *modelstr, *suffix;
   int cpu_64bit = 0;
-  int cpuid_64bit;
+  int cpuid_64bit, cpuid_avx, cpuid_osxsave;
 
   CPUID (vendor_string, 0);
   vendor_string[12] = 0;
@@ -767,6 +767,10 @@ main ()
   family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
   model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
   stepping = fms & 0xf;
+
+  cpuid_avx     = (dummy_string[11] >> 4) & 1;
+  cpuid_osxsave = (dummy_string[11] >> 3) & 1;
+  suffix = cpuid_avx > cpuid_osxsave ? "noavx" : "";
 
   modelstr = "$guess_cpu";
 
@@ -905,7 +909,7 @@ main ()
   if (cpuid_64bit && ! cpu_64bit)
     modelstr = "x86_64";
 
-  printf ("%s", modelstr);
+  printf ("%s%s", modelstr, suffix);
   return 0;
 }
 EOF
