@@ -1,6 +1,7 @@
 2014-04-03  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/arm64/mul_1.asm, mpn/arm64/gcd_1.asm: Use official b.cond syntax.
+	* mpn/arm64/invert_limb.asm: Prefix immediates with #.
 
 2014-04-03  Torbjorn Granlund  <tege@gmplib.org>
 

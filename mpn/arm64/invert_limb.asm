@@ -51,20 +51,20 @@ PROLOGUE(mpn_invert_limb)
 	umull	x3, w3, w3
 	mul	x3, x3, x4
 	sub	x2, x2, #1
-	sub	x2, x2, x3, lsr 40
+	sub	x2, x2, x3, lsr #40
 	lsl	x3, x2, 60
 	mul	x1, x2, x2
 	msub	x1, x1, x4, x3
 	lsl	x2, x2, 13
-	add	x1, x2, x1, lsr 47
+	add	x1, x2, x1, lsr #47
 	and	x2, x0, 1
 	neg	x3, x2
-	and	x3, x3, x1, lsr 1
-	add	x2, x2, x0, lsr 1
+	and	x3, x3, x1, lsr #1
+	add	x2, x2, x0, lsr #1
 	msub	x2, x1, x2, x3
 	umulh	x2, x2, x1
 	lsl	x1, x1, 31
-	add	x1, x1, x2, lsr 1
+	add	x1, x1, x2, lsr #1
 	mul	x3, x1, x0
 	umulh	x2, x1, x0
 	adds	x4, x3, x0
