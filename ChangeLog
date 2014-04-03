@@ -1,3 +1,18 @@
+2014-04-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Append "noavx" for CPUs which have AVX but where the
+	kernel does not support it.
+	* configure.ac: Accept "noavx" cpu name suffixes.  Conditionally pass
+	-mno-avx.
+
+2014-04-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/k8/redc_1.asm: Workaround for Darwin assembler quirk.
+
+2014-03-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c: Conditionalise ARM asm on !__thumb__.
+
 2014-03-31  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/arm/dive_1.asm, mpn/arm/invert_limb.asm: Use RODATA.
