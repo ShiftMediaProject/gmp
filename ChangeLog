@@ -1,3 +1,7 @@
+2014-04-04  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (i386): Add comment about "cc" clobber.
+
 2014-04-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (X86_64_PATTERN): Generalise patterns to allow "noavx"

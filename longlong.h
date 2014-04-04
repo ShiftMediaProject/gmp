@@ -867,6 +867,8 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 #endif
 
+/* On x86 and x86_64, every asm implicitly clobbers "flags" and "fpsr",
+   so we don't need __CLOBBER_CC.  */
 #if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addl %5,%k1\n\tadcl %3,%k0"					\
