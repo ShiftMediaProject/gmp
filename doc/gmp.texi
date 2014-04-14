@@ -3619,7 +3619,9 @@ Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @cindex Inverse modulo functions
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 @var{rop}.  If the inverse exists, the return value is non-zero and @var{rop}
-will satisfy @math{0 <= @var{rop} < @GMPabs{@var{op2}}}.  If an inverse doesn't
+will satisfy @math{0 @le{} @var{rop} < @GMPabs{@var{op2}}} (with @math{@var{rop}
+= 0} possible only when @math{@GMPabs{@var{op2}} = 1}, i.e., in the
+somewhat degenerate zero ring).  If an inverse doesn't
 exist the return value is zero and @var{rop} is undefined.  The behaviour of
 this function is undefined when @var{op2} is zero.
 @end deftypefun

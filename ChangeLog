@@ -1,3 +1,7 @@
+2014-04-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (mpz_invert): Clarify behavior in the zero ring.
+
 2014-04-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (mpz_invert): rop possibly is 0 (iif |op2| = 1).
