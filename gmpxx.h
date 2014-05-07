@@ -1232,9 +1232,9 @@ namespace std {
   };
 
   template <class T, class U>
-  struct common_type <__gmp_expr<T, U>, __gmp_expr<T, U> >
+  struct common_type <__gmp_expr<T, U> >
   {
-    typedef __gmp_expr<T, U> type;
+    typedef __gmp_expr<T, T> type;
   };
 
 #define __GMPXX_DECLARE_COMMON_TYPE(typ)	\

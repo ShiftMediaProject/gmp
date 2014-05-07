@@ -1,3 +1,9 @@
+2014-05-08  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (std::common_type): Remove partial specialization for two
+	identical expressions. New partial specialization for a single type.
+	* tests/cxx/t-cxx11.cc: Test it.
+
 2014-04-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_invert): Clarify behavior in the zero ring.
