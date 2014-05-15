@@ -3067,9 +3067,7 @@ void
 mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
 {
   mpz_t b;
-  mpz_init_set_ui (b, blimb);
-  mpz_pow_ui (r, b, e);
-  mpz_clear (b);
+  mpz_pow_ui (r, mpz_roinit_n (b, &blimb, 1), e);
 }
 
 void
@@ -3181,9 +3179,7 @@ void
 mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
-  mpz_init_set_ui (e, elimb);
-  mpz_powm (r, b, e, m);
-  mpz_clear (e);
+  mpz_powm (r, b, mpz_roinit_n (e, &elimb, 1), m);
 }
 
 /* x=trunc(y^(1/z)), r=y-x^z */
