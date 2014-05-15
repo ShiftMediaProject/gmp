@@ -346,7 +346,7 @@ mpn_copyi (mp_ptr d, mp_srcptr s, mp_size_t n)
 void
 mpn_copyd (mp_ptr d, mp_srcptr s, mp_size_t n)
 {
-  while (n-- > 0)
+  while (--n >= 0)
     d[n] = s[n];
 }
 
@@ -876,7 +876,7 @@ mpn_div_qr_1_preinv (mp_ptr qp, mp_srcptr np, mp_size_t nn,
 
   d = inv->d1;
   di = inv->di;
-  while (nn-- > 0)
+  while (--nn >= 0)
     {
       mp_limb_t q;
 
@@ -3148,7 +3148,7 @@ mpz_powm (mpz_t r, const mpz_t b, const mpz_t e, const mpz_t m)
     }
   mpz_init_set_ui (tr, 1);
 
-  while (en-- > 0)
+  while (--en >= 0)
     {
       mp_limb_t w = e->_mp_d[en];
       mp_limb_t bit;
@@ -3504,7 +3504,7 @@ mpz_tstbit (const mpz_t d, mp_bitcnt_t bit_index)
 	 must be complemented. */
       if (shift > 0 && (w << (GMP_LIMB_BITS - shift)) > 0)
 	return bit ^ 1;
-      while (limb_index-- > 0)
+      while (--limb_index >= 0)
 	if (d->_mp_d[limb_index] > 0)
 	  return bit ^ 1;
     }
