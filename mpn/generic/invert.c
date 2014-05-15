@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright (C) 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright (C) 2007, 2009, 2010, 2012, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -60,8 +60,11 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	mp_ptr xp;
 
 	xp = scratch;				/* 2 * n limbs */
-	for (i = n - 1; i >= 0; i--)
+	/* n > 1 here */
+	i = n - 1;
+	do
 	  xp[i] = GMP_NUMB_MAX;
+	while (--i >= 0);
 	mpn_com (xp + n, dp, n);
 	if (n == 2) {
 	  mpn_divrem_2 (ip, 0, xp, 4, dp);
