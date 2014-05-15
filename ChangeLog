@@ -2,6 +2,9 @@
 
 	* mini-gmp/mini-gmp.c: Micro-optimisations.
 
+	* gen-fib.c: Use mpz_setbit.
+	* gen-psqr.c: Skip even numbers when looking for primes.
+
 2014-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): Remove partial specialization for two
