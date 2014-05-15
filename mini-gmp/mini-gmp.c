@@ -578,17 +578,16 @@ mpn_mul (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
      way. */
 
   rp[un] = mpn_mul_1 (rp, up, un, vp[0]);
-  rp += 1, vp += 1, vn -= 1;
 
   /* Now accumulate the product of up[] and the next higher limb from
      vp[]. */
 
-  while (vn >= 1)
+  while (--vn >= 1)
     {
+      rp += 1, vp += 1;
       rp[un] = mpn_addmul_1 (rp, up, un, vp[0]);
-      rp += 1, vp += 1, vn -= 1;
     }
-  return rp[un - 1];
+  return rp[un];
 }
 
 void
