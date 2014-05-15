@@ -40,8 +40,8 @@ generate (int numb_bits)
   mpz_t  limit, l;
   int    falloc, i;
 
-  mpz_init_set_ui (limit, 1L);
-  mpz_mul_2exp (limit, limit, numb_bits);
+  mpz_init2 (limit, numb_bits);
+  mpz_setbit (limit, numb_bits);
 
   /* fib(2n) > 2^n, so use 2n as a limit for the table size */
   falloc = 2 * numb_bits;

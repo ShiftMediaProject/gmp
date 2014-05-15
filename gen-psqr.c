@@ -174,8 +174,7 @@ f_cmp_fraction (const void *parg, const void *qarg)
 int
 mul_2exp_mod (int n, int p, int m)
 {
-  int  i;
-  for (i = 0; i < p; i++)
+  while (--p >= 0)
     n = (2 * n) % m;
   return n;
 }
@@ -289,7 +288,7 @@ generate_mod (int limb_bits, int nail_bits)
     mpz_init (q);
     mpz_init (r);
 
-    for (i = 3; i <= max_divisor; i++)
+    for (i = 3; i <= max_divisor; i+=2)
       {
         if (! isprime (i))
           continue;
@@ -341,7 +340,7 @@ generate_mod (int limb_bits, int nail_bits)
 
       /* one copy of each small prime */
       mpz_set_ui (pp, 1L);
-      for (i = 3; i <= max_divisor; i++)
+      for (i = 3; i <= max_divisor; i+=2)
         {
           if (! isprime (i))
             continue;
