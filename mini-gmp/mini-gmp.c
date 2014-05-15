@@ -1474,14 +1474,12 @@ mpz_fits_slong_p (const mpz_t u)
 {
   mp_size_t us = u->_mp_size;
 
-  if (us == 0)
-    return 1;
-  else if (us == 1)
+  if (us == 1)
     return u->_mp_d[0] < GMP_LIMB_HIGHBIT;
   else if (us == -1)
     return u->_mp_d[0] <= GMP_LIMB_HIGHBIT;
   else
-    return 0;
+    return (us == 0);
 }
 
 int
@@ -1795,18 +1793,14 @@ mpz_cmpabs (const mpz_t u, const mpz_t v)
 void
 mpz_abs (mpz_t r, const mpz_t u)
 {
-  if (r != u)
-    mpz_set (r, u);
-
+  mpz_set (r, u);
   r->_mp_size = GMP_ABS (r->_mp_size);
 }
 
 void
 mpz_neg (mpz_t r, const mpz_t u)
 {
-  if (r != u)
-    mpz_set (r, u);
-
+  mpz_set (r, u);
   r->_mp_size = -r->_mp_size;
 }
 
