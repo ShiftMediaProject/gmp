@@ -1,3 +1,7 @@
+2014-05-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c: Micro-optimisations.
+
 2014-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (std::common_type): Remove partial specialization for two
