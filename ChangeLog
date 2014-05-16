@@ -6,6 +6,8 @@
 	* gen-psqr.c: Skip even numbers when looking for primes.
 
 	* mpn/generic/invert.c: Avoid a branch.
+	* mpn/generic/toom2_sqr.c: Avoid a few branches in the odd case.
+	* mpn/generic/toom22_mul.c: Likewise.
 
 2014-05-08  Marc Glisse  <marc.glisse@inria.fr>
 
