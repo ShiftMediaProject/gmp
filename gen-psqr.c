@@ -1,6 +1,6 @@
 /* Generate perfect square testing data.
 
-Copyright 2002-2004, 2012 Free Software Foundation, Inc.
+Copyright 2002-2004, 2012, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
