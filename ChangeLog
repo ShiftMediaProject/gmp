@@ -1,3 +1,10 @@
+2014-05-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gen-fac.c: +1 in the init2 argument before setbit.
+	* gen-fib.c: Likewise. (Thanks Niels)
+	* mini-gmp/mini-gmp.c: Likewise.
+	* rand/randmts.c: Likewise.
+
 2014-05-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c: Micro-optimisations.
