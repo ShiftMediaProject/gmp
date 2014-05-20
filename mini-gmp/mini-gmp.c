@@ -3207,7 +3207,7 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   {
     mp_bitcnt_t tb;
     tb = mpz_sizeinbase (y, 2) / z + 1;
-    mpz_init2 (t, tb);
+    mpz_init2 (t, tb + 1);
     mpz_setbit (t, tb);
   }
 
