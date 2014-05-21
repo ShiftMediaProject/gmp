@@ -49,12 +49,8 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 
   if (n == 1)
     invert_limb (*ip, *dp);
-  else {
-    TMP_DECL;
-
-    TMP_MARK;
-    if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD))
-      {
+  else if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD))
+    {
 	/* Maximum scratch needed by this branch: 2*n */
 	mp_size_t i;
 	mp_ptr xp;
@@ -74,8 +70,8 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	  /* FIXME: should we use dcpi1_div_q, for big sizes? */
 	  mpn_sbpi1_div_q (ip, xp, 2 * n, dp, n, inv.inv32);
 	}
-      }
-    else { /* Use approximated inverse; correct the result if needed. */
+    }
+  else { /* Use approximated inverse; correct the result if needed. */
       mp_limb_t e; /* The possible error in the approximate inverse */
 
       ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) );
@@ -88,7 +84,5 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	if (! mpn_add (scratch, scratch, 2*n, dp, n))
 	  MPN_INCR_U (ip, n, 1); /* The value was wrong, correct it.  */
       }
-    }
-    TMP_FREE;
   }
 }

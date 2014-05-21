@@ -106,8 +106,11 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
     mp_size_t i;
     xp = tp + n + 2;				/* 2 * n limbs */
 
-    for (i = n - 1; i >= 0; i--)
+    /* n > 1 here */
+    i = n - 1;
+    do
       xp[i] = GMP_NUMB_MAX;
+    while (--i >= 0);
     mpn_com (xp + n, dp, n);
 
     /* Now xp contains B^2n - {dp,n}*B^n - 1 */
