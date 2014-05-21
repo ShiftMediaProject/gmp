@@ -119,12 +119,16 @@ check_data (void)
 
   } data[] = {
     { { 123, 2, { 8, 9 } },             { 123, 1, { 9 } }, { 122, 1, { 8 } } },
+    { { 1, 1, { 9 } },                  { 1, 1, { 8 } },   { 1, 1, { 1 } } },
+    { { 1, 1, { 9 } },                 { 1, -1, { 6 } },   { 1, 1, { 15 } } },
+    { { 1, 2, { 8, 9 } },               { 1, 1, { 9 } },   { 0, 1, { 8 } } },
+    { { 1, 2, { 8, 9 } },               { 1, 1, { 8 } },   { 1, 2, { 8, 1 } } },
 
     /* f - f == 0, various sizes.
        These exercise a past problem (gmp 4.1.3 and earlier) where the
        result exponent was not zeroed on a zero result like this.  */
     { { 0, 0 }, { 0, 0 }, { 0, 0 } },
-    { { 99, 1, { 1 } },             { 99, 1, { 1 } },             { 0, 0 } },
+    { { 1, 1, { 123 } },            { 1, 1, { 123 } },            { 0, 0 } },
     { { 99, 2, { 123, 456 } },      { 99, 2, { 123, 456 } },      { 0, 0 } },
     { { 99, 3, { 123, 456, 789 } }, { 99, 3, { 123, 456, 789 } }, { 0, 0 } },
 
@@ -142,13 +146,14 @@ check_data (void)
 
   mpf_t  x, y, got, want;
   int  i, swap;
+  unsigned long int ui;
 
   mp_trace_base = 16;
   mpf_init (got);
 
   for (i = 0; i < numberof (data); i++)
     {
-      for (swap = 0; swap <= 1; swap++)
+      for (swap = 0; swap <= 7; swap++)
         {
           PTR(x) = (mp_ptr) data[i].x.d;
           SIZ(x) = data[i].x.size;
@@ -168,10 +173,22 @@ check_data (void)
           PREC(want) = numberof (data[i].want.d);
           MPF_CHECK_FORMAT (want);
 
-          if (swap)
+          if (swap & 4)
+            {
+              mpf_swap (want, y);
+            }
+
+          if (swap & 1)
             {
               mpf_swap (x, y);
               SIZ(want) = - SIZ(want);
+            }
+
+          if (swap & 2)
+            {
+              SIZ(want) = - SIZ(want);
+              SIZ(x) = - SIZ(x);
+              SIZ(y) = - SIZ(y);
             }
 
           mpf_sub (got, x, y);
@@ -186,6 +203,41 @@ check_data (void)
               mpf_trace ("want", want);
               abort ();
             }
+
+	  ui = mpf_get_ui (x);
+	  if (mpf_cmp_ui (x, ui) == 0)
+	    {
+	      printf("ui_\n");
+	      mpf_ui_sub (got, ui, y);
+
+	      if (mpf_cmp (got, want) != 0)
+		{
+		  printf ("check_data() wrong ui_sub result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		  mpf_trace ("x   ", x);
+		  mpf_trace ("y   ", y);
+		  mpf_trace ("got ", got);
+		  mpf_trace ("want", want);
+		  abort ();
+		}
+	    }
+
+	  ui = mpf_get_ui (y);
+	  if (mpf_cmp_ui (y, ui) == 0)
+	    {
+	      printf("_ui\n");
+	      mpf_sub_ui (got, x, ui);
+
+	      if (mpf_cmp (got, want) != 0)
+		{
+		  printf ("check_data() wrong sub_ui result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		  mpf_trace ("x   ", x);
+		  mpf_trace ("y   ", y);
+		  mpf_trace ("got ", got);
+		  mpf_trace ("want", want);
+		  abort ();
+		}
+	    }
+
         }
     }
 
