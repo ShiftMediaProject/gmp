@@ -155,7 +155,7 @@ mpf_ui_sub (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   if (ediff >= prec)
     {
       /* V completely cancelled.  */
-      if (tp != up)
+      if (rp != up)
 	MPN_COPY (rp, up, usize);
       rsize = usize;
     }
