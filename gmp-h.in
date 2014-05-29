@@ -56,6 +56,7 @@ see https://www.gnu.org/licenses/.  */
 #define __GNU_MP__ 5
 
 #include <stddef.h>    /* for size_t */
+#include <limits.h>
 
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
@@ -444,12 +445,6 @@ typedef __mpq_struct *mpq_ptr;
 
 #define __GMP_ABS(x)   ((x) >= 0 ? (x) : -(x))
 #define __GMP_MAX(h,i) ((h) > (i) ? (h) : (i))
-
-/* __GMP_USHRT_MAX is not "~ (unsigned short) 0" because short is promoted
-   to int by "~". It still needs to have the promoted type.  */
-#define __GMP_UINT_MAX   (~ (unsigned) 0)
-#define __GMP_ULONG_MAX  (~ (unsigned long) 0)
-#define __GMP_USHRT_MAX  (0 + (unsigned short) ~0)
 
 
 /* __builtin_expect is in gcc 3.0, and not in 2.95. */
@@ -1727,7 +1722,7 @@ __GMP_EXTERN_INLINE
 int
 mpz_fits_uint_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
-  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_UINT_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, UINT_MAX);
 }
 #endif
 
@@ -1738,7 +1733,7 @@ __GMP_EXTERN_INLINE
 int
 mpz_fits_ulong_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
-  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_ULONG_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, ULONG_MAX);
 }
 #endif
 
@@ -1749,7 +1744,7 @@ __GMP_EXTERN_INLINE
 int
 mpz_fits_ushort_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
-  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_USHRT_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, USHRT_MAX);
 }
 #endif
 
@@ -1766,7 +1761,7 @@ mpz_get_ui (mpz_srcptr __gmp_z) __GMP_NOTHROW
   /* This is a "#if" rather than a plain "if" so as to avoid gcc warnings
      about "<< GMP_NUMB_BITS" exceeding the type size, and to avoid Borland
      C++ 6.0 warnings about condition always true for something like
-     "__GMP_ULONG_MAX < GMP_NUMB_MASK".  */
+     "ULONG_MAX < GMP_NUMB_MASK".  */
 #if GMP_NAIL_BITS == 0 || defined (_LONG_LONG_LIMB)
   /* limb==long and no nails, or limb==longlong, one limb is enough */
   return (__gmp_n != 0 ? __gmp_l : 0);
@@ -1834,7 +1829,7 @@ mpz_popcount (mpz_srcptr __gmp_u) __GMP_NOTHROW
   mp_bitcnt_t    __gmp_result;
 
   __gmp_usize = __gmp_u->_mp_size;
-  __gmp_result = (__gmp_usize < 0 ? __GMP_ULONG_MAX : 0);
+  __gmp_result = (__gmp_usize < 0 ? ULONG_MAX : 0);
   if (__GMP_LIKELY (__gmp_usize > 0))
     __gmp_result =  mpn_popcount (__gmp_u->_mp_d, __gmp_usize);
   return __gmp_result;

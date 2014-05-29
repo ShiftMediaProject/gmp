@@ -547,24 +547,6 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
   ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
   ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
 
-/* The "short" defines are a bit different because shorts are promoted to
-   ints by ~ or >> etc.
-
-   #ifndef's are used since on some systems (HP?) header files other than
-   limits.h setup these defines.  We could forcibly #undef in that case, but
-   there seems no need to worry about that.
-
-   Now that we include <limits.h> we should be able to remove all this.  */
-
-#ifndef ULONG_MAX
-#define ULONG_MAX   __GMP_ULONG_MAX
-#endif
-#ifndef UINT_MAX
-#define UINT_MAX    __GMP_UINT_MAX
-#endif
-#ifndef USHRT_MAX
-#define USHRT_MAX   __GMP_USHRT_MAX
-#endif
 #define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
 
 /* Must cast ULONG_MAX etc to unsigned long etc, since they might not be
@@ -574,27 +556,6 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 #define UINT_HIGHBIT       (UINT_MAX ^ ((unsigned) UINT_MAX >> 1))
 #define USHRT_HIGHBIT      (USHRT_MAX ^ ((unsigned short) USHRT_MAX >> 1))
 #define GMP_LIMB_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
-
-#ifndef LONG_MIN
-#define LONG_MIN           ((long) ULONG_HIGHBIT)
-#endif
-#ifndef LONG_MAX
-#define LONG_MAX           (-(LONG_MIN+1))
-#endif
-
-#ifndef INT_MIN
-#define INT_MIN            ((int) UINT_HIGHBIT)
-#endif
-#ifndef INT_MAX
-#define INT_MAX            (-(INT_MIN+1))
-#endif
-
-#ifndef SHRT_MIN
-#define SHRT_MIN           ((int) (short) USHRT_HIGHBIT)
-#endif
-#ifndef SHRT_MAX
-#define SHRT_MAX           (-(SHRT_MIN+1))
-#endif
 
 #if __GMP_MP_SIZE_T_INT
 #define MP_SIZE_T_MAX      INT_MAX

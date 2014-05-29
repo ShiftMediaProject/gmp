@@ -1,3 +1,12 @@
+2014-05-29  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-h.in: Include <limits.h>.
+	(__GMP_UINT_MAX, __GMP_ULONG_MAX, __GMP_USHRT_MAX): Remove.
+	* gmp-impl.h (ULONG_MAX, UINT_MAX, USHRT_MAX, LONG_MAX, INT_MAX,
+	SHRT_MAX): Remove unnecessary redefinition.
+	* tests/t-gmpmax.c: Remove file.
+	* tests/Makefile.am: Remove t-gmpmax.
+
 2014-05-22 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpf/t-sub.c (check_data): Test also ui_sub and sub_ui.

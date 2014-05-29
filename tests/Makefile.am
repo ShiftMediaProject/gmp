@@ -34,6 +34,6 @@ libtests_la_SOURCES = tests.h \
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
 libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-hightomask \
+check_PROGRAMS = t-bswap t-constants t-count_zeros t-hightomask \
   t-modlinv t-popc t-parity t-sub
 TESTS = $(check_PROGRAMS)
