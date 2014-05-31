@@ -155,6 +155,7 @@ check_data (void)
     { { 123, 4, { 8, 0, 0, 9 } },       { 123, 1, { 9 } }, { 120, 1, { 8 } } },
     { { 123, 5, { 8, 0, 0, 0, 9 } },    { 123, 1, { 9 } }, { 119, 1, { 8 } } },
     { { 123, 6, { 8, 0, 0, 0, 0, 9 } }, { 123, 1, { 9 } }, { 118, 1, { 8 } } },
+    /* { { 123, 6, { 8, 0, 0, 0, 0, 9 } }, { 123, 6, { 9, 0, 0, 0, 0, 8 } }, { 122, 5, { W, W, W, W, W } } }, */
 
   };
 
@@ -211,7 +212,7 @@ check_data (void)
           mpf_sub (got, x, y);
 /*           MPF_CHECK_FORMAT (got); */
 
-          if (mpf_cmp (got, want) != 0)
+          if (! refmpf_validate ("mpf_sub", got, want))
             {
               printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
               mpf_trace ("x   ", x);
@@ -221,13 +222,18 @@ check_data (void)
 	      fail = 1;
             }
 
-	  if (SIZ (x) == 1)
+	  if (SIZ (x) == 1 || SIZ (x) == 0 )
 	    {
-	      if (SIZ (y)) EXP (y) -= EXP (x) - 1;
-	      if (SIZ (want)) EXP (want) -= EXP (x) - 1;
-	      EXP (x) = 1;
-	      mpf_ui_sub (got, * PTR (x), y);
-
+	      if (SIZ (x))
+		{
+		  if (SIZ (y)) EXP (y) -= EXP (x) - 1;
+		  if (SIZ (want)) EXP (want) -= EXP (x) - 1;
+		  EXP (x) = 1;
+		  mpf_ui_sub (got, * PTR (x), y);
+		}
+	      else
+		mpf_ui_sub (got, 0, y);
+	    
 	      if (! refmpf_validate ("mpf_ui_sub", got, want))
 		{
 		  printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
@@ -239,12 +245,17 @@ check_data (void)
 		}
 	    }
 
-	  if (SIZ (y) == 1)
+	  if (SIZ (y) == 1 || SIZ (y) == 0)
 	    {
-	      if (SIZ (x)) EXP (x) -= EXP (y) - 1;
-	      if (SIZ (want)) EXP (want) -= EXP (y) - 1;
-	      EXP (y) = 1;
-	      mpf_sub_ui (got, x, * PTR (y));
+	      if (SIZ (y))
+		{
+		  if (SIZ (x)) EXP (x) -= EXP (y) - 1;
+		  if (SIZ (want)) EXP (want) -= EXP (y) - 1;
+		  EXP (y) = 1;
+		  mpf_sub_ui (got, x, * PTR (y));
+		}
+	      else
+		mpf_sub_ui (got, x, 0);
 
 	      if (! refmpf_validate ("mpf_ui_sub", got, want))
 		{
