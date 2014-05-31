@@ -1,3 +1,9 @@
+2014-05-31 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpf/ui_sub.c: Remove buggy code, use a wrapper to mpf_sub.
+	* tests/mpf/t-sub.c: More corner cases and strict checking.
+	* mpf/sub.c: Use more mpn_ primitives.
+
 2014-05-29  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in: Include <limits.h>.
