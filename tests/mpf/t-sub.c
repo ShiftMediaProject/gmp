@@ -79,7 +79,7 @@ check_rand (int argc, char **argv)
       refmpf_sub (wref, u, v);
 
       mpf_reldiff (rerr, w, wref);
-      if (mpf_cmp (rerr, max_rerr) > 0)
+      if (! refmpf_validate ("mpf_ui_sub", w, wref))
 	{
 	  mpf_set (max_rerr, rerr);
 #if VERBOSE
@@ -107,6 +107,7 @@ check_rand (int argc, char **argv)
   mpf_clear (wref);
 }
 
+#define W GMP_NUMB_MAX
 
 void
 check_data (void)
@@ -122,21 +123,26 @@ check_data (void)
     { { 1, 1, { 9 } },                  { 1, 1, { 8 } },   { 1, 1, { 1 } } },
     { { 1, 1, { 9 } },                 { 1, -1, { 6 } },   { 1, 1, { 15 } } },
     { { 1, 2, { 8, 9 } },               { 1, 1, { 8 } },   { 1, 2, { 8, 1 } } },
-    { { 2, 2, { 8, 1 } },               { 1, 1, { 9 } },   { 1, 1, { GMP_NUMB_MAX } } },
-    { { 2, 1, { 1 } },                  { 1, 1, { 1 } },   { 1, 1, { GMP_NUMB_MAX } } },
-    { { 2, 1, { 9 } },                 { 1, -1, { 8 } },   { 2, 2, { 8, 9 } } },
+    { { 2, 2, { 8, 1 } },               { 1, 1, { 9 } },   { 1, 1, { W } } },
+    { { 2, 2, { 9, 8 } },               { 1, 1, { 9 } },   { 2, 1, { 8 } } },
+    { { 2, 1, { 1 } },                  { 1, 1, { 1 } },   { 1, 1, { W } } },
+    { { 2, 1, { 9 } },                  { 1, 1, { W } },   { 2, 2, { 1, 8 } } },
 
-    { { 1, 2, { GMP_NUMB_MAX, 8 } }, { 1, 1, { 9 } },  { 0, -1, { 1 } } },
-    { { 1, 2, { GMP_NUMB_MAX, 7 } }, { 1, 1, { 9 } },  { 1, -2, { 1, 1 } } },
-    { { 1, 2, { 1, 8 } },            { 1, 1, { 9 } },  { 0, -1, { GMP_NUMB_MAX } } },
-    { { 1, 2, { 1, 7 } },            { 1, 1, { 9 } },  { 1, -2, { GMP_NUMB_MAX, 1 } } },
-    { { 1, 2, { 0, 8 } },            { 1, 1, { 9 } },  { 1, -1, { 1 } } },
+    { { 1, 2, { W, 8 } },             { 1, 1, { 9 } },   { 0, -1, { 1 } } },
+    { { 1, 2, { W, 7 } },             { 1, 1, { 9 } },   { 1, -2, { 1, 1 } } },
+    { { 1, 2, { 1, 8 } },             { 1, 1, { 9 } },   { 0, -1, { W } } },
+    { { 1, 2, { 1, 7 } },             { 1, 1, { 9 } },   { 1, -2, { W, 1 } } },
+    { { 1, 2, { 0, 8 } },             { 1, 1, { 9 } },   { 1, -1, { 1 } } },
+    { { 2, 3, { 5, 8, 1 } },          { 1, 1, { 9 } },   { 1, 2, { 5, W } } },
+    { { 3, 1, { 1 } },                { 1, 1, { 1 } },   { 2, 2, { W, W } } },
+    { { 1, 6, { W, W, W, W, W, 8 } }, { 1, 1, { 9 } },   { -4, -1, { 1 } } },
+    { { 5, 5, { W-6, W, W, W, W } },  { 6, 1, { 1 } },   { 1, -1, { 7 } } },
 
     /* f - f == 0, various sizes.
        These exercise a past problem (gmp 4.1.3 and earlier) where the
        result exponent was not zeroed on a zero result like this.  */
     { { 0, 0 }, { 0, 0 }, { 0, 0 } },
-    { { 1, 3, { 0, 0, 123 } },      { 1, 1, { 123 } },            { 0, 0 } },
+    { { 99, 3, { 0, 0, 1 } },       { 99, 1, { 1 } },             { 0, 0 } },
     { { 99, 3, { 0, 123, 456 } },   { 99, 2, { 123, 456 } },      { 0, 0 } },
     { { 99, 3, { 123, 456, 789 } }, { 99, 3, { 123, 456, 789 } }, { 0, 0 } },
 
@@ -144,18 +150,18 @@ check_data (void)
        This exercises a past problem (gmp 4.1.3 and earlier) where high zero
        limbs on the remainder were not stripped before truncating to the
        destination, causing loss of precision.  */
-    { { 1, 2, { 8, 9 } },             { 1, 1, { 9 } }, { 0, 1, { 8 } } },
-    { { 1, 3, { 8, 0, 9 } },          { 1, 1, { 9 } }, { -1, 1, { 8 } } },
-    { { 1, 4, { 8, 0, 0, 9 } },       { 1, 1, { 9 } }, { -2, 1, { 8 } } },
-    { { 1, 5, { 8, 0, 0, 0, 9 } },    { 1, 1, { 9 } }, { -3, 1, { 8 } } },
-    { { 1, 6, { 8, 0, 0, 0, 0, 9 } }, { 1, 1, { 9 } }, { -4, 1, { 8 } } },
+    { { 123, 2, { 8, 9 } },             { 123, 1, { 9 } }, { 122, 1, { 8 } } },
+    { { 123, 3, { 8, 0, 9 } },          { 123, 1, { 9 } }, { 121, 1, { 8 } } },
+    { { 123, 4, { 8, 0, 0, 9 } },       { 123, 1, { 9 } }, { 120, 1, { 8 } } },
+    { { 123, 5, { 8, 0, 0, 0, 9 } },    { 123, 1, { 9 } }, { 119, 1, { 8 } } },
+    { { 123, 6, { 8, 0, 0, 0, 0, 9 } }, { 123, 1, { 9 } }, { 118, 1, { 8 } } },
 
   };
 
   mpf_t  x, y, got, want;
-  int  i, swap;
-  unsigned long int ui;
+  int  i, swap, fail;
 
+  fail = 0;
   mp_trace_base = 16;
   mpf_init (got);
 
@@ -186,6 +192,9 @@ check_data (void)
               mpf_swap (want, y);
             }
 
+	  if ((SIZ (x) ^ SIZ (y)) < 0)
+	    continue; /* It's an addition, not a subtraction (TO BE REMOVED) */
+
           if (swap & 1)
             {
               mpf_swap (x, y);
@@ -209,38 +218,42 @@ check_data (void)
               mpf_trace ("y   ", y);
               mpf_trace ("got ", got);
               mpf_trace ("want", want);
-              abort ();
+	      fail = 1;
             }
 
-	  ui = mpf_get_ui (x);
-	  if (mpf_cmp_ui (x, ui) == 0)
+	  if (SIZ (x) == 1)
 	    {
-	      mpf_ui_sub (got, ui, y);
+	      if (SIZ (y)) EXP (y) -= EXP (x) - 1;
+	      if (SIZ (want)) EXP (want) -= EXP (x) - 1;
+	      EXP (x) = 1;
+	      mpf_ui_sub (got, * PTR (x), y);
 
-	      if (mpf_cmp (got, want) != 0)
+	      if (! refmpf_validate ("mpf_ui_sub", got, want))
 		{
-		  printf ("check_data() wrong ui_sub result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		  printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
 		  mpf_trace ("x   ", x);
 		  mpf_trace ("y   ", y);
 		  mpf_trace ("got ", got);
 		  mpf_trace ("want", want);
-		  abort ();
+		  fail = 1;
 		}
 	    }
 
-	  ui = mpf_get_ui (y);
-	  if (mpf_cmp_ui (y, ui) == 0)
+	  if (SIZ (y) == 1)
 	    {
-	      mpf_sub_ui (got, x, ui);
+	      if (SIZ (x)) EXP (x) -= EXP (y) - 1;
+	      if (SIZ (want)) EXP (want) -= EXP (y) - 1;
+	      EXP (y) = 1;
+	      mpf_sub_ui (got, x, * PTR (y));
 
-	      if (mpf_cmp (got, want) != 0)
+	      if (! refmpf_validate ("mpf_ui_sub", got, want))
 		{
-		  printf ("check_data() wrong sub_ui result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		  printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
 		  mpf_trace ("x   ", x);
 		  mpf_trace ("y   ", y);
 		  mpf_trace ("got ", got);
 		  mpf_trace ("want", want);
-		  abort ();
+		  fail = 1;
 		}
 	    }
 
@@ -248,6 +261,8 @@ check_data (void)
     }
 
   mpf_clear (got);
+  if (fail)
+    abort ();
 }
 
 
