@@ -1,6 +1,6 @@
 /* Test mpf_sub.
 
-Copyright 1996, 2001, 2004 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2004, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -79,7 +79,7 @@ check_rand (int argc, char **argv)
       refmpf_sub (wref, u, v);
 
       mpf_reldiff (rerr, w, wref);
-      if (! refmpf_validate ("mpf_ui_sub", w, wref))
+      if (! refmpf_validate ("check_rand mpf_sub", w, wref))
 	{
 	  mpf_set (max_rerr, rerr);
 #if VERBOSE
@@ -224,47 +224,45 @@ check_data (void)
 
 	  if (SIZ (x) == 1 || SIZ (x) == 0 )
 	    {
-	      if (SIZ (x))
+	      if (SIZ (y)) EXP (y) -= EXP (x) - (mp_exp_t) SIZ (x);
+	      if (SIZ (want)) EXP (want) -= EXP (x) - (mp_exp_t) SIZ (x);
+	      EXP (x) = (mp_exp_t) SIZ (x);
+
+	      if (mpf_fits_uint_p (x))
 		{
-		  if (SIZ (y)) EXP (y) -= EXP (x) - 1;
-		  if (SIZ (want)) EXP (want) -= EXP (x) - 1;
-		  EXP (x) = 1;
-		  mpf_ui_sub (got, * PTR (x), y);
-		}
-	      else
-		mpf_ui_sub (got, 0, y);
+		  mpf_ui_sub (got, mpf_get_ui (x), y);
 	    
-	      if (! refmpf_validate ("mpf_ui_sub", got, want))
-		{
-		  printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
-		  mpf_trace ("x   ", x);
-		  mpf_trace ("y   ", y);
-		  mpf_trace ("got ", got);
-		  mpf_trace ("want", want);
-		  fail = 1;
+		  if (! refmpf_validate ("mpf_ui_sub", got, want))
+		    {
+		      printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		      mpf_trace ("x   ", x);
+		      mpf_trace ("y   ", y);
+		      mpf_trace ("got ", got);
+		      mpf_trace ("want", want);
+		      fail = 1;
+		    }
 		}
 	    }
 
 	  if (SIZ (y) == 1 || SIZ (y) == 0)
 	    {
-	      if (SIZ (y))
-		{
-		  if (SIZ (x)) EXP (x) -= EXP (y) - 1;
-		  if (SIZ (want)) EXP (want) -= EXP (y) - 1;
-		  EXP (y) = 1;
-		  mpf_sub_ui (got, x, * PTR (y));
-		}
-	      else
-		mpf_sub_ui (got, x, 0);
+	      if (SIZ (x)) EXP (x) -= EXP (y) - (mp_exp_t) SIZ (y);
+	      if (SIZ (want)) EXP (want) -= EXP (y) - (mp_exp_t) SIZ (y);
+	      EXP (y) = (mp_exp_t) SIZ (y);
 
-	      if (! refmpf_validate ("mpf_ui_sub", got, want))
+	      if (mpf_fits_uint_p (x))
 		{
-		  printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
-		  mpf_trace ("x   ", x);
-		  mpf_trace ("y   ", y);
-		  mpf_trace ("got ", got);
-		  mpf_trace ("want", want);
-		  fail = 1;
+		  mpf_sub_ui (got, x, mpf_get_ui (y));
+
+		  if (! refmpf_validate ("mpf_sub_ui", got, want))
+		    {
+		      printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+		      mpf_trace ("x   ", x);
+		      mpf_trace ("y   ", y);
+		      mpf_trace ("got ", got);
+		      mpf_trace ("want", want);
+		      fail = 1;
+		    }
 		}
 	    }
 
