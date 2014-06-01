@@ -4,6 +4,10 @@
 	* tests/mpf/t-sub.c: More corner cases and strict checking.
 	* mpf/sub.c: Use more mpn_ primitives.
 
+	* tests/mpf/t-int_p.c: Test numbers with both integer and
+	fractionary parts.
+
+
 2014-05-29  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in: Include <limits.h>.
