@@ -2,11 +2,14 @@
 
 	* mpf/ui_sub.c: Remove buggy code, use a wrapper to mpf_sub.
 	* tests/mpf/t-sub.c: More corner cases and strict checking.
-	* mpf/sub.c: Use more mpn_ primitives.
+	* mpf/sub.c: Use more mpn_ primitives and macros.
 
 	* tests/mpf/t-int_p.c: Test numbers with both integer and
 	fractionary parts.
 
+	* mpf/int_p.c: Delay zero branch and use mpn_zero_p.
+	* mpf/fits_s.h: No special case for SIZ == 0.
+	* mpf/fits_u.h: Likewise.
 
 2014-05-29  Marc Glisse  <marc.glisse@inria.fr>
 
