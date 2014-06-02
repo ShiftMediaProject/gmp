@@ -43,8 +43,8 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   int negate;
   TMP_DECL;
 
-  usize = u->_mp_size;
-  vsize = v->_mp_size;
+  usize = SIZ (u);
+  vsize = SIZ (v);
 
   /* Handle special cases that don't work in generic code below.  */
   if (usize == 0)
@@ -64,8 +64,8 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
     {
       __mpf_struct v_negated;
       v_negated._mp_size = -vsize;
-      v_negated._mp_exp = v->_mp_exp;
-      v_negated._mp_d = v->_mp_d;
+      v_negated._mp_exp = EXP (v);
+      v_negated._mp_d = PTR (v);
       mpf_add (r, u, &v_negated);
       return;
     }
@@ -76,23 +76,23 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   negate = usize < 0;
 
   /* Make U be the operand with the largest exponent.  */
-  if (u->_mp_exp < v->_mp_exp)
+  if (EXP (u) < EXP (v))
     {
       mpf_srcptr t;
       t = u; u = v; v = t;
       negate ^= 1;
-      usize = u->_mp_size;
-      vsize = v->_mp_size;
+      usize = SIZ (u);
+      vsize = SIZ (v);
     }
 
   usize = ABS (usize);
   vsize = ABS (vsize);
-  up = u->_mp_d;
-  vp = v->_mp_d;
-  rp = r->_mp_d;
-  prec = r->_mp_prec + 1;
-  exp = u->_mp_exp;
-  ediff = exp - v->_mp_exp;
+  up = PTR (u);
+  vp = PTR (v);
+  rp = PTR (r);
+  prec = PREC (r) + 1;
+  exp = EXP (u);
+  ediff = exp - EXP (v);
 
   /* If ediff is 0 or 1, we might have a situation where the operands are
      extremely close.  We need to scan the operands from the most significant
@@ -351,12 +351,12 @@ general_case:
 		  /* uuuu     */
 		  /*   vvvvv  */
 		  mp_size_t size;
-		  size = vsize + ediff - usize;
+		  rsize = vsize + ediff;
+		  size = rsize - usize;
 		  ASSERT_CARRY (mpn_neg (tp, vp, size));
 		  mpn_sub (tp + size, up, usize, vp + size, usize - ediff);
 		  /* Should we use sub_nc then sub_1? */
 		  MPN_DECR_U (tp + size, usize, CNST_LIMB (1));
-		  rsize = vsize + ediff;
 		}
 	    }
 	}
@@ -385,9 +385,12 @@ general_case:
     }
 
  done:
-  r->_mp_size = negate ? -rsize : rsize;
-  if (rsize == 0)
-    exp = 0;
-  r->_mp_exp = exp;
   TMP_FREE;
+  if (rsize == 0) {
+    SIZ (r) = 0;
+    EXP (r) = 0;
+  } else {
+    SIZ (r) = negate ? -rsize : rsize;
+    EXP (r) = exp;
+  }
 }
