@@ -2,8 +2,8 @@
 
    Contributed to the GNU project by Torbjorn Granlund.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1999-2003, 2005-2007, 2009, 2010, 2012
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1999-2003, 2005-2007, 2009, 2010, 2012,
+2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -274,9 +274,9 @@ mpn_mul (mp_ptr prodp,
 	{
 	  /* Use ToomX3 variants */
 	  mp_ptr scratch;
-	  TMP_SDECL; TMP_SMARK;
+	  TMP_DECL; TMP_MARK;
 
-	  scratch = TMP_SALLOC_LIMBS (ITCH);
+	  scratch = TMP_ALLOC_LIMBS (ITCH);
 
 	  if (2 * un >= 5 * vn)
 	    {
@@ -284,7 +284,7 @@ mpn_mul (mp_ptr prodp,
 	      mp_ptr ws;
 
 	      /* The maximum ws usage is for the mpn_mul result.  */
-	      ws = TMP_SALLOC_LIMBS (7 * vn >> 1);
+	      ws = TMP_ALLOC_LIMBS (7 * vn >> 1);
 
 	      if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
 		mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
@@ -355,7 +355,7 @@ mpn_mul (mp_ptr prodp,
 		    mpn_toom63_mul (prodp, up, un, vp, vn, scratch);
 		}
 	    }
-	  TMP_SFREE;
+	  TMP_FREE;
 	}
       else
 	{
@@ -364,12 +364,12 @@ mpn_mul (mp_ptr prodp,
 
 	  if (BELOW_THRESHOLD (vn, MUL_TOOM6H_THRESHOLD))
 	    {
-	      scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
+	      scratch = TMP_SALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
 	      mpn_toom44_mul (prodp, up, un, vp, vn, scratch);
 	    }
 	  else if (BELOW_THRESHOLD (vn, MUL_TOOM8H_THRESHOLD))
 	    {
-	      scratch = TMP_ALLOC_LIMBS (mpn_toom6h_mul_itch (un, vn));
+	      scratch = TMP_SALLOC_LIMBS (mpn_toom6h_mul_itch (un, vn));
 	      mpn_toom6h_mul (prodp, up, un, vp, vn, scratch);
 	    }
 	  else
