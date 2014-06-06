@@ -79,7 +79,7 @@ check_rand (int argc, char **argv)
       refmpf_sub (wref, u, v);
 
       mpf_reldiff (rerr, w, wref);
-      if (! refmpf_validate ("check_rand mpf_sub", w, wref))
+      if (mpf_cmp (rerr, max_rerr) > 0)
 	{
 	  mpf_set (max_rerr, rerr);
 #if VERBOSE
