@@ -1,3 +1,8 @@
+2014-06-06  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul.c: Swap some TMP_SALLOC_LIMB for TMP_ALLOC_LIMB
+	and some TMP_ALLOC_LIMB for TMP_SALLOC_LIMB.
+
 2014-04-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (mpz_invert): Clarify behavior in the zero ring.
