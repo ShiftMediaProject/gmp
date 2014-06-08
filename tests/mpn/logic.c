@@ -62,8 +62,8 @@ main (int argc, char **argv)
   mp_size_t max_n, n, i;
   gmp_randstate_ptr rands;
   long test, reps = 1000;
-  TMP_SDECL;
-  TMP_SMARK;
+  TMP_DECL;
+  TMP_MARK;
 
   tests_start ();
   TESTS_REPS (reps, argv, argc);
@@ -127,7 +127,7 @@ main (int argc, char **argv)
 	}
     }
 
-  TMP_SFREE;
+  TMP_FREE;
   mpz_clears (a, b, NULL);
   tests_end ();
   return 0;
