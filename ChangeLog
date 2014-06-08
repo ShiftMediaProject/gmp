@@ -1,3 +1,8 @@
+2014-06-08  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/dcpi1_div_q.c: Avoid TMP_SALLOC_LIMB.
+	* mpn/generic/dcpi1_div_qr.c: Likewise.
+
 2014-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mul.c: Tighter allocation in Toom{2,3}X branches.
