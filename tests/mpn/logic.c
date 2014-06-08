@@ -74,8 +74,8 @@ main (int argc, char **argv)
 
   max_n = 100;
 
-  rp = TMP_SALLOC_LIMBS (1 + max_n * 8 / GMP_LIMB_BITS);
-  refp = TMP_SALLOC_LIMBS (1 + max_n * 8 / GMP_LIMB_BITS);
+  rp = TMP_ALLOC_LIMBS (1 + max_n * 8 / GMP_LIMB_BITS);
+  refp = TMP_ALLOC_LIMBS (1 + max_n * 8 / GMP_LIMB_BITS);
 
   for (test = 0; test < reps; test++)
     {
