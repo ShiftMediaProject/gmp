@@ -1,3 +1,7 @@
+2014-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mul.c: Tighter allocation in the Toom2X branch.
+
 2014-06-06  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul.c: Swap some TMP_SALLOC_LIMB for TMP_ALLOC_LIMB
