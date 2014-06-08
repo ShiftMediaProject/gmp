@@ -374,8 +374,9 @@ __GMP_DECLSPEC void  __gmp_tmp_reentrant_free (struct tmp_reentrant_t *);
 #define TMP_MARK		__tmp_marker = 0
 #define TMP_SALLOC(n)		alloca(n)
 #define TMP_BALLOC(n)		__gmp_tmp_reentrant_alloc (&__tmp_marker, n)
+/* The peculiar stack allocation limit here is chosen for efficient asm.  */
 #define TMP_ALLOC(n)							\
-  (LIKELY ((n) < 65536) ? TMP_SALLOC(n) : TMP_BALLOC(n))
+  (LIKELY ((n) <= 0x7f00) ? TMP_SALLOC(n) : TMP_BALLOC(n))
 #define TMP_SFREE
 #define TMP_FREE							\
   do {									\
