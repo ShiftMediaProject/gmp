@@ -282,7 +282,7 @@ mpn_mul (mp_ptr prodp,
 	  TMP_DECL; TMP_MARK;
 
 #define ITCH_TOOMX3 (4 * vn + GMP_NUMB_BITS)
-	  scratch = TMP_SALLOC_LIMBS (ITCH_TOOMX3);
+	  scratch = TMP_ALLOC_LIMBS (ITCH_TOOMX3);
 	  ASSERT (mpn_toom33_mul_itch ((7*vn-1)/6, vn) <= ITCH_TOOMX3); /* 7vn/2+ */
 	  ASSERT (mpn_toom43_mul_itch ((3*vn-1)/2, vn) <= ITCH_TOOMX3); /* 9vn/4+ */
 	  ASSERT (mpn_toom32_mul_itch ((7*vn-1)/4, vn) <= ITCH_TOOMX3); /* 7vn/6+ */
