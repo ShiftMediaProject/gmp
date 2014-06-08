@@ -1,6 +1,20 @@
 2014-06-08  Torbjörn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/dcpi1_div_q.c: Avoid TMP_SALLOC_LIMB.
+	* gmp-impl.h (TMP_ALLOC): Decrease limit to about half.
+
+	* mpn/generic/toom53_mul.c: Replace many TMP_SALLOC invocations
+	by a single TMP_ALLOC.
+	* mpn/generic/toom42_mul.c: Likewise.
+
+	* mpn/generic/sec_sqr.c: Don't unconditionally call mpn_sqr_basecase
+	since it fails for non-cryptographic sizes for some obsolete CPUs.
+
+	* mpn/generic/sec_powm.c: Remove own squaring code, instead use
+	mpn_mul_basecase.
+
+	* tests/mpn/logic.c (main): Don't use TMP_SALLOC_LIMBS.
+
+	* mpn/generic/dcpi1_div_q.c: Avoid TMP_SALLOC_LIMBS.
 	* mpn/generic/dcpi1_div_qr.c: Likewise.
 
 2014-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
@@ -9,8 +23,8 @@
 
 2014-06-06  Torbjörn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/mul.c: Swap some TMP_SALLOC_LIMB for TMP_ALLOC_LIMB
-	and some TMP_ALLOC_LIMB for TMP_SALLOC_LIMB.
+	* mpn/generic/mul.c: Swap some TMP_SALLOC_LIMBS for TMP_ALLOC_LIMBS
+	and some TMP_ALLOC_LIMBS for TMP_SALLOC_LIMBS.
 
 2014-05-31 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
