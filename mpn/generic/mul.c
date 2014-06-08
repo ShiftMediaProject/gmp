@@ -209,7 +209,13 @@ mpn_mul (mp_ptr prodp,
       mp_ptr scratch;
       TMP_SDECL; TMP_SMARK;
 
-      scratch = TMP_SALLOC_LIMBS (ITCH);
+#define ITCH_TOOMX2 (9 * vn / 2 + GMP_NUMB_BITS * 2)
+      scratch = TMP_SALLOC_LIMBS (ITCH_TOOMX2);
+      ASSERT (mpn_toom42_mul_itch (2 * vn, vn) <= ITCH_TOOMX2);
+      ASSERT (mpn_toom22_mul_itch ((5*vn-1)/4, vn) <= ITCH_TOOMX2);
+      ASSERT (mpn_toom32_mul_itch ((7*vn-1)/4, vn) <= ITCH_TOOMX2);
+      ASSERT (mpn_toom42_mul_itch (3 * vn - 1, vn) <= ITCH_TOOMX2);
+#undef ITCH_TOOMX2
 
       /* FIXME: This condition (repeated in the loop below) leaves from a vn*vn
 	 square to a (3vn-1)*vn rectangle.  Leaving such a rectangle is hardly
