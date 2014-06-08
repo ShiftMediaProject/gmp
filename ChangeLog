@@ -1,6 +1,6 @@
 2014-06-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpn/generic/mul.c: Tighter allocation in the Toom2X branch.
+	* mpn/generic/mul.c: Tighter allocation in Toom{2,3}X branches.
 
 2014-06-06  Torbjörn Granlund  <tege@gmplib.org>
 
