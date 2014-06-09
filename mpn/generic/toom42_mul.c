@@ -95,7 +95,7 @@ mpn_toom42_mul (mp_ptr pp,
 
   TMP_MARK;
 
-  tmp = TMP_ALLOC_LIMBS (10 * (n + 1));
+  tmp = TMP_ALLOC_LIMBS (6 * n + 5);
   as1  = tmp; tmp += n + 1;
   asm1 = tmp; tmp += n + 1;
   as2  = tmp; tmp += n + 1;
