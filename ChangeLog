@@ -1,3 +1,9 @@
+2014-06-09  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mullo_n.c: Remove default THRESHOLDs.
+	* gmp-impl.h: Put MULLO THRESHOLDs here.  Improve various THRESHOLD
+	defaults.
+
 2014-06-08  Torbjörn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (TMP_ALLOC): Decrease limit to about half.

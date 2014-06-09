@@ -2069,7 +2069,7 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
    should be used, and that may be never.  */
 
 #ifndef SQR_BASECASE_THRESHOLD
-#define SQR_BASECASE_THRESHOLD            0
+#define SQR_BASECASE_THRESHOLD            0  /* never use mpn_mul_basecase */
 #endif
 
 #ifndef SQR_TOOM2_THRESHOLD
@@ -2093,8 +2093,20 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 #define MULMID_TOOM42_THRESHOLD     MUL_TOOM22_THRESHOLD
 #endif
 
+#ifndef MULLO_BASECASE_THRESHOLD
+#define MULLO_BASECASE_THRESHOLD          0  /* never use mpn_mul_basecase */
+#endif
+
+#ifndef MULLO_DC_THRESHOLD
+#define MULLO_DC_THRESHOLD         (2*MUL_TOOM22_THRESHOLD)
+#endif
+
+#ifndef MULLO_MUL_N_THRESHOLD
+#define MULLO_MUL_N_THRESHOLD      (2*MUL_FFT_THRESHOLD)
+#endif
+
 #ifndef DC_DIV_QR_THRESHOLD
-#define DC_DIV_QR_THRESHOLD              50
+#define DC_DIV_QR_THRESHOLD        (2*MUL_TOOM22_THRESHOLD)
 #endif
 
 #ifndef DC_DIVAPPR_Q_THRESHOLD
@@ -2102,7 +2114,7 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 #endif
 
 #ifndef DC_BDIV_QR_THRESHOLD
-#define DC_BDIV_QR_THRESHOLD             50
+#define DC_BDIV_QR_THRESHOLD       (2*MUL_TOOM22_THRESHOLD)
 #endif
 
 #ifndef DC_BDIV_Q_THRESHOLD
@@ -2114,7 +2126,7 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 #endif
 
 #ifndef INV_MULMOD_BNM1_THRESHOLD
-#define INV_MULMOD_BNM1_THRESHOLD  (5*MULMOD_BNM1_THRESHOLD)
+#define INV_MULMOD_BNM1_THRESHOLD  (4*MULMOD_BNM1_THRESHOLD)
 #endif
 
 #ifndef INV_APPR_THRESHOLD
