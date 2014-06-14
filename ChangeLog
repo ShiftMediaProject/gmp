@@ -1,3 +1,7 @@
+2014-06-15  Torbjörn Granlund  <tege@gmplib.org>
+
+	* tests/refmpn.c (refmpn_mul): Rewrite to avoid O(n) recursion depth.
+
 2014-06-09  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mullo_n.c: Remove default THRESHOLDs.
