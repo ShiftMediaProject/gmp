@@ -1,3 +1,7 @@
+2014-06-16  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/perfpow.c (perfpow): Combine TMP_ALLOCs.
+
 2014-06-15  Torbjörn Granlund  <tege@gmplib.org>
 
 	* tests/refmpn.c (refmpn_mul): Rewrite to avoid O(n) recursion depth.
