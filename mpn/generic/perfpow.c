@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Martin Boij.
 
-Copyright 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2012, 2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -175,6 +175,7 @@ perfpow (mp_srcptr np, mp_size_t n,
   int ans;
   mp_bitcnt_t b;
   gmp_primesieve_t ps;
+  mp_ptr tmp;
   TMP_DECL;
 
   ASSERT (n > 0);
@@ -185,9 +186,11 @@ perfpow (mp_srcptr np, mp_size_t n,
   gmp_init_primesieve (&ps);
   b = (f + 3) >> 1;
 
-  ip = TMP_ALLOC_LIMBS (n);
-  rp = TMP_ALLOC_LIMBS (n);
-  tp = TMP_ALLOC_LIMBS (5 * n);		/* FIXME */
+  tmp = TMP_ALLOC_LIMBS (7 * n);
+  ip = tmp; tmp += n;
+  rp = tmp; tmp += n;
+  tp = tmp; tmp += 5 * n;
+
   MPN_ZERO (rp, n);
 
   /* FIXME: It seems the inverse in ninv is needed only to get non-inverted
@@ -250,6 +253,7 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t n)
   mp_limb_t exp, *prev, *next, d, l, r, c, *tp, cry;
   mp_bitcnt_t twos, count;
   int ans, where, neg, trial;
+  mp_ptr tmp;
   TMP_DECL;
 
   nc = (mp_ptr) np;
@@ -318,9 +322,10 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t n)
 
       /* Remove factors found by trialdiv.  Optimization: Perhaps better to use
 	 the strategy in mpz_remove ().  */
-      prev = TMP_ALLOC_LIMBS (ncn + 2);
-      next = TMP_ALLOC_LIMBS (ncn + 2);
-      tp = TMP_ALLOC_LIMBS (4 * ncn);
+      tmp = TMP_ALLOC_LIMBS (6 * ncn + 4);
+      prev = tmp; tmp += ncn + 2;
+      next = tmp; tmp += ncn + 2;
+      tp = tmp; tmp += 4 * ncn;
 
       do
 	{
