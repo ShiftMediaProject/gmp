@@ -1105,6 +1105,42 @@ struct __gmp_cmp_function
   { return -mpf_cmp_d(f, d); }
 };
 
+struct __gmp_gcd_function
+{
+  static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
+  { mpz_gcd(z, w, v); }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  { mpz_gcd_ui(z, w, l); }
+  static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
+  { eval(z, w, l); }
+  static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
+  { eval(z, w, __gmpxx_abs_ui(l)); }
+  static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
+  { eval(z, w, l); }
+  static void eval(mpz_ptr z, mpz_srcptr w, double d)
+  {  __GMPXX_TMPZ_D;    mpz_gcd (z, w, temp); }
+  static void eval(mpz_ptr z, double d, mpz_srcptr w)
+  { eval(z, w, d); }
+};
+
+struct __gmp_lcm_function
+{
+  static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
+  { mpz_lcm(z, w, v); }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  { mpz_lcm_ui(z, w, l); }
+  static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
+  { eval(z, w, l); }
+  static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
+  { eval(z, w, __gmpxx_abs_ui(l)); }
+  static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
+  { eval(z, w, l); }
+  static void eval(mpz_ptr z, mpz_srcptr w, double d)
+  {  __GMPXX_TMPZ_D;    mpz_lcm (z, w, temp); }
+  static void eval(mpz_ptr z, double d, mpz_srcptr w)
+  { eval(z, w, d); }
+};
+
 struct __gmp_rand_function
 {
   static void eval(mpz_ptr z, gmp_randstate_t s, mp_bitcnt_t l)
@@ -2984,6 +3020,8 @@ __GMP_DEFINE_UNARY_FUNCTION(floor, __gmp_floor_function)
 __GMP_DEFINE_UNARY_FUNCTION(ceil, __gmp_ceil_function)
 __GMP_DEFINE_UNARY_FUNCTION(sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
+__GMP_DEFINE_BINARY_FUNCTION(gcd, __gmp_gcd_function)
+__GMP_DEFINE_BINARY_FUNCTION(lcm, __gmp_lcm_function)
 
 __GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
 __GMP_DEFINE_BINARY_TYPE_FUNCTION(int, cmp, __gmp_cmp_function)

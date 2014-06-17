@@ -1,3 +1,10 @@
+2014-06-17  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_gcd_function, __gmp_lcm_function): New classes.
+	(gcd, lcm): New functions.
+	* doc/gmp.texi (C++ Interface Integers): Document them.
+	* tests/cxx/t-ops2.cc (checkz): Test them.
+
 2014-06-16  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/perfpow.c (perfpow): Combine TMP_ALLOCs.

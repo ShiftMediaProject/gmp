@@ -6843,6 +6843,9 @@ mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
 @deftypefunx int sgn (mpz_class @var{op})
 @deftypefunx mpz_class sqrt (mpz_class @var{op})
 @maybepagebreak
+@deftypefunx mpz_class gcd (mpz_class @var{op1}, mpz_class @var{op2})
+@deftypefunx mpz_class lcm (mpz_class @var{op1}, mpz_class @var{op2})
+@maybepagebreak
 @deftypefunx void mpz_class::swap (mpz_class& @var{op})
 @deftypefunx void swap (mpz_class& @var{op1}, mpz_class& @var{op2})
 These functions provide a C++ class interface to the corresponding GMP C
