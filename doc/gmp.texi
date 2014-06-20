@@ -9184,12 +9184,6 @@ be practical, since in general the difference between numbers 100@dots{} and
 99@dots{} is only in the last few bits and the work to identify 99@dots{}
 might well be almost as much as a full conversion.
 
-@code{mpf_get_str} doesn't currently use the algorithm described here, it
-multiplies or divides by a power of @math{b} to move the radix point to the
-just above the highest non-zero digit (or at worst one above that location),
-then multiplies by @math{b^n} to bring out digits.  This is @math{O(N^2)} and
-is certainly not optimal.
-
 The @math{r/b^n} scheme described above for using multiplications to bring out
 digits might be useful for more than a single limb.  Some brief experiments
 with it on the base case when recursing didn't give a noticeable improvement,
