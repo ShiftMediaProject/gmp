@@ -1,3 +1,7 @@
+2014-06-30  Torbjörn Granlund  <tege@gmplib.org>
+
+	* config.sub: Generalise x86 patterns.
+
 2014-06-17  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_gcd_function, __gmp_lcm_function): New classes.
@@ -6,6 +10,8 @@
 	* tests/cxx/t-ops2.cc (checkz): Test them.
 
 2014-06-16  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpf/mul.c: Postpone TMP_MARK.
 
 	* mpn/generic/perfpow.c (perfpow): Combine TMP_ALLOCs.
 
