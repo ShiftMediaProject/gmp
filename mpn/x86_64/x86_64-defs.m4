@@ -127,7 +127,7 @@ m4_assert_defined(`WANT_ASSERT')
 `ifelse(`$2',,,
 `	pushfq')
 	$2
-	j`$1'	L(ASSERT_ok`'ASSERT_counter)
+	`j$1'	L(ASSERT_ok`'ASSERT_counter)
 	ud2	C assertion failed
 L(ASSERT_ok`'ASSERT_counter):
 ifelse(`$2',,,`	popfq')
