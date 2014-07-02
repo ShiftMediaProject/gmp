@@ -1,3 +1,20 @@
+2014-07-02  Torbjörn Granlund  <tege@gmplib.org>
+
+	mpn/x86_64/atom/redc_1.asm: Enforce proper stack allocation.
+	mpn/x86_64/bobcat/redc_1.asm: Likewise.
+	mpn/x86_64/core2/divrem_1.asm: Likewise.
+	mpn/x86_64/core2/gcd_1.asm: Likewise.
+	mpn/x86_64/core2/redc_1.asm: Likewise.
+	mpn/x86_64/coreihwl/redc_1.asm: Likewise.
+	mpn/x86_64/coreinhm/redc_1.asm: Likewise.
+	mpn/x86_64/coreisbr/redc_1.asm: Likewise.
+	mpn/x86_64/divrem_1.asm: Likewise.
+	mpn/x86_64/divrem_2.asm: Likewise.
+	mpn/x86_64/gcd_1.asm: Likewise.
+	mpn/x86_64/mod_1_1.asm: Likewise.
+	mpn/x86_64/mod_1_2.asm: Likewise.
+	mpn/x86_64/mod_1_4.asm: Likewise.
+
 2014-06-30  Torbjörn Granlund  <tege@gmplib.org>
 
 	* config.sub: Generalise x86 patterns.

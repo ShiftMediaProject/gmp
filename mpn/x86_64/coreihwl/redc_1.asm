@@ -420,6 +420,7 @@ IFDOS(`	mov	up, %rdx		C param 2: up
 	mov	8(%rsp), %rcx		C param 1: rp
 	lea	16(%rsp), %rsp	')	C deallocate two slots
 
+	ASSERT(z, `test $15, %rsp')
 	CALL(	mpn_add_n)
 
 L(ret):	pop	%r15

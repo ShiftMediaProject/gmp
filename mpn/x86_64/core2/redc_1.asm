@@ -280,6 +280,7 @@ IFDOS(`	lea	(up,n,8), %rdx		C param 2: up
 	mov	n, %r9			C param 4: n
 	mov	rp, %rcx	')	C param 1: rp
 
+	ASSERT(z, `test $15, %rsp')
 	CALL(	mpn_add_n)
 
 L(ret):	pop	%r15
