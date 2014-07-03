@@ -418,13 +418,13 @@ IFDOS(`	mov	up, %rdx		C param 2: up
 	neg	R32(n)
 	mov	n, %r9			C param 4: n
 	mov	8(%rsp), %rcx		C param 1: rp
-	lea	-16(%rsp), %rsp	')	C deallocate 2, allocate shadow
+	lea	16-32-8(%rsp), %rsp')	C deallocate 2, allocate shadow, align
 
 	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_add_n)
 
 IFSTD(`	lea	8(%rsp), %rsp	')
-IFDOS(`	lea	32(%rsp), %rsp	')
+IFDOS(`	lea	32+8(%rsp), %rsp')
 
 L(ret):	pop	%r15
 	pop	%r14
