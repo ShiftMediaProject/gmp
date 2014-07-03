@@ -138,12 +138,14 @@ L(44):
 IFSTD(`	push	%rdi		')
 IFSTD(`	push	%rsi		')
 	push	%r8
+IFSTD(`	sub	$8, %rsp	')
 IFSTD(`	mov	d, %rdi		')
-IFDOS(`	sub	$32, %rsp	')
+IFDOS(`	sub	$40, %rsp	')
 IFDOS(`	mov	d, %rcx		')
-	ASSERT(z, `test	$15, %rsp')
+	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_invert_limb)
-IFDOS(`	add	$32, %rsp	')
+IFSTD(`	add	$8, %rsp	')
+IFDOS(`	add	$40, %rsp	')
 	pop	%r8
 IFSTD(`	pop	%rsi		')
 IFSTD(`	pop	%rdi		')

@@ -181,12 +181,10 @@ PROLOGUE(mpn_mod_1s_2p_cps)
 	mov	%rsi, %r12
 	mov	R32(%rcx), R32(%rbp)	C preserve cnt over call
 	sal	R8(%rcx), %r12		C b << cnt
-	sub	$8, %rsp		C stack alignment
 IFSTD(`	mov	%r12, %rdi	')	C pass parameter
 IFDOS(`	mov	%r12, %rcx	')	C pass parameter
-	ASSERT(z, `test $15, %rsp')
+	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_invert_limb)
-	add	$8, %rsp		C stack alignment
 	mov	%r12, %r8
 	mov	%rax, %r11
 	mov	%rax, (%rbx)		C store bi

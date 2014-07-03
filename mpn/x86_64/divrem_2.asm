@@ -98,12 +98,10 @@ L(2):
 	push	%r8
 	push	%r10
 	push	%r11
-	sub	$8, %rsp		C stack alignment
 IFSTD(`	mov	%r11, %rdi	')
 IFDOS(`	mov	%r11, %rcx	')
-	ASSERT(z, `test $15, %rsp')
+	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_invert_limb)
-	add	$8, %rsp		C stack alignment
 	pop	%r11
 	pop	%r10
 	pop	%r8
