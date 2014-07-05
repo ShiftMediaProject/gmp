@@ -5301,7 +5301,8 @@ with a count equal to the logarithm of @var{s2limb} instead, for optimal speed.
 Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and add the @var{n} least
 significant limbs of the product to @{@var{rp}, @var{n}@} and write the result
 to @var{rp}.  Return the most significant limb of the product, plus carry-out
-from the addition.
+from the addition.  @{@var{s1p}, @var{n}@} and @{@var{rp}, @var{n}@} are
+allowed to overlap provided @math{@var{rp} @le{} @var{s1p}}.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP@.  It is written in assembly
@@ -5312,7 +5313,8 @@ for most CPUs.
 Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and subtract the @var{n}
 least significant limbs of the product from @{@var{rp}, @var{n}@} and write the
 result to @var{rp}.  Return the most significant limb of the product, plus
-borrow-out from the subtraction.
+borrow-out from the subtraction.  @{@var{s1p}, @var{n}@} and @{@var{rp},
+@var{n}@} are allowed to overlap provided @math{@var{rp} @le{} @var{s1p}}.
 
 This is a low-level function that is a building block for general
 multiplication and division as well as other operations in GMP@.  It is written

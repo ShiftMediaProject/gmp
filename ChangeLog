@@ -2,6 +2,8 @@
 
 	* doc/gmp.texi (Low-level Functions): Document that scratch need
 	for mpn_sec_add_1 and mpn_sec_sub_1 are at most n limbs.
+	(Low-level Functions): Document allowed overlap for mpn_addmul_1
+	and mpn_submul_1.
 
 2014-07-02  Torbjörn Granlund  <tege@gmplib.org>
 
