@@ -1,3 +1,8 @@
+2014-07-05  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Low-level Functions): Document that scratch need
+	for mpn_sec_add_1 and mpn_sec_sub_1 are at most n limbs.
+
 2014-07-02  Torbjörn Granlund  <tege@gmplib.org>
 
 	mpn/x86_64/atom/redc_1.asm: Enforce proper stack allocation.

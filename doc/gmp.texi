@@ -5706,7 +5706,8 @@ These functions take @math{O(N)} time, unlike the leaky functions
 @code{mpn_add_1} which are @math{O(1)} on average. They require scratch space
 of @code{mpn_sec_add_1_itch(@var{n})} and @code{mpn_sec_sub_1_itch(@var{n})}
 limbs, respectively, to be passed in the @var{tp} parameter. The scratch space
-requirements are guaranteed to increase monotonously in the operand size.
+requirements are guaranteed to be at most @var{n} limbs, and increase
+monotonously in the operand size.
 @end deftypefun
 
 @deftypefun void mpn_sec_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, mp_limb_t *@var{tp})
