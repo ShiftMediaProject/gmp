@@ -184,3 +184,4 @@ L(movl_eip_to_ebx):
 	ret
 ')
 EPILOGUE()
+ASM_END()

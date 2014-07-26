@@ -1,3 +1,24 @@
+2014-07-26  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/pentium/mode1o.asm: Add Darwin PIC code.
+	* mpn/x86/pentium/bdiv_q_1.asm: Likewise.
+	* mpn/x86/pentium/dive_1.asm: Likewise.
+	* mpn/x86/pentium/popcount.asm: Likewise.
+	* mpn/x86/pentium/hamdist.asm: Likewise.
+	* mpn/x86/k6/gcd_1.asm: Likewise.
+
+	* mpn/x86: Append ASM_END to many files.
+	* tests/x86call.asm: Append ASM_END.
+	
+	* mpn/x86/fat/fat_entry.asm (FAT_ENTRY, FAT_INIT):
+	Support Darwin.
+
+	* mpn/x86/darwin.m4 (ASM_END): New, body from EPILOGUE_cpu.
+	(EPILOGUE_cpu): Remove.
+
+	* mpn/x86/x86-defs.m4 (LEA): Put `mov_eip_' thunks in ASM_END instead
+	of EPILOGUE_cpu.
+
 2014-07-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document that scratch need
@@ -6,6 +27,8 @@
 	and mpn_submul_1.
 
 2014-07-02  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/x86_64-defs.m4: Fix quoting.
 
 	mpn/x86_64/atom/redc_1.asm: Enforce proper stack allocation.
 	mpn/x86_64/bobcat/redc_1.asm: Likewise.

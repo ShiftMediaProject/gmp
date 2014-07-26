@@ -958,12 +958,11 @@ dnl  Usage LEA(symbol,reg)
 define(`LEA',
 m4_assert_numargs(2)
 `ifdef(`PIC',`
-define(`EPILOGUE_cpu',
+define(`ASM_END',
 `
 L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
-	ret_internal
-	SIZE($'`1, .-$'`1)')
+	ret_internal')
 
 	call	L(movl_eip_`'substr($2,1))
 	addl	$_GLOBAL_OFFSET_TABLE_, $2

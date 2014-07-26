@@ -62,9 +62,9 @@ L($1`'$non_lazy_ptr):
 ')')
 
 
-dnl EPILOGUE_cpu
+dnl ASM_END
 
-define(`EPILOGUE_cpu',`load_eip`'darwin_bd')
+define(`ASM_END',`load_eip`'darwin_bd')
 
 define(`load_eip', `')		dnl updated in LEA
 define(`darwin_bd', `')		dnl updated in LEA

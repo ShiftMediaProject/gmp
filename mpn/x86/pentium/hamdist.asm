@@ -1,6 +1,6 @@
 dnl  Intel P5 mpn_hamdist -- mpn hamming distance.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2014 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -65,7 +65,14 @@ deflit(`FRAME',0)
 ifdef(`PIC',`
 	pushl	%ebx	FRAME_pushl()
 	pushl	%ebp	FRAME_pushl()
-
+ifdef(`DARWIN',`
+	movl	PARAM_SRC1, %esi
+	movl	PARAM_SRC2, %edi
+	LEA(	TABLE_NAME, %ebp)
+	xorl	%ebx, %ebx	C byte
+	xorl	%edx, %edx	C byte
+	xorl	%eax, %eax	C total
+',`
 	call	L(here)	FRAME_pushl()
 L(here):
 	movl	PARAM_SRC1, %esi
@@ -79,8 +86,8 @@ L(here):
 
 	movl	TABLE_NAME@GOT(%ebp), %ebp
 	xorl	%eax, %eax	C total
+')
 define(TABLE,`(%ebp,$1)')
-
 ',`
 dnl non-PIC
 	movl	PARAM_SRC1, %esi
@@ -141,3 +148,4 @@ ifdef(`PIC',`
 	ret
 
 EPILOGUE()
+ASM_END()
