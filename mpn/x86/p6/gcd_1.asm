@@ -94,7 +94,7 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 L(reduce_nby1):
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
-ifdef(`PIC_WITH_EBX',`
+ifdef(`PIC_WITH_EBX',`dnl
 	push	%ebx
 	call	L(movl_eip_to_ebx)
 	add	$_GLOBAL_OFFSET_TABLE_, %ebx
