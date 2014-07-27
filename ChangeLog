@@ -1,3 +1,11 @@
+2014-07-27  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/k7/gcd_1.asm: Use LEAL.
+
+	* mpn/x86/x86-defs.m4 (LEAL): New.
+	(LEA): Append to `load_eip' instead of ASM_END, like darwin.m4.
+	* mpn/x86/darwin.m4 (LEAL): New.
+
 2014-07-26  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium/mode1o.asm: Add Darwin PIC code.
@@ -9,7 +17,7 @@
 
 	* mpn/x86: Append ASM_END to many files.
 	* tests/x86call.asm: Append ASM_END.
-	
+
 	* mpn/x86/fat/fat_entry.asm (FAT_ENTRY, FAT_INIT):
 	Support Darwin.
 
