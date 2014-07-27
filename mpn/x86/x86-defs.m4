@@ -1,10 +1,8 @@
 divert(-1)
 
-
 dnl  m4 macros for x86 assembler.
 
-
-dnl  Copyright 1999-2003, 2007, 2010, 2012 Free Software Foundation, Inc.
+dnl  Copyright 1999-2003, 2007, 2010, 2012, 2014 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -954,22 +952,46 @@ m4_assert_numargs(1)
 
 
 dnl  Usage LEA(symbol,reg)
+dnl  Usage LEAL(symbol_local_to_file,reg)
 
 define(`LEA',
 m4_assert_numargs(2)
-`ifdef(`PIC',`
-define(`ASM_END',
-`
-L(movl_eip_`'substr($2,1)):
+`ifdef(`PIC',`dnl
+ifelse(index(defn(`load_eip'), `$2'),-1,
+`m4append(`load_eip',
+`L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
-	ret_internal')
-
+	ret_internal
+')')dnl
 	call	L(movl_eip_`'substr($2,1))
 	addl	$_GLOBAL_OFFSET_TABLE_, $2
 	movl	$1@GOT($2), $2
 ',`
 	movl	`$'$1, $2
 ')')
+
+define(`LEAL',
+m4_assert_numargs(2)
+`ifdef(`PIC',`dnl
+ifelse(index(defn(`load_eip'), `$2'),-1,
+`m4append(`load_eip',
+`L(movl_eip_`'substr($2,1)):
+	movl	(%esp), $2
+	ret_internal
+')')dnl
+	call	L(movl_eip_`'substr($2,1))
+	addl	$_GLOBAL_OFFSET_TABLE_, $2
+	leal	$1@GOTOFF($2), $2
+',`
+	movl	`$'$1, $2
+')')
+
+dnl ASM_END
+
+define(`ASM_END',`load_eip')
+
+define(`load_eip', `')		dnl updated in LEA/LEAL
+
 
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)

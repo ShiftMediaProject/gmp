@@ -1,5 +1,5 @@
 divert(-1)
-dnl  Copyright 2007, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2011, 2012, 2014 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -31,6 +31,7 @@ define(`DARWIN')
 
 
 dnl  Usage LEA(symbol,reg)
+dnl  Usage LEAL(symbol_local_to_file,reg)
 dnl
 dnl  We maintain lists of stuff to append in load_eip and darwin_bd.  The
 dnl  `index' stuff is needed to suppress repeated definitions.  To avoid
@@ -57,6 +58,21 @@ L($1`'$non_lazy_ptr):
 ')')
 	call	L(movl_eip_`'substr($2,1))
 	movl	L($1`'$non_lazy_ptr)-.($2), $2
+',`
+	movl	`$'$1, $2
+')')
+
+define(`LEAL',
+m4_assert_numargs(2)
+`ifdef(`PIC',`
+ifelse(index(defn(`load_eip'), `$2'),-1,
+`m4append(`load_eip',
+`L(movl_eip_`'substr($2,1)):
+	movl	(%esp), $2
+	ret_internal
+')')
+	call	L(movl_eip_`'substr($2,1))
+	leal	$1-.($2), $2
 ',`
 	movl	`$'$1, $2
 ')')
