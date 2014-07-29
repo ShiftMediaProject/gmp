@@ -4,6 +4,9 @@
 	* mpz/fib2_ui.c: Use tabulated values, when available.
 	* mpz/fib_ui.c: #if HAVE_NATIVE_mpn_addlsh1_n, use it.
 
+	* mpq/cmp_ui.c: Remove a branch.
+	* mpq/cmp_si.c: Likewise.
+
 2014-07-27  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/gcd_1.asm: Use LEAL.
