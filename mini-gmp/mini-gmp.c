@@ -373,8 +373,8 @@ mpn_cmp4 (mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn)
 static mp_size_t
 mpn_normalized_size (mp_srcptr xp, mp_size_t n)
 {
-  for (; n > 0 && xp[n-1] == 0; n--)
-    ;
+  while (n > 0 && xp[n-1] == 0)
+    --n;
   return n;
 }
 
@@ -383,10 +383,8 @@ mpn_normalized_size (mp_srcptr xp, mp_size_t n)
 void
 mpn_zero (mp_ptr rp, mp_size_t n)
 {
-  mp_size_t i;
-
-  for (i = 0; i < n; i++)
-    rp[i] = 0;
+  while (--n >= 0)
+    rp[n] = 0;
 }
 
 mp_limb_t
@@ -607,7 +605,6 @@ mpn_lshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
 {
   mp_limb_t high_limb, low_limb;
   unsigned int tnc;
-  mp_size_t i;
   mp_limb_t retval;
 
   assert (n >= 1);
@@ -622,7 +619,7 @@ mpn_lshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   retval = low_limb >> tnc;
   high_limb = (low_limb << cnt);
 
-  for (i = n; --i != 0;)
+  while (--n != 0)
     {
       low_limb = *--up;
       *--rp = high_limb | (low_limb >> tnc);
@@ -638,7 +635,6 @@ mpn_rshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
 {
   mp_limb_t high_limb, low_limb;
   unsigned int tnc;
-  mp_size_t i;
   mp_limb_t retval;
 
   assert (n >= 1);
@@ -650,7 +646,7 @@ mpn_rshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   retval = (high_limb << tnc);
   low_limb = high_limb >> cnt;
 
-  for (i = n; --i != 0;)
+  while (--n != 0)
     {
       high_limb = *up++;
       *rp++ = low_limb | (high_limb << tnc);
@@ -1313,7 +1309,7 @@ mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
 
   j = 0;
   w = sp[j++];
-  for (; --k > 0; )
+  while (--k != 0)
     w = w * b + sp[j++];
 
   rp[0] = w;
@@ -2070,8 +2066,7 @@ mpz_mul_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bits)
   else
     mpn_copyd (rp + limbs, u->_mp_d, un);
 
-  while (limbs > 0)
-    rp[--limbs] = 0;
+  mpn_zero (rp, limbs);
 
   r->_mp_size = (u->_mp_size < 0) ? - rn : rn;
 }
@@ -3322,7 +3317,7 @@ void
 mpz_fac_ui (mpz_t x, unsigned long n)
 {
   mpz_set_ui (x, n + (n == 0));
-  for (;n > 2;)
+  while (n > 2)
     mpz_mul_ui (x, x, --n);
 }
 
