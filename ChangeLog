@@ -10,6 +10,10 @@
 	* mpn/generic/toom_interpolate_7pts.c: Replace an in-place add
 	with add_n + INCR_U.
 
+	* tests/mpf/t-fits.c: use ui_sub instead of sub_ui+neg.
+
+	* mini-gmp/mini-gmp.c: Remove some useless variables.
+
 2014-07-27  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/gcd_1.asm: Use LEAL.
