@@ -301,8 +301,7 @@ main (void)
 
   mpf_set_ui (f, 1L);
   mpf_mul_2exp (f, f, BITS_PER_ULONG + 1);
-  mpf_sub_ui (f, f, 1L);
-  mpf_neg (f, f);
+  mpf_ui_sub (f, 1L, f);
   expr = "- (2^(BITS_PER_ULONG+1) - 1)";
   EXPECT (mpf_fits_ulong_p, 0);
   EXPECT (mpf_fits_uint_p, 0);
