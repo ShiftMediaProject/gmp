@@ -1,3 +1,12 @@
+2014-08-03  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bobcat/mul_1.asm: Fix typo in offset affecting DOS64.
+
+2014-06-08  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sec_sqr.c: Don't unconditionally call mpn_sqr_basecase
+	since it fails for non-cryptographic sizes for some obsolete CPUs.
+
 2014-06-06  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul.c: Swap some TMP_SALLOC_LIMB for TMP_ALLOC_LIMB
