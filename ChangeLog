@@ -1,3 +1,8 @@
+2014-08-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpq/canonicalize.c: Earlier check for negative denominator.
+	* mpq/set_d.c: Stricter allocation.
+
 2014-08-03  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bobcat/mul_1.asm: Fix typo in offset affecting DOS64.
