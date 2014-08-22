@@ -639,7 +639,7 @@ case $host in
 	gcc_cflags_tune="-mtune=cortex-a8"
 	;;
       armcortexa8neon)
-	path="arm/v6t2 arm/v6 arm/v5 arm/neon arm"
+	path="arm/neon arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a8"
@@ -650,7 +650,7 @@ case $host in
 	gcc_cflags_tune="-mtune=cortex-a9"
 	;;
       armcortexa9neon)
-	path="arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm/neon arm"
+	path="arm/neon arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a9"
@@ -661,7 +661,7 @@ case $host in
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
       armcortexa15neon)
-	path="arm/v7a/cora15/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm/neon arm"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
