@@ -1,3 +1,16 @@
+2014-08-23  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/arm64/bdiv_dbm1c.asm: New file.
+
+	* mpn/arm64/com.asm: New file.
+
+	* mpn/arm64/sec_tabselect.asm: New file.
+
+	* mpn/arm64/popcount.asm: New file.
+	* mpn/arm64/hamdist.asm: New file.
+
+	* configure.ac: Put generic arm/neon earlier in path.
+
 2014-08-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/canonicalize.c: Earlier check for negative denominator.
