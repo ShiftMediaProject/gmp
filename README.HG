@@ -1,0 +1,25 @@
+When you have checked out a fresh copy of GMP from the repository, the
+usual ./configure && make is not sufficient to build the sources. You
+need to have the following extra tools installed:
+
+* autoconf-2.65
+
+* automake-1.11.1
+
+* libtool-2.2.6b
+
+Later versions of these tools may work as well. Then the following
+steps are needed:
+
+* Run the .bootstrap script, in the top source directory. This
+  creates various automatically generated files such as configure and
+  Makefile.in.
+
+    ./.bootstrap
+
+* Run the configure script, either in the source directory or in a
+  separate build directory. Use the --enable-maintainer-mode option.
+
+    ./configure --enable-maintainer-mode
+
+Then you should be able to build the sources.
