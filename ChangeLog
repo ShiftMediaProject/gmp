@@ -1,3 +1,8 @@
+2014-08-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpz_abs_sub_bit): Do full normalization,
+	needed if mpz_clrbit clears the most significant one bit.
+
 2014-08-23  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/arm64/bdiv_dbm1c.asm: New file.

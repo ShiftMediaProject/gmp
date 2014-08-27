@@ -3553,7 +3553,7 @@ mpz_abs_sub_bit (mpz_t d, mp_bitcnt_t bit_index)
 
   gmp_assert_nocarry (mpn_sub_1 (dp + limb_index, dp + limb_index,
 				 dn - limb_index, bit));
-  dn -= (dp[dn-1] == 0);
+  dn = mpn_normalized_size (dp, dn);
   d->_mp_size = (d->_mp_size < 0) ? - dn : dn;
 }
 
