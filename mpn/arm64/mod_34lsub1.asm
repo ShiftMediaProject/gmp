@@ -112,7 +112,7 @@ L(sum2):
 	ret
 
 L(le2):	cmn	n, #1
-	bne	L(1)
+	b.ne	L(1)
 	ldp	x2, x3, [ap]
 	mov	x4, #0
 	b	L(sum2)
