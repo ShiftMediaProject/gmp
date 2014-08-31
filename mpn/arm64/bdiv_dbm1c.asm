@@ -46,10 +46,10 @@ ASM_START()
 PROLOGUE(mpn_bdiv_dbm1c)
 	ldr	x5, [up], #8
 	ands	x6, n, #3
-	beq	L(fi0)
+	b.eq	L(fi0)
 	cmp	x6, #2
-	bcc	L(fi1)
-	beq	L(fi2)
+	b.cc	L(fi1)
+	b.eq	L(fi2)
 
 L(fi3):	mul	x12, x5, bd
 	umulh	x13, x5, bd
@@ -64,7 +64,7 @@ L(fi0):	mul	x10, x5, bd
 L(fi1):	subs	n, n, #1
 	mul	x12, x5, bd
 	umulh	x13, x5, bd
-	bls	L(wd1)
+	b.ls	L(wd1)
 	ldr	x5, [up], #8
 	b	L(lo1)
 
@@ -98,7 +98,7 @@ L(lo3):	mul	x10, x5, bd
 L(lo2):	subs	n, n, #4
 	mul	x12, x5, bd
 	umulh	x13, x5, bd
-	bhi	L(top)
+	b.hi	L(top)
 
 L(wd2):	subs	x4, x4, x10
 	str	x4, [qp], #8
