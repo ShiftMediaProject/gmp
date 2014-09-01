@@ -490,7 +490,7 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 #define TMP_SALLOC_MP_PTRS(n)   TMP_SALLOC_TYPE(n,mp_ptr)
 #define TMP_BALLOC_MP_PTRS(n)   TMP_BALLOC_TYPE(n,mp_ptr)
 
-/* It's more efficient to allocate one block than two.  This is certainly
+/* It's more efficient to allocate one block than many.  This is certainly
    true of the malloc methods, but it can even be true of alloca if that
    involves copying a chunk of stack (various RISCs), or a call to a stack
    bounds check (mingw).  In any case, when debugging keep separate blocks
@@ -508,7 +508,21 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
 	(yp) = (xp) + (xsize);						\
       }									\
   } while (0)
-
+#define TMP_ALLOC_LIMBS_3(xp,xsize, yp,ysize, zp,zsize)			\
+  do {									\
+    if (WANT_TMP_DEBUG)							\
+      {									\
+	(xp) = TMP_ALLOC_LIMBS (xsize);					\
+	(yp) = TMP_ALLOC_LIMBS (ysize);					\
+	(zp) = TMP_ALLOC_LIMBS (zsize);					\
+      }									\
+    else								\
+      {									\
+	(xp) = TMP_ALLOC_LIMBS ((xsize) + (ysize) + (zsize));		\
+	(yp) = (xp) + (xsize);						\
+	(zp) = (yp) + (ysize);						\
+      }									\
+  } while (0)
 
 /* From gmp.h, nicer names for internal use. */
 #define CRAY_Pragma(str)               __GMP_CRAY_Pragma(str)
