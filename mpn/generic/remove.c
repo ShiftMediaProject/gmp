@@ -99,9 +99,15 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   TMP_MARK;
 
-  tp = TMP_ALLOC_LIMBS ((un + 1 + vn) / 2); /* remainder */
-  qp = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
-  qp2 = TMP_ALLOC_LIMBS (un + 1);	/* quotient, alternating */
+#ifdef TMP_ALLOC_LIMBS_3
+  TMP_ALLOC_LIMBS_3 (qp, un + 1,	/* quotient, alternating */
+		     qp2, un + 1,	/* quotient, alternating */
+		     tp, (un + 1 + vn) / 2); /* remainder */ 
+#else
+  qp = TMP_ALLOC_LIMBS (2 * un + 2 + (un + 1 + vn) / 2);
+  qp2 = qp + un + 1; 
+  tp = qp2 + un + 1; 
+#endif
   pp = vp;
   pn = vn;
 
