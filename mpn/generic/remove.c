@@ -7,7 +7,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2009, 2012, 2013 Free Software Foundation, Inc.
+Copyright 2009, 2012-2014 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -80,13 +80,14 @@ mpn_bdiv_qr_wrap (mp_ptr qp, mp_ptr rp,
 
 mp_bitcnt_t
 mpn_remove (mp_ptr wp, mp_size_t *wn,
-	    mp_ptr up, mp_size_t un, mp_ptr vp, mp_size_t vn,
+	    mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn,
 	    mp_bitcnt_t cap)
 {
-  mp_ptr    pwpsp[LOG];
+  mp_srcptr pwpsp[LOG];
   mp_size_t pwpsn[LOG];
   mp_size_t npowers;
-  mp_ptr tp, qp, np, pp, qp2;
+  mp_ptr tp, qp, np, qp2;
+  mp_srcptr pp;
   mp_size_t pn, nn, qn, i;
   mp_bitcnt_t pwr;
   TMP_DECL;

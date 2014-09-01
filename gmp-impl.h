@@ -2560,7 +2560,7 @@ __GMP_DECLSPEC void __gmp_assert_fail (const char *, int, const char *) ATTRIBUT
 __GMP_DECLSPEC mp_limb_t mpn_trialdiv (mp_srcptr, mp_size_t, mp_size_t, int *);
 
 #define mpn_remove __MPN(remove)
-__GMP_DECLSPEC mp_bitcnt_t mpn_remove (mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_bitcnt_t);
+__GMP_DECLSPEC mp_bitcnt_t mpn_remove (mp_ptr, mp_size_t *, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_bitcnt_t);
 
 
 /* ADDC_LIMB sets w=x+y and cout to 0 or 1 for a carry from that addition. */
