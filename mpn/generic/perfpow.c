@@ -54,12 +54,9 @@ pow_equals (mp_srcptr np, mp_size_t n,
 	    mp_limb_t k, mp_bitcnt_t f,
 	    mp_ptr tp)
 {
-  mp_limb_t *tp2;
   mp_bitcnt_t y, z;
-  mp_size_t i, bn;
-  int ans;
+  mp_size_t bn;
   mp_limb_t h, l;
-  TMP_DECL;
 
   ASSERT (n > 1 || (n == 1 && np[0] > 1));
   ASSERT (np[n - 1] > 0);
@@ -76,8 +73,6 @@ pow_equals (mp_srcptr np, mp_size_t n,
 	return 0;
     }
 
-  TMP_MARK;
-
   /* Final check. Estimate the size of {xp,xn}^k before computing the power
      with full precision.  Optimization: It might pay off to make a more
      accurate estimation of the logarithm of {xp,xn}, rather than using the
@@ -92,10 +87,16 @@ pow_equals (mp_srcptr np, mp_size_t n,
   z = f - 1; /* msb_index (np, n) */
   if (h == 0 && l <= z)
     {
+      mp_limb_t *tp2;
+      mp_size_t i;
+      int ans;
       mp_limb_t size;
+      TMP_DECL;
+
       size = l + k;
       ASSERT_ALWAYS (size >= k);
 
+      TMP_MARK;
       y = 2 + size / GMP_LIMB_BITS;
       tp2 = TMP_ALLOC_LIMBS (y);
 
@@ -104,14 +105,11 @@ pow_equals (mp_srcptr np, mp_size_t n,
 	ans = 1;
       else
 	ans = 0;
-    }
-  else
-    {
-      ans = 0;
+      TMP_FREE;
+      return ans;
     }
 
-  TMP_FREE;
-  return ans;
+  return 0;
 }
 
 
