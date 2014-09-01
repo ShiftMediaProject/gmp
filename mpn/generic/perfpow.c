@@ -250,142 +250,73 @@ static const double logs[] =
 int
 mpn_perfect_power_p (mp_srcptr np, mp_size_t n)
 {
-  mp_size_t ncn, s, pn, xn;
   mp_limb_t *nc, factor, g;
-  mp_limb_t exp, *prev, *next, d, l, r, c, *tp, cry;
+  mp_limb_t exp, d;
   mp_bitcnt_t twos, count;
   int ans, where, neg, trial;
-  mp_ptr tmp;
   TMP_DECL;
 
-  nc = (mp_ptr) np;
-
-  neg = 0;
-  if (n < 0)
+  neg = n < 0;
+  if (neg)
     {
-      neg = 1;
       n = -n;
     }
 
-  if (n == 0 || (n == 1 && np[0] == 1))
+  if (n == 0 || (n == 1 && np[0] == 1)) /* Valgrind doesn't like
+					   (n <= (np[0] == 1)) */
     return 1;
 
   TMP_MARK;
 
-  g = 0;
+  count = 0;
 
-  ncn = n;
   twos = mpn_scan1 (np, 0);
-  if (twos > 0)
+  if (twos != 0)
     {
+      mp_size_t s;
       if (twos == 1)
 	{
-	  ans = 0;
-	  goto ret;
+	  return 0;
 	}
       s = twos / GMP_LIMB_BITS;
       if (s + 1 == n && POW2_P (np[s]))
 	{
-	  ans = ! (neg && POW2_P (twos));
-	  goto ret;
+	  return ! (neg && POW2_P (twos));
 	}
       count = twos % GMP_LIMB_BITS;
-      ncn = n - s;
-      nc = TMP_ALLOC_LIMBS (ncn);
+      n -= s;
+      np += s;
       if (count > 0)
 	{
-	  mpn_rshift (nc, np + s, ncn, count);
-	  ncn -= (nc[ncn - 1] == 0);
+	  nc = TMP_ALLOC_LIMBS (n);
+	  mpn_rshift (nc, np, n, count);
+	  n -= (nc[n - 1] == 0);
+	  np = nc;
 	}
-      else
-	{
-	  MPN_COPY (nc, np + s, ncn);
-	}
-      g = twos;
     }
+  g = twos;
 
-  if (ncn <= SMALL)
-    trial = 0;
-  else if (ncn <= MEDIUM)
-    trial = 1;
-  else
-    trial = 2;
+  trial = (n > SMALL) + (n > MEDIUM);
 
   where = 0;
-  factor = mpn_trialdiv (nc, ncn, nrtrial[trial], &where);
+  factor = mpn_trialdiv (np, n, nrtrial[trial], &where);
 
   if (factor != 0)
     {
-      if (twos == 0)
+      if (count == 0) /* We did not allocate nc yet. */
 	{
-	  nc = TMP_ALLOC_LIMBS (ncn);
-	  MPN_COPY (nc, np, ncn);
+	  nc = TMP_ALLOC_LIMBS (n);
 	}
 
-      /* Remove factors found by trialdiv.  Optimization: Perhaps better to use
-	 the strategy in mpz_remove ().  */
-      tmp = TMP_ALLOC_LIMBS (6 * ncn + 4);
-      prev = tmp; tmp += ncn + 2;
-      next = tmp; tmp += ncn + 2;
-      tp = tmp; tmp += 4 * ncn;
+      /* Remove factors found by trialdiv.  Optimization: If remove
+	 define _itch, we can allocate its scratch just once */
 
       do
 	{
 	  binvert_limb (d, factor);
-	  prev[0] = d;
-	  pn = 1;
-	  exp = 1;
-	  while (2 * pn - 1 <= ncn)
-	    {
-	      mpn_sqr (next, prev, pn);
-	      xn = 2 * pn;
-	      xn -= (next[xn - 1] == 0);
 
-	      if (mpn_divisible_p (nc, ncn, next, xn) == 0)
-		break;
-
-	      exp <<= 1;
-	      pn = xn;
-	      MP_PTR_SWAP (next, prev);
-	    }
-
-	  /* Binary search for the exponent */
-	  l = exp + 1;
-	  r = 2 * exp - 1;
-	  while (l <= r)
-	    {
-	      c = (l + r) >> 1;
-	      if (c - exp > 1)
-		{
-		  xn = mpn_pow_1 (tp, &d, 1, c - exp, next);
-		  if (pn + xn - 1 > ncn)
-		    {
-		      r = c - 1;
-		      continue;
-		    }
-		  mpn_mul (next, prev, pn, tp, xn);
-		  xn += pn;
-		  xn -= (next[xn - 1] == 0);
-		}
-	      else
-		{
-		  cry = mpn_mul_1 (next, prev, pn, d);
-		  next[pn] = cry;
-		  xn = pn + (cry != 0);
-		}
-
-	      if (mpn_divisible_p (nc, ncn, next, xn) == 0)
-		{
-		  r = c - 1;
-		}
-	      else
-		{
-		  exp = c;
-		  l = c + 1;
-		  MP_PTR_SWAP (next, prev);
-		  pn = xn;
-		}
-	    }
+	  /* After the first round we always have nc == np */
+	  exp = mpn_remove (nc, &n, np, n, &d, 1, ~(mp_bitcnt_t)0);
 
 	  if (g == 0)
 	    g = exp;
@@ -398,25 +329,21 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t n)
 	      goto ret;
 	    }
 
-	  mpn_divexact (next, nc, ncn, prev, pn);
-	  ncn = ncn - pn;
-	  ncn += next[ncn] != 0;
-	  MPN_COPY (nc, next, ncn);
-
-	  if (ncn == 1 && nc[0] == 1)
+	  if ((n == 1) & (nc[0] == 1))
 	    {
 	      ans = ! (neg && POW2_P (g));
 	      goto ret;
 	    }
 
-	  factor = mpn_trialdiv (nc, ncn, nrtrial[trial], &where);
+	  np = nc;
+	  factor = mpn_trialdiv (np, n, nrtrial[trial], &where);
 	}
       while (factor != 0);
     }
 
-  MPN_SIZEINBASE_2EXP(count, nc, ncn, 1);   /* log (nc) + 1 */
+  MPN_SIZEINBASE_2EXP(count, np, n, 1);   /* log (np) + 1 */
   d = (mp_limb_t) (count * logs[trial] + 1e-9) + 1;
-  ans = perfpow (nc, ncn, d, g, count, neg);
+  ans = perfpow (np, n, d, g, count, neg);
 
  ret:
   TMP_FREE;
