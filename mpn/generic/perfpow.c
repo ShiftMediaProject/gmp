@@ -184,10 +184,14 @@ perfpow (mp_srcptr np, mp_size_t n,
   gmp_init_primesieve (&ps);
   b = (f + 3) >> 1;
 
+#ifdef TMP_ALLOC_LIMBS_3
+  TMP_ALLOC_LIMBS_3 (ip, n, rp, n, tp, 5 * n);
+#else
   tmp = TMP_ALLOC_LIMBS (7 * n);
   ip = tmp; tmp += n;
   rp = tmp; tmp += n;
   tp = tmp; tmp += 5 * n;
+#endif
 
   MPN_ZERO (rp, n);
 
