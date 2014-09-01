@@ -1,3 +1,8 @@
+2014-08-31  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/arm64/lshift.asm: New file.
+	* mpn/arm64/rshift.asm: New file.
+
 2014-09-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (TMP_ALLOC_LIMBS_3): New macro to allocate 3 blocks.
@@ -10,6 +15,10 @@
 	* tests/mpz/t-perfpow.c (check_random): Check more perfect powers.
 
 	* mpn/generic/divis.c: Use TMP_ALLOC_LIMBS_2. Share a count.
+
+2014-08-30  Torbjörn Granlund  <tege@gmplib.org>
+
+	* mpn/arm64/mod_34lsub1.asm: New file.
 
 2014-08-27  Niels Möller  <nisse@lysator.liu.se>
 
