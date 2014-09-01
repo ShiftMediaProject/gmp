@@ -135,8 +135,8 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
 
   TMP_MARK;
 
-  rp = TMP_ALLOC_LIMBS (an + 1);
-  qp = TMP_ALLOC_LIMBS (an - dn + 1); /* FIXME: Could we avoid this? */
+  TMP_ALLOC_LIMBS_2 (rp, an + 1,
+		     qp, an - dn + 1); /* FIXME: Could we avoid this? */
 
   if (twos != 0)
     {
