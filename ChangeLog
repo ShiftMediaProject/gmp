@@ -1,3 +1,16 @@
+2014-09-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (TMP_ALLOC_LIMBS_3): New macro to allocate 3 blocks.
+	(mpn_remove): Update declaration with mp_srcptr arguments.
+	* mpn/generic/remove.c: Use TMP_ALLOC_LIMBS_3. mp_srcptr for args.
+
+	* mpn/generic/perfpow.c (pow_equals): TMP_DECL only where needed.
+	(perfpow): Use TMP_ALLOC_LIMBS_3.
+	(mpn_perfect_power_p): Skip useless allocations. Use mpn_remove.
+	* tests/mpz/t-perfpow.c (check_random): Check more perfect powers.
+
+	* mpn/generic/divis.c: Use TMP_ALLOC_LIMBS_2. Share a count.
+
 2014-08-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpz_abs_sub_bit): Do full normalization,
