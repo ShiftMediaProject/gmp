@@ -55,7 +55,7 @@ see https://www.gnu.org/licenses/.  */
    * add_csaac accepts two addends and a carry in, and generates a sum
      and a carry out.  A little like a "full adder".
 */
-#if defined (__GNUC__)  && ! defined (__INTEL_COMPILER)
+#if defined (__GNUC__)  && ! defined (__INTEL_COMPILER) && ! defined (NO_ASM)
 
 #if HAVE_HOST_CPU_FAMILY_x86 && W_TYPE_SIZE == 32
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
