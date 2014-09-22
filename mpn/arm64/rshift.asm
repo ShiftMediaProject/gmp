@@ -50,16 +50,16 @@ L(b01):	lsl	x0, x4, tnc
 	str	x18, [rp,#0]
 	ret
 L(gt1):	ldp	x5, x4, [up,#8]
-	add	up, up, #-8
-	add	rp, rp, #-32
+	sub	up, up, #8
+	sub	rp, rp, #32
 	b	L(lo2)
 
 L(b11):	lsl	x0, x4, tnc
 	lsr	x9, x4, cnt
 	ldp	x7, x6, [up,#8]
 	add	n, n, #1
-	add	up, up, #-24
-	add	rp, rp, #-48
+	sub	up, up, #24
+	sub	rp, rp, #48
 	b	L(lo0)
 
 L(bx0):	ldp	x5, x4, [up,#0]
@@ -77,7 +77,7 @@ L(b10):	lsl	x0, x5, tnc
 L(gt2):	ldp	x5, x4, [up,#16]
 	orr	x10, x10, x13
 	str	x10, [rp,#0]
-	add	rp, rp, #-24
+	sub	rp, rp, #24
 	b	L(lo2)
 
 L(b00):	lsl	x0, x5, tnc
@@ -87,8 +87,8 @@ L(b00):	lsl	x0, x5, tnc
 	ldp	x7, x6, [up,#16]
 	orr	x10, x10, x13
 	str	x10, [rp,#0]
-	add	up, up, #-16
-	add	rp, rp, #-40
+	sub	up, up, #16
+	sub	rp, rp, #40
 	b	L(lo0)
 
 	ALIGN(16)

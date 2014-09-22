@@ -1,3 +1,8 @@
+2014-09-22  Marc Glisse  <marc.glisse@inria.fr>
+
+	* mpn/arm64/lshift.asm: Avoid negative immediates.
+	* mpn/arm64/rshift.asm: Likewise.
+
 2014-09-13  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/generic/div_qr_1n_pi1.c: Honor NO_ASM.

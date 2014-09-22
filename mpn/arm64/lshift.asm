@@ -51,7 +51,7 @@ L(b01):	lsr	x0, x4, tnc
 	str	x18, [rp,#-8]
 	ret
 L(gt1):	ldp	x4, x5, [up,#-24]
-	add	up, up, #-8
+	sub	up, up, #8
 	add	rp, rp, #16
 	b	L(lo2)
 
@@ -78,7 +78,7 @@ L(b10):	lsr	x0, x5, tnc
 L(gt2):	ldp	x4, x5, [up,#-32]
 	orr	x10, x10, x13
 	str	x10, [rp,#-8]
-	add	up, up, #-16
+	sub	up, up, #16
 	add	rp, rp, #8
 	b	L(lo2)
 
@@ -94,8 +94,8 @@ L(b00):	lsr	x0, x5, tnc
 
 	ALIGN(16)
 L(top):	ldp	x4, x5, [up,#-48]
-	add	rp, rp, #-32		C integrate with stp?
-	add	up, up, #-32		C integrate with ldp?
+	sub	rp, rp, #32		C integrate with stp?
+	sub	up, up, #32		C integrate with ldp?
 	orr	x11, x11, x9
 	orr	x10, x10, x13
 	stp	x10, x11, [rp,#-16]
