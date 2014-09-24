@@ -556,13 +556,11 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
-    __asm__ ("umulh\t%0, %1, %2" : "=r" (ph) : "r" (m0), "r" (m1));	\
+    __asm__ ("umulh\t%0, %1, %2" : "=r" (ph) : "r" (__m0), "r" (__m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
-#define count_leading_zeros(count, x) \
-  __asm__ ("clz\t%0, %1" : "=r" (count) : "r" (x))
-#define count_trailing_zeros(count, x) \
-  __asm__ ("rbit\t%0, %1\n\tclz\t%0, %0" : "=r" (count) : "r" (x))
+#define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
+#define count_trailing_zeros(count, x)  count_trailing_zeros_gcc_ctz(count, x)
 #define COUNT_LEADING_ZEROS_0 64
 #endif /* __aarch64__ */
 

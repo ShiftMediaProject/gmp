@@ -1,3 +1,9 @@
+2014-09-24  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (arm64 count_trailing_zeros, count_leading_zeros): Use
+	gcc's builtins.
+	(arm64 umul_ppmm): Use macro arguments only once.
+
 2014-09-22  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpn/arm64/lshift.asm: Avoid negative immediates.
