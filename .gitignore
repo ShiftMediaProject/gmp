@@ -94,3 +94,14 @@ COPYING
 *.lo
 
 *.exe
+
+*.obj
+*.log
+*.tlog
+*.pdb
+*.ildb
+*.suo
+*.sdf
+[Oo]bj/
+!SMC/*.h
+!SMC/mpn/*.h
