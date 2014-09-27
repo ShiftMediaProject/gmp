@@ -5457,7 +5457,7 @@
     <ClInclude Include="version.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2016A4DB-B9BA-4521-BDA7-0EB3806E1FC8}</ProjectGuid>
+    <ProjectGuid>{02B94302-23D6-43EF-8865-95CDE99D5DC2}</ProjectGuid>
     <RootNamespace>libgmp</RootNamespace>
     <ProjectName>libgmp</ProjectName>
   </PropertyGroup>
@@ -5672,6 +5672,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -5737,6 +5740,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -5804,6 +5810,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -5870,6 +5879,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -5948,6 +5960,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -6026,6 +6041,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -6104,6 +6122,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -6182,6 +6203,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -6260,6 +6284,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -6338,6 +6365,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if not exist .\gmp-mparam.h (
+copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
