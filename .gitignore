@@ -104,4 +104,8 @@ COPYING
 *.sdf
 [Oo]bj/
 !SMC/*.h
-!SMC/mpn/*.h
+!SMC/mpn/*
+!SMC/x86/*
+!SMC/x86_64/*
+!SMC/x86/mpn/*
+!SMC/x86_64/mpn/*
