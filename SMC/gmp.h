@@ -40,7 +40,11 @@ see https://www.gnu.org/licenses/.  */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
 #define __GMP_HAVE_HOST_CPU_FAMILY_power   0
 #define __GMP_HAVE_HOST_CPU_FAMILY_powerpc 0
+#if defined(__x86_64) || defined(_M_X64)
 #define GMP_LIMB_BITS                      64
+#else
+#define GMP_LIMB_BITS                      32
+#endif
 #define GMP_NAIL_BITS                      0
 #endif
 #define GMP_NUMB_BITS     (GMP_LIMB_BITS - GMP_NAIL_BITS)
@@ -59,7 +63,9 @@ see https://www.gnu.org/licenses/.  */
 
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
+#if defined(__x86_64) || defined(_M_X64)
 #define _LONG_LONG_LIMB 1
+#endif
 #if defined(DLL_EXPORT)
 #define __GMP_LIBGMP_DLL 1
 #else

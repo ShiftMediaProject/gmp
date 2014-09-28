@@ -108,7 +108,10 @@ del ..\trialdivtab.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-trialdivtab.exe 64 8000 &gt;trialdivtab.h
+      <Command>mkdir x86
+gen-trialdivtab.exe 32 8000 &gt; x86\trialdivtab.h
+mkdir x86_64
+gen-trialdivtab.exe 64 8000 &gt; x86_64\trialdivtab.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -141,7 +144,10 @@ del ..\trialdivtab.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-trialdivtab.exe 64 8000 &gt;trialdivtab.h
+      <Command>mkdir x86
+gen-trialdivtab.exe 32 8000 &gt; x86\trialdivtab.h
+mkdir x86_64
+gen-trialdivtab.exe 64 8000 &gt; x86_64\trialdivtab.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -173,7 +179,10 @@ del ..\trialdivtab.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-trialdivtab.exe 64 8000 &gt;trialdivtab.h
+      <Command>mkdir x86
+gen-trialdivtab.exe 32 8000 &gt; x86\trialdivtab.h
+mkdir x86_64
+gen-trialdivtab.exe 64 8000 &gt; x86_64\trialdivtab.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -206,7 +215,10 @@ del ..\trialdivtab.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-trialdivtab.exe 64 8000 &gt;trialdivtab.h
+      <Command>mkdir x86
+gen-trialdivtab.exe 32 8000 &gt; x86\trialdivtab.h
+mkdir x86_64
+gen-trialdivtab.exe 64 8000 &gt; x86_64\trialdivtab.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

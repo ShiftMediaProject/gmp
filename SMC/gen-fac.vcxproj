@@ -108,7 +108,10 @@ del ..\fac_table.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-fac.exe 64 0 &gt;fac_table.h
+      <Command>mkdir x86
+gen-fac.exe 32 0 &gt; x86\fac_table.h
+mkdir x86_64
+gen-fac.exe 64 0 &gt; x86_64\fac_table.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -141,7 +144,10 @@ del ..\fac_table.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-fac.exe 64 0 &gt;fac_table.h
+      <Command>mkdir x86
+gen-fac.exe 32 0 &gt; x86\fac_table.h
+mkdir x86_64
+gen-fac.exe 64 0 &gt; x86_64\fac_table.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -173,7 +179,10 @@ del ..\fac_table.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-fac.exe 64 0 &gt;fac_table.h
+      <Command>mkdir x86
+gen-fac.exe 32 0 &gt; x86\fac_table.h
+mkdir x86_64
+gen-fac.exe 64 0 &gt; x86_64\fac_table.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -206,7 +215,10 @@ del ..\fac_table.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-fac.exe 64 0 &gt;fac_table.h
+      <Command>mkdir x86
+gen-fac.exe 32 0 &gt; x86\fac_table.h
+mkdir x86_64
+gen-fac.exe 64 0 &gt; x86_64\fac_table.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

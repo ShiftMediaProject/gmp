@@ -108,7 +108,10 @@ del ..\mpn\perfsqr.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-psqr.exe 64 0 &gt;mpn/perfsqr.h</Command>
+      <Command>mkdir x86
+gen-psqr.exe 32 0 &gt; x86\mpn\perfsqr.h
+mkdir x86_64
+gen-psqr.exe 64 0 &gt; x86_64\mpn\perfsqr.h</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +143,10 @@ del ..\mpn\perfsqr.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-psqr.exe 64 0 &gt;mpn/perfsqr.h</Command>
+      <Command>mkdir x86
+gen-psqr.exe 32 0 &gt; x86\mpn\perfsqr.h
+mkdir x86_64
+gen-psqr.exe 64 0 &gt; x86_64\mpn\perfsqr.h</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -171,7 +177,10 @@ del ..\mpn\perfsqr.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-psqr.exe 64 0 &gt;mpn/perfsqr.h</Command>
+      <Command>mkdir x86
+gen-psqr.exe 32 0 &gt; x86\mpn\perfsqr.h
+mkdir x86_64
+gen-psqr.exe 64 0 &gt; x86_64\mpn\perfsqr.h</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -203,7 +212,10 @@ del ..\mpn\perfsqr.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-psqr.exe 64 0 &gt;mpn/perfsqr.h</Command>
+      <Command>mkdir x86
+gen-psqr.exe 32 0 &gt; x86\mpn\perfsqr.h
+mkdir x86_64
+gen-psqr.exe 64 0 &gt; x86_64\mpn\perfsqr.h</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

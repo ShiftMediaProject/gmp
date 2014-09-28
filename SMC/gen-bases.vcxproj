@@ -111,8 +111,14 @@ del ..\mp_bases.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-bases.exe table 64 0 &gt;mpn/mp_bases.c
-gen-bases.exe header 64 0 &gt;mp_bases.h
+      <Command>mkdir x86
+mkdir x86\mpn
+gen-bases.exe table 32 0 &gt;x86\mpn\mp_bases.c
+gen-bases.exe header 32 0 &gt;x86\mp_bases.h
+mkdir x86_64
+mkdir x86_64\mpn
+gen-bases.exe table 64 0 &gt;x86_64\mpn\mp_bases.c
+gen-bases.exe header 64 0 &gt;x86_64\mp_bases.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -148,8 +154,14 @@ del ..\mp_bases.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-bases.exe table 64 0 &gt;mpn/mp_bases.c
-gen-bases.exe header 64 0 &gt;mp_bases.h
+      <Command>mkdir x86
+mkdir x86\mpn
+gen-bases.exe table 32 0 &gt;x86\mpn\mp_bases.c
+gen-bases.exe header 32 0 &gt;x86\mp_bases.h
+mkdir x86_64
+mkdir x86_64\mpn
+gen-bases.exe table 64 0 &gt;x86_64\mpn\mp_bases.c
+gen-bases.exe header 64 0 &gt;x86_64\mp_bases.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -184,8 +196,14 @@ del ..\mp_bases.h
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>gen-bases.exe table 64 0 &gt;mpn/mp_bases.c
-gen-bases.exe header 64 0 &gt;mp_bases.h
+      <Command>mkdir x86
+mkdir x86\mpn
+gen-bases.exe table 32 0 &gt;x86\mpn\mp_bases.c
+gen-bases.exe header 32 0 &gt;x86\mp_bases.h
+mkdir x86_64
+mkdir x86_64\mpn
+gen-bases.exe table 64 0 &gt;x86_64\mpn\mp_bases.c
+gen-bases.exe header 64 0 &gt;x86_64\mp_bases.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -221,8 +239,14 @@ del ..\mp_bases.h
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>gen-bases.exe table 64 0 &gt;mpn/mp_bases.c
-gen-bases.exe header 64 0 &gt;mp_bases.h
+      <Command>mkdir x86
+mkdir x86\mpn
+gen-bases.exe table 32 0 &gt;x86\mpn\mp_bases.c
+gen-bases.exe header 32 0 &gt;x86\mp_bases.h
+mkdir x86_64
+mkdir x86_64\mpn
+gen-bases.exe table 64 0 &gt;x86_64\mpn\mp_bases.c
+gen-bases.exe header 64 0 &gt;x86_64\mp_bases.h
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

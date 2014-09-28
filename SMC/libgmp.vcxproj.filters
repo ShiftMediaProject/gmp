@@ -49,6 +49,18 @@
     <Filter Include="Header Files\mpn\generic">
       <UniqueIdentifier>{ca8332c9-161a-4054-8687-c4ece8d8daca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mpn\x86">
+      <UniqueIdentifier>{d8815d62-b0e7-40a5-b5e7-50a32297b021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mpn\x86_64">
+      <UniqueIdentifier>{55fc46ef-b616-4264-99fb-46d34c4e4e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mpn\x86">
+      <UniqueIdentifier>{31695252-6539-475f-aa56-81ec7bc27230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mpn\x86_64">
+      <UniqueIdentifier>{97b7147a-9665-4a85-b688-69fc54cc9f64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mpf\fits_sint.c">
@@ -948,12 +960,6 @@
     <ClCompile Include="..\scanf\sscanf.c">
       <Filter>Source Files\scanf</Filter>
     </ClCompile>
-    <ClCompile Include="mpn\fib_table.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\mp_bases.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
     <ClCompile Include="..\tal-reent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1563,6 +1569,18 @@
     <ClCompile Include="mpn\ior_n.c">
       <Filter>Source Files\mpn</Filter>
     </ClCompile>
+    <ClCompile Include="x86\mpn\mp_bases.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\mpn\fib_table.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="x86_64\mpn\mp_bases.c">
+      <Filter>Source Files\mpn\x86_64</Filter>
+    </ClCompile>
+    <ClCompile Include="x86_64\mpn\fib_table.c">
+      <Filter>Source Files\mpn\x86_64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h">
@@ -1586,9 +1604,6 @@
     <ClInclude Include="..\rand\randmt.h">
       <Filter>Header Files\rand</Filter>
     </ClInclude>
-    <ClInclude Include="mpn\perfsqr.h">
-      <Filter>Header Files\mpn</Filter>
-    </ClInclude>
     <ClInclude Include="..\mpn\generic\gmp-mparam.h">
       <Filter>Header Files\mpn\generic</Filter>
     </ClInclude>
@@ -1597,6 +1612,15 @@
     </ClInclude>
     <ClInclude Include="version.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="x86\mpn\perfsqr.h">
+      <Filter>Header Files\mpn\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="x86_64\mpn\perfsqr.h">
+      <Filter>Header Files\mpn\x86_64</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5250,18 +5250,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="mpn\fib_table.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="mpn\hamdist.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
@@ -5287,18 +5275,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="mpn\ior_n.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="mpn\mp_bases.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
@@ -5442,6 +5418,34 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="x86\mpn\fib_table.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="x86\mpn\mp_bases.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="x86_64\mpn\fib_table.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="x86_64\mpn\mp_bases.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h" />
@@ -5453,8 +5457,10 @@
     <ClInclude Include="..\mpz\mul_i.h" />
     <ClInclude Include="..\rand\randmt.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="mpn\perfsqr.h" />
+    <ClInclude Include="gmp.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="x86\mpn\perfsqr.h" />
+    <ClInclude Include="x86_64\mpn\perfsqr.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{02B94302-23D6-43EF-8865-95CDE99D5DC2}</ProjectGuid>
@@ -5617,7 +5623,7 @@
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
@@ -5673,6 +5679,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -5685,7 +5694,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
@@ -5741,6 +5750,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -5753,7 +5765,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;DLL_EXPORT;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -5811,6 +5823,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -5823,7 +5838,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;DLL_EXPORT;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
@@ -5880,6 +5895,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -5904,7 +5922,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -5960,6 +5978,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
 )
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
@@ -5985,7 +6006,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -6042,6 +6063,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -6066,7 +6090,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -6122,6 +6146,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
 )
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
@@ -6147,7 +6174,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -6204,6 +6231,9 @@ del ..\mpn\mp_bases.c
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
 )
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
+)
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
@@ -6228,7 +6258,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
     </ClCompile>
@@ -6284,6 +6314,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
 )
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
@@ -6309,7 +6342,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;.\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
     </ClCompile>
@@ -6365,6 +6398,9 @@ del ..\mpn\mp_bases.c
 )
 if exist ..\mpn\fib_table.c (
 del ..\mpn\fib_table.c
+)
+if exist ..\gmp-mparam.h (
+del ..\gmp-mparam.h
 )
 if not exist .\gmp-mparam.h (
 copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h

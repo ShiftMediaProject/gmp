@@ -514,7 +514,11 @@
 #define SIZEOF_UNSIGNED_SHORT 2
 
 /* The size of `void *', as computed by sizeof. */
+#if defined(__x86_64) || defined(_M_X64)
 #define SIZEOF_VOID_P 8
+#else
+#define SIZEOF_VOID_P 4
+#endif
 
 /* Define to 1 if sscanf requires writable inputs */
 /* #undef SSCANF_WRITABLE_INPUT */
