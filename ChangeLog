@@ -1,5 +1,7 @@
 2014-10-01  Torbjörn Granlund  <torbjorng@google.com>
 
+	* All Makefile.am: INCLUDES => AM_CPPFLAGS.
+
 	* configure.ac (arm64): Set gcc_cflags_maybe to enable Neon (for clang
 	pretending to be gcc).
 
