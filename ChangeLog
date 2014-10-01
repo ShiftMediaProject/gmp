@@ -1,3 +1,8 @@
+2014-10-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm64): Set gcc_cflags_maybe to enable Neon (for clang
+	pretending to be gcc).
+
 2014-09-24  Marc Glisse  <marc.glisse@inria.fr>
 
 	* longlong.h (arm64 count_trailing_zeros, count_leading_zeros): Use

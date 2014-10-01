@@ -597,6 +597,10 @@ case $host in
 
 
   arm64*-*-* | aarch64*-*-*)
+    # The compiler clang version 3.4 or earlier requires an explicit -mfpu=neon
+    # for out assembly code.  Since this compiler cloaks as gcc, we have to
+    # fake too.
+    gcc_cflags_maybe="-mfpu=neon"
     path="arm64"
     ;;
 
