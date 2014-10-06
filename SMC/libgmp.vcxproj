@@ -5780,6 +5780,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ProfileGuidedDatabase>$(OutDir)\bin\$(TargetName).pgd</ProfileGuidedDatabase>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -6272,6 +6273,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ProfileGuidedDatabase>$(OutDir)\bin\$(TargetName).pgd</ProfileGuidedDatabase>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
