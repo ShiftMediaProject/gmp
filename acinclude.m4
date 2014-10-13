@@ -634,6 +634,20 @@ int dummy;
 #endif
 ])
 
+GMP_PROG_CC_WORKS_PART([$1], [freebsd hacked gcc],
+[/* Provokes an ICE on i386-freebsd with the FreeBSD-hacked gcc, under
+   -O2 -march=amdfam10.  We call helper functions here "open" and "close" in
+   order for linking to succeed.  */
+
+#if defined (__GNUC__) && ! defined (__cplusplus)
+int open(int*,int*,int);void*close(int);void g(int*rp,int*up,int un){
+__builtin_expect(un<=0x7f00,1)?__builtin_alloca(un):close(un);if(__builtin_clzl
+(up[un])){open(rp,up,un);while(1){if(rp[un-1]!=0)break;un--;}}}
+#else
+int dummy;
+#endif
+])
+
 GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization],
 [/* The following is mis-compiled by HP ia-64 cc version
         cc: HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]
