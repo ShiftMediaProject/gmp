@@ -52,7 +52,7 @@ C    least vastly improve the current __udiv_qrnnd_c based code.
 
 ASM_START()
 PROLOGUE(mpn_divrem_2)
-	stwu	r1, -32(r1)
+	stwu	r1, -16(r1)
 	slwi	r0, r6, 2
 	add	r5, r5, r0
 	stmw	r28, 8(r1)
@@ -169,7 +169,7 @@ L(bck):	stw	r5, 0(r8)
 L(ret):	stw	r28, 0(r29)
 	stw	r12, 4(r29)
 	lmw	r28, 8(r1)
-	addi	r1, r1, 32
+	addi	r1, r1, 16
 	blr
 
 L(fix):	cmplw	cr6, r28, r7

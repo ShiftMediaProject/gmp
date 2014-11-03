@@ -1,3 +1,16 @@
+2014-11-03  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/powerpc32/addmul_1.asm: Avoid negative stack pointer references.
+	* mpn/powerpc32/lshift.asm: Likewise.
+	* mpn/powerpc32/lshiftc.asm:  Likewise.
+	* mpn/powerpc32/p3-p7/aors_n.asm:  Likewise.
+	* mpn/powerpc32/rshift.asm:  Likewise.
+	* mpn/powerpc32/sec_tabselect.asm:  Likewise.
+	* mpn/powerpc32/submul_1.asm:  Likewise.
+	* mpn/powerpc32/vmx/mod_34lsub1.asm:  Likewise.
+
+	* mpn/powerpc32/divrem_2.asm: Slightly trim stack usage.
+
 2014-10-13  Torbjörn Granlund  <torbjorng@google.com>
 
 	* acinclude.m4 (freebsd hacked gcc): Test for crash-prone FreeBSD gcc.
