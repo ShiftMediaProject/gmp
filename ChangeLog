@@ -1,3 +1,8 @@
+2014-11-06  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Ignore appended letters such E in POWER8E.
+	* configure.ac: Supply cflags for power8, power9.
+
 2014-11-03  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/powerpc32/addmul_1.asm: Avoid negative stack pointer references.
@@ -8,8 +13,6 @@
 	* mpn/powerpc32/sec_tabselect.asm:  Likewise.
 	* mpn/powerpc32/submul_1.asm:  Likewise.
 	* mpn/powerpc32/vmx/mod_34lsub1.asm:  Likewise.
-
-	* mpn/powerpc32/divrem_2.asm: Slightly trim stack usage.
 
 2014-10-13  Torbjörn Granlund  <torbjorng@google.com>
 

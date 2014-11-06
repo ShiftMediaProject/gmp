@@ -456,8 +456,8 @@ EOF
       970??)   exact_cpu="powerpc970" ;;
       603 | 603e | 604 | 604e | 750 | 821 | 860)
         exact_cpu="powerpc$x" ;;
-      POWER[4-9])
-        exact_cpu=`echo $x | sed "s;POWER;power;"` ;;
+      POWER[4-9]*)
+        exact_cpu=`echo $x | sed -e "s;POWER;power;" -e "s;[a-zA-Z]*$;;"` ;;
     esac
   fi
 
