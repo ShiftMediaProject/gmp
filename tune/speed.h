@@ -417,42 +417,6 @@ void speed_cyclecounter (unsigned p[2]);
 
 void mftb_function (unsigned p[2]);
 
-/* In i386 gcc -fPIC, ebx is a fixed register and can't be declared a dummy
-   output or a clobber for the cpuid, hence an explicit save and restore.  A
-   clobber as such doesn't provoke an error unfortunately (gcc 3.0), so use
-   the dummy output style in non-PIC, so there's an error if somehow -fPIC
-   is used without a -DPIC to tell us about it.  */
-#if defined(__GNUC__) && ! defined (NO_ASM)	\
-  && (defined (__i386__) || defined (__i486__))
-#if defined (PIC) || defined (__APPLE_CC__)
-#define speed_cyclecounter(p)						\
-  do {									\
-    int	 __speed_cyclecounter__save_ebx;				\
-    int	 __speed_cyclecounter__dummy;					\
-    __asm__ __volatile__ ("movl %%ebx, %1\n"				\
-			  "cpuid\n"					\
-			  "movl %1, %%ebx\n"				\
-			  "rdtsc"					\
-			  : "=a"   ((p)[0]),				\
-			    "=&rm" (__speed_cyclecounter__save_ebx),	\
-			    "=c"   (__speed_cyclecounter__dummy),	\
-			    "=d"   ((p)[1]));				\
-  } while (0)
-#else
-#define speed_cyclecounter(p)						\
-  do {									\
-    int	 __speed_cyclecounter__dummy1;					\
-    int	 __speed_cyclecounter__dummy2;					\
-    __asm__ __volatile__ ("cpuid\n"					\
-			  "rdtsc"					\
-			  : "=a" ((p)[0]),				\
-			    "=b" (__speed_cyclecounter__dummy1),	\
-			    "=c" (__speed_cyclecounter__dummy2),	\
-			    "=d" ((p)[1]));				\
-  } while (0)
-#endif
-#endif
-
 double speed_cyclecounter_diff (const unsigned [2], const unsigned [2]);
 int gettimeofday_microseconds_p (void);
 int getrusage_microseconds_p (void);

@@ -1,3 +1,8 @@
+2014-11-08  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tune/speed.h (i386 speed_cyclecounter): Remove inline asm code, rely
+	on external version.
+
 2014-11-06  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess: Ignore appended letters such E in POWER8E.
