@@ -959,7 +959,9 @@ m4_assert_numargs(2)
 `ifdef(`PIC',`dnl
 ifelse(index(defn(`load_eip'), `$2'),-1,
 `m4append(`load_eip',
-`L(movl_eip_`'substr($2,1)):
+`	TEXT
+	ALIGN(16)
+L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
 	ret_internal
 ')')dnl
@@ -975,7 +977,9 @@ m4_assert_numargs(2)
 `ifdef(`PIC',`dnl
 ifelse(index(defn(`load_eip'), `$2'),-1,
 `m4append(`load_eip',
-`L(movl_eip_`'substr($2,1)):
+`	TEXT
+	ALIGN(16)
+L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
 	ret_internal
 ')')dnl

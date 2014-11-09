@@ -1,5 +1,9 @@
 2014-11-08  Torbjörn Granlund  <torbjorng@google.com>
 
+	* mpn/x86/x86-defs.m4 (LEA, LEAL): Make sure to put eip stub code in
+	text segment.
+	* mpn/x86/darwin.m4: Likewise.
+
 	* tune/speed.h (i386 speed_cyclecounter): Remove inline asm code, rely
 	on external version.
 
