@@ -1,3 +1,9 @@
+2014-11-12  Torbjörn Granlund  <torbjorng@google.com>
+
+	* gen-psqr.c: Add casts for C++ compatibility.
+
+	* tests/misc/t-scanf.c: Include config.h early for HAVE_xxx.
+
 2014-11-08  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86/x86-defs.m4 (LEA, LEAL): Make sure to put eip stub code in
