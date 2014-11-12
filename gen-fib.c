@@ -45,7 +45,7 @@ generate (int numb_bits)
 
   /* fib(2n) > 2^n, so use 2n as a limit for the table size */
   falloc = 2 * numb_bits;
-  f = xmalloc (falloc * sizeof (*f));
+  f = (mpz_t*) xmalloc (falloc * sizeof (*f));
 
   mpz_init_set_ui (f[0], 1L);  /* F[-1] */
   mpz_init_set_ui (f[1], 0L);  /* F[0] */
