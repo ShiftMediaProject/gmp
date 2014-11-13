@@ -1,3 +1,20 @@
+2014-11-13  Hans Wennborg  <hwennborg@google.com>
+
+	* mpn/generic/toom_interpolate_8pts.c: Fix operator precedence in
+	ASSERT.
+	
+2014-11-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tune/speed.h: Add casts for C++ compatibility.
+	(speed_cyclecounter): Mark as extern "C".
+	(mpn_mod_1_1p_1, mpn_mod_1_1p_2): Correct prototype.
+
+	* tune/tune-gcd-p.c: Add casts for C++ compatibility.
+
+	* tune/tuneup.c:  Add casts for C++ compatibility.
+	(mpn_divrem_1_tune, mpn_mod_1_tune): Mark as extern "C".
+	(INSERT_FFTTAB): Produce sentinels differently to silence compiler.
+	
 2014-11-12  Torbjörn Granlund  <torbjorng@google.com>
 
 	* gen-psqr.c: Add casts for C++ compatibility.

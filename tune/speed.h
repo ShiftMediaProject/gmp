@@ -412,8 +412,10 @@ double speed_umul_ppmm (struct speed_params *);
 
 /* Prototypes for other routines */
 
+extern "C" {
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter (unsigned p[2]);
+}
 
 void mftb_function (unsigned p[2]);
 
@@ -459,8 +461,8 @@ int mpn_jacobi_base_4 (mp_limb_t, mp_limb_t, int);
 mp_limb_t mpn_mod_1_div (mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_mod_1_inv (mp_srcptr, mp_size_t, mp_limb_t);
 
-mp_limb_t mpn_mod_1_1p_1 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
-mp_limb_t mpn_mod_1_1p_2 (mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]);
+mp_limb_t mpn_mod_1_1p_1 (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [4]);
+mp_limb_t mpn_mod_1_1p_2 (mp_srcptr, mp_size_t, mp_limb_t, const mp_limb_t [4]);
 
 void mpn_mod_1_1p_cps_1 (mp_limb_t [4], mp_limb_t);
 void mpn_mod_1_1p_cps_2 (mp_limb_t [4], mp_limb_t);
@@ -3356,7 +3358,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     SPEED_TMP_ALLOC_LIMBS (xp, s->size + 1, s->align_xp);		\
 									\
     MPN_SIZEINBASE (wn, s->xp, s->size, base);				\
-    wp = TMP_ALLOC (wn);						\
+    wp = (unsigned char *) TMP_ALLOC (wn);				\
 									\
     /* use this during development to guard against overflowing wp */	\
     /*									\
@@ -3402,7 +3404,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 									\
     TMP_MARK;								\
 									\
-    xp = TMP_ALLOC (s->size);						\
+    xp = (unsigned char *) TMP_ALLOC (s->size);				\
     for (i = 0; i < s->size; i++)					\
       xp[i] = s->xp[i] % base;						\
 									\

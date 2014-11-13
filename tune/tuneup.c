@@ -387,9 +387,11 @@ analyze_dat (int final)
  * mpn/generic/divrem_1.c, mpn/generic/mod_1.c and mpz/fac_ui.c */
 
 mp_limb_t mpn_div_qr_1_tune (mp_ptr, mp_limb_t *, mp_srcptr, mp_size_t, mp_limb_t);
+extern "C" {
 mp_limb_t mpn_divrem_1_tune (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_mod_1_tune (mp_srcptr, mp_size_t, mp_limb_t);
 void mpz_fac_ui_tune (mpz_ptr, unsigned long);
+}
 
 double
 speed_mpn_mod_1_tune (struct speed_params *s)
@@ -858,8 +860,8 @@ cached_measure (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, int k,
   do {									\
     fft_tab[idx].n = nval;						\
     fft_tab[idx].k = kval;						\
-    fft_tab[idx+1].n = -1;	/* sentinel */				\
-    fft_tab[idx+1].k = -1;						\
+    fft_tab[idx+1].n = (1 << 27) - 1;	/* sentinel, 27b wide field */	\
+    fft_tab[idx+1].k = (1 <<  5) - 1;					\
   } while (0)
 
 int
@@ -902,12 +904,12 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
       idx = 1;
     }
 
-  ap = malloc (sizeof (mp_limb_t));
+  ap = (mp_ptr) malloc (sizeof (mp_limb_t));
   if (p->sqr)
     bp = ap;
   else
-    bp = malloc (sizeof (mp_limb_t));
-  rp = malloc (sizeof (mp_limb_t));
+    bp = (mp_ptr) malloc (sizeof (mp_limb_t));
+  rp = (mp_ptr) malloc (sizeof (mp_limb_t));
   alloc = 1;
 
   /* Round n to comply to initial k value */
@@ -945,22 +947,22 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 	      alloc = n1;
 	      if (p->sqr)
 		{
-		  ap = realloc (ap, sizeof (mp_limb_t));
-		  rp = realloc (rp, sizeof (mp_limb_t));
-		  ap = bp = realloc (ap, alloc * sizeof (mp_limb_t));
+		  ap = (mp_ptr) realloc (ap, sizeof (mp_limb_t));
+		  rp = (mp_ptr) realloc (rp, sizeof (mp_limb_t));
+		  ap = bp = (mp_ptr) realloc (ap, alloc * sizeof (mp_limb_t));
 		  mpn_random (ap, alloc);
-		  rp = realloc (rp, alloc * sizeof (mp_limb_t));
+		  rp = (mp_ptr) realloc (rp, alloc * sizeof (mp_limb_t));
 		}
 	      else
 		{
-		  ap = realloc (ap, sizeof (mp_limb_t));
-		  bp = realloc (bp, sizeof (mp_limb_t));
-		  rp = realloc (rp, sizeof (mp_limb_t));
-		  ap = realloc (ap, alloc * sizeof (mp_limb_t));
+		  ap = (mp_ptr) realloc (ap, sizeof (mp_limb_t));
+		  bp = (mp_ptr) realloc (bp, sizeof (mp_limb_t));
+		  rp = (mp_ptr) realloc (rp, sizeof (mp_limb_t));
+		  ap = (mp_ptr) realloc (ap, alloc * sizeof (mp_limb_t));
 		  mpn_random (ap, alloc);
-		  bp = realloc (bp, alloc * sizeof (mp_limb_t));
+		  bp = (mp_ptr) realloc (bp, alloc * sizeof (mp_limb_t));
 		  mpn_random (bp, alloc);
-		  rp = realloc (rp, alloc * sizeof (mp_limb_t));
+		  rp = (mp_ptr) realloc (rp, alloc * sizeof (mp_limb_t));
 		}
 	    }
 
@@ -2603,7 +2605,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
 
   TMP_MARK;
 
-  str = TMP_ALLOC (s->size);
+  str = (unsigned char *) TMP_ALLOC (s->size);
   for (i = 0; i < s->size; i++)
     str[i] = s->xp[i] % base;
 
