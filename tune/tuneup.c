@@ -387,11 +387,18 @@ analyze_dat (int final)
  * mpn/generic/divrem_1.c, mpn/generic/mod_1.c and mpz/fac_ui.c */
 
 mp_limb_t mpn_div_qr_1_tune (mp_ptr, mp_limb_t *, mp_srcptr, mp_size_t, mp_limb_t);
+
+#if defined (__cplusplus)
 extern "C" {
+#endif
+
 mp_limb_t mpn_divrem_1_tune (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_mod_1_tune (mp_srcptr, mp_size_t, mp_limb_t);
 void mpz_fac_ui_tune (mpz_ptr, unsigned long);
+
+#if defined (__cplusplus)
 }
+#endif
 
 double
 speed_mpn_mod_1_tune (struct speed_params *s)

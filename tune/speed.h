@@ -412,10 +412,16 @@ double speed_umul_ppmm (struct speed_params *);
 
 /* Prototypes for other routines */
 
+#if defined (__cplusplus)
 extern "C" {
+#endif
+
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter (unsigned p[2]);
+
+#if defined (__cplusplus)
 }
+#endif
 
 void mftb_function (unsigned p[2]);
 
