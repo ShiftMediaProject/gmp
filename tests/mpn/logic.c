@@ -41,7 +41,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 
 void
-check_one (mp_srcptr refp, mp_srcptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, char *funcname)
+check_one (mp_srcptr refp, mp_srcptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, const char *funcname)
 {
   if (mpn_cmp (refp, rp, n))
     {

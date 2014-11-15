@@ -1,3 +1,13 @@
+2014-11-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tests/mpz/reuse.c: Make function vectors 'static'.
+
+	* tests/mpn/logic.c (check_one): Make string variable 'const'.
+
+	* tests/mpz/t-perfpow.c (tests): Make 'static'.
+
+	* tune/tuneup.c (fftmes): Remove an unused variable.
+
 2014-11-15  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/amd64check.c (calling_conventions_fenv): Mark as extern "C".

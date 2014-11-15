@@ -30,7 +30,7 @@ struct
 {
   const char *num_as_str;
   char want;
-} tests[] =
+} static tests[] =
   {
     { "0", 1},
     { "1", 1},

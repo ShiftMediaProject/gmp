@@ -881,7 +881,6 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
   int n_measurements;
   mp_limb_t *ap, *bp, *rp;
   mp_size_t alloc;
-  char *linepref;
   struct fft_table_nk *fft_tab;
 
   fft_tab = mpn_fft_table3[p->sqr];
@@ -905,7 +904,6 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 	{
 	  printf ("\\\n  { ");
 	  printf ("{%7u,%2u}", fft_tab[0].n, fft_tab[0].k);
-	  linepref = "    ";
 	}
 
       idx = 1;
