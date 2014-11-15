@@ -34,7 +34,7 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 int
-_mpq_cmp_ui (const mpq_t op1, unsigned long int num2, unsigned long int den2)
+_mpq_cmp_ui (mpq_srcptr op1, unsigned long int num2, unsigned long int den2)
 {
   mp_size_t num1_size = SIZ(NUM(op1));
   mp_size_t den1_size = SIZ(DEN(op1));

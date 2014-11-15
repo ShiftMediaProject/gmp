@@ -34,7 +34,7 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 int
-mpq_cmp (const mpq_t op1, const mpq_t op2)
+mpq_cmp (mpq_srcptr op1, mpq_srcptr op2)
 {
   mp_size_t num1_size = SIZ(NUM(op1));
   mp_size_t den1_size = SIZ(DEN(op1));
