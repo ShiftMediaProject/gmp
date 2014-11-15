@@ -1,3 +1,8 @@
+2014-11-15  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/amd64check.c (calling_conventions_fenv): Mark as extern "C".
+	* tests/x86check.c (calling_conventions_fenv): Likewise.
+
 2014-11-13  Hans Wennborg  <hwennborg@google.com>
 
 	* mpn/generic/toom_interpolate_8pts.c: Fix operator precedence in
