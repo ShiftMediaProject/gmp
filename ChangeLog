@@ -1,3 +1,8 @@
+2014-11-17  Torbjörn Granlund  <torbjorng@google.com>
+
+	* longlong.h (__longlong_h_C): New macro.
+	(mpn_umul_ppmm, etc): Use it for C++ support.
+
 2014-11-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tests/mpz/reuse.c: Make function vectors 'static'.
