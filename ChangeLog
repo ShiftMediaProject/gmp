@@ -1,3 +1,9 @@
+2014-11-18  Torbjörn Granlund  <torbjorng@google.com>
+
+	From Hannes Mehnert:
+	* config.guess (arm*-*-*): Base guesses on first matching /proc/cpuinfo
+	line.
+
 2014-11-17  Torbjörn Granlund  <torbjorng@google.com>
 
 	* longlong.h (__longlong_h_C): New macro.
@@ -22,7 +28,7 @@
 
 	* mpn/generic/toom_interpolate_8pts.c: Fix operator precedence in
 	ASSERT.
-	
+
 2014-11-13  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tune/speed.h: Add casts for C++ compatibility.
@@ -34,7 +40,7 @@
 	* tune/tuneup.c:  Add casts for C++ compatibility.
 	(mpn_divrem_1_tune, mpn_mod_1_tune): Mark as extern "C".
 	(INSERT_FFTTAB): Produce sentinels differently to silence compiler.
-	
+
 2014-11-12  Torbjörn Granlund  <torbjorng@google.com>
 
 	* gen-psqr.c: Add casts for C++ compatibility.
