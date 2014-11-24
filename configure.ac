@@ -909,7 +909,7 @@ case $host in
   mips*-*-*)
     abilist="o32"
     gcc_cflags_optlist="abi"
-    gcc_cflags_abi="-mabi=32"
+    gcc_cflags_abi="-mabi=32 -m32"
     gcc_testlist="gcc-mips-o32"
     path="mips32"
     cc_cflags="-O2 -o32"   # no -g, it disables all optimizations
@@ -921,13 +921,17 @@ case $host in
         abilist="n32 64 o32"
 
         cclist_n32="gcc cc"
-        gcc_n32_cflags="$gcc_cflags -mabi=n32"
+        gcc_n32_cflags_optlist="abi"
+        gcc_n32_cflags="$gcc_cflags"
+        gcc_n32_cflags_abi="-mabi=n32 -mn32"
         cc_n32_cflags="-O2 -n32"	# no -g, it disables all optimizations
         limb_n32=longlong
         path_n32="mips64"
 
         cclist_64="gcc cc"
-        gcc_64_cflags="$gcc_cflags -mabi=64"
+        gcc_64_cflags_optlist="abi"
+        gcc_64_cflags="$gcc_cflags"
+        gcc_64_cflags_abi="-mabi=64 -m64"
         gcc_64_ldflags="-Wc,-mabi=64"
         cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
         cc_64_ldflags="-Wc,-64"
