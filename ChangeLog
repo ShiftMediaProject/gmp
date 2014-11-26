@@ -1,3 +1,10 @@
+2014-11-26  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm*-*-*): Optionally pass redundant fpu mode options
+	in order to placate clang.
+
+	* mpn/arm/neon/lshiftc.asm: Avoid insn form missing from clang.
+
 2014-11-24  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (mips*-*-*): Provide ABI synonyms (for clang pretending
