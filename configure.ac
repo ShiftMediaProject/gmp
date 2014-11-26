@@ -607,11 +607,20 @@ case $host in
 
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
-    gcc_cflags_optlist="arch neon tune"
+    gcc_cflags_optlist="arch fpmode neon tune"
     gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
+
+    # This is needed for clang, which is not content with flags like -mfpu=neon
+    # alone.
+    case $host in
+      *-*-*eabi)
+        gcc_cflags_fpmode="-mfloat-abi=softfp" ;;
+      *-*-*eabihf)
+        gcc_cflags_fpmode="-mfloat-abi=hard" ;;
+    esac
 
     # FIXME: We make mandatory compiler options optional here.  We should
     # either enforce them, or organise to strip paths as the corresponding
