@@ -1,3 +1,7 @@
+2014-12-02  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (arm*-*-*): Redirect stderr.
+
 2014-11-26  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (arm*-*-*): Optionally pass redundant fpu mode options
