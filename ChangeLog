@@ -4,6 +4,9 @@
 	* config.sub (ultrasparc*-*-*): Update for T5.
 	* configure.ac (ultrasparc*-*-*): Update for T5.
 
+	* longlong.h (sparc64): Define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+	with VIS3.
+
 2014-12-02  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess (arm*-*-*): Redirect stderr.

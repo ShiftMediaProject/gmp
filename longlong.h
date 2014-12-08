@@ -1790,6 +1790,8 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   } while (0)
 #define count_leading_zeros(count, x) \
   __asm__ ("lzd\t%1,%0" : "=r" (count) : "r" (x))
+/* Needed by count_leading_zeros_32 in sparc64.h.  */
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif
 #endif
 
