@@ -7,6 +7,11 @@
 	* longlong.h (sparc64): Define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 	with VIS3.
 
+	* tests/misc/t-locale.c (localeconv, nl_langinfo): Match glibc's
+	prototype in C++.
+	* tests/mpf/t-get_si.c (check_limbdata): Avoid narrowing conversion
+	from -1 to unsigned inside {}.
+
 2014-12-02  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess (arm*-*-*): Redirect stderr.
