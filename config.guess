@@ -592,6 +592,8 @@ sparc-*-* | sparc64-*-*)
     elif grep 'cpu.*MB86904' /proc/cpuinfo >/dev/null; then
       # actually MicroSPARC-II
       exact_cpu=microsparc
+    elif grep 'cpu.*UltraSparc T5' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparct5"
     elif grep 'cpu.*UltraSparc T4' /proc/cpuinfo >/dev/null; then
       exact_cpu="ultrasparct4"
     elif grep 'cpu.*UltraSparc T3' /proc/cpuinfo >/dev/null; then
@@ -655,7 +657,11 @@ sparc-*-* | sparc64-*-*)
   for prtconfopt in "" "-vp"; do
     if test -z "$exact_cpu"; then
       if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >$dummy; then
-	if grep 'SUNW,UltraSPARC-T3' $dummy >/dev/null; then
+	if grep 'SUNW,UltraSPARC-T5' $dummy >/dev/null; then
+	  exact_cpu=ultrasparct5
+	elif grep 'SUNW,UltraSPARC-T4' $dummy >/dev/null; then
+	  exact_cpu=ultrasparct4
+	elif grep 'SUNW,UltraSPARC-T3' $dummy >/dev/null; then
 	  exact_cpu=ultrasparct3
 	elif grep 'SUNW,UltraSPARC-T2' $dummy >/dev/null; then
 	  exact_cpu=ultrasparct2
@@ -693,7 +699,11 @@ sparc-*-* | sparc64-*-*)
   #
   if test -z "$exact_cpu"; then
     if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >$dummy; then
-      if grep -i 'UltraSparc-T3' $dummy >/dev/null; then
+      if grep -i 'UltraSparc-T5' $dummy >/dev/null; then
+        exact_cpu=ultrasparct5
+      elif grep -i 'UltraSparc-T4' $dummy >/dev/null; then
+        exact_cpu=ultrasparct4
+      elif grep -i 'UltraSparc-T3' $dummy >/dev/null; then
         exact_cpu=ultrasparct3
       elif grep -i 'UltraSparc-T2' $dummy >/dev/null; then
         exact_cpu=ultrasparct2

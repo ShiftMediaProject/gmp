@@ -1,3 +1,8 @@
+2014-12-08  Marc Glisse  <marc.glisse@inria.fr>
+
+	* config.guess (ultrasparc*-*-*): Update for T4 and T5.
+	* configure.ac (ultrasparc*-*-*): Update for T5.
+
 2014-12-02  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess (arm*-*-*): Redirect stderr.
