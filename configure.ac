@@ -1380,7 +1380,7 @@ case $host in
 			gcc_cflags_cpu="-mcpu=niagara3 -mcpu=niagara -mcpu=v9"
 			gcc_32_cflags_asm="-Wa,-Av8plusd -Wa,-xarch=v8plusd"
 			gcc_64_cflags_asm="-Wa,-Av9d -Wa,-xarch=v9d";;
-      ultrasparct[45])
+      [ultrasparct[45]])
 			gcc_cflags_cpu="-mcpu=niagara4 -mcpu=niagara3 -mcpu=niagara -mcpu=v9"
 			gcc_32_cflags_asm="-Wa,-Av8plusd -Wa,-xarch=v8plusd"
 			gcc_64_cflags_asm="-Wa,-Av9d -Wa,-xarch=v9d";;
