@@ -1,3 +1,8 @@
+2014-12-09  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (powerpc): Remove hardwired -mpowerpc, causes clang
+	problems.  Optionally pass -m32.
+
 2014-12-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* config.guess (ultrasparc*-*-*): Update for T4 and T5.
