@@ -978,7 +978,7 @@ case $host in
     abilist="32"
     cclist="gcc cc"
     cc_cflags="-O2"
-    gcc_32_cflags="$gcc_cflags -mpowerpc"
+    gcc_32_cflags_maybe="-m32"
     gcc_cflags_optlist="precomp subtype asm cpu"
     gcc_cflags_precomp="-no-cpp-precomp"
     gcc_cflags_subtype="-force_cpusubtype_ALL"	# for vmx on darwin
@@ -1118,7 +1118,6 @@ case $host in
 	    # incompatible with a shared library.
 	    #
 	    abilist="mode64 mode32 $abilist"
-	    gcc_32_cflags_maybe="-m32"
 	    gcc_cflags_opt="-O3 -O2 -O1"	# will this become used?
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags_maybe="-m32"
@@ -1164,7 +1163,6 @@ case $host in
 	    # 64-bits.
 	    #
 	    abilist="mode64 mode32 $abilist"
-	    gcc_32_cflags_maybe="-m32"
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags_maybe="-m32"
 	    gcc_mode32_cflags="-mpowerpc64"
