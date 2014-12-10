@@ -1,3 +1,8 @@
+2014-12-10  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/clocale.c (localeconv, nl_langinfo): Match glibc's
+	prototype in C++.
+
 2014-12-09  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (powerpc): Remove hardwired -mpowerpc, causes clang
