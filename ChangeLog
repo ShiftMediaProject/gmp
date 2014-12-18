@@ -1,3 +1,7 @@
+2014-12-18  Torbjörn Granlund  <torbjorng@google.com>
+
+	* longlong.h (umul_ppmm): Use input temps in more places.
+
 2014-12-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* tests/cxx/clocale.c (localeconv, nl_langinfo): Match glibc's
