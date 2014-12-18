@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2013 Free Software
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2014 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -200,7 +200,7 @@ see https://www.gnu.org/licenses/.  */
     UDItype __m0 = (m0), __m1 = (m1);					\
     __asm__ ("umulh %r1,%2,%0"						\
 	     : "=r" (ph)						\
-	     : "%rJ" (m0), "rI" (m1));					\
+	     : "%rJ" (__m0), "rI" (__m1));				\
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
@@ -210,7 +210,7 @@ see https://www.gnu.org/licenses/.  */
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
-    (ph) = __UMULH (m0, m1);						\
+    (ph) = __UMULH (__m0, __m1);					\
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
@@ -293,7 +293,7 @@ long __MPN(count_leading_zeros) (UDItype);
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
-    (ph) = _int_mult_upper (m0, m1);					\
+    (ph) = _int_mult_upper (__m0, __m1);				\
     (pl) = __m0 * __m1;							\
   } while (0)
 #ifndef LONGLONG_STANDALONE
@@ -358,9 +358,9 @@ long __MPN(count_leading_zeros) (UDItype);
 #include <ia64intrin.h>
 #define umul_ppmm(ph, pl, m0, m1)					\
   do {									\
-    UWtype _m0 = (m0), _m1 = (m1);					\
-    ph = _m64_xmahu (_m0, _m1, 0);					\
-    pl = _m0 * _m1;							\
+    UWtype __m0 = (m0), __m1 = (m1);					\
+    ph = _m64_xmahu (__m0, __m1, 0);					\
+    pl = __m0 * __m1;							\
   } while (0)
 #endif
 #ifndef LONGLONG_STANDALONE
@@ -1474,7 +1474,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
-    __asm__ ("mulhdu %0,%1,%2" : "=r" (ph) : "%r" (m0), "r" (m1));	\
+    __asm__ ("mulhdu %0,%1,%2" : "=r" (ph) : "%r" (__m0), "r" (__m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
@@ -1482,7 +1482,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define smul_ppmm(ph, pl, m0, m1) \
   do {									\
     DItype __m0 = (m0), __m1 = (m1);					\
-    __asm__ ("mulhd %0,%1,%2" : "=r" (ph) : "%r" (m0), "r" (m1));	\
+    __asm__ ("mulhd %0,%1,%2" : "=r" (ph) : "%r" (__m0), "r" (__m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
 #define SMUL_TIME 14  /* ??? */
