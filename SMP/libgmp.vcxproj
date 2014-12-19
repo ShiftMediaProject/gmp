@@ -5627,6 +5627,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(OutDir)\lib\$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -5696,6 +5697,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(OutDir)\lib\$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -5767,6 +5769,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)\bin\$(TargetName)$(TargetExt)</OutputFile>
@@ -5777,6 +5780,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <LargeAddressAware>true</LargeAddressAware>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -5838,6 +5842,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)\bin\$(TargetName)$(TargetExt)</OutputFile>
@@ -5847,6 +5852,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ProfileGuidedDatabase>$(OutDir)\bin\$(TargetName).pgd</ProfileGuidedDatabase>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -5920,6 +5926,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -6003,6 +6010,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -6085,6 +6093,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -6167,6 +6176,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -6249,6 +6259,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -6332,6 +6343,7 @@ copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267</DisableSpecificWarnings>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
