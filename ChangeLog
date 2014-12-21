@@ -1,3 +1,7 @@
+2014-12-22  Torbjörn Granlund  <torbjorng@google.com>
+
+	* longlong.h (mips64): Work around one clang bug.
+
 2014-12-18  Torbjörn Granlund  <torbjorng@google.com>
 
 	* longlong.h (umul_ppmm): Use input temps in more places.
