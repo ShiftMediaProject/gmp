@@ -1255,7 +1255,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     w0 = __ll;								\
   } while (0)
 #endif
-#if !defined (umul_ppmm) && __GMP_GNUC_PREREQ (2,7)
+#if !defined (umul_ppmm) && __GMP_GNUC_PREREQ (2,7) && !defined (__clang__)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("dmultu %2,%3" : "=l" (w0), "=h" (w1) : "d" (u), "d" (v))
 #endif
