@@ -1,6 +1,6 @@
 2014-12-22  Torbjörn Granlund  <torbjorng@google.com>
 
-	* longlong.h (mips64): Work around one clang bug.
+	* longlong.h (mips64, mips32): Work around one clang bug.
 
 2014-12-18  Torbjörn Granlund  <torbjorng@google.com>
 
