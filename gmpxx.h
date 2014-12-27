@@ -1304,7 +1304,7 @@ namespace std {
 template <class T, class Op>
 struct __gmp_unary_expr
 {
-  const T &val;
+  typename __gmp_resolve_ref<T>::ref_type val;
 
   __gmp_unary_expr(const T &v) : val(v) { }
 private:
@@ -2148,6 +2148,24 @@ public:
 };
 
 
+// simple expressions, U is a built-in numerical type
+
+template <class T, class U, class Op>
+class __gmp_expr<T, __gmp_unary_expr<U, Op> >
+{
+private:
+  typedef U val_type;
+
+  __gmp_unary_expr<val_type, Op> expr;
+public:
+  explicit __gmp_expr(const val_type &val) : expr(val) { }
+  void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
+  { Op::eval(p, expr.val); }
+  const val_type & get_val() const { return expr.val; }
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
+};
+
+
 // compound expressions
 
 template <class T, class U, class Op>
@@ -2203,7 +2221,7 @@ public:
 };
 
 
-// simple expressions, T is a built-in numerical type
+// simple expressions, U is a built-in numerical type
 
 template <class T, class U, class Op>
 class __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, T>, U, Op> >

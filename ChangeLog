@@ -1,3 +1,9 @@
+2014-12-27  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_unary_expr): Use __gmp_resolve_ref.
+	(__gmp_expr): New specialization for unary expressions with
+	a builtin argument.
+
 2014-12-26  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-impl.h (tmp_debug_entry_t): Change block to type void*.
