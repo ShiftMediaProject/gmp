@@ -1,7 +1,4 @@
 
-/* Define if building universal (internal helper macro) */
-/* #undef AC_APPLE_UNIVERSAL_BUILD */
-
 /* The gmp-mparam.h file (a string) the tune program should suggest updating.
    */
 #define GMP_MPARAM_H_SUGGEST "./mpn/generic/gmp-mparam.h"
@@ -477,25 +474,6 @@
 /* Assembler local label prefix */
 #define LSYM_PREFIX "L"
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
-#define LT_OBJDIR ".libs/"
-
-/* Name of package */
-#define PACKAGE "gmp"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "gmp-bugs@gmplib.org, see https://gmplib.org/manual/Reporting-Bugs.html"
-
-/* Define to the full name of this package. */
-#define PACKAGE_NAME "GNU MP"
-
-/* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "gmp"
-
-/* Define to the home page for this package. */
-#define PACKAGE_URL "http://www.gnu.org/software/gmp/"
-
 #include "version.h"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
@@ -567,42 +545,11 @@
 /* #undef WANT_TMP_NOTREENTRANT */
 /* #undef WANT_TMP_DEBUG */
 
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-/* #  undef WORDS_BIGENDIAN */
-# endif
-#endif
-
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 /* #undef YYTEXT_POINTER */
-
-/* Define to `__inline__' or `__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-/* #undef inline */
-#endif
 
 /* Define to the equivalent of the C99 'restrict' keyword, or to
    nothing if this is not supported.  Do not define if restrict is
    supported directly.  */
 #define restrict __restrict
-/* Work around a bug in Sun C++: it does not support _Restrict or
-   __restrict__, even though the corresponding Sun C compiler ends up with
-   "#define restrict _Restrict" or "#define restrict __restrict__" in the
-   previous line.  Perhaps some future version of Sun C++ will work with
-   restrict; if so, hopefully it defines __RESTRICT like Sun C does.  */
-#if defined __SUNPRO_CC && !defined __RESTRICT
-# define _Restrict
-# define __restrict__
-#endif
-
-/* Define to empty if the keyword `volatile' does not work. Warning: valid
-   code using `volatile' can become incorrect without. Disable with care. */
-/* #undef volatile */
