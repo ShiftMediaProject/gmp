@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2014 Free Software
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2015 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -548,11 +548,13 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("adds\t%1, %x4, %5\n\tadc\t%0, %x2, %x3"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "rZ" (ah), "rZ" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
+	   : "rZ" ((UDItype)(ah)), "rZ" ((UDItype)(bh)),		\
+	     "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)) __CLOBBER_CC)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("subs\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
 	   : "=r,r" (sh), "=&r,&r" (sl)					\
-	   : "rZ,rZ" (ah), "rZ,rZ" (bh), "r,Z" (al), "rI,r" (bl) __CLOBBER_CC)
+	   : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),		\
+	     "r,Z"   ((UDItype)(al)), "rI,r"  ((UDItype)(bl)) __CLOBBER_CC)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
@@ -1257,12 +1259,15 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 #if !defined (umul_ppmm) && __GMP_GNUC_PREREQ (2,7) && !defined (__clang__)
 #define umul_ppmm(w1, w0, u, v) \
-  __asm__ ("dmultu %2,%3" : "=l" (w0), "=h" (w1) : "d" (u), "d" (v))
+  __asm__ ("dmultu %2,%3"						\
+	   : "=l" (w0), "=h" (w1)					\
+	   : "d" ((UDItype)(u)), "d" ((UDItype)(v)))
 #endif
 #if !defined (umul_ppmm)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("dmultu %2,%3\n\tmflo %0\n\tmfhi %1"				\
-	   : "=d" (w0), "=d" (w1) : "d" (u), "d" (v))
+	   : "=d" (w0), "=d" (w1)					\
+	   : "d" ((UDItype)(u)), "d" ((UDItype)(v)))
 #endif
 #define UMUL_TIME 20
 #define UDIV_TIME 140
@@ -1408,14 +1413,19 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
       __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"			\
-	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));	\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r"  ((UDItype)(ah)),					\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
     else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
       __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"			\
-	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));	\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r"  ((UDItype)(ah)),					\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
     else								\
       __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"			\
-	     : "=r" (sh), "=&r" (sl)					\
-	     : "r" (ah), "r" (bh), "%r" (al), "rI" (bl));		\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r"  ((UDItype)(ah)), "r"  ((UDItype)(bh)),		\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
   } while (0)
 /* We use "*rI" for the constant operand here, since with just "I", gcc barfs.
    This might seem strange, but gcc folds away the dead code late.  */
@@ -1424,37 +1434,55 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     if (__builtin_constant_p (bl) && bl > -0x8000 && bl <= 0x8000) {	\
 	if (__builtin_constant_p (ah) && (ah) == 0)			\
 	  __asm__ ("addic %1,%3,%4\n\tsubfze %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "*rI" (-bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   :                       "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	\
 	  __asm__ ("addic %1,%3,%4\n\tsubfme %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "*rI" (-bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   :                       "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
 	else if (__builtin_constant_p (bh) && (bh) == 0)		\
 	  __asm__ ("addic %1,%3,%4\n\taddme %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "*rI" (-bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r"  ((UDItype)(ah)),				\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	\
 	  __asm__ ("addic %1,%3,%4\n\taddze %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "*rI" (-bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r"  ((UDItype)(ah)),				\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
 	else								\
 	  __asm__ ("addic %1,%4,%5\n\tsubfe %0,%3,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
-		   : "r" (ah), "r" (bh), "rI" (al), "*rI" (-bl));	\
+		   : "r"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
     } else {								\
 	if (__builtin_constant_p (ah) && (ah) == 0)			\
 	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   :                       "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	\
 	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   :                       "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
 	else if (__builtin_constant_p (bh) && (bh) == 0)		\
 	  __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r"  ((UDItype)(ah)),				\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	\
 	  __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"			\
-		   : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl)); \
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r"  ((UDItype)(ah)),				\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
 	else								\
 	  __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"		\
 		   : "=r" (sh), "=&r" (sl)				\
-		   : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		\
+		   : "r"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
     }									\
   } while (0)
 #endif /* ! _LONG_LONG_LIMB */
@@ -1759,18 +1787,20 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
        "addcc	%r4,%5,%1\n"						\
       "	addccc	%r6,%7,%%g0\n"						\
       "	addc	%r2,%3,%0"						\
-	  : "=r" (sh), "=&r" (sl)					\
-	  : "rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),		\
-	    "%rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
+       : "=r" (sh), "=&r" (sl)						\
+       : "rJ"  ((UDItype)(ah)), "rI" ((UDItype)(bh)),			\
+	 "%rJ" ((UDItype)(al)), "rI" ((UDItype)(bl)),			\
+	 "%rJ" ((UDItype)(al) >> 32), "rI" ((UDItype)(bl) >> 32)	\
 	   __CLOBBER_CC)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ (								\
        "subcc	%r4,%5,%1\n"						\
       "	subccc	%r6,%7,%%g0\n"						\
       "	subc	%r2,%3,%0"						\
-	  : "=r" (sh), "=&r" (sl)					\
-	  : "rJ" (ah), "rI" (bh), "rJ" (al), "rI" (bl),			\
-	    "rJ" ((al) >> 32), "rI" ((bl) >> 32)			\
+       : "=r" (sh), "=&r" (sl)						\
+       : "rJ" ((UDItype)(ah)), "rI" ((UDItype)(bh)),			\
+	 "rJ" ((UDItype)(al)), "rI" ((UDItype)(bl)),			\
+	 "rJ" ((UDItype)(al) >> 32), "rI" ((UDItype)(bl) >> 32)		\
 	   __CLOBBER_CC)
 #if __VIS__ >= 0x300
 #undef add_ssaaaa
@@ -1779,7 +1809,8 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
        "addcc	%r4, %5, %1\n"						\
       "	addxc	%r2, %r3, %0"						\
 	  : "=r" (sh), "=&r" (sl)					\
-	  : "rJ" (ah), "rJ" (bh), "%rJ" (al), "rI" (bl) __CLOBBER_CC)
+       : "rJ"  ((UDItype)(ah)), "rJ" ((UDItype)(bh)),			\
+	 "%rJ" ((UDItype)(al)), "rI" ((UDItype)(bl)) __CLOBBER_CC)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
