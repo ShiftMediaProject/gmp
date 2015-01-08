@@ -1,5 +1,7 @@
 2015-01-08  Torbjörn Granlund  <torbjorng@google.com>
 
+	* config.guess: Match POWER8 for AIX.
+
 	* longlong.h: Add many casts inside assembly input operands, this
 	insures proper zero extension.
 
