@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2014 Free Software Foundation, Inc.
+# Copyright 2000-2006, 2008, 2011-2015 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -508,6 +508,9 @@ main ()
 #endif
 #ifdef POWER_7
   case POWER_7:    puts ("power7"); break;
+#endif
+#ifdef POWER_8
+  case POWER_8:    puts ("power8"); break;
 #endif
   default:
     if (_system_configuration.architecture == POWER_RS)
