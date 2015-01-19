@@ -1,3 +1,11 @@
+2015-01-19  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm): Provide architecture specific configs in addition
+	to implementation specific configs.
+
+	* config.guess (arm): Use configfsf.guess's guess as default before
+	conditionally appending "neon".
+
 2015-01-08  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess: Match POWER8 for AIX.
