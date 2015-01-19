@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2014 Free Software Foundation, Inc.
+Copyright 1996-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -626,6 +626,18 @@ case $host in
     # either enforce them, or organise to strip paths as the corresponding
     # options fail.
     case $host_cpu in
+      armv7*)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	;;
+      armv6t2*)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv6t2"
+	;;
+      armv6*)
+	path="arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv6"
+	;;
       armsa1 | arm9tdmi | armv4*)
 	path="arm"
 	gcc_cflags_arch="-march=armv4"
@@ -634,7 +646,7 @@ case $host in
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
-      arm11mpcore | arm1136 | arm1176 | armv6*)
+      arm11mpcore | arm1136 | arm1176*)
 	path="arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6"
 	;;
@@ -642,7 +654,7 @@ case $host in
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6t2"
 	;;
-      armcortexa5 | armv7a*)
+      armcortexa5)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
