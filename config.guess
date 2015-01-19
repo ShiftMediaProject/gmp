@@ -199,6 +199,7 @@ arm*-*-*)
       0xc14)	exact_cpu="armcortexr4";;	# v7r
       0xc15)	exact_cpu="armcortexr5";;	# v7r
       0xc23)	exact_cpu="armcortexm3";;	# v7m
+      *)	exact_cpu=$guess_cpu;;
   esac
   exact_cpu="${exact_cpu}`sed -n 's;^Features.*\(neon\).*;\1;p' /proc/cpuinfo 2>/dev/null | head -n 1 2>/dev/null`"
   ;;
