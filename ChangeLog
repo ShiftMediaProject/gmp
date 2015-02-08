@@ -1,3 +1,13 @@
+2015-02-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Low-level Functions): Document mpn_cnd_swap.
+
+	* mpn/generic/cnd_swap.c (mpn_cnd_swap): New file, moved function
+	here. Also changed cnd argument type from int to mp_limb_t.
+	* mpn/generic/sec_invert.c (mpn_cnd_swap): Old location.
+	* configure.ac: Added cnd_swap.
+	* gmp-h.in (mpn_cnd_swap): Added prototype.
+
 2015-01-19  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (arm): Provide architecture specific configs in addition

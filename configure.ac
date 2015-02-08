@@ -2825,7 +2825,7 @@ gmp_mpn_functions_optional="umul udiv					\
   add_n_sub_n addaddmul_1msb0"
 
 gmp_mpn_functions="$extra_functions					   \
-  add add_1 add_n sub sub_1 sub_n cnd_add_n cnd_sub_n neg com		   \
+  add add_1 add_n sub sub_1 sub_n cnd_add_n cnd_sub_n cnd_swap neg com	   \
   mul_1 addmul_1 submul_1						   \
   add_err1_n add_err2_n add_err3_n sub_err1_n sub_err2_n sub_err3_n	   \
   lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2		   \
