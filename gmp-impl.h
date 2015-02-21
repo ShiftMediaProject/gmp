@@ -3173,11 +3173,6 @@ __GMP_DECLSPEC mp_limb_t mpn_mod_34lsub1 (mp_srcptr, mp_size_t) __GMP_ATTRIBUTE_
 #define BMOD_1_TO_MOD_1_THRESHOLD  10
 #endif
 
-#ifndef mpn_divexact_1  /* if not done with cpuvec in a fat binary */
-#define mpn_divexact_1 __MPN(divexact_1)
-__GMP_DECLSPEC void    mpn_divexact_1 (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);
-#endif
-
 #define MPN_DIVREM_OR_DIVEXACT_1(rp, up, n, d)				\
   do {									\
     if (BELOW_THRESHOLD (n, DIVEXACT_1_THRESHOLD))			\
