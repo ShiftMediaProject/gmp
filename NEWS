@@ -1,4 +1,4 @@
-Copyright 1996, 1999-2014 Free Software Foundation, Inc.
+Copyright 1996, 1999-2015 Free Software Foundation, Inc.
 
 Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
@@ -9,8 +9,22 @@ Changes between GMP version 6.0.* and 6.1.0
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
 
-  * Support for Darwin in all x86 code, including in fat builds.
+  * Support for Darwin in all x86 code, thereby enabling fat builds on Darwin.
 
+  * Improved arm64 support.
+
+  * Support for more arm processors.
+
+  * Support compilation with clang/llvm for more platforms.  Caution: GMP
+    triggers mis-compilation bugs in clang for many platforms, such as arm, x86
+    (32-bit and 64-bit), powerpc, mips.
+
+  * Support for AVX-less modern x86 CPUs, either because the CPU vendor chose
+    to disable it, or because the running kernel lacks AVX context switch
+    support.
+
+  * Stack usage trimmed; we believe 512 KiB is now sufficient for any GMP call,
+    irrespective of operand size.
 
 Changes between GMP version 5.1.* and 6.0.0
 
