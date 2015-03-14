@@ -1,3 +1,9 @@
+2015-03-15    <torbjorng@google.com>
+
+	* config.guess: Add more CPUs, use CPU code names.
+	* config.sub: Corresponding changes.
+	* configure.ac: Corresponding changes.
+
 2015-02-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-h.in (mpn_divexact_1): New public declaration.

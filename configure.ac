@@ -658,6 +658,17 @@ case $host in
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
+      armcortexa7)
+	path="arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a7"
+	;;
+      armcortexa7neon)
+	path="arm/neon arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_neon="-mfpu=neon"
+	gcc_cflags_tune="-mtune=cortex-a7"
+	;;
       armcortexa8)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
@@ -837,6 +848,7 @@ case $host in
 	# But icc miscompiles GMP at any optimization level, at higher levels
 	# it miscompiles more files...
 	icc_cflags_opt="-O2 -O1"
+	icc_cflags_opt_maybe="-fp-model~precise"
 	;;
 
       *-*-hpux*)
@@ -1574,6 +1586,7 @@ case $host in
     icc_cflags="-no-gcc"
     icc_cflags_optlist="opt"
     icc_cflags_opt="-O3 -O2 -O1"
+    icc_cflags_opt_maybe="-fp-model~precise"
     any_32_testlist="sizeof-long-4"
     gcc_cflags_optlist="cpu arch noavx"
     CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
@@ -1762,25 +1775,26 @@ case $host in
 	path="x86/core2 x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/core2 x86_64"
 	;;
-      corei | coreinhm | coreiwsm)
+      corei | coreinhm | coreiwsm | nehalem | westmere)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreinhm x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreinhm x86_64/core2 x86_64"
 	;;
-      coreisbr | coreisbrnoavx)
+      coreisbr | coreisbrnoavx | coreiibr | coreiibrnoavx | \
+      sandybridge | sandybridgenoavx | ivybridge | ivybridgenoavx)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
-      coreihwl | coreihwlnoavx)
+      coreihwl | coreihwlnoavx | haswell | haswellnoavx)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	;;
-      coreibwl | coreibwlnoavx)
+      coreibwl | coreibwlnoavx | broadwell | broadwellnoavx)
 	gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
@@ -1792,6 +1806,12 @@ case $host in
 	gcc_cflags_arch="-march=atom -march=pentium3"
 	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
 	path_64="x86_64/atom x86_64"
+	;;
+      silvermont)
+	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
+	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
+	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
+	path_64="x86_64/silvermont x86_64/atom x86_64"
 	;;
       nano)
 	gcc_cflags_cpu="-mtune=nano"
@@ -2137,7 +2157,7 @@ case $host in
 	fat_path="x86_64 x86_64/fat
 		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat
 		  x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr
-		  x86_64/coreihwl x86_64/atom x86_64/nano"
+		  x86_64/coreihwl x86_64/atom x86_64/silvermont x86_64/nano"
 	fat_functions="$fat_functions addmul_2 addlsh1_n addlsh2_n sublsh1_n"
       fi
 

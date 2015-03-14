@@ -807,39 +807,42 @@ main ()
           else if (model <= 0x0c)                modelstr = "pentium3";
           else if (model <= 0x0e)                modelstr = "pentiumm";
           else if (model <= 0x19) cpu_64bit = 1, modelstr = "core2";
-          else if (model == 0x1a) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Gainestown */
-          else if (model == 0x1c) cpu_64bit = 1, modelstr = "atom";     /* Silverthorne */
-          else if (model == 0x1d) cpu_64bit = 1, modelstr = "core2";    /* PNR Dunnington */
-          else if (model == 0x1e) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Lynnfield/Jasper */
-          else if (model == 0x25) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Clarkdale/Arrandale */
-          else if (model == 0x26) cpu_64bit = 1, modelstr = "atom";     /* Lincroft */
-          else if (model == 0x27) cpu_64bit = 1, modelstr = "atom";     /* Saltwell */
-          else if (model == 0x2a) cpu_64bit = 1, modelstr = "coreisbr"; /* SB */
-          else if (model == 0x2c) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Gulftown */
-          else if (model == 0x2d) cpu_64bit = 1, modelstr = "coreisbr"; /* SBC-EP */
-          else if (model == 0x2e) cpu_64bit = 1, modelstr = "coreinhm"; /* NHM Beckton */
-          else if (model == 0x2f) cpu_64bit = 1, modelstr = "coreiwsm"; /* WSM Eagleton */
-          else if (model == 0x36) cpu_64bit = 1, modelstr = "atom";     /* Cedarview/Saltwell */
-          else if (model == 0x37) cpu_64bit = 1, modelstr = "coreinhm"; /* Atom Silvermont */
-          else if (model == 0x3a) cpu_64bit = 1, modelstr = "coreisbr"; /* IBR */
-          else if (model == 0x3c) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell client */
-          else if (model == 0x3d) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell */
-          else if (model == 0x3e) cpu_64bit = 1, modelstr = "coreisbr"; /* Ivytown */
-          else if (model == 0x3f) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell server */
-          else if (model == 0x45) cpu_64bit = 1, modelstr = "coreihwl"; /* Haswell ULT */
-          else if (model == 0x46) cpu_64bit = 1, modelstr = "coreihwl"; /* Crystal Well */
-          else if (model == 0x4d) cpu_64bit = 1, modelstr = "coreinhm"; /* Silvermont/Avoton */
-          else if (model == 0x4f) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell server */
-          else if (model == 0x56) cpu_64bit = 1, modelstr = "coreibwl"; /* Broadwell microserver */
-          else cpu_64bit = 1, modelstr = "corei"; /* default */
+          else if (model == 0x1a) cpu_64bit = 1, modelstr = "nehalem";    /* NHM Gainestown */
+          else if (model == 0x1c) cpu_64bit = 1, modelstr = "atom";       /* Silverthorne */
+          else if (model == 0x1d) cpu_64bit = 1, modelstr = "core2";      /* PNR Dunnington */
+          else if (model == 0x1e) cpu_64bit = 1, modelstr = "nehalem";    /* NHM Lynnfield/Jasper */
+          else if (model == 0x25) cpu_64bit = 1, modelstr = "westmere";   /* WSM Clarkdale/Arrandale */
+          else if (model == 0x26) cpu_64bit = 1, modelstr = "atom";       /* Lincroft */
+          else if (model == 0x27) cpu_64bit = 1, modelstr = "atom";       /* Saltwell */
+          else if (model == 0x2a) cpu_64bit = 1, modelstr = "sandybridge";/* SB */
+          else if (model == 0x2c) cpu_64bit = 1, modelstr = "westmere";   /* WSM Gulftown */
+          else if (model == 0x2d) cpu_64bit = 1, modelstr = "sandybridge";/* SBC-EP */
+          else if (model == 0x2e) cpu_64bit = 1, modelstr = "nehalem";    /* NHM Beckton */
+          else if (model == 0x2f) cpu_64bit = 1, modelstr = "westmere";   /* WSM Eagleton */
+          else if (model == 0x36) cpu_64bit = 1, modelstr = "atom";       /* Cedarview/Saltwell */
+          else if (model == 0x37) cpu_64bit = 1, modelstr = "silvermont"; /* Atom Silvermont */
+          else if (model == 0x3a) cpu_64bit = 1, modelstr = "ivybridge";  /* IBR */
+          else if (model == 0x3c) cpu_64bit = 1, modelstr = "haswell";    /* Haswell client */
+          else if (model == 0x3d) cpu_64bit = 1, modelstr = "broadwell";  /* Broadwell */
+          else if (model == 0x3e) cpu_64bit = 1, modelstr = "ivybridge";  /* Ivytown */
+          else if (model == 0x3f) cpu_64bit = 1, modelstr = "haswell";    /* Haswell server */
+          else if (model == 0x45) cpu_64bit = 1, modelstr = "haswell";    /* Haswell ULT */
+          else if (model == 0x46) cpu_64bit = 1, modelstr = "haswell";    /* Crystal Well */
+          else if (model == 0x47) cpu_64bit = 1, modelstr = "broadwell";  /* Broadwell */
+          else if (model == 0x4a) cpu_64bit = 1, modelstr = "silvermont"; /* Silvermont */
+          else if (model == 0x4c) cpu_64bit = 1, modelstr = "silvermont"; /* Airmont */
+          else if (model == 0x4d) cpu_64bit = 1, modelstr = "silvermont"; /* Silvermont/Avoton */
+          else if (model == 0x4f) cpu_64bit = 1, modelstr = "broadwell";  /* Broadwell server */
+          else if (model == 0x56) cpu_64bit = 1, modelstr = "broadwell";  /* Broadwell microserver */
+          else cpu_64bit = 1, modelstr = "nehalem"; /* default */
 
-	  if (strcmp (modelstr, "coreihwl") == 0)
+	  if (strcmp (modelstr, "haswell") == 0)
 	    {
 	      /* Some Haswells lack BMI2.  Let them appear as Sandybridges for
 		 now.  */
 	      CPUID (dummy_string, 7);
 	      if ((dummy_string[0 + 8 / 8] & (1 << (8 % 8))) == 0)
-		modelstr = "coreisbr";
+		modelstr = "sandybridge";
 	    }
 
 	  break;
