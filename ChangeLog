@@ -1,5 +1,7 @@
 2015-03-15    <torbjorng@google.com>
 
+	* acinclude.m4 (X86_64_PATTERN): Add CPU code names.
+
 	* config.guess: Add more CPUs, use CPU code names.
 	* config.sub: Corresponding changes.
 	* configure.ac: Corresponding changes.
