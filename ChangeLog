@@ -1,3 +1,8 @@
+2015-03-24    <torbjorng@google.com>
+
+	* mpn/generic/mul_fft.c (mpn_fft_best_k): Don't make pointers `static'
+	just because they point to static (i.e., file-local) data.
+
 2015-03-15    <torbjorng@google.com>
 
 	* acinclude.m4 (X86_64_PATTERN): Add CPU code names.
