@@ -3524,18 +3524,14 @@ be perfect squares.
 @cindex Probable prime testing functions
 Determine whether @var{n} is prime.  Return 2 if @var{n} is definitely prime,
 return 1 if @var{n} is probably prime (without being certain), or return 0 if
-@var{n} is definitely composite.
+@var{n} is definitely non-prime.
 
-This function does some trial divisions, then some Miller-Rabin probabilistic
-primality tests.  The argument @var{reps} controls how many such tests are
-done; a higher value will reduce the chances of a composite being returned as
-``probably prime''.  25 is a reasonable number; a composite number will then be
-identified as a prime with a probability of less than @m{2^{-50},2^(-50)}.
-
-Miller-Rabin and similar tests can be more properly called compositeness
-tests.  Numbers which fail are known to be composite but those which pass
-might be prime or might be composite.  Only a few composites pass, hence those
-which pass are considered probably prime.
+This function performs some trial divisions, then @var{reps} Miller-Rabin
+probabilistic primality tests.  A higher @var{reps} value will reduce the
+chances of a non-prime being identified as ``probably prime''.  A composite
+number will be identified as a prime with a probability of less than
+@m{4^{-reps},4^(-@var{reps})}.  Reasonable values of @var{reps} are between 15
+and 50.
 @end deftypefun
 
 @deftypefun void mpz_nextprime (mpz_t @var{rop}, const mpz_t @var{op})
@@ -8852,7 +8848,7 @@ requirements, and return.
 GCD is then implemented as a loop around HGCD, similarly to Lehmer's
 algorithm. Where Lehmer repeatedly chops off the top two limbs, calls
 @code{mpn_hgcd2}, and applies the resulting matrix to the full numbers, the
-subquadratic GCD chops off the most significant third of the limbs (the
+sub-quadratic GCD chops off the most significant third of the limbs (the
 proportion is a tuning parameter, and @math{1/3} seems to be more efficient
 than, e.g, @math{1/2}), calls @code{mpn_hgcd}, and applies the resulting
 matrix. Once the input numbers are reduced to size below
