@@ -1418,8 +1418,8 @@ case $host in
 	cc_cflags=
 	cc_cflags_optlist="opt arch cpu"
 
-        # SunOS cc doesn't know -xO4, fallback to -O2.
-	cc_cflags_opt="-xO4 -O2"
+        # SunOS <= 4 cc doesn't know -xO3, fallback to -O2.
+	cc_cflags_opt="-xO3 -O2"
 
         # SunOS cc doesn't know -xarch, apparently always generating v7
         # code, so make this optional
