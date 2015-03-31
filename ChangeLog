@@ -1,3 +1,7 @@
+2015-04-01    <torbjorng@google.com>
+
+	* configure.ac (sparc): Don't use use -xO4, it miscompiles by design.
+
 2015-03-24    <torbjorng@google.com>
 
 	* mpn/generic/mul_fft.c (mpn_fft_best_k): Don't make pointers `static'
