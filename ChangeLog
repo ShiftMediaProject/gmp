@@ -1,3 +1,7 @@
+2015-04-10    <torbjorng@google.com>
+
+	* mpn/alpha/ev6/mod_1_4.asm: Use LDGP.
+
 2015-04-01    <torbjorng@google.com>
 
 	* configure.ac (sparc): Don't use use -xO4, it miscompiles by design.
