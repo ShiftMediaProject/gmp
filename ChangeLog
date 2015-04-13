@@ -1,3 +1,8 @@
+2015-04-13    <torbjorng@google.com>
+
+	* longlong.h (arm): Rewrite.  Support thumb2; use gcc builtins for
+	count_leading_zeros, use accurate code selection critera.
+
 2015-04-13  Marc Glisse  <marc.glisse@inria.fr>
 
 	* configure.ac (x86_64): Extend noavx to ABI=64.
