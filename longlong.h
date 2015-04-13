@@ -437,7 +437,8 @@ long __MPN(count_leading_zeros) (UDItype);
 	     "rIJ" ((USItype) (bl)))
 #endif
 
-#if defined (__arm__) && !defined (__thumb__) && W_TYPE_SIZE == 32
+#if defined (__arm__) && (defined (__thumb2__) || !defined (__thumb__)) \
+    && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("adds\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
 	   : "=r" (sh), "=&r" (sl)					\
@@ -482,7 +483,37 @@ long __MPN(count_leading_zeros) (UDItype);
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
     } while (0)
-#if 1 || defined (__arm_m__)	/* `M' series has widening multiply support */
+#if defined (__ARM_ARCH_2__) || defined (__ARM_ARCH_2A__) \
+    || defined (__ARM_ARCH_3__)
+#define umul_ppmm(xh, xl, a, b)						\
+  do {									\
+    register USItype __t0, __t1, __t2;					\
+    __asm__ ("%@ Inlined umul_ppmm\n"					\
+	   "	mov	%2, %5, lsr #16\n"				\
+	   "	mov	%0, %6, lsr #16\n"				\
+	   "	bic	%3, %5, %2, lsl #16\n"				\
+	   "	bic	%4, %6, %0, lsl #16\n"				\
+	   "	mul	%1, %3, %4\n"					\
+	   "	mul	%4, %2, %4\n"					\
+	   "	mul	%3, %0, %3\n"					\
+	   "	mul	%0, %2, %0\n"					\
+	   "	adds	%3, %4, %3\n"					\
+	   "	addcs	%0, %0, #65536\n"				\
+	   "	adds	%1, %1, %3, lsl #16\n"				\
+	   "	adc	%0, %0, %3, lsr #16"				\
+	   : "=&r" ((USItype) (xh)), "=r" ((USItype) (xl)),		\
+	     "=&r" (__t0), "=&r" (__t1), "=r" (__t2)			\
+	   : "r" ((USItype) (a)), "r" ((USItype) (b)) __CLOBBER_CC);	\
+  } while (0)
+#define UMUL_TIME 20
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UWtype __r;							\
+    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
+    (r) = __r;								\
+  } while (0)
+extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
+#define UDIV_TIME 200
+#else /* ARMv4 or newer */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
 #define UMUL_TIME 5
@@ -498,48 +529,10 @@ long __MPN(count_leading_zeros) (UDItype);
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 70
 #endif /* LONGLONG_STANDALONE */
-#else
-#define umul_ppmm(xh, xl, a, b) \
-  __asm__ ("%@ Inlined umul_ppmm\n"					\
-"	mov	%|r0, %2, lsr #16\n"					\
-"	mov	%|r2, %3, lsr #16\n"					\
-"	bic	%|r1, %2, %|r0, lsl #16\n"				\
-"	bic	%|r2, %3, %|r2, lsl #16\n"				\
-"	mul	%1, %|r1, %|r2\n"					\
-"	mul	%|r2, %|r0, %|r2\n"					\
-"	mul	%|r1, %0, %|r1\n"					\
-"	mul	%0, %|r0, %0\n"						\
-"	adds	%|r1, %|r2, %|r1\n"					\
-"	addcs	%0, %0, #65536\n"					\
-"	adds	%1, %1, %|r1, lsl #16\n"				\
-"	adc	%0, %0, %|r1, lsr #16"					\
-	   : "=&r" (xh), "=r" (xl)					\
-	   : "r" (a), "r" (b)						\
-	   : "r0", "r1", "r2")
-#define UMUL_TIME 20
-#ifndef LONGLONG_STANDALONE
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UWtype __r;							\
-    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
-    (r) = __r;								\
-  } while (0)
-extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
-#define UDIV_TIME 200
-#endif /* LONGLONG_STANDALONE */
-#endif
-/* This is a bizarre test, but GCC doesn't define any useful common symbol. */
-#if defined (__ARM_ARCH_5__)  || defined (__ARM_ARCH_5T__) || \
-    defined (__ARM_ARCH_5E__) || defined (__ARM_ARCH_5TE__)|| \
-    defined (__ARM_ARCH_6__)  || defined (__ARM_ARCH_6J__) || \
-    defined (__ARM_ARCH_6K__) || defined (__ARM_ARCH_6Z__) || \
-    defined (__ARM_ARCH_6ZK__)|| defined (__ARM_ARCH_6T2__)|| \
-    defined (__ARM_ARCH_6M__) || defined (__ARM_ARCH_7__)  || \
-    defined (__ARM_ARCH_7A__) || defined (__ARM_ARCH_7R__) || \
-    defined (__ARM_ARCH_7M__) || defined (__ARM_ARCH_7EM__)
-#define count_leading_zeros(count, x) \
-  __asm__ ("clz\t%0, %1" : "=r" (count) : "r" (x))
+#endif /* defined(__ARM_ARCH_2__) ... */
+#define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
+#define count_trailing_zeros(count, x)  count_trailing_zeros_gcc_ctz(count, x)
 #define COUNT_LEADING_ZEROS_0 32
-#endif
 #endif /* __arm__ */
 
 #if defined (__aarch64__) && W_TYPE_SIZE == 64
