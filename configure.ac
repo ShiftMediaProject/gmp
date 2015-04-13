@@ -1836,7 +1836,7 @@ case $host in
       X86_64_PATTERN)
 	cclist_64="gcc cc"
 	gcc_64_cflags="$gcc_cflags -m64"
-	gcc_64_cflags_optlist="cpu arch"
+	gcc_64_cflags_optlist="cpu arch noavx"
 	CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
 	SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
 	cyclecounter_size_64=2

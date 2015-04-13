@@ -1,3 +1,7 @@
+2015-04-13  Marc Glisse  <marc.glisse@inria.fr>
+
+	* configure.ac (x86_64): Extend noavx to ABI=64.
+
 2015-04-10    <torbjorng@google.com>
 
 	* mpn/alpha/ev6/mod_1_4.asm: Use LDGP.
