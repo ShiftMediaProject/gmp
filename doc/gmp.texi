@@ -4968,16 +4968,12 @@ a NaN.
 @end deftypefun
 
 @deftypefun int mpf_eq (const mpf_t @var{op1}, const mpf_t @var{op2}, mp_bitcnt_t op3)
+@strong{This function is mathematically ill-defined and should not be used.}
+
 Return non-zero if the first @var{op3} bits of @var{op1} and @var{op2} are
-equal, zero otherwise.  I.e., test if @var{op1} and @var{op2} are approximately
-equal.
-
-Caution 1: All version of GMP up to version 4.2.4 compared just whole limbs,
-meaning sometimes more than @var{op3} bits, sometimes fewer.
-
-Caution 2: This function will consider XXX11...111 and XX100...000 different,
-even if ... is replaced by a semi-infinite number of bits.  Such numbers are
-really just one ulp off, and should be considered equal.
+equal, zero otherwise.  Note that numbers like e.g., 256 (binary 100000000) and
+255 (binary 11111111) will never be equal by this function's measure, and
+furthermore that 0 will only be equal to itself.
 @end deftypefun
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, const mpf_t @var{op1}, const mpf_t @var{op2})
