@@ -1,3 +1,14 @@
+2015-04-19    <torbjorng@google.com>
+
+	* mpn/x86_64/x86_64-defs.m4 (oplist): Fix typo.
+	(mulx): Simplify.
+	(adcx, adox): New defines, using helper function adx.
+	* mpn/x86_64/coreibwl/mul_1.asm: New file.
+	* mpn/x86_64/coreibwl/addmul_1.asm: New file.
+	* configure.ac (x86_64): Put coreibwl in appropriate code path.
+
+	* configure.ac (x86_64): Pass more exact Intel CPU options.
+
 2015-04-13    <torbjorng@google.com>
 
 	* longlong.h (arm): Rewrite.  Support thumb2; use gcc builtins for
