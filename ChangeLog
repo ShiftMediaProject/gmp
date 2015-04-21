@@ -1,3 +1,11 @@
+2015-04-21    <torbjorng@google.com>
+
+	* printf/sprintffuns.c (gmp_sprintf_final): Remove extra parameters.
+
+	* mpn/arm/v6/popham.asm: Add MULFUNC_PROLOGUE.
+	* mpn/powerpc64/mode64/rsh1aors_n.asm: Likewise.
+	* mpn/powerpc64/mode64/p6/aorsmul_1.asm: Likewise.
+
 2015-04-19    <torbjorng@google.com>
 
 	* mpn/x86_64/x86_64-defs.m4 (oplist): Fix typo.
@@ -6256,9 +6264,6 @@
 2011-02-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/aorsmul_1.asm: Add MULFUNC_PROLOGUE.
-	* mpn/m68k/mc68020/aorsmul_1.asm: Likewise.
-
-	* mpn/powerpc64/mode64/aorsmul_1.asm: Add missing MULFUNC_PROLOGUE.
 	* mpn/m68k/mc68020/aorsmul_1.asm: Likewise.
 
 2011-02-25  Torbjorn Granlund  <tege@gmplib.org>
