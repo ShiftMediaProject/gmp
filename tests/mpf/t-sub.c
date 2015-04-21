@@ -231,7 +231,7 @@ check_data (void)
 	      if (mpf_fits_uint_p (x))
 		{
 		  mpf_ui_sub (got, mpf_get_ui (x), y);
-	    
+
 		  if (! refmpf_validate ("mpf_ui_sub", got, want))
 		    {
 		      printf ("check_data() wrong result at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");

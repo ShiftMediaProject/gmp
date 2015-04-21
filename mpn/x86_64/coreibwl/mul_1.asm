@@ -183,7 +183,7 @@ L(b3):	mulx(	-8,(up), %r10, %r8)
 	dec	n
 	mulx(	(up), %r9, %rax)
 	jnz	L(top)
-	
+
 L(end):	mov	%r10, -8(rp)
 	adc	%r8, %r9
 	mov	%r9, (rp)
