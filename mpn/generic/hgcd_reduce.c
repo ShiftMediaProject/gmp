@@ -143,9 +143,9 @@ hgcd_matrix_apply (const struct hgcd_matrix *M,
       /* In the range of interest, mulmod_bnm1 should always beat mullo. */
       modn = mpn_mulmod_bnm1_next_size (nn + 1);
 
-      scratch = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (modn, modn, M->n));
-      tp = TMP_ALLOC_LIMBS (modn);
-      sp = TMP_ALLOC_LIMBS (modn);
+      TMP_ALLOC_LIMBS_3 (tp, modn,
+			 sp, modn,
+			 scratch, mpn_mulmod_bnm1_itch (modn, modn, M->n));
 
       ASSERT (n <= 2*modn);
 
