@@ -99,15 +99,9 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   TMP_MARK;
 
-#ifdef TMP_ALLOC_LIMBS_3
   TMP_ALLOC_LIMBS_3 (qp, un + 1,	/* quotient, alternating */
 		     qp2, un + 1,	/* quotient, alternating */
 		     tp, (un + 1 + vn) / 2); /* remainder */
-#else
-  qp = TMP_ALLOC_LIMBS (2 * un + 2 + (un + 1 + vn) / 2);
-  qp2 = qp + un + 1;
-  tp = qp2 + un + 1;
-#endif
   pp = vp;
   pn = vn;
 
@@ -128,7 +122,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
       pwpsp[npowers] = pp;
       pwpsn[npowers] = pn;
-      npowers++;
+      ++npowers;
 
       if (((mp_bitcnt_t) 2 << npowers) - 1 > cap)
 	break;
@@ -149,7 +143,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   pwr = ((mp_bitcnt_t) 1 << npowers) - 1;
 
-  for (i = npowers - 1; i >= 0; i--)
+  for (i = npowers; --i >= 0;)
     {
       pn = pwpsn[i];
       if (qn < pn)

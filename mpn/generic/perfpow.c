@@ -82,7 +82,7 @@ pow_equals (mp_srcptr np, mp_size_t n,
   y -= 1;  /* msb_index (xp, xn) */
 
   umul_ppmm (h, l, k, y);
-  h -= l == 0;  l--;	/* two-limb decrement */
+  h -= l == 0;  --l;	/* two-limb decrement */
 
   z = f - 1; /* msb_index (np, n) */
   if (h == 0 && l <= z)
@@ -184,14 +184,7 @@ perfpow (mp_srcptr np, mp_size_t n,
   gmp_init_primesieve (&ps);
   b = (f + 3) >> 1;
 
-#ifdef TMP_ALLOC_LIMBS_3
   TMP_ALLOC_LIMBS_3 (ip, n, rp, n, tp, 5 * n);
-#else
-  tmp = TMP_ALLOC_LIMBS (7 * n);
-  ip = tmp; tmp += n;
-  rp = tmp; tmp += n;
-  tp = tmp; tmp += 5 * n;
-#endif
 
   MPN_ZERO (rp, n);
 
