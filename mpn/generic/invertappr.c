@@ -247,11 +247,19 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
 	++cy;
       } /* 1 <= cy <= 2 here. */
+#if HAVE_NATIVE_mpn_rsblsh1_n
+      if (mpn_cmp (xp, dp - n, n) > 0) {
+	ASSERT_NOCARRY (mpn_rsblsh1_n (xp, xp, dp - n, n));
+	++cy;
+      } else
+	ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
+#else
       if (mpn_cmp (xp, dp - n, n) > 0) {
 	ASSERT_NOCARRY (mpn_sub_n (xp, xp, dp - n, n));
 	++cy;
       }
       ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
+#endif
       MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 3 here. */
     } else { /* "negative" residue class */
       mpn_com (xp, xp, n + 1);
