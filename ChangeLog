@@ -1,3 +1,11 @@
+2015-04-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/hgcd_reduce.c: Use TMP_ALLOC_LIMBS_3.
+	* mpn/generic/remove.c: Remove redundant #ifdef.
+	* mpn/generic/perfpow.c: Likewise.
+	* mpn/generic/powm.c: Use TMP_ALLOC_LIMBS_2.
+	* mpn/generic/rootrem.c: Likewise.
+
 2015-04-21    <torbjorng@google.com>
 
 	* printf/sprintffuns.c (gmp_sprintf_final): Remove extra parameters.
