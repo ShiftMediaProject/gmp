@@ -105,9 +105,9 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       TMP_DECL;
       TMP_MARK;
       wn = un + k;
-      wp = TMP_ALLOC_LIMBS (wn); /* will contain the padded input */
       sn = m + 2; /* ceil(un/k) + 1 */
-      sp = TMP_ALLOC_LIMBS (sn); /* approximate root of padded input */
+      TMP_ALLOC_LIMBS_2 (wp, wn, /* will contain the padded input */
+			 sp, sn); /* approximate root of padded input */
       MPN_COPY (wp + k, up, un);
       MPN_ZERO (wp, k);
       rn = mpn_rootrem_internal (sp, NULL, wp, wn, k, 1);
@@ -224,9 +224,9 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      fits in un limbs, the number of extra limbs needed is bounded by
      ceil(k*log2(3/2)/GMP_NUMB_BITS). */
 #define EXTRA 2 + (mp_size_t) (0.585 * (double) k / (double) GMP_NUMB_BITS)
-  qp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain quotient and remainder
+  TMP_ALLOC_LIMBS_2 (qp, un + EXTRA, /* will contain quotient and remainder
 					of R/(k*S^(k-1)), and S^k */
-  wp = TMP_ALLOC_LIMBS (un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
+		     wp, un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
 					and temporary for mpn_pow_1 */
 
   wp[0] = 1; /* {sp,sn}^(k-1) = 1 */
