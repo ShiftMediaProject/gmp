@@ -229,17 +229,13 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* We know that 2*|ip*dp + dp*B^rn - B^{rn+n}| < B^mn-1 */
       /* Add dp*B^rn mod (B^mn-1) */
       ASSERT (n >= mn - rn);
-      xp[mn] = 1 + mpn_add_n (xp + rn, xp + rn, dp - n, mn - rn);
-      cy = mpn_add_n (xp, xp, dp - (n - (mn - rn)), n - (mn - rn));
-      MPN_INCR_U (xp + n - (mn - rn), mn + 1 - n + (mn - rn), cy);
-      ASSERT (n + rn >=  mn);
-      /* Subtract B^{rn+n} */
-      MPN_DECR_U (xp + rn + n - mn, 2*mn + 1 - rn - n, 1);
-      if (xp[mn])
-	MPN_INCR_U (xp, mn, xp[mn] - 1);
-      else
-	MPN_DECR_U (xp, mn, 1);
-      method = 0; /* Remember we are working Mod B^m-1 */
+      cy = mpn_add_n (xp + rn, xp + rn, dp - n, mn - rn);
+      cy = mpn_add_nc (xp, xp, dp - (n - (mn - rn)), n - (mn - rn), cy);
+      /* Subtract B^{rn+n}, maybe only compensate the carry*/
+      xp[mn] = CNST_LIMB (1); /* set a limit for DECR_U */
+      MPN_DECR_U (xp + rn + n - mn, 2 * mn + 1 - rn - n, CNST_LIMB (1) - cy);
+      MPN_DECR_U (xp, mn, CNST_LIMB (1) - xp[mn]); /* if DECR_U eroded xp[mn] */
+      method = CNST_LIMB (0); /* Remember we are working Mod B^mn-1 */
     }
 
     if (xp[n] < 2) { /* "positive" residue class */
