@@ -238,16 +238,21 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       method = CNST_LIMB (0); /* Remember we are working Mod B^mn-1 */
     }
 
-    if (xp[n] < 2) { /* "positive" residue class */
-      cy = 1;
-      while (xp[n] || mpn_cmp (xp, dp - n, n)>0) {
-	xp[n] -= mpn_sub_n (xp, xp, dp - n, n);
-	cy ++;
+    if (xp[n] < CNST_LIMB (2)) { /* "positive" residue class */
+      cy = xp[n]; /* 0 <= cy <= 1 here. */
+#if ! USE_MUL_N
+      xp[n] = CNST_LIMB (0);
+#endif
+      if (cy++ && !mpn_sub_n (xp, xp, dp - n, n)) {
+	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
+	++cy;
+      } /* 1 <= cy <= 2 here. */
+      if (mpn_cmp (xp, dp - n, n) > 0) {
+	ASSERT_NOCARRY (mpn_sub_n (xp, xp, dp - n, n));
+	++cy;
       }
-      MPN_DECR_U(ip - rn, rn, cy);
-      ASSERT (cy <= 4); /* at most 3 cycles for the while above */
       ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
-      ASSERT (xp[n] == 0);
+      MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 3 here. */
     } else { /* "negative" residue class */
       mpn_com (xp, xp, n + 1);
       MPN_INCR_U(xp, n + 1, method);
