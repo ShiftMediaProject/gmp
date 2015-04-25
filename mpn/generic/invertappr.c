@@ -12,7 +12,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright (C) 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright (C) 2007, 2009, 2010, 2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -107,10 +107,10 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
     xp = tp + n + 2;				/* 2 * n limbs */
 
     /* n > 1 here */
-    i = n - 1;
+    i = n;
     do
-      xp[i] = GMP_NUMB_MAX;
-    while (--i >= 0);
+      xp[--i] = GMP_NUMB_MAX;
+    while (i);
     mpn_com (xp + n, dp, n);
 
     /* Now xp contains B^2n - {dp,n}*B^n - 1 */
@@ -126,7 +126,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
 	mpn_sbpi1_divappr_q (ip, xp, 2 * n, dp, n, inv.inv32);
       else
 	mpn_dcpi1_divappr_q (ip, xp, 2 * n, dp, n, &inv);
-      MPN_DECR_U(ip, n, 1);
+      MPN_DECR_U(ip, n, CNST_LIMB (1));
       return 1;
     }
   }
@@ -182,8 +182,8 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   rn = n;
   do {
     *sizp = rn;
-    rn = ((rn) >> 1) + 1;
-    sizp ++;
+    rn = (rn >> 1) + 1;
+    ++sizp;
   } while (ABOVE_THRESHOLD (rn, INV_NEWTON_THRESHOLD));
 
   /* We search the inverse of 0.{dp,n}, we compute it as 1.{ip,n} */
@@ -221,9 +221,9 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* FIXME: We do only need {xp,n+1}*/
       mpn_mul (xp, dp - n, n, ip - rn, rn);
       mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
-      method = 1; /* Remember we used (truncated) product */
-      /* We computed cy.{xp,rn+n} <- 1.{ip,rn} * 0.{dp,n} */
-    } else { /* Use B^n-1 wraparound */
+      method = CNST_LIMB (1); /* Remember we truncated, Mod B^(n+1) */
+      /* We computed (truncated) {xp,n+1} <- 1.{ip,rn} * 0.{dp,n} */
+    } else { /* Use B^mn-1 wraparound */
       mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
       /* We computed {xp,mn} <- {ip,rn} * {dp,n} mod (B^mn-1) */
       /* We know that 2*|ip*dp + dp*B^rn - B^{rn+n}| < B^mn-1 */
@@ -255,10 +255,10 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     } else { /* "negative" residue class */
       mpn_com (xp, xp, n + 1);
       MPN_INCR_U(xp, n + 1, method);
-      ASSERT (xp[n] <= 1);
+      ASSERT (xp[n] <= CNST_LIMB (1));
 #if USE_MUL_N
       if (xp[n]) {
-	MPN_INCR_U(ip - rn, rn, 1);
+	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
 	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
       }
 #endif
@@ -271,14 +271,16 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     rp[2*rn] = 0;
     mpn_mul (rp, xp + n - rn, rn + xp[n], ip - rn, rn);
 #endif
-    /* We need _only_ the carry from the next addition  */
-    /* Anyway 2rn-n <= 2... we don't need to optimise.  */
     cy = mpn_add_n (rp + rn, rp + rn, xp + n - rn, 2*rn - n);
     cy = mpn_add_nc (ip - n, rp + 3*rn - n, xp + rn, n - rn, cy);
-    MPN_INCR_U (ip - rn, rn, cy + (1-USE_MUL_N)*(rp[2*rn] + xp[n]));
+#if USE_MUL_N
+    MPN_INCR_U (ip - rn, rn, cy);
+#else
+    MPN_INCR_U (ip - rn, rn, cy + rp[2*rn] + xp[n]);
+#endif
     if (sizp == sizes) { /* Get out of the cycle */
       /* Check for possible carry propagation from below. */
-      cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - 7; /* Be conservative. */
+      cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - CNST_LIMB (7); /* Be conservative. */
 /*    cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 4); */
       break;
     }
