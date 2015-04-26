@@ -1,3 +1,8 @@
+2015-04-26    <torbjorng@google.com>
+
+	* mpn/x86_64/coreibwl/mul_basecase.asm: New file.
+	* mpn/x86_64/coreibwl/sqr_basecase.asm: New file.
+
 2015-04-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Split add in the correction test.
