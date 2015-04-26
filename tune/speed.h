@@ -1,6 +1,6 @@
 /* Header for speed and threshold things.
 
-Copyright 1999-2003, 2005, 2006, 2008-2013 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -155,6 +155,8 @@ double speed_binvert_limb_arith (struct speed_params *);
 double speed_mpf_init_clear (struct speed_params *);
 
 double speed_mpn_add_n (struct speed_params *);
+double speed_mpn_add_1 (struct speed_params *);
+double speed_mpn_add_1_inplace (struct speed_params *);
 double speed_mpn_add_err1_n (struct speed_params *);
 double speed_mpn_add_err2_n (struct speed_params *);
 double speed_mpn_add_err3_n (struct speed_params *);
@@ -181,6 +183,7 @@ double speed_mpn_addmul_8 (struct speed_params *);
 double speed_mpn_cnd_add_n (struct speed_params *);
 double speed_mpn_cnd_sub_n (struct speed_params *);
 double speed_mpn_com (struct speed_params *);
+double speed_mpn_neg (struct speed_params *);
 double speed_mpn_copyd (struct speed_params *);
 double speed_mpn_copyi (struct speed_params *);
 double speed_MPN_COPY (struct speed_params *);
@@ -327,6 +330,8 @@ double speed_mpn_sqr (struct speed_params *);
 double speed_mpn_sqrtrem (struct speed_params *);
 double speed_mpn_rootrem (struct speed_params *);
 double speed_mpn_sub_n (struct speed_params *);
+double speed_mpn_sub_1 (struct speed_params *);
+double speed_mpn_sub_1_inplace (struct speed_params *);
 double speed_mpn_sub_err1_n (struct speed_params *);
 double speed_mpn_sub_err2_n (struct speed_params *);
 double speed_mpn_sub_err3_n (struct speed_params *);
@@ -378,6 +383,7 @@ double speed_mpz_add (struct speed_params *);
 double speed_mpz_bin_uiui (struct speed_params *);
 double speed_mpz_bin_ui (struct speed_params *);
 double speed_mpz_fac_ui (struct speed_params *);
+double speed_mpz_2fac_ui (struct speed_params *);
 double speed_mpz_fib_ui (struct speed_params *);
 double speed_mpz_fib2_ui (struct speed_params *);
 double speed_mpz_init_clear (struct speed_params *);

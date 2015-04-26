@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999-2006, 2008-2012 Free Software Foundation, Inc.
+Copyright 1999-2006, 2008-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -472,6 +472,11 @@ double
 speed_mpn_com (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_COPY (mpn_com);
+}
+double
+speed_mpn_neg (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_neg);
 }
 double
 speed_mpn_sec_tabselect (struct speed_params *s)
@@ -985,6 +990,26 @@ double
 speed_mpn_sub_n (struct speed_params *s)
 {
 SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n);
+}
+double
+speed_mpn_add_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_add_1);
+}
+double
+speed_mpn_add_1_inplace (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1_INPLACE (mpn_add_1);
+}
+double
+speed_mpn_sub_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_sub_1);
+}
+double
+speed_mpn_sub_1_inplace (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1_INPLACE (mpn_sub_1);
 }
 
 double
@@ -1730,6 +1755,12 @@ double
 speed_mpz_fac_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_FAC_UI (mpz_fac_ui);
+}
+
+double
+speed_mpz_2fac_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_2fac_ui);
 }
 
 
