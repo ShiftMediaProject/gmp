@@ -152,8 +152,8 @@ L(gen):
 
 	lea	L(mtab)(%rip), %r10
 ifdef(`PIC',
-`	movslq	(%r10,%rax,4), %r14
-	lea	(%r14, %r10), %r10
+`	movslq	(%r10,%rax,4), %r11
+	lea	(%r11, %r10), %r10
 	jmp	*%r10
 ',`
 	jmp	*(%r10,%rax,8)
