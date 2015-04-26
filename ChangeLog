@@ -3,6 +3,15 @@
 	* mpn/x86_64/coreibwl/mul_basecase.asm: New file.
 	* mpn/x86_64/coreibwl/sqr_basecase.asm: New file.
 
+2015-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/common.c (speed_mpn_neg, speed_mpz_2fac_ui): New functions.
+	(speed_mpn_add_1, speed_mpn_add_1_inplace): New functions.
+	(speed_mpn_sub_1, speed_mpn_sub_1_inplace): New functions.
+	* tune/speed.h: Declare them all.
+        * tune/speed.c (routine): Added mpn_neg, mpn_add_1, mpn_sub_1,
+	mpn_add_1_inplace, mpn_sub_1_inplace, and mpz_2fac_ui.
+
 2015-04-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Split add in the correction test.
