@@ -63,10 +63,8 @@ C    count will change only once each 8th time!
 C  * Replace sqr_diag_addlsh1 code (from haswell) with adx-aware code.  We have
 C    3 variants below, but the haswell code turns out to be fastest.
 C  * Do overlapped software pipelining.
-C  * Tune non-loop code.  Very little effort has been spent there.
 C  * When changing this, make sure the code which falls into the inner loops
-C    does not execute too many no-ops.
-C  * Improve awkward un_save computation.
+C    does not execute too many no-ops (for both PIC and non-PIC).
 
 define(`rp',      `%rdi')
 define(`up',      `%rsi')
@@ -167,14 +165,14 @@ L(gt3):	push	%rbx
 	push	up
 	push	un_param
 
-	lea	-3(un_param), un_save
-	lea	-1(un_param), R32(%rax)	C FIXME: rotate jump tables instead
-	shr	$3, un_save
-	lea	1(un_save), n
-	neg	un_save
-	shl	$3, un_save
+	lea	-3(un_param), R32(un_save)
+	lea	5(un_param), n
+	mov	R32(un_param), R32(%rax)
+	and	$-8, R32(un_save)
+	shr	$3, R32(n)		C count for mul_1 loop
+	neg	un_save			C 8*count and offert for addmul_1 loops
 	and	$7, R32(%rax)		C clear CF for adc as side-effect
-					C note that rax lives very long
+
 	mov	(up), u0
 
 	lea	L(mtab)(%rip), %r10
@@ -224,7 +222,7 @@ L(mf1):	mulx(	8,(up), w0, w1)
 L(mf2):	mulx(	8,(up), w2, w3)
 	lea	16(up), up
 	lea	16(rp), rp
-	dec	n
+	dec	R32(n)
 	mulx(	(up), w0, w1)
 
 	ALIGN(16)
@@ -253,7 +251,7 @@ L(mb4):	mulx(	-16,(up), w0, w1)
 L(mb3):	mulx(	-8,(up), w2, w3)
 	adc	w1, w2
 	mov	w0, -16(rp)
-	dec	n
+	dec	R32(n)
 	mulx(	(up), w0, w1)
 	jnz	L(top)
 
@@ -277,9 +275,8 @@ L(ed0):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f7):	test	R32(%rax), R32(%rax)
-	lea	-64(up,un_save,8), up
-	mov	R32(un_save), R32(n)
+L(f7):	lea	-64(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	mov	8(up), u0
 	mulx(	16,(up), w0, w1)
 	lea	-56(rp,un_save,8), rp
@@ -329,9 +326,8 @@ L(ed1):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f0):	test	R32(%rax), R32(%rax)
-	lea	-64(up,un_save,8), up
-	mov	R32(un_save), R32(n)
+L(f0):	lea	-64(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	mov	(up), u0
 	mulx(	8,(up), w2, w3)
 	lea	-56(rp,un_save,8), rp
@@ -381,10 +377,9 @@ L(ed2):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f1):	mov	R32(un_save), R32(n)
-	lea	(up,un_save,8), up
-	add	$8, un_save
-	test	R32(%rax), R32(%rax)
+L(f1):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
+	lea	8(un_save), un_save
 	mov	-8(up), u0
 	mulx(	(up), w0, w1)
 	lea	-56(rp,un_save,8), rp
@@ -434,9 +429,9 @@ L(ed3):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f2):	or	R32(un_save), R32(n)
+L(f2):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	jz	L(corner2)
-	lea	(up,un_save,8), up
 	mov	-16(up), u0
 	mulx(	-8,(up), w2, w3)
 	lea	8(rp,un_save,8), rp
@@ -487,9 +482,9 @@ L(ed4):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f3):	or	R32(un_save), R32(n)
+L(f3):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	jz	L(corner3)
-	lea	(up,un_save,8), up
 	mov	-24(up), u0
 	mulx(	-16,(up), w0, w1)
 	lea	-56(rp,un_save,8), rp
@@ -539,9 +534,8 @@ L(ed5):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f4):	test	R32(%rax), R32(%rax)
-	lea	(up,un_save,8), up
-	mov	R32(un_save), R32(n)
+L(f4):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	mov	-32(up), u0
 	mulx(	-24,(up), w2, w3)
 	lea	-56(rp,un_save,8), rp
@@ -591,9 +585,8 @@ L(ed6):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f5):	test	R32(%rax), R32(%rax)
-	lea	(up,un_save,8), up
-	mov	R32(un_save), R32(n)
+L(f5):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	mov	-40(up), u0
 	mulx(	-32,(up), w0, w1)
 	lea	-56(rp,un_save,8), rp
@@ -643,9 +636,8 @@ L(ed7):	adox(	(rp), w0)
 	mov	w0, (rp)
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
-L(f6):	test	R32(%rax), R32(%rax)
-	lea	(up,un_save,8), up
-	mov	R32(un_save), R32(n)
+L(f6):	lea	(up,un_save,8), up
+	or	R32(un_save), R32(n)
 	mov	-48(up), u0
 	mulx(	-40,(up), w2, w3)
 	lea	-56(rp,un_save,8), rp
@@ -828,21 +820,21 @@ L(dend):adcx(	%rcx, %r10)
 
 	JUMPTABSECT
 	ALIGN(8)
-L(mtab):JMPENT(	L(mf0), L(mtab))
+L(mtab):JMPENT(	L(mf7), L(mtab))
+	JMPENT(	L(mf0), L(mtab))
 	JMPENT(	L(mf1), L(mtab))
 	JMPENT(	L(mf2), L(mtab))
 	JMPENT(	L(mf3), L(mtab))
 	JMPENT(	L(mf4), L(mtab))
 	JMPENT(	L(mf5), L(mtab))
 	JMPENT(	L(mf6), L(mtab))
-	JMPENT(	L(mf7), L(mtab))
-L(atab):JMPENT(	L(f7), L(atab))
+L(atab):JMPENT(	L(f6), L(atab))
+	JMPENT(	L(f7), L(atab))
 	JMPENT(	L(f0), L(atab))
 	JMPENT(	L(f1), L(atab))
 	JMPENT(	L(f2), L(atab))
 	JMPENT(	L(f3), L(atab))
 	JMPENT(	L(f4), L(atab))
 	JMPENT(	L(f5), L(atab))
-	JMPENT(	L(f6), L(atab))
 	TEXT
 EPILOGUE()

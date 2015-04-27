@@ -54,11 +54,9 @@ C The inner loops of this code are the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
-C  * Tune non-loop code.  Very little effort has been spent there.
+C  * Do overlapped software pipelining.
 C  * When changing this, make sure the code which falls into the inner loops
-C    does not execute too many no-ops.
-C  * Eliminate rp_save and up_save by keeping un_save as a negated, scaled
-C    counter, similar to the sqr_basecase of this directory.
+C    does not execute too many no-ops (for both PIC and non-PIC).
 
 define(`rp',      `%rdi')
 define(`up',      `%rsi')
@@ -67,10 +65,9 @@ define(`vp_param',`%rcx')
 define(`vn',      `%r8')
 
 define(`n',       `%rcx')
-define(`rp_save', `%r13')
-define(`up_save', `%rbx')
-define(`un_save', `%rbp')
+define(`n_save',  `%rbp')
 define(`vp',      `%r14')
+define(`unneg',   `%rbx')
 define(`v0',      `%rdx')
 define(`jaddr',   `%rax')
 
@@ -78,9 +75,6 @@ define(`w0',	`%r12')
 define(`w1',	`%r9')
 define(`w2',	`%r10')
 define(`w3',	`%r11')
-
-C %rax %rbx %rcx %rdx %rdi %rsi %rbp
-C %r8  %r9  %r10 %r11 %r12 %r13 %r14 %r15
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
@@ -134,19 +128,18 @@ L(gen):
 	push	%rbx
 	push	%rbp
 	push	%r12
-	push	%r13
 	push	%r14
 
 	mov	vp_param, vp
-	mov	un_param, un_save
-	mov	rp, rp_save
-	mov	up, up_save
-
-	mov	R32(un_save), R32(%rax)
-	shr	$3, un_save
+	lea	1(un_param), unneg
+	mov	un_param, n_save
+	mov	R32(un_param), R32(%rax)
+	and	$-8, unneg
+	shr	$3, n_save		C loop count
+	neg	unneg
 	and	$7, R32(%rax)		C clear CF for adc as side-effect
 					C note that rax lives very long
-	mov	un_save, n
+	mov	n_save, n
 	mov	(vp), v0
 	lea	8(vp), vp
 
@@ -159,52 +152,50 @@ ifdef(`PIC',
 	jmp	*(%r10,%rax,8)
 ')
 
-L(mf0):	mulx(	(up_save), w2, w3)
-	lea	56(up_save), up
-	lea	-8(rp_save), rp
+L(mf0):	mulx(	(up), w2, w3)
+	lea	56(up), up
+	lea	-8(rp), rp
 	jmp	L(mb0)
 
-L(mf3):	mulx(	(up_save), w0, w1)
-	lea	16(up_save), up
-	lea	16(rp_save), rp
+L(mf3):	mulx(	(up), w0, w1)
+	lea	16(up), up
+	lea	16(rp), rp
 	inc	n
 	jmp	L(mb3)
 
-L(mf4):	mulx(	(up_save), w2, w3)
-	lea	24(up_save), up
-	lea	24(rp_save), rp
+L(mf4):	mulx(	(up), w2, w3)
+	lea	24(up), up
+	lea	24(rp), rp
 	inc	n
 	jmp	L(mb4)
 
-L(mf5):	mulx(	(up_save), w0, w1)
-	lea	32(up_save), up
-	lea	32(rp_save), rp
+L(mf5):	mulx(	(up), w0, w1)
+	lea	32(up), up
+	lea	32(rp), rp
 	inc	n
 	jmp	L(mb5)
 
-L(mf6):	mulx(	(up_save), w2, w3)
-	lea	40(up_save), up
-	lea	40(rp_save), rp
+L(mf6):	mulx(	(up), w2, w3)
+	lea	40(up), up
+	lea	40(rp), rp
 	inc	n
 	jmp	L(mb6)
 
-L(mf7):	mulx(	(up_save), w0, w1)
-	lea	48(up_save), up
-	lea	48(rp_save), rp
+L(mf7):	mulx(	(up), w0, w1)
+	lea	48(up), up
+	lea	48(rp), rp
 	inc	n
 	jmp	L(mb7)
 
-L(mf1):	mulx(	(up_save), w0, w1)
+L(mf1):	mulx(	(up), w0, w1)
 	jmp	L(mb1)
 
-L(mf2):	mulx(	(up_save), w2, w3)
-	lea	8(up_save), up
-	lea	8(rp_save), rp
+L(mf2):	mulx(	(up), w2, w3)
+	lea	8(up), up
+	lea	8(rp), rp
 	mulx(	(up), w0, w1)
-	test	n, n
-	jz	L(m1end)
 
-	ALIGN(32)
+	ALIGN(16)
 L(m1top):
 	mov	w2, -8(rp)
 	adc	w3, w0
@@ -254,47 +245,39 @@ ifdef(`PIC',
 ')
 
 L(outer):
-	mov	un_save, n
+	lea	(up,unneg,8), up
+	mov	n_save, n
 	mov	(vp), v0
 	lea	8(vp), vp
-	lea	8(rp_save), rp_save
 	jmp	*jaddr
 
-C addmul_1
-L(f0):	mulx(	(up_save), w2, w3)
-	lea	-8(up_save), up
-	lea	-8(rp_save), rp
+L(f0):	mulx(	8,(up), w2, w3)
+	lea	8(rp,unneg,8), rp
 	lea	-1(n), n
 	jmp	L(b0)
 
-L(f3):	mulx(	(up_save), w0, w1)
-	lea	16(up_save), up
-	lea	-48(rp_save), rp
+L(f3):	mulx(	-16,(up), w0, w1)
+	lea	-56(rp,unneg,8), rp
 	jmp	L(b3)
 
-L(f4):	mulx(	(up_save), w2, w3)
-	lea	24(up_save), up
-	lea	-40(rp_save), rp
+L(f4):	mulx(	-24,(up), w2, w3)
+	lea	-56(rp,unneg,8), rp
 	jmp	L(b4)
 
-L(f5):	mulx(	(up_save), w0, w1)
-	lea	32(up_save), up
-	lea	-32(rp_save), rp
+L(f5):	mulx(	-32,(up), w0, w1)
+	lea	-56(rp,unneg,8), rp
 	jmp	L(b5)
 
-L(f6):	mulx(	(up_save), w2, w3)
-	lea	40(up_save), up
-	lea	-24(rp_save), rp
+L(f6):	mulx(	-40,(up), w2, w3)
+	lea	-56(rp,unneg,8), rp
 	jmp	L(b6)
 
-L(f7):	mulx(	(up_save), w0, w1)
-	lea	-16(up_save), up
-	lea	-16(rp_save), rp
+L(f7):	mulx(	16,(up), w0, w1)
+	lea	8(rp,unneg,8), rp
 	jmp	L(b7)
 
-L(f1):	mulx(	(up_save), w0, w1)
-	lea	(up_save), up
-	lea	(rp_save), rp
+L(f1):	mulx(	(up), w0, w1)
+	lea	8(rp,unneg,8), rp
 	jmp	L(b1)
 
 L(am1end):
@@ -304,22 +287,21 @@ L(am1end):
 	adc	%rcx, w1		C relies on rcx = 0
 	mov	w1, 8(rp)
 
-	dec	vn
+	dec	vn			C clear CF and OF as side-effect
 	jnz	L(outer)
 L(done):
 	pop	%r14
-	pop	%r13
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
 	ret
 
-L(f2):	mulx(	(up_save), w2, w3)
-	lea	8(up_save), up
-	lea	8(rp_save), rp
+L(f2):
+	mulx(	-8,(up), w2, w3)
+	lea	8(rp,unneg,8), rp
 	mulx(	(up), w0, w1)
 
-	ALIGN(32)
+	ALIGN(16)
 L(am1top):
 	adox(	-8,(rp), w2)
 	adcx(	w3, w0)
