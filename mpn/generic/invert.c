@@ -57,10 +57,10 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 
 	xp = scratch;				/* 2 * n limbs */
 	/* n > 1 here */
-	i = n - 1;
+	i = n;
 	do
-	  xp[i] = GMP_NUMB_MAX;
-	while (--i >= 0);
+	  xp[--i] = GMP_NUMB_MAX;
+	while (i);
 	mpn_com (xp + n, dp, n);
 	if (n == 2) {
 	  mpn_divrem_2 (ip, 0, xp, 4, dp);
