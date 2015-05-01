@@ -2857,6 +2857,13 @@ all (void)
   tune_powm_sec ();
   printf("\n");
 
+  tune_get_str ();
+  tune_set_str ();
+  printf("\n");
+
+  tune_fac_ui ();
+  printf("\n");
+
   tune_matrix22_mul ();
   tune_hgcd ();
   tune_hgcd_appr ();
@@ -2864,13 +2871,6 @@ all (void)
   tune_gcd_dc ();
   tune_gcdext_dc ();
   tune_jacobi_base ();
-  printf("\n");
-
-  tune_get_str ();
-  tune_set_str ();
-  printf("\n");
-
-  tune_fac_ui ();
   printf("\n");
 
   time (&end_time);
