@@ -31,6 +31,7 @@ see https://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define GMP_LIMB_BYTES 8
 
+/* Disable use of slow functions.  FIXME: We should disable lib inclusion.  */
 #undef HAVE_NATIVE_mpn_mul_2
 #undef HAVE_NATIVE_mpn_addmul_2
 
