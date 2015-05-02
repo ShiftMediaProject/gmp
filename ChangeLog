@@ -1,3 +1,7 @@
+2015-05-01    <torbjorng@google.com>
+
+	* tune/tuneup.c (all): Make GCD tuning last since it is not robust.
+
 2015-04-27    <torbjorng@google.com>
 
 	* mpn/x86_64/coreibwl/gmp-mparam.h: New file.
