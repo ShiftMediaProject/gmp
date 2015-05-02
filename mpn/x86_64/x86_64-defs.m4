@@ -207,9 +207,9 @@ dnl  Usage: JMPENT(targlabel,tablabel)
 
 define(`JMPENT',`dnl
 ifdef(`PIC',
-	`.long	$1-$2'
+	`.long	$1-$2'dnl
 ,
-	`.quad	$1'
+	`.quad	$1'dnl
 )')
 
 
