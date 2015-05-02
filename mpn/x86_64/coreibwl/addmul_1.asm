@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_addmul_1 optimised for Broadwell.
+dnl  AMD64 mpn_addmul_1 optimised for Intel Broadwell.
 
 dnl  Copyright 2015 Free Software Foundation, Inc.
 
@@ -36,6 +36,7 @@ C AMD K10	n/a
 C AMD bull	n/a
 C AMD pile	n/a
 C AMD steam	n/a
+C AMD excavator	 ?
 C AMD bobcat	n/a
 C AMD jaguar	n/a
 C Intel P4	n/a

@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_mul_1 optimised for Broadwell.
+dnl  AMD64 mpn_mul_1 optimised for Intel Broadwell.
 
 dnl  Copyright 2015 Free Software Foundation, Inc.
 
