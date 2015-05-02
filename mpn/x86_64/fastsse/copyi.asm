@@ -1,8 +1,9 @@
 dnl  AMD64 mpn_copyi optimised for CPUs with fast SSE.
 
-dnl  Contributed to the GNU project by Torbjörn Granlund.
+dnl  Copyright 2003, 2005, 2007, 2011, 2012, 2015 Free Software Foundation,
+dnl  Inc.
 
-dnl  Copyright 2003, 2005, 2007, 2011, 2012 Free Software Foundation, Inc.
+dnl  Contributed to the GNU project by Torbjörn Granlund.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -32,18 +33,26 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
-C	    cycles/limb		  good for cpu?
+C	     cycles/limb     cycles/limb     cycles/limb      good
+C              aligned	      unaligned	      best seen	     for cpu?
 C AMD K8,K9
-C AMD K10	 0.85	 1.64		Y/N
-C AMD bd1	 1.4	 1.4		Y
+C AMD K10	 0.85		 1.64				Y/N
+C AMD bull	 1.4		 1.4				Y
+C AMD pile
+C AMD steam
+C AMD excavator
 C AMD bobcat
-C Intel P4	 2.3	 2.3		Y
-C Intel core2	 1.0	 1.0
-C Intel NHM	 0.5	 0.67		Y
-C Intel SBR	 0.5	 0.75		Y
+C AMD jaguar	 0.65		 1.02		opt/0.93	Y/N
+C Intel P4	 2.3		 2.3				Y
+C Intel core	 1.0		 1.0		0.52/0.64	N
+C Intel NHM	 0.5		 0.67				Y
+C Intel SBR	 0.51		 0.75		opt/0.54	Y/N
+C Intel IBR	 0.50		 0.57		opt/0.54	Y
+C Intel HWL	 0.50		 0.57		opt/0.51	Y
+C Intel BWL	 0.55		 0.62		opt/0.55	Y
 C Intel atom
-C VIA nano	 1.16	 5.16		Y/N
+C Intel SLM	 1.02		 1.27		opt/1.07	Y/N
+C VIA nano	 1.16		 5.16				Y/N
 
 C We try to do as many 16-byte operations as possible.  The top-most and
 C bottom-most writes might need 8-byte operations.  We can always write using
