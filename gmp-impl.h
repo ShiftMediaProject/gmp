@@ -2808,8 +2808,8 @@ __GMP_DECLSPEC mp_bitcnt_t mpn_remove (mp_ptr, mp_size_t *, mp_srcptr, mp_size_t
 struct bases
 {
   /* Number of digits in the conversion base that always fits in an mp_limb_t.
-     For example, for base 10 on a machine where a mp_limb_t has 32 bits this
-     is 9, since 10**9 is the largest number that fits into a mp_limb_t.  */
+     For example, for base 10 on a machine where an mp_limb_t has 32 bits this
+     is 9, since 10**9 is the largest number that fits into an mp_limb_t.  */
   int chars_per_limb;
 
   /* log(2)/log(conversion_base) */

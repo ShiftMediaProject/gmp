@@ -1,4 +1,4 @@
-/* mpq_clear -- free the space occupied by a mpq_t.
+/* mpq_clear -- free the space occupied by an mpq_t.
 
 Copyright 1991, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 

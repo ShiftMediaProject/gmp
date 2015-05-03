@@ -58,7 +58,7 @@ C Intel atom		       10.8
 C VIA nano			6.5
 
 C TODO
-C  * Make a mpn_hamdist based on this.  Alignment could either be handled by
+C  * Make an mpn_hamdist based on this.  Alignment could either be handled by
 C    using movdqu for one operand and movdqa for the other, or by painfully
 C    shifting as we go.  Unfortunately, there seem to be no usable shift
 C    instruction, except for one that takes an immediate count.

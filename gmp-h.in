@@ -463,7 +463,7 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 
 
-/* Allow direct user access to numerator and denominator of a mpq_t object.  */
+/* Allow direct user access to numerator and denominator of an mpq_t object.  */
 #define mpq_numref(Q) (&((Q)->_mp_num))
 #define mpq_denref(Q) (&((Q)->_mp_den))
 
