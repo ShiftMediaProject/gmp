@@ -87,24 +87,21 @@ see https://www.gnu.org/licenses/.  */
      {dp,n}*(B^n+{ip,n}) < B^{2n} <= {dp,n}*(B^n+{ip,n}+1) ;
    the function mpn_invert (ip, dp, n, scratch) should be used instead.  */
 
-/* Maximum scratch needed by this branch (at tp): 3*n + 2 */
+/* Maximum scratch needed by this branch (at xp): 2*n */
 static mp_limb_t
-mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
+mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr xp)
 {
-  mp_ptr xp;
-
   ASSERT (n > 0);
   ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
-  ASSERT (! MPN_OVERLAP_P (ip, n, tp, mpn_invertappr_itch(n)));
-  ASSERT (! MPN_OVERLAP_P (dp, n, tp, mpn_invertappr_itch(n)));
+  ASSERT (! MPN_OVERLAP_P (ip, n, xp, mpn_invertappr_itch(n)));
+  ASSERT (! MPN_OVERLAP_P (dp, n, xp, mpn_invertappr_itch(n)));
 
   /* Compute a base value of r limbs. */
   if (n == 1)
     invert_limb (*ip, *dp);
   else {
     mp_size_t i;
-    xp = tp + n + 2;				/* 2 * n limbs */
 
     /* n > 1 here */
     i = n;
@@ -163,12 +160,12 @@ mp_limb_t
 mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   mp_limb_t cy;
-  mp_ptr xp;
+  mp_ptr rp;
   mp_size_t rn, mn;
   mp_size_t sizes[NPOWS], *sizp;
   mp_ptr tp;
   TMP_DECL;
-#define rp scratch
+#define xp scratch
 
   ASSERT (n > 2);
   ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
@@ -203,10 +200,10 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   /* Use Newton's iterations to get the desired precision.*/
 
   /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */
-  /* Maximum scratch needed by this branch <= 3*n + 2 */
-  xp = scratch + n + 3;				/*  n + rn limbs */
+  /* Maximum scratch needed by this branch <= 2*n + 4 - USE_MUL_N */
+  rp = xp + n + 1 - USE_MUL_N;				/*  n + 3 limbs */
   while (1) {
-    mp_limb_t method;
+    int method;
 
     n = *--sizp;
     /*
@@ -221,7 +218,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* FIXME: We do only need {xp,n+1}*/
       mpn_mul (xp, dp - n, n, ip - rn, rn);
       mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
-      method = CNST_LIMB (1); /* Remember we truncated, Mod B^(n+1) */
+      method = 1; /* Remember we truncated, Mod B^(n+1) */
       /* We computed (truncated) {xp,n+1} <- 1.{ip,rn} * 0.{dp,n} */
     } else { /* Use B^mn-1 wraparound */
       mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
@@ -235,7 +232,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       xp[mn] = CNST_LIMB (1); /* set a limit for DECR_U */
       MPN_DECR_U (xp + rn + n - mn, 2 * mn + 1 - rn - n, CNST_LIMB (1) - cy);
       MPN_DECR_U (xp, mn, CNST_LIMB (1) - xp[mn]); /* if DECR_U eroded xp[mn] */
-      method = CNST_LIMB (0); /* Remember we are working Mod B^mn-1 */
+      method = 0; /* Remember we are working Mod B^mn-1 */
     }
 
     if (xp[n] < CNST_LIMB (2)) { /* "positive" residue class */
@@ -262,15 +259,16 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 #endif
       MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 3 here. */
     } else { /* "negative" residue class */
-      mpn_com (xp, xp, n + 1);
-      MPN_INCR_U(xp, n + 1, method);
-      ASSERT (xp[n] <= CNST_LIMB (1));
 #if USE_MUL_N
-      if (xp[n]) {
+      if (xp[n] != GMP_NUMB_MAX) {
 	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
-	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
+	ASSERT_CARRY (mpn_add_n (xp, xp, dp - n, n));
       }
 #endif
+      mpn_com (xp + n - rn, xp + n - rn, rn + 1 - USE_MUL_N);
+      if (UNLIKELY (method))
+	MPN_INCR_U(xp + n - rn, rn + 1 - USE_MUL_N, mpn_zero_p (xp, n - rn));
+      ASSERT (USE_MUL_N || xp[n] <= CNST_LIMB (1));
     }
 
     /* Compute x_ju_j. FIXME:We need {rp+rn,rn}, mulhi? */
