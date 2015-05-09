@@ -1466,7 +1466,7 @@ __GMP_DECLSPEC void      mpn_invert (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
 __GMP_DECLSPEC mp_limb_t mpn_ni_invertappr (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
 #define   mpn_invertappr __MPN(invertappr)
 __GMP_DECLSPEC mp_limb_t mpn_invertappr (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
-#define mpn_invertappr_itch(n)  (3 * (n) + 2)
+#define mpn_invertappr_itch(n)  (2 * (n) + 4)
 
 #define   mpn_binvert __MPN(binvert)
 __GMP_DECLSPEC void      mpn_binvert (mp_ptr, mp_srcptr, mp_size_t, mp_ptr);
