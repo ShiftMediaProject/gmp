@@ -1,3 +1,8 @@
+2015-05-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invertappr.c: Reduce memory usage.
+	* gmp-impl.h (mpn_invertappr_itch): Update accordingly.
+
 2015-05-01    <torbjorng@google.com>
 
 	* tune/tuneup.c (all): Make GCD tuning last since it is not robust.
