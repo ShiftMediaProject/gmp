@@ -203,7 +203,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   /* Maximum scratch needed by this branch <= 2*n + 4 - USE_MUL_N */
   rp = xp + n + 1 - USE_MUL_N;				/*  n + 3 limbs */
   while (1) {
-    int method;
+    mp_limb_t method;
 
     n = *--sizp;
     /*
@@ -218,7 +218,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* FIXME: We do only need {xp,n+1}*/
       mpn_mul (xp, dp - n, n, ip - rn, rn);
       mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
-      method = 1; /* Remember we truncated, Mod B^(n+1) */
+      method = CNST_LIMB(1); /* Remember we truncated, Mod B^(n+1) */
       /* We computed (truncated) {xp,n+1} <- 1.{ip,rn} * 0.{dp,n} */
     } else { /* Use B^mn-1 wraparound */
       mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
@@ -232,7 +232,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       xp[mn] = CNST_LIMB (1); /* set a limit for DECR_U */
       MPN_DECR_U (xp + rn + n - mn, 2 * mn + 1 - rn - n, CNST_LIMB (1) - cy);
       MPN_DECR_U (xp, mn, CNST_LIMB (1) - xp[mn]); /* if DECR_U eroded xp[mn] */
-      method = 0; /* Remember we are working Mod B^mn-1 */
+      method = CNST_LIMB(0); /* Remember we are working Mod B^mn-1 */
     }
 
     if (xp[n] < CNST_LIMB (2)) { /* "positive" residue class */
@@ -259,6 +259,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 #endif
       MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 3 here. */
     } else { /* "negative" residue class */
+      MPN_DECR_U(xp, n + 1, method);
 #if USE_MUL_N
       if (xp[n] != GMP_NUMB_MAX) {
 	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
@@ -266,8 +267,6 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       }
 #endif
       mpn_com (xp + n - rn, xp + n - rn, rn + 1 - USE_MUL_N);
-      if (UNLIKELY (method))
-	MPN_INCR_U(xp + n - rn, rn + 1 - USE_MUL_N, mpn_zero_p (xp, n - rn));
       ASSERT (USE_MUL_N || xp[n] <= CNST_LIMB (1));
     }
 
