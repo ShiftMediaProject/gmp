@@ -54,12 +54,8 @@ submul (mp_ptr rp, mp_size_t rn,
   tp = TMP_ALLOC_LIMBS (an + bn);
 
   mpn_mul (tp, ap, an, bp, bn);
-  if (an + bn > rn)
-    {
-      ASSERT (tp[rn] == 0);
-      bn--;
-    }
-  ASSERT_NOCARRY (mpn_sub (rp, rp, rn, tp, an + bn));
+  ASSERT ((an + bn <= rn) || (tp[rn] == 0));
+  ASSERT_NOCARRY (mpn_sub (rp, rp, rn, tp, an + bn - (an + bn > rn)));
   TMP_FREE;
 
   while (rn > an && (rp[rn-1] == 0))
