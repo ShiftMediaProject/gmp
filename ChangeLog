@@ -1,17 +1,21 @@
+2015-05-12  Felix Janda  <felix.janda@posteo.de>
+
+	* mpn/powerpc32/elf.m4 (LEA): Adopt to new ABI.
+
 2015-05-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invertappr.c: Reduce memory usage.
 	* gmp-impl.h (mpn_invertappr_itch): Update accordingly.
 
-2015-05-01    <torbjorng@google.com>
+2015-05-01  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tune/tuneup.c (all): Make GCD tuning last since it is not robust.
 
-2015-04-27    <torbjorng@google.com>
+2015-04-27  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/coreibwl/gmp-mparam.h: New file.
 
-2015-04-26    <torbjorng@google.com>
+2015-04-26  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/coreibwl/mul_basecase.asm: New file.
 	* mpn/x86_64/coreibwl/sqr_basecase.asm: New file.
@@ -36,7 +40,7 @@
 	* mpn/generic/remove.c: Remove redundant #ifdef.
 	* mpn/generic/perfpow.c: Likewise.
 
-2015-04-21    <torbjorng@google.com>
+2015-04-21  Torbjörn Granlund  <torbjorng@google.com>
 
 	* printf/sprintffuns.c (gmp_sprintf_final): Remove extra parameters.
 
@@ -44,7 +48,7 @@
 	* mpn/powerpc64/mode64/rsh1aors_n.asm: Likewise.
 	* mpn/powerpc64/mode64/p6/aorsmul_1.asm: Likewise.
 
-2015-04-19    <torbjorng@google.com>
+2015-04-19  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/x86_64-defs.m4 (oplist): Fix typo.
 	(mulx): Simplify.
@@ -55,7 +59,7 @@
 
 	* configure.ac (x86_64): Pass more exact Intel CPU options.
 
-2015-04-13    <torbjorng@google.com>
+2015-04-13  Torbjörn Granlund  <torbjorng@google.com>
 
 	* longlong.h (arm): Rewrite.  Support thumb2; use gcc builtins for
 	count_leading_zeros, use accurate code selection critera.
@@ -64,20 +68,20 @@
 
 	* configure.ac (x86_64): Extend noavx to ABI=64.
 
-2015-04-10    <torbjorng@google.com>
+2015-04-10  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/alpha/ev6/mod_1_4.asm: Use LDGP.
 
-2015-04-01    <torbjorng@google.com>
+2015-04-01  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (sparc): Don't use use -xO4, it miscompiles by design.
 
-2015-03-24    <torbjorng@google.com>
+2015-03-24  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/generic/mul_fft.c (mpn_fft_best_k): Don't make pointers `static'
 	just because they point to static (i.e., file-local) data.
 
-2015-03-15    <torbjorng@google.com>
+2015-03-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* acinclude.m4 (X86_64_PATTERN): Add CPU code names.
 
