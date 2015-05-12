@@ -260,8 +260,8 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
   else
     MPN_COPY_INCR (rp, np, dn);
 
-  if (qn == 0)
-    return qh;			/* Degenerate use.  Should we allow this? */
+  /* if (qn == 0) */			/* The while below handles this case */
+  /*   return qh; */			/* Degenerate use.  Should we allow this? */
 
   while (qn > 0)
     {
