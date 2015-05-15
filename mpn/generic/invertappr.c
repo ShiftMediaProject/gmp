@@ -140,9 +140,9 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr xp)
    Some adaptations were introduced, to allow product mod B^m-1 and return the
    value e.
 
-   USE_MUL_N = 1 (default) introduces a correction in such a way that "the
-   value of B^{n+h}-T computed at step 8 cannot exceed B^n-1" (the book reads
-   "2B^n-1").  This correction should not require to modify the proof.
+   We introduced a correction in such a way that "the value of
+   B^{n+h}-T computed at step 8 cannot exceed B^n-1" (the book reads
+   "2B^n-1").
 
    We use a wrapped product modulo B^m-1.  NOTE: is there any normalisation
    problem for the [0] class?  It shouldn't: we compute 2*|A*X_h - B^{n+h}| <
@@ -152,7 +152,8 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr xp)
    incremented (because A < B^n).
 
    FIXME: the scratch for mulmod_bnm1 does not currently fit in the scratch, it
-   is allocated apart.  */
+   is allocated apart.
+ */
 
 mp_limb_t
 mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
@@ -201,8 +202,6 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   /* Maximum scratch needed by this branch <= 2*n + 4 - USE_MUL_N */
   rp = xp + n;				/*  n + 3 limbs */
   while (1) {
-    mp_limb_t method;
-
     n = *--sizp;
     /*
       v    n  v
@@ -216,7 +215,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* FIXME: We do only need {xp,n+1}*/
       mpn_mul (xp, dp - n, n, ip - rn, rn);
       mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
-      method = CNST_LIMB(1); /* Remember we truncated, Mod B^(n+1) */
+      cy = CNST_LIMB(1); /* Remember we truncated, Mod B^(n+1) */
       /* We computed (truncated) {xp,n+1} <- 1.{ip,rn} * 0.{dp,n} */
     } else { /* Use B^mn-1 wraparound */
       mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
@@ -230,15 +229,28 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       xp[mn] = CNST_LIMB (1); /* set a limit for DECR_U */
       MPN_DECR_U (xp + rn + n - mn, 2 * mn + 1 - rn - n, CNST_LIMB (1) - cy);
       MPN_DECR_U (xp, mn, CNST_LIMB (1) - xp[mn]); /* if DECR_U eroded xp[mn] */
-      method = CNST_LIMB(0); /* Remember we are working Mod B^mn-1 */
+      cy = CNST_LIMB(0); /* Remember we are working Mod B^mn-1 */
     }
 
     if (xp[n] < CNST_LIMB (2)) { /* "positive" residue class */
       cy = xp[n]; /* 0 <= cy <= 1 here. */
+#if HAVE_NATIVE_mpn_sublsh1_n
+      if (cy++) {
+	if (mpn_cmp (xp, dp - n, n) > 0) {
+	  mp_limb_t chk;
+	  chk = mpn_sublsh1_n (xp, xp, dp - n, n);
+	  ASSERT (chk == xp[n]);
+	  ++ cy;
+	} else
+	  ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
+      }
+#else /* no mpn_sublsh1_n*/
       if (cy++ && !mpn_sub_n (xp, xp, dp - n, n)) {
 	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
 	++cy;
-      } /* 1 <= cy <= 3 here. */
+      }
+#endif
+      /* 1 <= cy <= 3 here. */
 #if HAVE_NATIVE_mpn_rsblsh1_n
       if (mpn_cmp (xp, dp - n, n) > 0) {
 	ASSERT_NOCARRY (mpn_rsblsh1_n (xp, xp, dp - n, n));
@@ -254,7 +266,8 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 #endif
       MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 4 here. */
     } else { /* "negative" residue class */
-      MPN_DECR_U(xp, n + 1, method);
+      ASSERT (xp[n] >= GMP_NUMB_MAX - CNST_LIMB(1));
+      MPN_DECR_U(xp, n + 1, cy);
       if (xp[n] != GMP_NUMB_MAX) {
 	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
 	ASSERT_CARRY (mpn_add_n (xp, xp, dp - n, n));
