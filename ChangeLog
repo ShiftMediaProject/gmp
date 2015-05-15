@@ -1,3 +1,12 @@
+2015-05-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invertappr.c: Reduce memory usage.
+	* gmp-impl.h (mpn_invertappr_itch): Update accordingly.
+	* tune/tuneup.c (tune_invertappr, tune_invert): Update min_size.
+
+	* mpn/generic/mu_div_qr.c: Pass scratch memory to mpn_invertappr.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+
 2015-05-12  Felix Janda  <felix.janda@posteo.de>
 
 	* mpn/powerpc32/elf.m4 (LEA): Adopt to new ABI.
