@@ -1694,12 +1694,12 @@ tune_invertappr (void)
 
   param.function = speed_mpn_ni_invertappr;
   param.name = "INV_MULMOD_BNM1_THRESHOLD";
-  param.min_size = 4;
+  param.min_size = 5;
   one (&inv_mulmod_bnm1_threshold, &param);
 
   param.function = speed_mpn_invertappr;
   param.name = "INV_NEWTON_THRESHOLD";
-  param.min_size = 3;
+  param.min_size = 5;
   one (&inv_newton_threshold, &param);
 }
 
@@ -1710,7 +1710,7 @@ tune_invert (void)
 
   param.function = speed_mpn_invert;
   param.name = "INV_APPR_THRESHOLD";
-  param.min_size = 3;
+  param.min_size = 5;
   one (&inv_appr_threshold, &param);
 }
 

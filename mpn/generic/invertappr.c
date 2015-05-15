@@ -144,6 +144,9 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr xp)
    B^{n+h}-T computed at step 8 cannot exceed B^n-1" (the book reads
    "2B^n-1").
 
+   Maximum scratch needed by this branch <= 2*n, but have to fit 3*rn
+   in the scratch, i.e. 3*rn <= 2*n: we require n>4.
+
    We use a wrapped product modulo B^m-1.  NOTE: is there any normalisation
    problem for the [0] class?  It shouldn't: we compute 2*|A*X_h - B^{n+h}| <
    B^m-1.  We may get [0] if and only if we get AX_h = B^{n+h}.  This can
@@ -159,14 +162,13 @@ mp_limb_t
 mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   mp_limb_t cy;
-  mp_ptr rp;
   mp_size_t rn, mn;
   mp_size_t sizes[NPOWS], *sizp;
   mp_ptr tp;
   TMP_DECL;
 #define xp scratch
 
-  ASSERT (n > 2);
+  ASSERT (n > 4);
   ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
@@ -198,9 +200,6 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     }
   /* Use Newton's iterations to get the desired precision.*/
 
-  /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */
-  /* Maximum scratch needed by this branch <= 2*n + 4 - USE_MUL_N */
-  rp = xp + n;				/*  n + 3 limbs */
   while (1) {
     n = *--sizp;
     /*
@@ -253,16 +252,16 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       /* 1 <= cy <= 3 here. */
 #if HAVE_NATIVE_mpn_rsblsh1_n
       if (mpn_cmp (xp, dp - n, n) > 0) {
-	ASSERT_NOCARRY (mpn_rsblsh1_n (xp, xp, dp - n, n));
+	ASSERT_NOCARRY (mpn_rsblsh1_n (xp + n, xp, dp - n, n));
 	++cy;
       } else
-	ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
-#else
+	ASSERT_NOCARRY (mpn_sub_nc (xp + 2 * n - rn, dp - rn, xp + n - rn, rn, mpn_cmp (xp, dp - n, n - rn) > 0));
+#else /* no mpn_rsblsh1_n*/
       if (mpn_cmp (xp, dp - n, n) > 0) {
 	ASSERT_NOCARRY (mpn_sub_n (xp, xp, dp - n, n));
 	++cy;
       }
-      ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
+      ASSERT_NOCARRY (mpn_sub_nc (xp + 2 * n - rn, dp - rn, xp + n - rn, rn, mpn_cmp (xp, dp - n, n - rn) > 0));
 #endif
       MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 4 here. */
     } else { /* "negative" residue class */
@@ -272,18 +271,18 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
 	ASSERT_CARRY (mpn_add_n (xp, xp, dp - n, n));
       }
-      mpn_com (xp + n - rn, xp + n - rn, rn);
+      mpn_com (xp + 2 * n - rn, xp + n - rn, rn);
     }
 
-    /* Compute x_ju_j. FIXME:We need {rp+rn,rn}, mulhi? */
-    mpn_mul_n (rp, xp + n - rn, ip - rn, rn);
-    cy = mpn_add_n (rp + rn, rp + rn, xp + n - rn, 2*rn - n);
-    cy = mpn_add_nc (ip - n, rp + 3*rn - n, xp + rn, n - rn, cy);
+    /* Compute x_ju_j. FIXME:We need {xp+rn,rn}, mulhi? */
+    mpn_mul_n (xp, xp + 2 * n - rn, ip - rn, rn);
+    cy = mpn_add_n (xp + rn, xp + rn, xp + 2 * n - rn, 2 * rn - n);
+    cy = mpn_add_nc (ip - n, xp + 3 * rn - n, xp + n + rn, n - rn, cy);
     MPN_INCR_U (ip - rn, rn, cy);
     if (sizp == sizes) { /* Get out of the cycle */
       /* Check for possible carry propagation from below. */
-      cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - CNST_LIMB (7); /* Be conservative. */
-/*    cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 4); */
+      cy = xp[3 * rn - n - 1] > GMP_NUMB_MAX - CNST_LIMB (7); /* Be conservative. */
+      /*    cy = mpn_add_1 (xp + rn, xp + rn, 2*rn - n, 4); */
       break;
     }
     rn = n;
@@ -291,7 +290,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   TMP_FREE;
 
   return cy;
-#undef rp
+#undef xp
 }
 
 mp_limb_t
