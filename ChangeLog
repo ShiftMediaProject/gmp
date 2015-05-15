@@ -1,3 +1,9 @@
+2015-05-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm/v7a/cora7/gmp-mparam.h: New file.
+	* mpn/arm/v7a/cora8/gmp-mparam.h: New file.
+	* configure.ac (arm): Point to new directories.
+
 2015-05-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invertappr.c: Reduce memory usage.
