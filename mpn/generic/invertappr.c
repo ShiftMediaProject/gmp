@@ -154,8 +154,6 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr xp)
    FIXME: the scratch for mulmod_bnm1 does not currently fit in the scratch, it
    is allocated apart.  */
 
-#define USE_MUL_N 1
-
 mp_limb_t
 mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
@@ -201,7 +199,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 
   /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */
   /* Maximum scratch needed by this branch <= 2*n + 4 - USE_MUL_N */
-  rp = xp + n + 1 - USE_MUL_N;				/*  n + 3 limbs */
+  rp = xp + n;				/*  n + 3 limbs */
   while (1) {
     mp_limb_t method;
 
@@ -237,13 +235,10 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 
     if (xp[n] < CNST_LIMB (2)) { /* "positive" residue class */
       cy = xp[n]; /* 0 <= cy <= 1 here. */
-#if ! USE_MUL_N
-      xp[n] = CNST_LIMB (0);
-#endif
       if (cy++ && !mpn_sub_n (xp, xp, dp - n, n)) {
 	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
 	++cy;
-      } /* 1 <= cy <= 2 here. */
+      } /* 1 <= cy <= 3 here. */
 #if HAVE_NATIVE_mpn_rsblsh1_n
       if (mpn_cmp (xp, dp - n, n) > 0) {
 	ASSERT_NOCARRY (mpn_rsblsh1_n (xp, xp, dp - n, n));
@@ -257,33 +252,21 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       }
       ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
 #endif
-      MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 3 here. */
+      MPN_DECR_U(ip - rn, rn, cy); /* 1 <= cy <= 4 here. */
     } else { /* "negative" residue class */
       MPN_DECR_U(xp, n + 1, method);
-#if USE_MUL_N
       if (xp[n] != GMP_NUMB_MAX) {
 	MPN_INCR_U(ip - rn, rn, CNST_LIMB (1));
 	ASSERT_CARRY (mpn_add_n (xp, xp, dp - n, n));
       }
-#endif
-      mpn_com (xp + n - rn, xp + n - rn, rn + 1 - USE_MUL_N);
-      ASSERT (USE_MUL_N || xp[n] <= CNST_LIMB (1));
+      mpn_com (xp + n - rn, xp + n - rn, rn);
     }
 
     /* Compute x_ju_j. FIXME:We need {rp+rn,rn}, mulhi? */
-#if USE_MUL_N
     mpn_mul_n (rp, xp + n - rn, ip - rn, rn);
-#else
-    rp[2*rn] = 0;
-    mpn_mul (rp, xp + n - rn, rn + xp[n], ip - rn, rn);
-#endif
     cy = mpn_add_n (rp + rn, rp + rn, xp + n - rn, 2*rn - n);
     cy = mpn_add_nc (ip - n, rp + 3*rn - n, xp + rn, n - rn, cy);
-#if USE_MUL_N
     MPN_INCR_U (ip - rn, rn, cy);
-#else
-    MPN_INCR_U (ip - rn, rn, cy + rp[2*rn] + xp[n]);
-#endif
     if (sizp == sizes) { /* Get out of the cycle */
       /* Check for possible carry propagation from below. */
       cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - CNST_LIMB (7); /* Be conservative. */
