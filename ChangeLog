@@ -1,3 +1,7 @@
+2015-05-16  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm/v6/addmul_2.asm: Rewrite for speed and size.
+
 2015-05-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/arm/v7a/cora7/gmp-mparam.h: New file.
