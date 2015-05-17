@@ -1,3 +1,7 @@
+2015-05-17  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm/v6/sqr_basecase.asm: Rewrite for speed.
+
 2015-05-16  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/arm/v6/addmul_2.asm: Rewrite for speed and size.
