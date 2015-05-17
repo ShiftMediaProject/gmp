@@ -6,6 +6,9 @@ medium, provided this notice is preserved.
 
 Changes between GMP version 6.0.* and 6.1.0
 
+  SPEEDUPS
+  * Speedup for Intel Broadwell.
+
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
 
