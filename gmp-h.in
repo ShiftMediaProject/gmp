@@ -2191,14 +2191,20 @@ __GMP_EXTERN_INLINE
 mp_limb_t
 mpn_neg (mp_ptr __gmp_rp, mp_srcptr __gmp_up, mp_size_t __gmp_n)
 {
-  mp_limb_t __gmp_ul, __gmp_cy;
-  __gmp_cy = 0;
-  do {
-      __gmp_ul = *__gmp_up++;
-      *__gmp_rp++ = -__gmp_ul - __gmp_cy;
-      __gmp_cy |= __gmp_ul != 0;
-  } while (--__gmp_n != 0);
-  return __gmp_cy;
+  while (*__gmp_up == 0) /* Low zero limbs are unchanged by negation. */
+    {
+      *__gmp_rp = 0;
+      if (!--__gmp_n) /* All zero */
+	return 0;
+      ++__gmp_up; ++__gmp_rp;
+    }
+
+  *__gmp_rp = (- *__gmp_up) & GMP_NUMB_MASK;
+
+  if (--__gmp_n) /* Higher limbs get complemented. */
+    mpn_com (++__gmp_rp, ++__gmp_up, __gmp_n);
+
+  return 1;
 }
 #endif
 
