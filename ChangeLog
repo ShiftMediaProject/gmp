@@ -1,3 +1,7 @@
+2015-05-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-h.in (mpn_neg): Niels' code using mpn_neg.
+
 2015-05-17  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/arm/v6/sqr_basecase.asm: Rewrite for speed.
