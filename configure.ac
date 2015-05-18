@@ -608,7 +608,6 @@ case $host in
   arm*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch fpmode neon tune"
-    gcc_cflags_maybe="-marm"
     gcc_testlist="gcc-arm-umodsi"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
