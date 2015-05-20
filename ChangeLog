@@ -1,6 +1,7 @@
 2015-05-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-h.in (mpn_neg): Niels' code using mpn_neg.
+	* gmp-h.in (mpn_com): Ubconditionaly declare prototype.
 
 2015-05-17  Torbjörn Granlund  <torbjorng@google.com>
 
