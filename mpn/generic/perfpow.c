@@ -173,7 +173,6 @@ perfpow (mp_srcptr np, mp_size_t n,
   int ans;
   mp_bitcnt_t b;
   gmp_primesieve_t ps;
-  mp_ptr tmp;
   TMP_DECL;
 
   ASSERT (n > 0);
