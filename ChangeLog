@@ -1,7 +1,11 @@
+2015-05-18  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm): Let compiler decide about arm vs thumb encoding.
+
 2015-05-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-h.in (mpn_neg): Niels' code using mpn_neg.
-	* gmp-h.in (mpn_com): Ubconditionaly declare prototype.
+	* gmp-h.in (mpn_com): Unconditionally declare prototype.
 
 2015-05-17  Torbjörn Granlund  <torbjorng@google.com>
 
