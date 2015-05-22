@@ -6,6 +6,9 @@ medium, provided this notice is preserved.
 
 Changes between GMP version 6.0.* and 6.1.0
 
+  BUGS FIXED
+  * The prototype for mpn_com is now provided by gmp.h for any configuration.
+
   SPEEDUPS
   * Speedup for Intel Broadwell.
 
