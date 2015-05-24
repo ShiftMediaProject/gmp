@@ -34,22 +34,7 @@ see https://www.gnu.org/licenses/.  */
 void
 mpz_swap (mpz_ptr u, mpz_ptr v) __GMP_NOTHROW
 {
-  mp_ptr up, vp;
-  mp_size_t usize, vsize;
-  mp_size_t ualloc, valloc;
-
-  ualloc = ALLOC (u);
-  valloc = ALLOC (v);
-  ALLOC (v) = ualloc;
-  ALLOC (u) = valloc;
-
-  usize = SIZ (u);
-  vsize = SIZ (v);
-  SIZ (v) = usize;
-  SIZ (u) = vsize;
-
-  up = PTR (u);
-  vp = PTR (v);
-  PTR (v) = up;
-  PTR (u) = vp;
+  MP_SIZE_T_SWAP (ALLOC(u), ALLOC(v));
+  MP_SIZE_T_SWAP (SIZ(u), SIZ(v));
+  MP_PTR_SWAP (PTR(v), PTR(u));
 }
