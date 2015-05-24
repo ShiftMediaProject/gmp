@@ -165,6 +165,18 @@ main (int argc, char **argv)
 	    dump_abort (dss_func_names[i], res1, res2);
 	  if (mpq_cmp (res1, res3) != 0)
 	    dump_abort (dss_func_names[i], res1, res3);
+
+	  mpq_set (out1, in2);
+	  (dss_funcs[i]) (res1, out1, in2);
+
+	  (dss_funcs[i]) (res2, in2, in2);
+
+	  (dss_funcs[i]) (out1, out1, out1);
+
+	  if (mpq_cmp (res1, res2) != 0)
+	    dump_abort (dss_func_names[i], res1, res2);
+	  if (mpq_cmp (res1, out1) != 0)
+	    dump_abort (dss_func_names[i], res1, out1);
 	}
 
       for (i = 0; i < sizeof (ds_funcs) / sizeof (ds_func); i++)
