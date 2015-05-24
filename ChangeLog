@@ -1,6 +1,7 @@
 2015-05-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/div.c: Reduce memory use.
+	* tests/mpq/reuse.c: Test also mpq_FUNCTION (x,x,x). 
 	* mpz/swap.c: Use _SWAP macros.
 
 2015-05-18  Torbjörn Granlund  <torbjorng@google.com>
