@@ -5370,6 +5370,14 @@ separate, not partially overlapping.
 performance.]
 @end deftypefun
 
+@deftypefun void mpn_divexact_1 (mp_limb_t * @var{rp}, const mp_limb_t * @var{sp}, mp_size_t @var{n}, mp_limb_t @var{d})
+Divide @{@var{sp}, @var{n}@} by @var{d}, expecting it to divide exactly, and
+writing the result to @{@var{rp}, @var{n}@}. If @var{d} doesn't divide
+exactly, the value written to @{@var{rp}, @var{n}@} is undefined. The areas at
+@var{rp} and @var{sp} have to be identical or completely separate, not
+partially overlapping.
+@end deftypefun
+
 @deftypefn Macro mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{n}})
 @deftypefnx Function mp_limb_t mpn_divexact_by3c (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{n}}, mp_limb_t @var{carry})
 Divide @{@var{sp}, @var{n}@} by 3, expecting it to divide exactly, and writing
@@ -5702,6 +5710,13 @@ of @code{mpn_sec_add_1_itch(@var{n})} and @code{mpn_sec_sub_1_itch(@var{n})}
 limbs, respectively, to be passed in the @var{tp} parameter. The scratch space
 requirements are guaranteed to be at most @var{n} limbs, and increase
 monotonously in the operand size.
+@end deftypefun
+
+@deftypefun void mpn_cnd_swap (mp_limb_t @var{cnd}, volatile mp_limb_t *@var{ap}, volatile mp_limb_t *@var{bp}, mp_size_t @var{n})
+If @var{cnd} is non-zero, swaps the contents of the areas @{@var{ap},@var{n}@}
+and @{@var{bp},@var{n}@}. Otherwise, the areas are left unmodified.
+Implemented using logical operations on the limbs, with the same memory
+accesses independent of the value of @var{cnd}.
 @end deftypefun
 
 @deftypefun void mpn_sec_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{ap}, mp_size_t @var{an}, const mp_limb_t *@var{bp}, mp_size_t @var{bn}, mp_limb_t *@var{tp})
