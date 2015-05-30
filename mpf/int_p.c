@@ -36,6 +36,7 @@ see https://www.gnu.org/licenses/.  */
 int
 mpf_integer_p (mpf_srcptr f) __GMP_NOTHROW
 {
+  mp_srcptr fp;
   mp_exp_t exp;
   mp_size_t size;
 
@@ -44,7 +45,12 @@ mpf_integer_p (mpf_srcptr f) __GMP_NOTHROW
   if (exp <= 0)
     return (size == 0);  /* zero is an integer,
 			    others have only fraction limbs */
+  size = ABS (size);
 
-  /* any fraction limbs must be zero */
-  return mpn_zero_p (PTR (f), ABS (size) - exp);
+  /* Ignore zeroes at the low end of F.  */
+  for (fp = PTR (f); *fp == 0; ++fp)
+    --size;
+
+  /* no fraction limbs */
+  return size <= exp;
 }
