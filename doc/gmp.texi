@@ -5440,6 +5440,10 @@ positive value if @math{@var{s1} > @var{s2}}, 0 if they are equal, or a
 negative value if @math{@var{s1} < @var{s2}}.
 @end deftypefun
 
+@deftypefun int mpn_zero_p (const mp_limb_t *@var{sp}, mp_size_t @var{n})
+Test @{@var{sp}, @var{n}@} and return 1 if the operand is zero, 0 otherwise.
+@end deftypefun
+
 @deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{xp}, mp_size_t @var{xn}, mp_limb_t *@var{yp}, mp_size_t @var{yn})
 Set @{@var{rp}, @var{retval}@} to the greatest common divisor of @{@var{xp},
 @var{xn}@} and @{@var{yp}, @var{yn}@}.  The result can be up to @var{yn} limbs,
