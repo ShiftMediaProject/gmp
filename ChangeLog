@@ -18,6 +18,11 @@
 	* doc/gmp.texi (Low-level Functions): Document mpn_divexact_1 and
 	mpn_cnd_swap (the latter was forgotten for the 2015-02-08 change).
 
+2015-05-28  Linus Nordberg  <linus@nordberg.se>
+
+	* configure.ac: Remove double quotes in help strings, make some
+	clarifications.
+
 2015-05-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/div.c: Reduce memory use.
