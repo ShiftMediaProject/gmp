@@ -1,3 +1,9 @@
+2015-05-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpf/cmp_ui.c: Use macros, remove branches, correct nails.
+	* mpf/cmp_si.c: Likewise.
+	* mpf/int_p.c: Use a simpler loop to ignore zero limbs.   
+
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_divexact_1 and

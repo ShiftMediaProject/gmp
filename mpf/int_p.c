@@ -1,7 +1,7 @@
 /* mpf_integer_p -- test whether an mpf is an integer */
 
 /*
-Copyright 2001, 2002, 2014 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2014-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
