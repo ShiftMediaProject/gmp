@@ -6,6 +6,12 @@
 
 	* mpf/sqrt_ui.c: Special case for sqrt(1).
 	* tests/mpf/t-sqrt_ui.c: Test special cases.
+
+	* gmp-h.in: Declare (and inline) mpn_zero_p.
+	* gmp-impl.h: Remove mpn_zero_p.
+	* mpn/generic/zero_p: New file to include the function in the library.
+	* configure.ac (gmp_mpn_functions): Add it.
+	* doc/gmp.texi: Document it.
 	
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 
