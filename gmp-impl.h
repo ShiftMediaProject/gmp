@@ -4656,17 +4656,6 @@ mpn_sub_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
 }
 #endif
 
-static inline int
-mpn_zero_p (mp_srcptr ap, mp_size_t n)
-{
-  while (--n >= 0)
-    {
-      if (ap[n] != 0)
-	return 0;
-    }
-  return 1;
-}
-
 #if TUNE_PROGRAM_BUILD
 /* Some extras wanted when recompiling some .c files for use by the tune
    program.  Not part of a normal build.

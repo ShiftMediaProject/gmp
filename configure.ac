@@ -2854,7 +2854,7 @@ gmp_mpn_functions="$extra_functions					   \
   mulmid_basecase toom42_mulmid mulmid_n mulmid				   \
   random random2 pow_1							   \
   rootrem sqrtrem sizeinbase get_str set_str				   \
-  scan0 scan1 popcount hamdist cmp					   \
+  scan0 scan1 popcount hamdist cmp zero_p				   \
   perfsqr perfpow							   \
   gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step				   \
   gcdext_lehmer								   \
