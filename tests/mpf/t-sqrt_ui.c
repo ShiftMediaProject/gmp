@@ -1,6 +1,6 @@
 /* Test mpf_sqrt_ui.
 
-Copyright 2004 Free Software Foundation, Inc.
+Copyright 2004, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 

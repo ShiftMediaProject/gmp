@@ -2,8 +2,11 @@
 
 	* mpf/cmp_ui.c: Use macros, remove branches, correct nails.
 	* mpf/cmp_si.c: Likewise.
-	* mpf/int_p.c: Use a simpler loop to ignore zero limbs.   
+	* mpf/int_p.c: Use a simpler loop to ignore zero limbs.
 
+	* mpf/sqrt_ui.c: Special case for sqrt(1).
+	* tests/mpf/t-sqrt_ui.c: Test special cases.
+	
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_divexact_1 and
