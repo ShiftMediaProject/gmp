@@ -97,7 +97,7 @@ check_one (mp_ptr qp, mp_srcptr rp,
 
   ASSERT_NOCARRY (refmpn_sub_n (tp, np, tp, nn));
   tvalue = "N-Q*D";
-  if (!mpn_zero_p (tp + dn, nn - dn) || mpn_cmp (tp, dp, dn) >= 0)
+  if (!(nn == dn || mpn_zero_p (tp + dn, nn - dn)) || mpn_cmp (tp, dp, dn) >= 0)
     {
       msg = "q too small";
       goto error;

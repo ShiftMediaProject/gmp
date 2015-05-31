@@ -43,7 +43,7 @@ mpz_eq_mpn (mp_ptr ap, mp_size_t an, const mpz_t b)
 
   return (bn >= 0 && bn <= an
 	  && mpn_cmp (ap, mpz_limbs_read (b), bn) == 0
-	  && mpn_zero_p (ap + bn, an - bn));
+	  && (an == bn || mpn_zero_p (ap + bn, an - bn)));
 }
 
 static mp_bitcnt_t
