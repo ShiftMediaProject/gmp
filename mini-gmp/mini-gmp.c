@@ -378,7 +378,11 @@ mpn_normalized_size (mp_srcptr xp, mp_size_t n)
   return n;
 }
 
-#define mpn_zero_p(xp, n) (mpn_normalized_size ((xp), (n)) == 0)
+int
+mpn_zero_p(mp_srcptr rp, mp_size_t n)
+{
+  return mpn_normalized_size (rp, n) == 0;
+}
 
 void
 mpn_zero (mp_ptr rp, mp_size_t n)
