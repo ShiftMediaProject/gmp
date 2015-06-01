@@ -1,3 +1,15 @@
+2015-06-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tune/speed.c (routine): Measure "mpn_sqrt" and "mpn_root", which are
+	really the corresponding "rem" functions with NULL remainder argument.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_SQRTROOT_CALL): New.
+	(SPEED_ROUTINE_MPN_SQRTREM, SPEED_ROUTINE_MPN_ROOTREM):	Remove.
+
+	* tune/common.c (speed_mpn_sqrt, speed_mpn_root): New functions.
+	(speed_mpn_sqrtrem): Use SPEED_ROUTINE_MPN_SQRTROOT_CALL
+	(speed_mpn_rootrem): Likewise.
+
 2015-05-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/cmp_ui.c: Use macros, remove branches, correct nails.
@@ -21,7 +33,7 @@
 
 	* mini-gmp/mini-gmp.h: Declare mpn_zero_p.
 	* mini-gmp/mini-gmp.c: Define mpn_zero_p as a function, not a macro.
-	
+
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_divexact_1 and

@@ -329,6 +329,8 @@ double speed_mpn_sqr_diagonal (struct speed_params *);
 double speed_mpn_sqr (struct speed_params *);
 double speed_mpn_sqrtrem (struct speed_params *);
 double speed_mpn_rootrem (struct speed_params *);
+double speed_mpn_sqrt (struct speed_params *);
+double speed_mpn_root (struct speed_params *);
 double speed_mpn_sub_n (struct speed_params *);
 double speed_mpn_sub_1 (struct speed_params *);
 double speed_mpn_sub_1_inplace (struct speed_params *);
@@ -3290,7 +3292,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
   }
 
 
-#define SPEED_ROUTINE_MPN_SQRTREM(function)				\
+#define SPEED_ROUTINE_MPN_SQRTROOT_CALL(call)				\
   {									\
     mp_ptr    wp, wp2;							\
     unsigned  i;							\
@@ -3311,36 +3313,7 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, wp2, s->xp, s->size);				\
-    while (--i != 0);							\
-    t = speed_endtime ();						\
-									\
-    TMP_FREE;								\
-    return t;								\
-  }
-
-#define SPEED_ROUTINE_MPN_ROOTREM(function)				\
-  {									\
-    mp_ptr    wp, wp2;							\
-    unsigned  i;							\
-    double    t;							\
-    TMP_DECL;								\
-									\
-    SPEED_RESTRICT_COND (s->size >= 1);					\
-									\
-    TMP_MARK;								\
-    SPEED_TMP_ALLOC_LIMBS (wp,	s->size, s->align_wp);			\
-    SPEED_TMP_ALLOC_LIMBS (wp2, s->size, s->align_wp2);			\
-									\
-    speed_operand_src (s, s->xp, s->size);				\
-    speed_operand_dst (s, wp, s->size);					\
-    speed_operand_dst (s, wp2, s->size);				\
-    speed_cache_fill (s);						\
-									\
-    speed_starttime ();							\
-    i = s->reps;							\
-    do									\
-      function (wp, wp2, s->xp, s->size, s->r);				\
+      call;								\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

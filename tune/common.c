@@ -1741,13 +1741,25 @@ speed_mpn_jacobi_base_4 (struct speed_params *s)
 double
 speed_mpn_sqrtrem (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SQRTREM (mpn_sqrtrem);
+  SPEED_ROUTINE_MPN_SQRTROOT_CALL (mpn_sqrtrem (wp, wp2, s->xp, s->size));
+}
+
+double
+speed_mpn_sqrt (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQRTROOT_CALL (mpn_sqrtrem (wp, NULL, s->xp, s->size));
 }
 
 double
 speed_mpn_rootrem (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_ROOTREM (mpn_rootrem);
+  SPEED_ROUTINE_MPN_SQRTROOT_CALL (mpn_rootrem (wp, wp2, s->xp, s->size, s->r));
+}
+
+double
+speed_mpn_root (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQRTROOT_CALL (mpn_rootrem (wp, NULL, s->xp, s->size, s->r));
 }
 
 
