@@ -12,6 +12,15 @@
 	* mpn/generic/zero_p: New file to include the function in the library.
 	* configure.ac (gmp_mpn_functions): Add it.
 	* doc/gmp.texi: Document it.
+
+	* mpz/combit.c: Call mpn_zero_p only if size is not zero.
+	* mpz/scan1.c: Likewise.
+	* tests/mpn/t-brootinv.c: Likewise.
+	* tests/mpn/t-div.c: Likewise.
+	* tests/mpn/t-minvert.c: Likewise.
+
+	* mini-gmp/mini-gmp.h: Declare mpn_zero_p.
+	* mini-gmp/mini-gmp.c: Define mpn_zero_p as a function, not a macro.
 	
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 

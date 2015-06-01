@@ -1,6 +1,6 @@
 /* mpz_combit -- complement a specified bit.
 
-Copyright 2002, 2003, 2012 Free Software Foundation, Inc.
+Copyright 2002, 2003, 2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
