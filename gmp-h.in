@@ -2168,7 +2168,7 @@ __GMP_EXTERN_INLINE
 int
 mpn_zero_p (mp_srcptr __gmp_p, mp_size_t __gmp_n) __GMP_NOTHROW
 {
-  if (__gmp_n != 0)
+  /* if (__GMP_LIKELY (__gmp_n > 0)) */
     do {
       if (__gmp_p[--__gmp_n] != 0)
 	return 0;
