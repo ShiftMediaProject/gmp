@@ -1076,7 +1076,7 @@ case $host in
 		    cpu_path="p7 p5 p4 p3-p7" ;;
       [power[89]])  gcc_cflags_cpu="-mtune=power8 -mtune=power7 -mtune=power5"
 		    xlc_cflags_arch="-qarch=pwr8 -qarch=pwr7 -qarch=pwr5"
-		    cpu_path="p7 p5 p4 p3-p7" ;;
+		    cpu_path="p8 p7 p5 p4 p3-p7" ;;
     esac
 
     case $host in
