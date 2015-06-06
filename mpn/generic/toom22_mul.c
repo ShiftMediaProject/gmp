@@ -202,9 +202,10 @@ mpn_toom22_mul (mp_ptr pp,
   ASSERT (cy + 1  <= 3);
   ASSERT (cy2 <= 2);
 
-  mpn_incr_u (pp + 2 * n, cy2);
+  MPN_INCR_U (pp + 2 * n, s + t, cy2);
   if (LIKELY (cy <= 2))
-    mpn_incr_u (pp + 3 * n, cy);
+    /* if s+t==n, cy is zero, but we should not acces pp[3*n] at all. */
+    MPN_INCR_U (pp + 3 * n, s + t - n, cy);
   else
-    mpn_decr_u (pp + 3 * n, 1);
+    MPN_DECR_U (pp + 3 * n, s + t - n, 1);
 }
