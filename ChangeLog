@@ -1,3 +1,7 @@
+2015-06-06  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/powerpc64/mode64/p8/invert_limb.asm: New file.
+
 2015-06-01  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tune/speed.c (routine): Measure "mpn_sqrt" and "mpn_root", which are
