@@ -1,5 +1,6 @@
 2015-06-06  Torbjörn Granlund  <torbjorng@google.com>
 
+	* config.sub: Recognise any arm*neon CPU.
 	* configure.ac (powerpc): Add p8 directory for power8 and later.
 	* mpn/powerpc64/mode64/p8/invert_limb.asm: New file.
 
