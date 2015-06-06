@@ -130,7 +130,7 @@ z900esa | z990esa | z9esa | z10esa | z196esa)
 armsa1 | armxscale | arm9tdmi | arm9te |				\
 arm10* | arm11mpcore | armsa1 | arm1136 | arm1156 | arm1176 |		\
 armcortexa5 | armcortexa7 | armcortexa8 | armcortexa9 | armcortexa15 |	\
-armcortexr4 | armcortexr5 | armcortexm3)
+armcortexr4 | armcortexr5 | armcortexm3 | arm*neon)
   test_cpu="arm";;
 
 *)
