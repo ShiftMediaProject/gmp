@@ -138,9 +138,9 @@ mpn_toom2_sqr (mp_ptr pp,
   ASSERT (cy + 1  <= 3);
   ASSERT (cy2 <= 2);
 
-  mpn_incr_u (pp + 2 * n, cy2);
+  MPN_INCR_U (pp + 2 * n, s + s, cy2);
   if (LIKELY (cy <= 2))
-    mpn_incr_u (pp + 3 * n, cy);
+    MPN_INCR_U (pp + 3 * n, s + s - n, cy);
   else
-    mpn_decr_u (pp + 3 * n, 1);
+    MPN_DECR_U (pp + 3 * n, s + s - n, 1);
 }
