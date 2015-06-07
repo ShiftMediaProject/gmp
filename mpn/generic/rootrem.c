@@ -143,35 +143,22 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   int logk;
   TMP_DECL;
 
-  TMP_MARK;
-
-  if (remp == NULL)
-    {
-      rp = TMP_ALLOC_LIMBS (un + 1);     /* will contain the remainder */
-      scratch = rp;			 /* used by mpn_div_q */
-    }
-  else
-    {
-      scratch = TMP_ALLOC_LIMBS (un + 1); /* used by mpn_div_q */
-      rp = remp;
-    }
-  sp = rootp;
-
   MPN_SIZEINBASE_2EXP(unb, up, un, 1);
   /* unb is the number of bits of the input U */
-
   xnb = (unb - 1) / k + 1;	/* ceil (unb / k) */
   /* xnb is the number of bits of the root R */
 
   if (xnb == 1) /* root is 1 */
     {
       if (remp == NULL)
-	remp = rp;
-      mpn_sub_1 (remp, up, un, (mp_limb_t) 1);
-      MPN_NORMALIZE (remp, un);	/* There should be at most one zero limb,
+	un -= (*up == CNST_LIMB (1)); /* Non-zero iif {up,un} > 1 */
+      else
+	{
+	  mpn_sub_1 (remp, up, un, CNST_LIMB (1));
+	  un -= (remp [un - 1] == 0);	/* There should be at most one zero limb,
 				   if we demand u to be normalized  */
+	}
       rootp[0] = 1;
-      TMP_FREE;
       return un;
     }
 
@@ -180,12 +167,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      r0^k = 2^(k*(xnb-1)), that we subtract to the input. */
   kk = k * (xnb - 1);		/* number of truncated bits in the input */
   rn = un - kk / GMP_NUMB_BITS; /* number of limbs of the non-truncated part */
-  MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
-  mpn_sub_1 (rp, rp, rn, 1);	/* subtract the initial approximation: since
-				   the non-truncated part is less than 2^k, it
-				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
-  sp[0] = 1;			/* initial approximation */
-  sn = 1;			/* it has one limb */
 
   for (logk = 1; ((k - 1) >> logk) != 0; logk++)
     ;
@@ -193,7 +174,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   b = xnb - 1; /* number of remaining bits to determine in the kth root */
   ni = 0;
-  while (b != 0)
+  do
     {
       /* invariant: here we want b+1 total bits for the kth root */
       sizes[ni] = b;
@@ -208,7 +189,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       if (b >= sizes[ni])
 	b = sizes[ni] - 1;	/* add just one bit at a time */
       ni++;
-    }
+    } while (b != 0);
   sizes[ni] = 0;
   ASSERT_ALWAYS (ni < GMP_NUMB_BITS + 1);
   /* We have sizes[0] = b > sizes[1] > ... > sizes[ni] = 0 with
@@ -216,6 +197,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      Newton iteration will first compute sizes[ni-1] extra bits,
      then sizes[ni-2], ..., then sizes[0] = b. */
 
+  TMP_MARK;
   /* qp and wp need enough space to store S'^k where S' is an approximate
      root. Since S' can be as large as S+2, the worst case is when S=2 and
      S'=4. But then since we know the number of bits of S in advance, S'
@@ -224,14 +206,29 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      fits in un limbs, the number of extra limbs needed is bounded by
      ceil(k*log2(3/2)/GMP_NUMB_BITS). */
 #define EXTRA 2 + (mp_size_t) (0.585 * (double) k / (double) GMP_NUMB_BITS)
-  TMP_ALLOC_LIMBS_2 (qp, un + EXTRA, /* will contain quotient and remainder
-					of R/(k*S^(k-1)), and S^k */
+  TMP_ALLOC_LIMBS_3 (scratch, un + 1, /* used by mpn_div_q */
+		     qp, un + EXTRA,  /* will contain quotient and remainder
+					 of R/(k*S^(k-1)), and S^k */
 		     wp, un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
-					and temporary for mpn_pow_1 */
+					 and temporary for mpn_pow_1 */
+		     
+  if (remp == NULL)
+    rp = scratch;     /* will contain the remainder */
+  else
+    rp = remp;
+  sp = rootp;
+
+  MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
+  mpn_sub_1 (rp, rp, rn, 1);	/* subtract the initial approximation: since
+				   the non-truncated part is less than 2^k, it
+				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
+  sp[0] = 1;			/* initial approximation */
+  sn = 1;			/* it has one limb */
 
   wp[0] = 1; /* {sp,sn}^(k-1) = 1 */
   wn = 1;
-  for (i = ni; i != 0; i--)
+  i = ni;
+  do
     {
       /* 1: loop invariant:
 	 {sp, sn} is the current approximation of the root, which has
@@ -408,7 +405,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* otherwise we have rn > 0, thus the return value is ok */
 
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-    }
+    } while (--i != 0);
 
   TMP_FREE;
   return rn;
