@@ -1,3 +1,7 @@
+2015-06-08  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86/p6/gcd_1.asm: Align stack for calls.
+
 2015-06-06  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.sub: Recognise any arm*neon CPU.
