@@ -225,7 +225,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   mpn_sub_1 (rp, rp, rn, 2);	/* subtract the initial approximation: since
 				   the non-truncated part is less than 2^k, it
 				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
-  sp[0] = 1;			/* initial approximation */
+  sp[0] = 2;			/* initial approximation */
   sn = 1;			/* it has one limb */
 
   wp[0] = k; /* k * {sp,sn}^(k-1) = 1 */
@@ -276,18 +276,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  MPN_DECR_U (qp, qn, 1);
 	  qn -= qp[qn - 1] == 0;
 	}
-
-      /* 6: current buffers: {sp,sn}, {qp,qn} */
-
-      /* multiply the root approximation by 2^b */
-      MPN_LSHIFT (cy, sp + b / GMP_NUMB_BITS, sp, sn, b % GMP_NUMB_BITS);
-      sn = sn + b / GMP_NUMB_BITS;
-      if (cy != 0)
-	{
-	  sp[sn] = cy;
-	  sn++;
-	}
-
       /* 7: current buffers: {sp,sn}, {qp,qn} */
 
       ASSERT_ALWAYS (bn >= qn); /* this is ok since in the case qn > bn
@@ -401,6 +389,17 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       cy = mpn_mul_1 (wp, wp, wn, k);
       wp[wn] = cy;
       wn += cy != 0;
+
+      /* 6: current buffers: {sp,sn}, {qp,qn} */
+
+      /* multiply the root approximation by 2^b */
+      MPN_LSHIFT (cy, sp + b / GMP_NUMB_BITS, sp, sn, b % GMP_NUMB_BITS);
+      sn = sn + b / GMP_NUMB_BITS;
+      if (cy != 0)
+	{
+	  sp[sn] = cy;
+	  sn++;
+	}
 
     } while (1);
 
