@@ -139,7 +139,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   unsigned long b, kk;
   unsigned long sizes[GMP_NUMB_BITS + 1];
   int ni, i;
-  int c;
+  int c, perf_pow;
   int logk;
   TMP_DECL;
 
@@ -371,15 +371,16 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      for (c = 0;; c++)
 	{
 	  /* Compute S^k in {qp,qn}. */
-	      /* W <- S^(k-1) for the next iteration,
-		 and S^k = W * S. */
-	      wn = mpn_pow_1 (wp, sp, sn, k - 1, qp);
-	      mpn_mul (qp, wp, wn, sp, sn);
-	      qn = wn + sn;
-	      qn -= qp[qn - 1] == 0;
+	  /* W <- S^(k-1) for the next iteration,
+	     and S^k = W * S. */
+	  wn = mpn_pow_1 (wp, sp, sn, k - 1, qp);
+	  mpn_mul (qp, wp, wn, sp, sn);
+	  qn = wn + sn;
+	  qn -= qp[qn - 1] == 0;
 
+	  perf_pow = 1;
 	  /* if S^k > floor(U/2^kk), the root approximation was too large */
-	  if (qn > rn || (qn == rn && mpn_cmp (qp, rp, rn) > 0))
+	  if (qn > rn || (qn == rn && (perf_pow=mpn_cmp (qp, rp, rn)) > 0))
 	    MPN_DECR_U (sp, sn, 1);
 	  else
 	    break;
@@ -391,11 +392,13 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       ASSERT_ALWAYS (rn >= qn);
 
       /* R = R - Q = floor(U/2^kk) - S^k */
-      /* if (i > 1 || approx == 0) */
+      if (perf_pow != 0)
 	{
 	  mpn_sub (rp, rp, rn, qp, qn);
 	  MPN_NORMALIZE (rp, rn);
 	}
+      else
+	rn = 0;
       /* otherwise we have rn > 0, thus the return value is ok */
 
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
@@ -403,7 +406,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   if (!approx || sp[0] <= CNST_LIMB (1))
     {
-      int perf_pow;
       for (c = 0;; c++)
 	{
 	  /* Compute S^k in {qp,qn}. */
