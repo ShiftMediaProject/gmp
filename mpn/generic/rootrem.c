@@ -145,10 +145,8 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   MPN_SIZEINBASE_2EXP(unb, up, un, 1);
   /* unb is the number of bits of the input U */
-  xnb = (unb - 1) / k + 1;	/* ceil (unb / k) */
-  /* xnb is the number of bits of the root R */
 
-  if (xnb == 1) /* root is 1 */
+  if (unb <= k) /* root is 1 */
     {
       if (remp == NULL)
 	un -= (*up == CNST_LIMB (1)); /* Non-zero iif {up,un} > 1 */
@@ -161,6 +159,10 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       rootp[0] = 1;
       return un;
     }
+  /* if (unb - k <= k/2) // root is 2 */
+
+  xnb = (unb - 1) / k + 1;	/* ceil (unb / k) */
+  /* xnb is the number of bits of the root R */
 
   /* We initialize the algorithm with a 1-bit approximation to zero: since we
      know the root has exactly xnb bits, we write r0 = 2^(xnb-1), so that
