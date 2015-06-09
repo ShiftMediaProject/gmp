@@ -242,6 +242,10 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 kk = number of truncated bits of the input
       */
 
+      /* Number of limbs used by b bits, when least significant bit is
+	 aligned to least limb */
+      bn = (b - 1) / GMP_NUMB_BITS + 1;
+
       /* 4: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
       /* now divide {rp, rn} by {wp, wn} to get the low part of the root */
@@ -254,16 +258,11 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  qn = rn - wn; /* expected quotient size */
 	  mpn_div_q (qp, rp, rn, wp, wn, scratch);
 	  qn += qp[qn] != 0;
-	}
 
       /* 5: current buffers: {sp,sn}, {qp,qn}.
 	 Note: {rp,rn} is not needed any more since we'll compute it from
 	 scratch at the end of the loop.
        */
-
-      /* Number of limbs used by b bits, when least significant bit is
-	 aligned to least limb */
-      bn = (b - 1) / GMP_NUMB_BITS + 1;
 
       /* the quotient should be smaller than 2^b, since the previous
 	 approximation was correctly rounded toward zero */
@@ -275,6 +274,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  qp[qn - 1] = (mp_limb_t) 1 << (b % GMP_NUMB_BITS);
 	  MPN_DECR_U (qp, qn, 1);
 	  qn -= qp[qn - 1] == 0;
+	}
 	}
       /* 7: current buffers: {sp,sn}, {qp,qn} */
 
