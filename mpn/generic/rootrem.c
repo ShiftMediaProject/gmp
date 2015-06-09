@@ -264,21 +264,21 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
       /* the quotient should be smaller than 2^b, since the previous
 	 approximation was correctly rounded toward zero */
-      if (qn > bn || (qn == bn && (b % GMP_NUMB_BITS != 0) &&
-		      qp[qn - 1] >= (CNST_LIMB (1) << (b % GMP_NUMB_BITS))))
-	{
-	  for (qn = 1; qn < bn; ++qn)
-	    sp[qn - 1] = GMP_NUMB_MAX;
-	  sp[qn - 1] = GMP_NUMB_MAX >> (GMP_NUMB_BITS-1 - ((b-1) % GMP_NUMB_BITS));
-	}
-      else
-	{
+	  if (qn > bn || (qn == bn && (b % GMP_NUMB_BITS != 0) &&
+			  qp[qn - 1] >= (CNST_LIMB (1) << (b % GMP_NUMB_BITS))))
+	    {
+	      for (qn = 1; qn < bn; ++qn)
+		sp[qn - 1] = GMP_NUMB_MAX;
+	      sp[qn - 1] = GMP_NUMB_MAX >> (GMP_NUMB_BITS-1 - ((b-1) % GMP_NUMB_BITS));
+	    }
+	  else
+	    {
       /* 7: current buffers: {sp,sn}, {qp,qn} */
 
       /* Combine sB and q to form sB + q.  */
-      MPN_COPY (sp, qp, qn);
-      MPN_ZERO (sp + qn, bn - qn);
-	}
+	      MPN_COPY (sp, qp, qn);
+	      MPN_ZERO (sp + qn, bn - qn);
+	    }
 	}
       sp[b / GMP_NUMB_BITS] |= save;
 
