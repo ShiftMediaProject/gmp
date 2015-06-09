@@ -228,7 +228,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   sp[0] = 1;			/* initial approximation */
   sn = 1;			/* it has one limb */
 
-  wp[0] = 1; /* {sp,sn}^(k-1) = 1 */
+  wp[0] = k; /* k * {sp,sn}^(k-1) = 1 */
   wn = 1;
   i = ni;
   b = 1;
@@ -241,13 +241,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 {wp, wn} = {sp, sn}^(k-1)
 	 kk = number of truncated bits of the input
       */
-
-      /* 3: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-
-      /* compute {wp, wn} = k * {sp, sn}^(k-1) */
-      cy = mpn_mul_1 (wp, wp, wn, k);
-      wp[wn] = cy;
-      wn += cy != 0;
 
       /* 4: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
@@ -401,6 +394,13 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	rp[bn + 1] = save2; /* the low b bits go in rp[0..bn] only, since
 			       they start by bit 0 in rp[0], so they use
 			       at most ceil(b/GMP_NUMB_BITS) limbs */
+
+      /* 3: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+
+      /* compute {wp, wn} = k * {sp, sn}^(k-1) */
+      cy = mpn_mul_1 (wp, wp, wn, k);
+      wp[wn] = cy;
+      wn += cy != 0;
 
     } while (1);
 
