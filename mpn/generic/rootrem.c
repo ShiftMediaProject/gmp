@@ -169,6 +169,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      r0^k = 2^(k*(xnb-1)), that we subtract to the input. */
   kk = k * (xnb - 1);		/* number of truncated bits in the input */
   rn = un - kk / GMP_NUMB_BITS; /* number of limbs of the non-truncated part */
+  --kk;
 
   for (logk = 1; ((k - 1) >> logk) != 0; logk++)
     ;
@@ -192,7 +193,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	b = sizes[ni] - 1;	/* add just one bit at a time */
       ni++;
     } while (b != 0);
-  sizes[ni] = 0;
+
   ASSERT_ALWAYS (ni < GMP_NUMB_BITS + 1);
   /* We have sizes[0] = b > sizes[1] > ... > sizes[ni] = 0 with
      sizes[i] <= 2 * sizes[i+1].
@@ -221,7 +222,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   sp = rootp;
 
   MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
-  mpn_sub_1 (rp, rp, rn, 1);	/* subtract the initial approximation: since
+  mpn_sub_1 (rp, rp, rn, 2);	/* subtract the initial approximation: since
 				   the non-truncated part is less than 2^k, it
 				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
   sp[0] = 1;			/* initial approximation */
@@ -230,6 +231,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   wp[0] = 1; /* {sp,sn}^(k-1) = 1 */
   wn = 1;
   i = ni;
+  b = 1;
   do
     {
       /* 1: loop invariant:
@@ -239,26 +241,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 {wp, wn} = {sp, sn}^(k-1)
 	 kk = number of truncated bits of the input
       */
-      b = sizes[i - 1] - sizes[i]; /* number of bits to compute in that
-				      iteration */
-
-      /* Reinsert a low zero limb if we normalized away the entire remainder */
-      if (rn == 0)
-	{
-	  rp[0] = 0;
-	  rn = 1;
-	}
-
-      /* first multiply the remainder by 2^b */
-      MPN_LSHIFT (cy, rp + b / GMP_NUMB_BITS, rp, rn, b % GMP_NUMB_BITS);
-      rn = rn + b / GMP_NUMB_BITS;
-      if (cy != 0)
-	{
-	  rp[rn] = cy;
-	  rn++;
-	}
-
-      kk = kk - b;
 
       /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
@@ -320,7 +302,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* the quotient should be smaller than 2^b, since the previous
 	 approximation was correctly rounded toward zero */
       if (qn > bn || (qn == bn && (b % GMP_NUMB_BITS != 0) &&
-		      qp[qn - 1] >= ((mp_limb_t) 1 << (b % GMP_NUMB_BITS))))
+		      qp[qn - 1] >= (CNST_LIMB (1) << (b % GMP_NUMB_BITS))))
 	{
 	  qn = b / GMP_NUMB_BITS + 1; /* b+1 bits */
 	  MPN_ZERO (qp, qn);
@@ -398,12 +380,31 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  MPN_NORMALIZE (rp, rn);
 	}
       else
-	rn = 0;
-      /* otherwise we have rn > 0, thus the return value is ok */
-
+	{
+	  rn = 1;
+	  rp[0] = 0;
+	}
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+      /* Reinsert a low zero limb if we normalized away the entire remainder */
+      rn += (rn == 0);
+
+      b = sizes[i - 1] - sizes[i]; /* number of bits to compute in the
+				      next iteration */
+
+      /* first multiply the remainder by 2^b */
+      MPN_LSHIFT (cy, rp + b / GMP_NUMB_BITS, rp, rn, b % GMP_NUMB_BITS);
+      rn = rn + b / GMP_NUMB_BITS;
+      if (cy != 0)
+	{
+	  rp[rn] = cy;
+	  rn++;
+	}
+
+      kk = kk - b;
+
     } while (1);
 
+  /* otherwise we have rn > 0, thus the return value is ok */
   if (!approx || sp[0] <= CNST_LIMB (1))
     {
       for (c = 0;; c++)
