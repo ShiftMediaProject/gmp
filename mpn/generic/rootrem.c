@@ -225,13 +225,13 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   mpn_sub_1 (rp, rp, rn, 2);	/* subtract the initial approximation: since
 				   the non-truncated part is less than 2^k, it
 				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
-  sp[0] = 2;			/* initial approximation */
+  sp[0] = save = 2;		/* initial approximation */
   sn = 1;			/* it has one limb */
 
   wp[0] = k; /* k * {sp,sn}^(k-1) = 1 */
   wn = 1;
   i = ni;
-  b = 1;
+  b = bn = 1;
   do
     {
       /* 1: loop invariant:
@@ -242,24 +242,20 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 kk = number of truncated bits of the input
       */
 
-      save = sp[b / GMP_NUMB_BITS];
-
-      /* Number of limbs used by b bits, when least significant bit is
-	 aligned to least limb */
-      bn = (b - 1) / GMP_NUMB_BITS + 1;
-
       /* 4: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
       /* now divide {rp, rn} by {wp, wn} to get the low part of the root */
-      if (rn < wn)
+      if (UNLIKELY (rn < wn))
 	{
 	  MPN_ZERO (sp, bn);
 	}
       else
 	{
 	  qn = rn - wn; /* expected quotient size */
-	  mpn_div_q (qp, rp, rn, wp, wn, scratch);
-	  qn += qp[qn] != 0;
+	  if (qn <= bn) { /* Divide only if result is not too big. */
+	    mpn_div_q (qp, rp, rn, wp, wn, scratch);
+	    qn += qp[qn] != 0;
+	  }
 
       /* 5: current buffers: {sp,sn}, {qp,qn}.
 	 Note: {rp,rn} is not needed any more since we'll compute it from
@@ -278,10 +274,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       else
 	{
       /* 7: current buffers: {sp,sn}, {qp,qn} */
-
-      ASSERT_ALWAYS (bn >= qn); /* this is ok since in the case qn > bn
-				   above, q is set to 2^b-1, which has
-				   exactly bn limbs */
 
       /* Combine sB and q to form sB + q.  */
       MPN_COPY (sp, qp, qn);
@@ -402,6 +394,12 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  sp[sn] = cy;
 	  sn++;
 	}
+
+      save = sp[b / GMP_NUMB_BITS];
+
+      /* Number of limbs used by b bits, when least significant bit is
+	 aligned to least limb */
+      bn = (b - 1) / GMP_NUMB_BITS + 1;
 
     } while (1);
 
