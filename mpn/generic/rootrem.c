@@ -354,6 +354,9 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
       /* 8: current buffer: {sp,sn} */
 
+      if (--i == 0)
+	break;
+
       /* Since each iteration treats b bits from the root and thus k*b bits
 	 from the input, and we already considered b bits from the input,
 	 we now have to take another (k-1)*b bits from the input. */
@@ -368,23 +371,12 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      for (c = 0;; c++)
 	{
 	  /* Compute S^k in {qp,qn}. */
-	  if (i == 1)
-	    {
-	      /* Last iteration: we don't need W anymore. */
-	      /* mpn_pow_1 requires that both qp and wp have enough space to
-		 store the result {sp,sn}^k + 1 limb */
-	      approx = approx && (sp[0] > 1);
-	      qn = (approx == 0) ? mpn_pow_1 (qp, sp, sn, k, wp) : 0;
-	    }
-	  else
-	    {
 	      /* W <- S^(k-1) for the next iteration,
 		 and S^k = W * S. */
 	      wn = mpn_pow_1 (wp, sp, sn, k - 1, qp);
 	      mpn_mul (qp, wp, wn, sp, sn);
 	      qn = wn + sn;
 	      qn -= qp[qn - 1] == 0;
-	    }
 
 	  /* if S^k > floor(U/2^kk), the root approximation was too large */
 	  if (qn > rn || (qn == rn && mpn_cmp (qp, rp, rn) > 0))
@@ -399,7 +391,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       ASSERT_ALWAYS (rn >= qn);
 
       /* R = R - Q = floor(U/2^kk) - S^k */
-      if (i > 1 || approx == 0)
+      /* if (i > 1 || approx == 0) */
 	{
 	  mpn_sub (rp, rp, rn, qp, qn);
 	  MPN_NORMALIZE (rp, rn);
@@ -407,7 +399,34 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* otherwise we have rn > 0, thus the return value is ok */
 
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-    } while (--i != 0);
+    } while (1);
+
+  if (!approx || sp[0] <= CNST_LIMB (1))
+    {
+      int perf_pow;
+      for (c = 0;; c++)
+	{
+	  /* Compute S^k in {qp,qn}. */
+	  /* Last iteration: we don't need W anymore. */
+	  /* mpn_pow_1 requires that both qp and wp have enough
+	     space to store the result {sp,sn}^k + 1 limb */
+	  qn = mpn_pow_1 (qp, sp, sn, k, wp);
+
+	  perf_pow = 1;
+	  if (qn > un || (qn == un && (perf_pow=mpn_cmp (qp, up, un)) > 0))
+	    MPN_DECR_U (sp, sn, 1);
+	  else
+	    break;
+	};
+
+      rn = perf_pow != 0;
+      if (rn != 0 && remp != NULL)
+	{
+	  mpn_sub (remp, up, un, qp, qn);
+	  rn = un;
+	  MPN_NORMALIZE (remp, rn);
+	}
+    }
 
   TMP_FREE;
   return rn;
