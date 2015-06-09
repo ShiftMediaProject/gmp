@@ -242,33 +242,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 kk = number of truncated bits of the input
       */
 
-      /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-
-      /* Now insert bits [kk,kk+b-1] from the input U */
-      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[] */
-      save = rp[bn];
-      /* nl is the number of limbs in U which contain bits [kk,kk+b-1] */
-      nl = 1 + (kk + b - 1) / GMP_NUMB_BITS - (kk / GMP_NUMB_BITS);
-      /* nl  = 1 + floor((kk + b - 1) / GMP_NUMB_BITS)
-		 - floor(kk / GMP_NUMB_BITS)
-	     <= 1 + (kk + b - 1) / GMP_NUMB_BITS
-		  - (kk - GMP_NUMB_BITS + 1) / GMP_NUMB_BITS
-	     = 2 + (b - 2) / GMP_NUMB_BITS
-	 thus since nl is an integer:
-	 nl <= 2 + floor(b/GMP_NUMB_BITS) <= 2 + bn. */
-      /* we have to save rp[bn] up to rp[nl-1], i.e. 1 or 2 limbs */
-      if (nl - 1 > bn)
-	save2 = rp[bn + 1];
-      MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, nl, kk % GMP_NUMB_BITS);
-      /* set to zero high bits of rp[bn] */
-      rp[bn] &= ((mp_limb_t) 1 << (b % GMP_NUMB_BITS)) - 1;
-      /* restore corresponding bits */
-      rp[bn] |= save;
-      if (nl - 1 > bn)
-	rp[bn + 1] = save2; /* the low b bits go in rp[0..bn] only, since
-			       they start by bit 0 in rp[0], so they use
-			       at most ceil(b/GMP_NUMB_BITS) limbs */
-
       /* 3: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
       /* compute {wp, wn} = k * {sp, sn}^(k-1) */
@@ -401,6 +374,33 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	}
 
       kk = kk - b;
+
+      /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+
+      /* Now insert bits [kk,kk+b-1] from the input U */
+      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[] */
+      save = rp[bn];
+      /* nl is the number of limbs in U which contain bits [kk,kk+b-1] */
+      nl = 1 + (kk + b - 1) / GMP_NUMB_BITS - (kk / GMP_NUMB_BITS);
+      /* nl  = 1 + floor((kk + b - 1) / GMP_NUMB_BITS)
+		 - floor(kk / GMP_NUMB_BITS)
+	     <= 1 + (kk + b - 1) / GMP_NUMB_BITS
+		  - (kk - GMP_NUMB_BITS + 1) / GMP_NUMB_BITS
+	     = 2 + (b - 2) / GMP_NUMB_BITS
+	 thus since nl is an integer:
+	 nl <= 2 + floor(b/GMP_NUMB_BITS) <= 2 + bn. */
+      /* we have to save rp[bn] up to rp[nl-1], i.e. 1 or 2 limbs */
+      if (nl - 1 > bn)
+	save2 = rp[bn + 1];
+      MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, nl, kk % GMP_NUMB_BITS);
+      /* set to zero high bits of rp[bn] */
+      rp[bn] &= ((mp_limb_t) 1 << (b % GMP_NUMB_BITS)) - 1;
+      /* restore corresponding bits */
+      rp[bn] |= save;
+      if (nl - 1 > bn)
+	rp[bn + 1] = save2; /* the low b bits go in rp[0..bn] only, since
+			       they start by bit 0 in rp[0], so they use
+			       at most ceil(b/GMP_NUMB_BITS) limbs */
 
     } while (1);
 
