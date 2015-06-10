@@ -132,6 +132,8 @@ main (int argc, char **argv)
       mpz_urandomb (bs, rands, 15);
       nth = mpz_getlimbn (bs, 0) % mpz_sizeinbase (x2, 2) + 2;
 
+      res = mpz_root (root1, x2, nth);
+
       mpz_urandomb (bs, rands, 4);
       bsi = mpz_get_ui (bs);
       if ((bsi & 1) != 0)
@@ -145,9 +147,9 @@ main (int argc, char **argv)
 	    }
 	  else
 	    mpz_add_ui (x2, x2, bsi >> 2);
+	  res = mpz_root (root1, x2, nth);
 	}
 
-      res = mpz_root (root1, x2, nth);
       check_one (root1, x2, nth, res, i);
 
       if (((nth & 1) != 0) && ((bsi & 2) != 0))
