@@ -1,3 +1,12 @@
+2015-06-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-root.c: Check also mpz_root retunr value.
+	* mpn/generic/rootrem.c: Shorten first and last loop.
+
+	* mpn/generic/toom2_sqr.c: Add some ASSERTs.
+	* mpn/generic/toom22_mul.c: Likewise.
+	* tests/mpn/t-toom22.c: stop testing some unsafe (unused) corner cases.
+
 2015-06-08  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86/p6/gcd_1.asm: Align stack for calls.
