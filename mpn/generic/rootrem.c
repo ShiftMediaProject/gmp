@@ -8,7 +8,7 @@
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
    GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2002, 2005, 2009-2012 Free Software Foundation, Inc.
+Copyright 2002, 2005, 2009-2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -225,10 +225,11 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   MPN_DECR_U (rp, rn, 2);	/* subtract the initial approximation: since
 				   the non-truncated part is less than 2^k, it
 				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
+  rn -= rp [rn - 1] == 0;
   sp[0] = save = 2;		/* initial approximation */
   sn = 1;			/* it has one limb */
 
-  wp[0] = k; /* k * {sp,sn}^(k-1) = 1 */
+  wp[0] = k; /* k * {sp,sn}^(k-1) */
   wn = 1;
   i = ni;
   b = bn = 1;
@@ -325,7 +326,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       if (perf_pow != 0)
 	{
 	  mpn_sub (rp, rp, rn, qp, qn);
-	  MPN_NORMALIZE (rp, rn);
+	  MPN_NORMALIZE_NOT_ZERO (rp, rn);
 	}
       else
 	{
@@ -333,15 +334,15 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  rp[0] = 0;
 	}
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-      /* Reinsert a low zero limb if we normalized away the entire remainder */
-      rn += (rn == 0);
 
       b = sizes[i - 1] - sizes[i]; /* number of bits to compute in the
 				      next iteration */
 
       /* first multiply the remainder by 2^b */
-      MPN_LSHIFT (cy, rp + b / GMP_NUMB_BITS, rp, rn, b % GMP_NUMB_BITS);
-      rn = rn + b / GMP_NUMB_BITS;
+      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[] */
+      /* FIXME: next shift can be moved in the only branch above where it makes sense. */
+      MPN_LSHIFT (cy, rp + bn, rp, rn, b % GMP_NUMB_BITS);
+      rn = rn + bn;
       if (cy != 0)
 	{
 	  rp[rn] = cy;
@@ -353,7 +354,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
       /* Now insert bits [kk,kk+b-1] from the input U */
-      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[] */
       save = rp[bn];
       /* nl is the number of limbs in U which contain bits [kk,kk+b-1] */
       nl = 1 + (kk + b - 1) / GMP_NUMB_BITS - (kk / GMP_NUMB_BITS);
@@ -369,13 +369,14 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	save2 = rp[bn + 1];
       MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, nl, kk % GMP_NUMB_BITS);
       /* set to zero high bits of rp[bn] */
-      rp[bn] &= ((mp_limb_t) 1 << (b % GMP_NUMB_BITS)) - 1;
+      rp[bn] &= (CNST_LIMB (1) << (b % GMP_NUMB_BITS)) - 1;
       /* restore corresponding bits */
       rp[bn] |= save;
       if (nl - 1 > bn)
 	rp[bn + 1] = save2; /* the low b bits go in rp[0..bn] only, since
 			       they start by bit 0 in rp[0], so they use
 			       at most ceil(b/GMP_NUMB_BITS) limbs */
+      /* FIXME: Should we normalise {rp,rn} here ?*/
 
       /* 3: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
 
@@ -426,7 +427,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	{
 	  mpn_sub (remp, up, un, qp, qn);
 	  rn = un;
-	  MPN_NORMALIZE (remp, rn);
+	  MPN_NORMALIZE_NOT_ZERO (remp, rn);
 	}
     }
 
