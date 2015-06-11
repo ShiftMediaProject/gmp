@@ -195,7 +195,7 @@ mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
   /* now we have (initial rp0)<<Prec + np0>>Prec = (qhl<<Prec + q) * (2sp0) + u */
   sp0 = ((sp0 + qhl) << Prec) + q;
   cc = u >> Prec;
-  rp0 = ((u << Prec) & GMP_NUMB_MASK) + (np0 & (((mp_limb_t) 1 << Prec) - 1));
+  rp0 = ((u << Prec) & GMP_NUMB_MASK) + (np0 & ((CNST_LIMB (1) << Prec) - 1));
   /* subtract q * q or qhl*2^(2*Prec) from rp */
   q2 = q * q;
   cc -= (rp0 < q2) + qhl;
@@ -242,7 +242,7 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
       h = n - l;
       q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h);
       if (q != 0)
-	mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h);
+	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
       q += mpn_divrem (sp, 0, np + l, n, sp + l, h);
       c = sp[0] & 1;
       mpn_rshift (sp, sp, l, 1);
@@ -292,14 +292,14 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   ASSERT (! MPN_OVERLAP_P (sp, (nn + 1) / 2, np, nn));
 
   high = np[nn - 1];
-  if (nn == 1 && (high & GMP_NUMB_HIGHBIT))
-    {
-      mp_limb_t r;
-      sp[0] = mpn_sqrtrem1 (&r, high);
-      if (rp != NULL)
-	rp[0] = r;
-      return r != 0;
-    }
+  if (nn == 1)
+    if (high & (GMP_NUMB_HIGHBIT | (GMP_NUMB_HIGHBIT >> 1)))
+      {
+	sp[0] = mpn_sqrtrem1 (&rl, high);
+	if (rp != NULL)
+	  rp[0] = rl;
+	return rl != 0;
+      }
   count_leading_zeros (c, high);
   c -= GMP_NAIL_BITS;
 
@@ -319,7 +319,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       /* We have 2^(2k)*N = S^2 + R where k = c + (2tn-nn)*GMP_NUMB_BITS/2,
 	 thus 2^(2k)*N = (S-s0)^2 + 2*S*s0 - s0^2 + R where s0=S mod 2^k */
       c += (nn % 2) * GMP_NUMB_BITS / 2;		/* c now represents k */
-      s0[0] = sp[0] & (((mp_limb_t) 1 << c) - 1);	/* S mod 2^k */
+      s0[0] = sp[0] & ((CNST_LIMB (1) << c) - 1);	/* S mod 2^k */
       rl += mpn_addmul_1 (tp, sp, tn, 2 * s0[0]);	/* R = R + 2*s0*S */
       cc = mpn_submul_1 (tp, s0, 1, s0[0]);
       rl -= (tn > 1) ? mpn_sub_1 (tp + 1, tp + 1, tn - 1, cc) : cc;
