@@ -1,3 +1,8 @@
+2015-06-11  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86/k7/gcd_1.asm: Align stack for calls.
+	* mpn/x86/p6/gcd_1.asm: Amend last change: align for PIC and non-PIC.
+
 2015-06-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/t-root.c: Check also mpz_root retunr value.
