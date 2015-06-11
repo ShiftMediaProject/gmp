@@ -8,8 +8,8 @@
    INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR
    DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 1999-2002, 2004, 2005, 2008, 2010, 2012 Free Software Foundation,
-Inc.
+Copyright 1999-2002, 2004, 2005, 2008, 2010, 2012, 2015 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -298,6 +298,18 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	sp[0] = mpn_sqrtrem1 (&rl, high);
 	if (rp != NULL)
 	  rp[0] = rl;
+	return rl != 0;
+      }
+    else
+      {
+	count_leading_zeros (c, high);
+	c -= GMP_NAIL_BITS;
+
+	c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
+	cc = mpn_sqrtrem1 (&rl, high << (2*c)) >> c;
+	sp[0] = cc;
+	if (rp != NULL)
+	  rp[0] = rl = high - cc*cc;
 	return rl != 0;
       }
   count_leading_zeros (c, high);
