@@ -97,10 +97,10 @@ L(reduce_nby1):
 	jl	L(bmod)
 ifdef(`PIC_WITH_EBX',`dnl
 	push	%ebx
+	add	$-4, %esp
 	call	L(movl_eip_to_ebx)
 	add	$_GLOBAL_OFFSET_TABLE_, %ebx
 ')
-	add	$-4, %esp
 	push	v0		C param 3
 	push	n		C param 2
 	push	up		C param 1
@@ -110,19 +110,21 @@ ifdef(`PIC_WITH_EBX',`dnl
 L(bmod):
 ifdef(`PIC_WITH_EBX',`dnl
 	push	%ebx
+	add	$-4, %esp
 	call	L(movl_eip_to_ebx)
 	add	$_GLOBAL_OFFSET_TABLE_, %ebx
 ')
-	add	$-4, %esp
 	push	v0		C param 3
 	push	n		C param 2
 	push	up		C param 1
 	CALL(	mpn_modexact_1_odd)
 
 L(called):
-	add	$16, %esp	C deallocate params
 ifdef(`PIC_WITH_EBX',`dnl
+	add	$16, %esp	C deallocate params
 	pop	%ebx
+',`
+	add	$12, %esp	C deallocate params
 ')
 L(reduced):
 	pop	%edx

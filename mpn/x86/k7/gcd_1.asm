@@ -3,7 +3,7 @@ dnl  x86 mpn_gcd_1 optimised for AMD K7.
 dnl  Contributed to the GNU project by by Kevin Ryde.  Rehacked by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012, 2014 Free Software
+dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012, 2014, 2015 Free Software
 dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
@@ -129,6 +129,7 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 L(reduce_nby1):
 ifdef(`PIC_WITH_EBX',`dnl
 	push	%ebx
+	add	$-4, %esp
 	call	L(movl_eip_ebx)
 	add	$_GLOBAL_OFFSET_TABLE_, %ebx
 ')
@@ -143,9 +144,11 @@ L(bmod):
 	CALL(	mpn_modexact_1_odd)
 
 L(called):
-	add	$12, %esp		C deallocate params
 ifdef(`PIC_WITH_EBX',`dnl
+	add	$16, %esp	C deallocate params
 	pop	%ebx
+',`
+	add	$12, %esp		C deallocate params
 ')
 L(reduced):
 	pop	%edx
