@@ -168,8 +168,8 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      know the root has exactly xnb bits, we write r0 = 2^(xnb-1), so that
      r0^k = 2^(k*(xnb-1)), that we subtract to the input. */
   kk = k * (xnb - 1);		/* number of truncated bits in the input */
-  rn = un - kk / GMP_NUMB_BITS; /* number of limbs of the non-truncated part */
   --kk;
+  rn = un - kk / GMP_NUMB_BITS; /* number of limbs of the non-truncated part */
 
   for (logk = 1; ((k - 1) >> logk) != 0; logk++)
     ;
@@ -222,7 +222,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   sp = rootp;
 
   MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
-  mpn_sub_1 (rp, rp, rn, 2);	/* subtract the initial approximation: since
+  MPN_DECR_U (rp, rn, 2);	/* subtract the initial approximation: since
 				   the non-truncated part is less than 2^k, it
 				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
   sp[0] = save = 2;		/* initial approximation */
