@@ -214,7 +214,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 					 of R/(k*S^(k-1)), and S^k */
 		     wp, un + EXTRA); /* will contain S^(k-1), k*S^(k-1),
 					 and temporary for mpn_pow_1 */
-		     
+
   if (remp == NULL)
     rp = scratch;     /* will contain the remainder */
   else
