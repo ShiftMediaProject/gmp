@@ -1,5 +1,7 @@
 2015-06-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/sqrtrem.c: Use sqrtrem1 for single limb operands.
+
 	* tests/mpz/t-root.c: Check also mpz_root retunr value.
 	* mpn/generic/rootrem.c: Shorten first and last loop.
 
