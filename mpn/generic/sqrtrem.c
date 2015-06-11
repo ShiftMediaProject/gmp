@@ -132,7 +132,7 @@ mpn_sqrtrem1 (mp_ptr rp, mp_limb_t a0)
 
 #if GMP_NUMB_BITS > 32
   a1 = a0 >> (GMP_LIMB_BITS - 1 - 32);
-  t = (mp_limb_signed_t) (CNST_LIMB(0x2000000000000) - 0x30000  - a1 * x0 * x0) >> 16;
+  t = (mp_limb_signed_t) (CNST_LIMB(0x2000000000000) - 0x30000 - a1 * x0 * x0) >> 16;
   x0 = (x0 << 16) + ((mp_limb_signed_t) (x0 * t) >> (16+2));
 
   /* x0 is now a 16 bits approximation of 1/sqrt(a0) */
