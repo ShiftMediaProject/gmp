@@ -618,6 +618,46 @@ validate_sqrtrem (void)
     validate_fail ();
 }
 
+void
+validate_sqrt (void)
+{
+  mp_srcptr  orig_ptr = s[0].p;
+  mp_size_t  orig_size = size;
+  mp_size_t  root_size = (size+1)/2;
+  mp_srcptr  root_ptr = fun.d[0].p;
+  int        perf_pow = (fun.retval == 0);
+  mp_size_t  prod_size = 2*root_size;
+  mp_ptr     p;
+  mp_limb_t  cy;
+  int  error = 0;
+
+  p = refmpn_malloc_limbs (prod_size);
+
+  refmpn_sqr (p, root_ptr, root_size);
+  MPN_NORMALIZE (p, prod_size);
+  if (refmpn_cmp_twosizes (p,prod_size, orig_ptr,orig_size) != - !perf_pow)
+    {
+      printf ("root^2 bigger than original.\n");
+      mpn_trace ("prod", p, prod_size);
+      error = 1;
+    }
+
+  refmpn_sub (p, orig_ptr,orig_size, p,prod_size);
+  MPN_NORMALIZE (p, prod_size);
+  if (prod_size >= root_size &&
+      refmpn_sub (p, p,prod_size, root_ptr, root_size) == 0 &&
+      refmpn_cmp_twosizes (p, prod_size, root_ptr, root_size) > 0)
+    {
+      printf ("(root+1)^2 smaller than original.\n");
+      mpn_trace ("prod", p, prod_size);
+      error = 1;
+    }
+  free (p);
+
+  if (error)
+    validate_fail ();
+}
+
 
 /* These types are indexes into the param[] array and are arbitrary so long
    as they're all distinct and within the size of param[].  Renumber
@@ -680,7 +720,7 @@ enum {
 
   TYPE_SBPI1_DIV_QR, TYPE_TDIV_QR,
 
-  TYPE_SQRTREM, TYPE_ZERO, TYPE_GET_STR, TYPE_POPCOUNT, TYPE_HAMDIST,
+  TYPE_SQRTREM, TYPE_SQRT, TYPE_ZERO, TYPE_GET_STR, TYPE_POPCOUNT, TYPE_HAMDIST,
 
   TYPE_EXTRA
 };
@@ -1402,6 +1442,15 @@ param_init (void)
   VALIDATE (validate_sqrtrem);
   REFERENCE (refmpn_sqrtrem);
 
+  p = &param[TYPE_SQRT];
+  p->retval = 1;
+  p->dst[0] = 1;
+  p->dst[1] = 0;
+  p->src[0] = 1;
+  p->dst_size[0] = SIZE_CEIL_HALF;
+  p->overlap = OVERLAP_NONE;
+  VALIDATE (validate_sqrt);
+
   p = &param[TYPE_ZERO];
   p->dst[0] = 1;
   p->size = SIZE_ALLOW_ZERO;
@@ -1669,6 +1718,9 @@ void
 MPN_ZERO_fun (mp_ptr ptr, mp_size_t size)
 { MPN_ZERO (ptr, size); }
 
+mp_size_t
+mpn_sqrt_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{ return mpn_sqrtrem (dst, NULL, src, size); }
 
 struct choice_t {
   const char  *name;
@@ -1970,7 +2022,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_popcount),   TYPE_POPCOUNT },
   { TRY(mpn_hamdist),    TYPE_HAMDIST },
 
-  { TRY(mpn_sqrtrem),    TYPE_SQRTREM },
+  { TRY(mpn_sqrtrem),     TYPE_SQRTREM },
+  { TRY_FUNFUN(mpn_sqrt), TYPE_SQRT },
 
   { TRY_FUNFUN(MPN_ZERO), TYPE_ZERO },
 
@@ -2776,6 +2829,11 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_SQRTREM:
     e->retval = (* (long (*)(ANYARGS)) CALLING_CONVENTIONS (function))
       (e->d[0].p, e->d[1].p, e->s[0].p, size);
+    break;
+
+  case TYPE_SQRT:
+    e->retval = (* (long (*)(ANYARGS)) CALLING_CONVENTIONS (function))
+      (e->d[0].p, e->s[0].p, size);
     break;
 
   case TYPE_ZERO:
