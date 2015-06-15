@@ -1,3 +1,8 @@
+2015-06-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Rewrite code for AVX handling to deal with broken cpuid
+	states.
+
 2015-06-11  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86/k7/gcd_1.asm: Align stack for calls.
@@ -7,7 +12,7 @@
 
 	* mpn/generic/sqrtrem.c: Use sqrtrem1 for single limb operands.
 
-	* tests/mpz/t-root.c: Check also mpz_root retunr value.
+	* tests/mpz/t-root.c: Check also mpz_root return value.
 	* mpn/generic/rootrem.c: Shorten first and last loop.
 
 	* mpn/generic/toom2_sqr.c: Add some ASSERTs.
