@@ -1,3 +1,7 @@
+2015-06-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/devel/try.c: Support mpn_sqrt (sqrtrem with remainder = NULL).
+
 2015-06-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess: Rewrite code for AVX handling to deal with broken cpuid

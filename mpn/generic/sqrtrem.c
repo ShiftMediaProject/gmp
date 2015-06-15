@@ -292,30 +292,31 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   ASSERT (! MPN_OVERLAP_P (sp, (nn + 1) / 2, np, nn));
 
   high = np[nn - 1];
-  if (nn == 1)
-    if (high & (GMP_NUMB_HIGHBIT | (GMP_NUMB_HIGHBIT >> 1)))
+  if (high & (GMP_NUMB_HIGHBIT | (GMP_NUMB_HIGHBIT / 2)))
+    c = 0;
+  else
+    {
+      count_leading_zeros (c, high);
+      c -= GMP_NAIL_BITS;
+
+      c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
+    }
+  if (nn == 1) {
+    if (c == 0)
       {
 	sp[0] = mpn_sqrtrem1 (&rl, high);
 	if (rp != NULL)
 	  rp[0] = rl;
-	return rl != 0;
       }
     else
       {
-	count_leading_zeros (c, high);
-	c -= GMP_NAIL_BITS;
-
-	c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
 	cc = mpn_sqrtrem1 (&rl, high << (2*c)) >> c;
 	sp[0] = cc;
 	if (rp != NULL)
 	  rp[0] = rl = high - cc*cc;
-	return rl != 0;
       }
-  count_leading_zeros (c, high);
-  c -= GMP_NAIL_BITS;
-
-  c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
+    return rl != 0;
+  }
   tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
   TMP_MARK;
