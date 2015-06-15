@@ -32,6 +32,10 @@ Changes between GMP version 6.0.* and 6.1.0
   * Stack usage trimmed; we believe 512 KiB is now sufficient for any GMP call,
     irrespective of operand size.
 
+  MISC
+  * The various FreeBSD problems listed for 6.0.0 affect this release too.
+
+
 Changes between GMP version 5.1.* and 6.0.0
 
   BUGS FIXED
