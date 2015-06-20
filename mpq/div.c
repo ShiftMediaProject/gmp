@@ -53,7 +53,7 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
       SIZ(NUM(quot)) = 1;
       PTR(DEN(quot))[0] = 1;
       SIZ(DEN(quot)) = 1;
-      return;      
+      return;
     }
 
   if (quot == op2)
