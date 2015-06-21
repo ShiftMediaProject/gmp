@@ -241,10 +241,10 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
       mpn_sqr (np + n, sp, l);
       b = q + mpn_sub_n (np, np, np + n, 2 * l);
       c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, (mp_limb_t) b);
-      q = mpn_add_1 (sp + l, sp + l, h, q);
 
       if (c < 0)
 	{
+	  q = mpn_add_1 (sp + l, sp + l, h, q);
 #if HAVE_NATIVE_mpn_addlsh1_n
 	  c += mpn_addlsh1_n (np, np, sp, n) + 2 * q;
 #else
