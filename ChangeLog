@@ -1,3 +1,8 @@
+2015-06-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/sqrtrem.c (mpn_sqrtrem2): Simplify branches.
+	(mpn_dc_sqrtrem): Don't compute remainder if not needed.
+
 2015-06-23  Torbjörn Granlund  <torbjorng@google.com>
 
 	* gmp-impl.h: Remove K&R stringize support.
