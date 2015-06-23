@@ -735,21 +735,12 @@ param_init (void)
 
 #define COPY(index)  memcpy (p, &param[index], sizeof (*p))
 
-#if HAVE_STRINGIZE
 #define REFERENCE(fun)                  \
   p->reference = (tryfun_t) fun;        \
   p->reference_name = #fun
 #define VALIDATE(fun)           \
   p->validate = fun;            \
   p->validate_name = #fun
-#else
-#define REFERENCE(fun)                  \
-  p->reference = (tryfun_t) fun;        \
-  p->reference_name = "fun"
-#define VALIDATE(fun)           \
-  p->validate = fun;            \
-  p->validate_name = "fun"
-#endif
 
 
   p = &param[TYPE_ADD_N];
@@ -1729,13 +1720,8 @@ struct choice_t {
   mp_size_t   minsize;
 };
 
-#if HAVE_STRINGIZE
 #define TRY(fun)        #fun, (tryfun_t) fun
 #define TRY_FUNFUN(fun) #fun, (tryfun_t) fun##_fun
-#else
-#define TRY(fun)        "fun", (tryfun_t) fun
-#define TRY_FUNFUN(fun) "fun", (tryfun_t) fun/**/_fun
-#endif
 
 const struct choice_t choice_array[] = {
   { TRY(mpn_add),       TYPE_ADD    },

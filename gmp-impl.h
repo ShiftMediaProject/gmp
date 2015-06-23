@@ -2327,11 +2327,7 @@ struct fft_table_nk
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
    ASSERT() does the check only if WANT_ASSERT is selected, ASSERT_ALWAYS()
    does it always.  Generally assertions are meant for development, but
-   might help when looking for a problem later too.
-
-   Note that strings shouldn't be used within the ASSERT expression,
-   eg. ASSERT(strcmp(s,"notgood")!=0), since the quotes upset the "expr"
-   used in the !HAVE_STRINGIZE case (ie. K&R).  */
+   might help when looking for a problem later too.  */
 
 #ifdef __LINE__
 #define ASSERT_LINE  __LINE__
@@ -2348,11 +2344,7 @@ struct fft_table_nk
 __GMP_DECLSPEC void __gmp_assert_header (const char *, int);
 __GMP_DECLSPEC void __gmp_assert_fail (const char *, int, const char *) ATTRIBUTE_NORETURN;
 
-#if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
-#else
-#define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, "expr")
-#endif
 
 #define ASSERT_ALWAYS(expr)						\
   do {									\

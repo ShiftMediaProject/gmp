@@ -2708,8 +2708,6 @@ AC_TYPE_SIGNAL
 AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t,
 		uint_least32_t, intptr_t])
 
-AC_C_STRINGIZE
-
 # FIXME: Really want #ifndef __cplusplus around the #define volatile
 # replacement autoconf gives, since volatile is always available in C++.
 # But we don't use it in C++ currently.

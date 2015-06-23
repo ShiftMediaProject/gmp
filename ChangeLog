@@ -1,3 +1,13 @@
+2015-06-23  Torbjörn Granlund  <torbjorng@google.com>
+
+	* gmp-impl.h: Remove K&R stringize support.
+	* tests/devel/try.c: Likewise.
+	* tests/t-constants.c: Likewise.
+	* tests/mpf/t-fits.c: Likewise.
+	* tests/mpz/t-fits.c: Likewise.
+
+	* configure.ac (AC_C_STRINGIZE): Remove.
+
 2015-06-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/try.c: Support mpn_sqrt (sqrtrem with remainder = NULL).
