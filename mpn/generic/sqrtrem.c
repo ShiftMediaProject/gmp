@@ -214,7 +214,7 @@ mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
    Assumes {np, 2n} is normalized, i.e. np[2n-1] >= B/4
    where B=2^GMP_NUMB_BITS.  */
 static mp_limb_t
-mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
+mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx)
 {
   mp_limb_t q;			/* carry out of {sp, n} */
   int c, b;			/* carry out of remainder */
@@ -228,13 +228,18 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
     {
       l = n / 2;
       h = n - l;
-      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h);
+      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0);
       if (q != 0)
 	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
       q += mpn_divrem (sp, 0, np + l, n, sp + l, h);
       c = sp[0] & 1;
       mpn_rshift (sp, sp, l, 1);
       sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
+      if (UNLIKELY ((sp[0] & approx) != 0)) /* (sp[0] & mask) > 1 */
+	{
+	  sp[0] &= ~(approx | 1);
+	  return 1; /* Remainder is non-zero */
+	}
       q >>= 1;
       if (c != 0)
 	c = mpn_add_n (np + l, np + l, sp + l, h);
@@ -308,19 +313,45 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
   TMP_MARK;
-  if (nn % 2 != 0 || c > 0)
+  if ((rp == NULL) && (nn > 9))
     {
+      mp_limb_t mask;
+      TMP_ALLOC_LIMBS_2 (rp, nn + 2 - (nn & 1),
+			 tp, tn + 2 - (nn & 1));
+      MPN_ZERO (rp, 2);
+      if (c != 0)
+	mpn_lshift (rp + 2 - (nn & 1), np, nn, 2 * c);
+      else
+	MPN_COPY (rp + 2 - (nn & 1), np, nn);
+      if (nn & 1)
+	{
+	  c += GMP_NUMB_BITS / 2;		/* c now represents k */
+	  mask = (CNST_LIMB (1) << c) - 2;
+	}
+      else
+	mask = GMP_NUMB_MAX - 1;
+      rn = tn + 1 - (nn & 1);
+      rn += (rp[rn] = mpn_dc_sqrtrem (tp, rp, rn, mask));
+      if (c != 0)
+	mpn_rshift (sp, tp + 1 - (nn & 1), tn, c);
+      else
+	MPN_COPY (sp, tp + 1, tn);
+    }
+  else if (nn % 2 != 0 || c > 0)
+    {
+      mp_limb_t mask;
       tp = TMP_ALLOC_LIMBS (2 * tn);
       tp[0] = 0;	     /* needed only when 2*tn > nn, but saves a test */
       if (c != 0)
 	mpn_lshift (tp + 2 * tn - nn, np, nn, 2 * c);
       else
 	MPN_COPY (tp + 2 * tn - nn, np, nn);
-      rl = mpn_dc_sqrtrem (sp, tp, tn);
+      c += (nn & 1) ? GMP_NUMB_BITS / 2 : 0;		/* c now represents k */
+      mask = (CNST_LIMB (1) << c) - 1;
+      rl = mpn_dc_sqrtrem (sp, tp, tn, (rp == NULL) ? mask - 1 : 0 );
       /* We have 2^(2k)*N = S^2 + R where k = c + (2tn-nn)*GMP_NUMB_BITS/2,
 	 thus 2^(2k)*N = (S-s0)^2 + 2*S*s0 - s0^2 + R where s0=S mod 2^k */
-      c += (nn % 2) * GMP_NUMB_BITS / 2;		/* c now represents k */
-      s0[0] = sp[0] & ((CNST_LIMB (1) << c) - 1);	/* S mod 2^k */
+      s0[0] = sp[0] & mask;	/* S mod 2^k */
       rl += mpn_addmul_1 (tp, sp, tn, 2 * s0[0]);	/* R = R + 2*s0*S */
       cc = mpn_submul_1 (tp, s0, 1, s0[0]);
       rl -= (tn > 1) ? mpn_sub_1 (tp + 1, tp + 1, tn - 1, cc) : cc;
@@ -348,7 +379,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	rp = TMP_ALLOC_LIMBS (nn);
       if (rp != np)
 	MPN_COPY (rp, np, nn);
-      rn = tn + (rp[tn] = mpn_dc_sqrtrem (sp, rp, tn));
+      rn = tn + (rp[tn] = mpn_dc_sqrtrem (sp, rp, tn, 0));
     }
 
   MPN_NORMALIZE (rp, rn);
