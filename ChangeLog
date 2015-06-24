@@ -1,3 +1,9 @@
+2015-06-24  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fastsse/com.asm: Disalllow zero size operands.
+
+	* mpn/x86_64/fastsse/copyi.asm: Suppress looping in basecase code.
+
 2015-06-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/sqrtrem.c (mpn_sqrtrem2): Simplify branches.
