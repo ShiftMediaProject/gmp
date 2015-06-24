@@ -78,9 +78,6 @@ ASM_START()
 PROLOGUE(mpn_com)
 	FUNC_ENTRY(3)
 
-	test	n, n
-	jz	L(don)
-
 	pcmpeqb	%xmm7, %xmm7		C set to 111...111
 
 	test	$8, R8(rp)		C is rp 16-byte aligned?
