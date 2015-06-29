@@ -272,12 +272,8 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   mp_size_t rn, tn;
   TMP_DECL;
 
-  ASSERT (nn >= 0);
+  ASSERT (nn > 0);
   ASSERT_MPN (np, nn);
-
-  /* If OP is zero, both results are zero.  */
-  if (nn == 0)
-    return 0;
 
   ASSERT (np[nn - 1] != 0);
   ASSERT (rp == NULL || MPN_SAME_OR_SEPARATE_P (np, rp, nn));
