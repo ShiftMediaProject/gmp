@@ -236,10 +236,7 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx)
       mpn_rshift (sp, sp, l, 1);
       sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
       if (UNLIKELY ((sp[0] & approx) != 0)) /* (sp[0] & mask) > 1 */
-	{
-	  sp[0] &= ~(approx | 1);
-	  return 1; /* Remainder is non-zero */
-	}
+	return 1; /* Remainder is non-zero */
       q >>= 1;
       if (c != 0)
 	c = mpn_add_n (np + l, np + l, sp + l, h);
@@ -250,8 +247,8 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx)
       if (c < 0)
 	{
 	  q = mpn_add_1 (sp + l, sp + l, h, q);
-#if HAVE_NATIVE_mpn_addlsh1_n
-	  c += mpn_addlsh1_n (np, np, sp, n) + 2 * q;
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1 || HAVE_NATIVE_mpn_addlsh1_n
+	  c += mpn_addlsh1_n_ip1 (np, sp, n) + 2 * q;
 #else
 	  c += mpn_addmul_1 (np, sp, n, CNST_LIMB(2)) + 2 * q;
 #endif
@@ -339,9 +336,9 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       tp = TMP_ALLOC_LIMBS (2 * tn);
       tp[0] = 0;	     /* needed only when 2*tn > nn, but saves a test */
       if (c != 0)
-	mpn_lshift (tp + 2 * tn - nn, np, nn, 2 * c);
+	mpn_lshift (tp + (nn & 1), np, nn, 2 * c);
       else
-	MPN_COPY (tp + 2 * tn - nn, np, nn);
+	MPN_COPY (tp + (nn & 1), np, nn);
       c += (nn & 1) ? GMP_NUMB_BITS / 2 : 0;		/* c now represents k */
       mask = (CNST_LIMB (1) << c) - 1;
       rl = mpn_dc_sqrtrem (sp, tp, tn, (rp == NULL) ? mask - 1 : 0 );
