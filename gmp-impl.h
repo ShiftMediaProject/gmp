@@ -1825,35 +1825,35 @@ __GMP_DECLSPEC void mpn_copyd (mp_ptr, mp_srcptr, mp_size_t);
    would be good when on a GNU system.  */
 
 #if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
+#define MPN_FILL(dst, n, f)						\
+  do {									\
+    mp_ptr __dst = (dst) - 1;						\
+    mp_size_t __n = (n);						\
+    ASSERT (__n > 0);							\
+    do									\
+      *++__dst = (f);							\
+    while (--__n);							\
+  } while (0)
+#endif
+
+#ifndef MPN_FILL
+#define MPN_FILL(dst, n, f)						\
+  do {									\
+    mp_ptr __dst = (dst);						\
+    mp_size_t __n = (n);						\
+    ASSERT (__n > 0);							\
+    do									\
+      *__dst++ = (f);							\
+    while (--__n);							\
+  } while (0)
+#endif
+
 #define MPN_ZERO(dst, n)						\
   do {									\
     ASSERT ((n) >= 0);							\
     if ((n) != 0)							\
-      {									\
-	mp_ptr __dst = (dst) - 1;					\
-	mp_size_t __n = (n);						\
-	do								\
-	  *++__dst = 0;							\
-	while (--__n);							\
-      }									\
+      MPN_FILL (dst, n, CNST_LIMB (0));					\
   } while (0)
-#endif
-
-#ifndef MPN_ZERO
-#define MPN_ZERO(dst, n)						\
-  do {									\
-    ASSERT ((n) >= 0);							\
-    if ((n) != 0)							\
-      {									\
-	mp_ptr __dst = (dst);						\
-	mp_size_t __n = (n);						\
-	do								\
-	  *__dst++ = 0;							\
-	while (--__n);							\
-      }									\
-  } while (0)
-#endif
-
 
 /* On the x86s repe/scasl doesn't seem useful, since it takes many cycles to
    start up and would need to strip a lot of zeros before it'd be faster
