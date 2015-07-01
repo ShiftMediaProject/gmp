@@ -1,3 +1,9 @@
+2015-07-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h(MPN_FILL): New macro, generalise MPN_ZERO.
+
+	* mpn/generic/sqrtrem.c(mpn_dc_sqrt): New function not computing remainder.
+
 2015-06-24  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fastsse/com.asm: Disalllow zero size operands.
