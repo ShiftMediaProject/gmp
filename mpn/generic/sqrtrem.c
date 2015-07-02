@@ -213,9 +213,10 @@ mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
    and in {np, n} the low n limbs of the remainder, returns the high
    limb of the remainder (which is 0 or 1).
    Assumes {np, 2n} is normalized, i.e. np[2n-1] >= B/4
-   where B=2^GMP_NUMB_BITS.  */
+   where B=2^GMP_NUMB_BITS.
+   Needs a scratch of n/2+1 limbs. */
 static mp_limb_t
-mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx)
+mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scratch)
 {
   mp_limb_t q;			/* carry out of {sp, n} */
   int c, b;			/* carry out of remainder */
@@ -229,12 +230,13 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx)
     {
       l = n / 2;
       h = n - l;
-      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0);
+      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
       if (q != 0)
 	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
-      q += mpn_divrem (sp, 0, np + l, n, sp + l, h);
-      c = sp[0] & 1;
-      mpn_rshift (sp, sp, l, 1);
+      mpn_tdiv_qr (scratch, np + l, 0, np + l, n, sp + l, h);
+      q += scratch[l];
+      c = scratch[0] & 1;
+      mpn_rshift (sp, scratch, l, 1);
       sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
       if (UNLIKELY ((sp[0] & approx) != 0)) /* (sp[0] & mask) > 1 */
 	return 1; /* Remainder is non-zero */
@@ -319,7 +321,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
     }
   else
     MPN_COPY (tp, np + l - 1, n + h + 1);
-  q = mpn_dc_sqrtrem (sp + l, tp + l + 1, h, 0);
+  q = mpn_dc_sqrtrem (sp + l, tp + l + 1, h, 0, scratch);
   if (q != 0)
     ASSERT_CARRY (mpn_sub_n (tp + l + 1, tp + l + 1, sp + l, h));
   qp = tp + n + 1; /* n + 2 */
@@ -450,7 +452,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
     else
       {
       mp_limb_t mask;
-      rp = TMP_ALLOC_LIMBS (nn + 1);
+      TMP_ALLOC_LIMBS_2 (rp, nn + 1, tp, tn / 2 + 1);
       MPN_ZERO (rp, 1);
       if (c != 0)
 	mpn_lshift (rp + 1, np, nn, 2 * c);
@@ -459,13 +461,14 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       c += GMP_NUMB_BITS / 2;		/* c now represents k */
       mask = (CNST_LIMB (1) << c) - 2;
       rn = tn;
-      rn += (rp[rn] = mpn_dc_sqrtrem (sp, rp, rn, mask));
+      rn += (rp[rn] = mpn_dc_sqrtrem (sp, rp, rn, mask, tp));
       mpn_rshift (sp, sp, tn, c);
       }
   else if ((nn & 1) != 0 || c > 0)
     {
       mp_limb_t mask;
-      tp = TMP_ALLOC_LIMBS (2 * tn);
+      mp_ptr scratch;
+      TMP_ALLOC_LIMBS_2 (tp, 2 * tn, scratch, tn / 2 + 1);
       tp[0] = 0;	     /* needed only when 2*tn > nn, but saves a test */
       if (c != 0)
 	mpn_lshift (tp + (nn & 1), np, nn, 2 * c);
@@ -473,7 +476,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	MPN_COPY (tp + (nn & 1), np, nn);
       c += (nn & 1) ? GMP_NUMB_BITS / 2 : 0;		/* c now represents k */
       mask = (CNST_LIMB (1) << c) - 1;
-      rl = mpn_dc_sqrtrem (sp, tp, tn, (rp == NULL) ? mask - 1 : 0 );
+      rl = mpn_dc_sqrtrem (sp, tp, tn, (rp == NULL) ? mask - 1 : 0, scratch);
       /* We have 2^(2k)*N = S^2 + R where k = c + (2tn-nn)*GMP_NUMB_BITS/2,
 	 thus 2^(2k)*N = (S-s0)^2 + 2*S*s0 - s0^2 + R where s0=S mod 2^k */
       s0[0] = sp[0] & mask;	/* S mod 2^k */
@@ -504,7 +507,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	rp = TMP_ALLOC_LIMBS (nn);
       if (rp != np)
 	MPN_COPY (rp, np, nn);
-      rn = tn + (rp[tn] = mpn_dc_sqrtrem (sp, rp, tn, 0));
+      rn = tn + (rp[tn] = mpn_dc_sqrtrem (sp, rp, tn, 0, TMP_ALLOC_LIMBS(tn / 2 + 1)));
     }
 
   MPN_NORMALIZE (rp, rn);
