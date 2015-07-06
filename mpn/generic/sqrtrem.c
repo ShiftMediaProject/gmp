@@ -504,10 +504,12 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
     }
   else
     {
-      if (rp == NULL)
-	rp = TMP_ALLOC_LIMBS (nn);
       if (rp != np)
-	MPN_COPY (rp, np, nn);
+	{
+	  if (rp == NULL) /* nn <= 8 */
+	    rp = TMP_SALLOC_LIMBS (nn);
+	  MPN_COPY (rp, np, nn);
+	}
       rn = tn + (rp[tn] = mpn_dc_sqrtrem (sp, rp, tn, 0, TMP_ALLOC_LIMBS(tn / 2 + 1)));
     }
 
