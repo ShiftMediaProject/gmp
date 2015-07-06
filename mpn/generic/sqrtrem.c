@@ -308,6 +308,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int nsh)
 
   ASSERT (np[2 * n - 1] != 0);
   ASSERT (n > 4);
+  ASSERT (nsh < GMP_NUMB_BITS / 2);
 
   l = (n - 1) / 2;
   h = n - l;

@@ -4,6 +4,7 @@
 
 	* mpn/generic/sqrtrem.c(mpn_dc_sqrt): New function not computing remainder.
 	(mpn_dc_sqrtrem): Use tdiv_q instead of divrem, use given scratch space.
+	(mpn_sqrtrem): Use mpn_dc_sqrt for both even and odd sizes.
 
 2015-06-24  Torbjörn Granlund  <torbjorng@google.com>
 
