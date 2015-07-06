@@ -307,11 +307,11 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
   TMP_MARK;
 
   ASSERT (np[2 * n - 1] != 0);
-  ASSERT (n > 2);
+  ASSERT (n > 4);
 
   l = (n - 1) / 2;
   h = n - l;
-  ASSERT (n >= l + 2 && l + 2 >= h && h > l && l > 0);
+  ASSERT (n >= l + 2 && l + 2 >= h && h > l && l > 1);
   scratch = TMP_ALLOC_LIMBS (l + 2 * n + 5 - USE_DIVAPPR_Q); /* n + 2-USE_DIVAPPR_Q */
   tp = scratch + n + 2 - USE_DIVAPPR_Q; /* n + h + 1, but tp [-1] is writable */
   if (s != 0)
@@ -324,7 +324,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
   q = mpn_dc_sqrtrem (sp + l, tp + l + 1, h, 0, scratch);
   if (q != 0)
     ASSERT_CARRY (mpn_sub_n (tp + l + 1, tp + l + 1, sp + l, h));
-  qp = tp + n + 1; /* n + 2 */
+  qp = tp + n + 1; /* l + 2 */
 #if USE_DIVAPPR_Q
   mpn_divappr_q (qp, tp, n + 1, sp + l, h, scratch);
 #else
@@ -368,6 +368,10 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
 	      ASSERT_NOCARRY (mpn_add_1 (tp + 1 + h, tp + 1 + h, l, cy));
 	      MPN_DECR_U (sp, l, 1);
 	    }
+	  /* Can the root be exact when a correction was needed? We
+	     did not find an example, but it depends on divappr
+	     internals, and we can not assume it true in general...*/
+	  /* else */
 #else /* WANT_ASSERT */
 	  ASSERT (mpn_cmp (tp + 1 + h, scratch + h, l) == 0);
 #endif
