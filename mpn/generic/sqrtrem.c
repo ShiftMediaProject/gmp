@@ -297,7 +297,7 @@ mpn_divappr_q (mp_ptr qp, mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn
    Assumes {np, 2n} is semi-normalized, i.e. np[2n-1] != 0
    where B=2^GMP_NUMB_BITS.  */
 static int
-mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
+mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int nsh)
 {
   mp_limb_t q;			/* carry out of {sp, n} */
   int c;			/* carry out of remainder */
@@ -314,10 +314,10 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
   ASSERT (n >= l + 2 && l + 2 >= h && h > l && l > 1);
   scratch = TMP_ALLOC_LIMBS (l + 2 * n + 5 - USE_DIVAPPR_Q); /* n + 2-USE_DIVAPPR_Q */
   tp = scratch + n + 2 - USE_DIVAPPR_Q; /* n + h + 1, but tp [-1] is writable */
-  if (s != 0)
+  if (nsh != 0)
     {
       int o = 1; /* Should be o = (l > 1) */;
-      ASSERT_NOCARRY (mpn_lshift (tp - o, np + l - 1 - o, n + h + 1 + o, 2 * s));
+      ASSERT_NOCARRY (mpn_lshift (tp - o, np + l - 1 - o, n + h + 1 + o, 2 * nsh));
     }
   else
     MPN_COPY (tp, np + l - 1, n + h + 1);
@@ -343,7 +343,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
       mpn_rshift (sp, qp + 1, l, 1);
       sp[l - 1] |= q << (GMP_NUMB_BITS - 1);
       if (((qp[0] >> (2 + USE_DIVAPPR_Q)) | /* < 3 + 4*USE_DIVAPPR_Q */
-	   (qp[1] & ((CNST_LIMB(2) << s) - 1))) == 0)
+	   (qp[1] & ((CNST_LIMB(2) << nsh) - 1))) == 0)
 	{
 	  mp_limb_t cy;
 	  /* Approximation is not good enough, the extra limb(+ s bits)
@@ -382,9 +382,9 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
 	      c = mpn_cmp (tp + 1, scratch + l, l);
 	      if (c == 0)
 		{
-		  if (s != 0)
+		  if (nsh != 0)
 		    {
-		      mpn_lshift (tp, np, l, 2 * s);
+		      mpn_lshift (tp, np, l, 2 * nsh);
 		      np = tp;
 		    }
 		  c = mpn_cmp (np, scratch, l);
@@ -399,8 +399,8 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, int s)
     }
   TMP_FREE;
 
-  if (s != 0)
-    mpn_rshift (sp, sp, n, s);
+  if (nsh != 0)
+    mpn_rshift (sp, sp, n, nsh);
   return c;
 }
 
