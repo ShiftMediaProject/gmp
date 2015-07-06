@@ -450,23 +450,20 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
   TMP_MARK;
-  if ((rp == NULL) && (nn > 9))
+  if ((rp == NULL) && (nn > 8))
     if ((nn & 1) == 0)
       return mpn_dc_sqrt (sp, np, tn, c);
     else
       {
-      mp_limb_t mask;
-      TMP_ALLOC_LIMBS_2 (rp, nn + 1, tp, tn / 2 + 1);
-      MPN_ZERO (rp, 1);
-      if (c != 0)
-	mpn_lshift (rp + 1, np, nn, 2 * c);
-      else
+	rp = TMP_ALLOC_LIMBS (nn + 1);
+	rp[0] = 0;
 	MPN_COPY (rp + 1, np, nn);
-      c += GMP_NUMB_BITS / 2;		/* c now represents k */
-      mask = (CNST_LIMB (1) << c) - 2;
-      rn = tn;
-      rn += (rp[rn] = mpn_dc_sqrtrem (sp, rp, rn, mask, tp));
-      mpn_rshift (sp, sp, tn, c);
+	/* FIXME: mpn_dc_sqrt already does copies and shifts
+	   internally, it should support c > GMP_NUMB_BITS / 2 ...*/ 
+	rn = mpn_dc_sqrt (sp, rp, tn, c);
+	TMP_FREE;
+	mpn_rshift (sp, sp, tn, GMP_NUMB_BITS / 2);
+	return rn;
       }
   else if ((nn & 1) != 0 || c > 0)
     {
