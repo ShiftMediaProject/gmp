@@ -1,3 +1,17 @@
+2015-07-09  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/ia64/add_n_sub_n.asm: Make it work for HP-UX.
+	* mpn/ia64/addmul_2.asm: Likewise.
+	* mpn/ia64/aors_n.asm: Likewise.
+	* mpn/ia64/aorsorrlshC_n.asm: Likewise.
+	* mpn/ia64/cnd_aors_n.asm: Likewise.
+	* mpn/ia64/gcd_1.asm: Likewise.
+	* mpn/ia64/lshiftc.asm: Likewise.
+	* mpn/ia64/mod_34lsub1.asm: Likewise.
+	* mpn/ia64/mul_2.asm: Likewise.
+	* mpn/ia64/sec_tabselect.asm: Likewise.
+	* mpn/ia64/sqr_diag_addlsh1.asm: Likewise.
+
 2015-07-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h(MPN_FILL): New macro, generalise MPN_ZERO.
