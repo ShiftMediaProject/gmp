@@ -33,6 +33,9 @@ Changes between GMP version 6.0.* and 6.1.0
     irrespective of operand size.
 
   MISC
+  * We now use manufacturers' code names for x86 CPUs, e.g., "haswell" instead
+    of names derived from the commercial brands.
+
   * The various FreeBSD problems listed for 6.0.0 affect this release too.
 
 
