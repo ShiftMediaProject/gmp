@@ -37,10 +37,10 @@ C	     cycles/limb     cycles/limb     cycles/limb      good
 C              aligned	      unaligned	      best seen	     for cpu?
 C AMD K8,K9
 C AMD K10	 0.85		 1.64				Y/N
-C AMD bull	 1.4		 1.4				Y
-C AMD pile
-C AMD steam
-C AMD excavator
+C AMD bull	 1.4		 1.4				N
+C AMD pile	 0.77		 0.93				N
+C AMD steam	 ?		 ?
+C AMD excavator	 ?		 ?
 C AMD bobcat
 C AMD jaguar	 0.65		 1.02		opt/0.93	Y/N
 C Intel P4	 2.3		 2.3				Y
