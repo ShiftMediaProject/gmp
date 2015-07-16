@@ -1,3 +1,9 @@
+2015-07-16  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tune/speed.c: Remove now redundant MPN_FILL.
+
+	* configure.ac (hppa-hpux): Never use O3 optimisation.
+
 2015-07-09  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/ia64/add_n_sub_n.asm: Make it work for HP-UX.
@@ -14,7 +20,7 @@
 
 2015-07-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* gmp-impl.h(MPN_FILL): New macro, generalise MPN_ZERO.
+	* gmp-impl.h (MPN_FILL): New macro, generalise MPN_ZERO.
 
 	* mpn/generic/sqrtrem.c(mpn_dc_sqrt): New function not computing remainder.
 	(mpn_dc_sqrtrem): Use tdiv_q instead of divrem, use given scratch space.
