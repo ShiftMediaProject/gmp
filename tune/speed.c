@@ -91,15 +91,6 @@ SPEED_EXTRA_PROTOS2
 #endif
 
 
-#define MPN_FILL(ptr, size, n)          \
-  do {                                  \
-    mp_size_t __i;                      \
-    ASSERT ((size) >= 0);               \
-    for (__i = 0; __i < (size); __i++)  \
-      (ptr)[__i] = (n);                 \
-  } while (0)
-
-
 #if GMP_LIMB_BITS == 32
 #define GMP_NUMB_0xAA  (CNST_LIMB(0xAAAAAAAA) & GMP_NUMB_MASK)
 #endif
