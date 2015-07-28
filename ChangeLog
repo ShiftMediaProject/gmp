@@ -1,3 +1,7 @@
+2015-07-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/sqrtrem.c (mpn_dc_sqrt): Support odd sizes.
+
 2015-07-16  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tune/speed.c: Remove now redundant MPN_FILL.
@@ -22,7 +26,7 @@
 
 	* gmp-impl.h (MPN_FILL): New macro, generalise MPN_ZERO.
 
-	* mpn/generic/sqrtrem.c(mpn_dc_sqrt): New function not computing remainder.
+	* mpn/generic/sqrtrem.c (mpn_dc_sqrt): New function not computing remainder.
 	(mpn_dc_sqrtrem): Use tdiv_q instead of divrem, use given scratch space.
 	(mpn_sqrtrem): Use mpn_dc_sqrt for both even and odd sizes.
 
