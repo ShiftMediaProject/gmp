@@ -48,6 +48,7 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 #define USE_DIVAPPR_Q 1
+#define TRACE(x)
 
 static const unsigned char invsqrttab[384] = /* The common 0x100 was removed */
 {
@@ -233,6 +234,7 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
       q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
       if (q != 0)
 	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
+      TRACE(printf("tdiv_qr(,,,,%u,,%u) -> %u\n", (unsigned) n, (unsigned) h, (unsigned) (n - h + 1)));
       mpn_tdiv_qr (scratch, np + l, 0, np + l, n, sp + l, h);
       q += scratch[l];
       c = scratch[0] & 1;
@@ -243,6 +245,7 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
       q >>= 1;
       if (c != 0)
 	c = mpn_add_n (np + l, np + l, sp + l, h);
+      TRACE(printf("sqr(,,%u)\n", (unsigned) l));
       mpn_sqr (np + n, sp, l);
       b = q + mpn_sub_n (np, np, np + n, 2 * l);
       c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, (mp_limb_t) b);
@@ -326,6 +329,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
   if (q != 0)
     ASSERT_CARRY (mpn_sub_n (tp + l + 1, tp + l + 1, sp + l, h));
   qp = tp + n + 1; /* l + 2 */
+  TRACE(printf("div(appr)_q(,,%u,,%u) -> %u \n", (unsigned) n+1, (unsigned) h, (unsigned) (n + 1 - h + 1)));
 #if USE_DIVAPPR_Q
   mpn_divappr_q (qp, tp, n + 1, sp + l, h, scratch);
 #else
@@ -351,6 +355,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
 	     is smaller than needed to absorb the possible error. */
 	  /* {qp + 1, l + 1} equals 2*{sp, l} */
 	  /* FIXME: use mullo or wrap-around. */
+	  TRACE(printf("mul(,,%u,,%u)\n", (unsigned) h, (unsigned) (l+1)));
 	  ASSERT_NOCARRY (mpn_mul (scratch, sp + l, h, qp + 1, l + 1));
 	  /* Compute the remainder of the previous mpn_div(appr)_q. */
 	  cy = mpn_sub_n (tp + 1, tp + 1, scratch, h);
@@ -379,6 +384,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
 #endif
 	  if (mpn_zero_p (tp + l + 1, h - l))
 	    {
+	      TRACE(printf("sqr(,,%u)\n", (unsigned) l));
 	      mpn_sqr (scratch, sp, l);
 	      c = mpn_cmp (tp + 1, scratch + l, l);
 	      if (c == 0)
