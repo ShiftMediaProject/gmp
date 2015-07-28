@@ -12,6 +12,8 @@ Changes between GMP version 6.0.* and 6.1.0
   SPEEDUPS
   * Speedup for Intel Broadwell.
 
+  * Square root is now faster when the remainder is not needed.
+
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
 
