@@ -90,13 +90,12 @@ mp_size_t
 mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 	     mp_srcptr up, mp_size_t un, mp_limb_t k)
 {
-  mp_size_t m;
   ASSERT (un > 0);
   ASSERT (up[un - 1] != 0);
   ASSERT (k > 1);
 
-  m = (un - 1) / k;		/* ceil(un/k) - 1 */
-  if (remp == NULL && m > 2)
+  /* (un-1)/k > 2 <=> un > 3k <=> (un + 2)/3 > k */
+  if (remp == NULL && (un + 2) / 3 > k)
     /* Pad {up,un} with k zero limbs.  This will produce an approximate root
        with one more limb, allowing us to compute the exact integral result. */
     {
@@ -105,7 +104,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       TMP_DECL;
       TMP_MARK;
       wn = un + k;
-      sn = m + 2; /* ceil(un/k) + 1 */
+      sn = (un - 1) / k + 2; /* ceil(un/k) + 1 */
       TMP_ALLOC_LIMBS_2 (wp, wn, /* will contain the padded input */
 			 sp, sn); /* approximate root of padded input */
       MPN_COPY (wp + k, up, un);
@@ -134,10 +133,10 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   mp_ptr qp, rp, sp, wp, scratch;
   mp_size_t qn, rn, sn, wn, nl, bn;
   mp_limb_t save, save2, cy;
-  unsigned long int unb; /* number of significant bits of {up,un} */
-  unsigned long int xnb; /* number of significant bits of the result */
-  unsigned long b, kk;
-  unsigned long sizes[GMP_NUMB_BITS + 1];
+  mp_bitcnt_t unb; /* number of significant bits of {up,un} */
+  mp_bitcnt_t xnb; /* number of significant bits of the result */
+  mp_bitcnt_t b, kk;
+  mp_bitcnt_t sizes[GMP_NUMB_BITS + 1];
   int ni, i;
   int c, perf_pow;
   int logk;
