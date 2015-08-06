@@ -1,5 +1,5 @@
 /* mpn_mullo_basecase -- Internal routine to multiply two natural
-   numbers of length m and n and return the low part.
+   numbers of length n and return the low part.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.

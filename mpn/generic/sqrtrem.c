@@ -298,7 +298,10 @@ mpn_divappr_q (mp_ptr qp, mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn
 /* writes in {sp, n} the square root (rounded towards zero) of {np, 2n-odd},
    returns zero if the operand was a perfect square, one otherwise.
    Assumes {np, 2n-odd}*4^nsh is normalized, i.e. B > np[2n-1-odd]*4^nsh >= B/4
-   where B=2^GMP_NUMB_BITS. */
+   where B=2^GMP_NUMB_BITS.
+   THINK: In the odd case, three more (dummy) limbs are taken into account,
+   when nsh is maximal, two limbs are discarded from the result of the
+   division. Too much? Is a single dummy limb enough? */
 static int
 mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
 {
@@ -320,7 +323,8 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
   tp = scratch + n + 2 - USE_DIVAPPR_Q; /* n + h + 1, but tp [-1] is writable */
   if (nsh != 0)
     {
-      int o = l > (1 + odd); /* */
+      /* o is used to exactly set the lowest bits of the dividend, is it needed? */
+      int o = l > (1 + odd);
       ASSERT_NOCARRY (mpn_lshift (tp - o, np + l - 1 - o - odd, n + h + 1 + o, 2 * nsh));
     }
   else
@@ -354,7 +358,8 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
 	  /* Approximation is not good enough, the extra limb(+ nsh bits)
 	     is smaller than needed to absorb the possible error. */
 	  /* {qp + 1, l + 1} equals 2*{sp, l} */
-	  /* FIXME: use mullo or wrap-around. */
+	  /* FIXME: use mullo or wrap-around, or directly evaluate
+	     remainder with a single sqrmod_bnm1. */
 	  TRACE(printf("mul(,,%u,,%u)\n", (unsigned) h, (unsigned) (l+1)));
 	  ASSERT_NOCARRY (mpn_mul (scratch, sp + l, h, qp + 1, l + 1));
 	  /* Compute the remainder of the previous mpn_div(appr)_q. */

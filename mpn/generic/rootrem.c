@@ -298,7 +298,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
       /* 9: current buffers: {sp,sn}, {rp,rn} */
 
-     for (c = 0;; c++)
+      for (c = 0;; c++)
 	{
 	  /* Compute S^k in {qp,qn}. */
 	  /* W <- S^(k-1) for the next iteration,
