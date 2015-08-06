@@ -59,19 +59,31 @@ see https://www.gnu.org/licenses/.  */
 #if HAVE_NATIVE_mpn_addlsh1_n_ip1
 #define MPN_SQRLO_DIAG_ADDLSH1(rp, tp, up, n)				\
   do {									\
-    MPN_SQR_DIAGONAL (rp, up, n>>1);					\
-    if ((n & 1) != 0)							\
-      (rp)[n - 1] = ((up)[n>>1] * (up)[n>>1]) & GMP_NUMB_MASK;		\
-    mpn_addlsh1_n_ip1 (rp + 1, tp, n - 1);				\
+    mp_size_t nhalf;							\
+    nhalf = (n) >> 1;							\
+    MPN_SQR_DIAGONAL ((rp), (up), nhalf);				\
+    if (((n) & 1) != 0)							\
+      {									\
+	mp_limb_t op;							\
+	op = (up)[nhalf];						\
+	(rp)[(n) - 1] = (op * op) & GMP_NUMB_MASK;			\
+      }									\
+    mpn_addlsh1_n_ip1 ((rp) + 1, (tp), (n) - 1);			\
   } while (0)
 #else
 #define MPN_SQRLO_DIAG_ADDLSH1(rp, tp, up, n)				\
   do {									\
-    MPN_SQR_DIAGONAL (rp, up, n>>1);					\
-    if ((n & 1) != 0)							\
-      (rp)[n - 1] = ((up)[n>>1] * (up)[n>>1]) & GMP_NUMB_MASK;		\
-    mpn_lshift (tp, tp, n - 1, 1);					\
-    mpn_add_n (rp + 1, rp + 1, tp, n - 1);				\
+    mp_size_t nhalf;							\
+    nhalf = (n) >> 1;							\
+    MPN_SQR_DIAGONAL ((rp), (up), nhalf);				\
+    if (((n) & 1) != 0)							\
+      {									\
+	mp_limb_t op;							\
+	op = (up)[nhalf];						\
+	(rp)[(n) - 1] = (op * op) & GMP_NUMB_MASK;			\
+      }									\
+    mpn_lshift ((tp), (tp), (n) - 1, 1);				\
+    mpn_add_n ((rp) + 1, (rp) + 1, (tp), (n) - 1);			\
   } while (0)
 #endif
 
@@ -99,10 +111,12 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
       /* must fit n-1 limbs in tp */
       ASSERT (n <= 2 * SQR_TOOM2_THRESHOLD);
 
-      mpn_mul_1 (tp, up + 1, n - 1, up[0]);
-      for (i = 2; 2 * i - 1 < n; ++i)
-	mpn_addmul_1 (tp + 2 * i - 2, up + i, n - 2 * i + 1, up[i - 1]);
+      --n;
+      mpn_mul_1 (tp, up + 1, n, up[0]);
+      i = 1;
+      for (; 2 * i < n; ++i)
+	mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i, up[i]);
 
-      MPN_SQRLO_DIAG_ADDLSH1 (rp, tp, up, n);
+      MPN_SQRLO_DIAG_ADDLSH1 (rp, tp, up, n + 1);
     }
 }
