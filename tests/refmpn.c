@@ -1942,6 +1942,12 @@ refmpn_sqr (mp_ptr dst, mp_srcptr src, mp_size_t size)
   refmpn_mul (dst, src, size, src, size);
 }
 
+void
+refmpn_sqrlo (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{
+  refmpn_mullo_n (dst, src, src, size);
+}
+
 /* Allowing usize<vsize, usize==0 or vsize==0. */
 void
 refmpn_mul_any (mp_ptr prodp,
