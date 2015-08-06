@@ -1084,6 +1084,12 @@ __GMP_DECLSPEC void mpn_mullo_basecase (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t)
 __GMP_DECLSPEC void mpn_sqr_basecase (mp_ptr, mp_srcptr, mp_size_t);
 #endif
 
+#define mpn_sqrlo __MPN(sqrlo)
+__GMP_DECLSPEC void mpn_sqrlo (mp_ptr, mp_srcptr, mp_size_t);
+
+#define mpn_sqrlo_basecase __MPN(sqrlo_basecase)
+__GMP_DECLSPEC void mpn_sqrlo_basecase (mp_ptr, mp_srcptr, mp_size_t);
+
 #define mpn_mulmid_basecase __MPN(mulmid_basecase)
 __GMP_DECLSPEC void mpn_mulmid_basecase (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
