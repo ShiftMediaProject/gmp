@@ -1505,6 +1505,16 @@ speed_mpn_fft_sqr (struct speed_params *s)
 }
 
 double
+speed_mpn_sqrlo (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQRLO (mpn_sqrlo);
+}
+double
+speed_mpn_sqrlo_basecase (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQRLO (mpn_sqrlo_basecase);
+}
+double
 speed_mpn_mullo_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MULLO_N (mpn_mullo_n);

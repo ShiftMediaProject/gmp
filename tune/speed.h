@@ -277,6 +277,8 @@ double speed_mpn_nussbaumer_mul_sqr (struct speed_params *);
 double speed_mpn_mul_n (struct speed_params *);
 double speed_mpn_mul_n_sqr (struct speed_params *);
 double speed_mpn_mulmid_n (struct speed_params *);
+double speed_mpn_sqrlo (struct speed_params *);
+double speed_mpn_sqrlo_basecase (struct speed_params *);
 double speed_mpn_mullo_n (struct speed_params *);
 double speed_mpn_mullo_basecase (struct speed_params *);
 double speed_mpn_nand_n (struct speed_params *);
@@ -1143,8 +1145,10 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 #define SPEED_ROUTINE_MPN_MULLO_N(function)				\
   SPEED_ROUTINE_MPN_MULLO_N_CALL (function (wp, s->xp, s->yp, s->size));
 
-/* For mpn_mul_basecase, xsize=r, ysize=s->size. */
 #define SPEED_ROUTINE_MPN_MULLO_BASECASE(function)			\
+  SPEED_ROUTINE_MPN_MULLO_N_CALL (function (wp, s->xp, s->yp, s->size));
+
+#define SPEED_ROUTINE_MPN_SQRLO(function)				\
   {									\
     mp_ptr    wp;							\
     unsigned  i;							\
@@ -1157,14 +1161,13 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);			\
 									\
     speed_operand_src (s, s->xp, s->size);				\
-    speed_operand_src (s, s->yp, s->size);				\
     speed_operand_dst (s, wp, s->size);					\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, s->xp, s->yp, s->size);				\
+      function (wp, s->xp, s->size);					\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

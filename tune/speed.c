@@ -351,6 +351,8 @@ const struct routine_t {
   { "mpn_mul_fft",       speed_mpn_mul_fft,     FLAG_R_OPTIONAL },
   { "mpn_mul_fft_sqr",   speed_mpn_mul_fft_sqr, FLAG_R_OPTIONAL },
 
+  { "mpn_sqrlo",          speed_mpn_sqrlo           },
+  { "mpn_sqrlo_basecase", speed_mpn_sqrlo_basecase  },
   { "mpn_mullo_n",        speed_mpn_mullo_n         },
   { "mpn_mullo_basecase", speed_mpn_mullo_basecase  },
 
