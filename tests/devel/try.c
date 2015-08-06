@@ -628,7 +628,6 @@ validate_sqrt (void)
   int        perf_pow = (fun.retval == 0);
   mp_size_t  prod_size = 2*root_size;
   mp_ptr     p;
-  mp_limb_t  cy;
   int  error = 0;
 
   p = refmpn_malloc_limbs (prod_size);
@@ -637,8 +636,8 @@ validate_sqrt (void)
   MPN_NORMALIZE (p, prod_size);
   if (refmpn_cmp_twosizes (p,prod_size, orig_ptr,orig_size) != - !perf_pow)
     {
-      printf ("root^2 bigger than original.\n");
-      mpn_trace ("prod", p, prod_size);
+      printf ("root^2 bigger than original, or wrong return value.\n");
+      mpn_trace ("prod...", p, prod_size);
       error = 1;
     }
 
@@ -716,7 +715,7 @@ enum {
   TYPE_XOR_N, TYPE_XNOR_N,
 
   TYPE_MUL_MN, TYPE_MUL_N, TYPE_SQR, TYPE_UMUL_PPMM, TYPE_UMUL_PPMM_R,
-  TYPE_MULLO_N, TYPE_MULMID_MN, TYPE_MULMID_N,
+  TYPE_MULLO_N, TYPE_SQRLO, TYPE_MULMID_MN, TYPE_MULMID_N,
 
   TYPE_SBPI1_DIV_QR, TYPE_TDIV_QR,
 
@@ -1338,6 +1337,11 @@ param_init (void)
   COPY (TYPE_MUL_N);
   p->dst_size[0] = 0;
   REFERENCE (refmpn_mullo_n);
+
+  p = &param[TYPE_SQRLO];
+  COPY (TYPE_SQR);
+  p->dst_size[0] = 0;
+  REFERENCE (refmpn_sqrlo);
 
   p = &param[TYPE_MUL_MN];
   COPY (TYPE_MUL_N);
@@ -1967,6 +1971,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_mul_basecase), TYPE_MUL_MN },
   { TRY(mpn_mulmid_basecase), TYPE_MULMID_MN },
   { TRY(mpn_mullo_basecase), TYPE_MULLO_N },
+  { TRY(mpn_sqrlo_basecase), TYPE_SQRLO },
+  { TRY(mpn_sqrlo), TYPE_SQRLO },
 #if SQR_TOOM2_THRESHOLD > 0
   { TRY(mpn_sqr_basecase), TYPE_SQR },
 #endif
@@ -2781,6 +2787,7 @@ call (struct each_t *e, tryfun_t function)
 				    (size + 1) / 2);
     break;
   case TYPE_SQR:
+  case TYPE_SQRLO:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
     break;
 
