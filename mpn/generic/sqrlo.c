@@ -234,7 +234,7 @@ mpn_sqrlo (mp_ptr rp, mp_srcptr xp, mp_size_t n)
 	{
 	  /* For really large operands, use plain mpn_mul_n but throw away upper n
 	     limbs of result.  */
-#if !TUNE_PROGRAM_BUILD && (SQRLO_MUL_N_THRESHOLD > SQR_FFT_THRESHOLD)
+#if !TUNE_PROGRAM_BUILD && (SQRLO_SQR_THRESHOLD > SQR_FFT_THRESHOLD)
 	  mpn_fft_mul (tp, xp, n, xp, n);
 #else
 	  mpn_sqr (tp, xp, n);
