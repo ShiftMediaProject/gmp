@@ -1,6 +1,21 @@
 2015-08-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* .
+	* tests/refmpn.c (refmpn_sqrlo): New function.
+	* tests/tests.h: Define it.
+
+	* mpn/generic/sqrlo.c: New file, new function.
+	* mpn/generic/sqrlo_basecase.c: New file, new function.
+	* gmp-impl.h (mpn_sqrlo, mpn_sqrlo_basecase): Declare them.
+	* configure.ac (gmp_mpn_functions): Add new files.
+
+	* tests/mpn/t-sqrlo.c: New file, new test.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add new test.
+	* tests/devel/try.c: Support mpn_sqrlo and mpn_sqrlo_basecase.
+
+	* tune/common.c (speed_mpn_sqrlo{,_basecase}): New functions. 
+	* tune/speed.c: Support new functions.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULLO_BASECASE): Update.
+	(SPEED_ROUTINE_MPN_SQRLO): New macro.
 
 2015-07-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
