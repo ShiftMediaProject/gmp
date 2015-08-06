@@ -89,7 +89,9 @@ see https://www.gnu.org/licenses/.  */
 
 
 /* Default mpn_sqrlo_basecase using mpn_addmul_1.  */
-
+#ifndef SQRLO_SPECIAL_CASES
+#define SQRLO_SPECIAL_CASES 2
+#endif
 void
 mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
@@ -98,11 +100,46 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, n, up, n));
 
-  if (n <= 1)
+  if (n <= SQRLO_SPECIAL_CASES)
     {
       mp_limb_t ul;
       ul = up[0];
+#if SQRLO_SPECIAL_CASES == 1
       rp[0] = (ul * ul) & GMP_NUMB_MASK;
+#else
+      if (n == 1)
+	rp[0] = (ul * ul) & GMP_NUMB_MASK;
+      else
+	{
+	  mp_limb_t hi, lo, ul1;
+	  umul_ppmm (hi, lo, ul, ul << GMP_NAIL_BITS);
+	  rp[0] = lo >> GMP_NAIL_BITS;
+	  ul1 = up[1];
+#if SQRLO_SPECIAL_CASES == 2
+	  rp[1] = (hi + ul * ul1 * 2) & GMP_NUMB_MASK;
+#else
+	  if (n == 2)
+	    rp[1] = (hi + ul * ul1 * 2) & GMP_NUMB_MASK;
+	  else
+	    {
+	      mp_limb_t hi1;
+#if GMP_NAIL_BITS != 0
+	      ul <<= 1;
+#endif
+	      umul_ppmm (hi1, lo, ul1 << GMP_NAIL_BITS, ul);
+	      hi1 += ul * up[2];
+#if GMP_NAIL_BITS == 0
+	      hi1 = (hi1 << 1) | (lo >> (GMP_LIMB_BITS - 1));
+	      add_ssaaaa(rp[2], rp[1], hi1, lo << 1, ul1 * ul1, hi);
+#else
+	      hi += lo >> GMP_NAIL_BITS;
+	      rp[1] = hi & GMP_NUMB_MASK;
+	      rp[2] = (hi1 + ul1 * ul1 + (hi >> GMP_NUMB_BITS)) & GMP_NUMB_MASK;	      
+#endif
+	    }
+#endif
+	}
+#endif
     }
   else
     {
@@ -113,10 +150,10 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 
       --n;
       mpn_mul_1 (tp, up + 1, n, up[0]);
-      i = 1;
-      for (; 2 * i < n; ++i)
+      for (i = 1; 2 * i < n; ++i)
 	mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i, up[i]);
 
       MPN_SQRLO_DIAG_ADDLSH1 (rp, tp, up, n + 1);
     }
 }
+#undef SQRLO_SPECIAL_CASES
