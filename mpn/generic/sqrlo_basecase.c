@@ -149,9 +149,20 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
       ASSERT (n <= 2 * SQR_TOOM2_THRESHOLD);
 
       --n;
+#ifdef SHORTCUT_MULTIPLICATIONS
+      {
+	mp_limb_t cy;
+      
+	cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]) + up[0] * up[n];
+	for (i = 1; 2 * i + 1 < n; ++i)
+	  cy += mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i - 1, up[i]) + up[i] * up[n - i];
+	tp [n-1] = (cy + ((n & 1)?up[i] * up[n - i]:0)) & GMP_NUMB_MASK;
+      }
+#else
       mpn_mul_1 (tp, up + 1, n, up[0]);
       for (i = 1; 2 * i < n; ++i)
 	mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i, up[i]);
+#endif
 
       MPN_SQRLO_DIAG_ADDLSH1 (rp, tp, up, n + 1);
     }
