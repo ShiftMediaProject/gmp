@@ -95,15 +95,15 @@ see https://www.gnu.org/licenses/.  */
 void
 mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
-  mp_size_t i;
+  mp_limb_t ul;
 
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, n, up, n));
 
+  ul = up[0];
+
   if (n <= SQRLO_SPECIAL_CASES)
     {
-      mp_limb_t ul;
-      ul = up[0];
 #if SQRLO_SPECIAL_CASES == 1
       rp[0] = (ul * ul) & GMP_NUMB_MASK;
 #else
@@ -144,22 +144,26 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
   else
     {
       mp_limb_t tp[2 * SQR_TOOM2_THRESHOLD - 1];
+      mp_size_t i;
 
       /* must fit n-1 limbs in tp */
       ASSERT (n <= 2 * SQR_TOOM2_THRESHOLD);
 
       --n;
-#ifdef SHORTCUT_MULTIPLICATIONS
+#ifdef SQRLO_SHORTCUT_MULTIPLICATIONS
       {
 	mp_limb_t cy;
-      
-	cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]) + up[0] * up[n];
+
+	cy = mpn_mul_1 (tp, up + 1, n - 1, ul) + ul * up[n];
 	for (i = 1; 2 * i + 1 < n; ++i)
-	  cy += mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i - 1, up[i]) + up[i] * up[n - i];
-	tp [n-1] = (cy + ((n & 1)?up[i] * up[n - i]:0)) & GMP_NUMB_MASK;
+	  {
+	    ul = up[i];
+	    cy += mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i - 1, ul) + ul * up[n - i];
+	  }
+	tp [n-1] = (cy + ((n & 1)?up[i] * up[i + 1]:0)) & GMP_NUMB_MASK;
       }
 #else
-      mpn_mul_1 (tp, up + 1, n, up[0]);
+      mpn_mul_1 (tp, up + 1, n, ul);
       for (i = 1; 2 * i < n; ++i)
 	mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i, up[i]);
 #endif
