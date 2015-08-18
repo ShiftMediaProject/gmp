@@ -124,6 +124,82 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
     }
 }
 
+#define LOGROOT_USED_BITS 8
+#define LOGROOT_NEEDS_TWO_CORRECTIONS 1
+#define LOGROOT_RETURNED_BITS (LOGROOT_USED_BITS + LOGROOT_NEEDS_TWO_CORRECTIONS)
+/* Puts in *rootp some bits of the k^nt root of the number
+   2^bitn * 1.op ; where op represents the "fractional" bits.
+
+   The returned value is the number of bits of the root minus one;
+   i.e. an approximation of the root will be
+   (*rootp) * 2^(retval-LOGROOT_RETURNED_BITS+1).
+
+   Currently, only LOGROOT_USED_BITS bits of op are used (the implicit
+   one is not counted).
+ */
+static unsigned
+logbased_root (mp_ptr rootp, mp_limb_t op, mp_bitcnt_t bitn, mp_limb_t k)
+{
+  /* vlog=vector(256,i,floor((log(256+i)/log(2)-8)*256)-(i>255)) */
+  static const
+  unsigned char vlog[] = {1,   2,   4,   5,   7,   8,   9,  11,  12,  14,  15,  16,  18,  19,  21,  22,
+			 23,  25,  26,  27,  29,  30,  31,  33,  34,  35,  37,  38,  39,  40,  42,  43,
+			 44,  46,  47,  48,  49,  51,  52,  53,  54,  56,  57,  58,  59,  61,  62,  63,
+			 64,  65,  67,  68,  69,  70,  71,  73,  74,  75,  76,  77,  78,  80,  81,  82,
+			 83,  84,  85,  87,  88,  89,  90,  91,  92,  93,  94,  96,  97,  98,  99, 100,
+			101, 102, 103, 104, 105, 106, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117,
+			118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 131, 132, 133, 134,
+			135, 136, 137, 138, 139, 140, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149,
+			150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 162, 163, 164,
+			165, 166, 167, 168, 169, 170, 171, 172, 173, 173, 174, 175, 176, 177, 178, 179,
+			180, 181, 181, 182, 183, 184, 185, 186, 187, 188, 188, 189, 190, 191, 192, 193,
+			194, 194, 195, 196, 197, 198, 199, 200, 200, 201, 202, 203, 204, 205, 205, 206,
+			207, 208, 209, 209, 210, 211, 212, 213, 214, 214, 215, 216, 217, 218, 218, 219,
+			220, 221, 222, 222, 223, 224, 225, 225, 226, 227, 228, 229, 229, 230, 231, 232,
+			232, 233, 234, 235, 235, 236, 237, 238, 239, 239, 240, 241, 242, 242, 243, 244,
+			245, 245, 246, 247, 247, 248, 249, 250, 250, 251, 252, 253, 253, 254, 255, 255};
+
+  /* vexp=vector(256,i,floor(2^(8+i/256)-256)-(i>255)) */
+  static const
+  unsigned char vexp[] = {0,   1,   2,   2,   3,   4,   4,   5,   6,   7,   7,   8,   9,   9,  10,  11,
+			 12,  12,  13,  14,  14,  15,  16,  17,  17,  18,  19,  20,  20,  21,  22,  23,
+			 23,  24,  25,  26,  26,  27,  28,  29,  30,  30,  31,  32,  33,  33,  34,  35,
+			 36,  37,  37,  38,  39,  40,  41,  41,  42,  43,  44,  45,  45,  46,  47,  48,
+			 49,  50,  50,  51,  52,  53,  54,  55,  55,  56,  57,  58,  59,  60,  61,  61,
+			 62,  63,  64,  65,  66,  67,  67,  68,  69,  70,  71,  72,  73,  74,  75,  75,
+			 76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  86,  87,  88,  89,  90,
+			 91,  92,  93,  94,  95,  96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106,
+			107, 108, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 119, 120, 121, 122,
+			123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138,
+			139, 140, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 154, 155, 156,
+			157, 158, 159, 160, 161, 163, 164, 165, 166, 167, 168, 169, 171, 172, 173, 174,
+			175, 176, 178, 179, 180, 181, 182, 183, 185, 186, 187, 188, 189, 191, 192, 193,
+			194, 196, 197, 198, 199, 200, 202, 203, 204, 205, 207, 208, 209, 210, 212, 213,
+			214, 216, 217, 218, 219, 221, 222, 223, 225, 226, 227, 229, 230, 231, 232, 234,
+			235, 236, 238, 239, 240, 242, 243, 245, 246, 247, 249, 250, 251, 253, 254, 255};
+  mp_bitcnt_t retval;
+
+  if (UNLIKELY (bitn > (~ (mp_bitcnt_t) 0) >> LOGROOT_USED_BITS))
+    {
+      /* In the unlikely case, we use two divisions and a modulo. */
+      retval = bitn / k;
+      bitn %= k;
+      bitn = (bitn << LOGROOT_USED_BITS |
+	      vlog[op >> (GMP_NUMB_BITS - LOGROOT_USED_BITS)]) / k;
+    }
+  else
+    {
+      bitn = (bitn << LOGROOT_USED_BITS |
+	      vlog[op >> (GMP_NUMB_BITS - LOGROOT_USED_BITS)]) / k;
+      retval = bitn >> LOGROOT_USED_BITS;
+      bitn &= (CNST_LIMB (1) << LOGROOT_USED_BITS) - 1;
+    }
+  ASSERT(bitn < CNST_LIMB (1) << LOGROOT_USED_BITS);
+  *rootp = CNST_LIMB(1) << (LOGROOT_USED_BITS - ! LOGROOT_NEEDS_TWO_CORRECTIONS)
+    | vexp[bitn] >> ! LOGROOT_NEEDS_TWO_CORRECTIONS;
+  return retval;
+}
+
 /* if approx is non-zero, does not compute the final remainder */
 static mp_size_t
 mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
@@ -131,20 +207,24 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 {
   mp_ptr qp, rp, sp, wp, scratch;
   mp_size_t qn, rn, sn, wn, nl, bn;
-  mp_limb_t save, save2, cy;
+  mp_limb_t save, save2, cy, uh;
   mp_bitcnt_t unb; /* number of significant bits of {up,un} */
   mp_bitcnt_t xnb; /* number of significant bits of the result */
   mp_bitcnt_t b, kk;
   mp_bitcnt_t sizes[GMP_NUMB_BITS + 1];
   int ni;
   int perf_pow;
-  unsigned c, logk;
+  unsigned ulz, snb, c, logk;
   TMP_DECL;
 
-  MPN_SIZEINBASE_2EXP(unb, up, un, 1);
-  /* unb is the number of bits of the input U */
+  /* MPN_SIZEINBASE_2EXP(unb, up, un, 1); --unb; */
+  uh = up[un - 1];
+  count_leading_zeros (ulz, uh);
+  ulz = ulz - GMP_NAIL_BITS + 1; /* Ignore the first 1. */
+  unb = (mp_bitcnt_t) un * GMP_NUMB_BITS - ulz;
+  /* unb is the (truncated) logarithm of the input U in base 2*/
 
-  if (unb <= k) /* root is 1 */
+  if (unb < k) /* root is 1 */
     {
       rootp[0] = 1;
       if (remp == NULL)
@@ -157,19 +237,27 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	}
       return un;
     }
-  /* if (unb - k <= k/2) // root is 2 */
+  /* if (unb - k < k/2 + k/16) // root is 2 */
 
-  xnb = (unb - 1) / k;	/* ceil (unb / k) - 1 */
-  /* xnb is the number of bits of the root R */
+  if (ulz == GMP_NUMB_BITS)
+    uh = up[un - 2];
+  else
+    uh = (uh << ulz & GMP_NUMB_MASK) | up[un - 1 - (un != 1)] >> (GMP_NUMB_BITS - ulz);
+  ASSERT (un != 1 || up[un - 1 - (un != 1)] >> (GMP_NUMB_BITS - ulz) == 1);
+
+  xnb = logbased_root (rootp, uh, unb, k);
+  snb = LOGROOT_RETURNED_BITS - 1;
+  /* xnb+1 is the number of bits of the root R */
+  /* snb+1 is the number of bits of the current approximation S */
 
   kk = k * xnb;		/* number of truncated bits in the input */
 
-  for (cy = k - 1, logk = 2; (cy >>= 1) != 0; ++logk )
+  for (uh = k - 1, logk = 2; (uh >>= 1) != 0; ++logk )
     ;
   /* logk = ceil(log(k)/log(2)) + 1 */
   
   /* xnb is the number of remaining bits to determine in the kth root */
-  for (ni = 0; (sizes[ni] = xnb) > 1; ++ni)
+  for (ni = 0; (sizes[ni] = xnb) > snb; ++ni)
     {
       /* invariant: here we want xnb+1 total bits for the kth root */
 
@@ -186,6 +274,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	--xnb;	/* add just one bit at a time */
     }
 
+  *rootp >>= snb - xnb;
   kk -= xnb;
 
   ASSERT_ALWAYS (ni < GMP_NUMB_BITS + 1);
@@ -215,7 +304,6 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
     rp = remp;
   sp = rootp;
 
-  sp[0] = 3;
   sn = 1;		/* Initial approximation has one limb */
 
   for (b = xnb; ni != 0; --ni)
@@ -259,7 +347,8 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
       /* 10: current buffers: {sp,sn}, {rp,rn}, {qp,qn}, {wp,wn} */
 
-      ASSERT_ALWAYS (c <= 1);
+      /* sometimes two corrections are needed with logbased_root*/
+      ASSERT (c <= 1 + LOGROOT_NEEDS_TWO_CORRECTIONS);
       ASSERT_ALWAYS (rn >= qn);
 
       b = sizes[ni - 1] - sizes[ni]; /* number of bits to compute in the
@@ -403,6 +492,9 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  else
 	    break;
 	};
+
+      /* sometimes two corrections are needed with logbased_root*/
+      ASSERT (c <= 1 + LOGROOT_NEEDS_TWO_CORRECTIONS);
 
       rn = perf_pow != 0;
       if (rn != 0 && remp != NULL)
