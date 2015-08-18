@@ -1,3 +1,8 @@
+2015-08-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/rootrem.c (logbased_root): New function.
+	(mpn_rootrem_internal): Use it to estimate highest 9 bits of the root.
+
 2015-08-17  Torbjörn Granlund  <torbjorng@google.com>
 
 	* acinclude.m4 (X86_64_PATTERN): Add skylake.
@@ -28,6 +33,8 @@
 	* tune/speed.c: Support new functions.
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULLO_BASECASE): Update.
 	(SPEED_ROUTINE_MPN_SQRLO): New macro.
+
+	* mpn/generic/rootrem.c: Avoid divisions if not needed.
 
 2015-07-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
