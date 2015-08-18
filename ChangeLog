@@ -36,6 +36,9 @@
 
 	* mpn/generic/rootrem.c: Avoid divisions if not needed.
 
+	* tests/mpn/t-broot.c: Test also k=1.
+	* mpz/aorsmul_i.c: Move branches out of main line.
+
 2015-07-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/sqrtrem.c (mpn_dc_sqrt): Support odd sizes.

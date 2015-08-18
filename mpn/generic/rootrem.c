@@ -252,6 +252,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   kk = k * xnb;		/* number of truncated bits in the input */
 
+  /* FIXME: Should we skipp all loops when xnb > snb ? */
   for (uh = k - 1, logk = 2; (uh >>= 1) != 0; ++logk )
     ;
   /* logk = ceil(log(k)/log(2)) + 1 */
