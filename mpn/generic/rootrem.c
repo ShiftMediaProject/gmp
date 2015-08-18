@@ -50,14 +50,13 @@ see https://www.gnu.org/licenses/.  */
 static mp_size_t mpn_rootrem_internal (mp_ptr, mp_ptr, mp_srcptr, mp_size_t,
 				       mp_limb_t, int);
 
-#define MPN_RSHIFT(cy,rp,up,un,cnt) \
+#define MPN_RSHIFT(rp,up,un,cnt) \
   do {									\
     if ((cnt) != 0)							\
-      cy = mpn_rshift (rp, up, un, cnt);				\
+      mpn_rshift (rp, up, un, cnt);					\
     else								\
       {									\
 	MPN_COPY_INCR (rp, up, un);					\
-	cy = 0;								\
       }									\
   } while (0)
 
@@ -137,9 +136,9 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   mp_bitcnt_t xnb; /* number of significant bits of the result */
   mp_bitcnt_t b, kk;
   mp_bitcnt_t sizes[GMP_NUMB_BITS + 1];
-  int ni, i;
-  int c, perf_pow;
-  int logk;
+  int ni;
+  int perf_pow;
+  unsigned c, logk;
   TMP_DECL;
 
   MPN_SIZEINBASE_2EXP(unb, up, un, 1);
@@ -147,6 +146,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   if (unb <= k) /* root is 1 */
     {
+      rootp[0] = 1;
       if (remp == NULL)
 	un -= (*up == CNST_LIMB (1)); /* Non-zero iif {up,un} > 1 */
       else
@@ -155,43 +155,38 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  un -= (remp [un - 1] == 0);	/* There should be at most one zero limb,
 				   if we demand u to be normalized  */
 	}
-      rootp[0] = 1;
       return un;
     }
   /* if (unb - k <= k/2) // root is 2 */
 
-  xnb = (unb - 1) / k + 1;	/* ceil (unb / k) */
+  xnb = (unb - 1) / k;	/* ceil (unb / k) - 1 */
   /* xnb is the number of bits of the root R */
 
-  /* We initialize the algorithm with a 1-bit approximation to zero: since we
-     know the root has exactly xnb bits, we write r0 = 2^(xnb-1), so that
-     r0^k = 2^(k*(xnb-1)), that we subtract to the input. */
-  kk = k * (xnb - 1);		/* number of truncated bits in the input */
-  --kk;
-  rn = un - kk / GMP_NUMB_BITS; /* number of limbs of the non-truncated part */
+  kk = k * xnb;		/* number of truncated bits in the input */
 
-  for (logk = 1; ((k - 1) >> logk) != 0; logk++)
+  for (cy = k - 1, logk = 2; (cy >>= 1) != 0; ++logk )
     ;
-  /* logk = ceil(log(k)/log(2)) */
-
-  b = xnb - 1; /* number of remaining bits to determine in the kth root */
-  ni = 0;
-  do
+  /* logk = ceil(log(k)/log(2)) + 1 */
+  
+  /* xnb is the number of remaining bits to determine in the kth root */
+  for (ni = 0; (sizes[ni] = xnb) > 1; ++ni)
     {
-      /* invariant: here we want b+1 total bits for the kth root */
-      sizes[ni] = b;
-      /* if c is the new value of b, this means that we'll go from a root
-	 of c+1 bits (say s') to a root of b+1 bits.
-	 It is proved in the book "Modern Computer Arithmetic" from Brent
+      /* invariant: here we want xnb+1 total bits for the kth root */
+
+      /* if c is the new value of xnb, this means that we'll go from a
+	 root of c+1 bits (say s') to a root of xnb+1 bits.
+	 It is proved in the book "Modern Computer Arithmetic" by Brent
 	 and Zimmermann, Chapter 1, that
 	 if s' >= k*beta, then at most one correction is necessary.
-	 Here beta = 2^(b-c), and s' >= 2^c, thus it suffices that
-	 c >= ceil((b + log2(k))/2). */
-      b = (b + logk + 1) / 2;
-      if (b >= sizes[ni])
-	b = sizes[ni] - 1;	/* add just one bit at a time */
-      ni++;
-    } while (b != 0);
+	 Here beta = 2^(xnb-c), and s' >= 2^c, thus it suffices that
+	 c >= ceil((xnb + log2(k))/2). */
+      if (xnb > logk)
+	xnb = (xnb + logk) / 2;
+      else
+	--xnb;	/* add just one bit at a time */
+    }
+
+  kk -= xnb;
 
   ASSERT_ALWAYS (ni < GMP_NUMB_BITS + 1);
   /* We have sizes[0] = b > sizes[1] > ... > sizes[ni] = 0 with
@@ -215,24 +210,15 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 					 and temporary for mpn_pow_1 */
 
   if (remp == NULL)
-    rp = scratch;     /* will contain the remainder */
+    rp = scratch;	/* will contain the remainder */
   else
     rp = remp;
   sp = rootp;
 
-  MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
-  MPN_DECR_U (rp, rn, 2);	/* subtract the initial approximation: since
-				   the non-truncated part is less than 2^k, it
-				   is <= k bits: rn <= ceil(k/GMP_NUMB_BITS) */
-  rn -= rp [rn - 1] == 0;
-  sp[0] = save = 2;		/* initial approximation */
-  sn = 1;			/* it has one limb */
+  sp[0] = 3;
+  sn = 1;		/* Initial approximation has one limb */
 
-  wp[0] = k; /* k * {sp,sn}^(k-1) */
-  wn = 1;
-  i = ni;
-  b = bn = 1;
-  do
+  for (b = xnb; ni != 0; --ni)
     {
       /* 1: loop invariant:
 	 {sp, sn} is the current approximation of the root, which has
@@ -242,58 +228,13 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 kk = number of truncated bits of the input
       */
 
-      /* 4: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-
-      /* now divide {rp, rn} by {wp, wn} to get the low part of the root */
-      if (UNLIKELY (rn < wn))
-	{
-	  MPN_ZERO (sp, bn);
-	}
-      else
-	{
-	  qn = rn - wn; /* expected quotient size */
-	  if (qn <= bn) { /* Divide only if result is not too big. */
-	    mpn_div_q (qp, rp, rn, wp, wn, scratch);
-	    qn += qp[qn] != 0;
-	  }
-
-      /* 5: current buffers: {sp,sn}, {qp,qn}.
-	 Note: {rp,rn} is not needed any more since we'll compute it from
-	 scratch at the end of the loop.
-       */
-
-      /* the quotient should be smaller than 2^b, since the previous
-	 approximation was correctly rounded toward zero */
-	  if (qn > bn || (qn == bn && (b % GMP_NUMB_BITS != 0) &&
-			  qp[qn - 1] >= (CNST_LIMB (1) << (b % GMP_NUMB_BITS))))
-	    {
-	      for (qn = 1; qn < bn; ++qn)
-		sp[qn - 1] = GMP_NUMB_MAX;
-	      sp[qn - 1] = GMP_NUMB_MAX >> (GMP_NUMB_BITS-1 - ((b-1) % GMP_NUMB_BITS));
-	    }
-	  else
-	    {
-      /* 7: current buffers: {sp,sn}, {qp,qn} */
-
-      /* Combine sB and q to form sB + q.  */
-	      MPN_COPY (sp, qp, qn);
-	      MPN_ZERO (sp + qn, bn - qn);
-	    }
-	}
-      sp[b / GMP_NUMB_BITS] |= save;
-
-      /* 8: current buffer: {sp,sn} */
-
-      if (--i == 0)
-	break;
-
       /* Since each iteration treats b bits from the root and thus k*b bits
 	 from the input, and we already considered b bits from the input,
 	 we now have to take another (k-1)*b bits from the input. */
       kk -= (k - 1) * b; /* remaining input bits */
       /* {rp, rn} = floor({up, un} / 2^kk) */
-      MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, un - kk / GMP_NUMB_BITS, kk % GMP_NUMB_BITS);
       rn = un - kk / GMP_NUMB_BITS;
+      MPN_RSHIFT (rp, up + kk / GMP_NUMB_BITS, rn, kk % GMP_NUMB_BITS);
       rn -= rp[rn - 1] == 0;
 
       /* 9: current buffers: {sp,sn}, {rp,rn} */
@@ -321,39 +262,11 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       ASSERT_ALWAYS (c <= 1);
       ASSERT_ALWAYS (rn >= qn);
 
-      /* R = R - Q = floor(U/2^kk) - S^k */
-      if (perf_pow != 0)
-	{
-	  mpn_sub (rp, rp, rn, qp, qn);
-	  MPN_NORMALIZE_NOT_ZERO (rp, rn);
-	}
-      else
-	{
-	  rn = 1;
-	  rp[0] = 0;
-	}
-      /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-
-      b = sizes[i - 1] - sizes[i]; /* number of bits to compute in the
+      b = sizes[ni - 1] - sizes[ni]; /* number of bits to compute in the
 				      next iteration */
-
-      /* first multiply the remainder by 2^b */
-      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[] */
-      /* FIXME: next shift can be moved in the only branch above where it makes sense. */
-      MPN_LSHIFT (cy, rp + bn, rp, rn, b % GMP_NUMB_BITS);
-      rn = rn + bn;
-      if (cy != 0)
-	{
-	  rp[rn] = cy;
-	  rn++;
-	}
+      bn = b / GMP_NUMB_BITS; /* lowest limb from high part of rp[], after shift */
 
       kk = kk - b;
-
-      /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
-
-      /* Now insert bits [kk,kk+b-1] from the input U */
-      save = rp[bn];
       /* nl is the number of limbs in U which contain bits [kk,kk+b-1] */
       nl = 1 + (kk + b - 1) / GMP_NUMB_BITS - (kk / GMP_NUMB_BITS);
       /* nl  = 1 + floor((kk + b - 1) / GMP_NUMB_BITS)
@@ -363,10 +276,38 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	     = 2 + (b - 2) / GMP_NUMB_BITS
 	 thus since nl is an integer:
 	 nl <= 2 + floor(b/GMP_NUMB_BITS) <= 2 + bn. */
-      /* we have to save rp[bn] up to rp[nl-1], i.e. 1 or 2 limbs */
-      if (nl - 1 > bn)
-	save2 = rp[bn + 1];
-      MPN_RSHIFT (cy, rp, up + kk / GMP_NUMB_BITS, nl, kk % GMP_NUMB_BITS);
+
+      /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+
+      /* R = R - Q = floor(U/2^kk) - S^k */
+      if (perf_pow != 0)
+	{
+	  mpn_sub (rp, rp, rn, qp, qn);
+	  MPN_NORMALIZE_NOT_ZERO (rp, rn);
+
+	  /* first multiply the remainder by 2^b */
+	  MPN_LSHIFT (cy, rp + bn, rp, rn, b % GMP_NUMB_BITS);
+	  rn = rn + bn;
+	  if (cy != 0)
+	    {
+	      rp[rn] = cy;
+	      rn++;
+	    }
+
+	  save = rp[bn];
+	  /* we have to save rp[bn] up to rp[nl-1], i.e. 1 or 2 limbs */
+	  if (nl - 1 > bn)
+	    save2 = rp[bn + 1];
+	}
+      else
+	{
+	  rn = bn;
+	  save2 = save = 0;
+	}
+      /* 2: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+
+      /* Now insert bits [kk,kk+b-1] from the input U */
+      MPN_RSHIFT (rp, up + kk / GMP_NUMB_BITS, nl, kk % GMP_NUMB_BITS);
       /* set to zero high bits of rp[bn] */
       rp[bn] &= (CNST_LIMB (1) << (b % GMP_NUMB_BITS)) - 1;
       /* restore corresponding bits */
@@ -401,7 +342,49 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	 aligned to least limb */
       bn = (b - 1) / GMP_NUMB_BITS + 1;
 
-    } while (1);
+      /* 4: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
+
+      /* now divide {rp, rn} by {wp, wn} to get the low part of the root */
+      if (UNLIKELY (rn < wn))
+	{
+	  MPN_ZERO (sp, bn);
+	}
+      else
+	{
+	  qn = rn - wn; /* expected quotient size */
+	  if (qn <= bn) { /* Divide only if result is not too big. */
+	    mpn_div_q (qp, rp, rn, wp, wn, scratch);
+	    qn += qp[qn] != 0;
+	  }
+
+      /* 5: current buffers: {sp,sn}, {qp,qn}.
+	 Note: {rp,rn} is not needed any more since we'll compute it from
+	 scratch at the end of the loop.
+       */
+
+      /* the quotient should be smaller than 2^b, since the previous
+	 approximation was correctly rounded toward zero */
+	  if (qn > bn || (qn == bn && (b % GMP_NUMB_BITS != 0) &&
+			  qp[qn - 1] >= (CNST_LIMB (1) << (b % GMP_NUMB_BITS))))
+	    {
+	      for (qn = 1; qn < bn; ++qn)
+		sp[qn - 1] = GMP_NUMB_MAX;
+	      sp[qn - 1] = GMP_NUMB_MAX >> (GMP_NUMB_BITS - 1 - ((b - 1) % GMP_NUMB_BITS));
+	    }
+	  else
+	    {
+      /* 7: current buffers: {sp,sn}, {qp,qn} */
+
+      /* Combine sB and q to form sB + q.  */
+	      MPN_COPY (sp, qp, qn);
+	      MPN_ZERO (sp + qn, bn - qn);
+	    }
+	}
+      sp[b / GMP_NUMB_BITS] |= save;
+
+      /* 8: current buffer: {sp,sn} */
+
+    };
 
   /* otherwise we have rn > 0, thus the return value is ok */
   if (!approx || sp[0] <= CNST_LIMB (1))
