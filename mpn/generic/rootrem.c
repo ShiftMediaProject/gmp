@@ -107,7 +107,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       TMP_ALLOC_LIMBS_2 (wp, wn, /* will contain the padded input */
 			 sp, sn); /* approximate root of padded input */
       MPN_COPY (wp + k, up, un);
-      MPN_ZERO (wp, k);
+      MPN_FILL (wp, k, 0);
       rn = mpn_rootrem_internal (sp, NULL, wp, wn, k, 1);
       /* The approximate root S = {sp,sn} is either the correct root of
 	 {sp,sn}, or 1 too large.  Thus unless the least significant limb of
@@ -437,7 +437,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* now divide {rp, rn} by {wp, wn} to get the low part of the root */
       if (UNLIKELY (rn < wn))
 	{
-	  MPN_ZERO (sp, bn);
+	  MPN_FILL (sp, bn, 0);
 	}
       else
 	{
