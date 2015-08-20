@@ -677,6 +677,19 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free (const char *, int, int,
     (y) = __mpz_srcptr_swap__tmp;					\
   } while (0)
 
+#define MPQ_PTR_SWAP(x, y)						\
+  do {                                                                  \
+    mpq_ptr __mpq_ptr_swap__tmp = (x);					\
+    (x) = (y);                                                          \
+    (y) = __mpq_ptr_swap__tmp;						\
+  } while (0)
+#define MPQ_SRCPTR_SWAP(x, y)                                           \
+  do {                                                                  \
+    mpq_srcptr __mpq_srcptr_swap__tmp = (x);                            \
+    (x) = (y);                                                          \
+    (y) = __mpq_srcptr_swap__tmp;                                       \
+  } while (0)
+
 
 /* Enhancement: __gmp_allocate_func could have "__attribute__ ((malloc))",
    but current gcc (3.0) doesn't seem to support that.  */
