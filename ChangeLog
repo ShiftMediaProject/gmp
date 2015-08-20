@@ -1,7 +1,9 @@
-2015-08-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2015-08-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/rootrem.c (logbased_root): New function.
 	(mpn_rootrem_internal): Use it to estimate highest 9 bits of the root.
+
+	* gmp-impl.h (MPQ_PTR_SWAP, MPQ_SRCPTR_SWAP): New macros.
 
 2015-08-17  Torbjörn Granlund  <torbjorng@google.com>
 
