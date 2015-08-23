@@ -272,8 +272,10 @@ __gmpn_cpuvec_init (void)
 	    case 0x2c:		/* WSM Gulftown */
 	    case 0x2e:		/* NHM Beckton */
 	    case 0x2f:		/* WSM Eagleton */
-	    case 0x37:		/* Atom Silvermont */
-	    case 0x4d:		/* Atom Silvermont/Avoton */
+	    case 0x37:		/* Silvermont */
+	    case 0x4a:		/* Silvermont */
+	    case 0x4c:		/* Airmont */
+	    case 0x4d:		/* Silvermont/Avoton */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      break;
@@ -287,12 +289,9 @@ __gmpn_cpuvec_init (void)
 	      CPUVEC_SETUP_coreisbr;
 	      break;
 	    case 0x3c:		/* Haswell client */
-	    case 0x3d:		/* Broadwell */
 	    case 0x3f:		/* Haswell server */
 	    case 0x45:		/* Haswell ULT */
 	    case 0x46:		/* Crystal Well */
-	    case 0x4f:		/* Broadwell server */
-	    case 0x56:		/* Broadwell microserver */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
@@ -301,6 +300,17 @@ __gmpn_cpuvec_init (void)
 	      __gmpn_cpuid (dummy_string, 7);
 	      if ((dummy_string[0 + 8 / 8] & (1 << (8 % 8))) != 0)
 		CPUVEC_SETUP_coreihwl;
+	      break;
+	    case 0x3d:		/* Broadwell */
+	    case 0x47:		/* Broadwell */
+	    case 0x4f:		/* Broadwell server */
+	    case 0x56:		/* Broadwell microserver */
+	    case 0x5e:		/* Skylake */
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreinhm;
+	      CPUVEC_SETUP_coreisbr;
+	      CPUVEC_SETUP_coreihwl;
+	      CPUVEC_SETUP_coreibwl;
 	      break;
 	    }
 	  break;
