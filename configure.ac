@@ -3473,6 +3473,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_mul_5
 #undef HAVE_NATIVE_mpn_mul_6
 #undef HAVE_NATIVE_mpn_mul_basecase
+#undef HAVE_NATIVE_mpn_mullo_basecase
 #undef HAVE_NATIVE_mpn_nand_n
 #undef HAVE_NATIVE_mpn_nior_n
 #undef HAVE_NATIVE_mpn_popcount
