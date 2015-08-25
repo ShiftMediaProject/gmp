@@ -1,4 +1,4 @@
-2015-08-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2015-08-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configure.ac (AH_VERBATIM): Add HAVE_NATIVE_mpn_mullo_basecase.
 	* mpn/generic/sqrlo.c (mpn_sqrlo): Use mullo_basecase when faster.
@@ -14,6 +14,11 @@
 
 	* tune/tuneup.c (tune_mullo): Set MULLO_MUL_N_THRESHOLD to never
 	whenever the FFT threshold does not exist.
+
+2015-08-25  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/x86_64-defs.m4: Output computed numbers in base-10 instead
+	of base-16 to avoid bugs on Solaris, FreeBSD, and old NetBSD.
 
 2015-08-23  Torbjörn Granlund  <torbjorng@google.com>
 
@@ -36,7 +41,7 @@
 	* config.sub: Corresponding changes.
 	* configure.ac: Corresponding changes.
 	* mpn/x86_64/skylake/gmp-mparam.h: New file.
-	
+
 2015-08-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/generic/mullo_basecase.c: Provide alternative code, make default.
