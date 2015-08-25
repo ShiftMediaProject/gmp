@@ -211,10 +211,17 @@ mpn_sqrlo (mp_ptr rp, mp_srcptr xp, mp_size_t n)
 
   if (BELOW_THRESHOLD (n, SQRLO_BASECASE_THRESHOLD))
     {
+      /* FIXME: smarter criteria? */
+#if HAVE_NATIVE_mpn_mullo_basecase || ! HAVE_NATIVE_mpn_sqr_basecase
+      /* mullo computes as many products as sqr, but directly writes
+	 on the result area. */
+      mpn_mullo_basecase (rp, xp, xp, n);      
+#else
       /* Allocate workspace of fixed size on stack: fast! */
       mp_limb_t tp[SQR_BASECASE_ALLOC];
       mpn_sqr_basecase (tp, xp, n);
       MPN_COPY (rp, tp, n);
+#endif
     }
   else if (BELOW_THRESHOLD (n, SQRLO_DC_THRESHOLD))
     {
