@@ -338,16 +338,16 @@ dnl  detected.  Offsets that don't fit one byte are not handled correctly.
 define(`mulx',`dnl
 .byte	0xc4`'dnl
 ifelse(`$#',3,`dnl
-,0x`'eval(0xe2^32*regnumh($1)^128*regnumh($3),16)`'dnl
-,0x`'eval(0xfb-8*regnum($2),16)`'dnl
+,eval(0xe2^32*regnumh($1)^128*regnumh($3))`'dnl
+,eval(0xfb-8*regnum($2))`'dnl
 ,0xf6`'dnl
-,0x`'eval(0xc0+(7 & regnum($1))+8*(7 & regnum($3))-0xc0*ix($1),16)`'dnl
+,eval(0xc0+(7 & regnum($1))+8*(7 & regnum($3))-0xc0*ix($1))`'dnl
 ',`$#',4,`dnl
-,0x`'eval(0xe2^32*regnumh($2)^128*regnumh($4),16)`'dnl
-,0x`'eval(0xfb-8*regnum($3),16)`'dnl
+,eval(0xe2^32*regnumh($2)^128*regnumh($4))`'dnl
+,eval(0xfb-8*regnum($3))`'dnl
 ,0xf6`'dnl
-,0x`'eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)),16)`'dnl
-,0x`'eval(($1 + 256) % 256,16)`'dnl
+,eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)))`'dnl
+,eval(($1 + 256) % 256)`'dnl
 ')')
 
 dnl  Usage
@@ -375,7 +375,7 @@ dnl  Other addressing forms are not handled.  Invalid forms are not properly
 dnl  detected.  Offsets that don't fit one byte are not handled correctly.
 
 define(`adx_helper',`dnl
-,0x`'eval(0x48+regnumh($1)+4*regnumh($2),16)`'dnl
+,eval(0x48+regnumh($1)+4*regnumh($2))`'dnl
 ,0x0f`'dnl
 ,0x38`'dnl
 ,0xf6`'dnl
@@ -384,11 +384,11 @@ define(`adx_helper',`dnl
 define(`adx',`dnl
 ifelse(`$#',2,`dnl
 adx_helper($1,$2)dnl
-,0x`'eval(0xc0+(7 & regnum($1))+8*(7 & regnum($2))-0xc0*ix($1),16)`'dnl
+,eval(0xc0+(7 & regnum($1))+8*(7 & regnum($2))-0xc0*ix($1))`'dnl
 ',`$#',3,`dnl
 adx_helper($2,$3)dnl
-,0x`'eval(0x40+(7 & regnum($2))+8*(7 & regnum($3)),16)`'dnl
-,0x`'eval(($1 + 256) % 256,16)`'dnl
+,eval(0x40+(7 & regnum($2))+8*(7 & regnum($3)))`'dnl
+,eval(($1 + 256) % 256)`'dnl
 ')')
 
 define(`adcx',`dnl
