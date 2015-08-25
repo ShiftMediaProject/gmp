@@ -40,11 +40,8 @@ mpf_cmp (mpf_srcptr u, mpf_srcptr v) __GMP_NOTHROW
   int cmp;
   int usign;
 
-  uexp = u->_mp_exp;
-  vexp = v->_mp_exp;
-
-  usize = u->_mp_size;
-  vsize = v->_mp_size;
+  usize = SIZ(u);
+  vsize = SIZ(v);
   usign = usize >= 0 ? 1 : -1;
 
   /* 1. Are the signs different?  */
@@ -67,6 +64,8 @@ mpf_cmp (mpf_srcptr u, mpf_srcptr v) __GMP_NOTHROW
 
   /* U and V have the same sign and are both non-zero.  */
 
+  uexp = EXP(u);
+  vexp = EXP(v);
 
   /* 2. Are the exponents different?  */
   if (uexp > vexp)
@@ -77,22 +76,19 @@ mpf_cmp (mpf_srcptr u, mpf_srcptr v) __GMP_NOTHROW
   usize = ABS (usize);
   vsize = ABS (vsize);
 
-  up = u->_mp_d;
-  vp = v->_mp_d;
+  up = PTR (u);
+  vp = PTR (v);
 
 #define STRICT_MPF_NORMALIZATION 0
 #if ! STRICT_MPF_NORMALIZATION
   /* Ignore zeroes at the low end of U and V.  */
-  while (up[0] == 0)
-    {
-      up++;
-      usize--;
-    }
-  while (vp[0] == 0)
-    {
-      vp++;
-      vsize--;
-    }
+  do {
+    mp_limb_t tl;
+    tl = up[0];
+    MPN_STRIP_LOW_ZEROS_NOT_ZERO (up, usize, tl);
+    tl = vp[0];
+    MPN_STRIP_LOW_ZEROS_NOT_ZERO (vp, vsize, tl);
+  } while (0);
 #endif
 
   if (usize > vsize)
