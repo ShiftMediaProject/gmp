@@ -99,7 +99,7 @@ main (int argc, char **argv)
 	  abort ();
 	}
     }
-  
+
   mpn_broot (rp, ap, MAX_LIMBS, 1);
   if (mpn_cmp (ap, rp, MAX_LIMBS) != 0)
     {

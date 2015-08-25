@@ -95,14 +95,14 @@ mpf_cmp (mpf_srcptr u, mpf_srcptr v) __GMP_NOTHROW
     {
       cmp = mpn_cmp (up + usize - vsize, vp, vsize);
       /* if (cmp == 0) */
-      /* 	return usign; */
-      ++cmp; 
+      /*	return usign; */
+      ++cmp;
     }
   else if (vsize > usize)
     {
       cmp = mpn_cmp (up, vp + vsize - usize, usize);
       /* if (cmp == 0) */
-      /* 	return -usign; */
+      /*	return -usign; */
     }
   else
     {

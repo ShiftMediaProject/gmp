@@ -256,7 +256,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
   for (uh = k - 1, logk = 2; (uh >>= 1) != 0; ++logk )
     ;
   /* logk = ceil(log(k)/log(2)) + 1 */
-  
+
   /* xnb is the number of remaining bits to determine in the kth root */
   for (ni = 0; (sizes[ni] = xnb) > snb; ++ni)
     {
