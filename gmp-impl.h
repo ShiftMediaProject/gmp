@@ -2090,6 +2090,12 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 #ifndef MULLO_BASECASE_THRESHOLD_LIMIT
 #define MULLO_BASECASE_THRESHOLD_LIMIT  MULLO_BASECASE_THRESHOLD
 #endif
+#ifndef SQRLO_BASECASE_THRESHOLD_LIMIT
+#define SQRLO_BASECASE_THRESHOLD_LIMIT  SQRLO_BASECASE_THRESHOLD
+#endif
+#ifndef SQRLO_DC_THRESHOLD_LIMIT
+#define SQRLO_DC_THRESHOLD_LIMIT  SQRLO_DC_THRESHOLD
+#endif
 
 /* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
    mpn_mul_basecase.  Default is to use mpn_sqr_basecase from 0.  (Note that we
@@ -2136,6 +2142,18 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 
 #ifndef MULLO_MUL_N_THRESHOLD
 #define MULLO_MUL_N_THRESHOLD      (2*MUL_FFT_THRESHOLD)
+#endif
+
+#ifndef SQRLO_BASECASE_THRESHOLD
+#define SQRLO_BASECASE_THRESHOLD          0  /* never use mpn_sqr_basecase */
+#endif
+
+#ifndef SQRLO_DC_THRESHOLD
+#define SQRLO_DC_THRESHOLD         (MULLO_DC_THRESHOLD)
+#endif
+
+#ifndef SQRLO_SQR_THRESHOLD
+#define SQRLO_SQR_THRESHOLD        (MULLO_MUL_N_THRESHOLD)
 #endif
 
 #ifndef DC_DIV_QR_THRESHOLD
@@ -4789,6 +4807,18 @@ extern mp_size_t			mullo_dc_threshold;
 #define MULLO_MUL_N_THRESHOLD		mullo_mul_n_threshold
 extern mp_size_t			mullo_mul_n_threshold;
 
+#undef	SQRLO_BASECASE_THRESHOLD
+#define SQRLO_BASECASE_THRESHOLD	sqrlo_basecase_threshold
+extern mp_size_t			sqrlo_basecase_threshold;
+
+#undef	SQRLO_DC_THRESHOLD
+#define SQRLO_DC_THRESHOLD		sqrlo_dc_threshold
+extern mp_size_t			sqrlo_dc_threshold;
+
+#undef	SQRLO_SQR_THRESHOLD
+#define SQRLO_SQR_THRESHOLD		sqrlo_sqr_threshold
+extern mp_size_t			sqrlo_sqr_threshold;
+
 #undef	MULMID_TOOM42_THRESHOLD
 #define MULMID_TOOM42_THRESHOLD		mulmid_toom42_threshold
 extern mp_size_t			mulmid_toom42_threshold;
@@ -4985,6 +5015,8 @@ extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 #undef MUL_TOOM22_THRESHOLD_LIMIT
 #undef MUL_TOOM33_THRESHOLD_LIMIT
 #undef MULLO_BASECASE_THRESHOLD_LIMIT
+#undef SQRLO_BASECASE_THRESHOLD_LIMIT
+#undef SQRLO_DC_THRESHOLD_LIMIT
 #undef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_TOOM2_MAX_GENERIC           200
 #define MUL_TOOM22_THRESHOLD_LIMIT      700
@@ -4997,6 +5029,8 @@ extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 #define MUL_TOOM8H_THRESHOLD_LIMIT     1200
 #define SQR_TOOM8_THRESHOLD_LIMIT      1200
 #define MULLO_BASECASE_THRESHOLD_LIMIT  200
+#define SQRLO_BASECASE_THRESHOLD_LIMIT  200
+#define SQRLO_DC_THRESHOLD_LIMIT        400
 #define GET_STR_THRESHOLD_LIMIT         150
 #define FAC_DSC_THRESHOLD_LIMIT        2048
 

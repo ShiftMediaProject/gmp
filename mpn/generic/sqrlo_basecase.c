@@ -91,6 +91,9 @@ see https://www.gnu.org/licenses/.  */
   } while (0)
 #endif
 
+/* Avoid zero allocations when SQRLO_LO_THRESHOLD is 0 (this code not used). */
+#define SQRLO_BASECASE_ALLOC						\
+  (SQRLO_DC_THRESHOLD_LIMIT < 2 ? 1 : SQRLO_DC_THRESHOLD_LIMIT - 1)
 
 /* Default mpn_sqrlo_basecase using mpn_addmul_1.  */
 #ifndef SQRLO_SPECIAL_CASES
@@ -147,11 +150,11 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
     }
   else
     {
-      mp_limb_t tp[2 * SQR_TOOM2_THRESHOLD - 1];
+      mp_limb_t tp[SQRLO_BASECASE_ALLOC];
       mp_size_t i;
 
       /* must fit n-1 limbs in tp */
-      ASSERT (n <= 2 * SQR_TOOM2_THRESHOLD);
+      ASSERT (n <= SQRLO_DC_THRESHOLD_LIMIT);
 
       --n;
 #if SQRLO_SHORTCUT_MULTIPLICATIONS

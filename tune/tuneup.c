@@ -181,6 +181,9 @@ mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullo_basecase_threshold     = MP_SIZE_T_MAX;
 mp_size_t  mullo_dc_threshold           = MP_SIZE_T_MAX;
 mp_size_t  mullo_mul_n_threshold        = MP_SIZE_T_MAX;
+mp_size_t  sqrlo_basecase_threshold     = MP_SIZE_T_MAX;
+mp_size_t  sqrlo_dc_threshold           = MP_SIZE_T_MAX;
+mp_size_t  sqrlo_sqr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mulmid_toom42_threshold      = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  sqrmod_bnm1_threshold        = MP_SIZE_T_MAX;
@@ -1387,6 +1390,52 @@ tune_mullo (void)
   print_define_remark ("MULLO_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
                            "without FFT use mullo forever");
 #endif
+}
+
+void
+tune_sqrlo (void)
+{
+  static struct param_t  param;
+
+  param.function = speed_mpn_sqrlo;
+
+  param.name = "SQRLO_BASECASE_THRESHOLD";
+  param.min_size = 1;
+  param.min_is_always = 1;
+  param.max_size = SQRLO_BASECASE_THRESHOLD_LIMIT-1;
+  param.stop_factor = 1.5;
+  param.noprint = 1;
+  one (&sqrlo_basecase_threshold, &param);
+
+  param.name = "SQRLO_DC_THRESHOLD";
+  param.min_size = 8;
+  param.min_is_always = 0;
+  param.max_size = SQRLO_DC_THRESHOLD_LIMIT-1;
+  one (&sqrlo_dc_threshold, &param);
+
+  if (sqrlo_basecase_threshold >= sqrlo_dc_threshold)
+    {
+      print_define ("SQRLO_BASECASE_THRESHOLD", sqrlo_dc_threshold);
+      print_define_remark ("SQRLO_DC_THRESHOLD", 0, "never mpn_sqrlo_basecase");
+    }
+  else
+    {
+      print_define ("SQRLO_BASECASE_THRESHOLD", sqrlo_basecase_threshold);
+      print_define ("SQRLO_DC_THRESHOLD", sqrlo_dc_threshold);
+    }
+
+  if (WANT_FFT && sqr_fft_threshold < MP_SIZE_T_MAX / 2)
+    {
+      param.name = "SQRLO_SQR_THRESHOLD";
+      param.min_size = sqrlo_dc_threshold;
+      param.max_size = 2 * sqr_fft_threshold;
+      param.noprint = 0;
+      param.step_factor = 0.03;
+      one (&sqrlo_sqr_threshold, &param);
+    }
+  else
+    print_define_remark ("SQRLO_SQR_THRESHOLD", MP_SIZE_T_MAX,
+			 "without FFT use sqrlo forever");
 }
 
 void
@@ -2836,6 +2885,7 @@ all (void)
   printf ("\n");
 
   tune_mullo ();
+  tune_sqrlo ();
   printf("\n");
 
   tune_dc_div ();
