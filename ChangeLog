@@ -1,3 +1,19 @@
+2015-08-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.ac (AH_VERBATIM): Add HAVE_NATIVE_mpn_mullo_basecase.
+	* mpn/generic/sqrlo.c (mpn_sqrlo): Use mullo_basecase when faster.
+	* mpn/generic/sqrlo_basecase.c: More readable #defines.
+	
+	* tune/tuneup.c (tune_sqrlo): New function to tune sqrlo thresholds.
+	(all): Call it, after multiplication and FFT.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add sqrlo{,_basecase}.c .
+	* gmp-impl.h: Add all SQRLO_*_THRESHOLD* defs, for tuning and default.
+	* mpn/generic/sqrlo.c: Remove default threshold definitions.
+	* mpn/generic/sqrlo_basecase.c: Use SQRLO_DC_THRESHOLD_LIMIT.
+
+	* tune/tuneup.c (tune_mullo): Set MULLO_MUL_N_THRESHOLD to never
+	whenever the FFT threshold does not exist.
+
 2015-08-23  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Add more entries, handle
