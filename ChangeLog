@@ -1,3 +1,8 @@
+2015-08-25  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/x86_64-defs.m4: Output computed numbers in base-10 instead
+	of base-16 to avoid bugs on Solaris, FreeBSD, and old NetBSD.
+
 2015-08-23  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Add more entries, handle
@@ -19,7 +24,7 @@
 	* config.sub: Corresponding changes.
 	* configure.ac: Corresponding changes.
 	* mpn/x86_64/skylake/gmp-mparam.h: New file.
-	
+
 2015-08-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/generic/mullo_basecase.c: Provide alternative code, make default.
