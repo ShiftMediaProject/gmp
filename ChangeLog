@@ -10,6 +10,7 @@
 	* gmp-impl.h: Add all SQRLO_*_THRESHOLD* defs, for tuning and default.
 	* mpn/generic/sqrlo.c: Remove default threshold definitions.
 	* mpn/generic/sqrlo_basecase.c: Use SQRLO_DC_THRESHOLD_LIMIT.
+	* mpn/minithres/gmp-mparam.h: New SQRLO_*_THRESHOLDs.
 
 	* tune/tuneup.c (tune_mullo): Set MULLO_MUL_N_THRESHOLD to never
 	whenever the FFT threshold does not exist.
