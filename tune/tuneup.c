@@ -1379,17 +1379,18 @@ tune_mullo (void)
       print_define ("MULLO_DC_THRESHOLD", mullo_dc_threshold);
     }
 
-#if WANT_FFT
-  param.name = "MULLO_MUL_N_THRESHOLD";
-  param.min_size = mullo_dc_threshold;
-  param.max_size = 2 * mul_fft_threshold;
-  param.noprint = 0;
-  param.step_factor = 0.03;
-  one (&mullo_mul_n_threshold, &param);
-#else
-  print_define_remark ("MULLO_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
-                           "without FFT use mullo forever");
-#endif
+  if (WANT_FFT && mul_fft_threshold < MP_SIZE_T_MAX / 2)
+    {
+      param.name = "MULLO_MUL_N_THRESHOLD";
+      param.min_size = mullo_dc_threshold;
+      param.max_size = 2 * mul_fft_threshold;
+      param.noprint = 0;
+      param.step_factor = 0.03;
+      one (&mullo_mul_n_threshold, &param);
+    }
+  else
+    print_define_remark ("MULLO_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
+			 "without FFT use mullo forever");
 }
 
 void
