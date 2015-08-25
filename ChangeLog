@@ -15,6 +15,8 @@
 	* tune/tuneup.c (tune_mullo): Set MULLO_MUL_N_THRESHOLD to never
 	whenever the FFT threshold does not exist.
 
+	* mpf/cmp.c: Remove some branches.
+
 2015-08-25  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/x86_64-defs.m4: Output computed numbers in base-10 instead
