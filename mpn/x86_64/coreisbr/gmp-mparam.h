@@ -185,6 +185,9 @@ see https://www.gnu.org/licenses/.  */
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  62
 #define MULLO_MUL_N_THRESHOLD             8907
+#define SQRLO_BASECASE_THRESHOLD            11
+#define SQRLO_DC_THRESHOLD                 124
+#define SQRLO_SQR_THRESHOLD               6526
 
 #define DC_DIV_QR_THRESHOLD                 52
 #define DC_DIVAPPR_Q_THRESHOLD             166
