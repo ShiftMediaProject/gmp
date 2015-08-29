@@ -7,7 +7,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2009, 2011-2014 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2009, 2011-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -67,11 +67,21 @@ static struct {
   unsigned    fms;
 } fake_cpuid_table[] = {
   { "core2",      "GenuineIntel", MAKE_FMS (6, 0xf) },
-  { "coreinhm",   "GenuineIntel", MAKE_FMS (6, 0x1a) },
-  { "coreiwsm",   "GenuineIntel", MAKE_FMS (6, 0x25) },
-  { "coreisbr",   "GenuineIntel", MAKE_FMS (6, 0x2a) },
-  { "coreihwl",   "GenuineIntel", MAKE_FMS (6, 0x3c) },
+  { "nehalem",    "GenuineIntel", MAKE_FMS (6, 0x1a) },
+  { "nhm",        "GenuineIntel", MAKE_FMS (6, 0x1a) },
   { "atom",       "GenuineIntel", MAKE_FMS (6, 0x1c) },
+  { "westmere",   "GenuineIntel", MAKE_FMS (6, 0x25) },
+  { "wsm",        "GenuineIntel", MAKE_FMS (6, 0x25) },
+  { "sandybridge","GenuineIntel", MAKE_FMS (6, 0x2a) },
+  { "sbr",        "GenuineIntel", MAKE_FMS (6, 0x2a) },
+  { "silvermont", "GenuineIntel", MAKE_FMS (6, 0x37) },
+  { "slm",        "GenuineIntel", MAKE_FMS (6, 0x37) },
+  { "haswell",    "GenuineIntel", MAKE_FMS (6, 0x3c) },
+  { "hwl",        "GenuineIntel", MAKE_FMS (6, 0x3c) },
+  { "broadwell"   "GenuineIntel", MAKE_FMS (6, 0x3d) },
+  { "bwl"         "GenuineIntel", MAKE_FMS (6, 0x3d) },
+  { "skylake"     "GenuineIntel", MAKE_FMS (6, 0x5e) },
+  { "sky"         "GenuineIntel", MAKE_FMS (6, 0x5e) },
   { "pentium4",   "GenuineIntel", MAKE_FMS (15, 3) },
 
   { "k8",         "AuthenticAMD", MAKE_FMS (15, 0) },
