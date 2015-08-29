@@ -1,3 +1,7 @@
+2015-08-29  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Add CPU aliases.
+
 2015-08-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configure.ac (AH_VERBATIM): Add HAVE_NATIVE_mpn_mullo_basecase.
@@ -24,7 +28,7 @@
 
 2015-08-23  Torbjörn Granlund  <torbjorng@google.com>
 
-	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Add more entries, handle
+	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Add more entries, handle
 	Broadwell separately.
 
 	* configure.ac (fat_path): Add coreibwl.
