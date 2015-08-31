@@ -1,3 +1,12 @@
+2015-08-31 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpq/cmp.c (mpq_cmp_z): New function to compare mpq with mpz,
+	asked by Vincent Delecroix for the SageMath project.
+	* gmp-h.in: Declare it.
+	* doc/gmp.texi: Document it.
+	* tests/mpq/t-cmp_z.c: New file to test mpq_cmp_z (from t-cmp.c).
+	* tests/mpq/Makefile.am (check_PROGRAMS): Add t-cmp_z.
+
 2015-08-29  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Add CPU aliases.
@@ -7,7 +16,7 @@
 	* configure.ac (AH_VERBATIM): Add HAVE_NATIVE_mpn_mullo_basecase.
 	* mpn/generic/sqrlo.c (mpn_sqrlo): Use mullo_basecase when faster.
 	* mpn/generic/sqrlo_basecase.c: More readable #defines.
-	
+
 	* tune/tuneup.c (tune_sqrlo): New function to tune sqrlo thresholds.
 	(all): Call it, after multiplication and FFT.
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add sqrlo{,_basecase}.c .
