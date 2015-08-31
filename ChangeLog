@@ -7,6 +7,8 @@
 	* tests/mpq/t-cmp_z.c: New file to test mpq_cmp_z (from t-cmp.c).
 	* tests/mpq/Makefile.am (check_PROGRAMS): Add t-cmp_z.
 
+	* mpn/generic/powlo.c: Use mpn_sqrlo.
+
 2015-08-29  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fat/fat.c (fake_cpuid_table): Add CPU aliases.
