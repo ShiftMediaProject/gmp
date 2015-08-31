@@ -1,3 +1,8 @@
+2015-08-31  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86/fat/fat.c (fake_cpuid_table): Update similarly to
+	corresponding x86_64 code.
+
 2015-08-31 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/cmp.c (mpq_cmp_z): New function to compare mpq with mpz,
