@@ -102,11 +102,11 @@ mpq_cmp_numden (mpq_srcptr op1, mpz_srcptr num_op2, mpz_srcptr den_op2)
 
     count_leading_zeros (cnt1, PTR(NUM(op1))[num1_size - 1]);
     count_leading_zeros (cnt2, d2h);
-    bits1 = tmp1_size * GMP_NUMB_BITS - cnt1 - cnt2; /* + 2 * GMP_NAIL_BITS */
+    bits1 = (mp_bitcnt_t) tmp1_size * GMP_NUMB_BITS - cnt1 - cnt2 + 2 * GMP_NAIL_BITS;
 
     count_leading_zeros (cnt1, PTR(num_op2)[num2_size - 1]);
     count_leading_zeros (cnt2, d1h);
-    bits2 = tmp2_size * GMP_NUMB_BITS - cnt1 - cnt2; /* + 2 * GMP_NAIL_BITS */
+    bits2 = (mp_bitcnt_t) tmp2_size * GMP_NUMB_BITS - cnt1 - cnt2 + 2 * GMP_NAIL_BITS;
 
     if (bits1 > bits2 + 1)
       return num1_sign;
