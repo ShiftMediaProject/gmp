@@ -83,15 +83,18 @@ main (int argc, char *argv[])
       mpz_mul_ui (f, f, n+1);  /* (n+1)! = n! * (n+1) */
     }
 
-  n = 1048573; /* a prime */
-  if (n > MP_LIMB_T_MAX)
-    n = 65521; /* a smaller prime :-) */
-  mpz_fac_ui (f, n - 1);
-  m = mpz_fdiv_ui (f, n);
+  n = 2097169; /* a prime = 1 mod 4*/
+  if (n / 2 > MP_LIMB_T_MAX)
+    n = 131041; /* a smaller prime :-) */
+  mpz_fac_ui (f, n / 2); /* ((n-1)/2)! */
+  m = mpz_fdiv_ui (f, n); /* ((n-1)/2)! mod n*/
+  mpz_set_ui (f, m);
+  mpz_mul_ui (f, f, m); /* (((n-1)/2)!)^2 */
+  m = mpz_fdiv_ui (f, n); /* (((n-1)/2)!)^2 mod n*/
   if ( m != n - 1)
     {
-      printf ("mpz_fac_ui(%lu) wrong\n", n - 1);
-      printf ("  Wilson's theorem not verified: got %lu, expected %lu.\n",m ,n - 1);
+      printf ("mpz_fac_ui(%lu) wrong\n", n / 2);
+      printf (" al-Haytham's theorem not verified: got %lu, expected %lu.\n", m, n - 1);
       abort ();
     }
 
