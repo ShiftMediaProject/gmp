@@ -1,3 +1,9 @@
+2015-09-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpq/cmp.c (mpq_cmp_numden): Cast to avoid over/underflow.
+	* tests/mpn/t-toom22.c (MIN_AN): Use defined value.
+	* tests/mpz/t-fac_ui.c: Check big factorial modulo a larger prime.
+
 2015-08-31  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86/fat/fat.c (fake_cpuid_table): Update similarly to
