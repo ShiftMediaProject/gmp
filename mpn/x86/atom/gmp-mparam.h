@@ -1,6 +1,6 @@
 /* Intel Atom/32 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000-2011, 2014 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000-2011, 2014-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -160,9 +160,12 @@ see https://www.gnu.org/licenses/.  */
 #define SQR_FFT_TABLE3_SIZE 151
 #define SQR_FFT_THRESHOLD                 2880
 
-#define MULLO_BASECASE_THRESHOLD             6
+#define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  48
 #define MULLO_MUL_N_THRESHOLD             8907
+#define SQRLO_BASECASE_THRESHOLD             0  /* always */
+#define SQRLO_DC_THRESHOLD                 140
+#define SQRLO_SQR_THRESHOLD               6075
 
 #define DC_DIV_QR_THRESHOLD                 59
 #define DC_DIVAPPR_Q_THRESHOLD             250
