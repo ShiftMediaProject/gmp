@@ -3,6 +3,8 @@
 	* mpq/cmp.c (mpq_cmp_numden): Cast to avoid over/underflow.
 	* tests/mpn/t-toom22.c (MIN_AN): Use defined value.
 	* tests/mpz/t-fac_ui.c: Check big factorial modulo a larger prime.
+	* mpn/generic/bsqrtinv.c: Use sqrlo+mullo_n instead of powlo(,,3,,).
+	* mpq/div.c: Move a branch out of the normal flow.
 
 2015-08-31  Torbjörn Granlund  <torbjorng@google.com>
 
