@@ -47,17 +47,17 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
   if (UNLIKELY (op2_size == 0))
     DIVIDE_BY_ZERO;
 
-  if (op1 == op2)
+  if (UNLIKELY (quot == op2))
     {
-      PTR(NUM(quot))[0] = 1;
-      SIZ(NUM(quot)) = 1;
-      PTR(DEN(quot))[0] = 1;
-      SIZ(DEN(quot)) = 1;
-      return;
-    }
+      if (op1 == op2)
+	{
+	  PTR(NUM(quot))[0] = 1;
+	  SIZ(NUM(quot)) = 1;
+	  PTR(DEN(quot))[0] = 1;
+	  SIZ(DEN(quot)) = 1;
+	  return;
+	}
 
-  if (quot == op2)
-    {
       /* We checked for op1 == op2: we are not in the x=x/x case.
 	 We compute x=y/x by computing x=inv(x)*y */
       MPN_PTR_SWAP (PTR(NUM(quot)), ALLOC(NUM(quot)),
