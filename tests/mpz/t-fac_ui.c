@@ -1,6 +1,6 @@
 /* Exercise mpz_fac_ui and mpz_2fac_ui.
 
-Copyright 2000-2002, 2012 Free Software Foundation, Inc.
+Copyright 2000-2002, 2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
