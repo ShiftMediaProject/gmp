@@ -3249,6 +3249,25 @@ if test $gmp_cv_c_attribute_noreturn = yes; then
 fi
 ])
 
+dnl  GMP_C_HIDDEN_ALIAS
+dnl  ------------------------
+
+AC_DEFUN([GMP_C_HIDDEN_ALIAS],
+[AC_CACHE_CHECK([whether gcc hidden aliases work],
+                gmp_cv_c_hidden_alias,
+[AC_TRY_COMPILE(
+[void hid() __attribute__ ((visibility("hidden")));
+void hid() {}
+void pub() __attribute__ ((alias("hid")));],
+, gmp_cv_c_hidden_alias=yes, gmp_cv_c_hidden_alias=no)
+])
+if test $gmp_cv_c_hidden_alias = yes; then
+  AC_DEFINE(HAVE_HIDDEN_ALIAS, 1,
+  [Define to 1 if the compiler accepts gcc style __attribute__ ((visibility))
+and __attribute__ ((alias))])
+  GMP_DEFINE(HAVE_HIDDEN_ALIAS, [])
+fi
+])
 
 dnl  GMP_C_DOUBLE_FORMAT
 dnl  -------------------
