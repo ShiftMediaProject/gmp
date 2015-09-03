@@ -3265,7 +3265,6 @@ if test $gmp_cv_c_hidden_alias = yes; then
   AC_DEFINE(HAVE_HIDDEN_ALIAS, 1,
   [Define to 1 if the compiler accepts gcc style __attribute__ ((visibility))
 and __attribute__ ((alias))])
-  GMP_DEFINE(HAVE_HIDDEN_ALIAS, [])
 fi
 ])
 
