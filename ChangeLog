@@ -1,3 +1,7 @@
+2015-09-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpq/t-cmp_z.c (sizes_test): New function, tests sizes.
+
 2015-09-03  Torbjörn Granlund  <torbjorng@google.com>
 
 	* acinclude.m4 (GMP_C_HIDDEN_ALIAS): New.
