@@ -63,7 +63,7 @@ long __gmpn_cpuid (char [12], int);
 
 static struct {
   const char  *name;
-  const char  vendor[13];
+  const char  *vendor;
   unsigned    fms;
 } fake_cpuid_table[] = {
   { "core2",      "GenuineIntel", MAKE_FMS (6, 0xf) },
@@ -78,10 +78,10 @@ static struct {
   { "slm",        "GenuineIntel", MAKE_FMS (6, 0x37) },
   { "haswell",    "GenuineIntel", MAKE_FMS (6, 0x3c) },
   { "hwl",        "GenuineIntel", MAKE_FMS (6, 0x3c) },
-  { "broadwell"   "GenuineIntel", MAKE_FMS (6, 0x3d) },
-  { "bwl"         "GenuineIntel", MAKE_FMS (6, 0x3d) },
-  { "skylake"     "GenuineIntel", MAKE_FMS (6, 0x5e) },
-  { "sky"         "GenuineIntel", MAKE_FMS (6, 0x5e) },
+  { "broadwell",  "GenuineIntel", MAKE_FMS (6, 0x3d) },
+  { "bwl",        "GenuineIntel", MAKE_FMS (6, 0x3d) },
+  { "skylake",    "GenuineIntel", MAKE_FMS (6, 0x5e) },
+  { "sky",        "GenuineIntel", MAKE_FMS (6, 0x5e) },
   { "pentium4",   "GenuineIntel", MAKE_FMS (15, 3) },
 
   { "k8",         "AuthenticAMD", MAKE_FMS (15, 0) },
