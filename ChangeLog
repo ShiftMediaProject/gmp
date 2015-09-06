@@ -1,3 +1,11 @@
+2015-09-06  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86/fat/fat.c (fake_cpuid_table): Add missing commas.
+	* mpn/x86_64/fat/fat.c: Likewise.
+
+	* mpn/x86/fat/fat.c (fake_cpuid_table): Improve struct type.
+	* mpn/x86/fat/fat.c: Likewise.
+
 2015-09-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpq/t-cmp_z.c (sizes_test): New function, tests sizes.
@@ -5,6 +13,7 @@
 2015-09-03  Torbjörn Granlund  <torbjorng@google.com>
 
 	* acinclude.m4 (GMP_C_HIDDEN_ALIAS): New.
+	* configure.ac (GMP_C_HIDDEN_ALIAS): Invoke.
 
 2015-09-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
