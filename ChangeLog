@@ -1,5 +1,7 @@
 2015-09-06  Torbjörn Granlund  <torbjorng@google.com>
 
+	* Wrap remaining limb allocations in __GMP_ALLOCATE_FUNC_LIMBS.
+
 	* mpn/x86/fat/fat.c (fake_cpuid_table): Add missing commas.
 	* mpn/x86_64/fat/fat.c: Likewise.
 
