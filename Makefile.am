@@ -1,7 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2014 Free
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2015 Free
 # Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
@@ -147,7 +147,7 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/inits$U.lo mpf/set$U.lo	    \
   mpf/get_str$U.lo mpf/dump$U.lo mpf/size$U.lo mpf/eq$U.lo mpf/reldiff$U.lo \
   mpf/sqrt$U.lo mpf/random2$U.lo mpf/inp_str$U.lo mpf/out_str$U.lo	    \
   mpf/add$U.lo mpf/add_ui$U.lo mpf/sub$U.lo mpf/sub_ui$U.lo mpf/ui_sub$U.lo \
-  mpf/mul$U.lo mpf/mul_ui$U.lo mpf/div$U.lo mpf/div_ui$U.lo		    \
+  mpf/mul$U.lo mpf/mul_ui$U.lo mpf/div$U.lo mpf/div_ui$U.lo mpf/cmp_z$U.lo  \
   mpf/cmp$U.lo mpf/cmp_d$U.lo mpf/cmp_ui$U.lo mpf/cmp_si$U.lo		    \
   mpf/mul_2exp$U.lo mpf/div_2exp$U.lo mpf/abs$U.lo mpf/neg$U.lo		    \
   mpf/set_q$U.lo mpf/get_d$U.lo mpf/get_d_2exp$U.lo mpf/set_dfl_prec$U.lo   \
