@@ -5,6 +5,7 @@
 	* Makefile.am (MPF_OBJECTS): Add generate object to libs.
 	* gmp-h.in: Declare new function.
 	* tests/mpf/t-cmp_si.c: Test also the new function.
+	* doc/gmp.texi: Document it.
 
 2015-09-06  Torbjörn Granlund  <torbjorng@google.com>
 

@@ -4957,6 +4957,7 @@ Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
 @cindex Comparison functions
 
 @deftypefun int mpf_cmp (const mpf_t @var{op1}, const mpf_t @var{op2})
+@deftypefunx int mpf_cmp_z (const mpf_t @var{op1}, const mpz_t @var{op2})
 @deftypefunx int mpf_cmp_d (const mpf_t @var{op1}, double @var{op2})
 @deftypefunx int mpf_cmp_ui (const mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (const mpf_t @var{op1}, signed long int @var{op2})
