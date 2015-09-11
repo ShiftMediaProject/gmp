@@ -197,14 +197,17 @@ see https://www.gnu.org/licenses/.  */
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  37
-#define MULLO_MUL_N_THRESHOLD             8397
+#define MULLO_MUL_N_THRESHOLD             8648
+#define SQRLO_BASECASE_THRESHOLD             8
+#define SQRLO_DC_THRESHOLD                  56
+#define SQRLO_SQR_THRESHOLD               6440
 
 #define DC_DIV_QR_THRESHOLD                 42
 #define DC_DIVAPPR_Q_THRESHOLD             173
 #define DC_BDIV_QR_THRESHOLD                42
 #define DC_BDIV_Q_THRESHOLD                 77
 
-#define INV_MULMOD_BNM1_THRESHOLD           30
+#define INV_MULMOD_BNM1_THRESHOLD           34
 #define INV_NEWTON_THRESHOLD               202
 #define INV_APPR_THRESHOLD                 172
 
@@ -233,5 +236,5 @@ see https://www.gnu.org/licenses/.  */
 #define SET_STR_DC_THRESHOLD               204
 #define SET_STR_PRECOMPUTE_THRESHOLD      1160
 
-#define FAC_DSC_THRESHOLD                  166
-#define FAC_ODD_THRESHOLD                   24
+#define FAC_DSC_THRESHOLD                  173
+#define FAC_ODD_THRESHOLD                    0  /* always */
