@@ -1,3 +1,7 @@
+2015-09-12  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tests/mpf/t-cmp_si.c (check_data): Set precision reflecting data.
+
 2015-09-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/cmp_z.c: New file implementing mpf_cmp_z.
