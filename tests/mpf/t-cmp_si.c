@@ -82,7 +82,7 @@ check_data (void)
   int    got;
   int    i;
 
-  mpf_init (a, 128);
+  mpf_init2 (a, 128);
   mpz_init (bz);
   for (i = 0; i < numberof (data); i++)
     {
