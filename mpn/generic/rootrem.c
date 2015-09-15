@@ -3,6 +3,7 @@
 
    Contributed by Paul Zimmermann (algorithm) and
    Paul Zimmermann and Torbjorn Granlund (implementation).
+   Marco Bodrato wrote logbased_root to seed the loop. 
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL, AND HAVE MUTABLE INTERFACES.  IT'S
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
@@ -93,6 +94,8 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   ASSERT (up[un - 1] != 0);
   ASSERT (k > 1);
 
+  if (UNLIKELY (k == 2))
+    return mpn_sqrtrem (rootp, remp, up, un);
   /* (un-1)/k > 2 <=> un > 3k <=> (un + 2)/3 > k */
   if (remp == NULL && (un + 2) / 3 > k)
     /* Pad {up,un} with k zero limbs.  This will produce an approximate root
@@ -252,8 +255,8 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
   kk = k * xnb;		/* number of truncated bits in the input */
 
-  /* FIXME: Should we skipp all loops when xnb > snb ? */
-  for (uh = k - 1, logk = 2; (uh >>= 1) != 0; ++logk )
+  /* FIXME: Should we skip the next two loops when xnb <= snb ? */
+  for (uh = (k - 1) / 2, logk = 3; (uh >>= 1) != 0; ++logk )
     ;
   /* logk = ceil(log(k)/log(2)) + 1 */
 
@@ -292,6 +295,8 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
      So the worst case is S'/S=3/2, thus S'^k <= (3/2)^k * S^k. Since S^k
      fits in un limbs, the number of extra limbs needed is bounded by
      ceil(k*log2(3/2)/GMP_NUMB_BITS). */
+  /* THINK: with the use of logbased_root, maybe the constant is
+     258/256 instead of 3/2 ? log2(258/256) < 1/89 < 1/64 */
 #define EXTRA 2 + (mp_size_t) (0.585 * (double) k / (double) GMP_NUMB_BITS)
   TMP_ALLOC_LIMBS_3 (scratch, un + 1, /* used by mpn_div_q */
 		     qp, un + EXTRA,  /* will contain quotient and remainder
