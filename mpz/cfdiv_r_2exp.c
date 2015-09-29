@@ -73,7 +73,7 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
 	  /* if already smaller than limb_cnt then do nothing */
 	  if (abs_usize <= limb_cnt)
 	    return;
-	  wp = up;
+	  wp = (mp_ptr) up;
 	}
       else
 	{
