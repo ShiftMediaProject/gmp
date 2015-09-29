@@ -466,7 +466,11 @@
 #define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the `vsnprintf' function and it works properly. */
+#if _MSC_VER >= 1900
+#define HAVE_VSNPRINTF 1
+#else
 /* #undef HAVE_VSNPRINTF */
+#endif
 
 /* Define to 1 for Windos/64 */
 #define HOST_DOS64 1
