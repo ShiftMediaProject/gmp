@@ -4,7 +4,7 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgmp", "libgmp.vcxproj", "{02B94302-23D6-43EF-8865-95CDE99D5DC2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pre-build", "pre-build", "{66D589C0-9D0C-48E7-9054-7E4DECEBBAF6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pre-build (optional)", "pre-build (optional)", "{66D589C0-9D0C-48E7-9054-7E4DECEBBAF6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen-bases", "gen-bases.vcxproj", "{90BC19D8-3074-4BB6-BE35-58D46113CBE8}"
 EndProject
