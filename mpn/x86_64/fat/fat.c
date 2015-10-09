@@ -286,6 +286,9 @@ __gmpn_cpuvec_init (void)
 	    case 0x4a:		/* Silvermont */
 	    case 0x4c:		/* Airmont */
 	    case 0x4d:		/* Silvermont/Avoton */
+	    case 0x5a:		/* Silvermont */
+	    case 0x5c:		/* Goldmont */
+	    case 0x5f:		/* Goldmont */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      break;
@@ -315,12 +318,23 @@ __gmpn_cpuvec_init (void)
 	    case 0x47:		/* Broadwell */
 	    case 0x4f:		/* Broadwell server */
 	    case 0x56:		/* Broadwell microserver */
-	    case 0x5e:		/* Skylake */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
 	      CPUVEC_SETUP_coreihwl;
 	      CPUVEC_SETUP_coreibwl;
+	      break;
+	    case 0x4e:		/* Skylake client */
+	    case 0x55:		/* Skylake server */
+	    case 0x5e:		/* Skylake */
+	    case 0x8e:		/* Cabylake */
+	    case 0x9e:		/* Cabylake */
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreinhm;
+	      CPUVEC_SETUP_coreisbr;
+	      CPUVEC_SETUP_coreihwl;
+	      CPUVEC_SETUP_coreibwl;
+	      CPUVEC_SETUP_skylake;
 	      break;
 	    }
 	  break;

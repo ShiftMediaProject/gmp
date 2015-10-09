@@ -818,7 +818,7 @@ main ()
           else if (model == 0x2e) cpu_64bit = 1,            modelstr = "nehalem";    /* NHM Beckton */
           else if (model == 0x2f) cpu_64bit = 1,            modelstr = "westmere";   /* WSM Eagleton */
           else if (model == 0x36) cpu_64bit = 1,            modelstr = "atom";       /* Cedarview/Saltwell */
-          else if (model == 0x37) cpu_64bit = 1,            modelstr = "silvermont"; /* Atom Silvermont */
+          else if (model == 0x37) cpu_64bit = 1,            modelstr = "silvermont"; /* Silvermont */
           else if (model == 0x3a) cpu_64bit = 1, cpu_avx=1, modelstr = "ivybridge";  /* IBR */
           else if (model == 0x3c) cpu_64bit = 1, cpu_avx=1, modelstr = "haswell";    /* Haswell client */
           else if (model == 0x3d) cpu_64bit = 1, cpu_avx=1, modelstr = "broadwell";  /* Broadwell */
@@ -830,9 +830,17 @@ main ()
           else if (model == 0x4a) cpu_64bit = 1,            modelstr = "silvermont"; /* Silvermont */
           else if (model == 0x4c) cpu_64bit = 1,            modelstr = "silvermont"; /* Airmont */
           else if (model == 0x4d) cpu_64bit = 1,            modelstr = "silvermont"; /* Silvermont/Avoton */
+          else if (model == 0x4e) cpu_64bit = 1, cpu_avx=1, modelstr = "skylake";    /* Skylake client */
           else if (model == 0x4f) cpu_64bit = 1, cpu_avx=1, modelstr = "broadwell";  /* Broadwell server */
+          else if (model == 0x55) cpu_64bit = 1, cpu_avx=1, modelstr = "skylake";    /* Skylake server */
           else if (model == 0x56) cpu_64bit = 1, cpu_avx=1, modelstr = "broadwell";  /* Broadwell microserver */
+          else if (model == 0x57) cpu_64bit = 1,            modelstr = "knightslanding"; /* aka Xeon Phi */
+          else if (model == 0x5a) cpu_64bit = 1,            modelstr = "silvermont"; /* Silvermont */
+          else if (model == 0x5c) cpu_64bit = 1,            modelstr = "goldmont";   /* Goldmont */
           else if (model == 0x5e) cpu_64bit = 1, cpu_avx=1, modelstr = "skylake";    /* Skylake */
+          else if (model == 0x5f) cpu_64bit = 1,            modelstr = "goldmont";   /* Goldmont */
+          else if (model == 0x8e) cpu_64bit = 1, cpu_avx=1, modelstr = "cabylake";   /* Capylake Y/U */
+          else if (model == 0x9e) cpu_64bit = 1, cpu_avx=1, modelstr = "cabylake";   /* Capylake desktop */
           else                    cpu_64bit = 1,            modelstr = "nehalem";    /* default */
 
 	  if (strcmp (modelstr, "haswell") == 0)
