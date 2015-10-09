@@ -1,9 +1,18 @@
+2015-10-09  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Recognise cabylake and goldmont and more versions of
+	skylake and silvermont.
+	* acinclude.m4 (X86_64_PATTERN): Add cabylake and goldmont.
+	* config.sub: Corresponding changes.
+	* configure.ac: Corresponding changes.
+	* mpn/x86_64/fat/fat.c: Corresponding changes.
+
 2015-09-12  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpf/clear.c, mpf/clears.c, mpf/inits.c, mpq/clear.c, mpq/clears.c
 	* mpq/inits.c, mpz/clear.c, mpz/clears.c, mpz/inits.c:
 	Streamline, use macros.
-	
+
 2015-09-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/cfdiv_r_2exp.c: Use mpn_neg and MPZ_NEWALLOC.
