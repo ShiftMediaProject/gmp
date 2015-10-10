@@ -204,10 +204,10 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 	  up += un - n_limbs_needed;
 	  un = n_limbs_needed;
 	}
-      pp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 2);
-      tp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 2);
+      pp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 4);
+      tp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 4);
 
-      pn = mpn_pow_1_highpart (pp, &ign, (mp_limb_t) base, e, n_limbs_needed, tp);
+      pn = mpn_pow_1_highpart (pp, &ign, (mp_limb_t) base, e, n_limbs_needed + 1, tp);
       if (un > pn)
 	mpn_mul (tp, up, un, pp, pn);	/* FIXME: mpn_mul_highpart */
       else
@@ -241,10 +241,10 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 	  up += un - n_limbs_needed;
 	  un = n_limbs_needed;
 	}
-      pp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 2);
-      tp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 2);
+      pp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 4);
+      tp = TMP_ALLOC_LIMBS (2 * n_limbs_needed + 4);
 
-      pn = mpn_pow_1_highpart (pp, &ign, (mp_limb_t) base, e, n_limbs_needed, tp);
+      pn = mpn_pow_1_highpart (pp, &ign, (mp_limb_t) base, e, n_limbs_needed + 1, tp);
 
       xn = n_limbs_needed + (n_less_limbs_needed-ign);
       xp = TMP_ALLOC_LIMBS (xn);
