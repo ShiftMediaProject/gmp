@@ -1,3 +1,10 @@
+2015-10-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gen-fib.c: Correct the name of the program in error message.
+	* gen-fac.c: Likewise.
+
+	* mpf/get_str.c: Increase precision of base^e computation.
+
 2015-10-09  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess: Recognise cabylake and goldmont and more versions of
