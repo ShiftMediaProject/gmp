@@ -1,6 +1,6 @@
 /* Generate data for combinatorics: fac_ui, bin_uiui, ...
 
-Copyright 2002, 2011-2014 Free Software Foundation, Inc.
+Copyright 2002, 2011-2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -268,7 +268,7 @@ main (int argc, char *argv[])
 
   if (argc != 3)
     {
-      fprintf (stderr, "Usage: gen-fac_ui limbbits nailbits\n");
+      fprintf (stderr, "Usage: gen-fac limbbits nailbits\n");
       exit (1);
     }
   limb_bits = atoi (argv[1]);

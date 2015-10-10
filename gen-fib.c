@@ -1,6 +1,6 @@
 /* Generate Fibonacci table data.
 
-Copyright 2001, 2002, 2004, 2012, 2014 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2004, 2012, 2014, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -123,7 +123,7 @@ main (int argc, char *argv[])
 
   if (argc != 4)
     {
-      fprintf (stderr, "Usage: gen-bases <header|table> <limbbits> <nailbits>\n");
+      fprintf (stderr, "Usage: gen-fib <header|table> <limbbits> <nailbits>\n");
       exit (1);
     }
 
