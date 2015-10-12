@@ -1,3 +1,11 @@
+2015-10-12  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac: Reject AVX for NetBSD.
+
+2015-10-11  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (fat_path): Add skylake.
+
 2015-10-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gen-fib.c: Correct the name of the program in error message.
