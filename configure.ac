@@ -1833,8 +1833,11 @@ case $host in
 	;;
     esac
 
-    case $host_cpu in
-      *noavx)
+    case $host in
+      # Disable AVX if the CPU part tells us AVX is unavailable, but also
+      # unconditionally for NetBSD where they don't work but OSXSAVE is set
+      # to claim the contrary.
+      *noavx-*-* | *-*-netbsd*)
 	gcc_cflags_noavx="-mno-avx";;
     esac
 
