@@ -17,7 +17,10 @@ Changes between GMP version 6.0.* and 6.1.0
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
 
-  * New public mpn functions mpn_divexact_1 and mpn_cnd_swap.
+  * New public mpn functions mpn_divexact_1, mpn_zero_p, and mpn_cnd_swap.
+
+  * New public mpq_cmp_z function, to efficiently compare rationals with
+    integers.
 
   * Support for Darwin in all x86 code, thereby enabling fat builds on Darwin.
 
