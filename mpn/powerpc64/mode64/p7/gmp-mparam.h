@@ -224,7 +224,7 @@ see https://www.gnu.org/licenses/.  */
 #define MU_DIVAPPR_Q_THRESHOLD            1142
 #define MUPI_DIV_QR_THRESHOLD               50
 #define MU_BDIV_QR_THRESHOLD              1120
-#define MU_BDIV_Q_THRESHOLD                 68
+#define MU_BDIV_Q_THRESHOLD               1470
 
 #define POWM_SEC_TABLE  3,25,194,712,2177
 
