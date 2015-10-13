@@ -1,3 +1,8 @@
+2015-10-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpf/clears.c, mpf/inits.c, mpq/clears.c, mpq/inits.c,
+	* mpz/clears.c, mpz/inits.c: Keep on supporting empty list.
+
 2015-10-13  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__GMPP_DEFINE_BINARY_TYPE_FUNCTION): Allow mixed operations.
