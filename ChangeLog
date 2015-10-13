@@ -1,3 +1,9 @@
+2015-10-13  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_cmp_function, __gmp_binary_equal, __gmp_binary_less):
+	Handle mixed operations.
+	(__gmp_cmp_function): Move before __gmp_binary_equal.
+
 2015-10-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/pow_ui.c: Increased precision of partial results.
