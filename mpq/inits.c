@@ -39,12 +39,11 @@ mpq_inits (mpq_ptr x, ...)
 
   va_start (ap, x);
 
-  do
+  while (x != NULL)
     {
       mpq_init (x);
       x = va_arg (ap, mpq_ptr);
     }
-  while (x != NULL);
 
   va_end (ap);
 }

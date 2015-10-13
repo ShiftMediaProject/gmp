@@ -39,12 +39,11 @@ mpf_clears (mpf_ptr x, ...)
 
   va_start (ap, x);
 
-  do
+  while (x != NULL)
     {
       __GMP_FREE_FUNC_LIMBS (PTR(x), PREC(x) + 1);
       x = va_arg (ap, mpf_ptr);
     }
-  while (x != NULL);
 
   va_end (ap);
 }

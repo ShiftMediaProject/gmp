@@ -39,7 +39,7 @@ mpz_inits (mpz_ptr x, ...)
 
   va_start (ap, x);
 
-  do
+  while (x != NULL)
     {
       ALLOC (x) = 1;
       PTR (x) = __GMP_ALLOCATE_FUNC_LIMBS (1);
@@ -52,7 +52,6 @@ mpz_inits (mpz_ptr x, ...)
 
       x = va_arg (ap, mpz_ptr);
     }
-  while (x != NULL);
 
   va_end (ap);
 }
