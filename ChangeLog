@@ -1,6 +1,7 @@
 2015-10-13  Marc Glisse  <marc.glisse@inria.fr>
 
-	* gmpxx.h (__gmp_cmp_function, __gmp_binary_equal, __gmp_binary_less):
+	* gmpxx.h (__GMPP_DEFINE_BINARY_TYPE_FUNCTION): Allow mixed operations.
+	(__gmp_cmp_function, __gmp_binary_equal, __gmp_binary_less):
 	Handle mixed operations.
 	(__gmp_cmp_function): Move before __gmp_binary_equal.
 
