@@ -1663,8 +1663,11 @@ rm -f conftest*
 
 
 dnl Checks whether the stack can be marked nonexecutable by passing an option
-dnl to the C-compiler when acting on .s files. Appends that option to ASFLAGS.
+dnl to the C-compiler when acting on .s files. Appends that option to ASMFLAGS.
 dnl This macro is adapted from one found in GLIBC-2.3.5.
+dnl FIXME: This test looks broken. It tests that a file with .note.GNU-stack...
+dnl can be compiled/assembled with -Wa,--noexecstack.  It does not determine
+dnl if that command-line option has any effect on general asm code.
 AC_DEFUN([CL_AS_NOEXECSTACK],[
 dnl AC_REQUIRE([AC_PROG_CC]) GMP uses something else
 AC_CACHE_CHECK([whether assembler supports --noexecstack option],
