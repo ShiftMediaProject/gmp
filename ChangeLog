@@ -1,3 +1,17 @@
+2015-10-14  Torbjörn Granlund  <torbjorng@google.com>
+
+	* demos/pexpr.c (main): Clear out a variable.
+
+	* mpn/generic/sqrlo_basecase.c: Move things before addmul_1 to reduce
+	register pressure.
+
+	* .hgignore: Add 'compile' and 'test-driver'.
+
+	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Simplify, add ASSERT.
+	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Likewise.
+
+	* tune/tuneup.c (tune_mu_bdiv): Start at measured BDIV_DC_ thresholds.
+
 2015-10-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpf/clears.c, mpf/inits.c, mpq/clears.c, mpq/inits.c,
