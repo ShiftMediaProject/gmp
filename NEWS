@@ -12,7 +12,8 @@ Changes between GMP version 6.0.* and 6.1.0
   SPEEDUPS
   * Speedup for Intel Broadwell.
 
-  * Square root is now faster when the remainder is not needed.
+  * Square root is now faster when the remainder is not needed. Also the speed
+    to compute the k-th root improved, for small sizes.
 
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
@@ -42,6 +43,10 @@ Changes between GMP version 6.0.* and 6.1.0
   MISC
   * We now use manufacturers' code names for x86 CPUs, e.g., "haswell" instead
     of names derived from the commercial brands.
+
+  * Small improvements and better coverage for the test suite.
+
+  * Minor portability enhancements.
 
   * The various FreeBSD problems listed for 6.0.0 affect this release too.
 
