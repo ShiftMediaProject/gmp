@@ -141,7 +141,7 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 #else
 	      hi += lo >> GMP_NAIL_BITS;
 	      rp[1] = hi & GMP_NUMB_MASK;
-	      rp[2] = (hi1 + ul1 * ul1 + (hi >> GMP_NUMB_BITS)) & GMP_NUMB_MASK;	      
+	      rp[2] = (hi1 + ul1 * ul1 + (hi >> GMP_NUMB_BITS)) & GMP_NUMB_MASK;
 #endif
 	    }
 #endif
@@ -161,11 +161,11 @@ mpn_sqrlo_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
       {
 	mp_limb_t cy;
 
-	cy = mpn_mul_1 (tp, up + 1, n - 1, ul) + ul * up[n];
+	cy = ul * up[n] + mpn_mul_1 (tp, up + 1, n - 1, ul);
 	for (i = 1; 2 * i + 1 < n; ++i)
 	  {
 	    ul = up[i];
-	    cy += mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i - 1, ul) + ul * up[n - i];
+	    cy += ul * up[n - i] + mpn_addmul_1 (tp + 2 * i, up + i + 1, n - 2 * i - 1, ul);
 	  }
 	tp [n-1] = (cy + ((n & 1)?up[i] * up[i + 1]:0)) & GMP_NUMB_MASK;
       }
