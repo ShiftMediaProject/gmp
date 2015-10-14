@@ -932,7 +932,7 @@ main ()
     /* If our cpuid-based CPU identification thinks this is a 32-bit CPU but
        cpuid claims AMD64 capabilities, then revert to the generic "x86_64".
        This is of course wrong, but it can happen in some virtualisers and
-       emulators, so this workaround allows for successful 64-bit builds.  */
+       emulators, and this workaround allows for successful 64-bit builds.  */
     modelstr = "x86_64";
   else if (cpu_avx && ! (cpuid_avx && cpuid_osxsave))
     /* For CPUs nominally capable of executing AVX, append "noavx" when not
