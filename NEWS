@@ -9,6 +9,14 @@ Changes between GMP version 6.0.* and 6.1.0
   BUGS FIXED
   * The prototype for mpn_com is now provided by gmp.h for any configuration.
 
+  * Healed possible failures of mpn_sec_sqr for non-cryptographic sizes for
+    some obsolete CPUs.
+
+  * The option --disable-assembly now disables al inlined asm.
+
+  * Fixed bug affecting mini-gmp's bitwise functions mpz_setbit, mpz_clrbit,
+    and mpz_combit.
+
   SPEEDUPS
   * Speedup for Intel Broadwell.
 
