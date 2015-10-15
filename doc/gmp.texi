@@ -10670,8 +10670,9 @@ multiplication.
 
 Marco Bodrato helped implement the new Toom multiply code for GMP 4.3 and
 implemented most of the new Toom multiply and squaring code for 5.0.
-He is the main author of the current mpn_mulmod_bnm1 and mpn_mullo_n.  Marco
-also wrote the functions mpn_invert and mpn_invertappr.  He is the author of
+He is the main author of the current mpn_mulmod_bnm1, mpn_mullo_n, and
+mpn_sqrlo.  Marco also wrote the functions mpn_invert and mpn_invertappr,
+and improved the speed of integer root extraction.  He is the author of
 the current combinatorial functions: binomial, factorial, multifactorial,
 primorial.
 
