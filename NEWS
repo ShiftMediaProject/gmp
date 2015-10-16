@@ -12,7 +12,7 @@ Changes between GMP version 6.0.* and 6.1.0
   * Healed possible failures of mpn_sec_sqr for non-cryptographic sizes for
     some obsolete CPUs.
 
-  * The option --disable-assembly now disables al inlined asm.
+  * The option --disable-assembly now disables all inlined asm.
 
   * Fixed bug affecting mini-gmp's bitwise functions mpz_setbit, mpz_clrbit,
     and mpz_combit.
