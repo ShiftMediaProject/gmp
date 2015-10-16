@@ -60,7 +60,6 @@ main (int argc, char **argv)
   long count = COUNT;
   mp_ptr mp;
   mp_ptr ap;
-  mp_ptr vp;
   mp_ptr tp;
   mp_ptr scratch;
   mpz_t m, a, r, g;
@@ -92,7 +91,6 @@ main (int argc, char **argv)
 
   mp = TMP_ALLOC_LIMBS (MAX_SIZE);
   ap = TMP_ALLOC_LIMBS (MAX_SIZE);
-  vp = TMP_ALLOC_LIMBS (MAX_SIZE);
   tp = TMP_ALLOC_LIMBS (MAX_SIZE);
   scratch = TMP_ALLOC_LIMBS (mpn_sec_invert_itch (MAX_SIZE) + 1);
 
