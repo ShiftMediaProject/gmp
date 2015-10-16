@@ -1,3 +1,17 @@
+2015-10-16  Hans Wennborg <hwennborg at google.com>
+
+	* mpn/generic/div_qr_2.c: Insert parentheses around & expressions.
+	* mpn/generic/toom44_mul.c: Likewise.
+	* mpn/generic/toom53_mul.c: Likewise.
+	* mpn/generic/toom62_mul.c: Likewise.
+	* tests/mpn/t-bdiv.c: Simplify conditional printing of whitespace.
+	* tests/mpn/t-div.c: Likewise.
+
+2015-10-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configfsf.sub: Updated to version 2015-08-20, from gnulib.
+	* configfsf.guess: Updated to version 2015-09-14, from gnulib.
+
 2015-10-14  Torbjörn Granlund  <torbjorng@google.com>
 
 	* demos/pexpr.c (main): Clear out a variable.
