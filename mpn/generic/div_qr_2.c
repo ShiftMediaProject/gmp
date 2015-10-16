@@ -152,7 +152,7 @@ see https://www.gnu.org/licenses/.  */
 									\
     sub_ddmmss (r1, r0, n1, n0, _t1, _t0);				\
 									\
-    _mask = -(mp_limb_t) (r1 >= _q1 & (r1 > _q1 | r0 >= _q0));  /* (r1,r0) >= (q1,q0) */  \
+    _mask = -(mp_limb_t) ((r1 >= _q1) & (r1 > _q1 | r0 >= _q0));  /* (r1,r0) >= (q1,q0) */  \
     add_ssaaaa (r1, r0, r1, r0, d1 & _mask, d0 & _mask);		\
     sub_ddmmss (_q3, _q2, _q3, _q2, CNST_LIMB(0), -_mask);		\
 									\

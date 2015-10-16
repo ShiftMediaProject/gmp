@@ -217,7 +217,7 @@ mpn_toom44_mul (mp_ptr pp,
   TOOM44_MUL_N_REC (vh, apx, bpx, n + 1, tp);	/* vh,  2n+1 limbs */
 
   /* Compute apx = a0 + a1 + a2 + a3 and amx = a0 - a1 + a2 - a3.  */
-  flags = (enum toom7_flags) (flags | toom7_w3_neg & mpn_toom_eval_dgr3_pm1 (apx, amx, ap, n, s, tp));
+  flags = (enum toom7_flags) (flags | (toom7_w3_neg & mpn_toom_eval_dgr3_pm1 (apx, amx, ap, n, s, tp)));
 
   /* Compute bpx = b0 + b1 + b2 + b3 and bmx = b0 - b1 + b2 - b3.  */
   flags = (enum toom7_flags) (flags ^ toom7_w3_neg & mpn_toom_eval_dgr3_pm1 (bpx, bmx, bp, n, t, tp));

@@ -111,7 +111,7 @@ mpn_toom53_mul (mp_ptr pp,
   flags = (enum toom7_flags) (toom7_w3_neg & mpn_toom_eval_pm1 (as1, asm1, 4, ap, n, s, gp));
 
   /* Compute as2 and asm2. */
-  flags = (enum toom7_flags) (flags | toom7_w1_neg & mpn_toom_eval_pm2 (as2, asm2, 4, ap, n, s, gp));
+  flags = (enum toom7_flags) (flags | (toom7_w1_neg & mpn_toom_eval_pm2 (as2, asm2, 4, ap, n, s, gp)));
 
   /* Compute ash = 16 a0 + 8 a1 + 4 a2 + 2 a3 + a4
      = 2*(2*(2*(2*a0 + a1) + a2) + a3) + a4  */
