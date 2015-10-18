@@ -1,3 +1,11 @@
+2015-10-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpf/t-cmp_si.c: Initialise a variable (only when error arise)
+	* mpn/generic/toom43_mul.c: Insert parentheses around & expressions.
+	* mpn/generic/toom52_mul.c: Likewise.
+	* tests/mpn/t-minvert.c: Remove an unused var.
+	* tests/mpz/t-cong_2exp.c: Likewise.
+
 2015-10-16  Hans Wennborg <hwennborg at google.com>
 
 	* mpn/generic/div_qr_2.c: Insert parentheses around & expressions.
