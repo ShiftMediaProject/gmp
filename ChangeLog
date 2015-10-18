@@ -1,3 +1,8 @@
+2015-10-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+	* gmp-h.in: Bump version.
+
 2015-10-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpf/t-cmp_si.c: Initialise a variable (only when error arise)
