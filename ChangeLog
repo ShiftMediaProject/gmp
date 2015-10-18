@@ -1,3 +1,7 @@
+2015-10-18  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm64/gmp-mparam.h: New file.
+
 2015-10-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
