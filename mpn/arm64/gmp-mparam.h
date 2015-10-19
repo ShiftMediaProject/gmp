@@ -28,8 +28,8 @@ You should have received copies of the GNU General Public License and the
 GNU Lesser General Public License along with the GNU MP Library.  If not,
 see https://www.gnu.org/licenses/.  */
 
-#define GMP_LIMB_BITS 32
-#define GMP_LIMB_BYTES 4
+#define GMP_LIMB_BITS 64
+#define GMP_LIMB_BYTES 8
 
 /* 2400 MHz AppliedMicro X-Gene */
 /* FFT tuning limit = 0.5 M */
