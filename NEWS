@@ -19,8 +19,11 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * Various problems related to precision for mpf have been fixed.
 
+  * Fixed incorrect stack alignment in calls from assembly code.
+
   SPEEDUPS
-  * Speedup for Intel Broadwell.
+  * Speedup for Intel Broadwell and Skylake though assembly code making use of
+    new ADX instructions.
 
   * Square root is now faster when the remainder is not needed. Also the speed
     to compute the k-th root improved, for small sizes.
@@ -37,14 +40,14 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * Improved arm64 support.
 
-  * Support for more arm processors.
+  * Support for more 32-bit arm processors.
 
   * Support compilation with clang/llvm for more platforms.  Caution: GMP
     triggers mis-compilation bugs in clang for many platforms, such as arm, x86
     (32-bit and 64-bit), powerpc, mips.
 
   * Support for AVX-less modern x86 CPUs, either because the CPU vendor chose
-    to disable it, or because the running kernel lacks AVX context switch
+    to disable AVX, or because the running kernel lacks AVX context switch
     support.
 
   * Stack usage trimmed; we believe 512 KiB is now sufficient for any GMP call,
