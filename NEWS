@@ -17,6 +17,8 @@ Changes between GMP version 6.0.* and 6.1.0
   * Fixed bug affecting mini-gmp's bitwise functions mpz_setbit, mpz_clrbit,
     and mpz_combit.
 
+  * Various problems related to precision for mpf have been fixed.
+
   SPEEDUPS
   * Speedup for Intel Broadwell.
 
@@ -58,6 +60,8 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * The various FreeBSD problems listed for 6.0.0 affect this release too.
 
+  * Tuned values for FFT multiplications are provided for larger number on
+    many platforms.
 
 Changes between GMP version 5.1.* and 6.0.0
 
