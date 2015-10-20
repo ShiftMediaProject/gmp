@@ -1,6 +1,6 @@
 dnl  Intel P5 mpn_hamdist -- mpn hamming distance.
 
-dnl  Copyright 2001, 2002, 2014 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2014, 2015 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -45,6 +45,9 @@ C The slightly strange quoting here helps the renaming done by tune/many.pl.
 deflit(TABLE_NAME,
 m4_assert_defined(`GSYM_PREFIX')
 GSYM_PREFIX`'mpn_popcount``'_table')
+
+C FIXME: referencing popcount.asm's table is incorrect as it hurt incremental
+C linking.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC2, 8)
