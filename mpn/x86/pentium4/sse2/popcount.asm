@@ -99,6 +99,10 @@ define(`LIMBS_PER_2XMM', eval(32/GMP_LIMB_BYTES))
 
 undefine(`psadbw')			C override inherited m4 version
 
+C This file is shared between 32-bit and 64-bit builds.  Only the former has
+C LEAL.  Default LEAL as an alias of LEA.
+ifdef(`LEAL',,`define(`LEAL', `LEA($1,$2)')')
+
 ASM_START()
 
 C Make cnsts global to work around Apple relocation bug.
