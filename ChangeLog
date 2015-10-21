@@ -1,3 +1,9 @@
+2015-10-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Version 6.1.0-rc1 published.
+
+	* gmp-h.in: Revert versioni for RC.
+
 2015-10-20  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86/pentium4/sse2/popcount.asm: Use LEAL.
