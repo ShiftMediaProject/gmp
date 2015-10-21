@@ -7,7 +7,7 @@ medium, provided this notice is preserved.
 Changes between GMP version 6.0.* and 6.1.0
 
   BUGS FIXED
-  * The prototype for mpn_com is now provided by gmp.h for any configuration.
+  * The public function mpn_com is now correctly declared in gmp.h.
 
   * Healed possible failures of mpn_sec_sqr for non-cryptographic sizes for
     some obsolete CPUs.
@@ -19,7 +19,9 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * Various problems related to precision for mpf have been fixed.
 
-  * Fixed incorrect stack alignment in calls from assembly code.
+  * Fixed ABI incompatible stack alignment in calls from assembly code.
+
+  * Fixed PIC bug in popcount affecting Intel processors using the 32-bit ABI.
 
   SPEEDUPS
   * Speedup for Intel Broadwell and Skylake though assembly code making use of
@@ -27,6 +29,8 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * Square root is now faster when the remainder is not needed. Also the speed
     to compute the k-th root improved, for small sizes.
+
+  * Improved arm64 support.
 
   FEATURES
   * New C++ functions gcd and lcm for mpz_class.
@@ -38,20 +42,21 @@ Changes between GMP version 6.0.* and 6.1.0
 
   * Support for Darwin in all x86 code, thereby enabling fat builds on Darwin.
 
-  * Improved arm64 support.
-
   * Support for more 32-bit arm processors.
 
   * Support compilation with clang/llvm for more platforms.  Caution: GMP
-    triggers mis-compilation bugs in clang for many platforms, such as arm, x86
-    (32-bit and 64-bit), powerpc, mips.
+    triggers mis-compilation bugs in clang for many platforms, such as arm,
+    x86 (32-bit and 64-bit), powerpc, mips.
 
   * Support for AVX-less modern x86 CPUs, either because the CPU vendor chose
     to disable AVX, or because the running kernel lacks AVX context switch
     support.
 
-  * Stack usage trimmed; we believe 512 KiB is now sufficient for any GMP call,
-    irrespective of operand size.
+  * Stack usage trimmed; we believe 512 KiB is now sufficient for any GMP
+    call, irrespective of operand size.
+
+  * Support for NetBSD under Xen; we switch off AVX unconditionally under
+    NetBSD since a bug in NetBSD makes AVX fail under Xen.
 
   MISC
   * We now use manufacturers' code names for x86 CPUs, e.g., "haswell" instead
