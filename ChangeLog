@@ -1,3 +1,10 @@
+2015-10-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configfsf.guess: Updated to version 2015-10-21, for a typo.
+
+	* tests/cxx/t-ops.cc (check_mpq): Compare also with mpz.
+	(check_mpf): Compare also with mpz and mpq.
+
 2015-10-25  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac: Avoid passing ambiguous -march=skylake.
