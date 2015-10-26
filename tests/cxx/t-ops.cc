@@ -541,6 +541,13 @@ check_mpq (void)
     c = cmp(a, b); ASSERT_ALWAYS(c > 0);
     c = cmp(b, a); ASSERT_ALWAYS(c < 0);
   }
+  {
+    mpq_class a(123);
+    mpz_class b(45);
+    int c;
+    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
+    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
+  }
 }
 
 void
@@ -702,6 +709,20 @@ check_mpf (void)
   {
     mpf_class a(123);
     double b = 45;
+    int c;
+    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
+    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
+  }
+  {
+    mpf_class a(123);
+    mpz_class b(45);
+    int c;
+    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
+    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
+  }
+  {
+    mpf_class a(123);
+    mpq_class b(45);
     int c;
     c = cmp(a, b); ASSERT_ALWAYS(c > 0);
     c = cmp(b, a); ASSERT_ALWAYS(c < 0);
