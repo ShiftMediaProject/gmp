@@ -1,3 +1,10 @@
+2015-10-28  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tests/mpf/t-pow_ui.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Compile it.
+
+	* mpf/pow_ui.c: Rewrite for accuracy and performance.
+
 2015-10-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configfsf.guess: Updated to version 2015-10-21, for a typo.
