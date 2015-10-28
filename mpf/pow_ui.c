@@ -30,25 +30,44 @@ see https://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 void
 mpf_pow_ui (mpf_ptr r, mpf_srcptr b, unsigned long int e)
 {
-  mpf_t b2;
+  mpf_t t;
+  int cnt;
 
-  mpf_init2 (b2, mpf_get_prec (r) + 1);
-  mpf_set (b2, b);
-
-  if ((e & 1) != 0)
-    mpf_set (r, b);
-  else
-    mpf_set_ui (r, 1);
-  while (e >>= 1)
+  if (e == 0)
     {
-      mpf_mul (b2, b2, b2);
-      if ((e & 1) != 0)
-	mpf_mul (r, r, b2);
+      mpf_set_ui (r, 1);
+      return;
     }
 
-  mpf_clear (b2);
+  count_leading_zeros (cnt, (mp_limb_t) e);
+  cnt = GMP_LIMB_BITS - 1 - cnt;
+
+  /* Use a temp for all intermediate result.  We might want to add an exponent
+     derived # of bits here too, e.g.  ((cnt >> GMP_LIMB_BITS/2) != 0).  */
+  mpf_init2 (t, mpf_get_prec (r) + GMP_LIMB_BITS);
+
+  mpf_set (t, b);		/* consume most significant bit */
+  while (--cnt > 0)
+    {
+      mpf_mul (t, t, t);
+      if ((e >> cnt) & 1)
+	mpf_mul (t, t, b);
+    }
+
+  if (e & 1)
+    {
+      mpf_mul (t, t, t);
+      mpf_mul (r, t, b);
+    }
+  else
+    {
+      mpf_mul (r, t, t);
+    }
+
+  mpf_clear (t);
 }
