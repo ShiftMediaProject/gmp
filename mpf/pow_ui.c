@@ -38,9 +38,12 @@ mpf_pow_ui (mpf_ptr r, mpf_srcptr b, unsigned long int e)
   mpf_t t;
   int cnt;
 
-  if (e == 0)
+  if (e <= 1)
     {
-      mpf_set_ui (r, 1);
+      if (e == 0)
+	mpf_set_ui (r, 1);
+      else
+	mpf_set (r, b);
       return;
     }
 
