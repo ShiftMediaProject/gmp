@@ -43,13 +43,13 @@ check_data (void)
 	{
 	  mpf_pow_ui (r, b1, e);
 
-	  if (mpf_cmp_ui (r, ~CNST_LIMB(0)) > 0)
-	    break;
-
 	  if (mpf_cmp (r, r2))
 	    abort ();
 
 	  mpf_mul_ui (r2, r2, b);
+
+	  if (mpf_cmp_ui (r2, GMP_NUMB_MAX) > 0)
+	    break;
 	}
     }
 
