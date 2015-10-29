@@ -1,3 +1,11 @@
+2015-10-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* demos/factorize.c: mpz_div_2exp => mpz_tdiv_q_2exp.
+	* demos/perl/GMP.xs: Likewise.
+	* tests/mpf/t-pow_ui.c: Use reference value to check the size.
+
+	* gmp-h.in: Update version.
+
 2015-10-28  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tests/mpf/t-pow_ui.c: New file.
