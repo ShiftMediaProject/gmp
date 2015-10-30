@@ -4,6 +4,9 @@
 	* demos/perl/GMP.xs: Likewise.
 	* tests/mpf/t-pow_ui.c: Use reference value to check the size.
 
+	* mini-gmp/mini-gmp.c: Removed a typo (spotted by Paul Zimmermann).
+	* doc/gmp.texi (Floating-point): Remove "infinite precision" claim.
+
 	* gmp-h.in: Update version.
 
 2015-10-28  Torbjörn Granlund  <torbjorng@google.com>
