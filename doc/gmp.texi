@@ -4567,8 +4567,8 @@ that if a float is exactly represented in only a few bits then only those bits
 will be used in a calculation, even if the selected precision is high.
 
 All calculations are performed to the precision of the destination variable.
-Each function calculate with ``higher'' then truncate to the destination
-precision.
+Each function calculate with ``higher'' precision then truncate to the
+destination precision.
 
 The precision selected by the user for a variable is a minimum value, GMP may
 increase it to facilitate efficient calculation.  Currently this means
