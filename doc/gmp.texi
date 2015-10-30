@@ -4567,9 +4567,8 @@ that if a float is exactly represented in only a few bits then only those bits
 will be used in a calculation, even if the selected precision is high.
 
 All calculations are performed to the precision of the destination variable.
-Each function is defined to calculate with ``infinite precision'' followed by
-a truncation to the destination precision, but of course the work done is only
-what's needed to determine a result under that definition.
+Each function calculate with ``higher'' then truncate to the destination
+precision.
 
 The precision selected by the user for a variable is a minimum value, GMP may
 increase it to facilitate efficient calculation.  Currently this means
@@ -4585,16 +4584,16 @@ choices.)
 
 The @code{mpf} functions and variables have no special notion of infinity or
 not-a-number, and applications must take care not to overflow the exponent or
-results will be unpredictable.  This might change in a future release.
+results will be unpredictable.
 
 Note that the @code{mpf} functions are @emph{not} intended as a smooth
 extension to IEEE P754 arithmetic.  In particular results obtained on one
 computer often differ from the results on a computer with a different word
 size.
 
-The GMP extension library MPFR (@url{http://mpfr.org}) is an alternative to
-GMP's @code{mpf} functions.  MPFR provides well-defined precision and accurate
-rounding, and thereby naturally extends IEEE P754.
+New projects should consider using the GMP extension library MPFR
+(@url{http://mpfr.org}) instead.  MPFR provides well-defined precision and
+accurate rounding, and thereby naturally extends IEEE P754.
 
 @menu
 * Initializing Floats::
