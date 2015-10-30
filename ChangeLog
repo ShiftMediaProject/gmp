@@ -1,3 +1,7 @@
+2015-10-30  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpf/pow_ui.c: Add log(e) precision bits.
+
 2015-10-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* demos/factorize.c: mpz_div_2exp => mpz_tdiv_q_2exp.
