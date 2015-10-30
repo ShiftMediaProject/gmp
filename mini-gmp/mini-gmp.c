@@ -269,7 +269,7 @@ gmp_default_realloc (void *old, size_t old_size, size_t new_size)
   p = realloc (old, new_size);
 
   if (!p)
-    gmp_die("gmp_default_realoc: Virtual memory exhausted.");
+    gmp_die("gmp_default_realloc: Virtual memory exhausted.");
 
   return p;
 }
