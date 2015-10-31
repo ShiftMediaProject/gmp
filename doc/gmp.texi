@@ -4174,7 +4174,7 @@ void foo (mpz_t x)
   mp_limb_t *xp;
 
   n = mpz_size (x);
-  xp = mpz_limbs_modify(x, 2*n);
+  xp = mpz_limbs_modify (x, 2*n);
   for (i = 0; i < n; i++)
     xp[n+i] = xp[n-1-i];
   mpz_limbs_finish (x, mpz_sgn (x) < 0 ? - 2*n : 2*n);
@@ -4550,30 +4550,33 @@ for instance @samp{0x10/11} is @math{16/11}, whereas @samp{0x10/0x11} is
 GMP floating point numbers are stored in objects of type @code{mpf_t} and
 functions operating on them have an @code{mpf_} prefix.
 
-The mantissa of each float has a user-selectable precision, limited only by
-available memory.  Each variable has its own precision, and that can be
-increased or decreased at any time.
+The mantissa of each float has a user-selectable precision, in practice only
+limited by available memory.  Each variable has its own precision, and that can
+be increased or decreased at any time.  This selectable precision is a minimum
+value, GMP rounds it up to a whole limb.
 
-The exponent of each float is a fixed precision, one machine word on most
+The accuracy of a calculation is determined by the priorly set precision of the
+destination variable and the numeric values of the input variables.  Input
+variables' set precisions do not affect calculations (except indirectly as
+their values might have been affected when they were assigned).
+
+The exponent of each float has fixed precision, one machine word on most
 systems.  In the current implementation the exponent is a count of limbs, so
 for example on a 32-bit system this means a range of roughly
 @math{2^@W{-68719476768}} to @math{2^@W{68719476736}}, or on a 64-bit system
-this will be greater.  Note however that @code{mpf_get_str} can only return an
-exponent which fits an @code{mp_exp_t} and currently @code{mpf_set_str}
-doesn't accept exponents bigger than a @code{long}.
+this will be much greater.  Note however that @code{mpf_get_str} can only
+return an exponent which fits an @code{mp_exp_t} and currently
+@code{mpf_set_str} doesn't accept exponents bigger than a @code{long}.
 
-Each variable keeps a size for the mantissa data actually in use.  This means
+Each variable keeps track of the mantissa data actually in use.  This means
 that if a float is exactly represented in only a few bits then only those bits
-will be used in a calculation, even if the selected precision is high.
+will be used in a calculation, even if the variable's selected precision is
+high.  This is a performance optimization; it does not affect the numeric
+results.
 
-All calculations are performed to the precision of the destination variable.
-Each function calculate with ``higher'' precision then truncate to the
-destination precision.
-
-The precision selected by the user for a variable is a minimum value, GMP may
-increase it to facilitate efficient calculation.  Currently this means
-rounding up to a whole limb, and then sometimes having a further partial limb,
-depending on the high limb of the mantissa.
+Internally, GMP sometimes calculates with higher precision than that of the
+destination variable in order to limit errors.  Final results are always
+truncated to the destination variable's precision.
 
 The mantissa is stored in binary.  One consequence of this is that decimal
 fractions like @math{0.1} cannot be represented exactly.  The same is true of
