@@ -28,12 +28,14 @@ void
 check_data (void)
 {
   unsigned int b, e;
-  mpf_t b1, r, r2;
+  mpf_t b1, r, r2, limit;
 
   mpf_inits (b1, r, r2, NULL);
+  mpf_init_set_ui (limit, 1);
+  mpf_mul_2exp (limit, limit, MAX (GMP_NUMB_BITS, 53)); 
 
   /* This test just test integers with results that fit in a single
-     limb.  This avoid any rounding.  */
+     limb or 53 bits.  This avoids any rounding.  */
 
   for (b = 0; b <= 400; b++)
     {
@@ -48,12 +50,12 @@ check_data (void)
 
 	  mpf_mul_ui (r2, r2, b);
 
-	  if (mpf_cmp_ui (r2, GMP_NUMB_MAX) > 0)
+	  if (mpf_cmp (r2, limit) >= 0)
 	    break;
 	}
     }
 
-  mpf_clears (b1, r, r2, NULL);
+  mpf_clears (b1, r, r2, limit, NULL);
 }
 
 int
