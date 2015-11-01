@@ -4,6 +4,7 @@
 
 	* mpz/inits.c [__CHECKER__]: Init limb, not pointer.
 	* mpz/init.c [__CHECKER__]: Likewise (spotted by Vicente Benjumea).
+	* tests/mpf/t-pow_ui.c: Use another mpf for the size limit.
 
 2015-10-30  Torbjörn Granlund  <torbjorng@google.com>
 
