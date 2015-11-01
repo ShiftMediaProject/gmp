@@ -40,6 +40,6 @@ mpz_init (mpz_ptr x)
 
 #ifdef __CHECKER__
   /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
-  PTR (x) = 0;
+  PTR (x)[0] = 0;
 #endif
 }
