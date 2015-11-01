@@ -1,3 +1,8 @@
+2015-11-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tests/misc.c (seed_from_tod, seed_from_urandom): New functions.
+	(tests_rand_start): Use them.
+
 2015-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Version 6.1.0 released.
