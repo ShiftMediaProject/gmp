@@ -1,6 +1,15 @@
+2015-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Version 6.1.0 released.
+
+	* mpz/inits.c [__CHECKER__]: Init limb, not pointer.
+	* mpz/init.c [__CHECKER__]: Likewise (spotted by Vicente Benjumea).
+
 2015-10-30  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpf/pow_ui.c: Add log(e) precision bits.
+
+	* doc/gmp.texi (Floating-point): Rewrite mpf introduction.
 
 2015-10-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
