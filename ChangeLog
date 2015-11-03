@@ -1,3 +1,8 @@
+2015-11-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/ior.c, mpz/xor.x: Use the return value of _mpz_realloc.
+	* mpn/generic/sec_div.c: Remove unused var.
+
 2015-11-01  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tests/misc.c (seed_from_tod, seed_from_urandom): New functions.
