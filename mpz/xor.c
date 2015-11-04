@@ -57,7 +57,7 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    {
 	      if (ALLOC(res) < op1_size)
 		{
-		  res_ptr =_mpz_realloc (res, op1_size);
+		  res_ptr = (mp_ptr) _mpz_realloc (res, op1_size);
 		  /* No overlapping possible: op1_ptr = PTR(op1); */
 		  op2_ptr = PTR(op2);
 		}
@@ -73,7 +73,7 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    {
 	      if (ALLOC(res) < op2_size)
 		{
-		  res_ptr =_mpz_realloc (res, op2_size);
+		  res_ptr = (mp_ptr) _mpz_realloc (res, op2_size);
 		  op1_ptr = PTR(op1);
 		  /* No overlapping possible: op2_ptr = PTR(op2); */
 		}
