@@ -178,7 +178,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
     if (ALLOC(res) < res_alloc)
       {
-	res_ptr = (mp_ptr) _mpz_realloc (res, res_alloc);
+	res_ptr = MPZ_REALLOC (res, res_alloc);
 	op1_ptr = PTR(op1);
 	/* op2_ptr points to temporary space.  */
       }
