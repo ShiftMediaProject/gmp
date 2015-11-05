@@ -122,7 +122,10 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    MPN_SRCPTR_SWAP (op1_ptr,op1_size, op2_ptr,op2_size);
 
 	  res_alloc = op2_size;
-	  res_ptr = MPZ_REALLOC (res, res_alloc);
+	  res_ptr = MPZ_NEWALLOC (res, res_alloc);
+	  /* Don't re-read OP1_PTR and OP2_PTR.  They point to temporary
+	     space--never to the space PTR(res) used to point to before
+	     reallocation.  */
 
 	  MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
 		    op2_size - op1_size);
@@ -184,7 +187,7 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     res_ptr[res_size] = cy;
     res_size += (cy != 0);
 
-    MPN_NORMALIZE (res_ptr, res_size);
+    MPN_NORMALIZE_NOT_ZERO (res_ptr, res_size);
     SIZ(res) = -res_size;
     TMP_FREE;
   }
