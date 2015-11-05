@@ -70,7 +70,7 @@ see https://www.gnu.org/licenses/.  */
 #define GMP_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define gmp_assert_nocarry(x) do { \
-    mp_limb_t __cy = x;		   \
+    mp_limb_t __cy = (x);	   \
     assert (__cy == 0);		   \
   } while (0)
 
@@ -699,6 +699,28 @@ mpn_scan0 (mp_srcptr ptr, mp_bitcnt_t bit)
 
   return mpn_common_scan (~ptr[i] & (GMP_LIMB_MAX << (bit % GMP_LIMB_BITS)),
 			  i, ptr, i, GMP_LIMB_MAX);
+}
+
+void
+mpn_com (mp_ptr rp, mp_srcptr up, mp_size_t n)
+{
+  while (--n >= 0)
+    *rp++ = ~ *up++;
+}
+
+mp_limb_t
+mpn_neg (mp_ptr rp, mp_srcptr up, mp_size_t n)
+{
+  while (*up == 0)
+    {
+      *rp = 0;
+      if (!--n)
+	return 0;
+      ++up; ++rp;
+    }
+  *rp = - *up;
+  mpn_com (++rp, ++up, --n);
+  return 1;
 }
 
 
@@ -2377,16 +2399,9 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 	{
 	  /* Have to negate and sign extend. */
 	  mp_size_t i;
-	  mp_limb_t cy;
 
-	  for (cy = 1, i = 0; i < un; i++)
-	    {
-	      mp_limb_t s = ~u->_mp_d[i] + cy;
-	      cy = s < cy;
-	      rp[i] = s;
-	    }
-	  assert (cy == 0);
-	  for (; i < rn - 1; i++)
+	  gmp_assert_nocarry (! mpn_neg (rp, u->_mp_d, un));
+	  for (i = un; i < rn - 1; i++)
 	    rp[i] = GMP_LIMB_MAX;
 
 	  rp[rn-1] = mask;
@@ -2411,23 +2426,13 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
       if (mode == ((us > 0) ? GMP_DIV_CEIL : GMP_DIV_FLOOR)) /* us != 0 here. */
 	{
 	  /* If r != 0, compute 2^{bit_count} - r. */
-	  mp_size_t i;
+	  mpn_neg (rp, rp, rn);
 
-	  for (i = 0; i < rn && rp[i] == 0; i++)
-	    ;
-	  if (i < rn)
-	    {
-	      /* r > 0, need to flip sign. */
-	      rp[i] = ~rp[i] + 1;
-	      while (++i < rn)
-		rp[i] = ~rp[i];
-
-	      rp[rn-1] &= mask;
-
-	      /* us is not used for anything else, so we can modify it
-		 here to indicate flipped sign. */
-	      us = -us;
-	    }
+	  rp[rn-1] &= mask;
+	      
+	  /* us is not used for anything else, so we can modify it
+	     here to indicate flipped sign. */
+	  us = -us;
 	}
     }
   rn = mpn_normalized_size (rp, rn);
