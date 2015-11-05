@@ -43,10 +43,5 @@ mpz_init_set_str (mpz_ptr x, const char *str, int base)
   /* if str has no digits mpz_set_str leaves x->_mp_size unset */
   SIZ (x) = 0;
 
-#ifdef __CHECKER__
-  /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
-  PTR (x)[0] = 0;
-#endif
-
   return mpz_set_str (x, str, base);
 }

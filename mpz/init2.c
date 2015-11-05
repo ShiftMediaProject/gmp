@@ -53,9 +53,4 @@ mpz_init2 (mpz_ptr x, mp_bitcnt_t bits)
   PTR(x) = __GMP_ALLOCATE_FUNC_LIMBS (new_alloc);
   ALLOC(x) = new_alloc;
   SIZ(x) = 0;
-
-#ifdef __CHECKER__
-  /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
-  PTR(x)[0] = 0;
-#endif
 }
