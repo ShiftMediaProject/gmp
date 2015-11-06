@@ -56,9 +56,9 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	{
 	  if (op1_size >= op2_size)
 	    {
-	      if (ALLOC(res) < op1_size)
+	      if (UNLIKELY (ALLOC(res) < op1_size))
 		{
-		  res_ptr = MPZ_REALLOC (res, op1_size);
+		  res_ptr = (mp_ptr) _mpz_realloc (res, op1_size);
 		  /* No overlapping possible: op1_ptr = PTR(op1); */
 		  op2_ptr = PTR(op2);
 		}
@@ -72,9 +72,9 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    }
 	  else
 	    {
-	      if (ALLOC(res) < op2_size)
+	      if (UNLIKELY (ALLOC(res) < op2_size))
 		{
-		  res_ptr = MPZ_REALLOC (res, op2_size);
+		  res_ptr = (mp_ptr) _mpz_realloc (res, op2_size);
 		  op1_ptr = PTR(op1);
 		  /* No overlapping possible: op2_ptr = PTR(op2); */
 		}
@@ -176,9 +176,9 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     op2_ptr = opx;
     op2_size -= op2_ptr[op2_size - 1] == 0;
 
-    if (ALLOC(res) < res_alloc)
+    if (UNLIKELY (ALLOC(res) < res_alloc))
       {
-	res_ptr = MPZ_REALLOC (res, res_alloc);
+	res_ptr = (mp_ptr) _mpz_realloc (res, res_alloc);
 	op1_ptr = PTR(op1);
 	/* op2_ptr points to temporary space.  */
       }
