@@ -1,3 +1,8 @@
+2015-11-07  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__GMP_DEFINE_UNARY_FUNCTION_1): New macro.
+	(operator~, trunc, floor, ceil, sqrt): Use it.
+
 2015-11-04  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpz/xor.c: Use MPZ_REALLOC.

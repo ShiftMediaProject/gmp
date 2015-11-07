@@ -2791,6 +2791,17 @@ fun(const __gmp_expr<T, U> &expr)                                            \
   return __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >(expr); \
 }
 
+// variant that only works for one of { mpz, mpq, mpf }
+
+#define __GMP_DEFINE_UNARY_FUNCTION_1(T, fun, eval_fun)                      \
+                                                                             \
+template <class U>                                                           \
+inline __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >          \
+fun(const __gmp_expr<T, U> &expr)                                            \
+{                                                                            \
+  return __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >(expr); \
+}
+
 #define __GMP_DEFINE_UNARY_TYPE_FUNCTION(type, fun, eval_fun) \
                                                               \
 template <class T, class U>                                   \
@@ -3053,7 +3064,7 @@ __GMP_DEFINE_INCREMENT_OPERATOR(mpf, fun, eval_fun)
 
 __GMP_DEFINE_UNARY_FUNCTION(operator+, __gmp_unary_plus)
 __GMP_DEFINE_UNARY_FUNCTION(operator-, __gmp_unary_minus)
-__GMP_DEFINE_UNARY_FUNCTION(operator~, __gmp_unary_com)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, operator~, __gmp_unary_com)
 
 __GMP_DEFINE_BINARY_FUNCTION(operator+, __gmp_binary_plus)
 __GMP_DEFINE_BINARY_FUNCTION(operator-, __gmp_binary_minus)
@@ -3075,10 +3086,11 @@ __GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>, __gmp_binary_greater)
 __GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>=, ! __gmp_binary_less)
 
 __GMP_DEFINE_UNARY_FUNCTION(abs, __gmp_abs_function)
-__GMP_DEFINE_UNARY_FUNCTION(trunc, __gmp_trunc_function)
-__GMP_DEFINE_UNARY_FUNCTION(floor, __gmp_floor_function)
-__GMP_DEFINE_UNARY_FUNCTION(ceil, __gmp_ceil_function)
-__GMP_DEFINE_UNARY_FUNCTION(sqrt, __gmp_sqrt_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, trunc, __gmp_trunc_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, floor, __gmp_floor_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, ceil, __gmp_ceil_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, sqrt, __gmp_sqrt_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
 __GMP_DEFINE_BINARY_FUNCTION(gcd, __gmp_gcd_function)
 __GMP_DEFINE_BINARY_FUNCTION(lcm, __gmp_lcm_function)
@@ -3381,6 +3393,7 @@ namespace std {
 
 #undef __GMPZQ_DEFINE_EXPR
 
+#undef __GMP_DEFINE_UNARY_FUNCTION_1
 #undef __GMP_DEFINE_UNARY_FUNCTION
 #undef __GMP_DEFINE_UNARY_TYPE_FUNCTION
 
