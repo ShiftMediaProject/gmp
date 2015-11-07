@@ -1194,6 +1194,28 @@ struct __gmp_rand_function
   { mpf_urandomb(f, s, prec); }
 };
 
+struct __gmp_fac_function
+{
+  static void eval(mpz_ptr z, unsigned long l) { mpz_fac_ui(z, l); }
+  static void eval(mpz_ptr z, signed long l)
+  {
+    if (l < 0)
+      throw std::domain_error ("factorial(negative)");
+    eval(z, static_cast<unsigned long>(l));
+  }
+  static void eval(mpz_ptr z, mpz_srcptr w)
+  {
+    if (!mpz_fits_ulong_p(w))
+      if (mpz_sgn(w) < 0)
+	throw std::domain_error ("factorial(negative)");
+      else
+	throw std::bad_alloc(); // or std::overflow_error ("factorial")?
+    eval(z, mpz_get_ui(w));
+  }
+  static void eval(mpz_ptr z, double d)
+  {  __GMPXX_TMPZ_D;    eval (z, temp); }
+};
+
 
 /**************** Auxiliary classes ****************/
 
@@ -1423,6 +1445,38 @@ __GMPN_DECLARE_COMPOUND_OPERATOR(fun)
   __gmp_expr & operator=(float f) { assign_d(f); return *this; } \
   __gmp_expr & operator=(double d) { assign_d(d); return *this; }
 
+#define __GMPP_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                 \
+template <class U>                                                           \
+static __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >          \
+fun(const __gmp_expr<T, U> &expr);
+
+#define __GMPNN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, bigtype) \
+static __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >                   \
+fun(type expr);
+
+#define __GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, signed long)
+#define __GMPNU_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, unsigned long)
+#define __GMPND_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, double)
+
+#define __GMPN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                 \
+__GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed char)           \
+__GMPNU_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned char)         \
+__GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed int)            \
+__GMPNU_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned int)          \
+__GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed short int)      \
+__GMPNU_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned short int)    \
+__GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed long int)       \
+__GMPNU_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned long int)     \
+__GMPND_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, float)                 \
+__GMPND_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, double)
+
+#define __GMP_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                  \
+__GMPP_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                         \
+__GMPN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)
+
 /**************** mpz_class -- wrapper for mpz_t ****************/
 
 template <>
@@ -1603,6 +1657,8 @@ public:
 
   __GMP_DECLARE_INCREMENT_OPERATOR(operator++)
   __GMP_DECLARE_INCREMENT_OPERATOR(operator--)
+
+  __GMP_DECLARE_UNARY_STATIC_MEMFUN(mpz_t, factorial, __gmp_fac_function)
 };
 
 typedef __gmp_expr<mpz_t, mpz_t> mpz_class;
@@ -3120,6 +3176,44 @@ __GMP_DEFINE_INCREMENT_OPERATOR(mpq, fun, eval_fun)
 __GMP_DEFINE_INCREMENT_OPERATOR(mpf, fun, eval_fun)
 
 
+#define __GMPP_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                  \
+template <class U>                                                           \
+__gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >          \
+fun(const __gmp_expr<T, U> &expr)                                            \
+{                                                                            \
+  return __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >(expr); \
+}
+
+#define __GMPNN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, bigtype)  \
+__gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >                   \
+fun(type expr)                                                               \
+{                                                                            \
+  return __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >(expr);          \
+}
+
+#define __GMPNS_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, signed long)
+#define __GMPNU_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, unsigned long)
+#define __GMPND_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
+__GMPNN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, double)
+
+#define __GMPN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                 \
+__GMPNS_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed char)           \
+__GMPNU_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned char)         \
+__GMPNS_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed int)            \
+__GMPNU_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned int)          \
+__GMPNS_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed short int)      \
+__GMPNU_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned short int)    \
+__GMPNS_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, signed long int)       \
+__GMPNU_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, unsigned long int)     \
+__GMPND_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, float)                 \
+__GMPND_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, double)                \
+
+#define __GMP_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                  \
+__GMPP_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                         \
+__GMPN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun)                         \
+
 
 /**************** Arithmetic operators and functions ****************/
 
@@ -3154,6 +3248,7 @@ __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, floor, __gmp_floor_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, ceil, __gmp_ceil_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, sqrt, __gmp_sqrt_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, factorial, __gmp_fac_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpf_t, hypot, __gmp_hypot_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, gcd, __gmp_gcd_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, lcm, __gmp_lcm_function)
@@ -3182,6 +3277,8 @@ __GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
 
 __GMPZ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
 __GMPZ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
+
+__GMP_DEFINE_UNARY_STATIC_MEMFUN(mpz_t, mpz_class::factorial, __gmp_fac_function)
 
 // member operators for mpq_class
 

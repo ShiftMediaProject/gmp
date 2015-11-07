@@ -34,10 +34,10 @@ LDADD = -L$(top_builddir)/.libs \
 if WANT_CXX
 check_PROGRAMS = t-binary t-cast t-cxx11 \
   t-headers t-iostream t-istream t-locale t-misc t-mix \
-  t-ops t-ops2 t-ops3 t-ostream t-prec \
+  t-ops t-ops3 t-ostream t-prec \
   t-ternary t-unary \
   t-do-exceptions-work-at-all-with-this-compiler \
-  t-assign t-constr t-rand
+  t-ops2 t-assign t-constr t-rand
 TESTS = $(check_PROGRAMS)
 endif
 

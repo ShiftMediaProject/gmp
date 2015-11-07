@@ -144,6 +144,20 @@ void checkz (){
   ASSERT_ALWAYS(lcm(mpz_class(6),static_cast<short>(8))==24);
   ASSERT_ALWAYS(lcm(-mpz_class(6),static_cast<unsigned char>(8))==24);
   ASSERT_ALWAYS(lcm(-6.,mpz_class(5)+3)==24);
+  ASSERT_ALWAYS(factorial(mpz_class(3))==6);
+  ASSERT_ALWAYS(factorial(mpz_class(5)-1)==24);
+  ASSERT_ALWAYS(mpz_class::factorial(mpz_class(3))==6);
+  ASSERT_ALWAYS(mpz_class::factorial(mpz_class(2)*2)==24);
+  ASSERT_ALWAYS(mpz_class::factorial(3)==6);
+  ASSERT_ALWAYS(mpz_class::factorial(3ul)==6);
+  ASSERT_ALWAYS(mpz_class::factorial(3.f)==6);
+  mpz_class ret;
+  try { ret=factorial(-mpz_class(3)); ASSERT_ALWAYS(0); }
+  catch (std::domain_error) {}
+  try { ret=mpz_class::factorial(-2); ASSERT_ALWAYS(0); }
+  catch (std::domain_error) {}
+  try { ret=factorial(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
+  catch (std::bad_alloc) {}
 }
 
 template<class T>
