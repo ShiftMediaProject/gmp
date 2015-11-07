@@ -1,7 +1,13 @@
 2015-11-07  Marc Glisse  <marc.glisse@inria.fr>
 
-	* gmpxx.h (__GMP_DEFINE_UNARY_FUNCTION_1): New macro.
-	(operator~, trunc, floor, ceil, sqrt): Use it.
+	* gmpxx.h (__GMP_DEFINE_UNARY_FUNCTION_1,
+	__GMPP_DEFINE_BINARY_FUNCTION_1, __GMPNN_DEFINE_BINARY_FUNCTION_1,
+	__GMPNS_DEFINE_BINARY_FUNCTION_1, __GMPNU_DEFINE_BINARY_FUNCTION_1,
+	__GMPND_DEFINE_BINARY_FUNCTION_1, __GMPNLD_DEFINE_BINARY_FUNCTION_1,
+	__GMPN_DEFINE_BINARY_FUNCTION_1, __GMP_DEFINE_BINARY_FUNCTION_1):
+	New macros.
+	(operator~, trunc, floor, ceil, sqrt, operator%, operator&, operator|,
+	operator^, hypot, gcd, lcm): Use them.
 
 2015-11-04  Torbjörn Granlund  <torbjorng@google.com>
 

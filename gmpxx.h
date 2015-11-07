@@ -2875,6 +2875,69 @@ __GMPND_DEFINE_BINARY_FUNCTION(fun, eval_fun, double)             \
 __GMPP_DEFINE_BINARY_FUNCTION(fun, eval_fun)        \
 __GMPN_DEFINE_BINARY_FUNCTION(fun, eval_fun)
 
+// variant that only works for one of { mpz, mpq, mpf }
+
+#define __GMPP_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun)              \
+                                                                       \
+template <class U, class W>                                            \
+inline __gmp_expr<T,                                                   \
+__gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<T, W>, eval_fun> >      \
+fun(const __gmp_expr<T, U> &expr1, const __gmp_expr<T, W> &expr2)      \
+{                                                                      \
+  return __gmp_expr<T,                                                 \
+     __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<T, W>, eval_fun> > \
+    (expr1, expr2);                                                    \
+}
+
+#define __GMPNN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type, bigtype)  \
+                                                                           \
+template <class U>                                                         \
+inline __gmp_expr                                                          \
+<T, __gmp_binary_expr<__gmp_expr<T, U>, bigtype, eval_fun> >               \
+fun(const __gmp_expr<T, U> &expr, type t)                                  \
+{                                                                          \
+  return __gmp_expr                                                        \
+    <T, __gmp_binary_expr<__gmp_expr<T, U>, bigtype, eval_fun> >(expr, t); \
+}                                                                          \
+                                                                           \
+template <class U>                                                         \
+inline __gmp_expr                                                          \
+<T, __gmp_binary_expr<bigtype, __gmp_expr<T, U>, eval_fun> >               \
+fun(type t, const __gmp_expr<T, U> &expr)                                  \
+{                                                                          \
+  return __gmp_expr                                                        \
+    <T, __gmp_binary_expr<bigtype, __gmp_expr<T, U>, eval_fun> >(t, expr); \
+}
+
+#define __GMPNS_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type)          \
+__GMPNN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type, signed long int)
+
+#define __GMPNU_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type)          \
+__GMPNN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type, unsigned long int)
+
+#define __GMPND_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type) \
+__GMPNN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type, double)
+
+#define __GMPNLD_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type)     \
+__GMPNN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, type, long double)
+
+#define __GMPN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun)              \
+__GMPNS_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, signed char)        \
+__GMPNU_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, unsigned char)      \
+__GMPNS_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, signed int)         \
+__GMPNU_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, unsigned int)       \
+__GMPNS_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, signed short int)   \
+__GMPNU_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, unsigned short int) \
+__GMPNS_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, signed long int)    \
+__GMPNU_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, unsigned long int)  \
+__GMPND_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, float)              \
+__GMPND_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, double)             \
+/* __GMPNLD_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun, long double) */
+
+#define __GMP_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun) \
+__GMPP_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun)        \
+__GMPN_DEFINE_BINARY_FUNCTION_1(T, fun, eval_fun)
+
 
 #define __GMP_DEFINE_BINARY_FUNCTION_UI(fun, eval_fun)                 \
                                                                        \
@@ -3070,10 +3133,10 @@ __GMP_DEFINE_BINARY_FUNCTION(operator+, __gmp_binary_plus)
 __GMP_DEFINE_BINARY_FUNCTION(operator-, __gmp_binary_minus)
 __GMP_DEFINE_BINARY_FUNCTION(operator*, __gmp_binary_multiplies)
 __GMP_DEFINE_BINARY_FUNCTION(operator/, __gmp_binary_divides)
-__GMP_DEFINE_BINARY_FUNCTION(operator%, __gmp_binary_modulus)
-__GMP_DEFINE_BINARY_FUNCTION(operator&, __gmp_binary_and)
-__GMP_DEFINE_BINARY_FUNCTION(operator|, __gmp_binary_ior)
-__GMP_DEFINE_BINARY_FUNCTION(operator^, __gmp_binary_xor)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, operator%, __gmp_binary_modulus)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, operator&, __gmp_binary_and)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, operator|, __gmp_binary_ior)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, operator^, __gmp_binary_xor)
 
 __GMP_DEFINE_BINARY_FUNCTION_UI(operator<<, __gmp_binary_lshift)
 __GMP_DEFINE_BINARY_FUNCTION_UI(operator>>, __gmp_binary_rshift)
@@ -3091,9 +3154,9 @@ __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, floor, __gmp_floor_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, ceil, __gmp_ceil_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, sqrt, __gmp_sqrt_function)
-__GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
-__GMP_DEFINE_BINARY_FUNCTION(gcd, __gmp_gcd_function)
-__GMP_DEFINE_BINARY_FUNCTION(lcm, __gmp_lcm_function)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpf_t, hypot, __gmp_hypot_function)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, gcd, __gmp_gcd_function)
+__GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, lcm, __gmp_lcm_function)
 
 __GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
 __GMP_DEFINE_BINARY_TYPE_FUNCTION(int, cmp, __gmp_cmp_function)
