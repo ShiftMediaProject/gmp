@@ -21,6 +21,11 @@
 	* doc/gmp.texi: Document factorial and primorial.
 	* NEWS: Likewise.
 
+	* tests/cxx/t-ops2.cc: Remove and split into ...
+	* tests/cxx/t-ops2z.cc, tests/cxx/t-ops2qf.cc, tests/cxx/t-ops2f.cc,
+	tests/cxx/t-ops2.h: New files.
+	* tests/cxx/Makefile.am: Update for the split.
+
 2015-11-07  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__GMP_DEFINE_UNARY_FUNCTION_1,

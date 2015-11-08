@@ -34,10 +34,11 @@ LDADD = -L$(top_builddir)/.libs \
 if WANT_CXX
 check_PROGRAMS = t-binary t-cast t-cxx11 \
   t-headers t-iostream t-istream t-locale t-misc t-mix \
-  t-ops t-ops3 t-ostream t-prec \
+  t-ops t-ops2qf t-ops2f t-ops3 t-ostream t-prec \
   t-ternary t-unary \
   t-do-exceptions-work-at-all-with-this-compiler \
-  t-ops2 t-assign t-constr t-rand
+  t-ops2z t-assign t-constr t-rand
+EXTRA_DIST = t-ops2.h
 TESTS = $(check_PROGRAMS)
 endif
 
@@ -53,7 +54,9 @@ t_locale_SOURCES  = t-locale.cc clocale.c
 t_misc_SOURCES    = t-misc.cc
 t_mix_SOURCES     = t-mix.cc
 t_ops_SOURCES     = t-ops.cc
-t_ops2_SOURCES    = t-ops2.cc
+t_ops2z_SOURCES   = t-ops2z.cc
+t_ops2qf_SOURCES  = t-ops2qf.cc
+t_ops2f_SOURCES   = t-ops2f.cc
 t_ops3_SOURCES    = t-ops3.cc
 t_ostream_SOURCES = t-ostream.cc
 t_prec_SOURCES    = t-prec.cc
