@@ -1,3 +1,7 @@
+2015-11-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/urandomm.c: Use mpn_zero_p to shorten code.
+
 2015-11-08  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_fac_function, __gmp_primorial_function): New classes.
@@ -37,6 +41,22 @@
 	(operator~, trunc, floor, ceil, sqrt, operator%, operator&, operator|,
 	operator^, hypot, gcd, lcm): Use them.
 
+2015-11-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/and.c: Use MPZ_NEWALLOC.
+	* mpz/ior.c: Remove duplicated branches, add branch hints.
+	* mpz/xor.c: Likewise, and use NORMALIZE_NOT_ZERO.
+
+	* mpz/init.c: Remove conditional code for __CHECKER__.
+	* mpz/init2.c: Likewise.
+	* mpz/inits.c: Likewise.
+	* mpz/iset.c: Likewise.
+	* mpz/iset_str.c: Likewise.
+
+	* mini-gmp/mini-gmp.c (mpn_com, mpn_neg): New functions.
+	* mini-gmp/mini-gmp.h: Declare them.
+	* mini-gmp/mini-gmp.c (mpz_div_r_2exp): Use mpn_neg.
+
 2015-11-04  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpz/xor.c: Use MPZ_REALLOC.
@@ -44,7 +64,8 @@
 
 2015-11-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpz/ior.c, mpz/xor.x: Use the return value of _mpz_realloc.
+	* mpz/xor.c: Use the return value of _mpz_realloc.
+	* mpz/ior.c: Likewise.
 	* mpn/generic/sec_div.c: Remove unused var.
 
 2015-11-01  Torbjörn Granlund  <torbjorng@google.com>
