@@ -1451,7 +1451,7 @@ static __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, eval_fun> >          \
 fun(const __gmp_expr<T, U> &expr);
 
 #define __GMPNN_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, bigtype) \
-static __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >                   \
+static inline __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >            \
 fun(type expr);
 
 #define __GMPNS_DECLARE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type)  \
@@ -3185,7 +3185,7 @@ fun(const __gmp_expr<T, U> &expr)                                            \
 }
 
 #define __GMPNN_DEFINE_UNARY_STATIC_MEMFUN(T, fun, eval_fun, type, bigtype)  \
-__gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >                   \
+inline __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >                   \
 fun(type expr)                                                               \
 {                                                                            \
   return __gmp_expr<T, __gmp_unary_expr<bigtype, eval_fun> >(expr);          \
