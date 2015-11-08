@@ -7,7 +7,7 @@ medium, provided this notice is preserved.
 Changes between GMP version 6.1.* and 6.2.0
 
   FEATURES
-  * New C++ function factorial for mpz_class.
+  * New C++ functions factorial and primorial for mpz_class.
 
 Changes between GMP version 6.0.* and 6.1.0
 

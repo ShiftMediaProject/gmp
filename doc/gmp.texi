@@ -6865,6 +6865,8 @@ mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
 @deftypefunx mpz_class lcm (mpz_class @var{op1}, mpz_class @var{op2})
 @deftypefunx mpz_class mpz_class::factorial (type @var{op})
 @deftypefunx mpz_class factorial (mpz_class @var{op})
+@deftypefunx mpz_class mpz_class::primorial (type @var{op})
+@deftypefunx mpz_class primorial (mpz_class @var{op})
 @maybepagebreak
 @deftypefunx void mpz_class::swap (mpz_class& @var{op})
 @deftypefunx void swap (mpz_class& @var{op1}, mpz_class& @var{op2})

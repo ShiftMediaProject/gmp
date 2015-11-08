@@ -1216,6 +1216,30 @@ struct __gmp_fac_function
   {  __GMPXX_TMPZ_D;    eval (z, temp); }
 };
 
+struct __gmp_primorial_function
+{
+  static void eval(mpz_ptr z, unsigned long l) { mpz_primorial_ui(z, l); }
+  static void eval(mpz_ptr z, signed long l)
+  {
+    if (l < 0)
+      mpz_set_ui(z, 1);
+    else
+      eval(z, static_cast<unsigned long>(l));
+  }
+  static void eval(mpz_ptr z, mpz_srcptr w)
+  {
+    if (!mpz_fits_ulong_p(w))
+      if (mpz_sgn(w) < 0)
+	mpz_set_ui(z, 1);
+      else
+	throw std::bad_alloc(); // or std::overflow_error ("factorial")?
+    else
+      eval(z, mpz_get_ui(w));
+  }
+  static void eval(mpz_ptr z, double d)
+  {  __GMPXX_TMPZ_D;    eval (z, temp); }
+};
+
 
 /**************** Auxiliary classes ****************/
 
@@ -1659,6 +1683,7 @@ public:
   __GMP_DECLARE_INCREMENT_OPERATOR(operator--)
 
   __GMP_DECLARE_UNARY_STATIC_MEMFUN(mpz_t, factorial, __gmp_fac_function)
+  __GMP_DECLARE_UNARY_STATIC_MEMFUN(mpz_t, primorial, __gmp_primorial_function)
 };
 
 typedef __gmp_expr<mpz_t, mpz_t> mpz_class;
@@ -3249,6 +3274,7 @@ __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, ceil, __gmp_ceil_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpf_t, sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, factorial, __gmp_fac_function)
+__GMP_DEFINE_UNARY_FUNCTION_1(mpz_t, primorial, __gmp_primorial_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpf_t, hypot, __gmp_hypot_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, gcd, __gmp_gcd_function)
 __GMP_DEFINE_BINARY_FUNCTION_1(mpz_t, lcm, __gmp_lcm_function)
@@ -3279,6 +3305,7 @@ __GMPZ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
 __GMPZ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
 
 __GMP_DEFINE_UNARY_STATIC_MEMFUN(mpz_t, mpz_class::factorial, __gmp_fac_function)
+__GMP_DEFINE_UNARY_STATIC_MEMFUN(mpz_t, mpz_class::primorial, __gmp_primorial_function)
 
 // member operators for mpq_class
 

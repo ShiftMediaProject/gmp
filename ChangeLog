@@ -1,6 +1,6 @@
 2015-11-08  Marc Glisse  <marc.glisse@inria.fr>
 
-	* gmpxx.h (__gmp_fac_function): New class.
+	* gmpxx.h (__gmp_fac_function, __gmp_primorial_function): New classes.
 	(__GMPP_DECLARE_UNARY_STATIC_MEMFUN,
 	__GMPNN_DECLARE_UNARY_STATIC_MEMFUN,
 	__GMPNS_DECLARE_UNARY_STATIC_MEMFUN,
@@ -13,11 +13,12 @@
 	__GMPNU_DEFINE_UNARY_STATIC_MEMFUN,
 	__GMPND_DEFINE_UNARY_STATIC_MEMFUN, __GMPN_DEFINE_UNARY_STATIC_MEMFUN,
 	__GMP_DEFINE_UNARY_STATIC_MEMFUN): New macros.
-	(factorial, mpz_class::factorial): New functions.
-	* tests/cxx/t-ops2.cc: Test factorial.
+	(factorial, mpz_class::factorial, primorial, mpz_class::primorial):
+	New functions.
+	* tests/cxx/t-ops2.cc: Test factorial and primorial.
 	* tests/cxx/Makefile.am: Move t-ops2 after
 	t-do-exceptions-work-at-all-with-this-compiler.
-	* doc/gmp.texi: Document factorial.
+	* doc/gmp.texi: Document factorial and primorial.
 	* NEWS: Likewise.
 
 2015-11-07  Marc Glisse  <marc.glisse@inria.fr>

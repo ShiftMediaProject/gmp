@@ -158,6 +158,15 @@ void checkz (){
   catch (std::domain_error) {}
   try { ret=factorial(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
   catch (std::bad_alloc) {}
+  ASSERT_ALWAYS(mpz_class::primorial(mpz_class(3))==6);
+  ASSERT_ALWAYS(mpz_class::primorial(mpz_class(2)*2)==6);
+  ASSERT_ALWAYS(mpz_class::primorial(3)==6);
+  ASSERT_ALWAYS(mpz_class::primorial(3ul)==6);
+  ASSERT_ALWAYS(mpz_class::primorial(3.f)==6);
+  ASSERT_ALWAYS(mpz_class::primorial(-mpz_class(3))==1);
+  ASSERT_ALWAYS(mpz_class::primorial(-5)==1);
+  try { ret=primorial(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
+  catch (std::bad_alloc) {}
 }
 
 template<class T>
