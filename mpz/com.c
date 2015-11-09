@@ -49,7 +49,7 @@ mpz_com (mpz_ptr dst, mpz_srcptr src)
       if (UNLIKELY (size == 0))
 	{
 	  /* special case, as mpn_add_1 wants size!=0 */
-	  PTR (dst)[0] = 1;
+	  MPZ_NEWALLOC (dst, 1)[0] = 1;
 	  SIZ (dst) = -1;
 	}
       else

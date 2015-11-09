@@ -114,7 +114,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 
   if (n < numberof (table))
     {
-      PTR (x)[0] = table[n];
+      MPZ_NEWALLOC (x, 1)[0] = table[n];
       SIZ (x) = 1;
     }
   else
@@ -155,7 +155,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 	}
       else
 	{
-	  PTR (x)[0] = prod;
+	  MPZ_NEWALLOC (x, 1)[0] = prod;
 	  SIZ (x) = 1;
 	}
 

@@ -59,7 +59,7 @@ mpz_mfac_uiui (mpz_ptr x, unsigned long n, unsigned long m)
   ASSERT (m != 0);
 
   if ((n < 3) | (n - 3 < m - 1)) { /* (n < 3 || n - 1 <= m || m == 0) */
-    PTR (x)[0] = n + (n == 0);
+    MPZ_NEWALLOC (x, 1)[0] = n + (n == 0);
     SIZ (x) = 1;
   } else { /* m < n - 1 < GMP_NUMB_MAX */
     mp_limb_t g, sn;

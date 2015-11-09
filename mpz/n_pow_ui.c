@@ -183,7 +183,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
   /* b^0 == 1, including 0^0 == 1 */
   if (e == 0)
     {
-      PTR(r)[0] = 1;
+      MPZ_NEWALLOC (r, 1)[0] = 1;
       SIZ(r) = 1;
       return;
     }

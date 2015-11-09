@@ -68,7 +68,7 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
   if (n <= FIB_TABLE_LUCNUM_LIMIT)
     {
       /* L[n] = F[n] + 2F[n-1] */
-      PTR(ln)[0] = FIB_TABLE(n) + 2 * FIB_TABLE ((int) n - 1);
+      MPZ_NEWALLOC (ln, 1)[0] = FIB_TABLE(n) + 2 * FIB_TABLE ((int) n - 1);
       SIZ(ln) = 1;
       return;
     }

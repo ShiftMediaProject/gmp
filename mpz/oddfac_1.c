@@ -245,6 +245,7 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
     }
   else
     {
+      ASSERT (ALLOC (x) > 0);
       PTR (x)[0] = prod;
       SIZ (x) = 1;
     }
@@ -290,7 +291,7 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 
   if (n <= ODD_FACTORIAL_TABLE_LIMIT)
     {
-      PTR (x)[0] = __gmp_oddfac_table[n];
+      MPZ_NEWALLOC (x, 1)[0] = __gmp_oddfac_table[n];
       SIZ (x) = 1;
     }
   else if (n <= ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1)

@@ -76,14 +76,14 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
   if (usize == 1)
     {
       SIZ (g) = 1;
-      PTR (g)[0] = mpn_gcd_1 (vp, vsize, up[0]);
+      MPZ_NEWALLOC (g, 1)[0] = mpn_gcd_1 (vp, vsize, up[0]);
       return;
     }
 
   if (vsize == 1)
     {
       SIZ(g) = 1;
-      PTR (g)[0] = mpn_gcd_1 (up, usize, vp[0]);
+      MPZ_NEWALLOC (g, 1)[0] = mpn_gcd_1 (up, usize, vp[0]);
       return;
     }
 

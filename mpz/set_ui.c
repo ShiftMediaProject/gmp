@@ -37,7 +37,7 @@ mpz_set_ui (mpz_ptr dest, unsigned long int val)
 {
   mp_size_t size;
 
-  PTR (dest)[0] = val & GMP_NUMB_MASK;
+  MPZ_NEWALLOC (dest, 1)[0] = val & GMP_NUMB_MASK;
   size = val != 0;
 
 #if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */

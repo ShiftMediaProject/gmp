@@ -108,7 +108,7 @@ mpz_cdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long in
 	      rl = divisor - rl;
 	    }
 
-	  PTR(rem)[0] = rl;
+	  MPZ_NEWALLOC (rem, 1)[0] = rl;
 	  SIZ(rem) = -(rl != 0);
 	}
       qn = nn - (qp[nn - 1] == 0);

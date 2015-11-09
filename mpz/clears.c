@@ -41,7 +41,8 @@ mpz_clears (mpz_ptr x, ...)
 
   while (x != NULL)
     {
-      __GMP_FREE_FUNC_LIMBS (PTR (x), ALLOC(x));
+      if (ALLOC (x))
+	__GMP_FREE_FUNC_LIMBS (PTR (x), ALLOC (x));
       x = va_arg (ap, mpz_ptr);
     }
 

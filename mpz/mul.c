@@ -104,13 +104,14 @@ mpz_mul (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
   wsize = usize + vsize;
   if (ALLOC (w) < wsize)
     {
-      if (wp == up || wp == vp)
-	{
-	  free_me = wp;
-	  free_me_size = ALLOC (w);
-	}
-      else
-	(*__gmp_free_func) (wp, (size_t) ALLOC (w) * GMP_LIMB_BYTES);
+      if (ALLOC (w) != 0)
+	if (wp == up || wp == vp)
+	  {
+	    free_me = wp;
+	    free_me_size = ALLOC (w);
+	  }
+	else
+	  (*__gmp_free_func) (wp, (size_t) ALLOC (w) * GMP_LIMB_BYTES);
 
       ALLOC (w) = wsize;
       wp = __GMP_ALLOCATE_FUNC_LIMBS (wsize);

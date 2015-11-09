@@ -39,7 +39,7 @@ mpz_set_si (mpz_ptr dest, signed long int val)
 
   vl = (mp_limb_t) ABS_CAST (unsigned long int, val);
 
-  PTR (dest)[0] = vl & GMP_NUMB_MASK;
+  MPZ_NEWALLOC (dest, 1)[0] = vl & GMP_NUMB_MASK;
   size = vl != 0;
 
 #if GMP_NAIL_BITS != 0

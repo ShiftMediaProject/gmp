@@ -35,8 +35,7 @@ see https://www.gnu.org/licenses/.  */
 void
 mpz_init_set_d (mpz_ptr dest, double val)
 {
-  ALLOC (dest) = 1;
-  PTR (dest) = __GMP_ALLOCATE_FUNC_LIMBS (1);
+  ALLOC (dest) = 0;
   SIZ (dest) = 0;
   mpz_set_d (dest, val);
 }

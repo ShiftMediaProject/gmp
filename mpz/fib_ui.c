@@ -65,7 +65,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
 
   if (n <= FIB_TABLE_LIMIT)
     {
-      PTR(fn)[0] = FIB_TABLE (n);
+      MPZ_NEWALLOC (fn, 1)[0] = FIB_TABLE (n);
       SIZ(fn) = (n != 0);      /* F[0]==0, others are !=0 */
       return;
     }

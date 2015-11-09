@@ -36,5 +36,6 @@ see https://www.gnu.org/licenses/.  */
 void
 mpz_clear (mpz_ptr x)
 {
-  __GMP_FREE_FUNC_LIMBS (PTR (x), ALLOC(x));
+  if (ALLOC (x))
+    __GMP_FREE_FUNC_LIMBS (PTR (x), ALLOC(x));
 }

@@ -642,7 +642,7 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     }
   else
     {
-      PTR (r)[0] = prod;
+      MPZ_NEWALLOC (r, 1)[0] = prod;
       SIZ (r) = 1;
     }
   TMP_FREE;
@@ -677,10 +677,10 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller. */
     k = MIN (k, n - k);
     if (k < 2) {
-      PTR(r)[0] = k ? n : 1; /* 1 + ((-k) & (n-1)); */
+      MPZ_NEWALLOC (r, 1)[0] = k ? n : 1; /* 1 + ((-k) & (n-1)); */
       SIZ(r) = 1;
     } else if (n <= ODD_FACTORIAL_EXTTABLE_LIMIT) { /* k >= 2, n >= 4 */
-      PTR(r)[0] = bc_bin_uiui (n, k);
+      MPZ_NEWALLOC (r, 1)[0] = bc_bin_uiui (n, k);
       SIZ(r) = 1;
     } else if (k <= ODD_FACTORIAL_TABLE_LIMIT)
       mpz_smallk_bin_uiui (r, n, k);

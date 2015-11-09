@@ -126,10 +126,10 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      break;
 	  res_size = i + 1;
 
+	  res_ptr = MPZ_NEWALLOC (res, res_size + 1);
+
 	  if (res_size != 0)
 	    {
-	      res_ptr = MPZ_NEWALLOC (res, res_size + 1);
-
 	      /* Second loop computes the real result.  */
 	      mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
 

@@ -86,7 +86,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 	  /* b^0 mod m,  b is anything and m is non-zero.
 	     Result is 1 mod m, i.e., 1 or 0 depending on if m = 1.  */
 	  SIZ(r) = n != 1 || mp[0] != 1;
-	  PTR(r)[0] = 1;
+	  MPZ_NEWALLOC (r, 1)[0] = 1;
 	  TMP_FREE;	/* we haven't really allocated anything here */
 	  return;
 	}

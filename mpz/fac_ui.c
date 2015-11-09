@@ -60,7 +60,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
 
   if (n < numberof (table))
     {
-      PTR (x)[0] = table[n];
+      MPZ_NEWALLOC (x, 1)[0] = table[n];
       SIZ (x) = 1;
     }
   else if (BELOW_THRESHOLD (n, FAC_ODD_THRESHOLD))

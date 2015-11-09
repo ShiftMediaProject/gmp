@@ -78,7 +78,7 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 
   if (w != NULL)
     {
-      PTR(w)[0] = res;
+      MPZ_NEWALLOC (w, 1)[0] = res;
       SIZ(w) = res != 0;
     }
   return res;

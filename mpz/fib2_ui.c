@@ -41,9 +41,9 @@ mpz_fib2_ui (mpz_ptr fn, mpz_ptr fnsub1, unsigned long n)
 
   if (n <= FIB_TABLE_LIMIT)
     {
-      PTR(fn)[0] = FIB_TABLE (n);
+      MPZ_NEWALLOC (fn, 1)[0] = FIB_TABLE (n);
       SIZ(fn) = (n != 0);      /* F[0]==0, others are !=0 */
-      PTR(fnsub1)[0] = FIB_TABLE ((int) n - 1);
+      MPZ_NEWALLOC (fnsub1, 1)[0] = FIB_TABLE ((int) n - 1);
       SIZ(fnsub1) = (n != 1);  /* F[1-1]==0, others are !=0 */
       return;
     }

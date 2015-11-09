@@ -319,7 +319,7 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
   if (SIZ (p->_mp_a) == 0)
     {
       SIZ (p->_mp_a) = 1;
-      PTR (p->_mp_a)[0] = CNST_LIMB (0);
+      MPZ_NEWALLOC (p->_mp_a, 1)[0] = CNST_LIMB (0);
     }
 
   MPN_SET_UI (p->_cp, p->_cn, c);

@@ -68,7 +68,7 @@ mpz_tdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long in
 	  SIZ(quot) = 0;
 	  rl = np[0];
 	  SIZ(rem) = ns >= 0 ? 1 : -1;
-	  PTR(rem)[0] = rl;
+	  MPZ_NEWALLOC (rem, 1)[0] = rl;
 	  return rl;
 	}
 
@@ -90,10 +90,8 @@ mpz_tdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long in
 	SIZ(rem) = 0;
       else
 	{
-	  /* Store the single-limb remainder.  We don't check if there's space
-	     for just one limb, since no function ever makes zero space.  */
 	  SIZ(rem) = ns >= 0 ? 1 : -1;
-	  PTR(rem)[0] = rl;
+	  MPZ_NEWALLOC (rem, 1)[0] = rl;
 	}
       qn = nn - (qp[nn - 1] == 0);
     }

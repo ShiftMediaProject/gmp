@@ -67,8 +67,8 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
     mpz_mul_2exp (x, x, count);
   } else { /* n is odd */
     if (n <= ODD_DOUBLEFACTORIAL_TABLE_LIMIT) {
-	PTR (x)[0] = __gmp_odd2fac_table[n >> 1];
-	SIZ (x) = 1;
+      MPZ_NEWALLOC (x, 1)[0] = __gmp_odd2fac_table[n >> 1];
+      SIZ (x) = 1;
     } else if (BELOW_THRESHOLD (n, FAC_2DSC_THRESHOLD)) { /* odd basecase, */
       mp_limb_t *factors, prod, max_prod, j;
       TMP_SDECL;

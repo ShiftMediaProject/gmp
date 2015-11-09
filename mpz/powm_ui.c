@@ -140,8 +140,8 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	{
 	  /* Exponent is zero, result is 1 mod M, i.e., 1 or 0 depending on if
 	     M equals 1.  */
-	  SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
-	  PTR(r)[0] = 1;
+	  SIZ(r) = mn != 1 || mp[0] != 1;
+	  MPZ_NEWALLOC (r, 1)[0] = 1;
 	  return;
 	}
 

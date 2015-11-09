@@ -80,7 +80,7 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int vval)
   usize = SIZ (u);
   if (usize == 0)
     {
-      PTR (w)[0] = vval;
+      MPZ_NEWALLOC (w, 1)[0] = vval;
       SIZ (w) = VARIATION_NEG (vval != 0);
       return;
     }

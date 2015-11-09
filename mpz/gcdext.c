@@ -72,7 +72,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       if (s != NULL)
 	{
 	  SIZ (s) = ssize;
-	  PTR (s)[0] = 1;
+	  MPZ_NEWALLOC (s, 1)[0] = 1;
 	}
       return;
     }

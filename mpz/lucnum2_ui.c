@@ -50,11 +50,11 @@ mpz_lucnum2_ui (mpz_ptr ln, mpz_ptr lnsub1, unsigned long n)
       mp_limb_t  f1 = FIB_TABLE ((int) n - 1);
 
       /* L[n] = F[n] + 2F[n-1] */
-      PTR(ln)[0] = f + 2*f1;
+      MPZ_NEWALLOC (ln, 1)[0] = f + 2*f1;
       SIZ(ln) = 1;
 
       /* L[n-1] = 2F[n] - F[n-1], but allow for L[-1]=-1 */
-      PTR(lnsub1)[0] = (n == 0 ? 1 : 2*f - f1);
+      MPZ_NEWALLOC (lnsub1, 1)[0] = (n == 0 ? 1 : 2*f - f1);
       SIZ(lnsub1) = (n == 0 ? -1 : 1);
 
       return;

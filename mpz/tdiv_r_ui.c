@@ -64,7 +64,7 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 	{
 	  rl = np[0];
 	  SIZ(rem) = ns >= 0 ? 1 : -1;
-	  PTR(rem)[0] = rl;
+	  MPZ_NEWALLOC (rem, 1)[0] = rl;
 	  return rl;
 	}
 
@@ -88,10 +88,8 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 	SIZ(rem) = 0;
       else
 	{
-	  /* Store the single-limb remainder.  We don't check if there's space
-	     for just one limb, since no function ever makes zero space.  */
 	  SIZ(rem) = ns >= 0 ? 1 : -1;
-	  PTR(rem)[0] = rl;
+	  MPZ_NEWALLOC (rem, 1)[0] = rl;
 	}
     }
 
