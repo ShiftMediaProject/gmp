@@ -1,3 +1,7 @@
+2015-11-09  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/Makefile.am: Move EXTRA_DIST out of WANT_CXX.
+
 2015-11-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/urandomm.c: Use mpn_zero_p to shorten code.

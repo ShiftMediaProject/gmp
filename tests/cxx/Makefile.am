@@ -38,9 +38,11 @@ check_PROGRAMS = t-binary t-cast t-cxx11 \
   t-ternary t-unary \
   t-do-exceptions-work-at-all-with-this-compiler \
   t-ops2z t-assign t-constr t-rand
-EXTRA_DIST = t-ops2.h
+
 TESTS = $(check_PROGRAMS)
 endif
+
+EXTRA_DIST = t-ops2.h
 
 t_assign_SOURCES  = t-assign.cc
 t_binary_SOURCES  = t-binary.cc
