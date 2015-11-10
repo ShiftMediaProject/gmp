@@ -43,7 +43,7 @@ mpz_inits (mpz_ptr x, ...)
   while (x != NULL)
     {
       ALLOC (x) = 0;
-      PTR (x) = &dummy_limb;
+      PTR (x) = (mp_ptr) &dummy_limb;
       SIZ (x) = 0;
 
       x = va_arg (ap, mpz_ptr);

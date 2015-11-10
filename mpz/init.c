@@ -36,6 +36,6 @@ mpz_init (mpz_ptr x)
 {
   static const mp_limb_t dummy_limb=0xc1a0;
   ALLOC (x) = 0;
-  PTR (x) = &dummy_limb;
+  PTR (x) = (mp_ptr) &dummy_limb;
   SIZ (x) = 0;
 }

@@ -35,7 +35,10 @@ see https://www.gnu.org/licenses/.  */
 void
 mpz_init_set_d (mpz_ptr dest, double val)
 {
+  static const mp_limb_t dummy_limb=0xc1a0;
+
   ALLOC (dest) = 0;
   SIZ (dest) = 0;
+  PTR (dest) = (mp_ptr) &dummy_limb;
   mpz_set_d (dest, val);
 }
