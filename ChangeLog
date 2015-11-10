@@ -1,3 +1,8 @@
+2015-11-10  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_primorial_function): Throw on negative operands.
+	* tests/cxx/t-ops2z.cc: Test it.
+
 2015-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz: Experimental, lazy allocation.

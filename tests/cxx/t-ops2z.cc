@@ -99,8 +99,10 @@ void checkz (){
   ASSERT_ALWAYS(mpz_class::primorial(3)==6);
   ASSERT_ALWAYS(mpz_class::primorial(3ul)==6);
   ASSERT_ALWAYS(mpz_class::primorial(3.f)==6);
-  ASSERT_ALWAYS(mpz_class::primorial(-mpz_class(3))==1);
-  ASSERT_ALWAYS(mpz_class::primorial(-5)==1);
+  try { ret=primorial(-mpz_class(3)); ASSERT_ALWAYS(0); }
+  catch (std::domain_error) {}
+  try { ret=mpz_class::primorial(-5); ASSERT_ALWAYS(0); }
+  catch (std::domain_error) {}
   try { ret=primorial(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
   catch (std::bad_alloc) {}
 }

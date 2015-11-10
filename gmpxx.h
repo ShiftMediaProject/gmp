@@ -1222,19 +1222,17 @@ struct __gmp_primorial_function
   static void eval(mpz_ptr z, signed long l)
   {
     if (l < 0)
-      mpz_set_ui(z, 1);
-    else
-      eval(z, static_cast<unsigned long>(l));
+      throw std::domain_error ("primorial(negative)");
+    eval(z, static_cast<unsigned long>(l));
   }
   static void eval(mpz_ptr z, mpz_srcptr w)
   {
     if (!mpz_fits_ulong_p(w))
       if (mpz_sgn(w) < 0)
-	mpz_set_ui(z, 1);
+	throw std::domain_error ("primorial(negative)");
       else
-	throw std::bad_alloc(); // or std::overflow_error ("factorial")?
-    else
-      eval(z, mpz_get_ui(w));
+	throw std::bad_alloc(); // or std::overflow_error ("primorial")?
+    eval(z, mpz_get_ui(w));
   }
   static void eval(mpz_ptr z, double d)
   {  __GMPXX_TMPZ_D;    eval (z, temp); }
