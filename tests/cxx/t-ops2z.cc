@@ -105,6 +105,15 @@ void checkz (){
   catch (std::domain_error) {}
   try { ret=primorial(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
   catch (std::bad_alloc) {}
+  ASSERT_ALWAYS(mpz_class::fibonacci(mpz_class(6))==8);
+  ASSERT_ALWAYS(mpz_class::fibonacci(mpz_class(2)*2)==3);
+  ASSERT_ALWAYS(mpz_class::fibonacci(3)==2);
+  ASSERT_ALWAYS(mpz_class::fibonacci(3ul)==2);
+  ASSERT_ALWAYS(mpz_class::fibonacci(3.f)==2);
+  ASSERT_ALWAYS(fibonacci(-mpz_class(6))==-8);
+  ASSERT_ALWAYS(mpz_class::fibonacci(-3)==2);
+  try { ret=fibonacci(mpz_class(1)<<300); ASSERT_ALWAYS(0); }
+  catch (std::bad_alloc) {}
 }
 
 int

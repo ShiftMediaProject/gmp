@@ -1,3 +1,11 @@
+2015-11-12  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_fibonacci_function): New class.
+	(fibonacci, mpz_class::fibonacci): New functions.
+	(__gmp_fac_function, __gmp_primorial_function): Add braces.
+	* tests/cxx/t-ops2z.cc: Test fibonacci.
+	* doc/gmp.texi: Document fibonacci.
+
 2015-11-10  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (__gmp_primorial_function): Throw on negative operands.
