@@ -6873,7 +6873,8 @@ mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
 @deftypefunx void mpz_class::swap (mpz_class& @var{op})
 @deftypefunx void swap (mpz_class& @var{op1}, mpz_class& @var{op2})
 These functions provide a C++ class interface to the corresponding GMP C
-routines.
+routines.  Calling @code{factorial} or @code{primorial} on a negative number
+is undefined.
 
 @code{cmp} can be used with any of the classes or the standard C++ types,
 except @code{long long} and @code{long double}.
