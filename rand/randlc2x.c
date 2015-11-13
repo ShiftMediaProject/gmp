@@ -1,6 +1,6 @@
 /* Linear Congruential pseudo-random number generator functions.
 
-Copyright 1999-2003, 2005 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

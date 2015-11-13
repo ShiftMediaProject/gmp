@@ -1,6 +1,6 @@
 /* mpz_realloc2 -- change allocated data size.
 
-Copyright 2001, 2002, 2008 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2008, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
