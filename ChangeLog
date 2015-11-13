@@ -2,6 +2,7 @@
 
 	* mini-gmp/mini-gmp.c: Lazy allocation for mpz_t.
 	* mpz/set.c: Use MPZ_NEWALLOC.
+	* mpq/init.c: Remove conditional code for __CHECKER__.
 
 2015-11-12  Marc Glisse  <marc.glisse@inria.fr>
 
