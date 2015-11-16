@@ -62,14 +62,14 @@ see https://www.gnu.org/licenses/.  */
 								\
     LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)
 
-#define LOOP_ON_SIEVE_STOP					\
+#define LOOP_ON_SIEVE_NOCOND					\
 	}							\
       __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
       __index += __mask & 1;					\
-    }  while (__i <= __max_i)					\
+    }  while (1)
 
-#define LOOP_ON_SIEVE_END					\
-    LOOP_ON_SIEVE_STOP;						\
+#define LOOP_ON_SIEVE_CLOSE					\
+    LOOP_ON_SIEVE_NOCOND;					\
   } while (0)
 
 /*********************************************************/
@@ -285,7 +285,7 @@ block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
       lmask = lmask << maskrot | lmask >> (GMP_LIMB_BITS - maskrot);
     };
   }
-  LOOP_ON_SIEVE_END;
+  LOOP_ON_SIEVE_CLOSE;
 }
 
 #define BLOCK_SIZE 2048
@@ -321,8 +321,9 @@ gmp_primesieve (mp_ptr bit_array, mp_limb_t n)
     mp_size_t off;
     off = BLOCK_SIZE + (size % BLOCK_SIZE);
     first_block_primesieve (bit_array, id_to_n (off * GMP_LIMB_BITS));
-    for ( ; off < size; off += BLOCK_SIZE)
-      block_resieve (bit_array + off, BLOCK_SIZE, off * GMP_LIMB_BITS, bit_array, off * GMP_LIMB_BITS - 1);
+    do {
+      block_resieve (bit_array + off, BLOCK_SIZE, off * GMP_LIMB_BITS, bit_array, off * GMP_LIMB_BITS);
+    } while ((off += BLOCK_SIZE) < size);
   } else {
     first_block_primesieve (bit_array, n);
   }
@@ -337,7 +338,7 @@ gmp_primesieve (mp_ptr bit_array, mp_limb_t n)
 #undef BLOCK_SIZE
 #undef SEED_LIMIT
 #undef SIEVE_SEED
-#undef LOOP_ON_SIEVE_END
-#undef LOOP_ON_SIEVE_STOP
+#undef LOOP_ON_SIEVE_CLOSE
+#undef LOOP_ON_SIEVE_NOCOND
 #undef LOOP_ON_SIEVE_BEGIN
 #undef LOOP_ON_SIEVE_CONTINUE
