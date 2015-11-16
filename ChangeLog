@@ -1,8 +1,16 @@
 2015-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c: Lazy allocation for mpz_t.
+	(mpz_rootrem): Exploit lazy allocation to avoid init2.
 	* mpz/set.c: Use MPZ_NEWALLOC.
+
 	* mpq/init.c: Remove conditional code for __CHECKER__.
+	* mpq/set.c: Shorten scope of local variables.
+	* mpq/set_den.c: Likewise.
+	* mpq/set_num.c: Likewise.
+	* mpq/set_z.c: Likewise.
+
+	* primesieve.c: Fill (initial) sieve with a presieved 70bits pattern.
 
 2015-11-12  Marc Glisse  <marc.glisse@inria.fr>
 
