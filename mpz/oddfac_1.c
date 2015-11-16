@@ -86,7 +86,7 @@ see https://www.gnu.org/licenses/.  */
 	}							\
       __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
       __index += __mask & 1;					\
-    }  while (__i <= __max_i)					\
+    }  while (__i <= __max_i)
 
 #define LOOP_ON_SIEVE_END					\
     LOOP_ON_SIEVE_STOP;						\
