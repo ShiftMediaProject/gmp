@@ -7,7 +7,7 @@ IT IS ONLY SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.
 IN FACT, IT IS ALMOST GUARANTEED THAT IT WILL CHANGE OR
 DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2010-2012 Free Software Foundation, Inc.
+Copyright 2010-2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -96,11 +96,24 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 
 #if GMP_LIMB_BITS > 61
 #define SIEVE_SEED CNST_LIMB(0x3294C9E069128480)
+#if GMP_LIMB_BITS < 67
+#define SIEVE_MASK1 CNST_LIMB(0x1214896069128483)
+#define SIEVE_MASKT (CNST_LIMB(0x3) << (66 - GMP_LIMB_BITS))
+#define SEED_LIMIT 208
+#else
 #define SEED_LIMIT 202
+#endif
 #else
 #if GMP_LIMB_BITS > 30
 #define SIEVE_SEED CNST_LIMB(0x69128480)
+#if GMP_LIMB_BITS < 35
+#define SIEVE_MASK1 CNST_LIMB(0x69128483)
+#define SIEVE_MASK2 (CNST_LIMB(0x1214896) << (36 - GMP_LIMB_BITS))
+#define SIEVE_MASKT (CNST_LIMB(0x3) << (34 - GMP_LIMB_BITS))
+#define SEED_LIMIT 120
+#else
 #define SEED_LIMIT 114
+#endif
 #else
 #if GMP_LIMB_BITS > 15
 #define SIEVE_SEED CNST_LIMB(0x8480)
@@ -117,31 +130,66 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 #endif /* 30 */
 #endif /* 61 */
 
+static mp_limb_t
+fill_bitpattern (mp_ptr bit_array, mp_size_t limbs)
+{
+#ifdef SIEVE_MASK1
+  mp_limb_t mask = SIEVE_MASK1;
+  mp_limb_t tail = SIEVE_MASKT;
+  mp_limb_t tmp;
+#ifdef SIEVE_MASK2
+  mp_limb_t mask2= SIEVE_MASK2;
+
+  do {
+    *bit_array = mask;
+    if (--limbs == 0)
+      break;
+    *++bit_array = mask2;
+    tmp = mask2 >> (GMP_LIMB_BITS - (70 - GMP_LIMB_BITS * 2));
+    mask2 = mask2 << (70 - GMP_LIMB_BITS * 2) | mask >> (GMP_LIMB_BITS - (70 - GMP_LIMB_BITS * 2));
+    mask = mask << (70 - GMP_LIMB_BITS * 2) | tail;
+#else
+  do {
+    *bit_array = mask;
+    tmp = mask >> (GMP_LIMB_BITS - (70 - GMP_LIMB_BITS));
+    mask <<= 70 - GMP_LIMB_BITS;
+#endif
+    mask |= tail;
+    tail = tmp;
+    bit_array++;
+  } while (--limbs != 0);
+  return 2;
+#else
+  MPN_ZERO (bit_array, limbs);
+  return 0;
+#endif
+}
+
 static void
 first_block_primesieve (mp_ptr bit_array, mp_limb_t n)
 {
   mp_size_t bits, limbs;
+  mp_limb_t i;
 
   ASSERT (n > 4);
 
   bits  = n_to_bit(n);
   limbs = bits / GMP_LIMB_BITS + 1;
 
-  /* FIXME: We can skip 5 too, filling with a 5-part pattern. */
-  MPN_ZERO (bit_array, limbs);
+  i = fill_bitpattern (bit_array, limbs);
   bit_array[0] = SIEVE_SEED;
 
   if ((bits + 1) % GMP_LIMB_BITS != 0)
     bit_array[limbs-1] |= MP_LIMB_T_MAX << ((bits + 1) % GMP_LIMB_BITS);
 
   if (n > SEED_LIMIT) {
-    mp_limb_t mask, index, i;
+    mp_limb_t mask, index;
 
     ASSERT (n > 49);
 
-    mask = 1;
+    mask = CNST_LIMB(1) << i;
     index = 0;
-    i = 1;
+    ++i;
     do {
       if ((bit_array[index] & mask) == 0)
 	{
@@ -192,8 +240,8 @@ block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
 
   bits = limbs * GMP_LIMB_BITS - 1;
 
-  /* FIXME: We can skip 5 too, filling with a 5-part pattern. */
-  MPN_ZERO (bit_array, limbs);
+  /* FIXME: We can skip 5 and 7 too, filling with a 70-bits pattern. */
+  MPN_FILL (bit_array, limbs, 0);
 
   LOOP_ON_SIEVE_BEGIN(step,0,sieve_bits,0,sieve);
   {
