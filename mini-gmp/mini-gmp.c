@@ -3214,12 +3214,8 @@ mpz_rootrem (mpz_t x, mpz_t r, const mpz_t y, unsigned long z)
   }
 
   mpz_init (u);
-  {
-    mp_bitcnt_t tb;
-    tb = mpz_sizeinbase (y, 2) / z + 1;
-    mpz_init2 (t, tb + 1);
-    mpz_setbit (t, tb);
-  }
+  mpz_init (t);
+  mpz_setbit (t, mpz_sizeinbase (y, 2) / z + 1);
 
   if (z == 2) /* simplify sqrt loop: z-1 == 1 */
     do {
