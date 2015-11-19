@@ -130,8 +130,9 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 #endif /* 30 */
 #endif /* 61 */
 
+/* FIXME: cleanup code, and support offset also for 32-bits machines */
 static mp_limb_t
-fill_bitpattern (mp_ptr bit_array, mp_size_t limbs)
+fill_bitpattern (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset)
 {
 #ifdef SIEVE_MASK1
   mp_limb_t mask = SIEVE_MASK1;
@@ -140,6 +141,13 @@ fill_bitpattern (mp_ptr bit_array, mp_size_t limbs)
 #ifdef SIEVE_MASK2
   mp_limb_t mask2= SIEVE_MASK2;
 
+  offset %= 70;
+  if (offset)
+    {
+      /* FIXME: support nonzero offset!! */
+        MPN_ZERO (bit_array, limbs);
+	return 0;
+    }
   do {
     *bit_array = mask;
     if (--limbs == 0)
@@ -149,6 +157,25 @@ fill_bitpattern (mp_ptr bit_array, mp_size_t limbs)
     mask2 = mask2 << (70 - GMP_LIMB_BITS * 2) | mask >> (GMP_LIMB_BITS - (70 - GMP_LIMB_BITS * 2));
     mask = mask << (70 - GMP_LIMB_BITS * 2) | tail;
 #else
+  offset %= 70;
+  if (offset) {
+    if (offset < GMP_LIMB_BITS) {
+      tmp = mask << (GMP_LIMB_BITS - offset);
+      mask >>= offset;
+      mask |= tail << (GMP_LIMB_BITS - offset);
+      if (offset <= 70 - GMP_LIMB_BITS) {
+	tail = (tail >> offset) | (tmp >> (GMP_LIMB_BITS * 2 - 70));
+      } else {
+	mask |= tmp << (70 - GMP_LIMB_BITS);
+	tail = tmp >> (GMP_LIMB_BITS * 2 - 70);
+      }
+    } else {
+      tmp = mask >> (offset + GMP_LIMB_BITS - 70);
+      mask <<= 70 - offset;
+      mask |= tail >> (offset - GMP_LIMB_BITS);
+      tail = ((tail << (70 - offset)) | tmp) & 0x3f;
+    }
+  };
   do {
     *bit_array = mask;
     tmp = mask >> (GMP_LIMB_BITS - (70 - GMP_LIMB_BITS));
@@ -176,7 +203,7 @@ first_block_primesieve (mp_ptr bit_array, mp_limb_t n)
   bits  = n_to_bit(n);
   limbs = bits / GMP_LIMB_BITS + 1;
 
-  i = fill_bitpattern (bit_array, limbs);
+  i = fill_bitpattern (bit_array, limbs, 0);
   bit_array[0] = SIEVE_SEED;
 
   if ((bits + 1) % GMP_LIMB_BITS != 0)
@@ -234,16 +261,15 @@ static void
 block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
 		      mp_srcptr sieve, mp_limb_t sieve_bits)
 {
-  mp_size_t bits, step;
+  mp_size_t bits, step, i;
 
   ASSERT (limbs > 0);
 
   bits = limbs * GMP_LIMB_BITS - 1;
 
-  /* FIXME: We can skip 5 and 7 too, filling with a 70-bits pattern. */
-  MPN_FILL (bit_array, limbs, 0);
+  i = fill_bitpattern (bit_array, limbs, offset);
 
-  LOOP_ON_SIEVE_BEGIN(step,0,sieve_bits,0,sieve);
+  LOOP_ON_SIEVE_BEGIN(step,i,sieve_bits,0,sieve);
   {
     mp_size_t lindex;
     mp_limb_t lmask;
