@@ -38,40 +38,6 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/**************************************************************/
-/* Section macros: common macros, for mswing/fac/bin (&sieve) */
-/**************************************************************/
-
-#define LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)			\
-    __max_i = (end);						\
-								\
-    do {							\
-      ++__i;							\
-      if (((sieve)[__index] & __mask) == 0)			\
-	{							\
-	  (prime) = id_to_n(__i)
-
-#define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
-  do {								\
-    mp_limb_t __mask, __index, __max_i, __i;			\
-								\
-    __i = (start)-(off);					\
-    __index = __i / GMP_LIMB_BITS;				\
-    __mask = CNST_LIMB(1) << (__i % GMP_LIMB_BITS);		\
-    __i += (off);						\
-								\
-    LOOP_ON_SIEVE_CONTINUE(prime,end,sieve)
-
-#define LOOP_ON_SIEVE_NOCOND					\
-	}							\
-      __mask = __mask << 1 | __mask >> (GMP_LIMB_BITS-1);	\
-      __index += __mask & 1;					\
-    }  while (1)
-
-#define LOOP_ON_SIEVE_CLOSE					\
-    LOOP_ON_SIEVE_NOCOND;					\
-  } while (0)
-
 /*********************************************************/
 /* Section sieve: sieving functions and tools for primes */
 /*********************************************************/
@@ -213,11 +179,12 @@ first_block_primesieve (mp_ptr bit_array, mp_limb_t n)
     mp_limb_t mask, index;
 
     ASSERT (n > 49);
+    ASSERT (i < GMP_LIMB_BITS);
 
     mask = CNST_LIMB(1) << i;
     index = 0;
-    ++i;
     do {
+      ++i;
       if ((bit_array[index] & mask) == 0)
 	{
 	  mp_size_t step, lindex;
@@ -252,16 +219,16 @@ first_block_primesieve (mp_ptr bit_array, mp_limb_t n)
 	}
       mask = mask << 1 | mask >> (GMP_LIMB_BITS-1);
       index += mask & 1;
-      i++;
     } while (1);
   }
 }
 
 static void
 block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
-		      mp_srcptr sieve, mp_limb_t sieve_bits)
+		      mp_srcptr sieve)
 {
-  mp_size_t bits, step, i;
+  mp_size_t bits;
+  mp_limb_t mask, index, i;
 
   ASSERT (limbs > 0);
 
@@ -269,49 +236,59 @@ block_resieve (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset,
 
   i = fill_bitpattern (bit_array, limbs, offset);
 
-  LOOP_ON_SIEVE_BEGIN(step,i,sieve_bits,0,sieve);
-  {
-    mp_size_t lindex;
-    mp_limb_t lmask;
-    unsigned  maskrot;
+  ASSERT (i < GMP_LIMB_BITS);
 
-/*  lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
-    lindex = __i*(step+1)-1+(-(__i&1)&(__i+1));
-/*  lindex = __i*(step+1+(__i&1))-1+(__i&1); */
-    if (lindex > bits + offset)
-      break;
+  mask = CNST_LIMB(1) << i;
+  index = 0;
+  do {
+    ++i;
+    if ((sieve[index] & mask) == 0)
+      {
+	mp_size_t step, lindex;
+	mp_limb_t lmask;
+	unsigned  maskrot;
 
-    step <<= 1;
-    maskrot = step % GMP_LIMB_BITS;
+	step = id_to_n(i);
 
-    if (lindex < offset)
-      lindex += step * ((offset - lindex - 1) / step + 1);
+/*	lindex = n_to_bit(id_to_n(i)*id_to_n(i)); */
+	lindex = i*(step+1)-1+(-(i&1)&(i+1));
+/*	lindex = i*(step+1+(i&1))-1+(i&1); */
+	if (lindex > bits + offset)
+	  break;
 
-    lindex -= offset;
+	step <<= 1;
+	maskrot = step % GMP_LIMB_BITS;
 
-    lmask = CNST_LIMB(1) << (lindex % GMP_LIMB_BITS);
-    for ( ; lindex <= bits; lindex += step) {
-      bit_array[lindex / GMP_LIMB_BITS] |= lmask;
-      lmask = lmask << maskrot | lmask >> (GMP_LIMB_BITS - maskrot);
-    };
+	if (lindex < offset)
+	  lindex += step * ((offset - lindex - 1) / step + 1);
 
-/*  lindex = n_to_bit(id_to_n(i)*bit_to_n(i)); */
-    lindex = __i*(__i*3+6)+(__i&1);
-    if (lindex > bits + offset)
-      continue;
+	lindex -= offset;
 
-    if (lindex < offset)
-      lindex += step * ((offset - lindex - 1) / step + 1);
+	lmask = CNST_LIMB(1) << (lindex % GMP_LIMB_BITS);
+	for ( ; lindex <= bits; lindex += step) {
+	  bit_array[lindex / GMP_LIMB_BITS] |= lmask;
+	  lmask = lmask << maskrot | lmask >> (GMP_LIMB_BITS - maskrot);
+	};
 
-    lindex -= offset;
+/*	lindex = n_to_bit(id_to_n(i)*bit_to_n(i)); */
+	lindex = i*(i*3+6)+(i&1);
+	if (lindex > bits + offset)
+	  continue;
 
-    lmask = CNST_LIMB(1) << (lindex % GMP_LIMB_BITS);
-    for ( ; lindex <= bits; lindex += step) {
-      bit_array[lindex / GMP_LIMB_BITS] |= lmask;
-      lmask = lmask << maskrot | lmask >> (GMP_LIMB_BITS - maskrot);
-    };
-  }
-  LOOP_ON_SIEVE_CLOSE;
+	if (lindex < offset)
+	  lindex += step * ((offset - lindex - 1) / step + 1);
+
+	lindex -= offset;
+
+	lmask = CNST_LIMB(1) << (lindex % GMP_LIMB_BITS);
+	for ( ; lindex <= bits; lindex += step) {
+	  bit_array[lindex / GMP_LIMB_BITS] |= lmask;
+	  lmask = lmask << maskrot | lmask >> (GMP_LIMB_BITS - maskrot);
+	};
+      }
+      mask = mask << 1 | mask >> (GMP_LIMB_BITS-1);
+      index += mask & 1;
+  } while (1);
 }
 
 #define BLOCK_SIZE 2048
@@ -348,7 +325,7 @@ gmp_primesieve (mp_ptr bit_array, mp_limb_t n)
     off = BLOCK_SIZE + (size % BLOCK_SIZE);
     first_block_primesieve (bit_array, id_to_n (off * GMP_LIMB_BITS));
     do {
-      block_resieve (bit_array + off, BLOCK_SIZE, off * GMP_LIMB_BITS, bit_array, off * GMP_LIMB_BITS);
+      block_resieve (bit_array + off, BLOCK_SIZE, off * GMP_LIMB_BITS, bit_array);
     } while ((off += BLOCK_SIZE) < size);
   } else {
     first_block_primesieve (bit_array, n);
