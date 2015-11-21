@@ -1,3 +1,9 @@
+2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (MPN_TOOM22_MUL_MINSIZE): Consider ToomX2 limits
+	  (thanks Paul).
+	* tests/mpn/t-toom22.c: Keep on testing small sizes.
+
 2015-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c: Lazy allocation for mpz_t.
@@ -10,7 +16,7 @@
 	* mpq/set_num.c: Likewise.
 	* mpq/set_z.c: Likewise.
 
-	* primesieve.c: Fill (initial) sieve with a presieved 70bits pattern.
+	* primesieve.c: Fill sieve with a presieved 70bits pattern.
 
 2015-11-12  Marc Glisse  <marc.glisse@inria.fr>
 
