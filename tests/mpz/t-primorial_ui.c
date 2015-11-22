@@ -1,6 +1,6 @@
 /* Exercise mpz_primorial_ui.
 
-Copyright 2000-2002, 2012 Free Software Foundation, Inc.
+Copyright 2000-2002, 2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -53,7 +53,8 @@ main (int argc, char *argv[])
   mpz_init_set_ui (f, 1);  /* 0# = 1 */
   mpz_init (r);
 
-  for (n = 0; n < limit; n++)
+  n = 0;
+  do
     {
       mpz_primorial_ui (r, n);
       MPZ_CHECK_FORMAT (r);
@@ -66,8 +67,25 @@ main (int argc, char *argv[])
           abort ();
         }
 
-      if (isprime (n+1))
-	mpz_mul_ui (f, f, n+1);  /* p# = (p-1)# * (p) */
+      if (isprime (++n))
+	mpz_mul_ui (f, f, n);  /* p# = (p-1)# * (p) */
+      if (n%16 == 0) { mpz_clear (r); mpz_init (r); }
+    } while (n < limit);
+
+  /* Chech a single "big" value, modulo a larger prime */
+  n = 2095637;
+  mpz_primorial_ui (r, n);
+  mpz_set_ui (f, 13);
+  mpz_setbit (f, 64); /* f = 2^64 + 13 */
+  mpz_tdiv_r (r, r, f);
+  mpz_set_str (f, "BAFCBF3C95B217D5", 16);
+  
+  if (mpz_cmp (f, r) != 0)
+    {
+      printf ("mpz_primorial_ui(%lu) wrong\n", n);
+      printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
+      printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
+      abort ();
     }
 
   mpz_clear (f);

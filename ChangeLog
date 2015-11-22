@@ -3,6 +3,7 @@
 	* gmp-impl.h (MPN_TOOM22_MUL_MINSIZE): Consider ToomX2 limits
 	  (thanks Paul).
 	* tests/mpn/t-toom22.c: Keep on testing small sizes.
+	* tests/mpz/t-primorial_ui.c: Test a single "large" number.
 
 2015-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
