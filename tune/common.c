@@ -1785,6 +1785,12 @@ speed_mpz_2fac_ui (struct speed_params *s)
   SPEED_ROUTINE_MPZ_UI (mpz_2fac_ui);
 }
 
+double
+speed_mpz_primorial_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_primorial_ui);
+}
+
 
 double
 speed_mpn_fib2_ui (struct speed_params *s)

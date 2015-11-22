@@ -5,6 +5,10 @@
 	* tests/mpn/t-toom22.c: Keep on testing small sizes.
 	* tests/mpz/t-primorial_ui.c: Test a single "large" number.
 
+	* tune/common.c (speed_mpz_primorial_ui): New functions.
+	* tune/speed.h: Declare it.
+	* tune/speed.c (routine): Add mpz_primorial_ui.
+
 2015-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c: Lazy allocation for mpz_t.

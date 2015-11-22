@@ -408,6 +408,7 @@ const struct routine_t {
   { "mpz_bin_ui",        speed_mpz_bin_ui,   FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
   { "mpz_2fac_ui",       speed_mpz_2fac_ui,  FLAG_NODATA   },
+  { "mpz_primorial_ui",  speed_mpz_primorial_ui, FLAG_NODATA },
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
   { "mpz_powm_redc",     speed_mpz_powm_redc        },
