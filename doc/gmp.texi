@@ -4231,7 +4231,7 @@ numbers.  These functions start with the prefix @code{mpq_}.
 Rational numbers are stored in objects of type @code{mpq_t}.
 
 All rational arithmetic functions assume operands have a canonical form, and
-canonicalize their result.  The canonical from means that the denominator and
+canonicalize their result.  The canonical form means that the denominator and
 the numerator have no common factors, and that the denominator is positive.
 Zero has the unique representation 0/1.
 
