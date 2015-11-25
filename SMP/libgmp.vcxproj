@@ -1102,10 +1102,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1171,10 +1169,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1244,10 +1240,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1315,10 +1309,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1397,10 +1389,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1479,10 +1469,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1561,10 +1549,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1643,10 +1629,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1726,10 +1710,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1808,10 +1790,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp (
-rd /s /q $(OutDir)\include\gmp
-cd ../
-cd $(ProjectDir)
+if exist $(OutDir)\include\gmp.h (
+del $(OutDir)\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
