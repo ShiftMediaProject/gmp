@@ -1,3 +1,7 @@
+2015-12-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/coreibwl/mul_basecase.asm: Add FUNC_EXITs.
+
 2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (MPN_TOOM22_MUL_MINSIZE): Consider ToomX2 limits
