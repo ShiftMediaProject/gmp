@@ -1,3 +1,15 @@
+2015-12-06  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm*): Conditionally define NOTHUMB.
+	Simplify and generalise.
+	* mpn/arm/arm-defs.m4 (ret): New macro, conditional on NOTHUMB.
+	* mpn/arm/*.asm: Use ret.
+
+2015-12-03  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Work around skylake cpuid bug.
+	Fix spelling of kabylake.
+
 2015-12-01  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/coreibwl/mul_basecase.asm: Add FUNC_EXITs.
