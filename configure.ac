@@ -625,35 +625,23 @@ case $host in
     # either enforce them, or organise to strip paths as the corresponding
     # options fail.
     case $host_cpu in
-      armv7*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv7-a"
-	;;
-      armv6t2*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6t2"
-	;;
-      armv6*)
-	path="arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6"
-	;;
-      armsa1 | arm9tdmi | armv4*)
+      armsa1 | arm7t* | arm9t* | armv4t*)
 	path="arm"
 	gcc_cflags_arch="-march=armv4"
 	;;
-      armxscale | arm9te | arm10 | armv5*)
+      armxscale | arm7ej | arm9te | arm9e* | arm10* | armv5*)
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
-      arm11mpcore | arm1136 | arm1176*)
-	path="arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6"
-	;;
-      arm1156)
+      arm1156 | armv6t2*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6t2"
 	;;
-      armcortexa5)
+      arm11* | armv6*)
+	path="arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv6"
+	;;
+      armcortexa5 | armv7*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
@@ -703,6 +691,8 @@ case $host in
 	;;
       *)
 	path="arm"
+	gcc_cflags_arch="-march=armv4"
+	GMP_DEFINE_RAW(["define(<NOTHUMB>,1)"])
 	;;
     esac
     ;;
