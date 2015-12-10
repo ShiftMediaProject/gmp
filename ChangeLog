@@ -1,3 +1,13 @@
+2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/misc/t-printf.c: Test a sequence of '%'.
+	* printf/doprnt.c: Avoid buffer overread with long long limbs.
+
+	* mpn/generic/toom_interpolate_7.c: Use the rsh1 functions,
+	  when available, also for negatives (clearing the carry).
+	* mpn/generic/toom_interpolate_12.c: Likewise.
+	* mpn/generic/toom_interpolate_16.c: Likewise.
+
 2015-12-06  Torbjörn Granlund  <torbjorng@google.com>
 
 	* configure.ac (arm*): Conditionally define NOTHUMB.
