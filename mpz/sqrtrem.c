@@ -1,8 +1,8 @@
 /* mpz_sqrtrem(root,rem,x) -- Set ROOT to floor(sqrt(X)) and REM
    to the remainder, i.e. X - ROOT**2.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2011, 2012 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2005, 2011, 2012, 2015 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -42,7 +42,7 @@ mpz_sqrtrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr op)
   op_size = SIZ (op);
   if (UNLIKELY (op_size <= 0))
     {
-      if (op_size < 0)
+      if (UNLIKELY (op_size < 0))
 	SQRT_OF_NEGATIVE;
       SIZ(root) = 0;
       SIZ(rem) = 0;
