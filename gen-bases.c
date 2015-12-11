@@ -1,7 +1,7 @@
 /* Generate mp_bases data.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2002, 2004, 2011, 2012 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2002, 2004, 2011, 2012, 2015
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -57,13 +57,11 @@ generate (int limb_bits, int nail_bits, int base)
 
   mpz_set_ui (t, 1L);
   mpz_mul_2exp (t, t, numb_bits);
-  mpz_set_ui (big_base, 1L);
+  mpz_set_ui (big_base, (long) base);
   chars_per_limb = 0;
-  for (;;)
+  while (mpz_cmp (big_base, t) <= 0)
     {
       mpz_mul_ui (big_base, big_base, (long) base);
-      if (mpz_cmp (big_base, t) > 0)
-        break;
       chars_per_limb++;
     }
 
@@ -74,9 +72,7 @@ generate (int limb_bits, int nail_bits, int base)
   mpz_set_ui (t, 1L);
   mpz_mul_2exp (t, t, 2*limb_bits - normalization_steps);
   mpz_tdiv_q (big_base_inverted, t, big_base);
-  mpz_set_ui (t, 1L);
-  mpz_mul_2exp (t, t, limb_bits);
-  mpz_sub (big_base_inverted, big_base_inverted, t);
+  mpz_clrbit (big_base_inverted, limb_bits);
 }
 
 void
@@ -137,7 +133,7 @@ mp_2logb (mpz_t r, int bi, int prec)
       if (mpz_cmp (t2, two) < 0)	/* not too large? */
 	{
 	  mpz_setbit (r, i);		/* set next less significant bit */
-	  mpz_set (t, t2);		/* new value acceptable */
+	  mpz_swap (t, t2);		/* new value acceptable */
 	}
     }
 
