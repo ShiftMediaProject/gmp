@@ -8,7 +8,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2006-2008, 2010, 2012 Free Software Foundation, Inc.
+Copyright 2006-2008, 2010, 2012, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -283,8 +283,8 @@ mpn_toom33_mul (mp_ptr pp,
     }
   else if (as1[n] != 0)
     {
-#if HAVE_NATIVE_mpn_addlsh1_n
-      cy = 2 * bs1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bs1, n);
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1
+      cy = 2 * bs1[n] + mpn_addlsh1_n_ip1 (v1 + n, bs1, n);
 #else
       cy = 2 * bs1[n] + mpn_addmul_1 (v1 + n, bs1, n, CNST_LIMB(2));
 #endif
@@ -297,8 +297,8 @@ mpn_toom33_mul (mp_ptr pp,
     }
   else if (bs1[n] != 0)
     {
-#if HAVE_NATIVE_mpn_addlsh1_n
-      cy += mpn_addlsh1_n (v1 + n, v1 + n, as1, n);
+#if HAVE_NATIVE_mpn_addlsh1_n_ip1
+      cy += mpn_addlsh1_n_ip1 (v1 + n, as1, n);
 #else
       cy += mpn_addmul_1 (v1 + n, as1, n, CNST_LIMB(2));
 #endif
