@@ -1,4 +1,8 @@
-2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.sub: Fix spelling of kabylake.
+
+2015-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/misc/t-printf.c: Test a sequence of '%'.
 	* printf/doprnt.c: Avoid buffer overread with long long limbs.
