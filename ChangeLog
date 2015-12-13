@@ -1,3 +1,9 @@
+2015-12-14  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fat/fat.c (gmp_workaround_skylake_cpuid_bug):
+	New function.
+	(__gmpn_cpuvec_init): Handle more BMI2 crippled CPUs.
+
 2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.sub: Fix spelling of kabylake.
