@@ -327,8 +327,8 @@ __gmpn_cpuvec_init (void)
 	    case 0x4e:		/* Skylake client */
 	    case 0x55:		/* Skylake server */
 	    case 0x5e:		/* Skylake */
-	    case 0x8e:		/* Cabylake */
-	    case 0x9e:		/* Cabylake */
+	    case 0x8e:		/* Kabylake */
+	    case 0x9e:		/* Kabylake */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
