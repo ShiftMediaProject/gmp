@@ -764,11 +764,11 @@ extern "C"
 unsigned int cpuid (int, char *, char *, int);
 
 int
-workaround_intel_skylake_bugs ()
+gmp_workaround_skylake_cpuid_bug ()
 {
   char feature_string[49];
   char processor_name_string[49];
-  const char *bad_cpus[] = {" G44", " G45", " G39" /* , "6600" */ };
+  static const char *bad_cpus[] = {" G44", " G45", " G39" /* , "6600" */ };
   int i;
 
   /* Example strings:                                   */
@@ -776,13 +776,12 @@ workaround_intel_skylake_bugs ()
   /* "Intel(R) Core(TM) i5-6600K CPU @ 3.50GHz"         */
   /*                  ^               ^               ^ */
   /*     0x80000002       0x80000003      0x80000004    */
-
   /* We match out just the 0x80000003 part here. */
 
-  /* In there infinitive wisdom, Intel decided to use one register
-     order for the vendor string, and another for the processor
-     name string.  We shuffle things about, rather than write a new
-     variant of our assembly cpuid.  */
+  /* In their infinitive wisdom, Intel decided to use one register order for
+     the vendor string, and another for the processor name string.  We shuffle
+     things about here, rather than write a new variant of our assembly cpuid.
+  */
 
   unsigned int eax, ebx, ecx, edx;
   eax = CPUID (feature_string, 0x80000003);
@@ -894,7 +893,7 @@ main ()
 		 as sandybridge for now.  */
 	      CPUID (feature_string, 7);
 	      if ((feature_string[0 + 8 / 8] & (1 << (8 % 8))) == 0
-		  || workaround_intel_skylake_bugs())
+		  || gmp_workaround_skylake_cpuid_bug ())
 		modelstr = "sandybridge";
 	    }
 
