@@ -1,7 +1,28 @@
+2015-12-14  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fat/fat.c (gmp_workaround_skylake_cpuid_bug):
+	New function.
+	(__gmpn_cpuvec_init): Handle more BMI2 crippled CPUs.
+
+2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.sub: Fix spelling of kabylake.
+	* acinclude.m4: Likewise.
+	* mpn/x86_64/fat/fat.c: Likewise.
+
 2015-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/misc/t-printf.c: Test a sequence of '%'.
 	* printf/doprnt.c: Avoid buffer overread with long long limbs.
+
+2015-12-03  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Work around skylake cpuid bug.
+	Fix spelling of kabylake.
+
+2015-12-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/coreibwl/mul_basecase.asm: Add FUNC_EXITs.
 
 2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
