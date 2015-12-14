@@ -1,3 +1,14 @@
+2015-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/misc/t-printf.c: Test a sequence of '%'.
+	* printf/doprnt.c: Avoid buffer overread with long long limbs.
+
+2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (MPN_TOOM22_MUL_MINSIZE): Consider ToomX2 limits
+	  (thanks Paul).
+	* tests/mpn/t-toom22.c: Keep on testing small sizes.
+
 2015-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Version 6.1.0 released.
