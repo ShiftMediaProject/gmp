@@ -705,7 +705,7 @@
 
 	* tune/tune-gcd-p.c: Add casts for C++ compatibility.
 
-	* tune/tuneup.c:  Add casts for C++ compatibility.
+	* tune/tuneup.c: Add casts for C++ compatibility.
 	(mpn_divrem_1_tune, mpn_mod_1_tune): Mark as extern "C".
 	(INSERT_FFTTAB): Produce sentinels differently to silence compiler.
 
@@ -733,12 +733,12 @@
 
 	* mpn/powerpc32/addmul_1.asm: Avoid negative stack pointer references.
 	* mpn/powerpc32/lshift.asm: Likewise.
-	* mpn/powerpc32/lshiftc.asm:  Likewise.
-	* mpn/powerpc32/p3-p7/aors_n.asm:  Likewise.
-	* mpn/powerpc32/rshift.asm:  Likewise.
-	* mpn/powerpc32/sec_tabselect.asm:  Likewise.
-	* mpn/powerpc32/submul_1.asm:  Likewise.
-	* mpn/powerpc32/vmx/mod_34lsub1.asm:  Likewise.
+	* mpn/powerpc32/lshiftc.asm: Likewise.
+	* mpn/powerpc32/p3-p7/aors_n.asm: Likewise.
+	* mpn/powerpc32/rshift.asm: Likewise.
+	* mpn/powerpc32/sec_tabselect.asm: Likewise.
+	* mpn/powerpc32/submul_1.asm: Likewise.
+	* mpn/powerpc32/vmx/mod_34lsub1.asm: Likewise.
 
 2014-10-13  Torbjörn Granlund  <torbjorng@google.com>
 
@@ -2065,8 +2065,8 @@
 
 	* mpn/powerpc64/mode64/divrem_1.asm: Remove explicit nop after CALL.
 	* mpn/powerpc64/mode64/divrem_2.asm: Likewise.
-	* mpn/powerpc64/mode64/mod_1_1.asm:  Likewise.
-	* mpn/powerpc64/mode64/mod_1_4.asm:  Likewise.
+	* mpn/powerpc64/mode64/mod_1_1.asm: Likewise.
+	* mpn/powerpc64/mode64/mod_1_4.asm: Likewise.
 
 2013-07-13  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -2461,7 +2461,7 @@
 	* mpn/arm/dive_1.asm: New file.
 	* mpn/arm/v6/dive_1.asm: New file.
 
-	* mpn/arm/v6t2/mode1o.asm:  Make trivial change to avoid v6t2...
+	* mpn/arm/v6t2/mode1o.asm: Make trivial change to avoid v6t2...
 	* mpn/arm/v6/mode1o.asm: ...instruction, move file accordingly.
 
 	* mpn/powerpc64/mode64/invert_limb.asm: Put all multiplies low-limb first.
@@ -4809,7 +4809,7 @@
 	Reintroduce previously removed RP argument.
 	* mpn/x86_64/redc_1.asm: Likewise.
 
-	* mpn/generic/redc_2.c:  Remove mpn_sub_n call, return carry from
+	* mpn/generic/redc_2.c: Remove mpn_sub_n call, return carry from
 	mpn_add_n call.
 
 	* gmp-impl.h (mpn_redc_1, mpn_redc_2): Now return an mp_limb_t.
