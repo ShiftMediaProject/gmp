@@ -1273,7 +1273,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #endif
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
-#define MPN_TOOM22_MUL_MINSIZE    4
+/* The minimal supported value for Toom22 depends also on Toom32 and
+   Toom42 implementations. */
+#define MPN_TOOM22_MUL_MINSIZE    6
 #define MPN_TOOM2_SQR_MINSIZE     4
 
 #define MPN_TOOM33_MUL_MINSIZE   17
