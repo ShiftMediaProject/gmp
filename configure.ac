@@ -1800,7 +1800,7 @@ case $host in
 	path_64="x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
 	;;
-      skylake | skylakenoavx | cabylake | cabylakenoavx)
+      skylake | skylakenoavx | kabylake | kabylakenoavx)
 	gcc_cflags_cpu="-mtune=skylake -mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
 	# Don't pass -march=skylake for now as then some compilers emit AVX512.
 	gcc_cflags_arch="-march=broadwell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
