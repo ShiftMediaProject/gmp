@@ -39,11 +39,12 @@ mpf_inits (mpf_ptr x, ...)
 
   va_start (ap, x);
 
-  while (x != NULL)
+  do
     {
       mpf_init (x);
       x = va_arg (ap, mpf_ptr);
     }
+  while (x != NULL);
 
   va_end (ap);
 }

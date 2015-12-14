@@ -40,7 +40,7 @@ mpz_inits (mpz_ptr x, ...)
 
   va_start (ap, x);
 
-  while (x != NULL)
+  do
     {
       ALLOC (x) = 0;
       PTR (x) = (mp_ptr) &dummy_limb;
@@ -48,6 +48,7 @@ mpz_inits (mpz_ptr x, ...)
 
       x = va_arg (ap, mpz_ptr);
     }
+  while (x != NULL);
 
   va_end (ap);
 }
