@@ -49,6 +49,20 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 void
 tests_start (void)
 {
+  char version[10];
+  snprintf (version, 10, "%u.%u.%u",
+	    __GNU_MP_VERSION,
+	    __GNU_MP_VERSION_MINOR,
+	    __GNU_MP_VERSION_PATCHLEVEL);
+
+  if (strcmp (gmp_version, version) != 0)
+    {
+      fprintf (stderr, "tests are not linked to the newly compiled library\n");
+      fprintf (stderr, "  local version is: %s\n", version);
+      fprintf (stderr, "  linked version is: %s\n", gmp_version);
+      abort ();
+    }
+
   /* don't buffer, so output is not lost if a test causes a segv etc */
   setbuf (stdout, NULL);
   setbuf (stderr, NULL);
