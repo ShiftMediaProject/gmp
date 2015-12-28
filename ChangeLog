@@ -1,3 +1,8 @@
+2015-12-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpq/set_str.c: Use __GMP_FREE_FUNC_TYPE.
+	* tests/mpz/t-nextprime.c: Speedup using swap, and correct type.
+
 2015-12-26  Torbjörn Granlund  <torbjorng@google.com>
 
 	* tests/misc.c (tests_start): Assert library version.
@@ -12,6 +17,13 @@
 	* mpn/x86_64/fat/fat.c (gmp_workaround_skylake_cpuid_bug):
 	New function.
 	(__gmpn_cpuvec_init): Handle more BMI2 crippled CPUs.
+
+2015-12-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpf/clears.c, mpf/inits.c, mpq/clears.c, mpq/inits.c,
+	* mpz/clears.c, mpz/inits.c: Stop supporting empty list.
+	* tests/arm32call.asm: bx->ret to support thumb-less chips 
+	  (thanks Martin Husemann).
 
 2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
 
