@@ -1,6 +1,6 @@
 /* Test mpz_nextprime.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2015 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -46,12 +46,13 @@ run (const char *start, int reps, const char *end, short diffs[])
     {
       mpz_nextprime (y, x);
       mpz_sub (x, y, x);
-      if (diffs != NULL && diffs[i] != mpz_get_ui (x))
+      if (diffs != NULL &&
+	  (! mpz_fits_sshort_p (x) || diffs[i] != (short) mpz_get_ui (x)))
 	{
 	  gmp_printf ("diff list discrepancy\n");
 	  abort ();
 	}
-      mpz_set (x, y);
+      mpz_swap (x, y);
     }
 
   mpz_set_str (y, end, 0);
