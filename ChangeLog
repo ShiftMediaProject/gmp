@@ -1,3 +1,8 @@
+2016-01-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
+	* tests/misc/t-locale.c: Enable test for mingw (tx Alexander).
+
 2015-12-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/set_str.c: Use __GMP_FREE_FUNC_TYPE.
@@ -666,7 +671,7 @@
 	(speed_mpn_add_1, speed_mpn_add_1_inplace): New functions.
 	(speed_mpn_sub_1, speed_mpn_sub_1_inplace): New functions.
 	* tune/speed.h: Declare them all.
-        * tune/speed.c (routine): Added mpn_neg, mpn_add_1, mpn_sub_1,
+	* tune/speed.c (routine): Added mpn_neg, mpn_add_1, mpn_sub_1,
 	mpn_add_1_inplace, mpn_sub_1_inplace, and mpz_2fac_ui.
 
 2015-04-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
