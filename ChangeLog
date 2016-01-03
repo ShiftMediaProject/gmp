@@ -3,6 +3,21 @@
 	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
 	* tests/misc/t-locale.c: Enable test for mingw (tx Alexander).
 
+	* primesieve.c: Heal a speed regression on small values.
+	* mpz/bin_uiui.c (mpz_bdiv_bin_uiui): 2 factors all at once.
+
+	* gen-fac.c: Use unsigned types for sizes.
+	* mini-gmp/mini-gmp.c: Silence wanrings due to (un)signed types.
+	* mini-gmp/tests/testutils.c: Likewise.
+	* mini-gmp/tests/t-logops.c: Likewise.
+	* mini-gmp/tests/t-cmp_d.c: Likewise.
+	* mini-gmp/tests/t-reuse.c: Likewise.
+	* mini-gmp/tests/t-cong.c: Likewise.
+
+	* mpn/generic/invert.c: Use MPN_FILL macro.
+	* mpn/generic/invertappr.c: Likewise.
+	* mpn/generic/toom53_mul.c: Use _ip1 when available.
+
 2015-12-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpq/set_str.c: Use __GMP_FREE_FUNC_TYPE.
