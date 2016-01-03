@@ -678,7 +678,7 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	     k <= (BIN_UIUI_RECURSIVE_SMALLDC ? ODD_CENTRAL_BINOMIAL_TABLE_LIMIT : ODD_FACTORIAL_TABLE_LIMIT)* 2)
       mpz_smallkdc_bin_uiui (r, n, k);
     else if (ABOVE_THRESHOLD (k, BIN_GOETGHELUCK_THRESHOLD) &&
-	     k < n) /* k > ODD_FACTORIAL_TABLE_LIMIT */
+	     k > (n >> 4)) /* k > ODD_FACTORIAL_TABLE_LIMIT */
       mpz_goetgheluck_bin_uiui (r, n, k);
     else
       mpz_bdiv_bin_uiui (r, n, k);
