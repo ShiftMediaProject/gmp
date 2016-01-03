@@ -482,7 +482,8 @@ mpz_smallkdc_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       ++__i;							\
       if (((sieve)[__index] & __mask) == 0)			\
 	{							\
-	  (prime) = id_to_n(__i)
+	  mp_limb_t prime;					\
+	  prime = id_to_n(__i)
 
 #define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
   do {								\
@@ -599,38 +600,30 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     {
       mp_limb_t s;
 
-      {
-	mp_limb_t prime;
-	s = limb_apprsqrt(n);
-	s = n_to_bit (s);
-	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
-	COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
-	LOOP_ON_SIEVE_END;
-	s++;
-      }
+      s = limb_apprsqrt(n);
+      s = n_to_bit (s);
+      ASSERT (bit_to_n (s) * bit_to_n (s) > n);
+      ASSERT (s <= n_to_bit (n >> 1));
+      LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
+      COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
+      LOOP_ON_SIEVE_STOP;
 
       ASSERT (max_prod <= GMP_NUMB_MAX / 2);
       max_prod <<= 1;
-      ASSERT (bit_to_n (s) * bit_to_n (s) > n);
-      ASSERT (s <= n_to_bit (n >> 1));
-      {
-	mp_limb_t prime;
 
-	LOOP_ON_SIEVE_BEGIN (prime, s, n_to_bit (n >> 1), 0,sieve);
-	SH_COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
-	LOOP_ON_SIEVE_END;
-      }
+      LOOP_ON_SIEVE_CONTINUE (prime, n_to_bit (n >> 1),sieve);
+      SH_COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);
+      LOOP_ON_SIEVE_END;
+
       max_prod >>= 1;
     }
 
   /* Store primes from (n-k)+1 to n */
   ASSERT (n_to_bit (n - k) < n_to_bit (n));
-    {
-      mp_limb_t prime;
-      LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n - k) + 1, n_to_bit (n), 0,sieve);
-      FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
-      LOOP_ON_SIEVE_END;
-    }
+
+  LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n - k) + 1, n_to_bit (n), 0,sieve);
+  FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
+  LOOP_ON_SIEVE_END;
 
   if (LIKELY (j != 0))
     {

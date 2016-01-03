@@ -7,7 +7,7 @@ IT IS ONLY SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.
 IN FACT, IT IS ALMOST GUARANTEED THAT IT WILL CHANGE OR
 DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2010-2012, 2015 Free Software Foundation, Inc.
+Copyright 2010-2012, 2015, 2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -69,7 +69,8 @@ see https://www.gnu.org/licenses/.  */
       ++__i;							\
       if (((sieve)[__index] & __mask) == 0)			\
 	{							\
-	  (prime) = id_to_n(__i)
+	  mp_limb_t prime;					\
+	  prime = id_to_n(__i)
 
 #define LOOP_ON_SIEVE_BEGIN(prime,start,end,off,sieve)		\
   do {								\
@@ -203,40 +204,30 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
 
   /* Swing primes from 5 to n/3 */
   {
-    mp_limb_t s;
+    mp_limb_t s, l_max_prod;
 
-    {
-      mp_limb_t prime;
-
-      s = limb_apprsqrt(n);
-      ASSERT (s >= 5);
-      s = n_to_bit (s);
-      LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
-      SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
-      LOOP_ON_SIEVE_END;
-      s++;
-    }
-
-    ASSERT (max_prod <= GMP_NUMB_MAX / 3);
+    s = limb_apprsqrt(n);
+    ASSERT (s >= 5);
+    s = n_to_bit (s);
     ASSERT (bit_to_n (s) * bit_to_n (s) > n);
     ASSERT (s <= n_to_bit (n / 3));
-    {
-      mp_limb_t prime;
-      mp_limb_t l_max_prod = max_prod * 3;
+    LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
+    SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
+    LOOP_ON_SIEVE_STOP;
 
-      LOOP_ON_SIEVE_BEGIN (prime, s, n_to_bit (n/3), 0, sieve);
-      SH_SWING_A_PRIME (prime, n, prod, l_max_prod, factors, j);
-      LOOP_ON_SIEVE_END;
-    }
+    ASSERT (max_prod <= GMP_NUMB_MAX / 3);
+
+    l_max_prod = max_prod * 3;
+
+    LOOP_ON_SIEVE_CONTINUE (prime, n_to_bit (n/3), sieve);
+    SH_SWING_A_PRIME (prime, n, prod, l_max_prod, factors, j);
+    LOOP_ON_SIEVE_END;
   }
 
   /* Store primes from (n+1)/2 to n */
-  {
-    mp_limb_t prime;
-    LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n >> 1) + 1, n_to_bit (n), 0,sieve);
-    FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
-    LOOP_ON_SIEVE_END;
-  }
+  LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (n >> 1) + 1, n_to_bit (n), 0,sieve);
+  FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
+  LOOP_ON_SIEVE_END;
 
   if (LIKELY (j != 0))
     {
@@ -416,8 +407,8 @@ mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 	    ASSERT (ns <= size);
 	    cy = mpn_mul (px, square, size, PTR(mswing), ns); /* n!= n$ * floor(n/2)!^2 */
 
-	    TMP_FREE;
 	    SIZ(x) = nx - (cy == 0);
+	    TMP_FREE;
 	  } while (s != 0);
 	  TMP_FREE;
 	}
