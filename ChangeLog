@@ -5,6 +5,9 @@
 
 	* primesieve.c: Heal a speed regression on small values.
 	* mpz/bin_uiui.c (mpz_bdiv_bin_uiui): 2 factors all at once.
+	  (mpz_goetgheluck_bin_uiui): Use STOP/CONT for loops on primesieve.
+	* mpz/oddfac_1.c: Likewise.
+	* mpz/primorial_ui.c (LOOP_ON_SIEVE_CONTINUE): Define prime locally.
 
 	* gen-fac.c: Use unsigned types for sizes.
 	* mini-gmp/mini-gmp.c: Silence wanrings due to (un)signed types.
