@@ -1181,7 +1181,7 @@ mpn_get_str_bits (unsigned char *sp, unsigned bits, mp_srcptr up, mp_size_t un)
   unsigned char mask;
   size_t sn, j;
   mp_size_t i;
-  int shift;
+  unsigned shift;
 
   sn = ((un - 1) * GMP_LIMB_BITS + mpn_limb_size_in_base_2 (up[un-1])
 	+ bits - 1) / bits;
@@ -3642,7 +3642,7 @@ mpz_and (mpz_t r, const mpz_t u, const mpz_t v)
   /* If the smaller input is positive, higher limbs don't matter. */
   rn = vx ? un : vn;
 
-  rp = MPZ_REALLOC (r, rn + rc);
+  rp = MPZ_REALLOC (r, rn + (mp_size_t) rc);
 
   up = u->_mp_d;
   vp = v->_mp_d;
@@ -3715,7 +3715,7 @@ mpz_ior (mpz_t r, const mpz_t u, const mpz_t v)
      don't matter. */
   rn = vx ? vn : un;
 
-  rp = MPZ_REALLOC (r, rn + rc);
+  rp = MPZ_REALLOC (r, rn + (mp_size_t) rc);
 
   up = u->_mp_d;
   vp = v->_mp_d;
@@ -3784,7 +3784,7 @@ mpz_xor (mpz_t r, const mpz_t u, const mpz_t v)
   vx = -vc;
   rx = -rc;
 
-  rp = MPZ_REALLOC (r, un + rc);
+  rp = MPZ_REALLOC (r, un + (mp_size_t) rc);
 
   up = u->_mp_d;
   vp = v->_mp_d;
@@ -4159,7 +4159,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
       else
 	digit = base; /* fail */
 
-      if (digit >= base)
+      if (digit >= (unsigned) base)
 	{
 	  gmp_free (dp);
 	  r->_mp_size = 0;
