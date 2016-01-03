@@ -2,7 +2,7 @@
 
 Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
-Copyright 2010-2012, 2015 Free Software Foundation, Inc.
+Copyright 2010-2012, 2015, 2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,7 +35,7 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #ifndef BIN_GOETGHELUCK_THRESHOLD
-#define BIN_GOETGHELUCK_THRESHOLD  1000
+#define BIN_GOETGHELUCK_THRESHOLD  512
 #endif
 #ifndef BIN_UIUI_ENABLE_SMALLDC
 #define BIN_UIUI_ENABLE_SMALLDC    1
@@ -199,11 +199,10 @@ static const mp_limb_t facinv[] = { ONE_LIMB_ODD_FACTORIAL_INVERSES_TABLE };
 static void
 mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
-  int nmax, kmax, nmaxnow, numfac;
+  unsigned nmax, kmax, nmaxnow, numfac;
   mp_ptr np, kp;
   mp_size_t nn, kn, alloc;
   mp_limb_t i, j, t, iii, jjj, cy, dinv;
-  mp_bitcnt_t i2cnt, j2cnt;
   int cnt;
   mp_size_t maxn;
   TMP_DECL;
@@ -216,7 +215,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   /* FIXME: This allocation might be insufficient, but is usually way too
      large.  */
   alloc = SOME_THRESHOLD - 1 + MAX (3 * maxn / 2, SOME_THRESHOLD);
-  alloc = MIN (alloc, k) + 1;
+  alloc = MIN (alloc, (mp_size_t) k) + 1;
   np = TMP_ALLOC_LIMBS (alloc);
   kp = TMP_ALLOC_LIMBS (SOME_THRESHOLD + 1);
 
@@ -229,10 +228,6 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   i = n - k + 1;
 
   np[0] = 1; nn = 1;
-
-  i2cnt = 0;				/* total low zeros in dividend */
-  j2cnt = __gmp_fac2cnt_table[ODD_FACTORIAL_TABLE_LIMIT / 2 - 1];
-					/* total low zeros in divisor */
 
   numfac = 1;
   j = ODD_FACTORIAL_TABLE_LIMIT + 1;
@@ -252,7 +247,6 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	  j += kmax;				/* number of factors used */
 	  count_trailing_zeros (cnt, jjj);	/* count low zeros */
 	  jjj >>= cnt;				/* remove remaining low zeros */
-	  j2cnt += tcnttab[kmax - 1] + cnt;	/* update low zeros count */
 	  cy = mpn_mul_1 (kp, kp, kn, jjj);	/* accumulate new factors */
 	  kp[kn] = cy;
 	  kn += cy != 0;
@@ -268,7 +262,6 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	  i += nmaxnow;				/* number of factors used */
 	  count_trailing_zeros (cnt, iii);	/* count low zeros */
 	  iii >>= cnt;				/* remove remaining low zeros */
-	  i2cnt += tcnttab[nmaxnow - 1] + cnt;	/* update low zeros count */
 	  cy = mpn_mul_1 (np, np, nn, iii);	/* accumulate new factors */
 	  np[nn] = cy;
 	  nn += cy != 0;
@@ -290,11 +283,15 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       j += kmax;				/* number of factors used */
       count_trailing_zeros (cnt, jjj);		/* count low zeros */
       jjj >>= cnt;				/* remove remaining low zeros */
-      j2cnt += tcnttab[kmax - 1] + cnt;		/* update low zeros count */
     }
 
   /* Put back the right number of factors of 2.  */
-  cnt = i2cnt - j2cnt;
+  /* Handle primes = 2, 3 separately. */
+  popc_limb (cnt, n - k);
+  popc_limb (j, k);
+  cnt += j;
+  popc_limb (j, n);
+  cnt -= j;
   if (cnt != 0)
     {
       ASSERT (cnt < GMP_NUMB_BITS); /* can happen, but not for intended use */
@@ -314,7 +311,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 static void
 mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
-  int nmax, numfac;
+  unsigned nmax, numfac;
   mp_ptr rp;
   mp_size_t rn, alloc;
   mp_limb_t i, iii, cy;
@@ -688,7 +685,7 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 	     k <= (BIN_UIUI_RECURSIVE_SMALLDC ? ODD_CENTRAL_BINOMIAL_TABLE_LIMIT : ODD_FACTORIAL_TABLE_LIMIT)* 2)
       mpz_smallkdc_bin_uiui (r, n, k);
     else if (ABOVE_THRESHOLD (k, BIN_GOETGHELUCK_THRESHOLD) &&
-	     k > (n >> 4)) /* k > ODD_FACTORIAL_TABLE_LIMIT */
+	     k < n) /* k > ODD_FACTORIAL_TABLE_LIMIT */
       mpz_goetgheluck_bin_uiui (r, n, k);
     else
       mpz_bdiv_bin_uiui (r, n, k);
