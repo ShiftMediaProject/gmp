@@ -1,3 +1,8 @@
+2015-12-19  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-impl.h (fft_table_nk): Use gmp_uint_least32_t.
+	* mpn/generic/trialdiv.c (gmp_primes_ptab): Likewise.
+
 2015-12-14  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/fat/fat.c (gmp_workaround_skylake_cpuid_bug):

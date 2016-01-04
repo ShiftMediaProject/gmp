@@ -2295,8 +2295,8 @@ __GMP_DECLSPEC mp_limb_t gmp_primesieve (mp_ptr, mp_limb_t);
 
 struct fft_table_nk
 {
-  unsigned int n:27;
-  unsigned int k:5;
+  gmp_uint_least32_t n:27;
+  gmp_uint_least32_t k:5;
 };
 
 #ifndef FFT_TABLE_ATTRS
