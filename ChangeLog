@@ -1,3 +1,8 @@
+2016-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+	* gmp-h.in: Bump version.
+
 2016-01-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
