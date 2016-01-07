@@ -1,7 +1,7 @@
 2016-01-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
-	* tests/misc/t-locale.c: Enable test for mingw (tx Alexander).
+	* tests/misc/t-locale.c: Likewise (Thanks Alexander).
 
 	* primesieve.c: Heal a speed regression on small values.
 	* mpz/bin_uiui.c (mpz_bdiv_bin_uiui): 2 factors all at once.

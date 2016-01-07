@@ -286,7 +286,6 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
     }
 
   /* Put back the right number of factors of 2.  */
-  /* Handle primes = 2, 3 separately. */
   popc_limb (cnt, n - k);
   popc_limb (j, k);
   cnt += j;
