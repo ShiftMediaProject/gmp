@@ -199,15 +199,17 @@ fill_bitpattern (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset)
     offset %= 182;
     SET_OFF2 (m21, m22, m23, SIEVE_2MSK1, SIEVE_2MSK2, SIEVE_2MSKT, offset, 182);
   }
+  /* THINK: Consider handling odd values of 'limbs' outside the loop,
+     to have a single exit condition. */
   do {
-    *bit_array = m11 | m21;
+    bit_array[0] = m11 | m21;
     if (--limbs == 0)
       break;
     ROTATE1 (m11, m12, 110);
-    *++bit_array = m11 | m22;
+    bit_array[1] = m11 | m22;
+    bit_array += 2;
     ROTATE1 (m11, m12, 110);
     ROTATE2 (m21, m22, m23, 182);
-    bit_array++;
   } while (--limbs != 0);
   return 4;
 #else
@@ -222,13 +224,15 @@ fill_bitpattern (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset)
     offset %= 70;
     SET_OFF2 (mask, mask2, tail, SIEVE_MASK1, SIEVE_MASK2, SIEVE_MASKT, offset, 70);
   }
+  /* THINK: Consider handling odd values of 'limbs' outside the loop,
+     to have a single exit condition. */
   do {
-    *bit_array = mask;
+    bit_array[0] = mask;
     if (--limbs == 0)
       break;
-    *++bit_array = mask2;
+    bit_array[1] = mask2;
+    bit_array += 2;
     ROTATE2 (mask, mask2, tail, 70);
-    bit_array++;
   } while (--limbs != 0);
   return 2;
 #else
