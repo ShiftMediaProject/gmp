@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2015 Free Software Foundation, Inc.
+# Copyright 2000-2006, 2008, 2011-2016 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -377,73 +377,8 @@ rs6000-*-* | powerpc*-*-*)
   # (as noted below).  But the man page says the command is still "under
   # development", so it doesn't seem wise to use it just yet, not while
   # there's an alternative.
-  #
-  # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
-  # and AIX don't allow it in user mode, but the Linux kernel does.
-  #
-  # Using explicit bytes for mfpvr avoids worrying about assembler syntax
-  # and underscores.  "char"s are used instead of "int"s to avoid worrying
-  # whether sizeof(int)==4 or if it's the right endianness.
-  #
-  # Note this is no good on AIX, since a C function there is the address of
-  # a function descriptor, not actual code.  But this doesn't matter since
-  # AIX doesn't allow mfpvr anyway.
-  #
-  eval $set_cc_for_build
-  cat >$dummy.c <<\EOF
-#include <stdio.h>
-struct {
-  int   n;  /* force 4-byte alignment */
-  char  a[8];
-} getpvr = {
-  0,
-  {
-    0x7c, 0x7f, 0x42, 0xa6,  /* mfpvr r3 */
-    0x4e, 0x80, 0x00, 0x20,  /* blr      */
-  }
-};
-int
-main ()
-{
-  unsigned  (*fun)();
-  unsigned  pvr;
 
-  /* a separate "fun" variable is necessary for gcc 2.95.2 on MacOS,
-     it gets a compiler error on a combined cast and call */
-  fun = (unsigned (*)()) getpvr.a;
-  pvr = (*fun) ();
-
-  switch (pvr >> 16) {
-  case 0x0001: puts ("powerpc601");  break;
-  case 0x0003: puts ("powerpc603");  break;
-  case 0x0004: puts ("powerpc604");  break;
-  case 0x0006: puts ("powerpc603e"); break;
-  case 0x0007: puts ("powerpc603e"); break;  /* 603ev */
-  case 0x0008: puts ("powerpc750");  break;
-  case 0x0009: puts ("powerpc604e"); break;
-  case 0x000a: puts ("powerpc604e"); break;  /* 604ev5 */
-  case 0x000c: puts ("powerpc7400"); break;
-  case 0x0041: puts ("powerpc630");  break;
-  case 0x0050: puts ("powerpc860");  break;
-  case 0x8000: puts ("powerpc7450"); break;
-  case 0x8001: puts ("powerpc7455"); break;
-  case 0x8002: puts ("powerpc7457"); break;
-  case 0x8003: puts ("powerpc7447"); break; /* really 7447A */
-  case 0x800c: puts ("powerpc7410"); break;
-  }
-  return 0;
-}
-EOF
-  if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-    # This style construct is needed on AIX 4.3 to suppress the SIGILL error
-    # from (*fun)().  Using $SHELL -c $dummy 2>/dev/null doesn't work.
-    { x=`$dummy`; } 2>/dev/null
-    if test -n "$x"; then
-      exact_cpu=$x
-    fi
-  fi
-
-  # Grep the linux kernel /proc/cpuinfo pseudo-file.
+  # Grep the /proc/cpuinfo pseudo-file.
   # Anything unrecognised is ignored, since of course we mustn't spit out
   # a cpu type config.sub doesn't know.
   if test -z "$exact_cpu" && test -f /proc/cpuinfo; then
@@ -460,6 +395,57 @@ EOF
       POWER[4-9]*)
         exact_cpu=`echo $x | sed -e "s;POWER;power;" -e "s;[a-zA-Z]*$;;"` ;;
     esac
+  fi
+
+  # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
+  # and AIX don't allow it in user mode, but the Linux kernel does.
+  #
+  # Note this is no good on AIX, since a C function there is the address of
+  # a function descriptor, not actual code.  But this doesn't matter since
+  # AIX doesn't allow mfpvr anyway.
+  #
+  if test -z "$exact_cpu"; then
+    eval $set_cc_for_build
+    cat >$dummy.c <<\EOF
+#include <stdio.h>
+int
+main ()
+{
+  unsigned  pvr;
+
+  asm ("mfpvr	%0" : "=r" (pvr));
+
+  switch (pvr >> 16) {
+  case 0x0001: puts ("powerpc601");  break;
+  case 0x0003: puts ("powerpc603");  break;
+  case 0x0004: puts ("powerpc604");  break;
+  case 0x0006: puts ("powerpc603e"); break;
+  case 0x0007: puts ("powerpc603e"); break;  /* 603ev */
+  case 0x0008: puts ("powerpc750");  break;
+  case 0x0009: puts ("powerpc604e"); break;
+  case 0x000a: puts ("powerpc604e"); break;  /* 604ev5 */
+  case 0x000c: puts ("powerpc7400"); break;
+  case 0x0041: puts ("powerpc630");  break;
+  case 0x003f: puts ("power7");      break;
+  case 0x004b: puts ("power8");      break;
+  case 0x0050: puts ("powerpc860");  break;
+  case 0x8000: puts ("powerpc7450"); break;
+  case 0x8001: puts ("powerpc7455"); break;
+  case 0x8002: puts ("powerpc7457"); break;
+  case 0x8003: puts ("powerpc7447"); break; /* really 7447A */
+  case 0x800c: puts ("powerpc7410"); break;
+  }
+  return 0;
+}
+EOF
+    if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
+      # This style construct is needed on AIX 4.3 to suppress the SIGILL error
+      # from (*fun)().  Using $SHELL -c $dummy 2>/dev/null doesn't work.
+      { x=`$dummy`; } 2>/dev/null
+      if test -n "$x"; then
+	exact_cpu=$x
+      fi
+    fi
   fi
 
   if test -z "$exact_cpu"; then
