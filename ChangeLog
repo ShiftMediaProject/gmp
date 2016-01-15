@@ -1,3 +1,11 @@
+2016-01-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (s390): Don't assume /proc/cpuinfo exists.
+
+2016-01-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Reorder and generalise ppc code.
+
 2016-01-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
