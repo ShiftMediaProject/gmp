@@ -1053,19 +1053,20 @@ EOF
   ;;
 
 s390*-*-*)
-  model=`grep "^processor 0: version =" /proc/cpuinfo | sed -e 's/.*machine = //'`
-  case $model in
-    2064 | 2066) zcpu="z900" ;;
-    2084 | 2086) zcpu="z990" ;;
-    2094 | 2096) zcpu="z9"   ;;
-    2097 | 2098) zcpu="z10"  ;;
-    2817 | 2818 | *) zcpu="z196" ;;
-  esac
-  case "$guess_full" in
-    s390x-*-*) exact_cpu=${zcpu}    ;;
-    s390-*-*)  exact_cpu=${zcpu}esa ;;
-  esac
-  ;;
+  if test -f /proc/cpuinfo; then
+    model=`grep "^processor 0: version =" /proc/cpuinfo | sed -e 's/.*machine = //'`
+    case $model in
+      2064 | 2066) zcpu="z900" ;;
+      2084 | 2086) zcpu="z990" ;;
+      2094 | 2096) zcpu="z9"   ;;
+      2097 | 2098) zcpu="z10"  ;;
+      2817 | 2818 | *) zcpu="z196" ;;
+    esac
+    case "$guess_full" in
+      s390x-*-*) exact_cpu=${zcpu}    ;;
+      s390-*-*)  exact_cpu=${zcpu}esa ;;
+    esac
+    ;;
 
 esac
 
