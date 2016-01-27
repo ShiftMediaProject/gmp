@@ -1,3 +1,7 @@
+2016-01-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* errno.c (__gmp_exception): Use raise(SIGFPE) when available.
+
 2016-01-15  Torbjörn Granlund  <torbjorng@google.com>
 
 	* config.guess (s390): Don't assume /proc/cpuinfo exists.
