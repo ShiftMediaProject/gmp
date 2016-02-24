@@ -49,7 +49,7 @@ see https://www.gnu.org/licenses/.  */
 
 /* FIXME: Duplicated in mod_1_1.c. Move to gmp-impl.h */
 
-#if defined (__GNUC__)
+#if defined (__GNUC__) && ! defined (NO_ASM)
 
 #if HAVE_HOST_CPU_FAMILY_x86 && W_TYPE_SIZE == 32
 #define add_mssaaaa(m, s1, s0, a1, a0, b1, b0)				\

@@ -23,6 +23,8 @@ Makefile
 ^install-sh
 ^missing
 ^ylwrap
+^compile
+^test-driver
 
 ^gmp-mparam\.h
 
