@@ -1,4 +1,4 @@
-2016-02-25  Marc Glisse  <marc.glisse@inria.fr>
+2016-02-25  Pavel Kopyl  <p.kopyl@samsung.com>
 
 	* acinclude.m4 (GMP_ASM_UNDERSCORE): Tighten gurkmacka detection.
 
