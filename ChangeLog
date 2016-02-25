@@ -1,3 +1,7 @@
+2016-02-25  Marc Glisse  <marc.glisse@inria.fr>
+
+	* acinclude.m4 (GMP_ASM_UNDERSCORE): Tighten gurkmacka detection.
+
 2016-01-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* errno.c (__gmp_exception): Use raise(SIGFPE) when available.
