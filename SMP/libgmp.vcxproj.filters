@@ -1581,6 +1581,18 @@
     <ClCompile Include="x86_64\mpn\fib_table.c">
       <Filter>Source Files\mpn\x86_64</Filter>
     </ClCompile>
+    <ClCompile Include="..\mpf\cmp_z.c">
+      <Filter>Source Files\mpf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sqrlo_basecase.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sqrlo.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\cnd_swap.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h">

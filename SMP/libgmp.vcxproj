@@ -79,6 +79,7 @@
     <ClCompile Include="..\mpf\cmp_ui.c">
       <ObjectFileName>$(IntDir)\mpf_%(Filename).obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\mpf\cmp_z.c" />
     <ClCompile Include="..\mpf\div.c">
       <ObjectFileName>$(IntDir)\mpf_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -269,6 +270,7 @@
     </ClCompile>
     <ClCompile Include="..\mpn\generic\cnd_add_n.c" />
     <ClCompile Include="..\mpn\generic\cnd_sub_n.c" />
+    <ClCompile Include="..\mpn\generic\cnd_swap.c" />
     <ClCompile Include="..\mpn\generic\com.c" />
     <ClCompile Include="..\mpn\generic\comb_tables.c" />
     <ClCompile Include="..\mpn\generic\copyd.c" />
@@ -387,6 +389,8 @@
     </ClCompile>
     <ClCompile Include="..\mpn\generic\sizeinbase.c" />
     <ClCompile Include="..\mpn\generic\sqr.c" />
+    <ClCompile Include="..\mpn\generic\sqrlo.c" />
+    <ClCompile Include="..\mpn\generic\sqrlo_basecase.c" />
     <ClCompile Include="..\mpn\generic\sqrmod_bnm1.c" />
     <ClCompile Include="..\mpn\generic\sqrtrem.c" />
     <ClCompile Include="..\mpn\generic\sqr_basecase.c" />
