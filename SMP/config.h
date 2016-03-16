@@ -519,7 +519,9 @@
 /* #undef WANT_ASSEMBLY */
 
 /* Define to 1 to enable ASSERT checking, per --enable-assert */
-/* #undef WANT_ASSERT */
+#ifdef _DEBUG
+#define WANT_ASSERT 1
+#endif
 
 /* Define to 1 to enable GMP_CPU_TYPE faking cpuid, per --enable-fake-cpuid */
 /* #undef WANT_FAKE_CPUID */
