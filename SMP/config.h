@@ -485,7 +485,11 @@
 #define RETSIGTYPE void
 
 /* The size of `mp_limb_t', as computed by sizeof. */
+#if defined(__x86_64) || defined(_M_X64)
 #define SIZEOF_MP_LIMB_T 8
+#else
+#define SIZEOF_MP_LIMB_T 4
+#endif
 
 /* The size of `unsigned', as computed by sizeof. */
 #define SIZEOF_UNSIGNED 4
