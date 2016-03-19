@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2015 Free Software Foundation, Inc.
+Copyright 1996-2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -644,6 +644,13 @@ case $host in
       armcortexa5 | armv7*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a5"
+	;;
+      armcortexa5neon)
+	path="arm/neon arm/v6t2 arm/v6 arm/v5 arm"
+	gcc_cflags_neon="-mfpu=neon"
+	gcc_cflags_arch="-march=armv7-a"
+	gcc_cflags_tune="-mtune=cortex-a5"
 	;;
       armcortexa7)
 	path="arm/v7a/cora7 arm/v6t2 arm/v6 arm/v5 arm"
