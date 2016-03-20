@@ -4,6 +4,12 @@
 	(NO_ASM): Remove from CFLAGS, add to AC_DEFINE.
 	* tests/misc.c: Test NO_ASM instead of WANT_ASSEMBLY.
 
+2016-03-20  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm/v7a/cora5/gmp-mparam.h: New file.
+
+	* configure.ac (arm*): Support cortex-a5 better.
+
 2016-02-25  Pavel Kopyl  <p.kopyl@samsung.com>
 
 	* acinclude.m4 (GMP_ASM_UNDERSCORE): Tighten gurkmacka detection.
@@ -67,7 +73,7 @@
 
 	* mpf/clears.c, mpf/inits.c, mpq/clears.c, mpq/inits.c,
 	* mpz/clears.c, mpz/inits.c: Stop supporting empty list.
-	* tests/arm32call.asm: bx->ret to support thumb-less chips 
+	* tests/arm32call.asm: bx->ret to support thumb-less chips
 	  (thanks Martin Husemann).
 
 2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
