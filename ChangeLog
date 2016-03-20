@@ -6,6 +6,10 @@
 
 2016-03-20  Torbjörn Granlund  <torbjorng@google.com>
 
+	* config.guess (arm*): Handle big.LITTLE CPUs by extracting the
+	lexically largest id.
+	* config.guess (arm*): Add many aarch64 CPUs.
+
 	* mpn/arm/v7a/cora5/gmp-mparam.h: New file.
 
 	* configure.ac (arm*): Support cortex-a5 better.
