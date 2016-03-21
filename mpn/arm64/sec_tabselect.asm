@@ -41,7 +41,7 @@ C void
 C mpn_sec_tabselect (mp_ptr rp, mp_srcptr *tab,
 C		     mp_size_t n, mp_size_t nents, mp_size_t which)
 
-changecom(@&*$)
+changecom(blah)
 
 define(`rp',     `x0')
 define(`tp',     `x1')

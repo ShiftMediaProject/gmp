@@ -37,7 +37,7 @@ C Cortex-A57	 ?
 define(`ap',	x0)
 define(`n',	x1)
 
-changecom(@&*$)
+changecom(blah)
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr up, mp_size_t n)
 

@@ -42,7 +42,7 @@ C    valgrind!)
 C  * Explore if explicit align directives, e.g., "[ptr:128]" help.
 C  * See rth's gmp-devel 2013-02/03 messages about final summation tricks.
 
-changecom(@&*$)
+changecom(blah)
 
 C INPUT PARAMETERS
 define(`ap', x0)

@@ -33,7 +33,7 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-changecom(@&*$)
+changecom(blah)
 
 C	     cycles/bit (approx)
 C Cortex-A53	 ?

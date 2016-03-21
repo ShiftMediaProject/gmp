@@ -36,7 +36,7 @@ C	     cycles/limb
 C Cortex-A53	 ?
 C Cortex-A57	 ?
 
-changecom(@&*$)
+changecom(blah)
 
 define(`cnd',	`x0')
 define(`rp',	`x1')
