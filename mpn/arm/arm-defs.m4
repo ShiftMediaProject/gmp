@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for ARM assembler.
 
-dnl  Copyright 2001, 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2012-2016 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -84,7 +84,7 @@ L(ptr'lea_num`):	.word	GSYM_PREFIX`'$2')
 ')dnl
 ')
 
-define(`ret',`ifdef(`NOTHUMB',`mov	pc, ',`bx')')
+define(`return',`ifdef(`NOTHUMB',`mov	pc, ',`bx')')
 
 
 define(`EPILOGUE_cpu',
