@@ -591,16 +591,7 @@ case $host in
     ;;
 
 
-  arm64*-*-* | aarch64*-*-*)
-    # The compiler clang version 3.4 or earlier requires an explicit -mfpu=neon
-    # for out assembly code.  Since this compiler cloaks as gcc, we have to
-    # fake too.
-    gcc_cflags_maybe="-mfpu=neon"
-    path="arm64"
-    ;;
-
-
-  arm*-*-*)
+  arm*-*-* | aarch64*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch fpmode neon tune"
     gcc_testlist="gcc-arm-umodsi"
@@ -690,6 +681,48 @@ case $host in
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
+	;;
+      armcortexa53)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64/cora53 arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=cortex-a53"
+	;;
+      armcortexa57)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=cortex-a57"
+	;;
+      armcortexa72)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=cortex-a72"
+	;;
+      exynosm1)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=exynosm1"
+	;;
+      thunderx)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=thunderx"
+	;;
+      xgene1)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64/xgene1 arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune="-mtune=xgene1"
+	;;
+      aarch64*)
+	unset CALLING_CONVENTIONS_OBJS
+	path="arm64"
+	gcc_cflags_arch=""
+	gcc_cflags_tune=""
 	;;
       *)
 	path="arm"
