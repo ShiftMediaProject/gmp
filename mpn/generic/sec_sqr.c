@@ -65,7 +65,7 @@ mpn_sec_sqr (mp_ptr rp,
    size.  */
   mpn_sqr_basecase (rp, ap, an);
 #else
-/* Else use mpn_sqr_basecase for its allowed sizes, else mpn_mul_basecase.  */
+/* Else use mpn_mul_basecase.  */
   mpn_mul_basecase (rp, ap, an, ap, an);
 #endif
 }
