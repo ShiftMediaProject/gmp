@@ -1,3 +1,19 @@
+2016-03-25  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm64/xgene1/aors_n.asm: New file.
+	* mpn/arm64/xgene1/aorsmul_1.asm: New file.
+	* mpn/arm64/xgene1/cnd_aors_n.asm: New file.
+	* mpn/arm64/xgene1/gmp-mparam.h: New file.
+	* mpn/arm64/xgene1/mul_1.asm: New file.
+
+	* config.guess: Prefix all arm CPUs with "arm" to accommodate our
+	matchers.
+	* configure.ac (arm): Match arm CPUs consistently.
+
+2016-03-21  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac: Support many arm64 processors.
+
 2015-03-20  Marc Glisse  <marc.glisse@inria.fr>
 
 	* configure.ac (WANT_ASSEMBLY): Remove.
@@ -9,6 +25,7 @@
 	* config.guess (arm*): Handle big.LITTLE CPUs by extracting the
 	lexically largest id.
 	* config.guess (arm*): Add many aarch64 CPUs.
+	* config.guess (main): Corresponding changes.
 
 	* mpn/arm/v7a/cora5/gmp-mparam.h: New file.
 
