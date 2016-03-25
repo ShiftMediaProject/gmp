@@ -700,19 +700,19 @@ case $host in
 	gcc_cflags_arch=""
 	gcc_cflags_tune="-mtune=cortex-a72"
 	;;
-      exynosm1)
+      armexynosm1)
 	unset CALLING_CONVENTIONS_OBJS
 	path="arm64"
 	gcc_cflags_arch=""
 	gcc_cflags_tune="-mtune=exynosm1"
 	;;
-      thunderx)
+      armthunderx)
 	unset CALLING_CONVENTIONS_OBJS
 	path="arm64"
 	gcc_cflags_arch=""
 	gcc_cflags_tune="-mtune=thunderx"
 	;;
-      xgene1)
+      armxgene1)
 	unset CALLING_CONVENTIONS_OBJS
 	path="arm64/xgene1 arm64"
 	gcc_cflags_arch=""

@@ -176,10 +176,10 @@ arm*-*-* | aarch64-*-*)
   cpu_code=`sed -n 's/^CPU part.*\(0x.*\)$/\1/p' /proc/cpuinfo 2>/dev/null | sort -r | head -n 1 2>/dev/null`
   cpu_implementer=`sed -n 's/^CPU implementer.*\(0x.*\)$/\1/p' /proc/cpuinfo 2>/dev/null | head -n 1 2>/dev/null`
   case "${cpu_implementer}_${cpu_code}" in
-    0x53_0x001) exact_cpu=exynosm1     ;;
+    0x53_0x001) exact_cpu=armexynosm1  ;;
     0x51_0x800) exact_cpu=armcortexa57 ;;
-    0x43_0x0a1) exact_cpu=thunderx     ;;
-    0x50_0x000) exact_cpu=xgene1       ;;
+    0x43_0x0a1) exact_cpu=armthunderx  ;;
+    0x50_0x000) exact_cpu=armxgene1    ;;
   esac
   if test -z "$exact_cpu"; then
     case "$cpu_code" in
