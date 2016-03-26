@@ -1,3 +1,7 @@
+2016-03-26  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/arm64/sqr_diag_addlsh1.asm: New file.
+
 2016-03-25  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/arm64/xgene1/aors_n.asm: New file.
