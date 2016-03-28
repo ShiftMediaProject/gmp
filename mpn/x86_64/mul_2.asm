@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mul_2 -- Multiply an n-limb vector with a 2-limb vector and
 dnl  store the result in a third limb vector.
 
-dnl  Copyright 2008, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2011, 2012, 2016 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -31,14 +31,26 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	     cycles/limb
-C AMD K8,K9	 2.275
+C	     cycles/limb     cycles/limb cfg	cycles/limb m1+am1
+C AMD K8,K9	 2.275		
 C AMD K10	 2.275
+C AMD bull	 5		 4.3
+C AMD pile	 4.62		 4.2		4.62			same
+C AMD steam	 ?
+C AMD excavator	 ?
+C AMD bobcat	 5.62		<-		5.0			bad
+C AMD jaguar	 5.97		<-		5.2-5.6			bad
 C Intel P4	13.5
-C Intel core2	 4.0
-C Intel corei	 3.8
-C Intel atom	 ?
-C VIA nano	 ?
+C Intel core2	 4		<-		4.12-4.25		good
+C Intel NHM	 3.88		<-		4.28			good
+C Intel SBR	 3.16	`	 2.57		2.87			bad
+C Intel IBR	 3		 2.29		2.63			bad
+C Intel HWL	 3		 1.86		1.93			bad
+C Intel BWL	 2.22		 2.1		1.58			bad
+C Intel SKL	 2.27		 2.1		1.57			bad
+C Intel atom	19.5		17.7
+C Intel SLM	 8		 8.5
+C VIA nano	 
 
 C This code is the result of running a code generation and optimization tool
 C suite written by David Harvey and Torbjorn Granlund.
