@@ -33,7 +33,6 @@ see https://www.gnu.org/licenses/.  */
 
 /* Disable use of slow functions.  FIXME: We should disable lib inclusion.  */
 #undef HAVE_NATIVE_mpn_mul_2
-#undef HAVE_NATIVE_mpn_addmul_2
 
 /* 2100 MHz Intel i3-5100 */
 /* FFT tuning limit = 200 M */
