@@ -1,3 +1,11 @@
+2016-04-02  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpf/set_q.c: Rewrite, mainly to use mpn_div_q..
+
+2016-03-29  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fat/addmul_2.c: New file.
+
 2016-03-28  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpn/x86_64/addmul_2.asm: Move from here...
