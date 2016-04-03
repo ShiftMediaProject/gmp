@@ -33,6 +33,7 @@ see https://www.gnu.org/licenses/.  */
 
 /* Disable use of slow functions.  FIXME: We should disable lib inclusion.  */
 #undef HAVE_NATIVE_mpn_mul_2
+#undef HAVE_NATIVE_mpn_addmul_2
 
 /* 3500 MHz i5-6600K Skylake */
 /* FFT tuning limit = 300 M */
