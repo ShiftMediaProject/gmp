@@ -33,7 +33,7 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpz_inits (mpz_ptr x, ...)
+mpz_inits (mpz_ptr x, ...) __GMP_NOTHROW
 {
   static const mp_limb_t dummy_limb=0xc1a0;
   va_list  ap;

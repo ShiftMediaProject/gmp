@@ -1589,11 +1589,11 @@ public:
   mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 
   // constructors and destructor
-  __gmp_expr() { mpz_init(mp); }
+  __gmp_expr() __GMPXX_NOEXCEPT { mpz_init(mp); }
 
   __gmp_expr(const __gmp_expr &z) { mpz_init_set(mp, z.mp); }
 #if __GMPXX_USE_CXX11
-  __gmp_expr(__gmp_expr &&z)
+  __gmp_expr(__gmp_expr &&z) noexcept
   { *mp = *z.mp; mpz_init(z.mp); }
 #endif
   template <class T>

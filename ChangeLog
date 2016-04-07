@@ -1,3 +1,11 @@
+2015-04-07  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-h.in (__GMP_NOTHROW): Prefer noexcept to throw().
+	(mpz_init, mpz_inits): Mark as __GMP_NOTHROW.
+	* mpz/init.c, mpz/inits.c: Likewise.
+	* gmpxx.h (mpz_class): Mark default and move constructors noexcept.
+	* tests/cxx/t-cxx11.cc: Check noexcept.
+
 2016-04-02  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpf/set_q.c: Rewrite, mainly to use mpn_div_q..

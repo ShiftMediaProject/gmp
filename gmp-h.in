@@ -345,7 +345,11 @@ typedef __mpq_struct *mpq_ptr;
    __GMP_ATTRIBUTE_PURE.  */
 
 #if defined (__cplusplus)
+#if __cplusplus >= 201103L
+#define __GMP_NOTHROW  noexcept
+#else
 #define __GMP_NOTHROW  throw ()
+#endif
 #else
 #define __GMP_NOTHROW
 #endif
@@ -849,13 +853,13 @@ __GMP_DECLSPEC mp_bitcnt_t mpz_hamdist (mpz_srcptr, mpz_srcptr) __GMP_NOTHROW __
 __GMP_DECLSPEC void mpz_import (mpz_ptr, size_t, int, size_t, int, size_t, const void *);
 
 #define mpz_init __gmpz_init
-__GMP_DECLSPEC void mpz_init (mpz_ptr);
+__GMP_DECLSPEC void mpz_init (mpz_ptr) __GMP_NOTHROW;
 
 #define mpz_init2 __gmpz_init2
 __GMP_DECLSPEC void mpz_init2 (mpz_ptr, mp_bitcnt_t);
 
 #define mpz_inits __gmpz_inits
-__GMP_DECLSPEC void mpz_inits (mpz_ptr, ...);
+__GMP_DECLSPEC void mpz_inits (mpz_ptr, ...) __GMP_NOTHROW;
 
 #define mpz_init_set __gmpz_init_set
 __GMP_DECLSPEC void mpz_init_set (mpz_ptr, mpz_srcptr);
