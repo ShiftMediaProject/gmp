@@ -479,7 +479,7 @@ tests_isinf (double d)
 int
 tests_hardware_setround (int mode)
 {
-#if WANT_ASSEMBLY && HAVE_HOST_CPU_FAMILY_x86
+#if ! defined NO_ASM && HAVE_HOST_CPU_FAMILY_x86
   int  rc;
   switch (mode) {
   case 0: rc = 0; break;  /* nearest */
@@ -500,7 +500,7 @@ tests_hardware_setround (int mode)
 int
 tests_hardware_getround (void)
 {
-#if WANT_ASSEMBLY && HAVE_HOST_CPU_FAMILY_x86
+#if ! defined NO_ASM && HAVE_HOST_CPU_FAMILY_x86
   switch ((x86_fstcw () & ~0xC00) >> 10) {
   case 0: return 0; break;  /* nearest */
   case 1: return 3; break;  /* down    */

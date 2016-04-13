@@ -1754,9 +1754,9 @@ EOF
 gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   $NM conftest.$OBJEXT >conftest.out
-  if grep _gurkmacka conftest.out >/dev/null; then
+  if grep "[[ 	]]_gurkmacka" conftest.out >/dev/null; then
     gmp_cv_asm_underscore=yes
-  elif grep gurkmacka conftest.out >/dev/null; then
+  elif grep "[[ 	]]gurkmacka" conftest.out >/dev/null; then
     gmp_cv_asm_underscore=no
   else
     echo "configure: $NM doesn't have gurkmacka:" >&AC_FD_CC
