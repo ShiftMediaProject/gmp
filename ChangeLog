@@ -1,3 +1,13 @@
+2015-03-20  Marc Glisse  <marc.glisse@inria.fr>
+
+	* configure.ac (WANT_ASSEMBLY): Remove.
+	(NO_ASM): Remove from CFLAGS, add to AC_DEFINE.
+	* tests/misc.c: Test NO_ASM instead of WANT_ASSEMBLY.
+
+2016-02-25  Pavel Kopyl  <p.kopyl@samsung.com>
+
+	* acinclude.m4 (GMP_ASM_UNDERSCORE): Tighten gurkmacka detection.
+
 2016-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
