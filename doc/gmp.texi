@@ -2027,8 +2027,7 @@ functions for generating random numbers.  (@pxref{Custom Allocation}, and
 @cindex Conventions for variables
 
 GMP functions generally have output arguments before input arguments.  This
-notation is by analogy with the assignment operator.  The BSD MP compatibility
-functions are exceptions, having the output arguments last.
+notation is by analogy with the assignment operator.
 
 GMP lets you use the same variable for both input and output in one call.  For
 example, the main function for integer multiplication, @code{mpz_mul}, can be
@@ -2070,6 +2069,16 @@ foo (void)
 @}
 @end example
 
+GMP types like @code{mpz_t} are implemented as one-element arrays of certain
+structures.  Declaring a variable creates an object with the fields GMP needs,
+but variables are normally manipulated by using the pointer to the object.  For
+both behavior and efficiency reasons, it is discouraged to make copies of the
+GMP object itself (either directly or via aggregate objects containing such GMP
+objects).  If copies are done, all of them must be used read-only; using a copy
+as the output of some function will invalidate all the other copies.  Note that
+the actual fields in each @code{mpz_t} etc are for internal use only and should
+not be accessed directly by code that expects to be compatible with future GMP
+releases.
 
 @node Parameter Conventions, Memory Management, Variable Conventions, GMP Basics
 @section Parameter Conventions
@@ -2077,10 +2086,10 @@ foo (void)
 @cindex Conventions for parameters
 
 When a GMP variable is used as a function parameter, it's effectively a
-call-by-reference, meaning if the function stores a value there it will change
-the original in the caller.  Parameters which are input-only can be designated
-@code{const} to provoke a compiler error or warning on attempting to modify
-them.
+call-by-reference, meaning that when the function stores a value there it will
+change the original in the caller.  Parameters which are input-only can be
+designated @code{const} to provoke a compiler error or warning on attempting to
+modify them.
 
 When a function is going to return a GMP result, it should designate a
 parameter that it sets, like the library functions do.  More than one value
@@ -2113,17 +2122,13 @@ main (void)
 @}
 @end example
 
-@code{foo} works even if the mainline passes the same variable for
+Our function @code{foo} works even if its caller passes the same variable for
 @code{param} and @code{result}, just like the library functions.  But
 sometimes it's tricky to make that work, and an application might not want to
 bother supporting that sort of thing.
 
-For interest, the GMP types @code{mpz_t} etc are implemented as one-element
-arrays of certain structures.  This is why declaring a variable creates an
-object with the fields GMP needs, but then using it as a parameter passes a
-pointer to the object.  Note that the actual fields in each @code{mpz_t} etc
-are for internal use only and should not be accessed directly by code that
-expects to be compatible with future GMP releases.
+Since GMP types are implemented as one-element arrays, using a GMP variable as
+a parameter passes a pointer to the object. Hence the call-by-reference.
 
 
 @need 1000
