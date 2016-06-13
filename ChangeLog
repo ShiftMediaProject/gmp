@@ -1,3 +1,7 @@
+2016-06-11  Torbjörn Granlund  <tg@gmplib.org>
+
+	* Version 6.1.1 released.
+
 2015-03-20  Marc Glisse  <marc.glisse@inria.fr>
 
 	* configure.ac (WANT_ASSEMBLY): Remove.
