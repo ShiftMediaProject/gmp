@@ -1,0 +1,59 @@
+version: '{build}'
+
+branches:
+  only:
+  - master
+skip_non_tags: true
+configuration: Release+ReleaseDLL
+shallow_clone: true
+
+environment:
+  matrix:
+  - MSVC_VER: 14
+  - MSVC_VER: 12
+
+before_build:
+- ps: >-
+    $script = @'
+
+    <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+      <ItemGroup>
+        <ConfigurationList Condition="'@(ConfigurationList)' == '' and $(Configuration) != ''" Include="$(Configuration.Split('+'))" />
+        <ConfigurationList Condition="'@(ConfigurationList)' == ''" Include="Release" />
+        <PlatformList Condition="'@(PlatformList)' == ''" Include="x64;Win32" />
+      </ItemGroup>
+      <Target Name="Build" Outputs="%(PlatformList.Identity)">
+        <PropertyGroup>
+          <CurrentPlatform>%(PlatformList.Identity)</CurrentPlatform>
+        </PropertyGroup>
+        <MSBuild Projects="SMP/APPVEYOR_PROJECT_NAME.sln" Properties="Configuration=%(ConfigurationList.Identity);Platform=$(CurrentPlatform);OutDir=$(MSBuildThisFileDirectory)build_out\;" />
+      </Target>
+    </Project>
+
+    '@
+
+
+    $script = $script -replace "APPVEYOR_PROJECT_NAME", "$env:APPVEYOR_PROJECT_NAME"
+
+    $script | Out-File build.vcxproj
+- ps: $env:VSCOMNTOOLS=(Get-Content ("env:VS" + "$env:MSVC_VER" + "0COMNTOOLS"))
+- cmd: call "%VSCOMNTOOLS%\..\..\VC\vcvarsall.bat" amd64
+
+build:
+  project: build.vcxproj
+  parallel: true
+  verbosity: minimal
+
+artifacts:
+- path: build_out
+  name: $(APPVEYOR_PROJECT_NAME)_$(APPVEYOR_REPO_TAG_NAME)_msvc$(MSVC_VER)
+  type: zip
+
+deploy:
+- provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  description: Pre-built static and shared libraries in 32b and 64b for $(APPVEYOR_PROJECT_NAME) $(APPVEYOR_REPO_TAG_NAME)
+  auth_token:
+    secure: aiTcAD/YitqgwuiBdC3ImXiUlHfIIDD7ayjCs3Y3aAO5vEm1gA7flCZpUZ60a5am
+  artifact: $(APPVEYOR_PROJECT_NAME)_$(APPVEYOR_REPO_TAG_NAME)_msvc$(MSVC_VER)
+  force_update: true
