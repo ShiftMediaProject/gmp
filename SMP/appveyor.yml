@@ -4,29 +4,51 @@ branches:
   only:
   - master
 skip_non_tags: true
-configuration: Release+ReleaseDLL
 shallow_clone: true
+
+configuration: Release+ReleaseDLL
+
+platform: x86+x64
 
 environment:
   matrix:
-  - MSVC_VER: 14
   - MSVC_VER: 12
+  - MSVC_VER: 14
+
+install:
+# Install GitLink
+- cmd: choco install gitlink
 
 before_build:
+# Create build project to compile all configurations and platforms at once
 - ps: >-
     $script = @'
 
-    <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+    <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="GitLink" ToolsVersion="4.0">
       <ItemGroup>
         <ConfigurationList Condition="'@(ConfigurationList)' == '' and $(Configuration) != ''" Include="$(Configuration.Split('+'))" />
         <ConfigurationList Condition="'@(ConfigurationList)' == ''" Include="Release" />
-        <PlatformList Condition="'@(PlatformList)' == ''" Include="x64;Win32" />
+        <PlatformList Condition="'@(PlatformList)' == '' and $(Platform) != ''" Include="$(Platform.Split('+'))" />
+        <PlatformList Condition="'@(PlatformList)' == ''" Include="x64;x86" />
       </ItemGroup>
-      <Target Name="Build" Outputs="%(PlatformList.Identity)">
+      <Target Name="List" Outputs="%(PlatformList.Identity)">
         <PropertyGroup>
           <CurrentPlatform>%(PlatformList.Identity)</CurrentPlatform>
         </PropertyGroup>
-        <MSBuild Projects="SMP/APPVEYOR_PROJECT_NAME.sln" Properties="Configuration=%(ConfigurationList.Identity);Platform=$(CurrentPlatform);OutDir=$(MSBuildThisFileDirectory)build_out\;" />
+        <ItemGroup>
+          <ProjectToBuild Include="SMP/APPVEYOR_PROJECT_NAME.sln">
+            <Properties>Configuration=%(ConfigurationList.Identity);Platform=$(CurrentPlatform);OutDir=$(MSBuildThisFileDirectory)build_out\</Properties>
+          </ProjectToBuild>
+        </ItemGroup>
+      </Target>
+      <Target Name="Build" DependsOnTargets="List">
+        <MSBuild Projects="@(ProjectToBuild)" BuildInParallel="true" />
+      </Target>
+      <Target Name="GitLink" DependsOnTargets="Build" Outputs="%(PlatformList.Identity)">
+        <PropertyGroup>
+          <CurrentPlatform>%(PlatformList.Identity)</CurrentPlatform>
+        </PropertyGroup>
+        <Exec Command="GitLink . -f SMP/APPVEYOR_PROJECT_NAME.sln -c %(ConfigurationList.Identity) -p $(CurrentPlatform) -d $(MSBuildThisFileDirectory)build_out\lib\$(CurrentPlatform) -u https://github.com/APPVEYOR_REPO_NAME.git -s APPVEYOR_REPO_COMMIT -errorsaswarnings"/>
       </Target>
     </Project>
 
@@ -35,9 +57,21 @@ before_build:
 
     $script = $script -replace "APPVEYOR_PROJECT_NAME", "$env:APPVEYOR_PROJECT_NAME"
 
+    $script = $script -replace "APPVEYOR_REPO_NAME", "$env:APPVEYOR_REPO_NAME"
+
+    $script = $script -replace "APPVEYOR_REPO_COMMIT", "$env:APPVEYOR_REPO_COMMIT"
+
     $script | Out-File build.vcxproj
+
+# Backup platform so it is not affected by vcvars
+- cmd: SET PLATFORMBACK=%PLATFORM%
+
+# Setup msvc environment for required compiler version (specified by MSVC_VER)
 - ps: $env:VSCOMNTOOLS=(Get-Content ("env:VS" + "$env:MSVC_VER" + "0COMNTOOLS"))
 - cmd: call "%VSCOMNTOOLS%\..\..\VC\vcvarsall.bat" amd64
+
+# Reset platform
+- cmd: SET PLATFORM=%PLATFORMBACK%
 
 build:
   project: build.vcxproj
