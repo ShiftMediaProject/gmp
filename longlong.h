@@ -1895,11 +1895,11 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 /* FIXME: "sidi" here is highly doubtful, should sometimes be "diti".  */
 #if !defined (umul_ppmm) && defined (__umulsidi3)
 #define umul_ppmm(ph, pl, m0, m1) \
-  {									\
+  do {									\
     UDWtype __ll = __umulsidi3 (m0, m1);				\
     ph = (UWtype) (__ll >> W_TYPE_SIZE);				\
     pl = (UWtype) __ll;							\
-  }
+  } while (0)
 #endif
 
 #if !defined (__umulsidi3)

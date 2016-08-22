@@ -1,3 +1,8 @@
+2016-08-22  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (umul_ppmm from __umulsidi3): Protect with do ...
+	while (0).
+
 2016-08-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpn_set_str_other): Always return size >=
@@ -8,7 +13,7 @@
 	failure for inputs string with no digits, i.e., empty except for
 	optional sign, base prefix and white space.
 
-2015-04-07  Marc Glisse  <marc.glisse@inria.fr>
+2016-04-07  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in (__GMP_NOTHROW): Prefer noexcept to throw().
 	(mpz_init, mpz_inits): Mark as __GMP_NOTHROW.
@@ -49,7 +54,7 @@
 
 	* configure.ac: Support many arm64 processors.
 
-2015-03-20  Marc Glisse  <marc.glisse@inria.fr>
+2016-03-20  Marc Glisse  <marc.glisse@inria.fr>
 
 	* configure.ac (WANT_ASSEMBLY): Remove.
 	(NO_ASM): Remove from CFLAGS, add to AC_DEFINE.
