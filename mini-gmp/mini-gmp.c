@@ -1322,6 +1322,8 @@ mpn_set_str_bits (mp_ptr rp, const unsigned char *sp, size_t sn,
   return rn;
 }
 
+/* Result is usually normalized, except for all-zero input, in which
+   case a single zero limb is written at *RP, and 1 is returned. */
 static mp_size_t
 mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
 		   mp_limb_t b, const struct mpn_base_info *info)
@@ -1330,6 +1332,8 @@ mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
   mp_limb_t w;
   unsigned k;
   size_t j;
+
+  assert (sn > 0);
 
   k = 1 + (sn - 1) % info->exp;
 
@@ -1340,7 +1344,7 @@ mpn_set_str_other (mp_ptr rp, const unsigned char *sp, size_t sn,
 
   rp[0] = w;
 
-  for (rn = (w > 0); j < sn;)
+  for (rn = 1; j < sn;)
     {
       mp_limb_t cy;
 
@@ -4107,7 +4111,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
   unsigned bits;
   mp_size_t rn, alloc;
   mp_ptr rp;
-  size_t sn;
+  size_t dn;
   int sign;
   unsigned char *dp;
 
@@ -4121,18 +4125,17 @@ mpz_set_str (mpz_t r, const char *sp, int base)
 
   if (base == 0)
     {
-      if (*sp == '0')
+      if (sp[0] == '0')
 	{
-	  sp++;
-	  if (*sp == 'x' || *sp == 'X')
+	  if (sp[1] == 'x' || sp[1] == 'X')
 	    {
 	      base = 16;
-	      sp++;
+	      sp += 2;
 	    }
-	  else if (*sp == 'b' || *sp == 'B')
+	  else if (sp[1] == 'b' || sp[1] == 'B')
 	    {
 	      base = 2;
-	      sp++;
+	      sp += 2;
 	    }
 	  else
 	    base = 8;
@@ -4141,16 +4144,20 @@ mpz_set_str (mpz_t r, const char *sp, int base)
 	base = 10;
     }
 
-  sn = strlen (sp);
-  dp = (unsigned char *) gmp_xalloc (sn + (sn == 0));
+  if (!*sp)
+    {
+      r->_mp_size = 0;
+      return -1;
+    }
+  dp = (unsigned char *) gmp_xalloc (strlen (sp));
 
-  for (sn = 0; *sp; sp++)
+  for (dn = 0; *sp; sp++)
     {
       unsigned digit;
 
       if (isspace ((unsigned char) *sp))
 	continue;
-      if (*sp >= '0' && *sp <= '9')
+      else if (*sp >= '0' && *sp <= '9')
 	digit = *sp - '0';
       else if (*sp >= 'a' && *sp <= 'z')
 	digit = *sp - 'a' + 10;
@@ -4166,24 +4173,33 @@ mpz_set_str (mpz_t r, const char *sp, int base)
 	  return -1;
 	}
 
-      dp[sn++] = digit;
+      dp[dn++] = digit;
     }
 
+  if (!dn)
+    {
+      gmp_free (dp);
+      r->_mp_size = 0;
+      return -1;
+    }
   bits = mpn_base_power_of_two_p (base);
 
   if (bits > 0)
     {
-      alloc = (sn * bits + GMP_LIMB_BITS - 1) / GMP_LIMB_BITS;
+      alloc = (dn * bits + GMP_LIMB_BITS - 1) / GMP_LIMB_BITS;
       rp = MPZ_REALLOC (r, alloc);
-      rn = mpn_set_str_bits (rp, dp, sn, bits);
+      rn = mpn_set_str_bits (rp, dp, dn, bits);
     }
   else
     {
       struct mpn_base_info info;
       mpn_get_base_info (&info, base);
-      alloc = (sn + info.exp - 1) / info.exp;
+      alloc = (dn + info.exp - 1) / info.exp;
       rp = MPZ_REALLOC (r, alloc);
-      rn = mpn_set_str_other (rp, dp, sn, base, &info);
+      rn = mpn_set_str_other (rp, dp, dn, base, &info);
+      /* Normalization, needed for all-zero input. */
+      assert (rn > 0);
+      rn -= rp[rn-1] == 0;
     }
   assert (rn <= alloc);
   gmp_free (dp);

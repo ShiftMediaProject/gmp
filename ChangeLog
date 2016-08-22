@@ -1,3 +1,13 @@
+2016-08-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpn_set_str_other): Always return size >=
+	1, with unnormalized result in the case the input digits are all
+	zero. Fixes crash on a large number of leading zeros, reported by
+	Axel Miller.
+	(mpz_set_str): Normalize as needed, after above change. Return
+	failure for inputs string with no digits, i.e., empty except for
+	optional sign, base prefix and white space.
+
 2015-04-07  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in (__GMP_NOTHROW): Prefer noexcept to throw().
