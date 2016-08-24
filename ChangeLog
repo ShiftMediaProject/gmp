@@ -1,3 +1,8 @@
+2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
+
+	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'
+	constraint with 'Cal'.
+
 2016-08-22  Marc Glisse  <marc.glisse@inria.fr>
 
 	* longlong.h (umul_ppmm from __umulsidi3): Protect with do ...
