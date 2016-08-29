@@ -1,5 +1,7 @@
 2016-08-29  Torbjörn Granlund  <tg@gmplib.org>
 
+	* All C files: Include just gmp-impl.h, make gmp-impl.h grab gmp.h.
+
 	* mpf/get_str.c: Use __GMP_ALLOCATE_FUNC_TYPE and friends.
 	* mpf/inp_str.c: Likewise.
 	* mpq/get_str.c: Likewise.
