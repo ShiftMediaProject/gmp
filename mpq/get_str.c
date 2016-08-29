@@ -51,7 +51,7 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
       DIGITS_IN_BASE_PER_LIMB (str_alloc, ABSIZ(NUM(q)) + SIZ(DEN(q)), ABS(base));
       str_alloc += 6;
 
-      str = (char *) (*__gmp_allocate_func) (str_alloc);
+      str = __GMP_ALLOCATE_FUNC_TYPE (str_alloc, char);
     }
 
   mpz_get_str (str, base, mpq_numref(q));

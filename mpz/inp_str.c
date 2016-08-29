@@ -132,7 +132,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
     }
 
   alloc_size = 100;
-  str = (char *) (*__gmp_allocate_func) (alloc_size);
+  str = __GMP_ALLOCATE_FUNC_TYPE (alloc_size, char);
   str_size = 0;
 
   while (c != EOF)
@@ -145,7 +145,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
-	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
+	  str = __GMP_REALLOCATE_FUNC_TYPE (str, old_alloc_size, alloc_size, char);
 	}
       str[str_size++] = dig;
       c = getc (stream);

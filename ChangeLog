@@ -1,3 +1,13 @@
+2016-08-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpf/get_str.c: Use __GMP_ALLOCATE_FUNC_TYPE and friends.
+	* mpf/inp_str.c: Likewise.
+	* mpq/get_str.c: Likewise.
+	* mpz/get_str.c: Likewise.
+	* mpz/inp_str.c: Likewise.
+	* scanf/vsscanf.c: Likewise.
+	* tal-reent.c: Likewise.
+
 2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
 
 	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'

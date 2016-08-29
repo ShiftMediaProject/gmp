@@ -170,7 +170,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it) with space for `-' and terminating null.  */
       alloc_size = n_digits + 2;
-      dbuf = (char *) (*__gmp_allocate_func) (n_digits + 2);
+      dbuf = __GMP_ALLOCATE_FUNC_TYPE (n_digits + 2, char);
     }
 
   if (un == 0)

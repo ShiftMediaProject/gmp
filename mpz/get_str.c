@@ -78,7 +78,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
       /* digits, null terminator, possible minus sign */
       MPN_SIZEINBASE (alloc_size, PTR(x), ABS(x_size), base);
       alloc_size += 1 + (x_size<0);
-      res_str = (char *) (*__gmp_allocate_func) (alloc_size);
+      res_str = __GMP_ALLOCATE_FUNC_TYPE (alloc_size, char);
     }
   return_str = res_str;
 
