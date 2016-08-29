@@ -64,7 +64,6 @@ see https://www.gnu.org/licenses/.  */
       cubes, not squares.
 */
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

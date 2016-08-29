@@ -44,7 +44,6 @@ see https://www.gnu.org/licenses/.  */
 #include <string.h>
 #include <obstack.h>
 
-#include "gmp.h"
 #include "gmp-impl.h"
 
 

@@ -72,7 +72,6 @@ see https://www.gnu.org/licenses/.  */
 #endif
 
 #include <stdlib.h>		/* for NULL */
-#include "gmp.h"
 #include "gmp-impl.h"
 
 

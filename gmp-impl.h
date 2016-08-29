@@ -142,6 +142,7 @@ see https://www.gnu.org/licenses/.  */
 
 #if ! defined (__GMP_WITHIN_CONFIGURE)
 #include "config.h"
+#include "gmp.h"
 #include "gmp-mparam.h"
 #include "fib_table.h"
 #include "fac_table.h"

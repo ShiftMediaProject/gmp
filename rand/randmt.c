@@ -34,7 +34,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include <stdio.h>   /* for NULL */
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "randmt.h"
 

@@ -36,7 +36,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include <signal.h>
 
-#include "gmp.h"
 #include "gmp-impl.h"
 
 int gmp_errno = 0;

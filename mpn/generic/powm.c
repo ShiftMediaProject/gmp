@@ -81,7 +81,6 @@ see https://www.gnu.org/licenses/.  */
      mod M.
 */
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

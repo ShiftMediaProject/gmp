@@ -67,7 +67,6 @@ see https://www.gnu.org/licenses/.  */
 #endif
 
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"  /* for the benefit of speed-many.c */
 #include "tests.h"

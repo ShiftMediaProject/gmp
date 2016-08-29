@@ -21,7 +21,6 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <string.h>
 #include <inttypes.h>
 
-#include "gmp.h"
 
 static unsigned char primes_diff[] = {
 #define P(a,b,c) a,

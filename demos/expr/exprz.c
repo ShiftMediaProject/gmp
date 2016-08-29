@@ -31,7 +31,6 @@ see https://www.gnu.org/licenses/.  */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include "gmp.h"
 #include "expr-impl.h"
 
 

@@ -31,7 +31,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
 #include <ctype.h>
-#include "gmp.h"
 #include "gmp-impl.h"
 
 size_t

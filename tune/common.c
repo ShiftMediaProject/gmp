@@ -41,7 +41,6 @@ see https://www.gnu.org/licenses/.  */
 #include <sys/ioctl.h>
 #endif
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

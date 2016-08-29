@@ -31,7 +31,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "gmp.h"
 #include "gmp-impl.h"
 
 void *

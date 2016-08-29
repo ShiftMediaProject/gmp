@@ -56,7 +56,6 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <sys/resource.h>
 #endif
 
-#include "gmp.h"
 
 /* SunOS 4 and HPUX 9 don't define a canonical SIGSTKSZ, use a default. */
 #ifndef SIGSTKSZ

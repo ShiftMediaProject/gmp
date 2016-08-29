@@ -54,7 +54,6 @@ see https://www.gnu.org/licenses/.  */
 #include <locale.h>    /* for localeconv */
 #endif
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

@@ -46,7 +46,6 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "gmp.h"
 #define NO_CALC_H /* because it conflicts with normal calc.c stuff */
 #include "calc-common.h"
 

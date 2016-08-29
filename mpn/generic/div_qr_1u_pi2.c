@@ -42,7 +42,6 @@ see https://www.gnu.org/licenses/.  */
    * Not yet adequately tested.
 */
 
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

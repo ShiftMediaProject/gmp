@@ -26,7 +26,6 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include "gmp.h"
 
 
 /* change this to "#define TRACE(x) x" for a few diagnostics */

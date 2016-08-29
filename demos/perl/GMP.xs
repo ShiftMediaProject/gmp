@@ -85,7 +85,6 @@ see https://www.gnu.org/licenses/.
 #include "XSUB.h"
 #include "patchlevel.h"
 
-#include "gmp.h"
 
 
 /* Perl 5.005 doesn't have SvIsUV, only 5.6 and up.

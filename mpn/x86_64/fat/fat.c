@@ -39,7 +39,6 @@ see https://www.gnu.org/licenses/.  */
 #include <stdlib.h>   /* for getenv */
 #include <string.h>
 
-#include "gmp.h"
 #include "gmp-impl.h"
 
 /* Change this to "#define TRACE(x) x" for some traces. */

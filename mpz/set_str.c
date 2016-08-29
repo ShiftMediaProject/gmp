@@ -35,7 +35,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include <string.h>
 #include <ctype.h>
-#include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 

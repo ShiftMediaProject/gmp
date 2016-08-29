@@ -44,7 +44,6 @@ see https://www.gnu.org/licenses/.  */
    for developing quotient bits.  This algorithm was presented at ICMS 2006.
 */
 
-#include "gmp.h"
 #include "gmp-impl.h"
 
 
