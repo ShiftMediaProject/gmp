@@ -50,6 +50,7 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
    we find possible record gaps.  Should speed up the searches tremendously.
  */
 
+#include "gmp.h"
 
 struct primes
 {

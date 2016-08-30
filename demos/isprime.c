@@ -19,6 +19,8 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <string.h>
 #include <stdio.h>
 
+#include "gmp.h"
+
 char *progname;
 
 void

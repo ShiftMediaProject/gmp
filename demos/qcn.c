@@ -42,6 +42,7 @@ this program.  If not, see https://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <string.h>
 
+#include "gmp.h"
 
 #ifndef M_PI
 #define M_PI  3.14159265358979323846
