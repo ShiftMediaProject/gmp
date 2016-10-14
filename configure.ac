@@ -1273,6 +1273,13 @@ case $host in
     ;;
 
 
+  # RISC-V
+  [riscv-*-*])
+    cclist="gcc"
+    path="riscv/64"
+    ;;
+
+
   # IBM System/390 and z/Architecture
   S390_PATTERN | S390X_PATTERN)
     abilist="32"
