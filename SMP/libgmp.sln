@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgmp", "libgmp.vcxproj", "{02B94302-23D6-43EF-8865-95CDE99D5DC2}"
 EndProject
@@ -17,6 +18,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen-fib", "gen-fib.vcxproj", "{D64CDBFD-FAF5-4AB2-9A7A-3CFAF86A0354}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen-fac", "gen-fac.vcxproj", "{51EF8902-63B3-4579-B816-B4DC3A2789ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgmp-sandybridge", "libgmp-sandybridge.vcxproj", "{29DCC424-3CB3-4452-81A4-81A6A35127EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +115,26 @@ Global
 		{51EF8902-63B3-4579-B816-B4DC3A2789ED}.ReleaseDLL|x86.ActiveCfg = Release|Win32
 		{51EF8902-63B3-4579-B816-B4DC3A2789ED}.ReleaseLTO|x64.ActiveCfg = Release|x64
 		{51EF8902-63B3-4579-B816-B4DC3A2789ED}.ReleaseLTO|x86.ActiveCfg = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Debug|x64.ActiveCfg = Debug|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Debug|x64.Build.0 = Debug|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Debug|x86.ActiveCfg = Debug|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Debug|x86.Build.0 = Debug|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.DebugDLL|x64.ActiveCfg = Debug|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.DebugDLL|x64.Build.0 = Debug|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.DebugDLL|x86.ActiveCfg = Debug|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.DebugDLL|x86.Build.0 = Debug|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Release|x64.ActiveCfg = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Release|x64.Build.0 = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Release|x86.ActiveCfg = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.Release|x86.Build.0 = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseDLL|x64.ActiveCfg = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseDLL|x64.Build.0 = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseDLL|x86.ActiveCfg = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseDLL|x86.Build.0 = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseLTO|x64.ActiveCfg = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseLTO|x64.Build.0 = Release|x64
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseLTO|x86.ActiveCfg = Release|Win32
+		{29DCC424-3CB3-4452-81A4-81A6A35127EC}.ReleaseLTO|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
