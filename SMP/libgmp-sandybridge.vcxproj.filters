@@ -61,6 +61,9 @@
     <Filter Include="Header Files\mpn\x86_64">
       <UniqueIdentifier>{97b7147a-9665-4a85-b688-69fc54cc9f64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mpn\yasm">
+      <UniqueIdentifier>{6963dad3-631a-4444-88f8-ac9e2af775d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mpf\fits_sint.c">
@@ -969,9 +972,6 @@
     <ClCompile Include="..\assert.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\compat.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\errno.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1074,22 +1074,10 @@
     <ClCompile Include="..\mpn\generic\add_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_err1_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_err2_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\add_err3_n.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\add_n_sub_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\addmul_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\bdiv_dbm1c.c">
@@ -1134,12 +1122,6 @@
     <ClCompile Include="..\mpn\generic\comb_tables.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\copyd.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\copyi.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_q.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1179,12 +1161,6 @@
     <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\dive_1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\diveby3.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\divexact.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1195,9 +1171,6 @@
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\divrem_1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\divrem_2.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\dump.c">
@@ -1269,12 +1242,6 @@
     <ClCompile Include="..\mpn\generic\jacobi_2.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\lshift.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\lshiftc.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\matrix22_mul.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1284,22 +1251,10 @@
     <ClCompile Include="..\mpn\generic\mod_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_2.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_3.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\mod_1_4.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\mod_34lsub1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mode1o.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\mu_bdiv_q.c">
@@ -1320,12 +1275,6 @@
     <ClCompile Include="..\mpn\generic\mul.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\mul_1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mul_basecase.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\mul_fft.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1339,9 +1288,6 @@
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\mulmid.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mulmid_basecase.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\mulmid_n.c">
@@ -1371,9 +1317,6 @@
     <ClCompile Include="..\mpn\generic\powm.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\pre_divrem_1.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\pre_mod_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1381,9 +1324,6 @@
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\random2.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\redc_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\redc_2.c">
@@ -1396,9 +1336,6 @@
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\rootrem.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\rshift.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_q.c">
@@ -1446,9 +1383,6 @@
     <ClCompile Include="..\mpn\generic\sqr.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\sqr_basecase.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\sqrmod_bnm1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
@@ -1461,19 +1395,7 @@
     <ClCompile Include="..\mpn\generic\sub_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err1_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err2_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\mpn\generic\sub_err3_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_n.c">
-      <Filter>Source Files\mpn\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\submul_1.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\tdiv_qr.c">
@@ -1521,18 +1443,6 @@
     <ClCompile Include="..\mpn\generic\toom2_sqr.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="mpn\iorn_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\nand_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\nior_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\popcount.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
     <ClCompile Include="mpn\sec_add_1.c">
       <Filter>Source Files\mpn</Filter>
     </ClCompile>
@@ -1549,24 +1459,6 @@
       <Filter>Source Files\mpn</Filter>
     </ClCompile>
     <ClCompile Include="mpn\sec_sub_1.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\xnor_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\xor_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\and_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\andn_n.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\hamdist.c">
-      <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\ior_n.c">
       <Filter>Source Files\mpn</Filter>
     </ClCompile>
     <ClCompile Include="x86\mpn\mp_bases.c">
@@ -1591,6 +1483,9 @@
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\cnd_swap.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mul_basecase.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1634,5 +1529,163 @@
     <ClInclude Include="x86_64\mpn\perfsqr.h">
       <Filter>Header Files\mpn\x86_64</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <YASM Include="yasm\add_err1_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\add_err2_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\addmul_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divexact_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divexact_by3c.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divexact_byfobm1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divrem_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divrem_euclidean_qr_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\divrem_euclidean_qr_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\modexact_1c_odd.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\mul_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\mulmid_basecase.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sqr_basecase.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sub_err1_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sub_err2_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\udiv_qrnnd.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\umul_ppmm.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\add_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\addmul_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\addmul_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\and_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\andn_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\com_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\copyd.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\copyi.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\divexact_byff.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\divrem_hensel_qr_1_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\hamdist.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\ior_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\iorn_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\karaadd.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\karasub.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshift.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshift1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshiftc.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_3.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mul_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mul_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\nand_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\nior_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\popcount.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\redc_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rsh_divrem_hensel_qr_1_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rsh_divrem_hensel_qr_1_2.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rshift.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\store.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\sub_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\submul_1.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\xnor_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
+    <YASM Include="yasm\sandybridge\xor_n.asm">
+      <Filter>Source Files\mpn\yasm</Filter>
+    </YASM>
   </ItemGroup>
 </Project>

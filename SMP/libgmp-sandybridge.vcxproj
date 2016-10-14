@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\assert.c" />
-    <ClCompile Include="..\compat.c" />
     <ClCompile Include="..\errno.c" />
     <ClCompile Include="..\extract-dbl.c" />
     <ClCompile Include="..\invalid.c" />
@@ -249,12 +248,8 @@
       <ObjectFileName>$(IntDir)\mpf_%(Filename).obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\add.c" />
-    <ClCompile Include="..\mpn\generic\addmul_1.c" />
     <ClCompile Include="..\mpn\generic\add_1.c" />
-    <ClCompile Include="..\mpn\generic\add_err1_n.c" />
-    <ClCompile Include="..\mpn\generic\add_err2_n.c" />
     <ClCompile Include="..\mpn\generic\add_err3_n.c" />
-    <ClCompile Include="..\mpn\generic\add_n.c" />
     <ClCompile Include="..\mpn\generic\add_n_sub_n.c" />
     <ClCompile Include="..\mpn\generic\bdiv_dbm1c.c" />
     <ClCompile Include="..\mpn\generic\bdiv_q.c" />
@@ -273,20 +268,15 @@
     <ClCompile Include="..\mpn\generic\cnd_swap.c" />
     <ClCompile Include="..\mpn\generic\com.c" />
     <ClCompile Include="..\mpn\generic\comb_tables.c" />
-    <ClCompile Include="..\mpn\generic\copyd.c" />
-    <ClCompile Include="..\mpn\generic\copyi.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_divappr_q.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_div_q.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_div_qr.c" />
-    <ClCompile Include="..\mpn\generic\diveby3.c" />
     <ClCompile Include="..\mpn\generic\divexact.c" />
-    <ClCompile Include="..\mpn\generic\dive_1.c" />
     <ClCompile Include="..\mpn\generic\divis.c" />
     <ClCompile Include="..\mpn\generic\divrem.c" />
     <ClCompile Include="..\mpn\generic\divrem_1.c" />
-    <ClCompile Include="..\mpn\generic\divrem_2.c" />
     <ClCompile Include="..\mpn\generic\div_q.c" />
     <ClCompile Include="..\mpn\generic\div_qr_1.c" />
     <ClCompile Include="..\mpn\generic\div_qr_1n_pi1.c" />
@@ -324,15 +314,9 @@
     <ClCompile Include="..\mpn\generic\jacbase.c" />
     <ClCompile Include="..\mpn\generic\jacobi.c" />
     <ClCompile Include="..\mpn\generic\jacobi_2.c" />
-    <ClCompile Include="..\mpn\generic\lshift.c" />
-    <ClCompile Include="..\mpn\generic\lshiftc.c" />
     <ClCompile Include="..\mpn\generic\matrix22_mul.c" />
     <ClCompile Include="..\mpn\generic\matrix22_mul1_inverse_vector.c" />
-    <ClCompile Include="..\mpn\generic\mode1o.c" />
     <ClCompile Include="..\mpn\generic\mod_1.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_1.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_2.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_3.c" />
     <ClCompile Include="..\mpn\generic\mod_1_4.c" />
     <ClCompile Include="..\mpn\generic\mod_34lsub1.c" />
     <ClCompile Include="..\mpn\generic\mul.c">
@@ -341,10 +325,8 @@
     <ClCompile Include="..\mpn\generic\mullo_basecase.c" />
     <ClCompile Include="..\mpn\generic\mullo_n.c" />
     <ClCompile Include="..\mpn\generic\mulmid.c" />
-    <ClCompile Include="..\mpn\generic\mulmid_basecase.c" />
     <ClCompile Include="..\mpn\generic\mulmid_n.c" />
     <ClCompile Include="..\mpn\generic\mulmod_bnm1.c" />
-    <ClCompile Include="..\mpn\generic\mul_1.c" />
     <ClCompile Include="..\mpn\generic\mul_basecase.c" />
     <ClCompile Include="..\mpn\generic\mul_fft.c" />
     <ClCompile Include="..\mpn\generic\mul_n.c" />
@@ -362,16 +344,13 @@
     <ClCompile Include="..\mpn\generic\powlo.c" />
     <ClCompile Include="..\mpn\generic\powm.c" />
     <ClCompile Include="..\mpn\generic\pow_1.c" />
-    <ClCompile Include="..\mpn\generic\pre_divrem_1.c" />
     <ClCompile Include="..\mpn\generic\pre_mod_1.c" />
     <ClCompile Include="..\mpn\generic\random.c" />
     <ClCompile Include="..\mpn\generic\random2.c" />
-    <ClCompile Include="..\mpn\generic\redc_1.c" />
     <ClCompile Include="..\mpn\generic\redc_2.c" />
     <ClCompile Include="..\mpn\generic\redc_n.c" />
     <ClCompile Include="..\mpn\generic\remove.c" />
     <ClCompile Include="..\mpn\generic\rootrem.c" />
-    <ClCompile Include="..\mpn\generic\rshift.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_divappr_q.c" />
@@ -393,16 +372,11 @@
     <ClCompile Include="..\mpn\generic\sqrlo_basecase.c" />
     <ClCompile Include="..\mpn\generic\sqrmod_bnm1.c" />
     <ClCompile Include="..\mpn\generic\sqrtrem.c" />
-    <ClCompile Include="..\mpn\generic\sqr_basecase.c" />
     <ClCompile Include="..\mpn\generic\sub.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\submul_1.c" />
     <ClCompile Include="..\mpn\generic\sub_1.c" />
-    <ClCompile Include="..\mpn\generic\sub_err1_n.c" />
-    <ClCompile Include="..\mpn\generic\sub_err2_n.c" />
     <ClCompile Include="..\mpn\generic\sub_err3_n.c" />
-    <ClCompile Include="..\mpn\generic\sub_n.c" />
     <ClCompile Include="..\mpn\generic\tdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\toom22_mul.c" />
     <ClCompile Include="..\mpn\generic\toom2_sqr.c" />
@@ -869,22 +843,12 @@
     <ClCompile Include="..\scanf\vsscanf.c" />
     <ClCompile Include="..\tal-reent.c" />
     <ClCompile Include="..\version.c" />
-    <ClCompile Include="mpn\andn_n.c" />
-    <ClCompile Include="mpn\and_n.c" />
-    <ClCompile Include="mpn\hamdist.c" />
-    <ClCompile Include="mpn\iorn_n.c" />
-    <ClCompile Include="mpn\ior_n.c" />
-    <ClCompile Include="mpn\nand_n.c" />
-    <ClCompile Include="mpn\nior_n.c" />
-    <ClCompile Include="mpn\popcount.c" />
     <ClCompile Include="mpn\sec_add_1.c" />
     <ClCompile Include="mpn\sec_div_qr.c" />
     <ClCompile Include="mpn\sec_div_r.c" />
     <ClCompile Include="mpn\sec_pi1_div_qr.c" />
     <ClCompile Include="mpn\sec_pi1_div_r.c" />
     <ClCompile Include="mpn\sec_sub_1.c" />
-    <ClCompile Include="mpn\xnor_n.c" />
-    <ClCompile Include="mpn\xor_n.c" />
     <ClCompile Include="x86\mpn\fib_table.c">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -912,6 +876,164 @@
     <ClInclude Include="version.h" />
     <ClInclude Include="x86\mpn\perfsqr.h" />
     <ClInclude Include="x86_64\mpn\perfsqr.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <YASM Include="yasm\addmul_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\add_err1_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\add_err2_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divexact_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divexact_by3c.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divexact_byfobm1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divrem_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divrem_euclidean_qr_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\divrem_euclidean_qr_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\modexact_1c_odd.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\mulmid_basecase.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\mul_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\addmul_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\addmul_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\add_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\andn_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\and_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\com_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\copyd.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\copyi.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\divexact_byff.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\divrem_hensel_qr_1_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\hamdist.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\iorn_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\ior_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\karaadd.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\karasub.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshift.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshift1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\lshiftc.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mod_1_3.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mul_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\mul_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\nand_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\nior_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\popcount.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\redc_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rshift.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rsh_divrem_hensel_qr_1_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\rsh_divrem_hensel_qr_1_2.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\store.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\submul_1.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\sub_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\xnor_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sandybridge\xor_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sqr_basecase.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sub_err1_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\sub_err2_n.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\udiv_qrnnd.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
+    <YASM Include="yasm\umul_ppmm.asm">
+      <IncludePaths>yasm</IncludePaths>
+    </YASM>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29DCC424-3CB3-4452-81A4-81A6A35127EC}</ProjectGuid>
@@ -993,6 +1115,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="yasm\vsyasm.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1966,5 +2089,6 @@ del /f /q $(OutDir)\licenses\gmp.txt
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="yasm\vsyasm.targets" />
   </ImportGroup>
 </Project>
