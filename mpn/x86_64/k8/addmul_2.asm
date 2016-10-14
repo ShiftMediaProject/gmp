@@ -32,7 +32,7 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb     cycles/limb cfg	cycles/limb am1+am1
-C AMD K8,K9	 2.375		
+C AMD K8,K9	 2.375
 C AMD K10	 2.375
 C AMD bull	 5.2		<-		4.6-4.75		bad
 C AMD pile	 4.96		<-		4.6-4.75		bad

@@ -38,7 +38,7 @@ mpf_cmp_z (mpf_srcptr u, mpz_srcptr v) __GMP_NOTHROW
 
   SIZ (vf) = size = SIZ (v);
   EXP (vf) = size = ABS (size);
-  /* PREC (vf) = size; */ 
+  /* PREC (vf) = size; */
   PTR (vf) = PTR (v);
 
   return mpf_cmp (u, vf);

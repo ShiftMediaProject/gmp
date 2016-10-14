@@ -1424,7 +1424,7 @@ mpz_realloc (mpz_t r, mp_size_t size)
   if (r->_mp_alloc)
     r->_mp_d = gmp_xrealloc_limbs (r->_mp_d, size);
   else
-    r->_mp_d = gmp_xalloc_limbs (size);  
+    r->_mp_d = gmp_xalloc_limbs (size);
   r->_mp_alloc = size;
 
   if (GMP_ABS (r->_mp_size) > size)
@@ -2439,7 +2439,7 @@ mpz_div_r_2exp (mpz_t r, const mpz_t u, mp_bitcnt_t bit_index,
 	  mpn_neg (rp, rp, rn);
 
 	  rp[rn-1] &= mask;
-	      
+
 	  /* us is not used for anything else, so we can modify it
 	     here to indicate flipped sign. */
 	  us = -us;

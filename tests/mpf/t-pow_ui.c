@@ -31,7 +31,7 @@ check_data (void)
 
   mpf_inits (b1, r, r2, NULL);
   mpf_init_set_ui (limit, 1);
-  mpf_mul_2exp (limit, limit, MAX (GMP_NUMB_BITS, 53)); 
+  mpf_mul_2exp (limit, limit, MAX (GMP_NUMB_BITS, 53));
 
   /* This test just test integers with results that fit in a single
      limb or 53 bits.  This avoids any rounding.  */

@@ -164,7 +164,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
 	mpn_sqrlo (tp, rp, n);
       else
 	MPN_COPY (tp, rp, n);
-      
+
       mpn_mullo_n (rp, tp, pp + n * (expbits >> 1), n);
     } while (ebi != 0);
 

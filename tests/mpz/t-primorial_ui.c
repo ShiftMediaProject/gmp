@@ -78,7 +78,7 @@ main (int argc, char *argv[])
   mpz_setbit (f, 64); /* f = 2^64 + 13 */
   mpz_tdiv_r (r, r, f);
   mpz_set_str (f, "BAFCBF3C95B217D5", 16);
-  
+
   if (mpz_cmp (f, r) != 0)
     {
       printf ("mpz_primorial_ui(%lu) wrong\n", n);

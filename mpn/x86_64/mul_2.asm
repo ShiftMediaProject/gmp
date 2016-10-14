@@ -32,7 +32,7 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb     cycles/limb cfg	cycles/limb m1+am1
-C AMD K8,K9	 2.275		
+C AMD K8,K9	 2.275
 C AMD K10	 2.275
 C AMD bull	 5		 4.3
 C AMD pile	 4.62		 4.2		4.62			same
@@ -50,7 +50,7 @@ C Intel BWL	 2.22		 2.1		1.58			bad
 C Intel SKL	 2.27		 2.1		1.57			bad
 C Intel atom	19.5		17.7
 C Intel SLM	 8		 8.5
-C VIA nano	 
+C VIA nano
 
 C This code is the result of running a code generation and optimization tool
 C suite written by David Harvey and Torbjorn Granlund.

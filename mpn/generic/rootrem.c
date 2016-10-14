@@ -3,7 +3,7 @@
 
    Contributed by Paul Zimmermann (algorithm) and
    Paul Zimmermann and Torbjorn Granlund (implementation).
-   Marco Bodrato wrote logbased_root to seed the loop. 
+   Marco Bodrato wrote logbased_root to seed the loop.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL, AND HAVE MUTABLE INTERFACES.  IT'S
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
