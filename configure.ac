@@ -594,9 +594,14 @@ case $host in
   arm*-*-* | aarch64*-*-*)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch fpmode neon tune"
+    gcc_64_cflags_optlist="arch tune"
     gcc_testlist="gcc-arm-umodsi"
-    GMP_INCLUDE_MPN(arm/arm-defs.m4)
+    gcc_64_testlist=""
     CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
+    CALLING_CONVENTIONS_OBJS_64=""
+    cclist_64="gcc cc"
+    any_32_testlist="sizeof-long-4"
+    any_64_testlist="sizeof-long-8"
 
     # This is needed for clang, which is not content with flags like -mfpu=neon
     # alone.
@@ -611,13 +616,13 @@ case $host in
     # either enforce them, or organise to strip paths as the corresponding
     # options fail.
     case $host_cpu in
-      armsa1 | arm7t* | arm9t* | armv4t*)
-	path="arm"
-	gcc_cflags_arch="-march=armv4"
-	;;
       armxscale | arm7ej | arm9te | arm9e* | arm10* | armv5*)
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
+	;;
+      armsa1 | arm7t* | arm9t* | armv4t*)
+	path="arm"
+	gcc_cflags_arch="-march=armv4"
 	;;
       arm1156 | armv6t2*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
@@ -682,46 +687,60 @@ case $host in
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
-      armcortexa53)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64/cora53 arm64"
-	gcc_cflags_arch=""
+      armcortexa53 | armcortexa53neon)
+        abilist="64 32"
+	path="arm/neon arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64/cora53 arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a53"
 	;;
-      armcortexa57)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64"
-	gcc_cflags_arch=""
+      armcortexa57 | armcortexa57neon)
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64/cora57 arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a57"
 	;;
-      armcortexa72)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64"
-	gcc_cflags_arch=""
+      armcortexa72 | armcortexa72neon)
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64/cora72 arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a72"
 	;;
       armexynosm1)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64"
-	gcc_cflags_arch=""
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=exynosm1"
 	;;
       armthunderx)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64"
-	gcc_cflags_arch=""
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=thunderx"
 	;;
       armxgene1)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64/xgene1 arm64"
-	gcc_cflags_arch=""
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64/xgene1 arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=xgene1"
 	;;
       aarch64*)
-	unset CALLING_CONVENTIONS_OBJS
-	path="arm64"
-	gcc_cflags_arch=""
+        abilist="64 32"
+	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
+	path_64="arm64"
+	gcc_cflags_arch="-march=armv8-a"
+	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune=""
 	;;
       *)
@@ -1270,6 +1289,13 @@ case $host in
       xlc_cflags="-O2 -qarch=pwr -qmaxmem=20000"
       ;;
     esac
+    ;;
+
+
+  # RISC-V
+  [riscv-*-*])
+    cclist="gcc"
+    path="riscv/64"
     ;;
 
 
@@ -3581,6 +3607,12 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_ALIGN_LOG
 
   case $host in
+    arm*-*-* | aarch64*-*-*)
+      case $ABI in
+        32)
+	  GMP_INCLUDE_MPN(arm/arm-defs.m4) ;;
+      esac
+      ;;
     hppa*-*-*)
       # for both pa32 and pa64
       GMP_INCLUDE_MPN(pa32/pa-defs.m4)

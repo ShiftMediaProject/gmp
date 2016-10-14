@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2015 Free Software
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2016 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -1583,6 +1583,15 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
       }									\
   } while (0)
 #endif /* RT/ROMP */
+
+#if defined (__riscv64) && W_TYPE_SIZE == 64
+#define umul_ppmm(ph, pl, u, v) \
+  do {									\
+    UDItype __u = (u), __v = (v);					\
+    (pl) = __u * __v;							\
+    __asm__ ("mulhu\t%2, %1, %0" : "=r" (ph) : "%r" (__u), "r" (__v));	\
+  } while (0)
+#endif
 
 #if (defined (__SH2__) || defined (__SH3__) || defined (__SH4__)) && W_TYPE_SIZE == 32
 #define umul_ppmm(w1, w0, u, v) \
