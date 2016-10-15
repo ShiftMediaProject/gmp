@@ -1537,9 +1537,6 @@
     <YASM Include="yasm\add_err2_n.asm">
       <Filter>Source Files\mpn\yasm</Filter>
     </YASM>
-    <YASM Include="yasm\addmul_2.asm">
-      <Filter>Source Files\mpn\yasm</Filter>
-    </YASM>
     <YASM Include="yasm\divexact_1.asm">
       <Filter>Source Files\mpn\yasm</Filter>
     </YASM>
@@ -1559,9 +1556,6 @@
       <Filter>Source Files\mpn\yasm</Filter>
     </YASM>
     <YASM Include="yasm\modexact_1c_odd.asm">
-      <Filter>Source Files\mpn\yasm</Filter>
-    </YASM>
-    <YASM Include="yasm\mul_2.asm">
       <Filter>Source Files\mpn\yasm</Filter>
     </YASM>
     <YASM Include="yasm\mulmid_basecase.asm">

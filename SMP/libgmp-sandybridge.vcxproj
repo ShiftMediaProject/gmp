@@ -878,9 +878,6 @@
     <ClInclude Include="x86_64\mpn\perfsqr.h" />
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="yasm\addmul_2.asm">
-      <IncludePaths>yasm</IncludePaths>
-    </YASM>
     <YASM Include="yasm\add_err1_n.asm">
       <IncludePaths>yasm</IncludePaths>
     </YASM>
@@ -909,9 +906,6 @@
       <IncludePaths>yasm</IncludePaths>
     </YASM>
     <YASM Include="yasm\mulmid_basecase.asm">
-      <IncludePaths>yasm</IncludePaths>
-    </YASM>
-    <YASM Include="yasm\mul_2.asm">
       <IncludePaths>yasm</IncludePaths>
     </YASM>
     <YASM Include="yasm\sandybridge\addmul_1.asm">
