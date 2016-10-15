@@ -198,16 +198,18 @@
 
 /* Define to 1 each of the following for which a native (ie. CPU specific)
     implementation of the corresponding routine exists.  */
-/* #undef HAVE_NATIVE_mpn_add_n */
+#define HAVE_NATIVE_mpn_add_n 1
 /* #undef HAVE_NATIVE_mpn_add_n_sub_n */
-/* #undef HAVE_NATIVE_mpn_add_nc */
-/* #undef HAVE_NATIVE_mpn_addaddmul_1msb0 */
-/* #undef HAVE_NATIVE_mpn_addlsh1_n */
-/* #undef HAVE_NATIVE_mpn_addlsh2_n */
-/* #undef HAVE_NATIVE_mpn_addlsh_n */
-/* #undef HAVE_NATIVE_mpn_addlsh1_nc */
-/* #undef HAVE_NATIVE_mpn_addlsh2_nc */
-/* #undef HAVE_NATIVE_mpn_addlsh_nc */
+#define HAVE_NATIVE_mpn_add_nc 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_addaddmul_1msb0 1
+#define HAVE_NATIVE_mpn_addlsh1_n 1
+#define HAVE_NATIVE_mpn_addlsh2_n 1
+#define HAVE_NATIVE_mpn_addlsh_n 1
+#define HAVE_NATIVE_mpn_addlsh1_nc 1
+#define HAVE_NATIVE_mpn_addlsh2_nc 1
+#define HAVE_NATIVE_mpn_addlsh_nc 1
+#endif
 /* #undef HAVE_NATIVE_mpn_addlsh1_n_ip1 */
 /* #undef HAVE_NATIVE_mpn_addlsh2_n_ip1 */
 /* #undef HAVE_NATIVE_mpn_addlsh_n_ip1 */
@@ -221,7 +223,9 @@
 /* #undef HAVE_NATIVE_mpn_addlsh2_nc_ip2 */
 /* #undef HAVE_NATIVE_mpn_addlsh_nc_ip2 */
 /* #undef HAVE_NATIVE_mpn_addmul_1c */
-/* #undef HAVE_NATIVE_mpn_addmul_2 */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_addmul_2 1
+#endif
 /* #undef HAVE_NATIVE_mpn_addmul_3 */
 /* #undef HAVE_NATIVE_mpn_addmul_4 */
 /* #undef HAVE_NATIVE_mpn_addmul_5 */
@@ -229,73 +233,97 @@
 /* #undef HAVE_NATIVE_mpn_addmul_7 */
 /* #undef HAVE_NATIVE_mpn_addmul_8 */
 /* #undef HAVE_NATIVE_mpn_addmul_2s */
-/* #undef HAVE_NATIVE_mpn_and_n */
-/* #undef HAVE_NATIVE_mpn_andn_n */
-/* #undef HAVE_NATIVE_mpn_bdiv_dbm1c */
-/* #undef HAVE_NATIVE_mpn_bdiv_q_1 */
-/* #undef HAVE_NATIVE_mpn_pi1_bdiv_q_1 */
-/* #undef HAVE_NATIVE_mpn_cnd_add_n */
-/* #undef HAVE_NATIVE_mpn_cnd_sub_n */
-/* #undef HAVE_NATIVE_mpn_com */
-/* #undef HAVE_NATIVE_mpn_copyd */
-/* #undef HAVE_NATIVE_mpn_copyi */
-/* #undef HAVE_NATIVE_mpn_div_qr_1n_pi1 */
-/* #undef HAVE_NATIVE_mpn_div_qr_2 */
-/* #undef HAVE_NATIVE_mpn_divexact_1 */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_and_n 1
+#define HAVE_NATIVE_mpn_andn_n 1
+#endif
+#define HAVE_NATIVE_mpn_bdiv_dbm1c 1
+#define HAVE_NATIVE_mpn_bdiv_q_1 1
+#define HAVE_NATIVE_mpn_pi1_bdiv_q_1 1
+#define HAVE_NATIVE_mpn_cnd_add_n 1
+#define HAVE_NATIVE_mpn_cnd_sub_n 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_com 1
+#endif
+#define HAVE_NATIVE_mpn_copyd 1
+#define HAVE_NATIVE_mpn_copyi 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_div_qr_1n_pi1 1
+#define HAVE_NATIVE_mpn_div_qr_2 1
+#endif
+#define HAVE_NATIVE_mpn_divexact_1 1
 /* #undef HAVE_NATIVE_mpn_divexact_by3c */
-/* #undef HAVE_NATIVE_mpn_divrem_1 */
-/* #undef HAVE_NATIVE_mpn_divrem_1c */
-/* #undef HAVE_NATIVE_mpn_divrem_2 */
-/* #undef HAVE_NATIVE_mpn_gcd_1 */
-/* #undef HAVE_NATIVE_mpn_hamdist */
-/* #undef HAVE_NATIVE_mpn_invert_limb */
-/* #undef HAVE_NATIVE_mpn_ior_n */
-/* #undef HAVE_NATIVE_mpn_iorn_n */
-/* #undef HAVE_NATIVE_mpn_lshift */
-/* #undef HAVE_NATIVE_mpn_lshiftc */
-/* #undef HAVE_NATIVE_mpn_lshsub_n */
-/* #undef HAVE_NATIVE_mpn_mod_1 */
-/* #undef HAVE_NATIVE_mpn_mod_1_1p */
-/* #undef HAVE_NATIVE_mpn_mod_1c */
-/* #undef HAVE_NATIVE_mpn_mod_1s_2p */
-/* #undef HAVE_NATIVE_mpn_mod_1s_4p */
-/* #undef HAVE_NATIVE_mpn_mod_34lsub1 */
-/* #undef HAVE_NATIVE_mpn_modexact_1_odd */
-/* #undef HAVE_NATIVE_mpn_modexact_1c_odd */
-/* #undef HAVE_NATIVE_mpn_mul_1 */
+#define HAVE_NATIVE_mpn_divrem_1 1
+#if !defined(__x86_64) && !defined(_M_X64)
+#define HAVE_NATIVE_mpn_divrem_1c 1
+#endif
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_divrem_2 1
+#define HAVE_NATIVE_mpn_gcd_1 1
+#define HAVE_NATIVE_mpn_hamdist 1
+#define HAVE_NATIVE_mpn_invert_limb 1
+#define HAVE_NATIVE_mpn_ior_n 1
+#define HAVE_NATIVE_mpn_iorn_n 1
+#endif
+#define HAVE_NATIVE_mpn_lshift 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_lshiftc 1
+#define HAVE_NATIVE_mpn_lshsub_n 1
+#define HAVE_NATIVE_mpn_mod_1 1
+#define HAVE_NATIVE_mpn_mod_1_1p 1
+#define HAVE_NATIVE_mpn_mod_1c 1
+#define HAVE_NATIVE_mpn_mod_1s_2p 1
+#define HAVE_NATIVE_mpn_mod_1s_4p 1
+#endif
+#define HAVE_NATIVE_mpn_mod_34lsub1 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_modexact_1_odd 1
+#define HAVE_NATIVE_mpn_modexact_1c_odd 1
+#endif
+#define HAVE_NATIVE_mpn_mul_1 1
 /* #undef HAVE_NATIVE_mpn_mul_1c */
-/* #undef HAVE_NATIVE_mpn_mul_2 */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_mul_2 1
+#endif
 /* #undef HAVE_NATIVE_mpn_mul_3 */
 /* #undef HAVE_NATIVE_mpn_mul_4 */
 /* #undef HAVE_NATIVE_mpn_mul_5 */
 /* #undef HAVE_NATIVE_mpn_mul_6 */
-/* #undef HAVE_NATIVE_mpn_mul_basecase */
-/* #undef HAVE_NATIVE_mpn_mullo_basecase */
-/* #undef HAVE_NATIVE_mpn_nand_n */
-/* #undef HAVE_NATIVE_mpn_nior_n */
-/* #undef HAVE_NATIVE_mpn_popcount */
-/* #undef HAVE_NATIVE_mpn_preinv_divrem_1 */
-/* #undef HAVE_NATIVE_mpn_preinv_mod_1 */
-/* #undef HAVE_NATIVE_mpn_redc_1 */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_mul_basecase 1
+#define HAVE_NATIVE_mpn_mullo_basecase 1
+#define HAVE_NATIVE_mpn_nand_n 1
+#define HAVE_NATIVE_mpn_nior_n 1
+#define HAVE_NATIVE_mpn_popcount 1
+#define HAVE_NATIVE_mpn_preinv_divrem_1 1
+#define HAVE_NATIVE_mpn_preinv_mod_1 1
+#define HAVE_NATIVE_mpn_redc_1 1
+#endif
 /* #undef HAVE_NATIVE_mpn_redc_2 */
-/* #undef HAVE_NATIVE_mpn_rsblsh1_n */
-/* #undef HAVE_NATIVE_mpn_rsblsh2_n */
-/* #undef HAVE_NATIVE_mpn_rsblsh_n */
-/* #undef HAVE_NATIVE_mpn_rsblsh1_nc */
-/* #undef HAVE_NATIVE_mpn_rsblsh2_nc */
-/* #undef HAVE_NATIVE_mpn_rsblsh_nc */
-/* #undef HAVE_NATIVE_mpn_rsh1add_n */
-/* #undef HAVE_NATIVE_mpn_rsh1add_nc */
-/* #undef HAVE_NATIVE_mpn_rsh1sub_n */
-/* #undef HAVE_NATIVE_mpn_rsh1sub_nc */
-/* #undef HAVE_NATIVE_mpn_rshift */
-/* #undef HAVE_NATIVE_mpn_sqr_basecase */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_rsblsh1_n 1
+#define HAVE_NATIVE_mpn_rsblsh2_n 1
+#define HAVE_NATIVE_mpn_rsblsh_n 1
+#define HAVE_NATIVE_mpn_rsblsh1_nc 1
+#define HAVE_NATIVE_mpn_rsblsh2_nc 1
+#define HAVE_NATIVE_mpn_rsblsh_nc 1
+#define HAVE_NATIVE_mpn_rsh1add_n 1
+#define HAVE_NATIVE_mpn_rsh1add_nc 1
+#define HAVE_NATIVE_mpn_rsh1sub_n 1
+#define HAVE_NATIVE_mpn_rsh1sub_nc 1
+#endif
+#define HAVE_NATIVE_mpn_rshift 1
+#define HAVE_NATIVE_mpn_sqr_basecase 1
 /* #undef HAVE_NATIVE_mpn_sqr_diagonal */
-/* #undef HAVE_NATIVE_mpn_sqr_diag_addlsh1 */
-/* #undef HAVE_NATIVE_mpn_sub_n */
-/* #undef HAVE_NATIVE_mpn_sub_nc */
-/* #undef HAVE_NATIVE_mpn_sublsh1_n */
-/* #undef HAVE_NATIVE_mpn_sublsh2_n */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_sqr_diag_addlsh1 1
+#endif
+#define HAVE_NATIVE_mpn_sub_n 1
+#define HAVE_NATIVE_mpn_sub_nc 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_sublsh1_n 1
+#define HAVE_NATIVE_mpn_sublsh2_n 1
+#endif
 /* #undef HAVE_NATIVE_mpn_sublsh_n */
 /* #undef HAVE_NATIVE_mpn_sublsh1_nc */
 /* #undef HAVE_NATIVE_mpn_sublsh2_nc */
@@ -306,14 +334,19 @@
 /* #undef HAVE_NATIVE_mpn_sublsh1_nc_ip1 */
 /* #undef HAVE_NATIVE_mpn_sublsh2_nc_ip1 */
 /* #undef HAVE_NATIVE_mpn_sublsh_nc_ip1 */
-/* #undef HAVE_NATIVE_mpn_submul_1c */
-/* #undef HAVE_NATIVE_mpn_tabselect */
-/* #undef HAVE_NATIVE_mpn_udiv_qrnnd */
-/* #undef HAVE_NATIVE_mpn_udiv_qrnnd_r */
-/* #undef HAVE_NATIVE_mpn_umul_ppmm */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_submul_1c 1
+#endif
+#define HAVE_NATIVE_mpn_tabselect 1
+#if !defined(__x86_64) && !defined(_M_X64)
+#define HAVE_NATIVE_mpn_udiv_qrnnd 1
+#define HAVE_NATIVE_mpn_umul_ppmm 1
+#endif
 /* #undef HAVE_NATIVE_mpn_umul_ppmm_r */
-/* #undef HAVE_NATIVE_mpn_xor_n */
-/* #undef HAVE_NATIVE_mpn_xnor_n */
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_xor_n 1
+#define HAVE_NATIVE_mpn_xnor_n 1
+#endif
 
 /* Define to 1 if you have the `nl_langinfo' function. */
 /* #undef HAVE_NL_LANGINFO */

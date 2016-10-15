@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\assert.c" />
-    <ClCompile Include="..\compat.c" />
     <ClCompile Include="..\errno.c" />
     <ClCompile Include="..\extract-dbl.c" />
     <ClCompile Include="..\invalid.c" />
@@ -249,17 +248,16 @@
       <ObjectFileName>$(IntDir)\mpf_%(Filename).obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\add.c" />
-    <ClCompile Include="..\mpn\generic\addmul_1.c" />
     <ClCompile Include="..\mpn\generic\add_1.c" />
-    <ClCompile Include="..\mpn\generic\add_err1_n.c" />
-    <ClCompile Include="..\mpn\generic\add_err2_n.c" />
-    <ClCompile Include="..\mpn\generic\add_err3_n.c" />
-    <ClCompile Include="..\mpn\generic\add_n.c" />
+    <ClCompile Include="..\mpn\generic\add_err1_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\add_err2_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\add_n_sub_n.c" />
-    <ClCompile Include="..\mpn\generic\bdiv_dbm1c.c" />
     <ClCompile Include="..\mpn\generic\bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\bdiv_qr.c" />
-    <ClCompile Include="..\mpn\generic\bdiv_q_1.c" />
     <ClCompile Include="..\mpn\generic\binvert.c" />
     <ClCompile Include="..\mpn\generic\broot.c" />
     <ClCompile Include="..\mpn\generic\brootinv.c" />
@@ -268,13 +266,11 @@
     <ClCompile Include="..\mpn\generic\cmp.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\cnd_add_n.c" />
-    <ClCompile Include="..\mpn\generic\cnd_sub_n.c" />
     <ClCompile Include="..\mpn\generic\cnd_swap.c" />
-    <ClCompile Include="..\mpn\generic\com.c" />
+    <ClCompile Include="..\mpn\generic\com.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\comb_tables.c" />
-    <ClCompile Include="..\mpn\generic\copyd.c" />
-    <ClCompile Include="..\mpn\generic\copyi.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_divappr_q.c" />
@@ -282,19 +278,22 @@
     <ClCompile Include="..\mpn\generic\dcpi1_div_qr.c" />
     <ClCompile Include="..\mpn\generic\diveby3.c" />
     <ClCompile Include="..\mpn\generic\divexact.c" />
-    <ClCompile Include="..\mpn\generic\dive_1.c" />
     <ClCompile Include="..\mpn\generic\divis.c" />
     <ClCompile Include="..\mpn\generic\divrem.c" />
-    <ClCompile Include="..\mpn\generic\divrem_1.c" />
-    <ClCompile Include="..\mpn\generic\divrem_2.c" />
     <ClCompile Include="..\mpn\generic\div_q.c" />
     <ClCompile Include="..\mpn\generic\div_qr_1.c" />
-    <ClCompile Include="..\mpn\generic\div_qr_1n_pi1.c" />
+    <ClCompile Include="..\mpn\generic\div_qr_1n_pi1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\div_qr_1n_pi2.c" />
     <ClCompile Include="..\mpn\generic\div_qr_1u_pi2.c" />
     <ClCompile Include="..\mpn\generic\div_qr_2.c" />
-    <ClCompile Include="..\mpn\generic\div_qr_2n_pi1.c" />
-    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c" />
+    <ClCompile Include="..\mpn\generic\div_qr_2n_pi1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\dump.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -303,7 +302,9 @@
     <ClCompile Include="..\mpn\generic\gcdext.c" />
     <ClCompile Include="..\mpn\generic\gcdext_1.c" />
     <ClCompile Include="..\mpn\generic\gcdext_lehmer.c" />
-    <ClCompile Include="..\mpn\generic\gcd_1.c" />
+    <ClCompile Include="..\mpn\generic\gcd_1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\gcd_subdiv_step.c" />
     <ClCompile Include="..\mpn\generic\get_d.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
@@ -324,28 +325,39 @@
     <ClCompile Include="..\mpn\generic\jacbase.c" />
     <ClCompile Include="..\mpn\generic\jacobi.c" />
     <ClCompile Include="..\mpn\generic\jacobi_2.c" />
-    <ClCompile Include="..\mpn\generic\lshift.c" />
-    <ClCompile Include="..\mpn\generic\lshiftc.c" />
+    <ClCompile Include="..\mpn\generic\lshiftc.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\matrix22_mul.c" />
     <ClCompile Include="..\mpn\generic\matrix22_mul1_inverse_vector.c" />
-    <ClCompile Include="..\mpn\generic\mode1o.c" />
+    <ClCompile Include="..\mpn\generic\mode1o.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\mod_1.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_1.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_2.c" />
+    <ClCompile Include="..\mpn\generic\mod_1_1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mod_1_2.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\mod_1_3.c" />
-    <ClCompile Include="..\mpn\generic\mod_1_4.c" />
-    <ClCompile Include="..\mpn\generic\mod_34lsub1.c" />
+    <ClCompile Include="..\mpn\generic\mod_1_4.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\mul.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\mullo_basecase.c" />
+    <ClCompile Include="..\mpn\generic\mullo_basecase.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\mullo_n.c" />
     <ClCompile Include="..\mpn\generic\mulmid.c" />
     <ClCompile Include="..\mpn\generic\mulmid_basecase.c" />
     <ClCompile Include="..\mpn\generic\mulmid_n.c" />
     <ClCompile Include="..\mpn\generic\mulmod_bnm1.c" />
-    <ClCompile Include="..\mpn\generic\mul_1.c" />
-    <ClCompile Include="..\mpn\generic\mul_basecase.c" />
+    <ClCompile Include="..\mpn\generic\mul_basecase.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\mul_fft.c" />
     <ClCompile Include="..\mpn\generic\mul_n.c" />
     <ClCompile Include="..\mpn\generic\mu_bdiv_q.c" />
@@ -362,16 +374,19 @@
     <ClCompile Include="..\mpn\generic\powlo.c" />
     <ClCompile Include="..\mpn\generic\powm.c" />
     <ClCompile Include="..\mpn\generic\pow_1.c" />
-    <ClCompile Include="..\mpn\generic\pre_divrem_1.c" />
+    <ClCompile Include="..\mpn\generic\pre_divrem_1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\pre_mod_1.c" />
     <ClCompile Include="..\mpn\generic\random.c" />
     <ClCompile Include="..\mpn\generic\random2.c" />
-    <ClCompile Include="..\mpn\generic\redc_1.c" />
+    <ClCompile Include="..\mpn\generic\redc_1.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\redc_2.c" />
     <ClCompile Include="..\mpn\generic\redc_n.c" />
     <ClCompile Include="..\mpn\generic\remove.c" />
     <ClCompile Include="..\mpn\generic\rootrem.c" />
-    <ClCompile Include="..\mpn\generic\rshift.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_divappr_q.c" />
@@ -383,7 +398,6 @@
     <ClCompile Include="..\mpn\generic\sec_mul.c" />
     <ClCompile Include="..\mpn\generic\sec_powm.c" />
     <ClCompile Include="..\mpn\generic\sec_sqr.c" />
-    <ClCompile Include="..\mpn\generic\sec_tabselect.c" />
     <ClCompile Include="..\mpn\generic\set_str.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -393,16 +407,19 @@
     <ClCompile Include="..\mpn\generic\sqrlo_basecase.c" />
     <ClCompile Include="..\mpn\generic\sqrmod_bnm1.c" />
     <ClCompile Include="..\mpn\generic\sqrtrem.c" />
-    <ClCompile Include="..\mpn\generic\sqr_basecase.c" />
     <ClCompile Include="..\mpn\generic\sub.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\submul_1.c" />
     <ClCompile Include="..\mpn\generic\sub_1.c" />
-    <ClCompile Include="..\mpn\generic\sub_err1_n.c" />
-    <ClCompile Include="..\mpn\generic\sub_err2_n.c" />
-    <ClCompile Include="..\mpn\generic\sub_err3_n.c" />
-    <ClCompile Include="..\mpn\generic\sub_n.c" />
+    <ClCompile Include="..\mpn\generic\sub_err1_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err2_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err3_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\mpn\generic\tdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\toom22_mul.c" />
     <ClCompile Include="..\mpn\generic\toom2_sqr.c" />
@@ -438,6 +455,7 @@
     <ClCompile Include="..\mpn\generic\toom_interpolate_8pts.c" />
     <ClCompile Include="..\mpn\generic\trialdiv.c" />
     <ClCompile Include="..\mpn\generic\zero.c" />
+    <ClCompile Include="..\mpn\generic\zero_p.c" />
     <ClCompile Include="..\mpq\abs.c">
       <ObjectFileName>$(IntDir)\mpq_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -869,22 +887,42 @@
     <ClCompile Include="..\scanf\vsscanf.c" />
     <ClCompile Include="..\tal-reent.c" />
     <ClCompile Include="..\version.c" />
-    <ClCompile Include="mpn\andn_n.c" />
-    <ClCompile Include="mpn\and_n.c" />
-    <ClCompile Include="mpn\hamdist.c" />
-    <ClCompile Include="mpn\iorn_n.c" />
-    <ClCompile Include="mpn\ior_n.c" />
-    <ClCompile Include="mpn\nand_n.c" />
-    <ClCompile Include="mpn\nior_n.c" />
-    <ClCompile Include="mpn\popcount.c" />
     <ClCompile Include="mpn\sec_add_1.c" />
     <ClCompile Include="mpn\sec_div_qr.c" />
     <ClCompile Include="mpn\sec_div_r.c" />
     <ClCompile Include="mpn\sec_pi1_div_qr.c" />
     <ClCompile Include="mpn\sec_pi1_div_r.c" />
     <ClCompile Include="mpn\sec_sub_1.c" />
-    <ClCompile Include="mpn\xnor_n.c" />
-    <ClCompile Include="mpn\xor_n.c" />
+    <ClCompile Include="mpn\x86\andn_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\and_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\hamdist.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\iorn_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\ior_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\nand_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\nior_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\popcount.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\xnor_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\xor_n.c">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="x86\mpn\fib_table.c">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -901,7 +939,6 @@
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h" />
     <ClInclude Include="..\mpf\fits_u.h" />
-    <ClInclude Include="..\mpn\generic\gmp-mparam.h" />
     <ClInclude Include="..\mpz\aors.h" />
     <ClInclude Include="..\mpz\aors_ui.h" />
     <ClInclude Include="..\mpz\fits_s.h" />
@@ -910,8 +947,302 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="gmp.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="x86\fac_table.h" />
+    <ClInclude Include="x86\fib_table.h" />
+    <ClInclude Include="x86\gmp-mparam.h" />
     <ClInclude Include="x86\mpn\perfsqr.h" />
+    <ClInclude Include="x86\mp_bases.h" />
+    <ClInclude Include="x86\trialdivtab.h" />
+    <ClInclude Include="x86_64\fac_table.h" />
+    <ClInclude Include="x86_64\fib_table.h" />
+    <ClInclude Include="x86_64\gmp-mparam.h" />
     <ClInclude Include="x86_64\mpn\perfsqr.h" />
+    <ClInclude Include="x86_64\mp_bases.h" />
+    <ClInclude Include="x86_64\trialdivtab.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\addlsh1_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\addlsh2_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\addlsh_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\addmul_2.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\add_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\bdiv_q_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\cnd_add_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\cnd_sub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\com.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\copyd.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\copyi.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\divexact_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\gcd_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\hamdist.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\invert_limb.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\lshsub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\modexact_1_odd.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mod_1s_2p.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mod_1s_4p.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mod_1_1p.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mod_34lsub1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mullo_basecase.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mul_2.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mul_basecase.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\popcount.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rsblsh1_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rsblsh2_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rsblsh_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sqr_basecase.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sqr_diag_addlsh1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sublsh1_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sub_err1_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sub_err2_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sub_err3_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\add_err1_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\add_err2_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\add_err3_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\invert_limb_table.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\mul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rsh1sub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\submul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\divrem_2.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rshift.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\divrem_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\lshift.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\div_qr_1n_pi1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\div_qr_2n_pi1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\div_qr_2u_pi1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\addmul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\rsh1add_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\lshiftc.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\redc_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\andn_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\and_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\ior_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\bdiv_dbm1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\iorn_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sec_tabselect.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\sublsh2_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\xnor_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\xor_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\nand_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\nior_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86\addmul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\add_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\bdiv_dbm1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\bdiv_q_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\cnd_add_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\cnd_sub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\copyd.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\copyi.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\divexact_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\divrem_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\divrem_2.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\lshift.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\mod_34lsub1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\mul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\rshift.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\sec_tabselect.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\sqr_basecase.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\submul_1.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\sub_n.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\udiv_qrnnd.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+    <YASM Include="mpn\x86\umul_ppmm.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
+    </YASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libgmp.def" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{02B94302-23D6-43EF-8865-95CDE99D5DC2}</ProjectGuid>
@@ -993,6 +1324,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1092,7 +1424,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1105,6 +1437,7 @@
       <OutputFile>$(OutDir)\lib\x86\$(TargetName)$(TargetExt)</OutputFile>
       <TargetMachine>MachineX86</TargetMachine>
       <SubSystem>Windows</SubSystem>
+      <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -1148,9 +1481,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1165,13 +1495,19 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1227,9 +1563,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1244,13 +1577,19 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
@@ -1263,10 +1602,10 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)\lib\x86\$(TargetName).lib</ImportLibrary>
       <ProfileGuidedDatabase>$(IntDir)\$(TargetName).pgd</ProfileGuidedDatabase>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
+      <ModuleDefinitionFile>libgmp.def</ModuleDefinitionFile>
       <LargeAddressAware>true</LargeAddressAware>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -1310,9 +1649,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1327,13 +1663,19 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1345,8 +1687,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)\lib\x64\$(TargetName).lib</ImportLibrary>
       <ProfileGuidedDatabase>$(IntDir)\$(TargetName).pgd</ProfileGuidedDatabase>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
+      <ModuleDefinitionFile>libgmp.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
@@ -1391,9 +1732,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1408,6 +1746,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -1424,7 +1768,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1440,6 +1784,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <OutputFile>$(OutDir)\lib\x86\$(TargetName)$(TargetExt)</OutputFile>
       <TargetMachine>MachineX86</TargetMachine>
       <SubSystem>Windows</SubSystem>
+      <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -1483,9 +1828,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1500,6 +1842,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">
     <ClCompile>
@@ -1516,7 +1864,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1532,6 +1880,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <OutputFile>$(OutDir)\lib\x86\$(TargetName)$(TargetExt)</OutputFile>
       <TargetMachine>MachineX86</TargetMachine>
       <SubSystem>Windows</SubSystem>
+      <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -1575,9 +1924,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1592,6 +1938,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -1608,7 +1960,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1667,9 +2019,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1684,6 +2033,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">
     <ClCompile>
@@ -1700,7 +2055,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1759,9 +2114,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1776,6 +2128,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
     <ClCompile>
@@ -1792,7 +2150,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1806,10 +2164,10 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)\lib\x86\$(TargetName).lib</ImportLibrary>
       <ProfileGuidedDatabase>$(IntDir)\$(TargetName).pgd</ProfileGuidedDatabase>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
+      <ModuleDefinitionFile>libgmp.def</ModuleDefinitionFile>
       <LargeAddressAware>true</LargeAddressAware>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\include
@@ -1853,9 +2211,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1870,6 +2225,12 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <ClCompile>
@@ -1886,7 +2247,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;NO_ASM;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1900,8 +2261,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)\lib\x64\$(TargetName).lib</ImportLibrary>
       <ProfileGuidedDatabase>$(IntDir)\$(TargetName).pgd</ProfileGuidedDatabase>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
+      <ModuleDefinitionFile>libgmp.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
@@ -1946,9 +2306,6 @@ del ..\mpn\fib_table.c
 )
 if exist ..\gmp-mparam.h (
 del ..\gmp-mparam.h
-)
-if not exist .\gmp-mparam.h (
-copy ..\mpn\generic\gmp-mparam.h .\gmp-mparam.h
 )</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -1963,8 +2320,15 @@ if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
+    <YASM>
+      <PreProc>1</PreProc>
+    </YASM>
+    <YASM>
+      <Parser>1</Parser>
+    </YASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.targets" />
   </ImportGroup>
 </Project>

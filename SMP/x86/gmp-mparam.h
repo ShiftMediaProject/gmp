@@ -1,6 +1,6 @@
-/* Generic C gmp-mparam.h -- Compiler/machine parameter header file.
+/* Generic x86 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,6 +28,11 @@ You should have received copies of the GNU General Public License and the
 GNU Lesser General Public License along with the GNU MP Library.  If not,
 see https://www.gnu.org/licenses/.  */
 
+#define GMP_LIMB_BITS 32
+#define GMP_LIMB_BYTES 4
 
-/* Values for GMP_LIMB_BITS etc will be determined by ./configure and put
-   in config.h. */
+
+/* Generic x86 mpn_divexact_1 is faster than generic x86 mpn_divrem_1 on all
+   of p5, p6, k6 and k7, so use it always.  It's probably slower on 386 and
+   486, but that's too bad.  */
+#define DIVEXACT_1_THRESHOLD  0

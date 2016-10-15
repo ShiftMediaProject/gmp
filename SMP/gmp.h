@@ -67,7 +67,7 @@ see https://www.gnu.org/licenses/.  */
 #if defined(__x86_64) || defined(_M_X64)
 #define _LONG_LONG_LIMB 1
 #endif
-#if defined(DLL_EXPORT)
+#if defined(DLL_EXPORT) && defined(NO_ASM)
 #define __GMP_LIBGMP_DLL 1
 #else
 #define __GMP_LIBGMP_DLL 0
@@ -2331,7 +2331,7 @@ enum
 
 /* Define CC and CFLAGS which were used to build this version of GMP */
 #define __GMP_CC "msvc"
-#define __GMP_CFLAGS "-DNO_ASM"
+#define __GMP_CFLAGS ""
 
 /* Major version number is the value of __GNU_MP__ too, above and in mp.h. */
 #define __GNU_MP_VERSION            6
