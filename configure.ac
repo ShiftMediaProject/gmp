@@ -592,6 +592,7 @@ case $host in
 
 
   arm*-*-* | aarch64*-*-*)
+    abilist="32"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch fpmode neon tune"
     gcc_64_cflags_optlist="arch tune"
