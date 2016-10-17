@@ -35,6 +35,8 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#define HAVE_NATIVE_mpn_addmul_2 1
+#define HAVE_NATIVE_mpn_mul_2 1
 
 /* Multiply {up,usize} by {vp,vsize} and write the result to
    {prodp,usize+vsize}.  Must have usize>=vsize.
