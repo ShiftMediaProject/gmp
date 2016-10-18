@@ -92,5 +92,6 @@ COPYING
 *.la
 *.o
 *.lo
+*.idb
 
 *.exe
