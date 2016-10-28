@@ -1,3 +1,8 @@
+2016-10-28  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (__gmp_binary_divides): Let 1/q call mpq_inv.
+	* tests/cxx/t-ops.cc (check_mpq): Test it.
+
 2016-08-29  Torbjörn Granlund  <tg@gmplib.org>
 
 	* All C files: Include just gmp-impl.h, make gmp-impl.h grab gmp.h.
