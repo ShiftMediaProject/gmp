@@ -3,6 +3,28 @@
 	* gmpxx.h (__gmp_binary_divides): Let 1/q call mpq_inv.
 	* tests/cxx/t-ops.cc (check_mpq): Test it.
 
+2016-10-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* config.guess: Recognise Itanium Poulson.
+
+2016-10-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm*-*-*): Amend last change.
+
+2016-10-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (riscv umul_ppmm): New.
+
+	* mpn/riscv/64/aors_n.asm: New file.
+	* mpn/riscv/64/mul_1.asm: New file.
+	* mpn/riscv/64/aorsmul_1.asm: New file.
+
+	* mpn/generic/addmul_1.c: Rewrite for shallower recurrency.
+	* mpn/generic/submul_1.c: Likewise.
+
+	* configure.ac (riscv-*-*): New.
+	(arm*-*-*): Rewrite arm support to handle armv8 CPUs in 32-bit mode.
+
 2016-08-29  Torbjörn Granlund  <tg@gmplib.org>
 
 	* All C files: Include just gmp-impl.h, make gmp-impl.h grab gmp.h.
@@ -35,6 +57,11 @@
 	failure for inputs string with no digits, i.e., empty except for
 	optional sign, base prefix and white space.
 
+2016-06-02  Torbjörn Granlund  <tg@gmplib.org>
+	    Vincent Lefevre <vincent@vinc17.net>
+
+	* doc/gmp.texi: Various clarifications about variable conventions.
+
 2016-04-07  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmp-h.in (__GMP_NOTHROW): Prefer noexcept to throw().
@@ -45,7 +72,7 @@
 
 2016-04-02  Torbjörn Granlund  <torbjorng@google.com>
 
-	* mpf/set_q.c: Rewrite, mainly to use mpn_div_q..
+	* mpf/set_q.c: Rewrite, mainly to use mpn_div_q.
 
 2016-03-29  Torbjörn Granlund  <torbjorng@google.com>
 
