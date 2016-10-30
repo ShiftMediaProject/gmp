@@ -63,25 +63,25 @@ PROLOGUE(func)
 
 L(top):	ld	a4, 0(up)
 	ld	a6, 0(vp)
-	addi	n, n, -2		C bookkeeping
-	addi	up, up, 16		C bookkeeping
+	addi	n, n, -2	C bookkeeping
+	addi	up, up, 16	C bookkeeping
 	ADDSUB	t0, a4, a6
 	CMPCY(	t2, t0, a4)
-	ADDSUB	t4, t0, t6
-	CMPCY(	t3, t4, t0)
+	ADDSUB	t4, t0, t6	C cycle 3, 9, ...
+	CMPCY(	t3, t4, t0)	C cycle 4, 10, ...
 	sd	t4, 0(rp)
-	add	t6, t2, t3
+	add	t6, t2, t3	C cycle 5, 11, ...
 L(mid):	ld	a5, -8(up)
 	ld	a7, 8(vp)
-	addi	vp, vp, 16		C bookkeeping
-	addi	rp, rp, 16		C bookkeeping
+	addi	vp, vp, 16	C bookkeeping
+	addi	rp, rp, 16	C bookkeeping
 	ADDSUB	t1, a5, a7
 	CMPCY(	t2, t1, a5)
-	ADDSUB	t4, t1, t6		C cycle 0
-	CMPCY(	t3, t4, t1)		C cycle 1
+	ADDSUB	t4, t1, t6	C cycle 0, 6, ...
+	CMPCY(	t3, t4, t1)	C cycle 1, 7, ...
 	sd	t4, -8(rp)
-	add	t6, t2, t3		C cycle 2
-	bne	n, x0, L(top)
+	add	t6, t2, t3	C cycle 2, 8, ...
+	bne	n, x0, L(top)	C bookkeeping
 
 L(end):	mv	a0, t6
 	ret

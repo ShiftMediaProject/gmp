@@ -54,11 +54,11 @@ PROLOGUE(func)
 	li	a6, 0
 
 L(top):	ld	a7, 0(up)
-	addi	up, up, 8
+	addi	up, up, 8	C bookkeeping
 	ld	a4, 0(rp)
-	addi	rp, rp, 8
+	addi	rp, rp, 8	C bookkeeping
 	mul	a5, a7, v0
-	addi	n, n, -1
+	addi	n, n, -1	C bookkeeping
 	mulhu	a7, a7, v0
 	ADDSUB	a5, a4, a5
 	ADDSUB	a6, a5, a6	C cycle 0, 3, ...
@@ -67,7 +67,7 @@ L(top):	ld	a7, 0(up)
 	CMPCY(	a5, a6, a5)	C cycle 1, 4, ...
 	sd	a6, -8(rp)
 	add	a6, a4, a5	C cycle 2, 5, ...
-	bne	n, x0, L(top)
+	bne	n, x0, L(top)	C bookkeeping
 
 L(end):	mv	a0, a6
 	ret
