@@ -23,6 +23,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include <time.h>
 #include <unistd.h>
 
+#include "gmp.h"
 
 #include "hex-random.h"
 
