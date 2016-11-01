@@ -1,5 +1,7 @@
 2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
 
+	* mini-gmp/tests/hex-random.c: Reinstate gmp.h inclusion.
+
 	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
 	by Peter Barfuss.)
 
