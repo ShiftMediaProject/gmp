@@ -1,3 +1,8 @@
+2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
+	by Peter Barfuss.)
+
 2016-10-31   Oleg Oshmyan  <chortos@inbox.lv>
 
 	* gmp-impl.h (x86_64 MPN_IORD_U): Use proper asm constraint.
