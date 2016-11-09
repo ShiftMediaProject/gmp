@@ -133,7 +133,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   str_size = s - begs;
 
   LIMBS_PER_DIGIT_IN_BASE (xsize, str_size, base);
-  MPZ_REALLOC (x, xsize);
+  MPZ_NEWALLOC (x, xsize);
 
   /* Convert the byte array in base BASE to our bignum format.  */
   xsize = mpn_set_str (PTR (x), (unsigned char *) begs, str_size, base);

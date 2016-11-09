@@ -36,8 +36,9 @@ see https://www.gnu.org/licenses/.  */
 int
 mpz_init_set_str (mpz_ptr x, const char *str, int base)
 {
-  ALLOC (x) = 1;
-  PTR (x) = __GMP_ALLOCATE_FUNC_LIMBS (1);
+  static const mp_limb_t dummy_limb=0xc1a0;
+  ALLOC (x) = 0;
+  PTR (x) = (mp_ptr) &dummy_limb;
 
   /* if str has no digits mpz_set_str leaves x->_mp_size unset */
   SIZ (x) = 0;
