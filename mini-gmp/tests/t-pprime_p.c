@@ -117,15 +117,15 @@ check_composites (void)
 
   for (i = 0; i < reps; i++)
     {
-      mini_urandomb (bs, 32);
-      size_range = mpz_get_ui (bs) % 12 + 1; /* 0..4096 bit operands */
+      mini_urandomb (bs, 16);
+      size_range = mpz_get_ui (bs) % 10 + 1; /* 0..1024 bit operands */
 
       mini_urandomb (bs, size_range);
       size = mpz_get_ui (bs);
       mini_rrandomb (a, size);
 
-      mini_urandomb (bs, 32);
-      size_range = mpz_get_ui (bs) % 12 + 1; /* 0..4096 bit operands */
+      mini_urandomb (bs, size_range);
+      size = mpz_get_ui (bs);
       mini_rrandomb (b, size);
 
       /* Exclude trivial factors */
