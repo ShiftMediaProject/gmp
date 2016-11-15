@@ -1,5 +1,8 @@
 2016-11-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* mini-gmp/tests/t-limbs.c (testmain): Skip tests with zero
+	product.
+
 	* mini-gmp/tests/hex-random.c (hex_random_init): Added fflush
 	call.
 
