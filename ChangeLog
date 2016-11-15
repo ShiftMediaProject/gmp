@@ -1,7 +1,5 @@
 2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
 
-	* mini-gmp/tests/hex-random.c: Reinstate gmp.h inclusion.
-
 	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
 	by Peter Barfuss.)
 
@@ -61,16 +59,6 @@
 
 	* longlong.h (umul_ppmm from __umulsidi3): Protect with do ...
 	while (0).
-
-2016-08-22  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/mini-gmp.c (mpn_set_str_other): Always return size >=
-	1, with unnormalized result in the case the input digits are all
-	zero. Fixes crash on a large number of leading zeros, reported by
-	Axel Miller.
-	(mpz_set_str): Normalize as needed, after above change. Return
-	failure for inputs string with no digits, i.e., empty except for
-	optional sign, base prefix and white space.
 
 2016-06-02  Torbjörn Granlund  <tg@gmplib.org>
 	    Vincent Lefevre <vincent@vinc17.net>
@@ -163,12 +151,6 @@
 	* mpz/primorial_ui.c (LOOP_ON_SIEVE_CONTINUE): Define prime locally.
 
 	* gen-fac.c: Use unsigned types for sizes.
-	* mini-gmp/mini-gmp.c: Silence wanrings due to (un)signed types.
-	* mini-gmp/tests/testutils.c: Likewise.
-	* mini-gmp/tests/t-logops.c: Likewise.
-	* mini-gmp/tests/t-cmp_d.c: Likewise.
-	* mini-gmp/tests/t-reuse.c: Likewise.
-	* mini-gmp/tests/t-cong.c: Likewise.
 
 	* mpn/generic/invert.c: Use MPN_FILL macro.
 	* mpn/generic/invertappr.c: Likewise.
@@ -247,10 +229,6 @@
 	* primesieve.c: Use two presieved patterns on 64-bits CPUs.
 
 2015-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c: Lazy allocation for mpz_t.
-	(mpz_rootrem): Exploit lazy allocation to avoid init2.
-	* mpz/set.c: Use MPZ_NEWALLOC.
 
 	* mpq/init.c: Remove conditional code for __CHECKER__.
 	* mpq/set.c: Shorten scope of local variables.
@@ -337,10 +315,6 @@
 	* mpz/iset.c: Likewise.
 	* mpz/iset_str.c: Likewise.
 
-	* mini-gmp/mini-gmp.c (mpn_com, mpn_neg): New functions.
-	* mini-gmp/mini-gmp.h: Declare them.
-	* mini-gmp/mini-gmp.c (mpz_div_r_2exp): Use mpn_neg.
-
 2015-11-04  Torbjörn Granlund  <torbjorng@google.com>
 
 	* mpz/xor.c: Use MPZ_REALLOC.
@@ -377,7 +351,6 @@
 	* demos/perl/GMP.xs: Likewise.
 	* tests/mpf/t-pow_ui.c: Use reference value to check the size.
 
-	* mini-gmp/mini-gmp.c: Removed a typo (spotted by Paul Zimmermann).
 	* doc/gmp.texi (Floating-point): Remove "infinite precision" claim.
 
 	* gmp-h.in: Update version.
@@ -763,9 +736,6 @@
 	* tests/mpn/t-div.c: Likewise.
 	* tests/mpn/t-minvert.c: Likewise.
 
-	* mini-gmp/mini-gmp.h: Declare mpn_zero_p.
-	* mini-gmp/mini-gmp.c: Define mpn_zero_p as a function, not a macro.
-
 2015-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_divexact_1 and
@@ -1124,11 +1094,6 @@
 
 	* mpn/arm64/mod_34lsub1.asm: New file.
 
-2014-08-27  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/mini-gmp.c (mpz_abs_sub_bit): Do full normalization,
-	needed if mpz_clrbit clears the most significant one bit.
-
 2014-08-23  Torbjörn Granlund  <tege@gmplib.org>
 
 	* mpn/arm64/bdiv_dbm1c.asm: New file.
@@ -1164,8 +1129,6 @@
 	with add_n + INCR_U.
 
 	* tests/mpf/t-fits.c: use ui_sub instead of sub_ui+neg.
-
-	* mini-gmp/mini-gmp.c: Remove some useless variables.
 
 2014-07-27  Torbjörn Granlund  <tege@gmplib.org>
 
@@ -1307,7 +1270,6 @@
 
 	* gen-fac.c: +1 in the init2 argument before setbit.
 	* gen-fib.c: Likewise. (Thanks Niels)
-	* mini-gmp/mini-gmp.c: Likewise.
 	* rand/randmts.c: Likewise.
 
 	* mpn/generic/invert.c: Remove unused TMP_MARK.
@@ -1315,8 +1277,6 @@
 	* mpz/millerrabin.c (millerrabin): Consider the rare case n is a power.
 
 2014-05-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c: Micro-optimisations.
 
 	* gen-fib.c: Use mpz_setbit.
 	* gen-psqr.c: Skip even numbers when looking for primes.
@@ -1408,10 +1368,6 @@
 	* mpn/Makefile.am (TARG_DIST): Purge removed directories.
 	* doc/gmp.texi: Remove special mentions of removed architectures.
 
-2014-03-12 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpz_probab_prime_p): Micro-optimisation.
-
 2014-03-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/bd2/gmp-mparam.h: New file.
@@ -1422,27 +1378,6 @@
 	* tests/mpz/t-pprime_p.c (check_composites): New function.
 	(check_primes): New function.
 	(main): Call them. Also use TESTS_REPS.
-
-	* mini-gmp/mini-gmp.c (gmp_millerrabin): New internal function.
-	(mpz_probab_prime_p): New function.
-	* mini-gmp/mini-gmp.h (mpz_probab_prime_p): Declare it.
-	* mini-gmp/tests/t-pprime_p.c: New test program.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-pprime_p.
-
-2014-03-03  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/mini-gmp.c (mpz_congruent_p): New function.
-	* mini-gmp/mini-gmp.h: Declare it.
-	* mini-gmp/tests/t-cong.c: New file, based on tests/mpz/t-cong.c.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-cong.
-
-	* mini-gmp/tests/testutils.c (dump): New function. Deleted static
-	functions in other files.
-	(mpz_set_str_or_abort): Moved function here, from...
-	* mini-gmp/tests/t-cmp_d.c: ... old location.
-
-	* mini-gmp/tests/t-reuse.c (dump3): Renamed, from ...
-	(dump): ...old name.
 
 2014-03-01  Niels Möller  <nisse@lysator.liu.se>
 
@@ -1465,12 +1400,6 @@
 	BMI2 is missing.
 	(x86 cpuid, 2 variants): Zero ecx for the benefit of new BMI2 feature
 	test.
-
-2014-02-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpn_sqrtrem): New function.
-	* mini-gmp/mini-gmp.h: Declare it.
-	* mini-gmp/tests/t-sqrt.c: Test it.
 
 2014-02-17  Niels Möller  <nisse@lysator.liu.se>
 
@@ -1495,7 +1424,6 @@
 
 	* doc/gmp.texi (mpz_roinit_n, MPZ_ROINIT_N): Document that
 	at least a readable limb is required.
-	* mini-gmp/mini-gmp.c (mpz_div_qr): init + set = init_set .
 
 2014-02-14  Niels Möller  <nisse@lysator.liu.se>
 
@@ -1520,11 +1448,6 @@
 	* tune/tuneup.c (tune_powm_sec): Likewise. Also deleted code
 	fiddling with the high exponent bits.
 
-2014-02-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-limbs.c: New test for mpz_limbs_*.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Add it.
-
 2014-02-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_powm_sec): Avoid timing of the nonsensical
@@ -1535,16 +1458,6 @@
 	win_size(eb) <= eb. Make the table const.
 	(mpn_sec_powm): Deleted handling of winsize > initial ebi. For
 	now, replaced with an ASSERT_ALWAYS.
-
-2014-02-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpz_realloc2, mpz_limbs_read, mpz_limbs_modify
-	mpz_limbs_write, mpz_limbs_finish, mpz_roinit_n): New functions.
-	(mpn_perfect_square_p): New function.
-	* mini-gmp/mini-gmp.h: Declare them.
-
-	* mini-gmp/tests/t-mul.c: Use roinit and limbs_read to test mpn.
-	* mini-gmp/tests/t-sqrt.c: Test also mpn_perfect_square_p.
 
 2014-02-08  Niels Möller  <nisse@lysator.liu.se>
 
@@ -1560,17 +1473,6 @@
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_sec_add_1 and
 	mpn_sec_sub_1.
-
-2014-02-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpn_rootrem): Allow NULL argument.
-
-	* mini-gmp/mini-gmp.c (mpn_zero): New function.
-	(mpz_perfect_square_p): New function.
-	* mini-gmp/mini-gmp.h: Declare them.
-
-	* mini-gmp/tests/t-sqrt.c: Test mpz_perfect_square_p.
-	* mini-gmp/tests/t-root.c: Test also 1-th root, allow perfect powers.
 
 2014-01-29  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -1616,9 +1518,6 @@
 
 	* printf/repl-vsnprintf.c: Feed case 'z' in switch (type) with case 'z'
 	in switch (fchar).
-
-	* mini-gmp/tests/t-aorsmul.c: New file, test for mpz_{add,sub}mul{,_ui}
-	* mini-gmp/tests/Makefile: Add t-aorsmul.
 
 2014-01-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
@@ -1677,13 +1576,6 @@
 	* mpz/clear.c: Add cast to avoid overflow of (later ignored) argument.
 	* mpf/clear.c: Likewise.
 
-2014-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpn_popcount): New function.
-	(mpz_popcount): Use it.
-	(mpz_addmul_ui, mpz_addmul, mpz_submul_ui, mpz_submul): Added.
-	* mini-gmp/mini-gmp.h: Declare them.
-
 2014-01-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-aors_1.c: Test also mpn_sec_add_1 and mpn_sec_sub_1.
@@ -1718,9 +1610,6 @@
 	* tune/speed.h: Declare it.
 	(SPEED_ROUTINE_MPN_SEC_MINVERT): New macro.
 	* tune/speed.c (routine): Added mpn_sec_minvert.
-
-	* mini-gmp/mini-gmp.c (mp_bits_per_limb): New const value.
-	* mini-gmp/mini-gmp.h: Declare it.
 
 2014-01-12  Marc Glisse  <marc.glisse@inria.fr>
 
@@ -3018,7 +2907,6 @@
 2013-03-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/cong_2exp.c: Write loops in a cleaner way.
-	* mini-gmp/mini-gmp.c: Likewise.
 	* gmp-impl.h (mpz_zero_p): Likewise.
 
 2013-03-12  Niels Möller  <nisse@lysator.liu.se>
@@ -3185,30 +3073,12 @@
 	* tune/common.c (speed_measure): Increase repetition count if we
 	get a zero measurement.
 
-2013-02-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpz_div_q_2exp): Adjust only if needed.
-	(mpn_common_scan): New service function to unify scan loops.
-	(mpz_scan0, mpz_scan1): Simplify by using mpn_common_scan.
-	(mpz_make_odd): Simplify, assume in-place operation on positive.
-	(mpn_scan0, mpn_scan1): New functions.
-	* mini-gmp/mini-gmp.h (mpn_scan0, mpn_scan1): New declarations.
-	* mini-gmp/tests/t-scan.c: Test also mpn_scan0 and mpn_scan1.
-
 2013-02-26  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-limbs.c (check_roinit): Test MPZ_ROINIT_N only if
 	compiler supports c99.
 
 2013-02-25  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-double.c (testmain): Declare double variables
-	as volatile, to drop extended precision.
-
-	* mini-gmp/tests/testutils.c (testfree): New function. Use it
-	everywhere where test programs deallocate storage allocated via
-	the mini-gmp allocation functions, including uses of mpz_get_str
-	for various test failure messages.
 
 	* mpz/limbs_finish.c (mpz_limbs_finish): New file and function.
 	* mpz/limbs_modify.c (mpz_limbs_modify): New file and function.
@@ -3243,32 +3113,11 @@
 
 	* tests/tests.h (TESTS_REPS): Keep count >= 1.
 
-2013-02-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c: Move asserts to work-around a compiler bug.
-	(mpz_export): Reorder branches.
-	(mpz_mul_ui): Avoid temporary allocation (mpn_mul_1 can work in-place).
-
-	* mini-gmp/tests/t-reuse.c: Fix typo causing the same negation
-	condition to be applied to all operands. (See 2013-02-03, Torbjorn)
-
 2013-02-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmpxx.h (mpq_class, mpf_class) [init_ui, init_si, assign_si]:
 	Optimise _si using _ui for positive arguments.
 	(__gmp_hypot_function): Use _mul_ui to square an ui, abs for si.
-
-	* mini-gmp/mini-gmp.c (mpz_mul): Read sizes just once.
-	(mpn_set_str_other): Remove a redundant variable.
-	(mpz_abs_add): Use SWAP once, to order sizes.
-	(mpz_mul_ui): Micro-optimisation.
-	(mpz_rootrem): Use _init2 before _setbit.
-	(mpz_set_str): Optimise-out a variable.
-	(mpz_import): Normalise only if needed.
-	(mpn_div_qr_1): Speed-up the d=1 case, delaying a branch.
-
-	* rand/randmts.c: Use init2, as size of variables is known in advance.
-	(mangle_seed): Get a single argument.
 
 	* mpz/remove.c: Delay allocation in the generic case; use swap
 	instead of set.
@@ -3373,10 +3222,8 @@
 
 	* gmp-impl.h (MPZ_PROVOKE_REALLOC): Remove unused macro.
 	* gen-fac.c (gen_consts): Remove obsolete code, use swap instead of set.
-	* mini-gmp/mini-gmp.c (fac_ui, bin_uiui): Use shorter and faster code.
 
 	* mpn/generic/mulmod_bnm1.c: Reorganise branches.
-	* mini-gmp/mini-gmp.c: Reduce branches.
 
 	* mpz/bin_ui.c: Avoid a copy when n < 0.
 	* mpz/mfac_uiui.c: Reduce memory usage.
@@ -3457,17 +3304,6 @@
 
 	* tests/mpz/reuse.c: Fix typo in last change.
 
-2013-01-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpz_cmpabs_d, mpz_cmp_d): Simplify.
-	(mpz_set_str): Behaviour more adherent to the real GMP.
-
-	* mini-gmp/tests/t-str.c: Cast size_t to unsigned long, for printf.
-	* mini-gmp/tests/t-import.c: Likewise.
-	* mini-gmp/tests/t-comb.c: Remove an unused var.
-	* mini-gmp/tests/t-div.c: Remove unused args passed to fprintf.
-	* mini-gmp/tests/t-double.c: Use float immediates with float vars.
-
 2013-01-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
@@ -3477,26 +3313,6 @@
 	on it.  Replace rotating progress with real measure.
 
 	* Makefile.am (check-mini-gmp): Fix typo in last change.
-
-2013-01-22  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/mini-gmp.c (mpz_cmp_d): Simplified, just sort out
-	signs, then call mpz_cmpabs_d.
-
-	* mini-gmp/tests/testutils.h: Include stdio.h and stdlib.h.
-	(numberof): New define.
-
-	* mini-gmp/tests/t-cmp_d.c: New file, copied from
-	tests/mpz/t-cmp_d.c with minor changes.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-cmp_d,
-
-	* mini-gmp/mini-gmp.c (mpz_cmpabs_d): New function.
-	* mini-gmp/mini-gmp.h: Declare it.
-
-2013-01-21  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-str.c (testmain): Test mpz_out_str, using
-	the tmpfile function for i/o.
 
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -3513,120 +3329,27 @@
 	* tests/mpz/t-remove.c: Back out last change which left `divisor_size'
 	uninitialised; achieve change's aim with a parameter tweak.
 
-2013-01-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/testutils.c (testhalves): New function, test default
-	memory functions.
-	* mini-gmp/tests/testutils.h (testhalves): Declare it
-	* mini-gmp/tests/t-logops.c: Use testhalves.
-
-	* mini-gmp/mini-gmp.c (mpz_init_set_str): New function.
-	* mini-gmp/mini-gmp.h (mpz_init_set_str): Declare it.
-	* mini-gmp/tests/t-str.c: Test mpz_init_set_str.
-
 2013-01-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/memory.c (PTRLIMB): New macro, used for conformant casting.
 
 2013-01-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp/tests/t-double.c (testmain): Get the current free
-	function using mp_get_memory_functions.
-	* mini-gmp/tests/t-str.c (testmain): Likewise.
-
-	* mini-gmp/tests/testutils.h (tu_free): Remove declaration.
-
-	* mini-gmp/tests/testutils.c (block_check, tu_free): Mark static.
-
 	* tests/mpz/t-set_str.c: Check also failing conditions.
 
 	* tests/mpz/t-remove.c: Test removal of 1.
-
-2013-01-18  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-str.c (test_small): New function, exercising
-	parsing of whitespace and base prefixes.
-	(testmain): Call it.
-
-	* mini-gmp/tests/t-gcd.c (gcdext_valid_p): Fixed memory leak.
-
-	* mini-gmp/tests/t-double.c (testmain): Call tu_free rather than
-	free, for storage allocated by mpz_get_str.
-	* mini-gmp/tests/t-str.c (testmain): Likewise.
-
-	* mini-gmp/tests/testutils.c (block_init, block_check): New
-	functions.
-	(tu_alloc, tu_realloc, tu_free): New functions.
-	(main): Use mp_set_memory_functions.
-	* mini-gmp/tests/testutils.h (tu_free): Declare.
-
-	* mini-gmp/tests/testutils.h: New file, declarations for test
-	programs.
-
-	* mini-gmp/tests/testutils.c (main): New file, with shared main
-	function for all the test programs. Also includes mini-gmp.c.
-	Calls testmain after initialization. All other test programs
-	updated to define testmain rather than main.
-
-2013-01-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-signed.c: Slightly larger coverage.
-	* mini-gmp/tests/t-double.c: Test also mpz_init_set_d.
 
 2013-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/set_str.c (normalization_steps): Eliminate set-but-unused
 	variable.
 
-	* mini-gmp/tests/t-div.c: Test mpz_divisible_p and mpz_divisible_ui_p.
-
 	* tests/tests.h (TESTS_REPS): Fix printf argument type clashes.
-
-	* mini-gmp/tests/t-div.c: Test also mpz_mod, mpz_mod_ui.  Compare
-	mpz_divisible_p just to ceil, to save time.
-
-	* mini-gmp/mini-gmp.c: Prefix some names with GMP_.
-
-2013-01-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-double.c: Test mpz_cmp_d.
-	* mini-gmp/mini-gmp.c (mpz_cmp_d): Correct multiword comparison.
-
-	* mini-gmp/mini-gmp.c (mpz_set_str): Handle the empty string.
-	* mini-gmp/tests/t-str.c: Test base <= 0.
-
-2013-01-15  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-str.c (main): Use x->_mp_d rather than x[0]._mp_d.
-	* mini-gmp/tests/t-invert.c (main): Likewise.
-
-	* mini-gmp/tests/t-mul.c (main): Test mpn_mul_n and mpn_sqr.
-
-	* mini-gmp/tests/hex-random.h (enum hex_random_op): New value
-	OP_SQR.
-
-	* mini-gmp/tests/mini-random.c (mini_random_op3): Renamed, from...
-	(mini_random_op): ... old name. Updated callers.
-	(mini_random_op2): New function.
-
-	* mini-gmp/tests/hex-random.c (hex_random_op3): Renamed, from...
-	(hex_random_op): ... old name. Updated callers.
-	(hex_random_op2): New function.
-
-2013-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-logops.c: Improve popcount/hamdist testing.
-	* mini-gmp/tests/t-signed.c: Test more cases.
 
 2013-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Mike Frysinger:
 	* configure.ac: Add x32 ABI for x86_64.
-
-2013-01-14  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-str.c (main): Added tests for mpn_get_str and
-	mpn_set_str.
 
 2013-01-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
@@ -3638,79 +3361,18 @@
 	* doc/gmp.texi: Let mpn_sqrtrem reference mpn_perfect_square_p instead
 	of mpz_perfect_square_p.
 
-2013-01-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-comb.c: New test program, testing both
-	mpz_fac_ui and mpz_bin_uiui.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-comb.
-
-	* mini-gmp/mini-gmp.c (mpz_mul_si): Simplify.
-	(mpz_mul_ui, mpz_mul, mpz_div_qr): Replace init+REALLOC with init2.
-
-	* mini-gmp/mini-gmp.c (NEG_CAST): New macro.
-	(mpz_mul_si, mpz_set_si, mpz_cmp_si): Use NEG_CAST.
-
-	* mini-gmp/mini-gmp.c (mpz_set_si, mpz_cmp_si): Simplify by using
-	the _ui variant.
-
-	* mini-gmp/tests/t-root.c: Use mpz_ui_pow_ui, when base fits an ui.
-
-	* mini-gmp/tests/t-mul.c: Test also mpz_mul_si.
-	* mini-gmp/tests/t-sub.c: Test also mpz_ui_sub.
-
-	* mini-gmp/mini-gmp.c (mpz_fits_slong_p): Correct range.
-	* mini-gmp/tests/t-signed.c: New test program, for get/set/cmp_si.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-signed.
-
-	* mini-gmp/mini-gmp.c (mpz_hamdist): Handle different sizes.
-	* mini-gmp/tests/t-logops.c: Test also popcount and hamdist.
-
 2013-01-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/export.c: Less restrictive ASSERTs.
-	* mini-gmp/mini-gmp.c (mpz_export, mpz_import): Likewise.
-	* mini-gmp/tests/t-import.c: Test also size=0 or count=0.
 
 2013-01-10  Torbjorn Granlund  <tege@gmplib.org>
-
-	* mini-gmp/tests/t-import.c (main): Don't drop off function end.
 
 	* Makefile.am (check-mini-gmp): Set LD_LIBRARY_PATH to allow testing
 	with dynamic main GMP build.
 
-2013-01-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c (mpz_export): Support op=0 countp=NULL.
-
-2013-01-08  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/t-import.c: New test program, testing both
-	mpz_import and mpz_export.
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Added t-import.
-
-	* mini-gmp/tests/mini-random.c (mini_rrandomb_export): New
-	function.
-	* mini-gmp/tests/mini-random.h: Declare it.
-	* mini-gmp/tests/hex-random.c (hex_rrandomb_export): New function.
-	* mini-gmp/tests/hex-random.h: Declare it.
-
-	* mini-gmp/mini-gmp.c (mpz_export): Compute accurate word count up
-	front, to avoid generating any high zero words.
-
-2013-01-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/README: Document base limitation for conversions.
-	* mini-gmp/mini-gmp.c (mpz_set_str): Remove goto.
-	(mpz_import, mpz_export): Correctly use order/endianness.
-
 2013-01-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (aarch64): Make add_ssaaaa and sub_ddmmss actually work.
-
-2013-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	From shuax:
-	* mini-gmp/mini-gmp.c (mpz_import): Reset limb after storing it.
 
 2013-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -3902,11 +3564,6 @@
 	* tests/mpn/t-get_d.c (check_onebit): Get vax bounds right.
 	(main): Switch off check_rand for vax.
 
-2012-11-22  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp/tests/run-tests: Copied latest version from GNU Nettle.
-	Minor fix to the use of $EMULATOR, and proper copyright notice.
-
 2012-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm_sec.c (redcify): Use mpn_sb_div_r_sec.
@@ -4067,9 +3724,6 @@
 	* mpn/generic/powlo.c: Likewise.
 	* mpn/generic/powm.c: Likewise.
 
-	* mini-gmp/mini-gmp.c (mpz_div_r_2exp, mpz_div_q_2exp): Improve
-	adjustment condition.
-
 2012-06-23  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (numeric_limits): Make content public.
@@ -4096,8 +3750,6 @@
 	* mpz/bin_uiui.c: Likewise.
 	* mpz/oddfac_1.c: Likewise.
 	* mpz/prodlimbs.c: Likewise.
-
-	* mini-gmp/mini-gmp.c (mpz_realloc): remove a branch.
 
 2012-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -4182,12 +3834,6 @@
 	* mpz: Use MPZ_REALLOC return value when possible.
 
 2012-05-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/tests/t-div.c: Test all _qr, _q, _r variants.
-	* mini-gmp/tests/t-lcm.c: Test the _ui variant.
-
-	* mini-gmp/mini-gmp.c (mpz_mod, mpz_mod_ui): New functions.
-	* mini-gmp/mini-gmp.h (mpz_mod, mpz_mod_ui): Prototypes.
 
 	* mpz/scan1.c: Simplify, and add a shortcut for scan1(z, 0).
 
@@ -4281,8 +3927,6 @@
 	* mpn/generic/toom33_mul.c: Likewise.
 
 2012-05-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.c: merge mpz_rootrem and mpz_sqrtrem.
 
 	* mpn/generic/sqrtrem.c (invsqrttab): Reduce size removing common byte.
 
@@ -4596,10 +4240,6 @@
 	* mpz/bin_uiui.c: Rewrite (some parts are Torbjorn's).
 	* gen-fac_ui.c: Generate new constants for bin_uiui.
 
-	* mini-gmp/mini-gmp.h (mpz_fac_ui, mpz_bin_uiui): New definitions.
-	* mini-gmp/mini-gmp.c (mpz_fac_ui, mpz_bin_uiui): Trivial
-	implementation.
-
 	* tests/mpz/t-fac_ui.c: Check Wilson's theorem on a big value.
 
 	* mpn/generic/invert.c: Remove support for scratch == NULL.
@@ -4637,24 +4277,9 @@
 	* Makefile.am (check-mini-gmp): Pass -I../.. in EXTRA_CFLAGS, to
 	locate gmp.h.
 
-2012-04-11 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mini-gmp/mini-gmp.h (mpz_root, mpz_rootrem): define (correctly).
-	* mini-gmp/mini-gmp.c (mpz_rootrem): Extended code from _root.
-	(mpz_root): Use mpz_rootrem.
-	(mpz_mul_ui): Correctly handle negative operands.
-
-	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): add t-root.
-	* mini-gmp/tests/t-root.c: New file.
-	* mini-gmp/tests/t-reuse.c: Enable root{,rem} tests.
-
 2012-04-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gen-fac_ui.c (mpz_root): Remove.
-	* mini-gmp/mini-gmp.c (mpz_root): New, support negative operands.
-	* mini-gmp/mini-gmp.h (mpz_root): define.
-	(mpz_out_str): Test also __STDIO_LOADED (for VMS).
-	* mpz/2fac_ui.c: Cosmetic change.
 
 2012-04-07  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -4906,19 +4531,6 @@
 
 2012-02-29  Niels Möller  <nisse@lysator.liu.se>
 
-	* mini-gmp/tests/t-reuse.c: New test case, based on
-	tests/mpz/reuse.c.
-
-	* mini-gmp/mini-gmp.c (mpz_cdiv_r_ui): New function.
-	(mpz_fdiv_r_ui): New function.
-	(mpz_tdiv_r_ui): New function.
-	(mpz_powm_ui): New function.
-	(mpz_pow_ui): New function.
-	(mpz_ui_pow_ui): Use mpz_pow_ui.
-	(mpz_gcdext): Fixed input/output overlap, for the case of one
-	input being zero.
-	(mpz_sqrtrem): Fix for the case r NULL, U zero.
-
 	* Makefile.am (check-mini-gmp): Use $(MAKE).
 	(clean-mini-gmp): New target.
 	(clean-local, distclean-local): New automake targets. Depend on
@@ -4928,17 +4540,6 @@
 
 	* Makefile.am (check-mini-gmp): New target, for running the
 	mini-gmp testsuite.
-
-	* mini-gmp/tests/Makefile (srcdir, MINI_GMP_DIR): New make
-	variables. These can be overridden when using a separate build
-	directory.
-	(EXTRA_CFLAGS): Renamed, was OPTFLAGS.
-
-	* mini-gmp/mini-gmp.c (mpz_abs_add): Don't cache limb pointers
-	over MPZ_REALLOC, since that breaks in-place operation. Bug
-	spotted by Torbjörn.
-	(mpz_and, mpz_ior, mpz_xor): Likewise.
-	(mpz_cmp): Fixed comparison of negative numbers.
 
 2012-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -4974,10 +4575,6 @@
 	* mpz/oddfac_1.c (mpz_oddfac_1): Use umul_ppmm when size = 2.
 
 2012-02-26  Niels Möller  <nisse@lysator.liu.se>
-
-	* mini-gmp: New subdirectory. For use by GMP bootstrap, and as a
-	fallback for applications needing bignums but not high
-	performance.
 
 	* bootstrap.c: New file, replacing dumbmp.c. Uses mini-gmp for the
 	standard GMP functions, and then defines the few functions
