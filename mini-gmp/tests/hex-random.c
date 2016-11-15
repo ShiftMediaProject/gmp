@@ -46,6 +46,7 @@ hex_random_init (void)
 	  seed = time(NULL) + getpid();
 	  printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
 	}
+      fflush(stdout);
     }
   else
     seed = 4711;
