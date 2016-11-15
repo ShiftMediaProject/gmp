@@ -31,6 +31,9 @@ CHECK_PROGRAMS = t-add t-sub t-mul t-invert t-div t-div_2exp \
 	t-double t-cmp_d t-gcd t-lcm t-import t-comb t-signed \
 	t-sqrt t-root t-powm t-logops t-bitops t-scan t-str \
 	t-reuse t-aorsmul t-limbs t-cong t-pprime_p
+# Default TESTS to all tests, allowing overriding TESTS for building tests
+# without running them.
+TESTS = $(CHECK_PROGRAMS)
 
 MISC_OBJS = hex-random.o mini-random.o testutils.o
 
@@ -57,4 +60,4 @@ testutils.o: $(MINI_GMP_DIR)/mini-gmp.c
 #   mpz_cmp_d, mpz_popcount, mpz_hamdist, mpz_ui_pow_ui
 
 check: $(CHECK_PROGRAMS)
-	$(srcdir)/run-tests $(CHECK_PROGRAMS)
+	$(srcdir)/run-tests $(TESTS)
