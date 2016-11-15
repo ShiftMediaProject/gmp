@@ -100,11 +100,13 @@ do
   shift
 done
 
-if [ $# -eq 0 ] ; then
-  for f in *-test; do test_program "./$f"; done
-else
+# Comment out special handling for zero arguments to support separate
+# tests-build/tests-run.
+#if [ $# -eq 0 ] ; then
+#  for f in *-test; do test_program "./$f"; done
+#else
   for f in "$@" ; do test_program `find_program "$f"`; done
-fi
+#fi
 
 if [ $failed -eq 0 ] ; then
   banner="All $all tests passed"
