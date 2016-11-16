@@ -1,3 +1,8 @@
+2016-11-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp/mini-gmp.c (mpn_invert_3by2): Fix arithmetic overflow
+	bug, and improve documentation of the algorithm.
+
 2016-11-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/tests/t-limbs.c (testmain): Skip tests with zero
