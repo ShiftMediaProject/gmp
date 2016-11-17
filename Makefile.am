@@ -113,15 +113,17 @@ SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
 EXTRA_DIST = configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf \
 	     COPYING.LESSERv3 COPYINGv2 COPYINGv3
 
+# Put asl.h here for now.
+EXTRA_DIST += asl.h
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h
 endif
 EXTRA_DIST += gmpxx.h
 
-# gmp.h and mp.h are architecture dependent, mainly since they encode the
-# limb size used in libgmp.  For that reason they belong under $exec_prefix
-# not $prefix, strictly speaking.
+# gmp.h is architecture dependent, mainly since it encodes the limb size used
+# in libgmp.  For that reason it belongs under $exec_prefix not $prefix,
+# strictly speaking.
 #
 # $exec_prefix/include is not in the default include path for gcc built to
 # the same $prefix and $exec_prefix, which might mean gmp.h is not found,
