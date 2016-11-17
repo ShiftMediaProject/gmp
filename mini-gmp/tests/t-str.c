@@ -310,6 +310,7 @@ testmain (int argc, char **argv)
 		}
 	    }
 	  free (ap);
+	  free (rp);
 	  testfree (bp);
 	}
     }

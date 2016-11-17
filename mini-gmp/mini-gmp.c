@@ -454,7 +454,7 @@ mpn_sub_1 (mp_ptr rp, mp_srcptr ap, mp_size_t n, mp_limb_t b)
     {
       mp_limb_t a = ap[i];
       /* Carry out */
-      mp_limb_t cy = a < b;;
+      mp_limb_t cy = a < b;
       rp[i] = a - b;
       b = cy;
     }
@@ -1597,7 +1597,7 @@ mpz_realloc2 (mpz_t x, mp_bitcnt_t n)
 mp_srcptr
 mpz_limbs_read (mpz_srcptr x)
 {
-  return x->_mp_d;;
+  return x->_mp_d;
 }
 
 mp_ptr
