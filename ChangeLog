@@ -1,3 +1,11 @@
+2016-11-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* Makefile.am (check-mini-gmp): Get CC and EXTRA_CFLAGS right.
+
+2016-11-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* asl.h: Initial support for artificially small limbs.
+
 2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
