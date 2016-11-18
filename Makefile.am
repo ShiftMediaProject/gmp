@@ -1,7 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2015 Free
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2016 Free
 # Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
@@ -435,7 +435,7 @@ check-mini-gmp:
 		MINI_GMP_DIR="$$abs_srcdir/mini-gmp" \
 		LDFLAGS="-L../../.libs" \
 		LIBS="-lgmp -lm" \
-		CC="$(CC_FOR_BUILD)" EXTRA_CFLAGS="-g -I../.." check
+		CC="$(CC)" EXTRA_CFLAGS="$(CFLAGS) -g -I../.." check
 
 clean-mini-gmp:
 	if [ -d mini-gmp/tests ] ; then \
