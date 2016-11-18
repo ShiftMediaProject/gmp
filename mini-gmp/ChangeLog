@@ -1,3 +1,7 @@
+2016-11-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/Makefile: Pass EXTRA_CFLAGS to linker as a intermediate fix.
+
 2016-11-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp/mini-gmp.c (mpn_invert_3by2): Fix arithmetic overflow
