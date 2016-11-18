@@ -53,8 +53,9 @@ clean:
 
 testutils.o: $(MINI_GMP_DIR)/mini-gmp.c
 
+# FIXME: Pass EXTRA_CFLAGS as an emergency hack to solve massive failures.
 %: %.o $(MISC_OBJS)
-	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
+	$(CC) $(EXTRA_CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 # Missing tests include:
 #   mpz_cmp_d, mpz_popcount, mpz_hamdist, mpz_ui_pow_ui
