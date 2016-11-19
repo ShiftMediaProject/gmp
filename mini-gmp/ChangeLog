@@ -1,3 +1,15 @@
+2016-11-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mini-random.h: Use name "../mini-gmp.h" for include, so we
+	don't need any -I options to the compiler.
+
+	* tests/Makefile: Pass CFLAGS to the linker, as
+	recommended by the GNU coding standard.
+	(CPPFLAGS): New variable, with empty default value.
+	(CFLAGS): Remove the -I flag involving MINI_GMP_DIR, to leave free
+	for overriding on make command line.
+	(EXTRA_CFLAGS): Deleted variable, no longer needed.
+
 2016-11-18  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/Makefile: Pass EXTRA_CFLAGS to linker as a intermediate fix.

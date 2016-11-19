@@ -1,3 +1,8 @@
+2016-11-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* Makefile.am (check-mini-gmp): Override CFLAGS and CPPFLAGS
+	instead of the deleted EXTRA_CFLAGS.
+
 2016-11-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): Get CC and EXTRA_CFLAGS right.

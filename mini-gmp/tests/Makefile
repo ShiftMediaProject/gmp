@@ -21,8 +21,8 @@ srcdir=.
 MINI_GMP_DIR=..
 
 CC = gcc
-EXTRA_CFLAGS = -O -Wall -g
-CFLAGS = $(EXTRA_CFLAGS) -I$(MINI_GMP_DIR)
+CFLAGS = -O -Wall -g
+CPPFLAGS =
 LDFLAGS =
 
 LIBS = -lgmp -lm -lmcheck
@@ -49,13 +49,12 @@ clean:
 .PRECIOUS: %.o
 
 %.o: %.c $(MINI_GMP_DIR)/mini-gmp.h hex-random.h mini-random.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 testutils.o: $(MINI_GMP_DIR)/mini-gmp.c
 
-# FIXME: Pass EXTRA_CFLAGS as an emergency hack to solve massive failures.
 %: %.o $(MISC_OBJS)
-	$(CC) $(EXTRA_CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 # Missing tests include:
 #   mpz_cmp_d, mpz_popcount, mpz_hamdist, mpz_ui_pow_ui
