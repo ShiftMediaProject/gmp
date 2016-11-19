@@ -1,7 +1,9 @@
 2016-11-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): Override CFLAGS and CPPFLAGS
-	instead of the deleted EXTRA_CFLAGS.
+	instead of the deleted EXTRA_CFLAGS. Set TEST_LIBRARY_PATH,
+	instead of LD_LIBRARY_PATH and DYLD_LIBRARY_PATH, to avoid getting
+	gcc linked with an unexpected version of gmp.
 
 2016-11-18  Niels Möller  <nisse@lysator.liu.se>
 

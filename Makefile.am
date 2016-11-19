@@ -427,8 +427,7 @@ check-mini-gmp:
 	abs_srcdir="`cd $(srcdir) && pwd`" ; \
 	$(MKDIR_P) mini-gmp/tests \
 	&& cd mini-gmp/tests \
-	&& LD_LIBRARY_PATH="../../.libs:$$LD_LIBRARY_PATH" \
-	   DYLD_LIBRARY_PATH="../../.libs:$$DYLD_LIBRARY_PATH" \
+	&& TEST_LIBRARY_PATH="../../.libs"  \
 	   $(MAKE) -f "$$abs_srcdir/mini-gmp/tests/Makefile" \
 		VPATH="$$abs_srcdir/mini-gmp/tests" \
 		srcdir="$$abs_srcdir/mini-gmp/tests" \

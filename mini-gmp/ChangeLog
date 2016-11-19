@@ -1,5 +1,8 @@
 2016-11-19  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/run-tests: Set up LD_LIBRARY_PATH and DYLD_LIBRARY_PATH
+	for tests only, based on TEST_LIBRARY_PATH.
+
 	* tests/mini-random.h: Use name "../mini-gmp.h" for include, so we
 	don't need any -I options to the compiler.
 

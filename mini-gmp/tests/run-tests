@@ -54,10 +54,20 @@ env_program () {
   fi
 }
 
+TEST_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+TEST_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"
+
+if [ "$TEST_LIBRARY_PATH" ] ; then
+  TEST_LD_LIBRARY_PATH="$TEST_LIBRARY_PATH:$TEST_LD_LIBRARY_PATH"
+  TEST_DYLD_LIBRARY_PATH="$TEST_LIBRARY_PATH:$TEST_DYLD_LIBRARY_PATH"
+fi
+
 test_program () {
   testname=`basename "$1" .exe`
   testname=`basename "$testname" -test`
   if [ -z "$EMULATOR" ] || head -1 "$1" | grep '^#!' > /dev/null; then
+    LD_LIBRARY_PATH="$TEST_LD_LIBRARY_PATH" \
+    DYLD_LIBRARY_PATH="$TEST_DYLD_LIBRARY_PATH" \
     "$1" $testflags
   else
     $EMULATOR "$1" $testflags
