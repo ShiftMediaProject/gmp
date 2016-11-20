@@ -1,3 +1,8 @@
+2016-11-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/t-signed.c: Reorganize testcase, to avoid undefined
+	behaviour with signed overflow.
+
 2016-11-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/run-tests: Set up LD_LIBRARY_PATH and DYLD_LIBRARY_PATH
