@@ -1,3 +1,11 @@
+2016-11-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (powerpc): Never use -O3.
+
+	* acinclude.m4 (mpn_lshift_com optimization 2): Make it well-defined
+	also for 32-bit systems.
+	(mpn_lshift_com optimization 2): Free allocated memory.
+
 2016-11-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am (check-mini-gmp): Override CFLAGS and CPPFLAGS
