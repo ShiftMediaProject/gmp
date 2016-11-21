@@ -743,7 +743,7 @@ main ()
     a[i] = ~0L;
   r = malloc (10000 * sizeof (unsigned long));
   r2 = r;
-  for (i = 0; i < 528; i += 22)
+  for (i = 0; i < 528; i += 23)
     {
       lshift_com (r2, a,
 		  i / (8 * sizeof (unsigned long)) + 1,
