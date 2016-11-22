@@ -3,7 +3,7 @@ dnl  x86 fat binary entrypoints.
 dnl  Contributed to the GNU project by Kevin Ryde (original x86_32 code) and
 dnl  Torbjorn Granlund (port to x86_64)
 
-dnl  Copyright 2003, 2009, 2011-2014 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2009, 2011-2014, 2016 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -45,12 +45,15 @@ define(`WANT_PROFILING',no)
 
 
 dnl  We define PRETEND_PIC as a helper symbol, the use it for suppressing
-dnl  normal, fast call code, since that triggers problems on Darwin and
-dnl  OpenBSD.
+dnl  normal, fast call code, since that triggers problems on Darwin, OpenBSD
+dnl  and some versions of GNU/Linux.  This will go away when symbol hiding is
+dnl  finished.
 
 ifdef(`DARWIN',
 `define(`PRETEND_PIC')')
 ifdef(`OPENBSD',
+`define(`PRETEND_PIC')')
+ifdef(`LINUX',
 `define(`PRETEND_PIC')')
 ifdef(`PIC',
 `define(`PRETEND_PIC')')
@@ -85,22 +88,11 @@ dnl  $1 in it.
 
 define(FAT_ENTRY,
 m4_assert_numargs(2)
-`ifdef(`HOST_DOS64',
 `	ALIGN(8)
 `'PROLOGUE($1)
 	jmp	*$2+GSYM_PREFIX`'__gmpn_cpuvec(%rip)
 EPILOGUE()
-',
-`	ALIGN(ifdef(`PIC',16,8))
-`'PROLOGUE($1)
-ifdef(`PRETEND_PIC',
-`	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %rax)
-	jmp	*$2(%rax)
-',`dnl non-PIC
-	jmp	*GSYM_PREFIX`'__gmpn_cpuvec+$2
 ')
-EPILOGUE()
-')')
 
 
 dnl  FAT_ENTRY for each CPUVEC_FUNCS_LIST

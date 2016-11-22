@@ -3702,6 +3702,8 @@ yes
 	      GMP_INCLUDE_MPN(x86_64/dos64.m4) ;;
 	    *-openbsd*)
 	      GMP_DEFINE_RAW(["define(<OPENBSD>,1)"]) ;;
+	    *-linux*)
+	      GMP_DEFINE_RAW(["define(<LINUX>,1)"]) ;;
 	  esac
           ;;
       esac

@@ -1,3 +1,8 @@
+2016-11-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (x86): Define LINUX for GNU/Linux systems.
+	* mpn/x86_64/fat/fat_entry.asm: Set PRETEND_PIC for GNU/Linux.
+
 2016-11-21  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (powerpc): Never use -O3.
