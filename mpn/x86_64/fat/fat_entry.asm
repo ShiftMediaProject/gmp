@@ -88,11 +88,22 @@ dnl  $1 in it.
 
 define(FAT_ENTRY,
 m4_assert_numargs(2)
+`ifdef(`HOST_DOS64',
 `	ALIGN(8)
 `'PROLOGUE($1)
 	jmp	*$2+GSYM_PREFIX`'__gmpn_cpuvec(%rip)
 EPILOGUE()
+',
+`	ALIGN(ifdef(`PIC',16,8))
+`'PROLOGUE($1)
+ifdef(`PRETEND_PIC',
+`	LEA(	GSYM_PREFIX`'__gmpn_cpuvec, %rax)
+	jmp	*$2(%rax)
+',`dnl non-PIC
+	jmp	*GSYM_PREFIX`'__gmpn_cpuvec+$2
 ')
+EPILOGUE()
+')')
 
 
 dnl  FAT_ENTRY for each CPUVEC_FUNCS_LIST
