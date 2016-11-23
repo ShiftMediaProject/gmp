@@ -69,6 +69,8 @@ see https://www.gnu.org/licenses/.  */
 #define GMP_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define GMP_MAX(a, b) ((a) > (b) ? (a) : (b))
 
+#define GMP_CMP(a,b) (((a) > (b)) - ((a) < (b)))
+
 #define gmp_assert_nocarry(x) do { \
     mp_limb_t __cy = (x);	   \
     assert (__cy == 0);		   \
@@ -1777,9 +1779,7 @@ mpz_cmp_d (const mpz_t x, double d)
 int
 mpz_sgn (const mpz_t u)
 {
-  mp_size_t usize = u->_mp_size;
-
-  return (usize > 0) - (usize < 0);
+  return GMP_CMP (u->_mp_size, 0);
 }
 
 int
@@ -1794,13 +1794,7 @@ mpz_cmp_si (const mpz_t u, long v)
   else if (usize >= 0)
     return 1;
   else /* usize == -1 */
-    {
-      mp_limb_t ul = u->_mp_d[0];
-      if ((mp_limb_t)GMP_NEG_CAST (unsigned long int, v) < ul)
-	return -1;
-      else
-	return (mp_limb_t)GMP_NEG_CAST (unsigned long int, v) > ul;
-    }
+    return GMP_CMP (GMP_NEG_CAST (mp_limb_t, v), u->_mp_d[0]);
 }
 
 int
@@ -1813,10 +1807,7 @@ mpz_cmp_ui (const mpz_t u, unsigned long v)
   else if (usize < 0)
     return -1;
   else
-    {
-      mp_limb_t ul = (usize > 0) ? u->_mp_d[0] : 0;
-      return (ul > v) - (ul < v);
-    }
+    return GMP_CMP (mpz_get_ui (u), v);
 }
 
 int
@@ -1836,15 +1827,10 @@ mpz_cmp (const mpz_t a, const mpz_t b)
 int
 mpz_cmpabs_ui (const mpz_t u, unsigned long v)
 {
-  mp_size_t un = GMP_ABS (u->_mp_size);
-  mp_limb_t ul;
-
-  if (un > 1)
+  if (GMP_ABS (u->_mp_size) > 1)
     return 1;
-
-  ul = (un == 1) ? u->_mp_d[0] : 0;
-
-  return (ul > v) - (ul < v);
+  else
+    return GMP_CMP (mpz_get_ui (u), v);
 }
 
 int

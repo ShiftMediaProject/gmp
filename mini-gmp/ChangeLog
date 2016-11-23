@@ -1,3 +1,8 @@
+2016-11-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp.c (GMP_CMP): New macro.
+	(mpz_sgn, mpz_cmp_si, mpz_cmp_ui, mpz_cmpabs_ui): Use it.
+
 2016-11-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/t-invert.c (test_3by2, test_2by1): New functions,
