@@ -33,61 +33,74 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 static gmp_randstate_t state;
 
-static unsigned long
-mkseed (void)
+static void
+mkseed (mpz_t seed)
 {
   FILE *f = fopen ("/dev/urandom", "rb");
   if (f)
     {
-      unsigned long seed;
+      unsigned char buf[6];
       size_t res;
 
       setbuf (f, NULL);
-      res = fread (&seed, sizeof(seed), 1, f);
+      res = fread (buf, sizeof(buf), 1, f);
       fclose (f);
 
       if (res == 1)
-	return seed;
+	{
+	  mpz_import (seed, sizeof(buf), 1, 1, 0, 0, buf);
+	  return;
+	}
     }
+
 #ifdef __unix__
   {
     struct timeval tv;
+    mpz_t usec;
+    mpz_init (usec);
+
     gettimeofday (&tv, NULL);
-    /* Unsigned long may be only 32 bits, and then a plain microsecond
-       count would wrap around in only 71 minutes. So instead, xor
-       microseconds with the most significant second bits, which are
-       the least "random". */
-    return tv.tv_sec ^ (tv.tv_usec << 12);
+    mpz_set_ui (seed, tv.tv_sec);
+    mpz_set_ui (usec, tv.tv_usec);
+    /* usec fits in 20 bits, shift left to make it 48 bits. */
+    mpz_mul_2exp (usec, usec, 28);
+    mpz_xor (seed, seed, usec);
+
+    mpz_clear (usec);
   }
 #else
-  return time (NULL);
+  mpz_set_ui (seed, time (NULL));
 #endif
 }
 
 void
 hex_random_init (void)
 {
-  unsigned long seed;
+  mpz_t seed;
   char *env_seed;
+
+  mpz_init (seed);
 
   env_seed = getenv ("GMP_CHECK_RANDOMIZE");
   if (env_seed && env_seed[0])
     {
-      seed = strtoul (env_seed, NULL, 0);
-      if (seed)
-	printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%lu\n", seed);
+      mpz_set_str (seed, env_seed, 0);
+      if (mpz_cmp_ui (seed, 0) != 0)
+	gmp_printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%Zd\n", seed);
       else
 	{
-	  seed = mkseed ();
-	  printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
+	  mkseed (seed);
+	  gmp_printf ("Seed GMP_CHECK_RANDOMIZE=%Zd (include this in bug reports)\n", seed);
 	}
       fflush (stdout);
     }
   else
-    seed = 4711;
+    mpz_set_ui (seed, 4711);
 
   gmp_randinit_default (state);
-  gmp_randseed_ui (state, seed);
+  gmp_randseed (state, seed);
+
+  mpz_clear (seed);
 }
 
 char *

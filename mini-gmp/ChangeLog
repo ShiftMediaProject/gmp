@@ -1,5 +1,10 @@
 2016-11-24  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/hex-random.c (mkseed): Produce a 48-bit mpz_t value,
+	regardless of word size.
+	(hex_random_init): Use gmp_randseed instead of gmp_randseed_ui,
+	and support seeds exceeding an unsigned long.
+
 	* tests/hex-random.c (mkseed): New function, using /dev/urandom
 	for random seed when available.
 	(hex_random_init): Use it.
