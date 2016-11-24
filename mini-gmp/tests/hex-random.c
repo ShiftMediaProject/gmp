@@ -21,7 +21,11 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 
 #include <time.h>
-#include <unistd.h>
+
+#ifdef __unix__
+# include <unistd.h>
+# include <sys/time.h>
+#endif
 
 #include "gmp.h"
 
@@ -29,13 +33,44 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 static gmp_randstate_t state;
 
+static unsigned long
+mkseed (void)
+{
+  FILE *f = fopen ("/dev/urandom", "rb");
+  if (f)
+    {
+      unsigned long seed;
+      size_t res;
+
+      setbuf (f, NULL);
+      res = fread (&seed, sizeof(seed), 1, f);
+      fclose (f);
+
+      if (res == 1)
+	return seed;
+    }
+#ifdef __unix__
+  {
+    struct timeval tv;
+    gettimeofday (&tv, NULL);
+    /* Unsigned long may be only 32 bits, and then a plain microsecond
+       count would wrap around in only 71 minutes. So instead, xor
+       microseconds with the most significant second bits, which are
+       the least "random". */
+    return tv.tv_sec ^ (tv.tv_usec << 12);
+  }
+#else
+  return time (NULL);
+#endif
+}
+
 void
 hex_random_init (void)
 {
   unsigned long seed;
   char *env_seed;
 
-  env_seed = getenv("GMP_CHECK_RANDOMIZE");
+  env_seed = getenv ("GMP_CHECK_RANDOMIZE");
   if (env_seed && env_seed[0])
     {
       seed = strtoul (env_seed, NULL, 0);
@@ -43,10 +78,10 @@ hex_random_init (void)
 	printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%lu\n", seed);
       else
 	{
-	  seed = time(NULL) + getpid();
+	  seed = mkseed ();
 	  printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
 	}
-      fflush(stdout);
+      fflush (stdout);
     }
   else
     seed = 4711;
