@@ -1,3 +1,7 @@
+2016-11-25  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-ops2z.cc (checkz): Avoid left shift of negative number.
+
 2016-11-22  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (x86): Define LINUX for GNU/Linux systems.
