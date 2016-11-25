@@ -1,5 +1,11 @@
 2016-11-25  Marc Glisse  <marc.glisse@inria.fr>
 
+	* mpz/gcdext.c (mpz_gcdext): Allow a first argument of NULL.
+	* doc/gmp.texi (Number Theoretic Functions): Document it.
+	* tests/mpz/t-gcd.c (main): Test it.
+
+2016-11-25  Marc Glisse  <marc.glisse@inria.fr>
+
 	* tests/cxx/t-ops2z.cc (checkz): Avoid left shift of negative number.
 
 2016-11-22  Torbjörn Granlund  <tg@gmplib.org>

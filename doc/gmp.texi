@@ -3624,7 +3624,7 @@ In all cases, @math{@var{s} = 0} if and only if @math{@var{g} =
 @GMPabs{@var{b}}}, i.e., if @var{b} divides @var{a} or @math{@var{a} = @var{b}
 = 0}.
 
-If @var{t} is @code{NULL} then that value is not computed.
+If @var{s}, @var{t} or @var{g} is @code{NULL} then that value is not computed.
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, const mpz_t @var{op1}, const mpz_t @var{op2})

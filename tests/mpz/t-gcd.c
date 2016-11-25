@@ -287,6 +287,17 @@ main (int argc, char **argv)
       one_test (op1, op2, ref, i);
     }
 
+  /* Check that we can use NULL as first argument of mpz_gcdext.  */
+  mpz_set_si (op1, -10);
+  mpz_set_si (op2, 0);
+  mpz_gcdext (NULL, temp1, temp2, op1, op2);
+  ASSERT_ALWAYS (mpz_cmp_si (temp1, -1) == 0);
+  ASSERT_ALWAYS (mpz_cmp_si (temp2, 0) == 0);
+  mpz_set_si (op2, 6);
+  mpz_gcdext (NULL, temp1, temp2, op1, op2);
+  ASSERT_ALWAYS (mpz_cmp_si (temp1, 1) == 0);
+  ASSERT_ALWAYS (mpz_cmp_si (temp2, 2) == 0);
+
   mpz_clears (bs, op1, op2, ref, gcd1, gcd2, temp1, temp2, temp3, s, NULL);
 
   tests_end ();

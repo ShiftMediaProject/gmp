@@ -62,10 +62,12 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       /* g = |a|, s = sgn(a), t = 0. */
       ssize = SIZ (a) >= 0 ? (asize != 0) : -1;
 
-      gp = MPZ_REALLOC (g, asize);
-      MPN_COPY (gp, PTR (a), asize);
-      SIZ (g) = asize;
-
+      if (g != NULL)
+	{
+	  gp = MPZ_REALLOC (g, asize);
+	  MPN_COPY (gp, PTR (a), asize);
+	  SIZ (g) = asize;
+	}
       if (t != NULL)
 	SIZ (t) = 0;
       if (s != NULL)
@@ -115,9 +117,12 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       SIZ (s) = tmp_ssize;
     }
 
-  gp = MPZ_REALLOC (g, gsize);
-  MPN_COPY (gp, tmp_gp, gsize);
-  SIZ (g) = gsize;
+  if (g != NULL)
+    {
+      gp = MPZ_REALLOC (g, gsize);
+      MPN_COPY (gp, tmp_gp, gsize);
+      SIZ (g) = gsize;
+    }
 
   TMP_FREE;
 }
