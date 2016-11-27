@@ -1559,14 +1559,11 @@ mpz_fits_ulong_p (const mpz_t u)
 long int
 mpz_get_si (const mpz_t u)
 {
-  mp_size_t us = u->_mp_size;
-
-  if (us > 0)
-    return (long) (u->_mp_d[0] & ~GMP_LIMB_HIGHBIT);
-  else if (us < 0)
-    return (long) (- u->_mp_d[0] | GMP_LIMB_HIGHBIT);
+  if (u->_mp_size < 0)
+    /* This expression is necessary to properly handle 0x80000000 */
+    return -1 - (long) ((u->_mp_d[0] - 1) & ~GMP_LIMB_HIGHBIT);
   else
-    return 0;
+    return (long) (mpz_get_ui (u) & ~GMP_LIMB_HIGHBIT);
 }
 
 unsigned long int
