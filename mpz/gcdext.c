@@ -112,14 +112,14 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
     {
       mp_ptr sp;
 
-      sp = MPZ_REALLOC (s, ssize);
+      sp = MPZ_NEWALLOC (s, ssize);
       MPN_COPY (sp, tmp_sp, ssize);
       SIZ (s) = tmp_ssize;
     }
 
   if (g != NULL)
     {
-      gp = MPZ_REALLOC (g, gsize);
+      gp = MPZ_NEWALLOC (g, gsize);
       MPN_COPY (gp, tmp_gp, gsize);
       SIZ (g) = gsize;
     }

@@ -56,8 +56,8 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
       SIZ (g) = vsize;
       if (g == v)
 	return;
-      MPZ_REALLOC (g, vsize);
-      MPN_COPY (PTR (g), vp, vsize);
+      tp = MPZ_NEWALLOC (g, vsize);
+      MPN_COPY (tp, vp, vsize);
       return;
     }
 
@@ -67,8 +67,8 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
       SIZ (g) = usize;
       if (g == u)
 	return;
-      MPZ_REALLOC (g, usize);
-      MPN_COPY (PTR (g), up, usize);
+      tp = MPZ_NEWALLOC (g, usize);
+      MPN_COPY (tp, up, usize);
       return;
     }
 
@@ -146,19 +146,19 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
     {
       mp_limb_t cy_limb;
       gsize += (vp[vsize - 1] >> (GMP_NUMB_BITS - g_zero_bits)) != 0;
-      MPZ_REALLOC (g, gsize);
-      MPN_ZERO (PTR (g), g_zero_limbs);
+      tp = MPZ_NEWALLOC (g, gsize);
+      MPN_ZERO (tp, g_zero_limbs);
 
-      tp = PTR(g) + g_zero_limbs;
+      tp = tp + g_zero_limbs;
       cy_limb = mpn_lshift (tp, vp, vsize, g_zero_bits);
       if (cy_limb != 0)
 	tp[vsize] = cy_limb;
     }
   else
     {
-      MPZ_REALLOC (g, gsize);
-      MPN_ZERO (PTR (g), g_zero_limbs);
-      MPN_COPY (PTR (g) + g_zero_limbs, vp, vsize);
+      tp = MPZ_NEWALLOC (g, gsize);
+      MPN_ZERO (tp, g_zero_limbs);
+      MPN_COPY (tp + g_zero_limbs, vp, vsize);
     }
 
   SIZ (g) = gsize;
