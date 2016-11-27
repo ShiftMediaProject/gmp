@@ -1,3 +1,11 @@
+2016-11-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpz/reuse.c: Rewrite operand randomisation to use fixed ranges.
+
+	* tune/time.c (cgt_works_p): Add a missing verbosity check.
+
+	* configure.ac: Make udiv_w_sdiv use conditional on enable_assembly.
+
 2016-11-25  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpz/gcdext.c (mpz_gcdext): Allow a first argument of NULL.
