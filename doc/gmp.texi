@@ -627,8 +627,8 @@ install under a particular tree.  The default is @samp{/usr/local}.
 @option{--exec-prefix} can be used to direct architecture-dependent files like
 @file{libgmp.a} to a different location.  This can be used to share
 architecture-independent parts like the documentation, but separate the
-dependent parts.  Note however that @file{gmp.h} and @file{mp.h} are
-architecture-dependent since they encode certain aspects of @file{libgmp}, so
+dependent parts.  Note however that @file{gmp.h} is
+architecture-dependent since it encodes certain aspects of @file{libgmp}, so
 it will be necessary to ensure both @file{$prefix/include} and
 @file{$exec_prefix/include} are available to the compiler.
 

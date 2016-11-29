@@ -243,7 +243,8 @@ main ()
       switch ((getcpuid(3LL) >> 24) & 0xFF) {
       case 0x07: puts ("itanium");  break;
       case 0x1F: puts ("itanium2"); break; /* McKinley, Madison */
-      case 0x20: puts ("itanium2"); break; /* Montecito */
+      case 0x20: puts ("itanium2"); break; /* Montecito, Montvale, Tukwila */
+      case 0x21: puts ("itanium2"); break; /* Poulson */
       }
     }
   return 0;

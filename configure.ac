@@ -1209,7 +1209,9 @@ case $host in
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_power)
     HAVE_HOST_CPU_FAMILY_power=1
     cclist="gcc"
-    extra_functions="udiv_w_sdiv"
+    if test "$enable_assembly" = "yes" ; then
+      extra_functions="udiv_w_sdiv"
+    fi
     path="power"
 
     # gcc 2.7.2 knows rios1, rios2, rsc
@@ -1239,7 +1241,9 @@ case $host in
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_cflags_optlist="arch"
     path="s390_32"
-    extra_functions="udiv_w_sdiv"
+    if test "$enable_assembly" = "yes" ; then
+       extra_functions="udiv_w_sdiv"
+    fi
     gcc_32_cflags_maybe="-m31"
 
     case $host_cpu in
@@ -1536,14 +1540,18 @@ case $host in
     GMP_INCLUDE_MPN(vax/elf.m4)
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     path="vax"
-    extra_functions="udiv_w_sdiv"
+    if test "$enable_assembly" = "yes" ; then
+      extra_functions="udiv_w_sdiv"
+    fi
     ;;
   vax*-*-*)
     # Default to aout conventions (i.e., no register prefix, '_' global prefix)
     #
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     path="vax"
-    extra_functions="udiv_w_sdiv"
+    if test "$enable_assembly" = "yes" ; then
+      extra_functions="udiv_w_sdiv"
+    fi
     ;;
 
 
@@ -3629,6 +3637,8 @@ yes
 	      GMP_INCLUDE_MPN(x86_64/dos64.m4) ;;
 	    *-openbsd*)
 	      GMP_DEFINE_RAW(["define(<OPENBSD>,1)"]) ;;
+	    *-linux*)
+	      GMP_DEFINE_RAW(["define(<LINUX>,1)"]) ;;
 	  esac
           ;;
       esac

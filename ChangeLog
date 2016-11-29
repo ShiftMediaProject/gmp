@@ -1,3 +1,41 @@
+2016-11-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in (__GNU_MP__): Bump.
+
+	* mpz/inp_raw.c: Rewrite size computation to avoid overflow.
+
+	* mpz/kronsz.c: Use ABS_CAST to avoid undefined code.
+
+2016-11-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/time.c (cgt_works_p): Add a missing verbosity check.
+
+	* configure.ac: Make udiv_w_sdiv use conditional on enable_assembly.
+
+2016-11-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (x86): Define LINUX for GNU/Linux systems.
+	* mpn/x86_64/fat/fat_entry.asm: Set PRETEND_PIC for GNU/Linux.
+
+2016-11-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* acinclude.m4 (mpn_lshift_com optimization 2): Make it well-defined
+	also for 32-bit systems.
+	(mpn_lshift_com optimization 2): Free allocated memory.
+
+2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
+	by Peter Barfuss.)
+
+2016-10-31   Oleg Oshmyan  <chortos@inbox.lv>
+
+	* gmp-impl.h (x86_64 MPN_IORD_U): Use proper asm constraint.
+
+2016-10-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* config.guess: Recognise Itanium Poulson.
+
 2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
 
 	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'
