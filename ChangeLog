@@ -1,3 +1,8 @@
+2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
+
+	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'
+	constraint with 'Cal'.
+
 2016-06-18  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.1.1 released.

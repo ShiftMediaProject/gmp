@@ -424,17 +424,17 @@ long __MPN(count_leading_zeros) (UDItype);
 	   : "=r" (sh),							\
 	     "=&r" (sl)							\
 	   : "r"  ((USItype) (ah)),					\
-	     "rIJ" ((USItype) (bh)),					\
+	     "rICal" ((USItype) (bh)),					\
 	     "%r" ((USItype) (al)),					\
-	     "rIJ" ((USItype) (bl)))
+	     "rICal" ((USItype) (bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub.f\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	   : "=r" (sh),							\
 	     "=&r" (sl)							\
 	   : "r" ((USItype) (ah)),					\
-	     "rIJ" ((USItype) (bh)),					\
+	     "rICal" ((USItype) (bh)),					\
 	     "r" ((USItype) (al)),					\
-	     "rIJ" ((USItype) (bl)))
+	     "rICal" ((USItype) (bl)))
 #endif
 
 #if defined (__arm__) && (defined (__thumb2__) || !defined (__thumb__)) \
