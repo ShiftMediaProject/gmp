@@ -208,7 +208,7 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
     s = limb_apprsqrt(n);
     ASSERT (s >= 5);
     s = n_to_bit (s);
-    ASSERT (bit_to_n (s) * bit_to_n (s) > n);
+    /* ASSERT (bit_to_n (s+1) * bit_to_n (s+1) > n); */
     ASSERT (s <= n_to_bit (n / 3));
     LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
     SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
