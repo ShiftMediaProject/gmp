@@ -1,3 +1,8 @@
+2016-11-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/gcd.c, mpz/gcdext.c: Use NEWALLOC.
+	* mpz/oddfac_1.c: Disable an ASSERT that needs a revision.
+
 2016-11-27  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/mpz/reuse.c: Rewrite operand randomisation to use fixed ranges.
@@ -43,6 +48,10 @@
 2016-11-17  Torbjörn Granlund  <tg@gmplib.org>
 
 	* asl.h: Initial support for artificially small limbs.
+
+2016-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* pz/iset_str.c: Lazy allocation.
 
 2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
 

@@ -1,3 +1,7 @@
+2016-11-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp.c (mpz_get_si): fewer branches, safer forumla for negatives.
+
 2016-11-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/hex-random.c (mkseed): Produce a 48-bit mpz_t value,
@@ -20,6 +24,10 @@
 	extracted from testmain.
 	(testmain): Add test with inputs which triggered the
 	mpn_invert_3by2 bug (see 2016-11-16 entry).
+
+2016-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/t-signed.c: compare different signs, and after overflow.
 
 2016-11-20  Niels Möller  <nisse@lysator.liu.se>
 
@@ -45,6 +53,10 @@
 
 	* tests/Makefile: Pass EXTRA_CFLAGS to linker as a intermediate fix.
 
+2016-11-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/t-str.c: free a pointer to avoid memory leaks.
+
 2016-11-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp.c (mpn_invert_3by2): Fix arithmetic overflow
@@ -61,6 +73,11 @@
 	* tests/Makefile (TESTS): New variable, allowing separation of
 	compilation and running of tests.
 	* tests/run-tests: Allow empty tests list.
+
+2016-11-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/t-str.c: Some more test cases.
+	* tests/t-pprime_p.c: Use shorter operands, with different sizes.
 
 2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
 
