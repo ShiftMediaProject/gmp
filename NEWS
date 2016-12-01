@@ -35,7 +35,7 @@ Changes between GMP version 6.0.* and 6.1.0
   * Fixed PIC bug in popcount affecting Intel processors using the 32-bit ABI.
 
   SPEEDUPS
-  * Speedup for Intel Broadwell and Skylake though assembly code making use of
+  * Speedup for Intel Broadwell and Skylake through assembly code making use of
     new ADX instructions.
 
   * Square root is now faster when the remainder is not needed. Also the speed
