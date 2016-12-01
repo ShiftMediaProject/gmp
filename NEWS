@@ -4,6 +4,19 @@ Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
 
+Changes between GMP version 6.1.1 and 6.1.2
+
+  BUGS FIXED
+
+  FEATURES
+  * Handle more systems which require PIC code in static libraries (e.g.,
+    "hardened" Gentoo and Debian 9).
+
+  SPEEDUPS
+
+  MISC
+  
+
 Changes between GMP version 6.1.0 and 6.1.1
 
   BUGS FIXED
