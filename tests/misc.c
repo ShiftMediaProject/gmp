@@ -83,7 +83,7 @@ seed_from_tod (gmp_randstate_ptr  rands)
 #if HAVE_GETTIMEOFDAY
   struct timeval  tv;
   gettimeofday (&tv, NULL);
-  seed = tv.tv_sec ^ (tv.tv_usec << 12);
+  seed = tv.tv_sec ^ ((unsigned long) tv.tv_usec << 12);
   seed &= 0xffffffff;
 #else
   time_t  tv;
