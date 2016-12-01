@@ -1,5 +1,7 @@
 2016-12-01  Torbjörn Granlund  <tg@gmplib.org>
 
+	* tests/misc.c (tests_rand_start): Make shift well-defined.
+
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
 	* gmp-h.in: Bump version.
 
