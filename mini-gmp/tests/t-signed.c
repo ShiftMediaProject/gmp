@@ -85,7 +85,7 @@ check_si_cmp (const mpz_t sz, const mpz_t oz, long si, long oi, int c)
 	}
       if (mpz_cmp_si (sz, -c) != c)
 	{
-	  printf ("mpz_cmp_si (sz, %ld) != %i.\n", -c, c);
+	  printf ("mpz_cmp_si (sz, %i) != %i.\n", -c, c);
 	  goto fail;
 	}
     }
