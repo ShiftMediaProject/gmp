@@ -1,3 +1,34 @@
+2016-12-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	Merge configure changes from before 6.1.1:
+
+	2016-03-25  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Prefix all arm CPUs with "arm" to accommodate our
+	matchers.
+	* configure.ac (arm): Match arm CPUs consistently.
+
+	2016-03-21  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac: Support many arm64 processors.
+
+	2016-03-20  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (arm*): Handle big.LITTLE CPUs by extracting the
+	lexically largest id.
+	* config.guess (arm*): Add many aarch64 CPUs.
+	* config.guess (main): Corresponding changes.
+
+	* configure.ac (arm*): Support cortex-a5 better.
+
+	2016-01-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (s390): Don't assume /proc/cpuinfo exists.
+
+	2016-01-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Reorder and generalise ppc code.
+
 2016-12-01  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/misc.c (tests_rand_start): Make shift well-defined.
@@ -46,6 +77,15 @@
 2016-10-24  Torbjörn Granlund  <tg@gmplib.org>
 
 	* config.guess: Recognise Itanium Poulson.
+
+2016-10-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm*-*-*): Amend last change.
+
+2016-10-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac
+	(arm*-*-*): Rewrite arm support to handle armv8 CPUs in 32-bit mode.
 
 2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
 
