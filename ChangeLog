@@ -1,3 +1,8 @@
+2016-12-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/reuse.c (main): Test additional cases of reuse for
+	mpz_gcd and mpz_gcdext.
+
 2016-11-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/gcd.c, mpz/gcdext.c: Use NEWALLOC.
