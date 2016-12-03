@@ -400,6 +400,14 @@ mpz_negrandom (mpz_ptr rop, gmp_randstate_t rstate)
     mpz_neg (rop, rop);
 }
 
+void
+mpz_clobber(mpz_ptr rop)
+{
+  MPN_ZERO(PTR(rop), ALLOC(rop));
+  PTR(rop)[0] = 0xDEADBEEF;
+  SIZ(rop) = 0xDEFACE;
+}
+
 mp_limb_t
 urandom (void)
 {
