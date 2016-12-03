@@ -137,6 +137,7 @@ void mpz_negrandom (mpz_ptr, gmp_randstate_t);
 int mpz_pow2abs_p (mpz_srcptr) __GMP_ATTRIBUTE_PURE;
 void mpz_set_n (mpz_ptr, mp_srcptr, mp_size_t);
 void mpz_set_str_or_abort (mpz_ptr, const char *, int);
+void mpz_clobber(mpz_ptr);
 
 mp_size_t mpn_diff_highest (mp_srcptr, mp_srcptr, mp_size_t) __GMP_ATTRIBUTE_PURE;
 mp_size_t mpn_diff_lowest (mp_srcptr, mp_srcptr, mp_size_t) __GMP_ATTRIBUTE_PURE;
