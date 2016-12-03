@@ -1,3 +1,10 @@
+2016-12-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpz/reuse.c: Use mpz_clobber.  Split mpz_gcdext macros to avoid
+	spurious res3 dependency.
+
+	* tests/misc.c (mpz_clobber): New function.
+
 2016-12-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Number Theoretic Functions): Tweak mpz_gcdext
@@ -8,6 +15,18 @@
 
 	* tests/mpz/reuse.c (main): Test additional cases of reuse for
 	mpz_gcd and mpz_gcdext.
+
+2016-12-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/misc.c (seed_from_tod): Make shift well-defined.
+
+2016-11-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in (__GNU_MP__): Bump.
+
+	* mpz/inp_raw.c: Rewrite size computation to avoid overflow.
+
+	* mpz/kronsz.c: Use ABS_CAST to avoid undefined code.
 
 2016-11-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
