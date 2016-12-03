@@ -1,3 +1,9 @@
+2016-12-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Number Theoretic Functions): Tweak mpz_gcdext
+	documentation. The first and third argument may be NULL, but not
+	the second.
+
 2016-12-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/reuse.c (main): Test additional cases of reuse for
