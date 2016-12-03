@@ -231,6 +231,10 @@ main (int argc, char **argv)
   mpz_init (res3);
   mpz_init (t);
 
+  mpz_set_ui (res1, 1);		/* force allocation */
+  mpz_set_ui (res2, 1);		/* force allocation */
+  mpz_set_ui (res3, 1);		/* force allocation */
+
   for (pass = 1; pass <= reps; pass++)
     {
 #ifndef VERBOSE
@@ -307,12 +311,14 @@ main (int argc, char **argv)
 	  MPZ_CHECK_FORMAT (ref2);
 
 	  mpz_set (res1, in1);
+	  mpz_clobber (res2);
 	  INVOKE_RRSS (ddss_div[i], res1, res2, res1, in2);
 	  MPZ_CHECK_FORMAT (res1);
 	  MPZ_CHECK_FORMAT (res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
 	    FAIL (ddss_div, i, in1, in2, NULL);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in1);
 	  INVOKE_RRSS (ddss_div[i], res1, res2, res2, in2);
 	  MPZ_CHECK_FORMAT (res1);
@@ -321,12 +327,14 @@ main (int argc, char **argv)
 	    FAIL (ddss_div, i, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
+	  mpz_clobber (res2);
 	  INVOKE_RRSS (ddss_div[i], res1, res2, in1, res1);
 	  MPZ_CHECK_FORMAT (res1);
 	  MPZ_CHECK_FORMAT (res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
 	    FAIL (ddss_div, i, in1, in2, NULL);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in2);
 	  INVOKE_RRSS (ddss_div[i], res1, res2, in1, res2);
 	  MPZ_CHECK_FORMAT (res1);
@@ -387,11 +395,13 @@ main (int argc, char **argv)
 	      MPZ_CHECK_FORMAT (ref1);
 
 	      mpz_set (res1, in1);
+	      mpz_clobber (res2);
 	      r2 = (ddsi_div[i].fptr) (res1, res2, res1, in2i);
 	      MPZ_CHECK_FORMAT (res1);
 	      if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0 || r1 != r2)
 		FAIL (ddsi_div, i, in1, in2, NULL);
 
+	      mpz_clobber (res1);
 	      mpz_set (res2, in1);
 	      (ddsi_div[i].fptr) (res1, res2, res2, in2i);
 	      MPZ_CHECK_FORMAT (res1);
@@ -467,100 +477,146 @@ main (int argc, char **argv)
 	  MPZ_CHECK_FORMAT (ref2);
 	  MPZ_CHECK_FORMAT (ref3);
 
-#define GCDEXT_CHECK(t, i1,i2) do {					\
-	    mpz_gcdext (res1, res2, t ? res3 : NULL, i1, i2);		\
+#define GCDEXT_CHECK3(i1, i2) do {					\
+	    mpz_gcdext (res1, res2, res3, i1, i2);			\
 	    MPZ_CHECK_FORMAT (res1);					\
 	    MPZ_CHECK_FORMAT (res2);					\
 	    MPZ_CHECK_FORMAT (res3);					\
 	    if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0	\
 		|| mpz_cmp (ref3, res3) != 0)				\
 	      FAIL2 (mpz_gcdext, i1, i2, NULL);				\
-	  } while(0)
+	  } while (0)
+#define GCDEXT_CHECK2(i1, i2) do {					\
+	    mpz_gcdext (res1, res2, NULL, i1, i2);			\
+	    MPZ_CHECK_FORMAT (res1);					\
+	    MPZ_CHECK_FORMAT (res2);					\
+	    if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)	\
+	      FAIL2 (mpz_gcdext, i1, i2, NULL);				\
+	  } while (0)
 
 	  mpz_set (res1, in1);
-	  GCDEXT_CHECK (1, res1, in2);
+	  mpz_clobber (res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (res1, in2);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in1);
-	  GCDEXT_CHECK (1, res2, in2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (res2, in2);
 
+	  mpz_clobber (res1);
+	  mpz_clobber (res2);
 	  mpz_set (res3, in1);
-	  GCDEXT_CHECK (1, res3, in2);
+	  GCDEXT_CHECK3 (res3, in2);
 
 	  mpz_set (res1, in2);
-	  GCDEXT_CHECK (1, in1, res1);
+	  mpz_clobber (res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (in1, res1);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in2);
-	  GCDEXT_CHECK (1, in1, res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (in1, res2);
 
+	  mpz_clobber (res1);
+	  mpz_clobber (res2);
 	  mpz_set (res3, in2);
-	  GCDEXT_CHECK (1, in1, res3);
+	  GCDEXT_CHECK3 (in1, res3);
 
 	  mpz_set (res1, in1);
 	  mpz_set (res2, in2);
-	  GCDEXT_CHECK (1, res1, res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (res1, res2);
 
 	  mpz_set (res1, in1);
+	  mpz_clobber (res2);
 	  mpz_set (res3, in2);
-	  GCDEXT_CHECK (1, res1, res3);
+	  GCDEXT_CHECK3 (res1, res3);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in1);
 	  mpz_set (res3, in2);
-	  GCDEXT_CHECK (1, res2, res3);
+	  GCDEXT_CHECK3 (res2, res3);
 
-	  mpz_set (res2, in1);
 	  mpz_set (res1, in2);
-	  GCDEXT_CHECK (1, res2, res1);
+	  mpz_set (res2, in1);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK3 (res2, res1);
 
+	  mpz_set (res1, in2);
+	  mpz_clobber (res2);
 	  mpz_set (res3, in1);
-	  mpz_set (res1, in2);
-	  GCDEXT_CHECK (1, res3, res1);
+	  GCDEXT_CHECK3 (res3, res1);
 
-	  mpz_set (res3, in1);
+	  mpz_clobber (res1);
 	  mpz_set (res2, in2);
-	  GCDEXT_CHECK(1, res3, res2);
+	  mpz_set (res3, in1);
+	  GCDEXT_CHECK3(res3, res2);
 
 	  mpz_set (res1, in1);
-	  GCDEXT_CHECK (0, res1, in2);
+	  mpz_clobber (res2);
+	  GCDEXT_CHECK2 (res1, in2);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in1);
-	  GCDEXT_CHECK (0, res2, in2);
+	  GCDEXT_CHECK2 (res2, in2);
 
 	  mpz_set (res1, in2);
-	  GCDEXT_CHECK (0, in1, res1);
+	  mpz_clobber (res2);
+	  GCDEXT_CHECK2 (in1, res1);
 
+	  mpz_clobber (res1);
 	  mpz_set (res2, in2);
-	  GCDEXT_CHECK (0, in1, res2);
+	  GCDEXT_CHECK2 (in1, res2);
 #undef GCDEXT_CHECK
 	  /* Identical inputs, gcd(in1, in1). Then the result should be
 	     gcd = abs(in1), s = 0, t = sgn(in1). */
 	  mpz_abs (ref1, in1);
 	  mpz_set_ui (ref2, 0);
-	  mpz_set_si (ref3, mpz_sgn(in1));
+	  mpz_set_si (ref3, mpz_sgn (in1));
 
-#define GCDEXT_CHECK_SAME(t, i) do {					\
-	    mpz_gcdext(res1, res2, t ? res3 : NULL, i, i);		\
+#define GCDEXT_CHECK_SAME3(in) do {					\
+	    mpz_gcdext (res1, res2, res3, in, in);			\
 	    MPZ_CHECK_FORMAT (res1);					\
 	    MPZ_CHECK_FORMAT (res2);					\
 	    MPZ_CHECK_FORMAT (res3);					\
 	    if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0	\
 		|| mpz_cmp (ref3, res3) != 0)				\
-	      FAIL2 (mpz_gcdext, i, i, NULL);				\
-	  } while(0)
+	      FAIL2 (mpz_gcdext, in, in, NULL);				\
+	  } while (0)
+#define GCDEXT_CHECK_SAME2(in) do {					\
+	    mpz_gcdext (res1, res2, NULL, in, in);			\
+	    MPZ_CHECK_FORMAT (res1);					\
+	    MPZ_CHECK_FORMAT (res2);					\
+	    if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)	\
+	      FAIL2 (mpz_gcdext, in, in, NULL);				\
+	  } while (0)
 
 	  mpz_set (res1, in1);
-	  GCDEXT_CHECK_SAME (1, res1);
+	  mpz_clobber (res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK_SAME3 (res1);
 
-	  mpz_set(res2, in1);
-	  GCDEXT_CHECK_SAME (1, res2);
+	  mpz_clobber (res1);
+	  mpz_set (res2, in1);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK_SAME3 (res2);
 
-	  mpz_set(res3, in1);
-	  GCDEXT_CHECK_SAME (1, res3);
+	  mpz_clobber (res1);
+	  mpz_clobber (res2);
+	  mpz_set (res3, in1);
+	  GCDEXT_CHECK_SAME3 (res3);
 
 	  mpz_set (res1, in1);
-	  GCDEXT_CHECK_SAME (0, res1);
+	  mpz_clobber (res2);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK_SAME2 (res1);
 
-	  mpz_set(res2, in1);
-	  GCDEXT_CHECK_SAME (0, res2);
+	  mpz_clobber (res1);
+	  mpz_set (res2, in1);
+	  mpz_clobber (res3);
+	  GCDEXT_CHECK_SAME2 (res2);
 #undef GCDEXT_CHECK_SAME
 	}
 
