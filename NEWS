@@ -4,6 +4,19 @@ Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
 
+Changes between GMP version 6.1.1 and 6.1.2
+
+  BUGS FIXED
+
+  FEATURES
+  * Handle more systems which require PIC code in static libraries (e.g.,
+    "hardened" Gentoo and Debian 9).
+
+  SPEEDUPS
+
+  MISC
+  
+
 Changes between GMP version 6.1.0 and 6.1.1
 
   BUGS FIXED
@@ -35,7 +48,7 @@ Changes between GMP version 6.0.* and 6.1.0
   * Fixed PIC bug in popcount affecting Intel processors using the 32-bit ABI.
 
   SPEEDUPS
-  * Speedup for Intel Broadwell and Skylake though assembly code making use of
+  * Speedup for Intel Broadwell and Skylake through assembly code making use of
     new ADX instructions.
 
   * Square root is now faster when the remainder is not needed. Also the speed
