@@ -189,7 +189,7 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
   mp_limb_t prod, max_prod;
   mp_size_t j;
 
-  ASSERT (n >= 26);
+  ASSERT (n > 25);
 
   j = 0;
   prod  = -(n & 1);
@@ -208,8 +208,8 @@ mpz_2multiswing_1 (mpz_ptr x, mp_limb_t n, mp_ptr sieve, mp_ptr factors)
     s = limb_apprsqrt(n);
     ASSERT (s >= 5);
     s = n_to_bit (s);
-    /* ASSERT (bit_to_n (s+1) * bit_to_n (s+1) > n); */
-    ASSERT (s <= n_to_bit (n / 3));
+    ASSERT (bit_to_n (s+1) * bit_to_n (s+1) > n);
+    ASSERT (s < n_to_bit (n / 3));
     LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
     SWING_A_PRIME (prime, n, prod, max_prod, factors, j);
     LOOP_ON_SIEVE_STOP;
@@ -277,7 +277,7 @@ void
 mpz_oddfac_1 (mpz_ptr x, mp_limb_t n, unsigned flag)
 {
   ASSERT (n <= GMP_NUMB_MAX);
-  ASSERT (flag == 0 || (flag == 1 && n > ODD_FACTORIAL_TABLE_LIMIT && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
+  ASSERT (flag == 0 || (flag == 1 && n > ODD_DOUBLEFACTORIAL_TABLE_LIMIT + 1 && ABOVE_THRESHOLD (n, FAC_DSC_THRESHOLD)));
 
   if (n <= ODD_FACTORIAL_TABLE_LIMIT)
     {
