@@ -94,17 +94,17 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   if (t != NULL)
     {
       mpz_t x;
-      __mpz_struct gtmp, stmp;
+      mpz_t gtmp, stmp;
 
-      PTR (&gtmp) = tmp_gp;
-      SIZ (&gtmp) = gsize;
+      PTR (gtmp) = tmp_gp;
+      SIZ (gtmp) = gsize;
 
-      PTR (&stmp) = tmp_sp;
-      SIZ (&stmp) = tmp_ssize;
+      PTR (stmp) = tmp_sp;
+      SIZ (stmp) = tmp_ssize;
 
       MPZ_TMP_INIT (x, ssize + asize + 1);
-      mpz_mul (x, &stmp, a);
-      mpz_sub (x, &gtmp, x);
+      mpz_mul (x, stmp, a);
+      mpz_sub (x, gtmp, x);
       mpz_divexact (t, x, b);
     }
 
