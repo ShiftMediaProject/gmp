@@ -1,3 +1,7 @@
+2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in: Check yet another symbol for FILE.
+
 2016-12-04  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/mpz/reuse.c: Use mpz_clobber.  Split mpz_gcdext macros to avoid
