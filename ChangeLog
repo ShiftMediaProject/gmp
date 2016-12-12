@@ -1,3 +1,7 @@
+2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in: Check yet another symbol for FILE.
+
 2016-12-02  Torbjörn Granlund  <tg@gmplib.org>
 
 	Merge configure changes from before 6.1.1:
