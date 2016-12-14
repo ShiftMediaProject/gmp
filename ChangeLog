@@ -1,3 +1,7 @@
+2016-12-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h: Test LONGLONG_STANDALONE in two more places.
+
 2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* gmp-h.in: Check yet another symbol for FILE.
@@ -96,6 +100,11 @@
 	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'
 	constraint with 'Cal'.
 
+2016-08-22  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (umul_ppmm from __umulsidi3): Protect with do ...
+	while (0).
+
 2016-06-18  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.1.1 released.
@@ -137,7 +146,7 @@
 
 2015-12-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* tests/arm32call.asm: bx->ret to support thumb-less chips 
+	* tests/arm32call.asm: bx->ret to support thumb-less chips
 	  (thanks Martin Husemann).
 
 2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
