@@ -64,7 +64,7 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
       if (g != NULL)
 	{
-	  gp = MPZ_REALLOC (g, asize);
+	  gp = MPZ_NEWALLOC (g, asize);
 	  MPN_COPY (gp, PTR (a), asize);
 	  SIZ (g) = asize;
 	}
@@ -80,11 +80,11 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
   TMP_MARK;
 
-  TMP_ALLOC_LIMBS_2 (tmp_ap, asize, tmp_bp, bsize);
+  TMP_ALLOC_LIMBS_2 (tmp_gp, bsize, tmp_sp, asize + bsize + bsize + 1);
+  tmp_ap = tmp_sp + bsize + 1;
+  tmp_bp = tmp_ap + asize;
   MPN_COPY (tmp_ap, PTR (a), asize);
   MPN_COPY (tmp_bp, PTR (b), bsize);
-
-  TMP_ALLOC_LIMBS_2 (tmp_gp, bsize, tmp_sp, bsize + 1);
 
   gsize = mpn_gcdext (tmp_gp, tmp_sp, &tmp_ssize, tmp_ap, asize, tmp_bp, bsize);
 
@@ -102,7 +102,10 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
       PTR (stmp) = tmp_sp;
       SIZ (stmp) = tmp_ssize;
 
-      MPZ_TMP_INIT (x, ssize + asize + 1);
+      ASSERT (ssize <= bsize); /* ssize*2 + asize + 1 <= asize + bsize*2 + 1 */
+      PTR (x) = tmp_sp + ssize;
+      ALLOC (x) = ssize + asize + 1;
+
       mpz_mul (x, stmp, a);
       mpz_sub (x, gtmp, x);
       mpz_divexact (t, x, b);
