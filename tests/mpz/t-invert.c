@@ -94,9 +94,6 @@ main (int argc, char **argv)
 	}
       else /* Inverse deos not exist */
 	{
-	  if (mpz_cmpabs_ui (m, 1) <= 0)
-	    continue; /* OK */
-
 	  mpz_gcd (t, a, m);
 	  if (mpz_cmp_ui (t, 1) == 0)
 	    {
