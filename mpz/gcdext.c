@@ -50,6 +50,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   asize = ABSIZ (a);
   bsize = ABSIZ (b);
 
+  ASSERT (s != NULL);
+
   if (asize < bsize)
     {
       MPZ_SRCPTR_SWAP (a, b);
@@ -81,8 +83,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   TMP_MARK;
 
   TMP_ALLOC_LIMBS_2 (tmp_gp, bsize, tmp_sp, asize + bsize + bsize + 1);
-  tmp_ap = tmp_sp + bsize + 1;
-  tmp_bp = tmp_ap + asize;
+  tmp_bp = tmp_sp + bsize + 1;
+  tmp_ap = tmp_bp + bsize;
   MPN_COPY (tmp_ap, PTR (a), asize);
   MPN_COPY (tmp_bp, PTR (b), bsize);
 
