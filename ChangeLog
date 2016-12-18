@@ -1,3 +1,9 @@
+2016-12-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/gcdext.c: Save an allocation if both cofactors are needed.
+	* mpz/oddfac_1.c: Revision of all ASSERTs.
+	* tests/mpz/t-invert.c: All elements are invertible in the zero ring.
+
 2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* gmp-h.in: Check yet another symbol for FILE.
