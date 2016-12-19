@@ -19,7 +19,7 @@ Changes between GMP version 6.1.1 and 6.1.2
     "hardened" Gentoo and Debian 9).
 
   * Configuration for arm (-32 and -64) has been rewritten, fixing poor
-    code selection for many CPS.
+    code selection for many CPUs.
 
   * Mini-GMP: Updated to the latest development version, including
     new functions mpn_com and mpn_neg.
