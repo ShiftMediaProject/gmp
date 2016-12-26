@@ -1016,10 +1016,17 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
 	     "1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
+#if defined (HAVE_MULX)
 #define umul_ppmm(w1, w0, u, v) \
-  __asm__ ("mulq %3"							\
+  __asm__ ("mulx	%3, %0, %1"					\
+	   : "=r" (w0), "=r" (w1)					\
+	   : "%d" ((UDItype)(u)), "rm" ((UDItype)(v)))
+#else
+#define umul_ppmm(w1, w0, u, v) \
+  __asm__ ("mulq	%3"						\
 	   : "=a" (w0), "=d" (w1)					\
 	   : "%0" ((UDItype)(u)), "rm" ((UDItype)(v)))
+#endif
 #define udiv_qrnnd(q, r, n1, n0, dx) /* d renamed to dx avoiding "=d" */\
   __asm__ ("divq %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
