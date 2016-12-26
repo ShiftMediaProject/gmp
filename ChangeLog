@@ -1,8 +1,17 @@
+2016-12-26  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (x86_64 umul_ppmm): Add mulx variant (not automatically
+	used).
+
 2016-12-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/gcdext.c: Save an allocation if both cofactors are needed.
 	* mpz/oddfac_1.c: Revision of all ASSERTs.
 	* tests/mpz/t-invert.c: All elements are invertible in the zero ring.
+
+2016-12-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h: Test LONGLONG_STANDALONE in two more places.
 
 2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
 
