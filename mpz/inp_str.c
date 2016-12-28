@@ -162,7 +162,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   else
     {
       LIMBS_PER_DIGIT_IN_BASE (xsize, str_size, base);
-      MPZ_REALLOC (x, xsize);
+      MPZ_NEWALLOC (x, xsize);
 
       /* Convert the byte array in base BASE to our bignum format.  */
       xsize = mpn_set_str (PTR (x), (unsigned char *) str, str_size, base);

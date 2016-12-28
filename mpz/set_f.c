@@ -46,7 +46,7 @@ mpz_set_f (mpz_ptr w, mpf_srcptr u)
       return;
     }
 
-  wp = MPZ_REALLOC (w, exp);
+  wp = MPZ_NEWALLOC (w, exp);
   up = PTR(u);
 
   size = SIZ (u);

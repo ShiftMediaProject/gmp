@@ -96,7 +96,7 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
       tp[size + 1] = cy;
       size += 2;
       MPN_NORMALIZE_NOT_ZERO (tp, size); /* too general, need to trim one or two limb */
-      pp = MPZ_REALLOC (prod, size);
+      pp = MPZ_NEWALLOC (prod, size);
       MPN_COPY (pp, tp, size);
       TMP_FREE;
     }

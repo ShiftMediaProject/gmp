@@ -63,7 +63,7 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 	{
 	  if (u != w)
 	    {
-	      MPZ_REALLOC (w, un);
+	      MPZ_NEWALLOC (w, un);
 	      MPN_COPY (PTR(w), PTR(u), un);
 	    }
 	  SIZ(w) = un;

@@ -64,7 +64,7 @@ mpz_root (mpz_ptr root, mpz_srcptr u, unsigned long int nth)
 
   /* FIXME: Perhaps disallow root == NULL */
   if (root != NULL && u != root)
-    rootp = MPZ_REALLOC (root, rootn);
+    rootp = MPZ_NEWALLOC (root, rootn);
   else
     rootp = TMP_ALLOC_LIMBS (rootn);
 

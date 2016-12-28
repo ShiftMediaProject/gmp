@@ -67,7 +67,7 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 	  return rl;
 	}
 
-      rp = MPZ_REALLOC (rem, 2);
+      rp = MPZ_NEWALLOC (rem, 2);
 
       TMP_MARK;
       dp[0] = divisor & GMP_NUMB_MASK;

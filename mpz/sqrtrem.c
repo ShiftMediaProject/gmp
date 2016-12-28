@@ -48,7 +48,8 @@ mpz_sqrtrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr op)
       return;
     }
 
-  rem_ptr = MPZ_REALLOC (rem, op_size);
+  /* No-op if rem == op */
+  rem_ptr = MPZ_NEWALLOC (rem, op_size);
 
   /* The size of the root is accurate after this simple calculation.  */
   root_size = (op_size + 1) / 2;

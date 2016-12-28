@@ -61,8 +61,7 @@ mpz_fdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long in
       mp_ptr rp;
       mp_size_t rn;
 
-      MPZ_REALLOC (rem, 2);
-      rp = PTR(rem);
+      rp = MPZ_REALLOC (rem, 2);
 
       if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
 	{

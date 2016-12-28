@@ -76,7 +76,7 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
      since square or mul used below might need an extra limb over the true
      size */
   lalloc = MPN_FIB2_SIZE (n) + 2;
-  lp = MPZ_REALLOC (ln, lalloc);
+  lp = MPZ_NEWALLOC (ln, lalloc);
 
   TMP_MARK;
   xalloc = lalloc;

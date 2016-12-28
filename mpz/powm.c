@@ -274,7 +274,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
     }
 
  ret:
-  MPZ_REALLOC (r, rn);
+  MPZ_NEWALLOC (r, rn);
   SIZ(r) = rn;
   MPN_COPY (PTR(r), rp, rn);
 
