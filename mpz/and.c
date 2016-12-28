@@ -1,7 +1,7 @@
 /* mpz_and -- Logical and.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003, 2005, 2012,
-2015 Free Software Foundation, Inc.
+2015, 2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,14 +61,13 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  /* Handle allocation, now then we know exactly how much space is
 	     needed for the result.  */
-	  res_ptr = MPZ_NEWALLOC (res, res_size);
 	  /* Don't re-read op1_ptr and op2_ptr.  Since res_size <=
 	     MIN(op1_size, op2_size), res is not changed when op1
 	     is identical to res or op2 is identical to res.  */
 
 	  SIZ(res) = res_size;
 	  if (LIKELY (res_size != 0))
-	    mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
+	    mpn_and_n (MPZ_NEWALLOC (res, res_size), op1_ptr, op2_ptr, res_size);
 	  return;
 	}
       else /* op2_size < 0 */
@@ -226,14 +225,13 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	/* Handle allocation, now then we know exactly how much space is
 	   needed for the result.  */
-	res_ptr = MPZ_NEWALLOC (res, res_size);
 	/* Don't re-read OP1_PTR.  Since res_size <= op1_size,
 	   op1 is not changed if it is identical to res.
 	   Don't re-read OP2_PTR.  It points to temporary space--never
 	   to the space PTR(res) used to point to before reallocation.  */
 
 	if (LIKELY (res_size != 0))
-	  mpn_andn_n (res_ptr, op1_ptr, op2_ptr, res_size);
+	  mpn_andn_n (MPZ_NEWALLOC (res, res_size), op1_ptr, op2_ptr, res_size);
 
 	SIZ(res) = res_size;
       }
