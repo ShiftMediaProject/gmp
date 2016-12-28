@@ -109,13 +109,13 @@ mp_2logb (mpz_t r, int bi, int prec)
   mpz_t t, t2, two, b;
   int i;
 
-  mpz_init_set_ui (t, 1);
-  mpz_mul_2exp (t, t, prec+EXTRA);
+  mpz_init (t);
+  mpz_setbit (t, prec + EXTRA);
 
   mpz_init (t2);
 
-  mpz_init_set_ui (two, 2);
-  mpz_mul_2exp (two, two, prec+EXTRA);
+  mpz_init (two);
+  mpz_setbit (two, prec + EXTRA + 1);
 
   mpz_set_ui (r, 0);
 
