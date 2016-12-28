@@ -75,9 +75,8 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
     }
 
   TMP_MARK;
-  tp = TMP_ALLOC_LIMBS (n + mpn_sec_powm_itch (bn, en * GMP_NUMB_BITS, n));
-
-  rp = tp;  tp += n;
+  TMP_ALLOC_LIMBS_2 (rp, n,
+		     tp, mpn_sec_powm_itch (bn, en * GMP_NUMB_BITS, n));
 
   bp = PTR(b);
   ep = PTR(e);
@@ -95,7 +94,7 @@ mpz_powm_sec (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
       MPN_NORMALIZE (rp, rn);
     }
 
-  MPZ_REALLOC (r, rn);
+  MPZ_NEWALLOC (r, rn);
   SIZ(r) = rn;
   MPN_COPY (PTR(r), rp, rn);
 
