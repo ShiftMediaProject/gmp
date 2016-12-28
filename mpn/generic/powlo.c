@@ -37,9 +37,9 @@ see https://www.gnu.org/licenses/.  */
   ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)
 
 static inline mp_limb_t
-getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
+getbits (const mp_limb_t *p, mp_bitcnt_t bi, unsigned nbits)
 {
-  int nbits_in_r;
+  unsigned nbits_in_r;
   mp_limb_t r;
   mp_size_t i;
 
@@ -60,15 +60,15 @@ getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
     }
 }
 
-static inline int
+static inline unsigned
 win_size (mp_bitcnt_t eb)
 {
-  int k;
-  static mp_bitcnt_t x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~(mp_bitcnt_t)0};
+  unsigned k;
+  static mp_bitcnt_t x[] = {7,25,81,241,673,1793,4609,11521,28161,~(mp_bitcnt_t)0};
   ASSERT (eb > 1);
-  for (k = 1; eb > x[k]; ++k)
+  for (k = 0; eb > x[k]; ++k)
     ;
-  return k;
+  return k + 1;
 }
 
 /* rp[n-1..0] = bp[n-1..0] ^ ep[en-1..0] mod B^n, B is the limb base.
@@ -81,9 +81,9 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
 	   mp_srcptr ep, mp_size_t en,
 	   mp_size_t n, mp_ptr tp)
 {
-  int cnt;
+  unsigned cnt;
   mp_bitcnt_t ebi;
-  int windowsize, this_windowsize;
+  unsigned windowsize, this_windowsize;
   mp_limb_t expbits;
   mp_limb_t *pp, *this_pp, *last_pp;
   long i;
