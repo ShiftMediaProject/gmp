@@ -154,12 +154,13 @@ isprime (unsigned long int t)
 
   ASSERT (t >= 3 && (t & 1) != 0);
 
-  for (d = 3, r = 1; r != 0; d += 2)
-    {
+  d = 3;
+  do {
       q = t / d;
       r = t - q * d;
       if (q < d)
 	return 1;
-    }
+      d += 2;
+  } while (r != 0);
   return 0;
 }
