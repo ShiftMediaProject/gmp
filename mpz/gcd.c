@@ -89,12 +89,12 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
   TMP_MARK;
 
   /*  Eliminate low zero bits from U and V and move to temporary storage.  */
-  while (*up == 0)
-    up++;
-  u_zero_limbs = up - PTR(u);
-  usize -= u_zero_limbs;
-  count_trailing_zeros (u_zero_bits, *up);
   tp = up;
+  while (*tp == 0)
+    tp++;
+  u_zero_limbs = tp - up;
+  usize -= u_zero_limbs;
+  count_trailing_zeros (u_zero_bits, *tp);
   up = TMP_ALLOC_LIMBS (usize);
   if (u_zero_bits != 0)
     {
@@ -104,12 +104,12 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
   else
     MPN_COPY (up, tp, usize);
 
-  while (*vp == 0)
-    vp++;
-  v_zero_limbs = vp - PTR (v);
-  vsize -= v_zero_limbs;
-  count_trailing_zeros (v_zero_bits, *vp);
   tp = vp;
+  while (*tp == 0)
+    tp++;
+  v_zero_limbs = tp - vp;
+  vsize -= v_zero_limbs;
+  count_trailing_zeros (v_zero_bits, *tp);
   vp = TMP_ALLOC_LIMBS (vsize);
   if (v_zero_bits != 0)
     {
@@ -124,15 +124,13 @@ mpz_gcd (mpz_ptr g, mpz_srcptr u, mpz_srcptr v)
       g_zero_limbs = v_zero_limbs;
       g_zero_bits = v_zero_bits;
     }
-  else if (u_zero_limbs < v_zero_limbs)
+  else
     {
       g_zero_limbs = u_zero_limbs;
-      g_zero_bits = u_zero_bits;
-    }
-  else  /*  Equal.  */
-    {
-      g_zero_limbs = u_zero_limbs;
-      g_zero_bits = MIN (u_zero_bits, v_zero_bits);
+      if (u_zero_limbs < v_zero_limbs)
+	g_zero_bits = u_zero_bits;
+      else  /*  Equal.  */
+	g_zero_bits = MIN (u_zero_bits, v_zero_bits);
     }
 
   /*  Call mpn_gcd.  The 2nd argument must not have more bits than the 1st.  */
