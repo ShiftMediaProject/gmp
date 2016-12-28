@@ -1,6 +1,6 @@
 /* Header for speed and threshold things.
 
-Copyright 1999-2003, 2005, 2006, 2008-2015 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -388,6 +388,7 @@ double speed_mpz_bin_uiui (struct speed_params *);
 double speed_mpz_bin_ui (struct speed_params *);
 double speed_mpz_fac_ui (struct speed_params *);
 double speed_mpz_2fac_ui (struct speed_params *);
+double speed_mpz_mfac_uiui (struct speed_params *);
 double speed_mpz_primorial_ui (struct speed_params *);
 double speed_mpz_fib_ui (struct speed_params *);
 double speed_mpz_fib2_ui (struct speed_params *);

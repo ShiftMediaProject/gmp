@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999-2006, 2008-2015 Free Software Foundation, Inc.
+Copyright 1999-2006, 2008-2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2039,8 +2039,8 @@ speed_mpz_add (struct speed_params *s)
 }
 
 
-/* If r==0, calculate (size,size/2),
-   otherwise calculate (size,r). */
+/* If r==0, calculate binomial(size,size/2),
+   otherwise calculate binomial(size,r). */
 
 double
 speed_mpz_bin_uiui (struct speed_params *s)
@@ -2101,6 +2101,36 @@ speed_mpz_bin_ui (struct speed_params *s)
 
   mpz_clear (w);
   mpz_clear (x);
+  return t;
+}
+
+/* If r==0, calculate mfac(size,log(size)),
+   otherwise calculate mfac(size,r). */
+
+double
+speed_mpz_mfac_uiui (struct speed_params *s)
+{
+  mpz_t          w;
+  unsigned long  k;
+  unsigned  i;
+  double    t;
+
+  mpz_init (w);
+  if (s->r != 0)
+    k = s->r;
+  else
+    for (k = 1; s->size >> k; ++k);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      mpz_mfac_uiui (w, s->size, k);
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (w);
   return t;
 }
 

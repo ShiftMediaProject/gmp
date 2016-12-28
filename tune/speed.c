@@ -1,6 +1,6 @@
 /* Speed measuring program.
 
-Copyright 1999-2003, 2005, 2006, 2008-2015 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -407,6 +407,7 @@ const struct routine_t {
   { "mpz_bin_ui",        speed_mpz_bin_ui,   FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
   { "mpz_2fac_ui",       speed_mpz_2fac_ui,  FLAG_NODATA   },
+  { "mpz_mfac_uiui",     speed_mpz_mfac_uiui,  FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_primorial_ui",  speed_mpz_primorial_ui, FLAG_NODATA },
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
