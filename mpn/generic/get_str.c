@@ -107,8 +107,8 @@ see https://www.gnu.org/licenses/.  */
 
 
   The reason for the two threshold values is the cost of
-  precompute_power_tables.  GET_STR_PRECOMPUTE_THRESHOLD will be considerably
-  larger than GET_STR_PRECOMPUTE_THRESHOLD.  */
+  precompute_power_tables.  GET_STR_PRECOMPUTE_THRESHOLD will be
+  considerably larger than GET_STR_DC_THRESHOLD.  */
 
 
 /* The x86s and m68020 have a quotient and remainder "div" instruction and
