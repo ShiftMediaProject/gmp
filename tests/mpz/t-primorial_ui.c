@@ -37,9 +37,11 @@ main (int argc, char *argv[])
 {
   unsigned long  n;
   unsigned long  limit = 2222;
-  mpz_t          f, r;
+  gmp_randstate_ptr rands;
+  mpz_t          f, r, bs;
 
   tests_start ();
+  rands = RANDS;
 
   if (argc > 1 && argv[1][0] == 'x')
     limit = ULONG_MAX;
@@ -71,6 +73,34 @@ main (int argc, char *argv[])
       if (n%16 == 0) { mpz_clear (r); mpz_init (r); }
     } while (n < limit);
 
+  n = 0; limit =1;
+  mpz_init (bs);
+  do
+    {
+      unsigned long i, d;
+
+      mpz_urandomb (bs, rands, 21);
+      i = mpz_get_ui (bs);
+      mpz_urandomb (bs, rands, 9);
+      d = mpz_get_ui (bs) + 3*64;
+      mpz_primorial_ui (f, i);
+      MPZ_CHECK_FORMAT (f);
+      mpz_primorial_ui (r, i+d);
+      MPZ_CHECK_FORMAT (r);
+
+      do {
+	if (isprime (++i))
+	  mpz_mul_ui (f, f, i);
+      } while (--d != 0); 
+
+      if (mpz_cmp (f, r) != 0)
+        {
+          printf ("mpz_primorial_ui(%lu) wrong\n", i);
+          printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
+          printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
+          abort ();
+        }
+    } while (++n < limit);
   /* Chech a single "big" value, modulo a larger prime */
   n = 2095637;
   mpz_primorial_ui (r, n);
@@ -87,6 +117,7 @@ main (int argc, char *argv[])
       abort ();
     }
 
+  mpz_clear (bs);
   mpz_clear (f);
   mpz_clear (r);
 
