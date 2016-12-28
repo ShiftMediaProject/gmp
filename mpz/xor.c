@@ -54,32 +54,34 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	{
 	  if (op1_size >= op2_size)
 	    {
-	      if (UNLIKELY (ALLOC(res) < op1_size))
-		{
-		  res_ptr = (mp_ptr) _mpz_realloc (res, op1_size);
-		  /* No overlapping possible: op1_ptr = PTR(op1); */
-		  op2_ptr = PTR(op2);
-		}
-
 	      if (res_ptr != op1_ptr)
-		MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
-			  op1_size - op2_size);
+		{
+		  if (UNLIKELY (ALLOC(res) < op1_size))
+		    {
+		      res_ptr = (mp_ptr) _mpz_realloc (res, op1_size);
+		      /* No overlapping possible: op1_ptr = PTR(op1); */
+		      op2_ptr = PTR(op2);
+		    }
+		  MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
+			    op1_size - op2_size);
+		}
 	      if (LIKELY (op2_size != 0))
 		mpn_xor_n (res_ptr, op1_ptr, op2_ptr, op2_size);
 	      res_size = op1_size;
 	    }
 	  else
 	    {
-	      if (UNLIKELY (ALLOC(res) < op2_size))
-		{
-		  res_ptr = (mp_ptr) _mpz_realloc (res, op2_size);
-		  op1_ptr = PTR(op1);
-		  /* No overlapping possible: op2_ptr = PTR(op2); */
-		}
-
 	      if (res_ptr != op2_ptr)
-		MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
-			  op2_size - op1_size);
+		{
+		  if (UNLIKELY (ALLOC(res) < op2_size))
+		    {
+		      res_ptr = (mp_ptr) _mpz_realloc (res, op2_size);
+		      op1_ptr = PTR(op1);
+		      /* No overlapping possible: op2_ptr = PTR(op2); */
+		    }
+		  MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
+			    op2_size - op1_size);
+		}
 	      if (LIKELY (op1_size != 0))
 		mpn_xor_n (res_ptr, op1_ptr, op2_ptr, op1_size);
 	      res_size = op2_size;
