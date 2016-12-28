@@ -108,8 +108,7 @@ reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn, gmp_p
   TMP_DECL;
   TMP_MARK;
 
-  rp = TMP_ALLOC_LIMBS (an);
-  scratch = TMP_ALLOC_LIMBS (an - mn + 1);
+  TMP_ALLOC_LIMBS_2 (rp, an, scratch, an - mn + 1);
   MPN_COPY (rp, ap, an);
   mod (rp, an, mp, mn, dinv, scratch);
   MPN_COPY (tp, rp, mn);
@@ -182,9 +181,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  return;
 	}
 
-      tp = TMP_ALLOC_LIMBS (2 * mn + 1);
-      xp = TMP_ALLOC_LIMBS (mn);
-      scratch = TMP_ALLOC_LIMBS (mn + 1);
+      TMP_ALLOC_LIMBS_3 (xp, mn, scratch, mn + 1, tp, 2 * mn + 1);
 
       MPN_COPY (xp, bp, bn);
       xn = bn;
@@ -273,7 +270,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  xn = mn;
 	  MPN_NORMALIZE (xp, xn);
 	}
-      MPZ_REALLOC (r, xn);
+      MPZ_NEWALLOC (r, xn);
       SIZ (r) = xn;
       MPN_COPY (PTR(r), xp, xn);
 
