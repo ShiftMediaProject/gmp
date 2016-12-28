@@ -96,8 +96,8 @@ mpz_preinv_invert (mpz_t inv, const mpz_t d, int numb_bits)
 
   norm = numb_bits - mpz_sizeinbase (d, 2);
   assert (norm >= 0);
-  mpz_init_set_ui (t, 1L);
-  mpz_mul_2exp (t, t, 2*numb_bits - norm);
+  mpz_init (t);
+  mpz_setbit (t, 2*numb_bits - norm);
   mpz_tdiv_q (inv, t, d);
   mpz_clrbit (inv, numb_bits);
 
