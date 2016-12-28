@@ -1844,7 +1844,7 @@ mpz_popcount (mpz_srcptr __gmp_u) __GMP_NOTHROW
   mp_bitcnt_t    __gmp_result;
 
   __gmp_usize = __gmp_u->_mp_size;
-  __gmp_result = (__gmp_usize < 0 ? ULONG_MAX : 0);
+  __gmp_result = (__gmp_usize < 0 ? ~ __GMP_CAST (mp_bitcnt_t, 0) : __GMP_CAST (mp_bitcnt_t, 0));
   if (__GMP_LIKELY (__gmp_usize > 0))
     __gmp_result =  mpn_popcount (__gmp_u->_mp_d, __gmp_usize);
   return __gmp_result;
