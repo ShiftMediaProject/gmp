@@ -2039,6 +2039,47 @@ speed_mpz_add (struct speed_params *s)
 }
 
 
+/* An inverse (s->r) or (s->size)/2 modulo s->size limbs */
+
+double
+speed_mpz_invert (struct speed_params *s)
+{
+  mpz_t     a, m, r;
+  mp_size_t k;
+  unsigned  i;
+  double    t;
+
+  if (s->r == 0)
+    k = s->size/2;
+  else if (s->r < GMP_LIMB_HIGHBIT)
+    k = s->r;
+  else /* s->r < 0 */
+    k = s->size - (-s->r);
+
+  SPEED_RESTRICT_COND (k > 0 && k <= s->size);
+
+  mpz_init_set_n (m, s->yp, s->size);
+  mpz_setbit (m, 0);	/* force m to odd */
+
+  mpz_init_set_n (a, s->xp, k);
+
+  mpz_init (r);
+  while (mpz_invert (r, a, m) == 0)
+    mpz_add_ui (a, a, 1);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    mpz_invert (r, a, m);
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (r);
+  mpz_clear (a);
+  mpz_clear (m);
+  return t;
+  }
+
 /* If r==0, calculate binomial(size,size/2),
    otherwise calculate binomial(size,r). */
 

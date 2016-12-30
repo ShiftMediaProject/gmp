@@ -403,6 +403,7 @@ const struct routine_t {
   { "mpz_lucnum2_ui",    speed_mpz_lucnum2_ui, FLAG_NODATA },
 
   { "mpz_add",           speed_mpz_add              },
+  { "mpz_invert",        speed_mpz_invert,   FLAG_R_OPTIONAL },
   { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_bin_ui",        speed_mpz_bin_ui,   FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
