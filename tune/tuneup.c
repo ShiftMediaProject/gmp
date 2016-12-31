@@ -1,6 +1,6 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999-2003, 2005, 2006, 2008-2012 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1194,6 +1194,47 @@ fft (struct fft_param_t *p)
     }
 }
 
+/* Compare mpn_mul_1 to whatever fast exact single-limb division we have.  This
+   is currently mpn_divexact_1, but will become mpn_bdiv_1_qr_pi2 or somesuch.
+   This is used in get_str and set_str.  */
+void
+relspeed_div_1_vs_mul_1 (void)
+{
+  const size_t max_opsize = 100;
+  const mp_limb_t fake_big_base = (~CNST_LIMB(0)) / 3;
+  mp_size_t n;
+  long j;
+  mp_limb_t rp[max_opsize];
+  mp_limb_t ap[max_opsize];
+  double multime, divtime;
+
+  mpn_random (ap, max_opsize);
+
+  multime = 0;
+  for (n = max_opsize; n > 1; n--)
+    {
+      mpn_mul_1 (rp, ap, n, fake_big_base);
+      speed_starttime ();
+      for (j = speed_precision; j != 0 ; j--)
+	mpn_mul_1 (rp, ap, n, fake_big_base);
+      multime += speed_endtime () / n;
+    }
+
+  divtime = 0;
+  for (n = max_opsize; n > 1; n--)
+    {
+      /* Make input divisible for good measure.  */
+      ap[n - 1] = mpn_mul_1 (ap, ap, n - 1, fake_big_base);
+
+      mpn_divexact_1 (rp, ap, n, fake_big_base);
+      speed_starttime ();
+      for (j = speed_precision; j != 0 ; j--)
+	mpn_divexact_1 (rp, ap, n, fake_big_base);
+      divtime += speed_endtime () / n;
+    }
+
+  print_define ("DIV_1_VS_MUL_1_PERCENT", (int) (100 * divtime/multime));
+}
 
 
 /* Start karatsuba from 4, since the Cray t90 ieee code is much faster at 2,
@@ -2860,6 +2901,9 @@ all (void)
   tune_div_qr_2 ();
   tune_divexact_1 ();
   tune_modexact_1_odd ();
+  printf("\n");
+
+  relspeed_div_1_vs_mul_1 ();
   printf("\n");
 
   tune_mul_n ();
