@@ -51,6 +51,8 @@ see https://www.gnu.org/licenses/.  */
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           27
 
+#define DIV_1_VS_MUL_1_PERCENT             256
+
 #define MUL_TOOM22_THRESHOLD                32
 #define MUL_TOOM33_THRESHOLD                65
 #define MUL_TOOM44_THRESHOLD               154
