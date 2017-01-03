@@ -634,12 +634,12 @@ case $host in
 	gcc_cflags_arch="-march=armv6"
 	;;
       armcortexa5 | armv7*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
+	path="arm/v7a/cora5 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a5"
 	;;
       armcortexa5neon)
-	path="arm/neon arm/v6t2 arm/v6 arm/v5 arm"
+	path="arm/neon arm/v7a/cora5 arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_arch="-march=armv7-a"
 	gcc_cflags_tune="-mtune=cortex-a5"
