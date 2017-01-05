@@ -88,7 +88,7 @@ ifdef(`DARWIN',`
 	shr	$47, %rcx
 	add	%rax, %rcx		C	%rcx = v2
 
-	C v3 = (v2 << 31) + (v2 * (2^96 - v2 * d63 + ((v2 >> 1) & mask)) >> 65
+	C v3 = (v2 << 31) + (v2 * (2^96 - v2 * d63 + ((v2 >> 1) & mask)) >> 65)
 	mov	%rdi, %rsi		C			 0	 0	 0
 	shr	%rsi			C d/2
 	sbb	%rax, %rax		C -d0 = -(d mod 2)
