@@ -6,6 +6,23 @@
 
 	* tune/tuneup.c (relspeed_div_1_vs_mul_1): New function.
 
+2016-12-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/common.c (speed_mpz_mfac_uiui, speed_mpz_invert): New
+	functions.
+	* tune/speed.h: Declare them.
+	* tune/speed.c (routine): Add mpz_mfac_uiui, mpz_invert.
+
+	* tests/mpz/t-primorial_ui.c: Add randomization to the test.
+	* mpz/tdiv_r.c: Reduce allocation in some corner-case conditions.
+	* mpz/tdiv_r_2exp.c: Rearrange counting non-zero limbs.
+	* mpz/tdiv_q.c: Move common code out of some branches.
+	* mpz/and.c: Alloc only when needed.
+	* mpz/xor.c: Reorder branches.
+	* mpz/gcd.c: Reorder branches.
+	* mpz/pprime_p.c: Save the initial branch of a loop.
+	* mpn/generic/divrem.c: Save an allocation.
+
 2016-12-26  Torbjörn Granlund  <tg@gmplib.org>
 
 	* longlong.h (x86_64 umul_ppmm): Add mulx variant (not automatically
@@ -334,7 +351,7 @@
 	* tests/mpn/t-toom22.c: Keep on testing small sizes.
 	* tests/mpz/t-primorial_ui.c: Test a single "large" number.
 
-	* tune/common.c (speed_mpz_primorial_ui): New functions.
+	* tune/common.c (speed_mpz_primorial_ui): New function.
 	* tune/speed.h: Declare it.
 	* tune/speed.c (routine): Add mpz_primorial_ui.
 
