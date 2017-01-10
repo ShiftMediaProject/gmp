@@ -8249,11 +8249,11 @@ single operand. It can be virtual, i.e. zero, or real, when the two operand
 are not exactly balanced. By choosing an even @math{r},
 Toom-@m{r{1\over2},r+1/2} requires @math{2r} points, a multiple of four.
 
-The four-plets of points include 0, @m{\infty,inf}, +1, -1 and
+The quadruplets of points include 0, @m{\infty,inf}, +1, -1 and
 @m{\pm2^i,+-2^i}, @m{\pm2^{-i},+-2^-i} . Each of them giving shortcuts for the
 evaluation phase and for some steps in the interpolation phase. Further tricks
 are used to reduce the memory footprint of the whole multiplication algorithm
-to a memory buffer equanl in size to the result of the product.
+to a memory buffer equal in size to the result of the product.
 
 Current GMP uses both Toom-6'n'half and Toom-8'n'half.
 
