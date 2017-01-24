@@ -1,3 +1,7 @@
+2017-01-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Invoke AC_PROG_CC_C99 instead of AC_PROG_CC_STDC.
+
 2017-01-03  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (arm*-*-*): Properly point to cortex-a5 subdir.
