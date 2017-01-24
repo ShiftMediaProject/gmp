@@ -1,5 +1,25 @@
 2017-01-24  Torbjörn Granlund  <tg@gmplib.org>
 
+	* mpn/generic/compute_powtab.c: New file, providing mpn_compute_powtab
+	for both get_str and set_str.
+
+	* gmp-impl.h (mpn_str_powtab_alloc): New macro.
+	(mpn_dc_set_str_powtab_alloc, mpn_dc_get_str_powtab_alloc): Remove.
+	(mpn_compute_powtab): Declare.
+
+	* mpn/generic/set_str.c: Use mpn_compute_powtab.
+	(mpn_set_str_compute_powtab): Remove.
+
+	* mpn/generic/get_str.c: Use mpn_compute_powtab.
+	(mpn_get_str_compute_powtab): Remove.
+	(mpn_bc_get_str): New name for mpn_sb_get_str.
+
+	* configure.ac (gmp_mpn_functions): Add compute_powtab.
+
+	* tune/tuneup.c (speed_mpn_pre_set_str): Call mpn_compute_powtab.
+	* tune/set_strb.c: Remove mpn_set_str_compute_powtab name mangling.
+	* tune/set_strs.c: Likewise.
+
 	* configure.ac: Invoke AC_PROG_CC_C99 instead of AC_PROG_CC_STDC.
 
 2017-01-03  Torbjörn Granlund  <tg@gmplib.org>

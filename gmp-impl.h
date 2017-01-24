@@ -3,7 +3,7 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993-1997, 1999-2015 Free Software Foundation, Inc.
+Copyright 1991-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -4298,17 +4298,16 @@ struct powers
   int base;
 };
 typedef struct powers powers_t;
-#define mpn_dc_set_str_powtab_alloc(n) ((n) + GMP_LIMB_BITS)
+#define mpn_str_powtab_alloc(n) ((n) + 2 * GMP_LIMB_BITS) /* FIXME: This can perhaps be trimmed */
 #define mpn_dc_set_str_itch(n) ((n) + GMP_LIMB_BITS)
-#define mpn_dc_get_str_powtab_alloc(n) ((n) + 2 * GMP_LIMB_BITS)
 #define mpn_dc_get_str_itch(n) ((n) + GMP_LIMB_BITS)
 
+#define mpn_compute_powtab __MPN(compute_powtab)
+__GMP_DECLSPEC size_t mpn_compute_powtab (powers_t *, mp_ptr, mp_size_t, int);
 #define   mpn_dc_set_str __MPN(dc_set_str)
 __GMP_DECLSPEC mp_size_t mpn_dc_set_str (mp_ptr, const unsigned char *, size_t, const powers_t *, mp_ptr);
 #define   mpn_bc_set_str __MPN(bc_set_str)
 __GMP_DECLSPEC mp_size_t mpn_bc_set_str (mp_ptr, const unsigned char *, size_t, int);
-#define   mpn_set_str_compute_powtab __MPN(set_str_compute_powtab)
-__GMP_DECLSPEC void      mpn_set_str_compute_powtab (powers_t *, mp_ptr, mp_size_t, int);
 
 
 /* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole

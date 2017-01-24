@@ -2719,14 +2719,15 @@ speed_mpn_pre_set_str (struct speed_params *s)
   chars_per_limb = mp_bases[base].chars_per_limb;
   un = s->size / chars_per_limb + 1;
   powtab_mem = TMP_BALLOC_LIMBS (mpn_dc_set_str_powtab_alloc (un));
-  mpn_set_str_compute_powtab (powtab, powtab_mem, un, base);
+  size_t n_pows = mpn_compute_powtab (powtab, powtab_mem, un, base);
+  powers_t *pt = powtab + n_pows;
   tp = TMP_BALLOC_LIMBS (mpn_dc_set_str_itch (un));
 
   speed_starttime ();
   i = s->reps;
   do
     {
-      mpn_pre_set_str (wp, str, s->size, powtab, tp);
+      mpn_pre_set_str (wp, str, s->size, pt, tp);
     }
   while (--i != 0);
   t = speed_endtime ();
