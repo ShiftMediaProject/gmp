@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2016 Free Software Foundation, Inc.
+Copyright 1996-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2390,9 +2390,12 @@ AC_SUBST(DEFN_LONG_LONG_LIMB)
 
 # The C compiler and preprocessor, put into ANSI mode if possible.
 AC_PROG_CC
-AC_PROG_CC_STDC
+AC_PROG_CC_C99
 AC_PROG_CPP
 
+if test "$ac_cv_prog_cc_c99" = no; then
+  AC_MSG_ERROR([Cannot find a C99 capable compiler])
+fi
 
 # The C compiler on the build system, and associated tests.
 GMP_PROG_CC_FOR_BUILD
