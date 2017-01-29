@@ -2393,9 +2393,9 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CPP
 
-if test "$ac_cv_prog_cc_c99" = no; then
-  AC_MSG_ERROR([Cannot find a C99 capable compiler])
-fi
+#if test "$ac_cv_prog_cc_c99" = no; then
+#  AC_MSG_ERROR([Cannot find a C99 capable compiler])
+#fi
 
 # The C compiler on the build system, and associated tests.
 GMP_PROG_CC_FOR_BUILD
