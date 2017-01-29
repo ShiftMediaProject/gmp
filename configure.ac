@@ -77,7 +77,7 @@ dnl
 dnl  Note that there's a copy of these options in the top-level Makefile.am,
 dnl  so update there too if changing anything.
 dnl
-AM_INIT_AUTOMAKE([1.8 gnu no-dependencies])
+AM_INIT_AUTOMAKE([1.8 gnu no-dependencies subdir-objects])
 AC_CONFIG_HEADERS(config.h:config.in)
 AM_MAINTAINER_MODE
 
@@ -3901,15 +3901,7 @@ fi
 AC_PROG_YACC
 AM_PROG_LEX
 
-# Configs for demos/expr directory
-#
-# Libtool already runs an AC_CHECK_TOOL for ranlib, but we give
-# AC_PROG_RANLIB anyway since automake is supposed to complain if it's not
-# called.  (Automake 1.8.4 doesn't, at least not when the only library is in
-# an EXTRA_LIBRARIES.)
-#
-AC_PROG_RANLIB
-
+LT_INIT
 
 # Create config.m4.
 GMP_FINISH
