@@ -1,3 +1,11 @@
+2017-01-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/and.c: Simplify branches.
+	* mpz/ior.c: Likewise.
+	* mpz/xor.c: Likewise.
+
+	* gen-bases.c: In generated file, include just gmp-impl.h, not gmp.h
+
 2017-01-24  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/compute_powtab.c: New file, providing mpn_compute_powtab
