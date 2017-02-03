@@ -4013,7 +4013,7 @@ mpz_sizeinbase (const mpz_t u, int base)
   size_t ndigits;
 
   assert (base >= 2);
-  assert (base <= 36);
+  assert (base <= 62);
 
   un = GMP_ABS (u->_mp_size);
   if (un == 0)
@@ -4063,19 +4063,22 @@ mpz_get_str (char *sp, int base, const mpz_t u)
   mp_size_t un;
   size_t i, sn;
 
-  if (base >= 0)
+  digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  if (base > 1)
     {
-      digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+      if (base <= 36)
+	digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+      else if (base > 62)
+	return NULL;
     }
+  else if (base >= -1)
+    base = 10;
   else
     {
       base = -base;
-      digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      if (base > 36)
+	return NULL;
     }
-  if (base <= 1)
-    base = 10;
-  if (base > 36)
-    return NULL;
 
   sn = 1 + mpz_sizeinbase (u, base);
   if (!sp)
@@ -4123,14 +4126,14 @@ mpz_get_str (char *sp, int base, const mpz_t u)
 int
 mpz_set_str (mpz_t r, const char *sp, int base)
 {
-  unsigned bits;
+  unsigned bits, value_of_a;
   mp_size_t rn, alloc;
   mp_ptr rp;
   size_t dn;
   int sign;
   unsigned char *dp;
 
-  assert (base == 0 || (base >= 2 && base <= 36));
+  assert (base == 0 || (base >= 2 && base <= 62));
 
   while (isspace( (unsigned char) *sp))
     sp++;
@@ -4166,6 +4169,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
     }
   dp = (unsigned char *) gmp_xalloc (strlen (sp));
 
+  value_of_a = (base > 36) ? 36 : 10;
   for (dn = 0; *sp; sp++)
     {
       unsigned digit;
@@ -4175,7 +4179,7 @@ mpz_set_str (mpz_t r, const char *sp, int base)
       else if (*sp >= '0' && *sp <= '9')
 	digit = *sp - '0';
       else if (*sp >= 'a' && *sp <= 'z')
-	digit = *sp - 'a' + 10;
+	digit = *sp - 'a' + value_of_a;
       else if (*sp >= 'A' && *sp <= 'Z')
 	digit = *sp - 'A' + 10;
       else
