@@ -1,6 +1,6 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999-2003, 2005, 2006, 2008-2016 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1201,7 +1201,6 @@ void
 relspeed_div_1_vs_mul_1 (void)
 {
   const size_t max_opsize = 100;
-  const mp_limb_t fake_big_base = (~CNST_LIMB(0)) / 3;
   mp_size_t n;
   long j;
   mp_limb_t rp[max_opsize];
@@ -1213,10 +1212,10 @@ relspeed_div_1_vs_mul_1 (void)
   multime = 0;
   for (n = max_opsize; n > 1; n--)
     {
-      mpn_mul_1 (rp, ap, n, fake_big_base);
+      mpn_mul_1 (rp, ap, n, MP_BASES_BIG_BASE_10);
       speed_starttime ();
       for (j = speed_precision; j != 0 ; j--)
-	mpn_mul_1 (rp, ap, n, fake_big_base);
+	mpn_mul_1 (rp, ap, n, MP_BASES_BIG_BASE_10);
       multime += speed_endtime () / n;
     }
 
@@ -1224,12 +1223,26 @@ relspeed_div_1_vs_mul_1 (void)
   for (n = max_opsize; n > 1; n--)
     {
       /* Make input divisible for good measure.  */
-      ap[n - 1] = mpn_mul_1 (ap, ap, n - 1, fake_big_base);
+      ap[n - 1] = mpn_mul_1 (ap, ap, n - 1, MP_BASES_BIG_BASE_10);
 
-      mpn_divexact_1 (rp, ap, n, fake_big_base);
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+	  mpn_pi1_bdiv_q_1 (rp, ap, n, MP_BASES_BIG_BASE_10,
+			    MP_BASES_BIG_BASE_BINVERTED_10,
+			    MP_BASES_BIG_BASE_CTZ_10);
+#else
+	  mpn_divexact_1 (rp, ap, n, MP_BASES_BIG_BASE_10);
+#endif
       speed_starttime ();
       for (j = speed_precision; j != 0 ; j--)
-	mpn_divexact_1 (rp, ap, n, fake_big_base);
+	{
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+	  mpn_pi1_bdiv_q_1 (rp, ap, n, MP_BASES_BIG_BASE_10,
+			    MP_BASES_BIG_BASE_BINVERTED_10,
+			    MP_BASES_BIG_BASE_CTZ_10);
+#else
+	  mpn_divexact_1 (rp, ap, n, MP_BASES_BIG_BASE_10);
+#endif
+	}
       divtime += speed_endtime () / n;
     }
 
