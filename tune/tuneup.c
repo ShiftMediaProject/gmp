@@ -1225,7 +1225,7 @@ relspeed_div_1_vs_mul_1 (void)
       /* Make input divisible for good measure.  */
       ap[n - 1] = mpn_mul_1 (ap, ap, n - 1, MP_BASES_BIG_BASE_10);
 
-#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1 || ! HAVE_NATIVE_mpn_divexact_1
 	  mpn_pi1_bdiv_q_1 (rp, ap, n, MP_BASES_BIG_BASE_10,
 			    MP_BASES_BIG_BASE_BINVERTED_10,
 			    MP_BASES_BIG_BASE_CTZ_10);
@@ -1235,7 +1235,7 @@ relspeed_div_1_vs_mul_1 (void)
       speed_starttime ();
       for (j = speed_precision; j != 0 ; j--)
 	{
-#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1 || ! HAVE_NATIVE_mpn_divexact_1
 	  mpn_pi1_bdiv_q_1 (rp, ap, n, MP_BASES_BIG_BASE_10,
 			    MP_BASES_BIG_BASE_BINVERTED_10,
 			    MP_BASES_BIG_BASE_CTZ_10);
