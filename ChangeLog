@@ -1,4 +1,11 @@
+2017-02-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/compute_powtab.c: Choose mpn_pi1_bdiv_q_1 vs
+	mpn_divexact_1 more wisely (spotted by Marco).
+
 2017-02-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/tuneup.c (relspeed_div_1_vs_mul_1): Prefer mpn_pi1_bdiv_q_1.
 
 	* mpn/generic/compute_powtab.c: Use mpn_pi1_bdiv_q_1/mpn_bdiv_q_1
 	instead of mpn_divexact_1.
