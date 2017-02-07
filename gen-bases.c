@@ -33,9 +33,11 @@ see https://www.gnu.org/licenses/.  */
 
 
 int    chars_per_limb;
+int    big_base_ctz;
 mpz_t  big_base;
 int    normalization_steps;
 mpz_t  big_base_inverted;
+mpz_t  big_base_binverted;
 
 mpz_t  t;
 
@@ -48,6 +50,17 @@ ulog2 (unsigned int x)
   for (i = 0;  x != 0;  i++)
     x >>= 1;
   return i;
+}
+
+void
+binvert (int numb_bits)
+{
+  int i;
+  mpz_t bbo;
+
+  mpz_init_set (bbo, big_base);
+  big_base_ctz = mpz_make_odd (bbo);
+  mpz_invert_2exp (big_base_binverted, bbo, numb_bits);
 }
 
 void
@@ -73,6 +86,8 @@ generate (int limb_bits, int nail_bits, int base)
   mpz_mul_2exp (t, t, 2*limb_bits - normalization_steps);
   mpz_tdiv_q (big_base_inverted, t, big_base);
   mpz_clrbit (big_base_inverted, limb_bits);
+
+  binvert (numb_bits);
 }
 
 void
@@ -90,11 +105,15 @@ header (int limb_bits, int nail_bits)
   printf ("\n");
   printf ("/* mp_bases[10] data, as literal values */\n");
   printf ("#define MP_BASES_CHARS_PER_LIMB_10      %d\n", chars_per_limb);
+  printf ("#define MP_BASES_BIG_BASE_CTZ_10        %d\n", big_base_ctz);
   printf ("#define MP_BASES_BIG_BASE_10            CNST_LIMB(0x");
   mpz_out_str (stdout, 16, big_base);
   printf (")\n");
   printf ("#define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x");
   mpz_out_str (stdout, 16, big_base_inverted);
+  printf (")\n");
+  printf ("#define MP_BASES_BIG_BASE_BINVERTED_10  CNST_LIMB(0x");
+  mpz_out_str (stdout, 16, big_base_binverted);
   printf (")\n");
   printf ("#define MP_BASES_NORMALIZATION_STEPS_10 %d\n", normalization_steps);
 }
@@ -212,6 +231,7 @@ main (int argc, char **argv)
 
   mpz_init (big_base);
   mpz_init (big_base_inverted);
+  mpz_init (big_base_binverted);
   mpz_init (t);
 
   if (argc != 4)
