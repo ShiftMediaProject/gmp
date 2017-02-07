@@ -236,7 +236,16 @@ mpn_compute_powtab_div (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un,
 
       if (digits_in_base != exptab[pi])	/* if ((((un - 1) >> pi) & 2) == 0) */
 	{
-	  mpn_divexact_1 (t, t, n, big_base);
+	  if (__GMP_LIKELY (base == 10))
+	    mpn_pi1_bdiv_q_1 (t, t, n, big_base,
+			      MP_BASES_BIG_BASE_BINVERTED_10,
+			      MP_BASES_BIG_BASE_CTZ_10);
+	  else
+	    /* FIXME: We could use _pi1 here if we add big_base_binverted and
+	       big_base_ctz fields to struct bases.  That would add about 2 KiB
+	       to mp_bases.c.  */
+	    mpn_bdiv_q_1 (t, t, n, big_base);
+
 	  n -= t[n - 1] == 0;
 	  digits_in_base -= chars_per_limb;
 	}
