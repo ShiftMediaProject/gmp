@@ -324,8 +324,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       }
 
     ra = 2 * (prec + 1);
-    rp = TMP_ALLOC_LIMBS (ra);
-    tp = TMP_ALLOC_LIMBS (ra);
+    TMP_ALLOC_LIMBS_2 (rp, ra, tp, ra);
     rn = mpn_pow_1_highpart (rp, &radj, (mp_limb_t) base, exp_in_base, prec, tp);
 
     if (divflag)
