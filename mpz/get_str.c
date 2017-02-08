@@ -49,26 +49,23 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   int i;
   TMP_DECL;
 
-  if (base >= 0)
+  num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  if (base > 1)
     {
-      num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
-      if (base <= 1)
-	base = 10;
-      else if (base > 36)
-	{
-	  num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	  if (base > 62)
-	    return NULL;
-	}
+      if (base <= 36)
+	num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
+      else if (UNLIKELY (base > 62))
+	return NULL;
+    }
+  else if (base > -2)
+    {
+      base = 10;
     }
   else
     {
       base = -base;
-      if (base <= 1)
-	base = 10;
-      else if (base > 36)
+      if (UNLIKELY (base > 36))
 	return NULL;
-      num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
   /* allocate string for the user if necessary */

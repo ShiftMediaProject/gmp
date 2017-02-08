@@ -138,26 +138,23 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   un = ABSIZ(u);
   ue = EXP(u);
 
-  if (base >= 0)
+  num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  if (base > 1)
     {
-      num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
-      if (base <= 1)
-	base = 10;
-      else if (base > 36)
-	{
-	  num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	  if (base > 62)
+      if (base <= 36)
+	num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
+      else if (UNLIKELY (base > 62))
 	    return NULL;
-	}
+    }
+  else if (base > -2)
+    {
+      base = 10;
     }
   else
     {
       base = -base;
-      if (base <= 1)
-	base = 10;
-      else if (base > 36)
+      if (UNLIKELY (base > 36))
 	return NULL;
-      num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
   MPF_SIGNIFICANT_DIGITS (max_digits, base, PREC(u));
