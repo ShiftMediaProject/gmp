@@ -253,7 +253,7 @@ do {									\
    f(2^(GMP_NUMB_BITS * n)) for a polynomial f of degree 15 (or
    14), given the 16 (rsp. 15) values:
 
-     r0 = limit at infinity of f(x) / x^7,
+     r0 = limit at infinity of f(x) / x^15,
      r1 = f(8),f(-8),
      r2 = f(4),f(-4),
      r3 = f(2),f(-2),

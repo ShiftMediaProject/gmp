@@ -169,7 +169,7 @@ do {									\
    we want to compute f(2^(GMP_NUMB_BITS * n)) for a polynomial f of
    degree 11 (or 10), given the 12 (rsp. 11) values:
 
-     r0 = limit at infinity of f(x) / x^7,
+     r0 = limit at infinity of f(x) / x^11,
      r1 = f(4),f(-4),
      r2 = f(2),f(-2),
      r3 = f(1),f(-1),
