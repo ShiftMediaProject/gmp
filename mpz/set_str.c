@@ -58,7 +58,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
       /* For bases > 36, use the collating sequence
 	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
       digit_value += 208;
-      if (base > 62)
+      if (UNLIKELY (base > 62))
 	return -1;		/* too large base */
     }
 
@@ -120,7 +120,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
       if (!isspace (c))
 	{
 	  int dig = digit_value[c];
-	  if (dig >= base)
+	  if (UNLIKELY (dig >= base))
 	    {
 	      TMP_FREE;
 	      return -1;
