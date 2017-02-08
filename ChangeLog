@@ -1,3 +1,27 @@
+2017-02-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/compute_powtab.c: Choose mpn_pi1_bdiv_q_1 vs
+	mpn_divexact_1 more wisely (spotted by Marco).
+
+2017-02-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/tuneup.c (relspeed_div_1_vs_mul_1): Prefer mpn_pi1_bdiv_q_1.
+
+	* mpn/generic/compute_powtab.c: Use mpn_pi1_bdiv_q_1/mpn_bdiv_q_1
+	instead of mpn_divexact_1.
+
+	* gen-bases.c (binvert): New function, computing modular inverse and
+	low zero count.
+	(header): Print MP_BASES_BIG_BASE_CTZ_10 and
+	MP_BASES_BIG_BASE_BINVERTED_10.
+
+2017-02-06  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/bdiv_q_1.c: Make return value consistent.
+
+	* mpn/x86/p6/mmx/gmp-mparam.h (SQR_TOOM2_THRESHOLD): Revert to bogus
+	value to accomodate p6/sqr_basecase.asm fragility.
+
 2017-01-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/and.c: Simplify branches.
@@ -5,6 +29,11 @@
 	* mpz/xor.c: Likewise.
 
 	* gen-bases.c: In generated file, include just gmp-impl.h, not gmp.h
+
+2017-01-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Don't check if we got a C99 compiler for now (partially
+	revert 2017-01-24 change as C++ compilers become rejected).
 
 2017-01-24  Torbjörn Granlund  <tg@gmplib.org>
 

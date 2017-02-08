@@ -5,7 +5,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2000-2003, 2005, 2009 Free Software Foundation, Inc.
+Copyright 2000-2003, 2005, 2009, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,9 +73,10 @@ mpn_pi1_bdiv_q_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d,
 	}
 
       u = u >> shift;
-      l = u - c;
+      SUBC_LIMB (c, l, u, c);
+
       l = (l * di) & GMP_NUMB_MASK;
-      rp[i] = l;
+      rp[n] = l;
     }
   else
     {
