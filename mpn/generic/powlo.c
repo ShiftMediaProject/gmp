@@ -1,6 +1,6 @@
 /* mpn_powlo -- Compute R = U^E mod B^n, where B is the limb base.
 
-Copyright 2007-2009, 2012, 2015 Free Software Foundation, Inc.
+Copyright 2007-2009, 2012, 2015, 2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

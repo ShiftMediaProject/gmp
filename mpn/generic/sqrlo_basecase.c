@@ -5,8 +5,8 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991-1994, 1996, 1997, 2000-2005, 2008, 2010, 2011, 2015
-Free Software Foundation, Inc.
+Copyright 1991-1994, 1996, 1997, 2000-2005, 2008, 2010, 2011, 2015,
+2016 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

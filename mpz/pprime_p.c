@@ -6,7 +6,7 @@
    positive is (1/4)**reps, where reps is the number of internal passes of the
    probabilistic algorithm.  Knuth indicates that 25 passes are reasonable.
 
-Copyright 1991, 1993, 1994, 1996-2002, 2005, 2015 Free Software
+Copyright 1991, 1993, 1994, 1996-2002, 2005, 2015, 2016 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
