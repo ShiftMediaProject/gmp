@@ -89,6 +89,7 @@ define(`return',`ifdef(`NOTHUMB',`mov	pc, ',`bx')')
 
 define(`EPILOGUE_cpu',
 `lea_list
-	SIZE(`$1',.-`$1')')
+	SIZE(`$1',.-`$1')'
+`define(`lea_list', `')')
 
 divert
