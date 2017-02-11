@@ -1,5 +1,4 @@
-dnl  AMD64 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- Hensel division by 1-limb divisor,
-dnl  returning quotient only.
+dnl  AMD64 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- Hensel division by 1-limb divisor.
 
 dnl  Copyright 2001, 2002, 2004-2006, 2010-2012, 2017 Free Software Foundation,
 dnl  Inc.
