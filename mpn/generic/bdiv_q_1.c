@@ -113,13 +113,8 @@ mpn_bdiv_q_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d)
   ASSERT_MPN (up, n);
   ASSERT_LIMB (d);
 
-  if ((d & 1) == 0)
-    {
-      count_trailing_zeros (shift, d);
-      d >>= shift;
-    }
-  else
-    shift = 0;
+  count_trailing_zeros (shift, d);
+  d >>= shift;
 
   binvert_limb (di, d);
   return mpn_pi1_bdiv_q_1 (rp, up, n, d, di, shift);
