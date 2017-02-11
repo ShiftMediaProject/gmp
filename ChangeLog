@@ -1,3 +1,21 @@
+2017-02-11  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm/bdiv_q_1.asm: New file.
+
+	* mpn/generic/bdiv_q_1.c (mpn_bdiv_q_1): Remove odd d special case.
+
+	* mpn/powerpc64/mode64/bdiv_q_1.asm: New file.
+
+	* mpn/arm64/bdiv_q_1.asm: New file.
+
+2017-02-10  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm/v6/bdiv_q_1.asm: New file, based on dive_1.asm.
+
+	* mpn/arm/arm-defs.m4 (EPILOGUE_cpu): Zap lea_list to avoid repetition.
+
+	* mpn/x86_64/bdiv_q_1.asm: Rewrite, base on atom/dive_1.asm.
+
 2017-02-08  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/compute_powtab.c: Choose mpn_pi1_bdiv_q_1 vs
