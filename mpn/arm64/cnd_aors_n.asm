@@ -2,7 +2,7 @@ dnl  ARM64 mpn_cnd_add_n, mpn_cnd_sub_n
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013, 2017 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,8 +33,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	 ?
-C Cortex-A57	 ?
+C Cortex-A53	3.5-4
+C Cortex-A57	 2.25
+C X-Gene	 3.5
 
 changecom(blah)
 
@@ -45,16 +46,15 @@ define(`vp',	`x3')
 define(`n',	`x4')
 
 ifdef(`OPERATION_cnd_add_n', `
-  define(`ADDSUBC',      adcs)
+  define(`ADDSUBC',	adcs)
   define(`CLRCY',	`cmn	xzr, xzr')
-  define(`RETVAL',	`adc	x0, xzr, xzr')
-  define(func,		mpn_cnd_add_n)')
+  define(`RETVAL',	`cset	x0, cs')
+  define(`func',	mpn_cnd_add_n)')
 ifdef(`OPERATION_cnd_sub_n', `
-  define(`ADDSUBC',      sbcs)
+  define(`ADDSUBC',	sbcs)
   define(`CLRCY',	`cmp	xzr, xzr')
-  define(`RETVAL',	`sbc	x0, xzr, xzr
-			and	x0, x0, #1')
-  define(func,		mpn_cnd_sub_n)')
+  define(`RETVAL',	`cset	x0, cc')
+  define(`func',	mpn_cnd_sub_n)')
 
 MULFUNC_PROLOGUE(mpn_cnd_add_n mpn_cnd_sub_n)
 

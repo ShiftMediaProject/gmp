@@ -2,7 +2,7 @@ dnl  ARM64 mpn_add_n and mpn_sub_n
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2013 Free Software Foundation, Inc.
+dnl  Copyright 2013, 2017 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,8 +33,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	 ?
-C Cortex-A57	 ?
+C Cortex-A53	3-3.5
+C Cortex-A57	 2
+C X-Gene	 2.5
 
 changecom(blah)
 
@@ -47,15 +48,14 @@ ifdef(`OPERATION_add_n', `
   define(`ADDSUBC',	adcs)
   define(`CLRCY',	`cmn	xzr, xzr')
   define(`SETCY',	`cmp	$1, #1')
-  define(`RETVAL',	`adc	x0, xzr, xzr')
+  define(`RETVAL',	`cset	x0, cs')
   define(`func',	mpn_add_n)
   define(`func_nc',	mpn_add_nc)')
 ifdef(`OPERATION_sub_n', `
   define(`ADDSUBC',	sbcs)
   define(`CLRCY',	`cmp	xzr, xzr')
-  define(`SETCY',	`subs	$1, xzr, $1')
-  define(`RETVAL',	`sbc	x0, xzr, xzr
-			and	x0, x0, #1')
+  define(`SETCY',	`cmp	xzr, $1')
+  define(`RETVAL',	`cset	x0, cc')
   define(`func',	mpn_sub_n)
   define(`func_nc',	mpn_sub_nc)')
 
