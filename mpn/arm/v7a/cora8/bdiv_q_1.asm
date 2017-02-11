@@ -1,4 +1,5 @@
-dnl  ARM v6 mpn_bdiv_q_1
+dnl  ARM v6 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- Hensel division by 1-limb divisor.
+dnl  This is v6 code but it runs well on just the v7a Cortex-A8, A9, and A15.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
@@ -32,14 +33,15 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C               cycles/limb       cycles/limb
-C               norm    unorm    modexact_1c_odd
-C StrongARM	 -	 -
-C XScale	 -	 -
-C Cortex-A7	 ?	 ?
-C Cortex-A8	 ?	 ?
-C Cortex-A9	 9	10		 9
-C Cortex-A15	 7	 7		 7
+C               cycles/limb
+C               norm   unorm
+C 1176		 -	 -
+C Cortex-A5	 9	13
+C Cortex-A7	12	18
+C Cortex-A8	13	14
+C Cortex-A9	 9	10		not measured since latest edits
+C Cortex-A15	 7	 7
+C Cortex-A53	16	24
 
 C Architecture requirements:
 C v5	-
@@ -49,12 +51,12 @@ C v6	umaal
 C v6t2	-
 C v7a	-
 
-define(`rp',   `r0')
-define(`up',   `r1')
-define(`n',    `r2')
-define(`d',    `r3')
-define(`di_arg',  `sp[0]')
-define(`cnt_arg', `sp[4]')
+define(`rp',  `r0')
+define(`up',  `r1')
+define(`n',   `r2')
+define(`d',   `r3')
+define(`di_arg',  `sp[0]')		C	just mpn_pi1_bdiv_q_1
+define(`cnt_arg', `sp[4]')		C	just mpn_pi1_bdiv_q_1
 
 define(`cy',  `r7')
 define(`cnt', `r6')
@@ -62,14 +64,12 @@ define(`tnc', `r4')
 
 ASM_START()
 PROLOGUE(mpn_bdiv_q_1)
-	push	{r6,r7,r8,r9,r10,r11}
-
-	tst	d, #1
+	push	{r6-r11}
 
 	rsb	r10, d, #0
 	and	r10, r10, d
 	clz	r10, r10
-	rsb	cnt, r10, #31		C count_trailing_zeros
+	rsbs	cnt, r10, #31		C count_trailing_zeros
 	mov	d, d, lsr cnt
 
 C binvert limb
@@ -82,52 +82,46 @@ C binvert limb
 	mul	r10, r12, r12
 	mul	r10, d, r10
 	rsb	r10, r10, r12, lsl #1	C r10 = inverse
-
-	ldr	r11, [up], #4		C up[0]
-	mov	cy, #0
-	rsb	r8, r10, #0		C r8 = -inverse
-	bne	L(norm)
-	b	L(unnorm)
+	b	L(pi1)
 EPILOGUE()
 
 PROLOGUE(mpn_pi1_bdiv_q_1)
-	push	{r6,r7,r8,r9,r10,r11}
+	push	{r6-r11}
 
 	ldr	cnt, [sp, #28]
 	ldr	r10, [sp, #24]
 	cmp	cnt, #0
 
-	ldr	r11, [up], #4		C up[0]
+L(pi1):	ldr	r11, [up], #4		C up[0]
 	mov	cy, #0
 	rsb	r8, r10, #0		C r8 = -inverse
-
-	bne	L(unnorm)
+	bne	L(unorm)
 
 L(norm):
 	subs	n, n, #1
 	mul	r11, r11, r10
-	beq	L(end)
+	beq	L(edn)
 
 	ALIGN(16)
-L(top):	ldr	r9, [up], #4
+L(tpn):	ldr	r9, [up], #4
 	mov	r12, #0
 	str	r11, [rp], #4
 	umaal	r12, cy, r11, d
 	mul	r11, r9, r10
 	mla	r11, cy, r8, r11
 	subs	n, n, #1
-	bne	L(top)
+	bne	L(tpn)
 
-L(end):	str	r11, [rp]
-	pop	{r10,r11,r6,r7,r8,r9}
+L(edn):	str	r11, [rp]
+	pop	{r6-r11}
 	bx	r14
 
-L(unnorm):
-	push	{r4,r5}
+L(unorm):
+	push	{r4-r5}
 	rsb	tnc, cnt, #32
 	mov	r5, r11, lsr cnt
 	subs	n, n, #1
-	beq	L(edx)
+	beq	L(ed1)
 
 	ldr	r12, [up], #4
 	orr	r9, r5, r12, lsl tnc
@@ -154,11 +148,11 @@ L(edu):	str	r11, [rp], #4
 	mul	r11, r5, r10
 	mla	r11, cy, r8, r11
 	str	r11, [rp]
-	pop	{r4,r5,r6,r7,r8,r9,r10,r11}
+	pop	{r4-r11}
 	bx	r14
 
-L(edx):	mul	r11, r5, r10
+L(ed1):	mul	r11, r5, r10
 	str	r11, [rp]
-	pop	{r4,r5,r6,r7,r8,r9,r10,r11}
+	pop	{r4-r11}
 	bx	r14
 EPILOGUE()
