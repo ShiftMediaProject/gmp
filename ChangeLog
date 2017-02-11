@@ -1,5 +1,14 @@
 2017-02-11  Torbjörn Granlund  <tg@gmplib.org>
 
+	* mpn/arm/v7a/cora8/bdiv_q_1.asm: New file, based on v6/dive_1.asm.
+	* mpn/arm/v7a/cora9/bdiv_q_1.asm: New file, grabbing cora8 code.
+	* mpn/arm/v7a/cora15/bdiv_q_1.asm: Likewise.
+
+	* mpn/arm64/aors_n.asm: (SETCY, RETVAL): Shorten insn sequences.
+	* mpn/arm64/cnd_aors_n.asm: Likewise.
+	* mpn/arm64/xgene1/aors_n.asm: Likewise.
+	* mpn/arm64/xgene1/cnd_aors_n.asm: Likewise.
+
 	* mpn/arm/bdiv_q_1.asm: New file.
 
 	* mpn/generic/bdiv_q_1.c (mpn_bdiv_q_1): Remove odd d special case.
@@ -10,7 +19,6 @@
 
 2017-02-10  Torbjörn Granlund  <tg@gmplib.org>
 
-	* mpn/arm/v6/bdiv_q_1.asm: New file, based on dive_1.asm.
 
 	* mpn/arm/arm-defs.m4 (EPILOGUE_cpu): Zap lea_list to avoid repetition.
 
