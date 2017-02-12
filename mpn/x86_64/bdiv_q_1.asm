@@ -49,7 +49,7 @@ C Intel IBR	7.75		7.85
 C Intel HWL	8		8
 C Intel BWL	8		8
 C Intel SKL	8		8
-C Intel atom	34		36	needs re-measuring
+C Intel atom	34		36
 C Intel SLM	13.7		13.5
 C VIA nano	19.25		19.25	needs re-measuring
 

@@ -50,7 +50,7 @@ C Intel IBR	8.5	-
 C Intel HWL	8	=
 C Intel BWL	8	=
 C Intel SKL	8	=
-C Intel atom	42	--	needs re-measuring
+C Intel atom	42	--
 C Intel SLM	20.4	--
 C VIA nano
 
