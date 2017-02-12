@@ -1,5 +1,14 @@
 2017-02-12  Torbjörn Granlund  <tg@gmplib.org>
 
+	* mpn/powerpc64/aix.m4 (AIX): New define.
+
+	* mpn/powerpc64/mode64/bdiv_q_1.asm: For AIX, don't jump from
+	mpn_bdiv_q_1 to middle of mpn_pi1_bdiv_q_1.  Streamline.
+
+	* mpn/powerpc64/darwin.m4 (LEA): Put code in lea_list instead of in
+	EPILOGUE_cpu.
+	(EPILOGUE_cpu): Output lea_list, the zap it.
+
 	* mpn/sparc64/ultrasparct3/bdiv_q_1.asm: New file, based on dive_1.asm.
 
 2017-02-11  Torbjörn Granlund  <tg@gmplib.org>
@@ -22,7 +31,6 @@
 	* mpn/arm64/bdiv_q_1.asm: New file.
 
 2017-02-10  Torbjörn Granlund  <tg@gmplib.org>
-
 
 	* mpn/arm/arm-defs.m4 (EPILOGUE_cpu): Zap lea_list to avoid repetition.
 
