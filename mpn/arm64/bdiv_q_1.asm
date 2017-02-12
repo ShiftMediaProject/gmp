@@ -85,7 +85,7 @@ ifdef(`PIC',`
 EPILOGUE()
 
 PROLOGUE(mpn_pi1_bdiv_q_1)
-	add	n, n, #-1
+	sub	n, n, #1
 	subs	x6, x6, x6		C clear r6 and C flag
 	ldr	x9, [up],#8
 	cbz	cnt, L(norm)
@@ -103,7 +103,7 @@ L(tpu):	ldr	x9, [up],#8
 	str	x7, [rp],#8
 	lsr	x12, x9, cnt
 	umulh	x6, x7, d
-	add	n, n, #-1
+	sub	n, n, #1
 	cbnz	n, L(tpu)
 
 L(eu1):	sbcs	x6, x12, x6
@@ -121,7 +121,7 @@ L(tpn):	ldr	x9, [up],#8
 	sbcs	x5, x9, x5
 	mul	x5, x5, di
 	str	x5, [rp],#8
-	add	n, n, #-1
+	sub	n, n, #1
 	cbnz	n, L(tpn)
 
 L(en1):	ret
