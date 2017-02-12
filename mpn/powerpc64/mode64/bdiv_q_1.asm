@@ -55,44 +55,46 @@ ASM_START()
 EXTERN(binvert_limb_table)
 
 PROLOGUE(mpn_bdiv_q_1,toc)
-	addic	r7, n, -1
+	addi	r7, n, -1
 	cmpi	cr1, n, 1
 	ld	r12, 0(up)
-	rldicl.	r0, d, 0, 63
 	li	cnt, 0
-	bne	cr0, L(7)
 	neg	r0, d
 	and	r0, d, r0
 	cntlzd	r0, r0
-	subfic	r0, r0, 63
-	rldicl	cnt, r0, 0, 32
-	srd	d, d, r0
+	subfic	cnt, r0, 63
+	srd	d, d, cnt
 L(7):
 	mtctr	r7
-	LEA(	r5, binvert_limb_table)
+	LEA(	r10, binvert_limb_table)
 	rldicl	r11, d, 63, 57
-	lbzx	r0, r5, r11
+	lbzx	r0, r10, r11
 	mulld	r9, r0, r0
 	sldi	r0, r0, 1
 	mulld	r9, d, r9
 	subf	r0, r9, r0
-	mulld	r5, r0, r0
+	mulld	r10, r0, r0
 	sldi	r0, r0, 1
-	mulld	r5, d, r5
-	subf	r0, r5, r0
+	mulld	r10, d, r10
+	subf	r0, r10, r0
 	mulld	r9, r0, r0
 	sldi	r0, r0, 1
 	mulld	r9, d, r9
 	subf	di, r9, r0		C di = 1/d mod 2^64
-
+ifdef(`AIX',
+`	C For AIX it is not clear how to jump into another function.
+	b	.mpn_pi1_bdiv_q_1
+',`
+	C For non-AIX, dispatch into the pi1 variant.
 	bne	cr0, L(norm)
 	b	L(unorm)
+')
 EPILOGUE()
 
-PROLOGUE(mpn_pi1_bdiv_q_1,toc)
+PROLOGUE(mpn_pi1_bdiv_q_1)
 	cmpi	cr0, cnt, 0
 	ld	r12, 0(up)
-	addic	r0, n, -1
+	addic	r0, n, -1		C set carry as side effect
 	cmpi	cr1, n, 1
 	mtctr	r0
 	beq	cr0, L(norm)
