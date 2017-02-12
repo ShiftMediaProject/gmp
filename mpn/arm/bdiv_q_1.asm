@@ -79,7 +79,7 @@ C count trailing zeros
 	and	r11, d, #0xff
 	ldrb	r10, [r10, r11]
 	mov	d, d, lsr r10
-	adds	cnt, cnt, r10
+	add	cnt, cnt, r10
 
 C binvert limb
 L(inv):	LEA(	r10, binvert_limb_table)
@@ -99,9 +99,9 @@ PROLOGUE(mpn_pi1_bdiv_q_1)
 
 	ldr	cnt, [sp, #28]
 	ldr	r10, [sp, #24]
-	cmp	cnt, #0
 
 L(pi1):	ldr	r11, [up], #4		C up[0]
+	cmp	cnt, #0
 	mov	cy, #0
 	bne	L(unorm)
 
