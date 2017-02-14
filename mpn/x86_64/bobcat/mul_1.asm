@@ -31,16 +31,25 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 4.5
-C AMD K10	 4.5
-C AMD bd1	 4.62
-C AMD bobcat	 5
-C Intel P4	14
-C Intel core2	 4.5
-C Intel NHM	 4.23
-C Intel SBR	 3.0
-C Intel atom	21
-C VIA nano	 4.94
+C AMD K8,K9      4.53
+C AMD K10        4.53
+C AMD bull       4.56
+C AMD pile       4.47
+C AMD steam
+C AMD excavator
+C AMD bobcat     5.07
+C AMD jaguar     5.23    5.82
+C Intel P4      12.6
+C Intel core2    4.53
+C Intel NHM      4.36
+C Intel SBR      3.0
+C Intel IBR      2.55
+C Intel HWL      2.28
+C Intel BWL      2.36
+C Intel SKL      2.39
+C Intel atom    21.0
+C Intel SLM      9
+C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.

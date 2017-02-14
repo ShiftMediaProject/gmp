@@ -31,16 +31,25 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 4.5
-C AMD K10	 4.5
-C AMD bd1	 4.75
-C AMD bobcat	 5
-C Intel P4	17.7
-C Intel core2	 5.5
-C Intel NHM	 5.43
-C Intel SBR	 3.92
-C Intel atom	23
-C VIA nano	 5.63
+C AMD K8,K9      4.52
+C AMD K10        4.51
+C AMD bull       4.66
+C AMD pile       4.57
+C AMD steam     
+C AMD excavator 
+C AMD bobcat     5.05
+C AMD jaguar     5.22
+C Intel P4      16.8    18.6
+C Intel core2    5.59
+C Intel NHM      5.39
+C Intel SBR      3.93
+C Intel IBR      3.59
+C Intel HWL      3.61
+C Intel BWL      2.76
+C Intel SKL      2.77
+C Intel atom    23
+C Intel SLM      8
+C VIA nano       5.63
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)

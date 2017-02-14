@@ -35,14 +35,22 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9
 C AMD K10
-C AMD bd1
+C AMD bull
+C AMD pile
+C AMD steam
+C AMD excavator
 C AMD bobcat
+C AMD jaguar
 C Intel P4
 C Intel core2
 C Intel NHM
-C Intel SBR	 2.5
-C Intel IBR	 2.4
+C Intel SBR      2.49
+C Intel IBR      2.32
+C Intel HWL      2.44
+C Intel BWL      2.43
+C Intel SKL      2.47
 C Intel atom
+C Intel SLM
 C VIA nano
 
 C The loop of this code is the result of running a code generation and
