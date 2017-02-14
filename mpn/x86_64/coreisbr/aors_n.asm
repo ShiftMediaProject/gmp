@@ -33,21 +33,25 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	     cycles/limb
-C AMD K8,K9
-C AMD K10
-C AMD bull	 1.82		average over 400-600
-C AMD pile	 1.83		average over 400-600
-C AMD bobcat
-C AMD jaguar
-C Intel P4
-C Intel core
-C Intel NHM
-C Intel SBR	 1.55		fluctuates
-C Intel IBR	 1.55		fluctuates
-C Intel HWL	 1.33		fluctuates
-C Intel BWL
-C Intel atom
+C	    cycles/limb
+C AMD K8,K9	 1.75\2.52
+C AMD K10	 1.5
+C AMD bull	 1.69\2.25
+C AMD pile	 1.65
+C AMD steam
+C AMD excavator
+C AMD bobcat	 2.67
+C AMD jaguar	 2.16
+C Intel P4	11.54
+C Intel core2	 5
+C Intel NHM	 5.5
+C Intel SBR	 1.54
+C Intel IBR	 1.5
+C Intel HWL	 1.32
+C Intel BWL	 1.07
+C Intel SKL	 1.21
+C Intel atom	 4.3
+C Intel SLM	 4
 C VIA nano
 
 C The loop of this code was manually written.  It runs close to optimally on
