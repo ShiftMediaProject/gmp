@@ -34,8 +34,9 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C Cortex-A53	 ?
-C Cortex-A57	 ?
+C Cortex-A53	 2.25
+C Cortex-A57	 1.33
+C X-Gene	 2
 
 C void
 C mpn_sec_tabselect (mp_ptr rp, mp_srcptr *tab,

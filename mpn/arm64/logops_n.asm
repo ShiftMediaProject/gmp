@@ -32,9 +32,11 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C	     cycles/limb
-C Cortex-A53	 ?
-C Cortex-A57	 ?
+C	     cycles/limb     cycles/limb
+C	      nand,nior	      all other
+C Cortex-A53	3.5-4		3-3.5
+C Cortex-A57	 2.5		 2.0
+C X-Gene	 3.0		 2.5
 
 changecom(blah)
 

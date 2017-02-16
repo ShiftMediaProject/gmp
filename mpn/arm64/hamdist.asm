@@ -31,8 +31,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	 ?
-C Cortex-A57	 ?
+C Cortex-A53	 4.5
+C Cortex-A57	 1.9
+C X-Gene	 4.36
 
 C TODO
 C  * Consider greater unrolling.

@@ -34,7 +34,7 @@ include(`../config.m4')
 
 C	     cycles/limb
 C Cortex-A53	 6.85
-C Cortex-A57	 ?
+C Cortex-A57	 3.5
 C X-Gene	 4.1
 
 define(`rp', `x0')
