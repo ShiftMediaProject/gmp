@@ -187,7 +187,7 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
     MPN_INCR_U (r7 + n, 2*n + 1, 1);
     cy = 0;
   }
-    
+
   cy = mpn_sub_nc (pp + 2*n, r7 + n, r5 + n, n, -cy); /* Mr7-Mr5 */
   MPN_DECR_U (r7 + 2*n, n + 1, cy);
 
