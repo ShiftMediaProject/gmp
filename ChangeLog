@@ -1,3 +1,27 @@
+2017-02-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/aorsorrlshC_n.asm: New file.
+	* mpn/arm64/aorsorrlsh2_n.asm: New file.
+	* mpn/arm64/aorsorrlsh1_n.asm: New file.
+
+	* mpn/arm64/xgene1/aors_n.asm: Remove file since default code now
+	performs similarly.
+
+	* mpn/arm64/aors_n.asm: Rewrite to use 4x unrolling.
+
+2017-02-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/silvermont/hamdist.asm: New file, based on k10 code.
+
+	* mpn/x86_64/silvermont/popcount.asm: Grab coreisbr/popcount.asm.
+
+2017-02-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/silvermont/aors_n.asm: New file, grabbing coreisbr code.
+
+	* mpn/x86_64/atom/aors_n.asm: Replace coreisbr grabbing code with
+	code based on Marco's x64/atom/aors_n.asm.
+
 2017-02-12  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc64/aix.m4 (AIX): New define.
