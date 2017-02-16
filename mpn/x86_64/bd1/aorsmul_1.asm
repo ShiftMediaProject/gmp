@@ -35,8 +35,8 @@ C AMD K8,K9      3.30    3.58
 C AMD K10        3.09
 C AMD bull       4.47    4.72
 C AMD pile       4.66
-C AMD steam     
-C AMD excavator 
+C AMD steam
+C AMD excavator
 C AMD bobcat     6.30
 C AMD jaguar     6.29
 C Intel P4      17.3    17.8
@@ -49,13 +49,13 @@ C Intel BWL      2.56
 C Intel SKL      2.53
 C Intel atom    20.3
 C Intel SLM      9
-C VIA nano      
+C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
-C  * Try to make loop run closer to 4 c/l.
+C  * Try to make loop run closer to 4 c/l in Bulldozer and Piledriver.
 
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx

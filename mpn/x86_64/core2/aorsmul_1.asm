@@ -35,8 +35,8 @@ C AMD K8,K9      4.52
 C AMD K10        4.01
 C AMD bull       4.98
 C AMD pile       4.83
-C AMD steam     
-C AMD excavator 
+C AMD steam
+C AMD excavator
 C AMD bobcat     5.56
 C AMD jaguar     5.54
 C Intel P4      16.3    17.3

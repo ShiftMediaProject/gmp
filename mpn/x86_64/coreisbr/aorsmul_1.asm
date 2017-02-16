@@ -37,8 +37,8 @@ C AMD K8,K9      4.27
 C AMD K10        4.27    4.54
 C AMD bull       4.76
 C AMD pile       4.55
-C AMD steam     
-C AMD excavator 
+C AMD steam
+C AMD excavator
 C AMD bobcat     5.30
 C AMD jaguar     5.28
 C Intel P4      16.2    17.1
@@ -51,7 +51,7 @@ C Intel BWL      2.76
 C Intel SKL      2.76
 C Intel atom    21.5
 C Intel SLM      9.5
-C VIA nano      
+C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjörn Granlund.
