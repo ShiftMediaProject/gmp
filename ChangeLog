@@ -1,3 +1,8 @@
+2017-02-16  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* rand/randmt.c (__gmp_randiset_mt): Set generator functions from
+	source.
+
 2017-02-16  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/arm64/aorsorrlshC_n.asm: New file.
