@@ -33,9 +33,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	 3.25
-C Cortex-A57	 2.35
-C X-Gene	 2.75
+C Cortex-A53	3.25-3.75
+C Cortex-A57	 2.18
+C X-Gene	 2.5
 
 changecom(blah)
 
@@ -68,54 +68,58 @@ PROLOGUE(func_n)
 	lsr	x18, n, #2
 	tbz	n, #0, L(bx0)
 
-L(bx1):	tbnz	n, #1, L(b11)
+L(bx1):	ldr	x5, [up]
+	tbnz	n, #1, L(b11)
 
-L(b01):	ldr	x7, [up],#8
-	ldr	x11, [vp],#8
+L(b01):	ldr	x11, [vp]
 	cbz	x18, L(1)
-	ldp	x8, x9, [vp],#16
+	ldp	x8, x9, [vp,#8]
 	lsl	x13, x11, #LSH
-	ADDSUB(	x15, x13, x7)
+	ADDSUB(	x15, x13, x5)
 	str	x15, [rp],#8
+	sub	up, up, #24
+	sub	vp, vp, #8
 	b	L(mid)
 
 L(1):	lsl	x13, x11, #LSH
-	ADDSUB(	x15, x13, x7)
+	ADDSUB(	x15, x13, x5)
 	str	x15, [rp]
 	lsr	x0, x11, RSH
 	RETVAL(	 x0, x1)
 	ret
 
-L(b11):	ldr	x5, [up],#8
-	ldr	x9, [vp],#8
-	ldp	x10, x11, [vp],#16
+L(b11):	ldr	x9, [vp]
+	ldp	x10, x11, [vp,#8]!
 	lsl	x13, x9, #LSH
 	ADDSUB(	x17, x13, x5)
 	str	x17, [rp],#8
+	sub	up, up, #8
 	cbz	x18, L(end)
 	b	L(top)
 
 L(bx0):	tbnz	n, #1, L(b10)
 
 L(b00):	CLRRCY(	x11)
-	ldp	x8, x9, [vp],#16
+	ldp	x8, x9, [vp],#-16
+	sub	up, up, #32
 	b	L(mid)
 
 L(b10):	CLRRCY(	x9)
-	ldp	x10, x11, [vp],#16
+	ldp	x10, x11, [vp]
+	sub	up, up, #16
 	cbz	x18, L(end)
 
 	ALIGN(16)
-L(top):	ldp	x6, x7, [up],#16
+L(top):	ldp	x4, x5, [up,#16]
 	extr	x12, x10, x9, #RSH
-	ldp	x8, x9, [vp],#16
+	ldp	x8, x9, [vp,#16]
 	extr	x13, x11, x10, #RSH
-	ADDSUBC(x14, x12, x6)
-	ADDSUBC(x15, x13, x7)
+	ADDSUBC(x14, x12, x4)
+	ADDSUBC(x15, x13, x5)
 	stp	x14, x15, [rp],#16
-L(mid):	ldp	x4, x5, [up],#16
+L(mid):	ldp	x4, x5, [up,#32]!
 	extr	x12, x8, x11, #RSH
-	ldp	x10, x11, [vp],#16
+	ldp	x10, x11, [vp,#32]!
 	extr	x13, x9, x8, #RSH
 	ADDSUBC(x16, x12, x4)
 	ADDSUBC(x17, x13, x5)
@@ -123,11 +127,11 @@ L(mid):	ldp	x4, x5, [up],#16
 	sub	x18, x18, #1
 	cbnz	x18, L(top)
 
-L(end):	ldp	x6, x7, [up],#16
+L(end):	ldp	x4, x5, [up,#16]
 	extr	x12, x10, x9, #RSH
 	extr	x13, x11, x10, #RSH
-	ADDSUBC(x14, x12, x6)
-	ADDSUBC(x15, x13, x7)
+	ADDSUBC(x14, x12, x4)
+	ADDSUBC(x15, x13, x5)
 	stp	x14, x15, [rp]
 	lsr	x0, x11, RSH
 	RETVAL(	 x0, x1)
