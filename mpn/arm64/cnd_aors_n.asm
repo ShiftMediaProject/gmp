@@ -33,9 +33,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	3.5-4
-C Cortex-A57	 2.25
-C X-Gene	 3.5
+C Cortex-A53	3.87-4.37
+C Cortex-A57	 1.75
+C X-Gene	 2.0
 
 changecom(blah)
 
@@ -63,37 +63,67 @@ PROLOGUE(func)
 	cmp	cnd, #1
 	sbc	cnd, cnd, cnd
 
-	CLRCY				C really only needed for n = 0 (mod 4)
+	CLRCY
 
-	tbz	n, #0, L(1)
-	ldr	x10, [up], #8
-	ldr	x12, [vp], #8
-	bic	x6, x12, cnd
-	ADDSUBC	x8, x10, x6
-	sub	n, n, #1
-	str	x8, [rp], #8
-	cbz	n, L(rt)
+	lsr	x18, n, #2
+	tbz	n, #0, L(bx0)
 
-L(1):	ldp	x10, x11, [up], #16
-	ldp	x12, x13, [vp], #16
-	sub	n, n, #2
-	cbz	n, L(end)
+L(bx1):	ldr	x13, [vp]
+	ldr	x11, [up]
+	bic	x7, x13, cnd
+	ADDSUBC	x9, x11, x7
+	str	x9, [rp]
+	tbnz	n, #1, L(b11)
 
+L(b01):	cbz	x18, L(rt)
+	ldp	x12, x13, [vp,#8]
+	ldp	x10, x11, [up,#8]
+	sub	up, up, #8
+	sub	vp, vp, #8
+	sub	rp, rp, #24
+	b	L(mid)
+
+L(b11):	ldp	x12, x13, [vp,#8]!
+	ldp	x10, x11, [up,#8]!
+	sub	rp, rp, #8
+	cbz	x18, L(end)
+	b	L(top)
+
+L(bx0):	ldp	x12, x13, [vp]
+	ldp	x10, x11, [up]
+	tbnz	n, #1, L(b10)
+
+L(b00):	sub	up, up, #16
+	sub	vp, vp, #16
+	sub	rp, rp, #32
+	b	L(mid)
+
+L(b10):	sub	rp, rp, #16
+	cbz	x18, L(end)
+
+	ALIGN(16)
 L(top):	bic	x6, x12, cnd
 	bic	x7, x13, cnd
-	ldp	x12, x13, [vp], #16
+	ldp	x12, x13, [vp,#16]
 	ADDSUBC	x8, x10, x6
 	ADDSUBC	x9, x11, x7
-	ldp	x10, x11, [up], #16
-	sub	n, n, #2
-	stp	x8, x9, [rp], #16
-	cbnz	n, L(top)
+	ldp	x10, x11, [up,#16]
+	stp	x8, x9, [rp,#16]
+L(mid):	bic	x6, x12, cnd
+	bic	x7, x13, cnd
+	ldp	x12, x13, [vp,#32]!
+	ADDSUBC	x8, x10, x6
+	ADDSUBC	x9, x11, x7
+	ldp	x10, x11, [up,#32]!
+	stp	x8, x9, [rp,#32]!
+	sub	x18, x18, #1
+	cbnz	x18, L(top)
 
 L(end):	bic	x6, x12, cnd
 	bic	x7, x13, cnd
 	ADDSUBC	x8, x10, x6
 	ADDSUBC	x9, x11, x7
-	stp	x8, x9, [rp]
+	stp	x8, x9, [rp,#16]
 L(rt):	RETVAL
 	ret
 EPILOGUE()

@@ -2,7 +2,7 @@ dnl  ARM64 mpn_cnd_add_n, mpn_cnd_sub_n
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2012, 2013, 2015, 2017 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013, 2017 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,9 +33,9 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C Cortex-A53	4-4.5
+C Cortex-A53	3.5-4
 C Cortex-A57	 2.25
-C X-Gene	 2.5
+C X-Gene	 3.5
 
 changecom(blah)
 
@@ -81,12 +81,12 @@ L(1):	ldp	x10, x11, [up], #16
 
 L(top):	bic	x6, x12, cnd
 	bic	x7, x13, cnd
+	ldp	x12, x13, [vp], #16
 	ADDSUBC	x8, x10, x6
 	ADDSUBC	x9, x11, x7
-	ldp	x12, x13, [vp], #16
 	ldp	x10, x11, [up], #16
-	stp	x8, x9, [rp], #16
 	sub	n, n, #2
+	stp	x8, x9, [rp], #16
 	cbnz	n, L(top)
 
 L(end):	bic	x6, x12, cnd
