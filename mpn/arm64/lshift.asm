@@ -29,6 +29,7 @@ C  * The feed-in code used 1 ldr for odd sized and 2 ldr for even sizes.  These
 C    numbers should be 1 and 0, respectively.  The str in wind-down should also
 C    go.
 C  * Using extr and with 63 separate loops we might reach 1.25 c/l on A57.
+C  * A53's speed depends on alignment, tune/speed -w1 gives 3.5, -w0 gives 4.0.
 
 changecom(blah)
 
