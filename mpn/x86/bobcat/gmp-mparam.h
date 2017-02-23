@@ -161,6 +161,9 @@ see https://www.gnu.org/licenses/.  */
 #define MULLO_BASECASE_THRESHOLD             5
 #define MULLO_DC_THRESHOLD                  45
 #define MULLO_MUL_N_THRESHOLD            14281
+#define SQRLO_BASECASE_THRESHOLD             7
+#define SQRLO_DC_THRESHOLD                  71
+#define SQRLO_SQR_THRESHOLD              10323
 
 #define DC_DIV_QR_THRESHOLD                 71
 #define DC_DIVAPPR_Q_THRESHOLD             238
@@ -182,6 +185,14 @@ see https://www.gnu.org/licenses/.  */
 
 #define POWM_SEC_TABLE  1,16,96,416,1185
 
+#define GET_STR_DC_THRESHOLD                15
+#define GET_STR_PRECOMPUTE_THRESHOLD        29
+#define SET_STR_DC_THRESHOLD               290
+#define SET_STR_PRECOMPUTE_THRESHOLD       860
+
+#define FAC_DSC_THRESHOLD                  141
+#define FAC_ODD_THRESHOLD                   50
+
 #define MATRIX22_STRASSEN_THRESHOLD         17
 #define HGCD_THRESHOLD                      88
 #define HGCD_APPR_THRESHOLD                137
@@ -189,11 +200,3 @@ see https://www.gnu.org/licenses/.  */
 #define GCD_DC_THRESHOLD                   465
 #define GCDEXT_DC_THRESHOLD                345
 #define JACOBI_BASE_METHOD                   4
-
-#define GET_STR_DC_THRESHOLD                18
-#define GET_STR_PRECOMPUTE_THRESHOLD        34
-#define SET_STR_DC_THRESHOLD               270
-#define SET_STR_PRECOMPUTE_THRESHOLD       828
-
-#define FAC_DSC_THRESHOLD                  256
-#define FAC_ODD_THRESHOLD                   34
