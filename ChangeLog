@@ -1,3 +1,36 @@
+2017-02-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/silvermont/gmp-mparam.h: New file.
+
+2017-02-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/aorsmul_1.asm: Rewrite.
+
+	* mpn/arm64/lshiftc.asm: New file.
+
+2017-02-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/lshift.asm: Rewrite.
+	* mpn/arm64/rshift.asm: Rewrite.
+
+	* mpn/arm64/rsh1aors_n.asm: New file.
+
+2017-02-19  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/mul_1.asm: Rewrite.
+	* mpn/arm64/xgene1/mul_1.asm: Remove.
+
+2017-02-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/cora53/cnd_aors_n.asm: Moved from "..".
+
+	* mpn/arm64/xgene1/cnd_aors_n.asm: Remove file since default code
+	performs better.
+
+	* mpn/arm64/cnd_aors_n.asm: Rewrite.
+
+	* mpn/arm64/logops_n.asm: Rewrite based on new aors_n.asm.
+
 2017-02-16  Pedro Gimeno  <pggimeno@wanadoo.es>
 
 	* rand/randmt.c (__gmp_randiset_mt): Set generator functions from
