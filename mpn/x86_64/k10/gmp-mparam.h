@@ -1,7 +1,6 @@
 /* AMD K10 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000-2012, 2014, 2015 Free Software Foundation,
-Inc.
+Copyright 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -222,10 +221,10 @@ see https://www.gnu.org/licenses/.  */
 
 #define POWM_SEC_TABLE  1,22,194,579,1297
 
-#define GET_STR_DC_THRESHOLD                19
-#define GET_STR_PRECOMPUTE_THRESHOLD        27
-#define SET_STR_DC_THRESHOLD               248
-#define SET_STR_PRECOMPUTE_THRESHOLD      1616
+#define GET_STR_DC_THRESHOLD                13
+#define GET_STR_PRECOMPUTE_THRESHOLD        22
+#define SET_STR_DC_THRESHOLD               252
+#define SET_STR_PRECOMPUTE_THRESHOLD      1183
 
 #define FAC_DSC_THRESHOLD                  739
 #define FAC_ODD_THRESHOLD                    0  /* always */

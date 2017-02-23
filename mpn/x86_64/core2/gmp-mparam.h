@@ -1,7 +1,6 @@
 /* Core 2 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000-2010, 2012, 2014, 2015 Free Software
-Foundation, Inc.
+Copyright 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -213,9 +212,9 @@ see https://www.gnu.org/licenses/.  */
 #define POWM_SEC_TABLE  3,64,127,386,1486
 
 #define GET_STR_DC_THRESHOLD                11
-#define GET_STR_PRECOMPUTE_THRESHOLD        18
-#define SET_STR_DC_THRESHOLD               552
-#define SET_STR_PRECOMPUTE_THRESHOLD      1416
+#define GET_STR_PRECOMPUTE_THRESHOLD        17
+#define SET_STR_DC_THRESHOLD               134
+#define SET_STR_PRECOMPUTE_THRESHOLD      1752
 
 #define FAC_DSC_THRESHOLD                  753
 #define FAC_ODD_THRESHOLD                   23
