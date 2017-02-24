@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2016 Free Software
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2017 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -440,9 +440,19 @@ long __MPN(count_leading_zeros) (UDItype);
 #if defined (__arm__) && (defined (__thumb2__) || !defined (__thumb__)) \
     && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("adds\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
+  do {									\
+    if (__builtin_constant_p (bl) && (bl) < 0 && (-(USItype) (bl) < 0x1000)) \
+      __asm__ ("subs\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
+	       : "r" (ah), "rI" (bh),					\
+		 "%r" (al), "rI" (-(USItype)(bl)) __CLOBBER_CC);	\
+    else								\
+      __asm__ ("adds\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC);	\
+  } while (0)
+/* FIXME: Extend the immediate range for the low word by using both
+   ADDS and SUBS, since they set carry in the same way.  */
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (al))					\
@@ -541,15 +551,31 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 /* FIXME: Extend the immediate range for the low word by using both
    ADDS and SUBS, since they set carry in the same way.  */
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("adds\t%1, %x4, %5\n\tadc\t%0, %x2, %x3"			\
-	   : "=r" (sh), "=&r" (sl)					\
-	   : "rZ" ((UDItype)(ah)), "rZ" ((UDItype)(bh)),		\
-	     "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)) __CLOBBER_CC)
+  do {									\
+    if (__builtin_constant_p (bl) && (bl) < 0 && (-(UDItype) (bl) < 0x1000)) \
+      __asm__ ("subs\t%1, %x4, %5\n\tadc\t%0, %x2, %x3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "rZ" ((UDItype)(ah)), "rZ" ((UDItype)(bh)),		\
+		 "%r" ((UDItype)(al)), "rI" (-(UDItype)(bl)) __CLOBBER_CC);\
+    else								\
+      __asm__ ("adds\t%1, %x4, %5\n\tadc\t%0, %x2, %x3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "rZ" ((UDItype)(ah)), "rZ" ((UDItype)(bh)),		\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)) __CLOBBER_CC);\
+  } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("subs\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
-	   : "=r,r" (sh), "=&r,&r" (sl)					\
-	   : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),		\
-	     "r,Z"   ((UDItype)(al)), "rI,r"  ((UDItype)(bl)) __CLOBBER_CC)
+  do {									\
+    if (__builtin_constant_p (bl) && (bl) < 0 && (-(UDItype) (bl) < 0x1000)) \
+      __asm__ ("adds\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
+	       : "=r,r" (sh), "=&r,&r" (sl)				\
+	       : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),	\
+		 "r,Z"   ((UDItype)(al)), "rI,r" (-(UDItype)(bl)) __CLOBBER_CC);\
+    else								\
+      __asm__ ("subs\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
+	       : "=r,r" (sh), "=&r,&r" (sl)				\
+	       : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),	\
+	     "r,Z"   ((UDItype)(al)), "rI,r"  ((UDItype)(bl)) __CLOBBER_CC);\
+  } while(0);
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
