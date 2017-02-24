@@ -1,4 +1,4 @@
-/* mpn_div_qr_1u_pi2.
+/* mpn_div_qr_1n_pi2.
 
    THIS FILE CONTAINS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS
    ONLY SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -46,8 +46,10 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 /* Define some longlong.h-style macros, but for wider operations.
-   * add_sssaaaa is like longlong.h's add_ssaaaa but propagating
-     carry-out into an additional sum operand.
+   * add_sssaaaa is like longlong.h's add_ssaaaa but propagating carry-out into
+     an additional sum operand.
+   * add_csaac accepts two addends and a carry in, and generates a sum and a
+     carry out.  A little like a "full adder".
 */
 #if defined (__GNUC__)  && ! defined (__INTEL_COMPILER) && ! defined (NO_ASM)
 
@@ -74,7 +76,7 @@ see https://www.gnu.org/licenses/.  */
    processor running in 32-bit mode, since the carry flag then gets the 32-bit
    carry.  */
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
-  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"	\
+  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%3"	\
 	   : "=r" (s2), "=&r" (s1), "=&r" (s0)				\
 	   : "r"  (s2), "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
