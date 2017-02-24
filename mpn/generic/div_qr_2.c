@@ -89,7 +89,7 @@ see https://www.gnu.org/licenses/.  */
    processor running in 32-bit mode, since the carry flag then gets the 32-bit
    carry.  */
 #define add_sssaaaa(s2, s1, s0, a1, a0, b1, b0)				\
-  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%0"	\
+  __asm__ ("add%I7c\t%2,%6,%7\n\tadde\t%1,%4,%5\n\taddze\t%0,%3"	\
 	   : "=r" (s2), "=&r" (s1), "=&r" (s0)				\
 	   : "r"  (s2), "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
 #endif
@@ -282,9 +282,9 @@ mpn_div_qr_2n_pi2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
    Return the most significant limb of the quotient.
 
    Preconditions:
-   1. qp must either not overlap with the input operands at all, or
+   1. qp must either not overlap with the other operands at all, or
       qp >= np + 2 must hold true.  (This means that it's possible to put
-      the quotient in the high part of {np,nn}, right above the remainder.
+      the quotient in the high part of {np,nn}, right above the remainder.)
    2. nn >= 2.  */
 
 mp_limb_t
