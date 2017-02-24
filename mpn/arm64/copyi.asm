@@ -53,16 +53,16 @@ C Copy until rp is 128-bit aligned
 	st1	{v22.1d}, [rp], #8
 
 L(al2):	ld1	{v26.2d}, [up], #16
-	subs	n, n, #6
-	b.lt	L(end)
+	sub	n, n, #6
+	tbnz	n, #63, L(end)
 
 	ALIGN(16)
 L(top):	ld1	{v22.2d}, [up], #16
 	st1	{v26.2d}, [rp], #16
 	ld1	{v26.2d}, [up], #16
 	st1	{v22.2d}, [rp], #16
-	subs	n, n, #4
-	b.ge	L(top)
+	sub	n, n, #4
+	tbz	n, #63, L(top)
 
 L(end):	st1	{v26.2d}, [rp], #16
 
