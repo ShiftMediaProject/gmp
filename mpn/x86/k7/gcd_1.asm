@@ -113,7 +113,7 @@ L(divide_strip_y):
 	cmp	$1, n
 	jnz	L(reduce_nby1)
 
-C Both U and V are single limbs, reduce with bmod if u0 >> v0.
+C Both U and V are single limbs, reduce with div if u0 >> v0.
 	mov	(up), %ecx
 	mov	%ecx, %eax
 	shr	$DIV_THRES_LOG2, %ecx
@@ -145,7 +145,7 @@ L(bmod):
 
 L(called):
 ifdef(`PIC_WITH_EBX',`dnl
-	add	$16, %esp	C deallocate params
+	add	$16, %esp		C deallocate params
 	pop	%ebx
 ',`
 	add	$12, %esp		C deallocate params
