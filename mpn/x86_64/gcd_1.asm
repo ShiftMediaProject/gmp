@@ -3,7 +3,8 @@ dnl  AMD64 mpn_gcd_1 -- mpn by 1 gcd.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012, 2017 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -97,63 +98,67 @@ L(divide_strip_y):
 	adc	v0, v0
 
 	cmp	$1, n
+ifelse(BMOD_1_TO_MOD_1_THRESHOLD, MP_SIZE_T_MAX,`
+	jnz	L(bmod)
+',`
 	jnz	L(reduce_nby1)
-
+')
 C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	mov	(up), %r8
 	mov	%r8, %rax
 	shr	$BMOD_THRES_LOG2, %r8
 	cmp	%r8, v0
-	ja	L(noreduce)
-	push	v0
-	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
+	ja	L(reduced)
 
 L(bmod):
+	push	v0			C preserve v0 argument over call
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
 	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_modexact_1_odd)
 
-L(reduced):
+L(called):
 	add	$STACK_ALLOC, %rsp
-	pop	%rdx
+	pop	v0
 
-L(noreduce):
+L(reduced):
 	LEA(	ctz_table, %rsi)
 	test	%rax, %rax
 	mov	%rax, %rcx
 	jnz	L(mid)
 	jmp	L(end)
 
+ifelse(BMOD_1_TO_MOD_1_THRESHOLD, `MP_SIZE_T_MAX',,`
 L(reduce_nby1):
-	push	v0
-	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
-
 	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
 	jl	L(bmod)
+
+	push	v0			C preserve v0 argument over call
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
 	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_mod_1)
-	jmp	L(reduced)
-
-	ALIGN(16)			C               K8    BC    P4    NHM   SBR
-L(top):	cmovc	%rcx, %rax		C if x-y < 0	0
-	cmovc	%rdi, %rdx		C use x,y-x	0
-L(mid):	and	$MASK, R32(%rcx)	C		0
-	movzbl	(%rsi,%rcx), R32(%rcx)	C		1
-	jz	L(shift_alot)		C		1
-	shr	R8(%rcx), %rax		C		3
-	mov	%rax, %rdi		C		4
-	mov	%rdx, %rcx		C		3
-	sub	%rax, %rcx		C		4
-	sub	%rdx, %rax		C		4
-	jnz	L(top)			C		5
+	jmp	L(called)
+')
+	ALIGN(16)			C              K8   BC   P4   NHM  SBR
+L(top):	cmovc	%rcx, %rax		C if x-y < 0   0
+	cmovc	%rdi, v0		C use x,y-x    0
+L(mid):	and	$MASK, R32(%rcx)	C	       0
+	movzbl	(%rsi,%rcx), R32(%rcx)	C	       1
+	jz	L(shift_alot)		C	       1
+	shr	R8(%rcx), %rax		C	       3
+	mov	%rax, %rdi		C	       4
+	mov	v0, %rcx		C	       3
+	sub	%rax, %rcx		C	       4
+	sub	v0, %rax		C	       4
+	jnz	L(top)			C
 
 L(end):	pop	%rcx
-	mov	%rdx, %rax
+	mov	v0, %rax
 	shl	R8(%rcx), %rax
 	FUNC_EXIT()
 	ret
