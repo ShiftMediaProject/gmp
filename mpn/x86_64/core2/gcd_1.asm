@@ -3,7 +3,8 @@ dnl  AMD64 mpn_gcd_1 optimised for Intel C2, NHM, SBR and AMD K10, BD.
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
 
-dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012, 2017 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -80,16 +81,14 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_1)
 	FUNC_ENTRY(3)
-	mov	(up), %rax	C U low limb
-	or	v0, %rax
-	bsf	%rax, %rax	C min(ctz(u0),ctz(v0))
+	mov	(up), %rax		C U low limb
+	or	v0, %rax		C x | y
+	bsf	%rax, %rax		C min(ctz(u0),ctz(v0))
 
 	bsf	v0, %rcx
 	shr	R8(%rcx), v0
 
-	push	%rax		C preserve common twos over call
-	push	v0		C preserve v0 argument over call
-	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
+	push	%rax			C preserve common twos over call
 
 	cmp	$1, n
 	jnz	L(reduce_nby1)
@@ -100,46 +99,52 @@ C Both U and V are single limbs, reduce with bmod if u0 >> v0.
 	shr	$BMOD_THRES_LOG2, %r8
 	cmp	%r8, v0
 	ja	L(reduced)
-	jmp	L(bmod)
 
-L(reduce_nby1):
-	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
-	jl	L(bmod)
-IFDOS(`	mov	%rdx, %r8	')
-IFDOS(`	mov	%rsi, %rdx	')
-IFDOS(`	mov	%rdi, %rcx	')
-	ASSERT(nz, `test $15, %rsp')
-	CALL(	mpn_mod_1)
-	jmp	L(reduced)
 L(bmod):
+	push	v0			C preserve v0 argument over call
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
 IFDOS(`	mov	%rdx, %r8	')
 IFDOS(`	mov	%rsi, %rdx	')
 IFDOS(`	mov	%rdi, %rcx	')
 	ASSERT(nz, `test $15, %rsp')
 	CALL(	mpn_modexact_1_odd)
-L(reduced):
 
+L(called):
 	add	$STACK_ALLOC, %rsp
-	pop	%rdx
+	pop	v0
 
+L(reduced):
 	bsf	%rax, %rcx
-C	test	%rax, %rax	C FIXME: does this lower latency?
+C	test	%rax, %rax		C FIXME: does this lower latency?
 	jnz	L(mid)
 	jmp	L(end)
 
-	ALIGN(16)		C               K10   BD    C2    NHM   SBR
-L(top):	cmovc	%r10, %rax	C if x-y < 0    0,3   0,3   0,6   0,5   0,5
-	cmovc	%r9, %rdx	C use x,y-x     0,3   0,3   2,8   1,7   1,7
-L(mid):	shr	R8(%rcx), %rax	C               1,7   1,6   2,8   2,8   2,8
-	mov	%rdx, %r10	C               1     1     4     3     3
-	sub	%rax, %r10	C               2     2     5     4     4
-	bsf	%r10, %rcx	C               3     3     6     5     5
-	mov	%rax, %r9	C               2     2     3     3     4
-	sub	%rdx, %rax	C               2     2     4     3     4
-	jnz	L(top)		C
+L(reduce_nby1):
+	cmp	$BMOD_1_TO_MOD_1_THRESHOLD, n
+	jl	L(bmod)
 
-L(end):	pop	%rcx
-	mov	%rdx, %rax
+	push	v0			C preserve v0 argument over call
+	sub	$STACK_ALLOC, %rsp	C maintain ABI required rsp alignment
+IFDOS(`	mov	%rdx, %r8	')
+IFDOS(`	mov	%rsi, %rdx	')
+IFDOS(`	mov	%rdi, %rcx	')
+	ASSERT(nz, `test $15, %rsp')
+	CALL(	mpn_mod_1)
+	jmp	L(called)
+
+	ALIGN(16)			C              K10  BD   C2   NHM  SBR
+L(top):	cmovc	%r10, %rax		C if x-y < 0   0,3  0,3  0,6  0,5  0,5
+	cmovc	%r9, v0			C use x,y-x    0,3  0,3  2,8  1,7  1,7
+L(mid):	shr	R8(%rcx), %rax		C              1,7  1,6  2,8  2,8  2,8
+	mov	v0, %r10		C              1    1    4    3    3
+	sub	%rax, %r10		C              2    2    5    4    4
+	bsf	%r10, %rcx		C              3    3    6    5    5
+	mov	%rax, %r9		C              2    2    3    3    4
+	sub	v0, %rax		C              2    2    4    3    4
+	jnz	L(top)			C
+
+L(end):	pop	%rcx			C common twos
+	mov	v0, %rax
 	shl	R8(%rcx), %rax
 	FUNC_EXIT()
 	ret
