@@ -1,3 +1,29 @@
+2017-02-25  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Allow MP_SIZE_T_MAX for threasholds exported to
+	config.m4.
+
+	* mpn/x86_64/gcd_1.asm: Handle BMOD_1_TO_MOD_1_THRESHOLD=MP_SIZE_T_MAX.
+	Streamline non-reduction path.
+	* mpn/x86_64/core2/gcd_1.asm: Streamline small operands cases similarly
+	to top-level code.
+
+2017-02-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (arm32/arm64 add_sssaaaa): Use "subs" for some immediates.
+	* longlong.h (arm32/arm64 sub_sssaaaa): Use "adds" for some immediates.
+
+	* mpn/arm64/copyi.asm: Avoid branching on flags.
+	* mpn/arm64/copyd.asm: Likewise.
+
+	* mpn/generic/div_qr_2.c (aarch64 add_sssaaaa): New.
+	* mpn/generic/div_qr_1n_pi2.c: Same.
+	* mpn/generic/div_qr_1u_pi2.c: Same.
+
+	* mpn/generic/div_qr_2.c (powerpc add_sssaaaa): Fix typo.
+	* mpn/generic/div_qr_1n_pi2.c: Same.
+	* mpn/generic/div_qr_1u_pi2.c: Same.
+
 2017-02-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/sqrtrem_1_2.c: New exhaustive test for sqrtrem_[12].
