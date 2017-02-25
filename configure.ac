@@ -3762,7 +3762,7 @@ AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
 #
 if test -z "$fat_path"; then
   for i in SQR_TOOM2_THRESHOLD BMOD_1_TO_MOD_1_THRESHOLD SHLD_SLOW SHRD_SLOW; do
-    value=`sed -n 's/^#define '$i'[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
+    value=`sed -n 's/^#define '$i'[ 	]*\([0-9A-Z][0-9A-Z_]*\).*$/\1/p' $gmp_mparam_source`
     if test -n "$value"; then
       GMP_DEFINE_RAW(["define(<$i>,<$value>)"])
     fi
