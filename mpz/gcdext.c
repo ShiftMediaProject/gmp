@@ -66,6 +66,8 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
 
       if (g != NULL)
 	{
+	  /* If g == a, then ALLOC(g) == ALLOC(a) >= asize, i.e.
+	     the next MPZ_NEWALLOC returns the old PTR(a) .*/
 	  gp = MPZ_NEWALLOC (g, asize);
 	  MPN_COPY (gp, PTR (a), asize);
 	  SIZ (g) = asize;
