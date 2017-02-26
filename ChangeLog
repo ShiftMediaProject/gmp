@@ -1,3 +1,7 @@
+2017-02-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/pow_1.c: Use umul_ppmm for a single limb.
+
 2017-02-25  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac: Allow MP_SIZE_T_MAX for threasholds exported to
@@ -10,8 +14,8 @@
 
 2017-02-24  Torbjörn Granlund  <tg@gmplib.org>
 
-	* longlong.h (arm32/arm64 add_sssaaaa): Use "subs" for some immediates.
-	* longlong.h (arm32/arm64 sub_sssaaaa): Use "adds" for some immediates.
+	* longlong.h (arm32/arm64 add_ssaaaa): Use "subs" for some immediates.
+	* longlong.h (arm32/arm64 sub_ssaaaa): Use "adds" for some immediates.
 
 	* mpn/arm64/copyi.asm: Avoid branching on flags.
 	* mpn/arm64/copyd.asm: Likewise.
