@@ -441,7 +441,7 @@ long __MPN(count_leading_zeros) (UDItype);
     && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
-    if (__builtin_constant_p (bl) && -(USItype)(bl) < 0x1000))		\
+    if (__builtin_constant_p (bl) && -(USItype)(bl) < 0x100)		\
       __asm__ ("subs\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
 	   : "=r" (sh), "=&r" (sl)					\
 	       : "r" (ah), "rI" (bh),					\
@@ -552,7 +552,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
    ADDS and SUBS, since they set carry in the same way.  */
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
-    if (__builtin_constant_p (bl) && (-(UDItype)(bl) < 0x1000))		\
+    if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x1000)		\
       __asm__ ("subs\t%1, %x4, %5\n\tadc\t%0, %x2, %x3"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "rZ" ((UDItype)(ah)), "rZ" ((UDItype)(bh)),		\
@@ -565,7 +565,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   do {									\
-    if (__builtin_constant_p (bl) && (-(UDItype)(bl) < 0x1000))		\
+    if (__builtin_constant_p (bl) && -(UDItype)(bl) < 0x1000)		\
       __asm__ ("adds\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
 	       : "=r,r" (sh), "=&r,&r" (sl)				\
 	       : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),	\
