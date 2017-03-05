@@ -574,14 +574,25 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
       __asm__ ("subs\t%1, %x4, %5\n\tsbc\t%0, %x2, %x3"			\
 	       : "=r,r" (sh), "=&r,&r" (sl)				\
 	       : "rZ,rZ" ((UDItype)(ah)), "rZ,rZ" ((UDItype)(bh)),	\
-	     "r,Z"   ((UDItype)(al)), "rI,r"  ((UDItype)(bl)) __CLOBBER_CC);\
+		 "r,Z"   ((UDItype)(al)), "rI,r"  ((UDItype)(bl)) __CLOBBER_CC);\
   } while(0);
+#if __GMP_GNUC_PREREQ (4,9)
+#define umul_ppmm(w1, w0, u, v) \
+  do {									\
+    typedef unsigned int __ll_UTItype __attribute__((mode(TI)));	\
+    __ll_UTItype __ll = (__ll_UTItype)(u) * (v);			\
+    w1 = __ll >> 64;							\
+    w0 = __ll;								\
+  } while (0)
+#endif
+#if !defined (umul_ppmm)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
     __asm__ ("umulh\t%0, %1, %2" : "=r" (ph) : "r" (__m0), "r" (__m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
+#endif
 #define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
 #define count_trailing_zeros(count, x)  count_trailing_zeros_gcc_ctz(count, x)
 #define COUNT_LEADING_ZEROS_0 64
