@@ -1528,7 +1528,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define count_leading_zeros(count, x) \
   __asm__ ("cntlzd %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 64
-#if 0 && __GMP_GNUC_PREREQ (4,4) /* Disable, this results in libcalls! */
+#if __GMP_GNUC_PREREQ (4,8)
 #define umul_ppmm(w1, w0, u, v) \
   do {									\
     typedef unsigned int __ll_UTItype __attribute__((mode(TI)));	\
