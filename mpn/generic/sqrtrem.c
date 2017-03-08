@@ -224,13 +224,12 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
 
   ASSERT (np[2 * n - 1] >= GMP_NUMB_HIGHBIT / 2);
 
-  if (n == 1)
-    c = mpn_sqrtrem2 (sp, np, np);
-  else
-    {
       l = n / 2;
       h = n - l;
-      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
+      if (h == 1)
+	q = mpn_sqrtrem2 (sp + l, np + 2 * l, np + 2 * l);
+      else
+	q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
       if (q != 0)
 	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
       TRACE(printf("tdiv_qr(,,,,%u,,%u) -> %u\n", (unsigned) n, (unsigned) h, (unsigned) (n - h + 1)));
@@ -260,7 +259,6 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
 	  c -= mpn_sub_1 (np, np, n, CNST_LIMB(1));
 	  q -= mpn_sub_1 (sp, sp, n, CNST_LIMB(1));
 	}
-    }
 
   return c;
 }
@@ -419,7 +417,7 @@ mpn_dc_sqrt (mp_ptr sp, mp_srcptr np, mp_size_t n, unsigned nsh, unsigned odd)
 mp_size_t
 mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 {
-  mp_limb_t *tp, s0[1], cc, high, rl;
+  mp_limb_t cc, high, rl;
   int c;
   mp_size_t rn, tn;
   TMP_DECL;
@@ -458,6 +456,25 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       }
     return rl != 0;
   }
+  if (nn == 2) {
+    mp_limb_t tp [2];
+    if (rp == NULL) rp = tp;
+    if (c == 0)
+      {
+	rp[1] = cc = mpn_sqrtrem2 (sp, rp, np);
+	return ((rp[0] | cc) != 0) + cc;
+      }
+    else
+      {
+	rl = np[0];
+	rp[1] = (high << (2*c)) | (rl >> (GMP_NUMB_BITS - 2*c));
+	rp[0] = rl << (2*c);
+	mpn_sqrtrem2 (sp, rp, rp);
+	cc = sp[0] >>= c;
+	rp[0] = rl -= cc*cc;
+	return rl != 0;
+      }
+  }
   tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
   if ((rp == NULL) && (nn > 8))
@@ -465,8 +482,8 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   TMP_MARK;
   if (((nn & 1) | c) != 0)
     {
-      mp_limb_t mask;
-      mp_ptr scratch;
+      mp_limb_t s0[1], mask;
+      mp_ptr tp, scratch;
       TMP_ALLOC_LIMBS_2 (tp, 2 * tn, scratch, tn / 2 + 1);
       tp[0] = 0;	     /* needed only when 2*tn > nn, but saves a test */
       if (c != 0)
