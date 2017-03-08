@@ -18,13 +18,13 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 /* Usage:
 
-   ./sqrtrem_1_2
+   ./sqrtrem_1_2 x
 
      Checks mpn_sqrtrem() exhaustively, starting from 0, incrementing
      the operand by a single unit, until all values handled by
      sqrtrem_{1,2} are tested. SLOW.
 
-   ./sqrtrem_1_2 any_parameter
+   ./sqrtrem_1_2 c
 
      Checks all corner cased for mpn_sqrtrem(). I.e. values of the form
      i*i and (i+1)*(i+1)-1, for each value of i, until all such values,
@@ -52,7 +52,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 int something_wrong (mp_limb_t er, mp_limb_t ec, mp_limb_t es)
 {
-  printf ("root = %lu , rem = {%lu , %lu}\n", (long unsigned) es,(long unsigned) ec,(long unsigned) er);
+  fprintf (stderr, "root = %lu , rem = {%lu , %lu}\n", (long unsigned) es,(long unsigned) ec,(long unsigned) er);
   return -1;
 }
 
@@ -199,7 +199,24 @@ check_corner_cases ()
 int
 main (int argc, char **argv)
 {
-  if (argc < 2)
+  int mode = 0;
+
+  if (argc > 1)
+    {
+      if (*argv[1] == 'x')
+	mode = 0;
+      else if (*argv[1] == 'c')
+	mode = 1;
+      else
+	mode = -1;
+      if (argc > 2 || mode == -1)
+	{
+	  fprintf (stderr, "usage: sqrtrem_1_2 [x|c]\n");
+	  exit (1);
+	}
+    }
+
+  if (mode == 0)
     return check_all_values ();
   else
     return check_corner_cases ();
