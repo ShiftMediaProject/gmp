@@ -166,12 +166,24 @@ mpn_sqrtrem1 (mp_ptr rp, mp_limb_t a0)
 
 
 #define Prec (GMP_NUMB_BITS >> 1)
+#if ! defined(SQRTREM2_INPLACE)
+#define SQRTREM2_INPLACE 0
+#endif
 
 /* same as mpn_sqrtrem, but for size=2 and {np, 2} normalized
    return cc such that {np, 2} = sp[0]^2 + cc*2^GMP_NUMB_BITS + rp[0] */
+#if SQRTREM2_INPLACE
+#define CALL_SQRTREM2_INPLACE(sp,rp) mpn_sqrtrem2 (sp, rp)
+static mp_limb_t
+mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp)
+{
+  mp_srcptr np = rp;
+#else
+#define CALL_SQRTREM2_INPLACE(sp,rp) mpn_sqrtrem2 (sp, rp, rp)
 static mp_limb_t
 mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
 {
+#endif
   mp_limb_t q, u, np0, sp0, rp0, q2;
   int cc;
 
@@ -228,7 +240,7 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
   l = n / 2;
   h = n - l;
   if (h == 1)
-    q = mpn_sqrtrem2 (sp + l, np + 2 * l, np + 2 * l);
+    q = CALL_SQRTREM2_INPLACE (sp + l, np + 2 * l);
   else
     q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
   if (q != 0)
@@ -462,7 +474,14 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
     if (rp == NULL) rp = tp;
     if (c == 0)
       {
-	rp[1] = cc = mpn_sqrtrem2 (sp, rp, np);
+#if SQRTREM2_INPLACE
+	rp[1] = high;
+	rp[0] = np[0];
+	cc = CALL_SQRTREM2_INPLACE (sp, rp);
+#else
+	cc = mpn_sqrtrem2 (sp, rp, np);
+#endif
+	rp[1] = cc;
 	return ((rp[0] | cc) != 0) + cc;
       }
     else
@@ -470,7 +489,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	rl = np[0];
 	rp[1] = (high << (2*c)) | (rl >> (GMP_NUMB_BITS - 2*c));
 	rp[0] = rl << (2*c);
-	mpn_sqrtrem2 (sp, rp, rp);
+	CALL_SQRTREM2_INPLACE (sp, rp);
 	cc = sp[0] >>= c;	/* c != 0, the higest bit of the root cc is 0. */
 	rp[0] = rl -= cc*cc;	/* Computed modulo 2^GMP_LIMB_BITS, because it's smaller. */
 	return rl != 0;
