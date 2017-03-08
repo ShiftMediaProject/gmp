@@ -222,43 +222,44 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n, mp_limb_t approx, mp_ptr scra
   int c, b;			/* carry out of remainder */
   mp_size_t l, h;
 
+  ASSERT (n > 1);
   ASSERT (np[2 * n - 1] >= GMP_NUMB_HIGHBIT / 2);
 
-      l = n / 2;
-      h = n - l;
-      if (h == 1)
-	q = mpn_sqrtrem2 (sp + l, np + 2 * l, np + 2 * l);
-      else
-	q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
-      if (q != 0)
-	ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
-      TRACE(printf("tdiv_qr(,,,,%u,,%u) -> %u\n", (unsigned) n, (unsigned) h, (unsigned) (n - h + 1)));
-      mpn_tdiv_qr (scratch, np + l, 0, np + l, n, sp + l, h);
-      q += scratch[l];
-      c = scratch[0] & 1;
-      mpn_rshift (sp, scratch, l, 1);
-      sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
-      if (UNLIKELY ((sp[0] & approx) != 0)) /* (sp[0] & mask) > 1 */
-	return 1; /* Remainder is non-zero */
-      q >>= 1;
-      if (c != 0)
-	c = mpn_add_n (np + l, np + l, sp + l, h);
-      TRACE(printf("sqr(,,%u)\n", (unsigned) l));
-      mpn_sqr (np + n, sp, l);
-      b = q + mpn_sub_n (np, np, np + n, 2 * l);
-      c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, (mp_limb_t) b);
+  l = n / 2;
+  h = n - l;
+  if (h == 1)
+    q = mpn_sqrtrem2 (sp + l, np + 2 * l, np + 2 * l);
+  else
+    q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h, 0, scratch);
+  if (q != 0)
+    ASSERT_CARRY (mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h));
+  TRACE(printf("tdiv_qr(,,,,%u,,%u) -> %u\n", (unsigned) n, (unsigned) h, (unsigned) (n - h + 1)));
+  mpn_tdiv_qr (scratch, np + l, 0, np + l, n, sp + l, h);
+  q += scratch[l];
+  c = scratch[0] & 1;
+  mpn_rshift (sp, scratch, l, 1);
+  sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
+  if (UNLIKELY ((sp[0] & approx) != 0)) /* (sp[0] & mask) > 1 */
+    return 1; /* Remainder is non-zero */
+  q >>= 1;
+  if (c != 0)
+    c = mpn_add_n (np + l, np + l, sp + l, h);
+  TRACE(printf("sqr(,,%u)\n", (unsigned) l));
+  mpn_sqr (np + n, sp, l);
+  b = q + mpn_sub_n (np, np, np + n, 2 * l);
+  c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, (mp_limb_t) b);
 
-      if (c < 0)
-	{
-	  q = mpn_add_1 (sp + l, sp + l, h, q);
+  if (c < 0)
+    {
+      q = mpn_add_1 (sp + l, sp + l, h, q);
 #if HAVE_NATIVE_mpn_addlsh1_n_ip1 || HAVE_NATIVE_mpn_addlsh1_n
-	  c += mpn_addlsh1_n_ip1 (np, sp, n) + 2 * q;
+      c += mpn_addlsh1_n_ip1 (np, sp, n) + 2 * q;
 #else
-	  c += mpn_addmul_1 (np, sp, n, CNST_LIMB(2)) + 2 * q;
+      c += mpn_addmul_1 (np, sp, n, CNST_LIMB(2)) + 2 * q;
 #endif
-	  c -= mpn_sub_1 (np, np, n, CNST_LIMB(1));
-	  q -= mpn_sub_1 (sp, sp, n, CNST_LIMB(1));
-	}
+      c -= mpn_sub_1 (np, np, n, CNST_LIMB(1));
+      q -= mpn_sub_1 (sp, sp, n, CNST_LIMB(1));
+    }
 
   return c;
 }
@@ -470,8 +471,8 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	rp[1] = (high << (2*c)) | (rl >> (GMP_NUMB_BITS - 2*c));
 	rp[0] = rl << (2*c);
 	mpn_sqrtrem2 (sp, rp, rp);
-	cc = sp[0] >>= c;
-	rp[0] = rl -= cc*cc;
+	cc = sp[0] >>= c;	/* c != 0, the higest bit of the root cc is 0. */
+	rp[0] = rl -= cc*cc;	/* Computed modulo 2^GMP_LIMB_BITS, because it's smaller. */
 	return rl != 0;
       }
   }
