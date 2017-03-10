@@ -1,3 +1,9 @@
+2017-03-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/sqrtrem.c: Direct use of sqrtrem2 when n==2.
+
+	* mpn/generic/div_qr_2.c (udiv_qr_4by2): Replace add_csaac with add_sssaaaa.
+
 2017-02-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/pow_1.c: Use umul_ppmm for a single limb.
