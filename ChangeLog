@@ -4,6 +4,24 @@
 
 	* mpn/generic/div_qr_2.c (udiv_qr_4by2): Replace add_csaac with add_sssaaaa.
 
+2017-03-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpf/get_d_2exp.c: Return negative value for negative input.
+
+2017-03-06  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (aarch64): Provide asm-free umul_ppmm.
+	* longlong.h (powerpc64): Enable asm-free umul_ppmm.
+
+2017-03-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/sqr_diag_addlsh1.asm: Complete rewrite.
+
+2017-02-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (arm32/arm64): Remove useless comparison to 0 introduced
+	in last change (spotted by Marco).
+
 2017-02-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/pow_1.c: Use umul_ppmm for a single limb.
