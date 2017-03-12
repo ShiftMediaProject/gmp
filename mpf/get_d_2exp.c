@@ -38,7 +38,6 @@ mpf_get_d_2exp (signed long int *expptr, mpf_srcptr src)
   mp_size_t size, abs_size;
   mp_srcptr ptr;
   int cnt;
-  double d;
 
   size = SIZ(src);
   if (UNLIKELY (size == 0))
@@ -53,7 +52,5 @@ mpf_get_d_2exp (signed long int *expptr, mpf_srcptr src)
   cnt -= GMP_NAIL_BITS;
 
   *expptr = EXP(src) * GMP_NUMB_BITS - cnt;
-
-  d = mpn_get_d (ptr, abs_size, 0, -(abs_size * GMP_NUMB_BITS - cnt));
-  return size >= 0 ? d : -d;
+  return mpn_get_d (ptr, abs_size, size, -(abs_size * GMP_NUMB_BITS - cnt));
 }
