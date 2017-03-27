@@ -1,7 +1,11 @@
+2017-03-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/oddfac_1.c (limb_apprsqrt): Better approximation.
+	* mpz/bin_uiui.c (limb_apprsqrt): Likewise.
+
 2017-03-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/sqrtrem.c: Direct use of sqrtrem2 when n==2.
-
 	* mpn/generic/div_qr_2.c (udiv_qr_4by2): Replace add_csaac with add_sssaaaa.
 
 2017-03-07  Torbjörn Granlund  <tg@gmplib.org>
