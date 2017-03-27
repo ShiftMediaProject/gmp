@@ -2,7 +2,7 @@
 
 Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
-Copyright 2010-2012, 2015, 2016 Free Software Foundation, Inc.
+Copyright 2010-2012, 2015-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -552,17 +552,21 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
     }							\
   } while (0)
 
-/* Returns an approximation of the sqare root of x.  *
- * It gives: x <= limb_apprsqrt (x) ^ 2 < x * 9/4    */
+/* Returns an approximation of the sqare root of x.
+ * It gives:
+ *   limb_apprsqrt (x) ^ 2 <= x < (limb_apprsqrt (x)+1) ^ 2
+ * or
+ *   x <= limb_apprsqrt (x) ^ 2 <= x * 9/8
+ */
 static mp_limb_t
 limb_apprsqrt (mp_limb_t x)
 {
   int s;
 
   ASSERT (x > 2);
-  count_leading_zeros (s, x - 1);
-  s = GMP_LIMB_BITS - 1 - s;
-  return (CNST_LIMB(1) << (s >> 1)) + (CNST_LIMB(1) << ((s - 1) >> 1));
+  count_leading_zeros (s, x);
+  s = (GMP_LIMB_BITS - s) >> 1;
+  return ((CNST_LIMB(1) << s) + (x >> s)) >> 1;
 }
 
 static void
@@ -600,7 +604,7 @@ mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 
       s = limb_apprsqrt(n);
       s = n_to_bit (s);
-      ASSERT (bit_to_n (s) * bit_to_n (s) > n);
+      ASSERT (bit_to_n (s+1) * bit_to_n (s+1) > n);
       ASSERT (s <= n_to_bit (n >> 1));
       LOOP_ON_SIEVE_BEGIN (prime, n_to_bit (5), s, 0,sieve);
       COUNT_A_PRIME (prime, n, k, prod, max_prod, factors, j);

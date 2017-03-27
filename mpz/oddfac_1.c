@@ -7,7 +7,7 @@ IT IS ONLY SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.
 IN FACT, IT IS ALMOST GUARANTEED THAT IT WILL CHANGE OR
 DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2010-2012, 2015, 2016 Free Software Foundation, Inc.
+Copyright 2010-2012, 2015-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -115,20 +115,24 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 #endif
 
 /*********************************************************/
-/* Section mswing: 2-multiswing factorial                 */
+/* Section mswing: 2-multiswing factorial                */
 /*********************************************************/
 
-/* Returns an approximation of the sqare root of x.  *
- * It gives: x <= limb_apprsqrt (x) ^ 2 < x * 9/4    */
+/* Returns an approximation of the sqare root of x.
+ * It gives:
+ *   limb_apprsqrt (x) ^ 2 <= x < (limb_apprsqrt (x)+1) ^ 2
+ * or
+ *   x <= limb_apprsqrt (x) ^ 2 <= x * 9/8
+ */
 static mp_limb_t
 limb_apprsqrt (mp_limb_t x)
 {
   int s;
 
   ASSERT (x > 2);
-  count_leading_zeros (s, x - 1);
-  s = GMP_LIMB_BITS - 1 - s;
-  return (CNST_LIMB(1) << (s >> 1)) + (CNST_LIMB(1) << ((s - 1) >> 1));
+  count_leading_zeros (s, x);
+  s = (GMP_LIMB_BITS - s) >> 1;
+  return ((CNST_LIMB(1) << s) + (x >> s)) >> 1;
 }
 
 #if 0
