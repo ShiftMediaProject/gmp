@@ -76,7 +76,7 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
   ASSERT (tp[2*rn] < GMP_NUMB_MAX);
   cy = tp[2*rn] + mpn_sub_n (rp, tp, tp+rn, rn);
   rp[rn] = 0;
-  MPN_INCR_U (rp, rn+1, cy );
+  MPN_INCR_U (rp, rn+1, cy);
 }
 
 
