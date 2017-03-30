@@ -3,12 +3,12 @@
    Contributed to the GNU project by Paul Zimmermann (most code),
    Torbjorn Granlund (mpn_sqrtrem1) and Marco Bodrato (mpn_dc_sqrt).
 
-   THE FUNCTIONS IN THIS FILE EXCEPT mpn_sqrtrem ARE INTERNAL WITH A
-   MUTABLE INTERFACE.  IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED
-   INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR
-   DISAPPEAR IN A FUTURE GMP RELEASE.
+   THE FUNCTIONS IN THIS FILE EXCEPT mpn_sqrtrem ARE INTERNAL WITH MUTABLE
+   INTERFACES.  IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.
+   IN FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A
+   FUTURE GMP RELEASE.
 
-Copyright 1999-2002, 2004, 2005, 2008, 2010, 2012, 2015 Free Software
+Copyright 1999-2002, 2004, 2005, 2008, 2010, 2012, 2015, 2017 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -490,7 +490,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 	rp[1] = (high << (2*c)) | (rl >> (GMP_NUMB_BITS - 2*c));
 	rp[0] = rl << (2*c);
 	CALL_SQRTREM2_INPLACE (sp, rp);
-	cc = sp[0] >>= c;	/* c != 0, the higest bit of the root cc is 0. */
+	cc = sp[0] >>= c;	/* c != 0, the highest bit of the root cc is 0. */
 	rp[0] = rl -= cc*cc;	/* Computed modulo 2^GMP_LIMB_BITS, because it's smaller. */
 	return rl != 0;
       }
