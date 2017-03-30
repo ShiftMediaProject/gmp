@@ -478,7 +478,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
       /* 8: current buffer: {sp,sn} */
 
-    };
+    }
 
   /* otherwise we have rn > 0, thus the return value is ok */
   if (!approx || sp[0] <= CNST_LIMB (1))
