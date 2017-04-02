@@ -57,7 +57,7 @@ int something_wrong (mp_limb_t er, mp_limb_t ec, mp_limb_t es)
 }
 
 int
-check_all_values ()
+check_all_values (int justone)
 {
   mp_limb_t es, mer, er, s[1], r[2], q[2];
   mp_size_t x;
@@ -86,7 +86,9 @@ check_all_values ()
   } while (*q != 0);
   q[1] = 1;
   SPINNER(2);
-  printf ("\nValues of a single limb, tested.\nAll values tested, up to bits:\n");
+  printf ("\nValues of a single limb, tested.\n");
+  if (justone) return 0;
+  printf ("All values tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 2);
     if (UNLIKELY (x != (er != 0)) || UNLIKELY (*s != es)
@@ -112,7 +114,7 @@ check_all_values ()
 }
 
 int
-check_corner_cases ()
+check_corner_cases (int justone)
 {
   mp_limb_t es, er, s[1], r[2], q[2];
   mp_size_t x;
@@ -141,7 +143,9 @@ check_corner_cases ()
   } while (*q != 0);
   q[1] = 1;
   SPINNER(2);
-  printf ("\nValues of a single limb, tested.\nCorner cases tested, up to bits:\n");
+  printf ("\nValues of a single limb, tested.\n");
+  if (justone) return 0;
+  printf ("Corner cases tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 2);
     if (UNLIKELY (x != (er != 0)) || UNLIKELY (*s != es)
@@ -200,24 +204,27 @@ int
 main (int argc, char **argv)
 {
   int mode = 0;
+  int justone = 0;
 
-  if (argc > 1)
+  for (;argc > 1;--argc,++argv)
     {
       if (*argv[1] == 'x')
 	mode = 0;
       else if (*argv[1] == 'c')
 	mode = 1;
+      else if (*argv[1] == '1')
+	justone = 1;
+      else if (*argv[1] == '2')
+	justone = 0;
       else
-	mode = -1;
-      if (argc > 2 || mode == -1)
 	{
-	  fprintf (stderr, "usage: sqrtrem_1_2 [x|c]\n");
+	  fprintf (stderr, "usage: sqrtrem_1_2 [x|c] [1|2]\n");
 	  exit (1);
 	}
     }
 
   if (mode == 0)
-    return check_all_values ();
+    return check_all_values (justone);
   else
-    return check_corner_cases ();
+    return check_corner_cases (justone);
 }
