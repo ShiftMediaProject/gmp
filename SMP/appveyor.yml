@@ -95,15 +95,12 @@ before_build:
         $env:VCTargetsPath="$env:MSBUILDDIR\..\..\..\Microsoft.Cpp\v4.0\V${env:MSVC_VER}0"
     }
 
-# Download and install nasm integration
-- ps: (New-Object Net.WebClient).DownloadFile('http://www.nasm.us/pub/nasm/releasebuilds/2.12.02/win64/nasm-2.12.02-win64.zip', "$pwd\nasm.zip")
-- ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory("$pwd\nasm.zip", "$pwd\TempNASMUnpack")
-- ps: Move-Item -Force "TempNASMUnpack\nasm-2.12.02\*.exe" "$env:VCINSTALLDIR"
-- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSNASM/releases/download/0.1/VSNASM.zip', "$pwd\nasm2.zip")
-- ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory("$pwd\nasm2.zip", "$pwd\TempNASMUnpack2")
-- ps: Copy-Item -Force "TempNASMUnpack2\*.*" "$env:VCTargetsPath\BuildCustomizations"
-# Additional nasm location in order to fix gitlink error
-- ps: if ($env:MSVC_VER -ne 15) { Copy-Item -Force "TempNASMUnpack2\*.*" "$env:VCTargetsPath\..\BuildCustomizations" }
+# Download and install yasm integration
+- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSYASM/releases/download/0.1/VSYASM.zip', "$pwd\yasm.zip")
+- ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory("$pwd\yasm.zip", "$pwd\TempYASMUnpack")
+- cmd: call ".\TempYASMUnpack\install_script.bat"
+# Additional yasm location in order to fix gitlink error
+- ps: if ($env:MSVC_VER -ne 15) { Copy-Item -Force "TempYASMUnpack\*.*" "$env:VCTargetsPath\..\BuildCustomizations" }
 
 build:
   project: build.vcxproj

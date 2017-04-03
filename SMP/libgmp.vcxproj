@@ -1162,83 +1162,63 @@
     </YASM>
     <YASM Include="mpn\x86\add_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\bdiv_dbm1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\bdiv_q_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\cnd_add_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\cnd_sub_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\copyd.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\copyi.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\divexact_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\divrem_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\divrem_2.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\lshift.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\mod_34lsub1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\mul_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\rshift.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\sec_tabselect.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\sqr_basecase.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\submul_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\sub_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\udiv_qrnnd.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
     <YASM Include="mpn\x86\umul_ppmm.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ObjectFile>$(IntDir)%(Filename).obj</ObjectFile>
     </YASM>
   </ItemGroup>
   <ItemGroup>
@@ -1334,7 +1314,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.props" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\yasm.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1506,10 +1486,9 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -1588,10 +1567,9 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">
@@ -1675,10 +1653,9 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
@@ -1759,10 +1736,9 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -1855,10 +1831,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|Win32'">
@@ -1951,10 +1925,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -2046,10 +2018,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLTO|x64'">
@@ -2141,10 +2111,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
@@ -2239,10 +2207,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
@@ -2335,14 +2301,12 @@ del /f /q $(OutDir)\licenses\gmp.txt
 )</Command>
     </CustomBuildStep>
     <YASM>
-      <PreProc>1</PreProc>
-    </YASM>
-    <YASM>
       <Parser>1</Parser>
+      <Preprocessor>1</Preprocessor>
     </YASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.targets" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\yasm.targets" />
   </ImportGroup>
 </Project>
