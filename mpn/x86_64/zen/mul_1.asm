@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_mul_1 for CPUs with mulx.
 
-dnl  Copyright 2012, 2013 Free Software Foundation, Inc.
+dnl  Copyright 2012, 2013, 2017 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,17 +33,24 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 -
 C AMD K10	 -
-C AMD bd1	 -
-C AMD bd2	 ?
+C AMD bull	 -
+C AMD pile	 -
+C AMD steam	 -
+C AMD excavator	 ?
+C AMD zen	 2
 C AMD bobcat	 -
-C AMD jaguar	 ?
+C AMD jaguar	 -
 C Intel P4	 -
 C Intel PNR	 -
 C Intel NHM	 -
 C Intel SBR	 -
+C Intel IBR	 -
 C Intel HWL	 ?
 C Intel BWL	 ?
+C Intel SKL	 ?
+C Intel BWL	 ?
 C Intel atom	 -
+C Intel SLM      -
 C VIA nano	 -
 
 define(`rp',      `%rdi')   C rcx
@@ -89,51 +96,51 @@ L(ent):	mov	(up), %r9
 	jg	L(b3)
 
 L(b1):	mov	%r8, %r12
-	mulx	%r9, %rbx, %rax
+	mulx(	%r9, %rbx, %rax)
 	sub	$-1, n
 	jz	L(wd1)
-	mulx	(up,n,8), %r9, %r8
-	mulx	8(up,n,8), %r11, %r10
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
 	add	%r12, %rbx
 	jmp	L(lo1)
 
-L(b3):	mulx	%r9, %r11, %r10
-	mulx	8(up,n,8), %r13, %r12
-	mulx	16(up,n,8), %rbx, %rax
+L(b3):	mulx(	%r9, %r11, %r10)
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x08	C mulx 8(up,n,8), %r13, %r12
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x10	C mulx 16(up,n,8), %rbx, %rax
 	sub	$-3, n
 	jz	L(wd3)
 	add	%r8, %r11
 	jmp	L(lo3)
 
 L(b2):	mov	%r8, %r10		C carry-in limb
-	mulx	%r9, %r13, %r12
-	mulx	8(up,n,8), %rbx, %rax
+	mulx(	%r9, %r13, %r12)
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x08 	C mulx 8(up,n,8), %rbx, %rax
 	sub	$-2, n
 	jz	L(wd2)
-	mulx	(up,n,8), %r9, %r8
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce	  	C mulx (up,n,8), %r9, %r8
 	add	%r10, %r13
 	jmp	L(lo2)
 
 L(b0):	mov	%r8, %rax		C carry-in limb
-	mulx	%r9, %r9, %r8
-	mulx	8(up,n,8), %r11, %r10
-	mulx	16(up,n,8), %r13, %r12
+	mulx(	%r9, %r9, %r8)
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
 	add	%rax, %r9
 	jmp	L(lo0)
 
 L(top):	jrcxz	L(end)
 	adc	%r8, %r11
 	mov	%r9, (rp,n,8)
-L(lo3):	mulx	(up,n,8), %r9, %r8
+L(lo3):	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
 	adc	%r10, %r13
 	mov	%r11, 8(rp,n,8)
-L(lo2):	mulx	8(up,n,8), %r11, %r10
+L(lo2):	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
 	adc	%r12, %rbx
 	mov	%r13, 16(rp,n,8)
-L(lo1):	mulx	16(up,n,8), %r13, %r12
+L(lo1):	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
 	adc	%rax, %r9
 	mov	%rbx, 24(rp,n,8)
-L(lo0):	mulx	24(up,n,8), %rbx, %rax
+L(lo0):	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
 	lea	4(n), n
 	jmp	L(top)
 
