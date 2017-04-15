@@ -1828,6 +1828,12 @@ case $host in
 	path="x86/bd4 x86/bd3 x86/bd2 x86/bd1 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/bd4 x86_64/bd3 x86_64/bd2 x86_64/bd1 x86_64/k10 x86_64/k8 x86_64"
 	;;
+      zen)
+	gcc_cflags_cpu="-mtune=znver1 -mtune=amdfam10 -mtune=k8"
+	gcc_cflags_arch="-march=znver1 -march=amdfam10 -march=k8"
+	path="x86/k7/mmx x86/k7 x86/mmx x86"
+	path_64="x86_64/zen x86_64/k10 x86_64/k8 x86_64"
+	;;
       core2)
 	gcc_cflags_cpu="-mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
@@ -2225,10 +2231,10 @@ case $host in
 	extra_functions_64="$extra_functions_64 fat fat_entry"
 	path_64="x86_64/fat x86_64"
 	fat_path="x86_64 x86_64/fat
-		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat x86_64/pentium4
-		  x86_64/core2 x86_64/coreinhm x86_64/coreisbr x86_64/coreihwl
-		  x86_64/coreibwl x86_64/skylake x86_64/atom x86_64/silvermont
-		  x86_64/nano"
+		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat x86_64/zen
+		  x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr
+		  x86_64/coreihwl x86_64/coreibwl x86_64/skylake x86_64/atom
+		  x86_64/silvermont x86_64/nano"
 	fat_functions="$fat_functions addmul_2 addlsh1_n addlsh2_n sublsh1_n"
       fi
 

@@ -951,6 +951,9 @@ main ()
 	case 22:		/* Jaguar, an improved bobcat */
 	  cpu_64bit = 1, cpu_avx = 1, modelstr = "jaguar";
 	  break;
+	case 23:		/* Zen */
+	  cpu_64bit = 1, cpu_avx = 1, modelstr = "zen";
+	  break;
 	}
     }
   else if (strcmp (vendor_string, "CyrixInstead") == 0)

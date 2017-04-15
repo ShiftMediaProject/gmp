@@ -91,6 +91,7 @@ static struct {
   { "steamroller","AuthenticAMD", MAKE_FMS (21, 0x30) },
   { "excavator",  "AuthenticAMD", MAKE_FMS (21, 0x60) },
   { "jaguar",     "AuthenticAMD", MAKE_FMS (22, 1) },
+  { "zen",        "AuthenticAMD", MAKE_FMS (23, 1) },
 
   { "nano",       "CentaurHauls", MAKE_FMS (6, 15) },
 };
@@ -400,7 +401,6 @@ __gmpn_cpuvec_init (void)
 	case 0x0f:		/* k8 */
 	case 0x11:		/* "fam 11h", mix of k8 and k10 */
 	case 0x13:
-	case 0x17:
 	  CPUVEC_SETUP_k8;
 	  break;
 
@@ -421,6 +421,11 @@ __gmpn_cpuvec_init (void)
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bd1;
+
+	case 0x17:	    /* zen */
+	  CPUVEC_SETUP_k8;
+	  CPUVEC_SETUP_k10;
+	  CPUVEC_SETUP_zen;
 	}
     }
   else if (strcmp (vendor_string, "CentaurHauls") == 0)
