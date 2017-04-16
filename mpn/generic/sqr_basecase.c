@@ -5,8 +5,8 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991-1994, 1996, 1997, 2000-2005, 2008, 2010, 2011 Free Software
-Foundation, Inc.
+Copyright 1991-1994, 1996, 1997, 2000-2005, 2008, 2010, 2011, 2017 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -289,36 +289,29 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 void
 mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
-  mp_size_t i;
-
-  ASSERT (n >= 1);
-  ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
-
-  {
-    mp_limb_t ul, lpl;
-    ul = up[0];
-    umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
-    rp[0] = lpl >> GMP_NAIL_BITS;
-  }
-  if (n > 1)
+  if (n == 1)
     {
-      mp_limb_t tarr[2 * SQR_TOOM2_THRESHOLD];
-      mp_ptr tp = tarr;
-      mp_limb_t cy;
+      mp_limb_t ul, lpl;
+      ul = up[0];
+      umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
+      rp[0] = lpl >> GMP_NAIL_BITS;
+    }
+  else
+    {
+      mp_size_t i;
+      mp_ptr xp;
 
-      /* must fit 2*n limbs in tarr */
-      ASSERT (n <= SQR_TOOM2_THRESHOLD);
-
-      cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
-      tp[n - 1] = cy;
-      for (i = 2; i < n; i++)
+      rp += 1;
+      rp[n - 1] = mpn_mul_1 (rp, up + 1, n - 1, up[0]);
+      for (i = n - 2; i != 0; i--)
 	{
-	  mp_limb_t cy;
-	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
-	  tp[n + i - 2] = cy;
+	  up += 1;
+	  rp += 2;
+	  rp[i] = mpn_addmul_1 (rp, up + 1, i, up[0]);
 	}
 
-      MPN_SQR_DIAG_ADDLSH1 (rp, tp, up, n);
+      xp = rp - 2 * n + 3;
+      MPN_SQR_DIAG_ADDLSH1 (xp, xp + 1, up - n + 2, n);
     }
 }
 #endif
