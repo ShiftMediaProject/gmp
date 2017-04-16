@@ -282,10 +282,10 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 #endif
 
 
-#if ! defined (READY_WITH_mpn_sqr_basecase)
+#if ! defined (READY_WITH_mpn_sqr_basecase) && HAVE_NATIVE_mpn_sqr_diag_addlsh1
 
-/* Default mpn_sqr_basecase using mpn_addmul_1.  */
-
+/* mpn_sqr_basecase using mpn_addmul_1 and mpn_sqr_diag_addlsh1, avoiding stack
+   allocation.  */
 void
 mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
@@ -311,7 +311,49 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	}
 
       xp = rp - 2 * n + 3;
-      MPN_SQR_DIAG_ADDLSH1 (xp, xp + 1, up - n + 2, n);
+      mpn_sqr_diag_addlsh1 (xp, xp + 1, up - n + 2, n);
+    }
+}
+#endif
+
+
+#if ! defined (READY_WITH_mpn_sqr_basecase)
+
+/* Default mpn_sqr_basecase using mpn_addmul_1.  */
+void
+mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
+{
+  mp_size_t i;
+
+  ASSERT (n >= 1);
+  ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
+
+  if (n == 1)
+    {
+      mp_limb_t ul, lpl;
+      ul = up[0];
+      umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
+      rp[0] = lpl >> GMP_NAIL_BITS;
+    }
+  else
+    {
+      mp_limb_t tarr[2 * SQR_TOOM2_THRESHOLD];
+      mp_ptr tp = tarr;
+      mp_limb_t cy;
+
+      /* must fit 2*n limbs in tarr */
+      ASSERT (n <= SQR_TOOM2_THRESHOLD);
+
+      cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
+      tp[n - 1] = cy;
+      for (i = 2; i < n; i++)
+	{
+	  mp_limb_t cy;
+	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
+	  tp[n + i - 2] = cy;
+	}
+
+      MPN_SQR_DIAG_ADDLSH1 (rp, tp, up, n);
     }
 }
 #endif
