@@ -1,7 +1,43 @@
+2017-04-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/mul_basecase.asm: New file.
+	* mpn/x86_64/zen/sqr_basecase.asm: New file.
+
+2017-04-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/sqr_basecase.c (addmul_1 variant): Rewrite to compute
+	in-place and to avoid a re-computation.
+
+	* configure.ac: Remove k8, k10 from zen path.
+
+2017-04-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/gmp-mparam.h: New file.
+
+	* mpn/x86_64/zen/com.asm: New file, grabbing another asm file.
+	* mpn/x86_64/zen/copyd.asm: Likewise.
+	* mpn/x86_64/zen/copyi.asm: Likewise.
+	* mpn/x86_64/zen/gcd_1.asm: Likewise.
+	* mpn/x86_64/zen/hamdist.asm: Likewise.
+	* mpn/x86_64/zen/lshift.asm: Likewise.
+	* mpn/x86_64/zen/lshiftc.asm: Likewise.
+	* mpn/x86_64/zen/popcount.asm: Likewise.
+	* mpn/x86_64/zen/rshift.asm: Likewise.
+
+	* config.guess: Recognise AMD zen.
+	* acinclude.m4 (X86_64_PATTERN): Add zen.
+	* config.sub: Corresponding changes.
+	* configure.ac: Corresponding changes.
+	* mpn/x86_64/fat/fat.c: Corresponding changes.
+
 2017-03-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/oddfac_1.c (limb_apprsqrt): Better approximation.
 	* mpz/bin_uiui.c (limb_apprsqrt): Likewise.
+
+2017-03-12  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpf/t-get_d_2exp.c (check_data): Rewrite of check_onebit.
 
 2017-03-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
