@@ -150,7 +150,7 @@ L(wd3):	adc	%r8, %r11
 L(wd2):	adc	%r10, %r13
 	mov	%r13, 16(rp)
 L(wd1):	adc	%r12, %rbx
-	adc	n, %rax
+	adc	$0, %rax
 	mov	%rbx, 24(rp)
 
 	pop	%r13
