@@ -1832,7 +1832,7 @@ case $host in
 	gcc_cflags_cpu="-mtune=znver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=znver1 -march=amdfam10 -march=k8"
 	path="x86/k7/mmx x86/k7 x86/mmx x86"
-	path_64="x86_64/zen x86_64/k10 x86_64/k8 x86_64"
+	path_64="x86_64/zen x86_64"
 	;;
       core2)
 	gcc_cflags_cpu="-mtune=core2 -mtune=k8"
