@@ -55,24 +55,24 @@ see https://www.gnu.org/licenses/.  */
 
 #define DIV_1_VS_MUL_1_PERCENT             326
 
-#define MUL_TOOM22_THRESHOLD                29
-#define MUL_TOOM33_THRESHOLD                81
-#define MUL_TOOM44_THRESHOLD               121
-#define MUL_TOOM6H_THRESHOLD               262
-#define MUL_TOOM8H_THRESHOLD               296
+#define MUL_TOOM22_THRESHOLD                16
+#define MUL_TOOM33_THRESHOLD               101
+#define MUL_TOOM44_THRESHOLD               169
+#define MUL_TOOM6H_THRESHOLD               238
+#define MUL_TOOM8H_THRESHOLD               309
 
-#define MUL_TOOM32_TO_TOOM43_THRESHOLD      81
-#define MUL_TOOM32_TO_TOOM53_THRESHOLD      90
-#define MUL_TOOM42_TO_TOOM53_THRESHOLD      81
-#define MUL_TOOM42_TO_TOOM63_THRESHOLD     103
-#define MUL_TOOM43_TO_TOOM54_THRESHOLD     118
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD      97
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD     114
+#define MUL_TOOM42_TO_TOOM53_THRESHOLD     105
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD     115
+#define MUL_TOOM43_TO_TOOM54_THRESHOLD     143
 
-#define SQR_BASECASE_THRESHOLD               5
-#define SQR_TOOM2_THRESHOLD                 44
-#define SQR_TOOM3_THRESHOLD                 80
-#define SQR_TOOM4_THRESHOLD                208
-#define SQR_TOOM6_THRESHOLD                303
-#define SQR_TOOM8_THRESHOLD                406
+#define SQR_BASECASE_THRESHOLD               0  /* always (native) */
+#define SQR_TOOM2_THRESHOLD                 38
+#define SQR_TOOM3_THRESHOLD                109
+#define SQR_TOOM4_THRESHOLD                354
+#define SQR_TOOM6_THRESHOLD                  0  /* always */
+#define SQR_TOOM8_THRESHOLD                  0  /* always */
 
 #define MULMID_TOOM42_THRESHOLD             40
 
