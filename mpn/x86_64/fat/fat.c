@@ -7,7 +7,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2009, 2011-2015 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2009, 2011-2015, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -421,11 +421,13 @@ __gmpn_cpuvec_init (void)
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_bd1;
+	  break;
 
 	case 0x17:	    /* zen */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_zen;
+	  break;
 	}
     }
   else if (strcmp (vendor_string, "CentaurHauls") == 0)
