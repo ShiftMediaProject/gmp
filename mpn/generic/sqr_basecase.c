@@ -314,6 +314,7 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
       mpn_sqr_diag_addlsh1 (xp, xp + 1, up - n + 2, n);
     }
 }
+#define READY_WITH_mpn_sqr_basecase
 #endif
 
 
@@ -356,4 +357,5 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
       MPN_SQR_DIAG_ADDLSH1 (rp, tp, up, n);
     }
 }
+#define READY_WITH_mpn_sqr_basecase
 #endif
