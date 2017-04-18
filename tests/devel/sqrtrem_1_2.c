@@ -22,14 +22,22 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
      Checks mpn_sqrtrem() exhaustively, starting from 0, incrementing
      the operand by a single unit, until all values handled by
-     sqrtrem_{1,2} are tested. SLOW.
+     mpn_sqrtrem{1,2} are tested. SLOW.
+
+   ./sqrtrem_1_2 s 1
+
+     Checks some special cases for mpn_sqrtrem(). I.e. values of the form
+     2^k*i and 2^k*(i+1)-1, with k=2^n and 0<i<2^k, until all such values,
+     handled by mpn_sqrtrem{1,2}, are tested.
+     Currently supports only the test of values that fits in one limb.
+     Less slow than the exhaustive test.
 
    ./sqrtrem_1_2 c
 
-     Checks all corner cased for mpn_sqrtrem(). I.e. values of the form
+     Checks all corner cases for mpn_sqrtrem(). I.e. values of the form
      i*i and (i+1)*(i+1)-1, for each value of i, until all such values,
-     handled by sqrtrem_{1,2}, are tested.
-     Less slow than the exhaustive test.
+     handled by mpn_sqrtrem{1,2}, are tested.
+     Slightly faster than the special cases test.
 
    For larger values, use
    ./try mpn_sqrtrem
@@ -111,6 +119,68 @@ check_all_values (int justone)
   printf("\n%u\n", bits);
   printf ("\nValues with at most a limb for reminder, tested.\n");
   return 0;
+}
+
+mp_limb_t
+upd (mp_limb_t *s, mp_limb_t k)
+{
+  mp_limb_t _s = *s;
+
+  while (k > _s * 2)
+    {
+      k -= _s * 2 + 1;
+      ++_s;
+    }
+  *s = _s;
+  return k;
+}
+
+mp_limb_t
+upd1 (mp_limb_t *s, mp_limb_t k)
+{
+  mp_limb_t _s = *s;
+
+  if (LIKELY (k < _s * 2)) return k + 1;
+  *s = _s + 1;
+  return k - _s * 2;
+}
+
+int
+check_some_values (int justone)
+{
+  mp_limb_t es, mer, er, k, s[1], r[2], q[2];
+  mp_size_t x;
+  unsigned bits;
+
+  es = 1 << 1;
+  er = 0;
+  *q = es * es;
+  printf ("High-half values tested, up to bits:\n");
+  do {
+    k  = *q - 1;
+    do {
+      x = mpn_sqrtrem (s, r, q, 1);
+      if (UNLIKELY (x != (er != 0)) || UNLIKELY (*s != es)
+	  || UNLIKELY ((x == 1) && (er != *r)))
+	STOP (something_wrong (er, 0, es));
+
+      if ((*q & k) == 0) {
+	*q |= k;
+	er = upd (&es, k + er);
+      } else {
+	++*q;
+	er = upd1 (&es, er);
+      }
+      if (UNLIKELY ((es & 0xffff) == 0))
+	SPINNER(1);
+    } while (es & k);
+  } while (*q != 0);
+  q[1] = 1;
+  SPINNER(2);
+  printf ("\nValues of a single limb, tested.\n");
+  if (justone) return 0;
+  printf ("Testing more values not supported, jet.\n");
+  return -1;
 }
 
 int
@@ -207,24 +277,32 @@ main (int argc, char **argv)
   int justone = 0;
 
   for (;argc > 1;--argc,++argv)
-    {
-      if (*argv[1] == 'x')
-	mode = 0;
-      else if (*argv[1] == 'c')
-	mode = 1;
-      else if (*argv[1] == '1')
-	justone = 1;
-      else if (*argv[1] == '2')
-	justone = 0;
-      else
-	{
-	  fprintf (stderr, "usage: sqrtrem_1_2 [x|c] [1|2]\n");
-	  exit (1);
-	}
+    switch (*argv[1]) {
+    default:
+      fprintf (stderr, "usage: sqrtrem_1_2 [x|c|s] [1|2]\n");
+      exit (1);
+    case 'x':
+      mode = 0;
+      break;
+    case 'c':
+      mode = 1;
+      break;
+    case 's':
+      mode = 2;
+      break;
+    case '1':
+      justone = 1;
+      break;
+    case '2':
+      justone = 0;
     }
 
-  if (mode == 0)
+  switch (mode) {
+  default:
     return check_all_values (justone);
-  else
+  case 1:
     return check_corner_cases (justone);
+  case 2:
+    return check_some_values (justone);
+  }
 }
