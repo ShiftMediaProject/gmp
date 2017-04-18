@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999-2006, 2008-2016 Free Software Foundation, Inc.
+Copyright 1999-2006, 2008-2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1511,6 +1511,8 @@ speed_mpn_sqrlo (struct speed_params *s)
 double
 speed_mpn_sqrlo_basecase (struct speed_params *s)
 {
+  SPEED_RESTRICT_COND (ABOVE_THRESHOLD (s->size, MIN (3, SQRLO_BASECASE_THRESHOLD))
+		       && BELOW_THRESHOLD (s->size, SQRLO_DC_THRESHOLD));
   SPEED_ROUTINE_MPN_SQRLO (mpn_sqrlo_basecase);
 }
 double
