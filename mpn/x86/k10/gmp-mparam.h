@@ -199,14 +199,6 @@ see https://www.gnu.org/licenses/.  */
 
 #define POWM_SEC_TABLE  1,16,114,428,1240
 
-#define MATRIX22_STRASSEN_THRESHOLD         19
-#define HGCD_THRESHOLD                     136
-#define HGCD_APPR_THRESHOLD                175
-#define HGCD_REDUCE_THRESHOLD             3389
-#define GCD_DC_THRESHOLD                   595
-#define GCDEXT_DC_THRESHOLD                424
-#define JACOBI_BASE_METHOD                   4
-
 #define GET_STR_DC_THRESHOLD                15
 #define GET_STR_PRECOMPUTE_THRESHOLD        28
 #define SET_STR_DC_THRESHOLD               100
@@ -214,3 +206,11 @@ see https://www.gnu.org/licenses/.  */
 
 #define FAC_DSC_THRESHOLD                  224
 #define FAC_ODD_THRESHOLD                   29
+
+#define MATRIX22_STRASSEN_THRESHOLD         19
+#define HGCD_THRESHOLD                     136
+#define HGCD_APPR_THRESHOLD                175
+#define HGCD_REDUCE_THRESHOLD             3389
+#define GCD_DC_THRESHOLD                   595
+#define GCDEXT_DC_THRESHOLD                424
+#define JACOBI_BASE_METHOD                   4
