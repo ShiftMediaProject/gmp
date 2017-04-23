@@ -36,7 +36,7 @@ C	    cycles/limb
 C AMD K8,K9	 0.67	   0.583 is possible with zero-reg instead of $0, 4-way
 C AMD K10	 0.67	   this seems hard to beat
 C AMD bd1	 1
-C AMD bd2	 ?
+C AMD bd2	 1
 C AMD bd3	 ?
 C AMD bd4	 ?
 C AMD zen	 0.62
