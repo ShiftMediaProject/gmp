@@ -69,14 +69,14 @@ define(`n',	  `%r9')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-IFDOS(`	define(`rp',      `%rcx')')dnl
-IFDOS(`	define(`up_param',`%rdx')')dnl
-IFDOS(`	define(`n_param', `%r8')')dnl
-IFDOS(`	define(`v0',      `%r9')')dnl
-IFDOS(`	define(`cin',     `48(%rsp)')')dnl
+IFDOS(`	define(`rp',      `%rcx')')
+IFDOS(`	define(`up_param',`%rdx')')
+IFDOS(`	define(`n_param', `%r8')')
+IFDOS(`	define(`v0',      `%r9')')
+IFDOS(`	define(`cin',     `48(%rsp)')')
 
-IFDOS(`	define(`up',      `%rsi')')dnl
-IFDOS(`	define(`n',       `%r8')')dnl
+IFDOS(`	define(`up',      `%rsi')')
+IFDOS(`	define(`n',       `%r8')')
 
 ASM_START()
 	TEXT
@@ -90,18 +90,18 @@ IFSTD(`	mov	n_param, n	')
 	neg	n
 	mul	v0
 
-	bt	$0, R32(n)
-	jnc	L(x0)
+	test	$1, R8(n)
+	jz	L(x0)
 L(x1):	mov	%rax, %r11
 	mov	%rdx, %r10
-	bt	$1, R32(n)
-	jc	L(01)
+	test	$2, R8(n)
+	jnz	L(01)
 
-L(11):	dec	n
-	mov	16(up,n,8), %rax
+L(11):	mov	8(up,n,8), %rax
+	dec	n
 	jmp	L(L3)
 
-L(01):	add	$1, n			C clear cy as side-effect
+L(01):	inc	n
 	jnz	L(L1)
 	mov	%rax, (rp)
 	mov	%rdx, %rax
@@ -111,8 +111,8 @@ IFDOS(`	pop	%rsi		')
 L(x0):	mov	%rax, %r10
 	mov	%rdx, %r11
 	mov	8(up,n,8), %rax
-	bt	$1, R32(n)
-	jnc	L(L0)
+	test	$2, R8(n)
+	jz	L(L0)
 
 L(10):	add	$-2, n
 	jmp	L(L2)
@@ -164,12 +164,12 @@ IFSTD(`	mov	n_param, n	')
 	neg	n
 	mul	v0
 
-	bt	$0, R32(n)
-	jnc	L(x0c)
+	test	$1, R8(n)
+	jz	L(x0c)
 L(x1c):	mov	%rax, %r11
 	mov	%rdx, %r10
-	bt	$1, R32(n)
-	jc	L(01c)
+	test	$2, R8(n)
+	jnz	L(01c)
 
 L(11c):	add	cin, %r11
 	dec	n
@@ -186,8 +186,8 @@ IFDOS(`	pop	%rsi		')
 
 L(x0c):	mov	%rax, %r10
 	mov	%rdx, %r11
-	bt	$1, R32(n)
-	jnc	L(00c)
+	test	$2, R8(n)
+	jz	L(00c)
 
 L(10c):	add	$-2, n
 	add	cin, %r10
