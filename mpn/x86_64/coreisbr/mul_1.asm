@@ -2,7 +2,8 @@ dnl  X86-64 mpn_mul_1 optimised for Intel Sandy Bridge.
 
 dnl  Contributed to the GNU project by Torbjörn Granlund.
 
-dnl  Copyright 2003-2005, 2007, 2008, 2011-2013 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005, 2007, 2008, 2011-2013, 2017 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -56,114 +57,143 @@ C VIA nano
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 
-C TODO
-C  * The loop is great, but the prologue code was quickly written.  Tune it!
-C  * Add mul_1c entry point.
-C  * We could preserve one less register under DOS64 calling conventions, using
-C    r10 instead of rsi.
-
 define(`rp',      `%rdi')   C rcx
-define(`up',      `%rsi')   C rdx
+define(`up_param',`%rsi')   C rdx
 define(`n_param', `%rdx')   C r8
 define(`v0',      `%rcx')   C r9
+define(`cin',     `%r8')    C stack
 
-define(`n',	  `%r11')
+define(`up',      `%rsi')   C same as rp_param
+define(`n',	  `%r9')
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-IFDOS(`	define(`up',     ``%rsi'')') dnl
-IFDOS(`	define(`rp',     ``%rcx'')') dnl
-IFDOS(`	define(`v0',     ``%r9'')') dnl
-IFDOS(`	define(`r9',     ``rdi'')') dnl
-IFDOS(`	define(`n_param',``%r8'')') dnl
-IFDOS(`	define(`n',      ``%r8'')') dnl
-IFDOS(`	define(`r8',     ``r11'')') dnl
+IFDOS(`	define(`rp',      `%rcx')')dnl
+IFDOS(`	define(`up_param',`%rdx')')dnl
+IFDOS(`	define(`n_param', `%r8')')dnl
+IFDOS(`	define(`v0',      `%r9')')dnl
+IFDOS(`	define(`cin',     `48(%rsp)')')dnl
+
+IFDOS(`	define(`up',      `%rsi')')dnl
+IFDOS(`	define(`n',       `%r8')')dnl
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_1)
-
-IFDOS(``push	%rsi		'')
-IFDOS(``push	%rdi		'')
-IFDOS(``mov	%rdx, %rsi	'')
-
-	mov	(up), %rax
-	mov	R32(`n_param'), R32(%r10)
-IFSTD(`	mov	n_param, n		')
-
-	lea	(up,n_param,8), up
+IFDOS(`	push	%rsi		')
+	mov	(up_param), %rax
+IFSTD(`	mov	n_param, n	')
+	lea	(up_param,n_param,8), up
 	lea	-8(rp,n_param,8), rp
 	neg	n
 	mul	v0
-	and	$3, R32(%r10)
-	jz	L(b0)
-	cmp	$2, R32(%r10)
-	jb	L(b1)
-	jz	L(b2)
 
-L(b3):	add	$-1, n
-	mov	%rax, %r9
-	mov	%rdx, %r8
+	bt	$0, R32(n)
+	jnc	L(x0)
+L(x1):	mov	%rax, %r11
+	mov	%rdx, %r10
+	bt	$1, R32(n)
+	jc	L(01)
+
+L(11):	dec	n
 	mov	16(up,n,8), %rax
 	jmp	L(L3)
 
-L(b1):	mov	%rax, %r9
-	mov	%rdx, %r8
-	add	$1, n
-	jnc	L(L1)
+L(01):	add	$1, n			C clear cy as side-effect
+	jnz	L(L1)
 	mov	%rax, (rp)
 	mov	%rdx, %rax
-IFDOS(``pop	%rdi		'')
-IFDOS(``pop	%rsi		'')
+IFDOS(`	pop	%rsi		')
 	ret
 
-L(b2):	add	$-2, n
-	mov	%rax, %r8
-	mov	%rdx, %r9
-	mov	24(up,n,8), %rax
+L(x0):	mov	%rax, %r10
+	mov	%rdx, %r11
+	mov	8(up,n,8), %rax
+	bt	$1, R32(n)
+	jnc	L(L0)
+
+L(10):	add	$-2, n
 	jmp	L(L2)
 
-L(b0):	mov	%rax, %r8
-	mov	%rdx, %r9
-	mov	8(up,n,8), %rax
-	jmp	L(L0)
-
 	ALIGN(8)
-L(top):	mov	%rdx, %r8
-	add	%rax, %r9
+L(top):	mov	%rdx, %r10
+	add	%rax, %r11
 L(L1):	mov	0(up,n,8), %rax
-	adc	$0, %r8
+	adc	$0, %r10
 	mul	v0
-	add	%rax, %r8
-	mov	%r9, 0(rp,n,8)
+	add	%rax, %r10
+	mov	%r11, 0(rp,n,8)
 	mov	8(up,n,8), %rax
-	mov	%rdx, %r9
-	adc	$0, %r9
+	mov	%rdx, %r11
+L(L0c):	adc	$0, %r11
 L(L0):	mul	v0
-	mov	%r8, 8(rp,n,8)
-	add	%rax, %r9
-	mov	%rdx, %r8
-	mov	16(up,n,8), %rax
-	adc	$0, %r8
+	mov	%r10, 8(rp,n,8)
+	add	%rax, %r11
+	mov	%rdx, %r10
+L(L3c):	mov	16(up,n,8), %rax
+	adc	$0, %r10
 L(L3):	mul	v0
-	mov	%r9, 16(rp,n,8)
-	mov	%rdx, %r9
-	add	%rax, %r8
-	mov	24(up,n,8), %rax
-	adc	$0, %r9
+	mov	%r11, 16(rp,n,8)
+	mov	%rdx, %r11
+	add	%rax, %r10
+L(L2c):	mov	24(up,n,8), %rax
+	adc	$0, %r11
 L(L2):	mul	v0
-	mov	%r8, 24(rp,n,8)
+	mov	%r10, 24(rp,n,8)
 	add	$4, n
 	jnc	L(top)
 
-L(end):	add	%rax, %r9
+L(end):	add	%rax, %r11
 	mov	%rdx, %rax
 	adc	$0, %rax
-	mov	%r9, (rp)
+	mov	%r11, (rp)
 
-IFDOS(``pop	%rdi		'')
-IFDOS(``pop	%rsi		'')
+IFDOS(`	pop	%rsi		')
 	ret
+EPILOGUE()
+
+	ALIGN(16)
+PROLOGUE(mpn_mul_1c)
+IFDOS(`	push	%rsi		')
+	mov	(up_param), %rax
+IFSTD(`	mov	n_param, n	')
+	lea	(up_param,n_param,8), up
+	lea	-8(rp,n_param,8), rp
+	neg	n
+	mul	v0
+
+	bt	$0, R32(n)
+	jnc	L(x0c)
+L(x1c):	mov	%rax, %r11
+	mov	%rdx, %r10
+	bt	$1, R32(n)
+	jc	L(01c)
+
+L(11c):	add	cin, %r11
+	dec	n
+	jmp	L(L3c)
+
+L(01c):	add	cin, %r11
+	inc	n
+	jnz	L(L1)
+	mov	%r11, (rp)
+	mov	%rdx, %rax
+	adc	$0, %rax
+IFDOS(`	pop	%rsi		')
+	ret
+
+L(x0c):	mov	%rax, %r10
+	mov	%rdx, %r11
+	bt	$1, R32(n)
+	jnc	L(00c)
+
+L(10c):	add	$-2, n
+	add	cin, %r10
+	jmp	L(L2c)
+
+L(00c):	add	cin, %r10
+	mov	8(up,n,8), %rax
+	jmp	L(L0c)
 EPILOGUE()
