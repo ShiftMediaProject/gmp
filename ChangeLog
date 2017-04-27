@@ -1,4 +1,24 @@
+2017-04-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/sqr_basecase.asm: Rewrite to do 2x and limb squaring
+	in main loop.
+
+2017-04-25  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/fat/fat_entry.asm: Allocate correct DOS64 frame.
+	* mpn/x86_64/divrem_2.asm: Likewise.
+	* mpn/x86_64/mod_1_2.asm: Likewise.
+	* mpn/x86_64/mod_1_4.asm: Likewise.
+	* mpn/x86_64/mod_1_1.asm: Likewise.
+
+2017-04-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreisbr/mul_1.asm: Rewrite feed-in code and add mul_1c
+	entry point.
+
 2017-04-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init): Amend last change.
 
 	* mpn/x86_64/zen/mul_basecase.asm: New file.
 	* mpn/x86_64/zen/sqr_basecase.asm: New file.
