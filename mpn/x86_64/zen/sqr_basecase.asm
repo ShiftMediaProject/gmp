@@ -33,6 +33,7 @@ include(`../config.m4')
 C TODO
 C  * Polish.
 C  * Micro-schedule.
+C  * Perform CSE of corner code as indicated by FIXME comments.
 C  * Do overlapped software pipelining.
 C  * Consider shallower sw pipelining of mul_1/addmul_1 loops, allowing 4
 C    instead of 8 product registers.  Keep 4x unrolling or go to 2x.  This
@@ -166,37 +167,35 @@ L(mx1):	test	$2, R8(un)
 	jz	L(mb3)
 
 L(mb1):	mulx(	%r9, %rbx, %rax)
-	`mulx'	16(up,un,8), %r9, %r8
-	`mulx'	24(up,un,8), %r11, %r10
+	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %r9, %r8
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x18	C mulx 24(up,un,8), %r11, %r10
 	add	%r15, %rbx
 	jmp	L(mlo1)
 
 L(mb3):	mulx(	%r9, %r11, %r10)
-	`mulx'	16(up,un,8), %r13, %r12
-	`mulx'	24(up,un,8), %rbx, %rax
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x10	C mulx 16(up,un,8), %r13, %r12
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x18	C mulx 24(up,un,8), %rbx, %rax
 	add	%r15, %r11
 	jrcxz	L(n4)
 	jmp	L(mlo3)
 L(n4):	mov	%r11, 8(rp)
 	adc	%r10, %r13
-	mov	%r13, 16(rp)		C FIXME: suppress
 	adc	%r12, %rbx
 	adc	$0, %rax
-	mov	%rbx, 24(rp)		C FIXME: suppress
 	jmp	L(m)
 
 L(mx0):	test	$2, R8(un)
 	jnz	L(mb0)
 
 L(mb2):	mulx(	%r9, %r13, %r12)
-	`mulx'	16(up,un,8), %rbx, %rax
-	`mulx'	24(up,un,8), %r9, %r8
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %rbx, %rax
+	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x18	C mulx 24(up,un,8), %r9, %r8
 	add	%r15, %r13
 	jmp	L(mlo2)
 
 L(mb0):	mulx(	%r9, %r9, %r8)
-	`mulx'	16(up,un,8), %r11, %r10
-	`mulx'	24(up,un,8), %r13, %r12
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x10	C mulx 16(up,un,8), %r11, %r10
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x18 	C mulx 24(up,un,8), %r13, %r12
 	add	%r15, %r9
 	jmp	L(mlo0)
 
@@ -258,13 +257,13 @@ L(x1):	test	$2, R8(un)
 L(b1):	mulx(	%r8, %rbx, %rax)
 	add	%r15, %rbx
 	adc	$0, %rax
-	`mulx'	8(up,un,8), %r9, %r8
-	`mulx'	16(up,un,8), %r11, %r10
+	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x08	C mulx 8(up,un,8), %r9, %r8
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x10	C mulx 16(up,un,8), %r11, %r10
 	jmp	L(lo1)
 
 L(b0):	mulx(	%r8, %r9, %r8)
-	`mulx'	8(up,un,8), %r11, %r10
-	`mulx'	16(up,un,8), %r13, %r12
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x08	C mulx 8(up,un,8), %r11, %r10
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x10	C mulx 16(up,un,8), %r13, %r12
 	add	%r15, %r9
 	jmp	L(lo0)
 
@@ -272,16 +271,16 @@ L(x0):	test	$2, R8(un)
 	jz	L(b0)
 
 L(b2):	mulx(	%r8, %r13, %r12)
-	`mulx'	8(up,un,8), %rbx, %rax
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x08	C mulx 8(up,un,8), %rbx, %rax
 	add	%r15, %r13
 	adc	%r12, %rbx
 	adc	$0, %rax
-	`mulx'	16(up,un,8), %r9, %r8
+	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %r9, %r8
 	jmp	L(lo2)
 
 L(b3):	mulx(	%r8, %r11, %r10)
-	`mulx'	8(up,un,8), %r13, %r12
-	`mulx'	16(up,un,8), %rbx, %rax
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x08	C mulx 8(up,un,8), %r13, %r12
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %rbx, %rax
 	add	%r15, %r11
 	adc	%r10, %r13
 	adc	%r12, %rbx
@@ -317,65 +316,64 @@ L(lo0):	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
 	jmp	L(outer)
 
 L(xit3):add	%r11, 8(rp)
-	adc	%r13, 16(rp)		C FIXME: reverse operands
-	adc	%rbx, 24(rp)		C FIXME: reverse operands
+	adc	16(rp), %r13
+	adc	24(rp), %rbx
 	adc	$0, %rax
 L(m):	mov	%rax, 32(rp)
-	mov	-24(up), %rdx
-	lea	8(rp), rp		C FIXME
-	mov	-32(up), %r9
+	mov	-24(up), %rdx		C FIXME: CSE
+	mov	-32(up), %r9		C FIXME: CSE
 	sar	$63, %r9
 	and	%rdx, %r9
-	add	8(rp), %r9
+	add	%r13, %r9
 	mulx(	%rdx, %rax, %r15)
-	mov	-16(up), %r8
+	mov	-16(up), %r8		C FIXME: CSE
 	adc	$0, %r15
 	add	%rax, %r9
 	adc	$0, %r15
-	mov	%r9, 8(rp)
+	mov	%r9, 16(rp)
 	mov	-32(up), %r10
-	shr	$63, %r10
-	lea	(%r10,%rdx,2), %rdx
+	shl	%r10
+	adc	%rdx, %rdx
 	mulx(	%r8, %r13, %r12)
-	`mulx'	-8(up), %rbx, %rax
+	mulx(	-8,(up), %r11, %rax)	C FIXME: CSE
 	add	%r15, %r13
-	adc	%r12, %rbx
+	adc	%r12, %r11
 	adc	$0, %rax
-	add	%r13, 16(rp)
-	adc	24(rp), %rbx
+	add	%rbx, %r13
+	mov	%r13, 24(rp)
+	adc	32(rp), %r11
 	adc	$0, %rax
-	mov	-16(up), %rdx
-	mov	-8(up), %r8
+	mov	-16(up), %rdx		C FIXME: CSE
+	mov	-8(up), %r8		C FIXME: CSE
 	mov	-24(up), %r9
 	sar	$63, %r9
 	and	%rdx, %r9
-	add	%rbx, %r9
+	add	%r11, %r9
 	mulx(	%rdx, %rbp, %r15)
 	adc	$0, %r15
 	add	%rbp, %r9
 	adc	$0, %r15
-	mov	%r9, 24(rp)
+	mov	%r9, 32(rp)
 	mov	-24(up), %r10
-	shr	$63, %r10
-	lea	(%r10,%rdx,2), %rdx
+	shl	%r10
+	adc	%rdx, %rdx
 	mulx(	%r8, %rbx, %rbp)
 	add	%r15, %rbx
 	adc	$0, %rbp
 	adc	%rbx, %rax
-	mov	%rax, 32(rp)
+	mov	%rax, 40(rp)
 	adc	$0, %rbp
-	mov	-8(up), %rdx
-	mov	-16(up), %r9
+	mov	-8(up), %rdx		C FIXME: CSE
+	mov	-16(up), %r9		C FIXME: CSE
 	sar	$63, %r9
 	and	%rdx, %r9
 	add	%rbp, %r9
-	mov	%r9, 40(rp)
 	mulx(	%rdx, %rbp, %r15)
 	adc	$0, %r15
 	add	%rbp, %r9
 	adc	$0, %r15
-	mov	%r9, 40(rp)
-	mov	%r15, 48(rp)
+	mov	%r9, 48(rp)
+	mov	%r15, 56(rp)
 
 	pop	%rbx
 	pop	%rbp
