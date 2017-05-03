@@ -61,13 +61,6 @@ define(`v0_param',`%rcx')   C r9
 define(`n',       `%rcx')
 define(`v0',      `%rdx')
 
-IFDOS(`	define(`up', ``%rsi'')	') dnl
-IFDOS(`	define(`rp', ``%rcx'')	') dnl
-IFDOS(`	define(`v0', ``%r9'')	') dnl
-IFDOS(`	define(`r9', ``rdi'')	') dnl
-IFDOS(`	define(`n',  ``%r8'')	') dnl
-IFDOS(`	define(`r8', ``r11'')	') dnl
-
 ASM_START()
 	TEXT
 	ALIGN(16)
@@ -114,10 +107,10 @@ L(b3):	mulx(	%r9, %r11, %r10)
 
 L(b2):	mov	%r8, %r10		C carry-in limb
 	mulx(	%r9, %r13, %r12)
-	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x08 	C mulx 8(up,n,8), %rbx, %rax
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x08	C mulx 8(up,n,8), %rbx, %rax
 	sub	$-2, n
 	jz	L(wd2)
-	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce	  	C mulx (up,n,8), %r9, %r8
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
 	add	%r10, %r13
 	jmp	L(lo2)
 
