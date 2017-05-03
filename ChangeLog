@@ -1,3 +1,25 @@
+2017-05-03  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreisbr/cnd_aors_n.asm: New file.
+	* mpn/x86_64/coreisbr/cnd_add_n.asm: New file.
+
+	* mpn/x86_64/core2/aorsmul_1.asm: Tune.
+
+	* mpn/x86_64/silvermont/mul_1.asm: New file, grabbing another asm file.
+	* mpn/x86_64/silvermont/aorsmul_1.asm: Likewise.
+	* mpn/x86_64/silvermont/aorrlsh1_n.asm: Likewise.
+	* mpn/x86_64/silvermont/aorrlsh2_n.asm: Likewise.
+	* mpn/x86_64/silvermont/lshift.asm: Likewise.
+	* mpn/x86_64/silvermont/rshift.asm: Likewise.
+	* mpn/x86_64/silvermont/lshiftc.asm: Likewise.
+
+	* mpn/x86_64/zen/mul_basecase.asm: Split outer loop into 4 loops.
+
+2017-05-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/sqr_basecase.asm: Use .byte for encoding all mulx.
+	Misc tuning.
+
 2017-04-27  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/zen/sqr_basecase.asm: Rewrite to do 2x and limb squaring
