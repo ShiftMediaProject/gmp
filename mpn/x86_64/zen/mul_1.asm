@@ -48,7 +48,6 @@ C Intel IBR	 -
 C Intel HWL	 ?
 C Intel BWL	 ?
 C Intel SKL	 ?
-C Intel BWL	 ?
 C Intel atom	 -
 C Intel SLM      -
 C VIA nano	 -
