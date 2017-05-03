@@ -48,7 +48,7 @@ C Intel HWL      3.66
 C Intel BWL      2.87
 C Intel SKL      2.79
 C Intel atom    20.6
-C Intel SLM      8
+C Intel SLM      7.6
 C VIA nano       5.25
 
 C INPUT PARAMETERS
@@ -116,23 +116,24 @@ PROLOGUE(func)
 	mul	%rcx
 
 L(start_nc):
-	bt	$0, R32(%rbx)
-	jc	L(odd)
+	test	$1, R8(%rbx)
+	jnz	L(odd)
 
 	lea	(%rax), %r11
 	mov	8(up,%rbx,8), %rax
 	lea	(%rdx), %rbp
 	mul	%rcx
 	add	$2, %rbx
-	jns	L(n2)
+	jz	L(n2)
 
 	lea	(%rax), %r8
 	mov	(up,%rbx,8), %rax
 	lea	(%rdx), %r9
 	jmp	L(mid)
 
-L(odd):	add	$1, %rbx
-	jns	L(n1)
+	ALIGN(8)
+L(odd):	inc	%rbx
+	jz	L(n1)
 
 	lea	(%rax), %r8
 	mov	(up,%rbx,8), %rax
@@ -169,16 +170,16 @@ L(e):	add	$2, %rbx
 	ADDSUB	%r8, %r10
 	adc	%r9, %r11
 	mov	%r10, -8(rp)
-	adc	$0, %rbp
+	adc	%rbx, %rbp		C rbx = 0
 L(n2):	mov	(rp), %r10
 	ADDSUB	%r11, %r10
 	adc	%rbp, %rax
 	mov	%r10, (rp)
-	adc	$0, %rdx
+	adc	%rbx, %rdx		C rbx = 0
 L(n1):	mov	8(rp), %r10
 	ADDSUB	%rax, %r10
 	mov	%r10, 8(rp)
-	mov	R32(%rbx), R32(%rax)	C zero rax
+	mov	R32(%rbx), R32(%rax)	C rbx = 0
 	adc	%rdx, %rax
 	pop	%rbp
 	pop	%rbx
