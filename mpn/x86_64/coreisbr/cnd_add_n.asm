@@ -44,7 +44,7 @@ C Intel P4
 C Intel PNR	 3.0
 C Intel NHM	 3.75
 C Intel SBR	 1.93
-C Intel IBR	 1.60
+C Intel IBR	 1.89
 C Intel HWL	 1.78
 C Intel BWL	 1.50
 C Intel SKL	 1.50
