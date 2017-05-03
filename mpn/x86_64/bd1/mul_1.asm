@@ -48,7 +48,7 @@ C Intel HWL      2.41
 C Intel BWL      2.49
 C Intel SKL      2.50
 C Intel atom    20.3
-C Intel SLM      8
+C Intel SLM      7.8
 C VIA nano       4.25
 
 C The loop of this code is the result of running a code generation and
