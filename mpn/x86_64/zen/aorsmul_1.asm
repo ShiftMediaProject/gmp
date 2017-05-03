@@ -74,13 +74,6 @@ ifdef(`OPERATION_submul_1',`
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
-IFDOS(`	define(`up', ``%rsi'')	') dnl
-IFDOS(`	define(`rp', ``%rcx'')	') dnl
-IFDOS(`	define(`vl', ``%r9'')	') dnl
-IFDOS(`	define(`r9', ``rdi'')	') dnl
-IFDOS(`	define(`n',  ``%r8'')	') dnl
-IFDOS(`	define(`r8', ``r11'')	') dnl
-
 ASM_START()
 	TEXT
 	ALIGN(16)
