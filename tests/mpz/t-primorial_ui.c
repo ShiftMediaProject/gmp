@@ -61,12 +61,12 @@ main (int argc, char *argv[])
       MPZ_CHECK_FORMAT (r);
 
       if (mpz_cmp (f, r) != 0)
-        {
-          printf ("mpz_primorial_ui(%lu) wrong\n", n);
-          printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
-          printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
-          abort ();
-        }
+	{
+	  printf ("mpz_primorial_ui(%lu) wrong\n", n);
+	  printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
+	  printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
+	  abort ();
+	}
 
       if (isprime (++n))
 	mpz_mul_ui (f, f, n);  /* p# = (p-1)# * (p) */
@@ -91,15 +91,15 @@ main (int argc, char *argv[])
       do {
 	if (isprime (++i))
 	  mpz_mul_ui (f, f, i);
-      } while (--d != 0); 
+      } while (--d != 0);
 
       if (mpz_cmp (f, r) != 0)
-        {
-          printf ("mpz_primorial_ui(%lu) wrong\n", i);
-          printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
-          printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
-          abort ();
-        }
+	{
+	  printf ("mpz_primorial_ui(%lu) wrong\n", i);
+	  printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
+	  printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
+	  abort ();
+	}
     } while (++n < limit);
   /* Chech a single "big" value, modulo a larger prime */
   n = 2095637;
