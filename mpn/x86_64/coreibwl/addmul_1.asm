@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addmul_1 optimised for Intel Broadwell.
 
-dnl  Copyright 2015 Free Software Foundation, Inc.
+dnl  Copyright 2015, 2017 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -58,7 +58,7 @@ C TODO
 C  * Put an initial mulx before switching, targeting some free registers.
 C  * Tune feed-in code.
 C  * Trim nop execution after L(f2).
-C  * Port to DOS64, not forgetting nop execution.
+C  * For DOS64, fix nop execution.
 
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx
@@ -67,7 +67,7 @@ define(`v0_param',`%rcx')   C r9
 
 define(`n',       `%rcx')
 
-dnl ABI_SUPPORT(DOS64)
+ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 dnl IFDOS(`	define(`up', ``%rsi'')	') dnl
@@ -81,6 +81,7 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_addmul_1)
+	FUNC_ENTRY(4)
 
 	mov	v0_param, %r10
 	mov	n_param, n
@@ -140,12 +141,14 @@ L(f1):	mulx(	(up), %r9, %rax)
 L(1):	add	(rp), %r9
 	mov	%r9, (rp)
 	adc	%rcx, %rax		C relies on rcx = 0
+	FUNC_EXIT()
 	ret
 
 L(end):	adox(	(rp), %r9)
 	mov	%r9, (rp)
 	adox(	%rcx, %rax)		C relies on rcx = 0
 	adc	%rcx, %rax		C relies on rcx = 0
+	FUNC_EXIT()
 	ret
 
 ifdef(`PIC',
