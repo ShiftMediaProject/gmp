@@ -99,7 +99,7 @@ mpn_div_qr_1 (mp_ptr qp, mp_limb_t *qh, mp_srcptr up, mp_size_t n,
       count_leading_zeros (cnt, d);
       d <<= cnt;
 
-#if HAVE_NATIVE_div_qr_1u_pi1
+#if HAVE_NATIVE_mpn_div_qr_1u_pi1
       /* FIXME: Call loop doing on-the-fly normalization */
 #endif
 
