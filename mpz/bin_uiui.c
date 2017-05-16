@@ -273,6 +273,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       nn += (np[nn - 1] >= kp[kn - 1]);
       nn -= kn;
       mpn_sbpi1_bdiv_q (np, np, nn, kp, MIN(kn,nn), -dinv);
+      mpn_neg (np, np, nn);
 
       if (kmax == 0)
 	break;

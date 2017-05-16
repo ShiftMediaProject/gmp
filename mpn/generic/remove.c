@@ -7,7 +7,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2009, 2012-2014 Free Software Foundation, Inc.
+Copyright 2009, 2012-2014, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -113,10 +113,15 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       qp[qn] = 0;
       mpn_bdiv_qr_wrap (qp2, tp, qp, qn + 1, pp, pn);
       if (!mpn_zero_p (tp, pn))
-	break;			/* could not divide by V^npowers */
+	{
+	  if (mpn_cmp (tp, pp, pn) != 0)
+	    break;		/* could not divide by V^npowers */
+	}
 
       MP_PTR_SWAP (qp, qp2);
       qn = qn - pn;
+      mpn_neg (qp, qp, qn+1);
+
       qn += qp[qn] != 0;
 
       pwpsp[npowers] = pp;
@@ -154,10 +159,15 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       qp[qn] = 0;
       mpn_bdiv_qr_wrap (qp2, tp, qp, qn + 1, pwpsp[i], pn);
       if (!mpn_zero_p (tp, pn))
-	continue;		/* could not divide by V^i */
+	{
+	  if (mpn_cmp (tp, pwpsp[i], pn) != 0)
+	    continue;		/* could not divide by V^i */
+	}
 
       MP_PTR_SWAP (qp, qp2);
       qn = qn - pn;
+      mpn_neg (qp, qp, qn+1);
+
       qn += qp[qn] != 0;
 
       pwr += (mp_bitcnt_t) 1 << i;

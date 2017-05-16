@@ -1,3 +1,28 @@
+2017-05-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/divis.c (mpn_divisible_p): Updated the divisibility
+	test; bdiv now returns R = D rather than R = 0 when D divides a
+	non-zero U.
+
+	* mpn/generic/binvert.c (mpn_binvert): Negate bdiv quotient.
+	* mpn/generic/divexact.c (mpn_divexact): Likewise.
+	* mpn/generic/remove.c (mpn_remove): Likewise.
+	* mpz/bin_uiui.c (mpz_bdiv_bin_uiui): Likewise.
+
+	* tests/mpn/t-bdiv.c (check_one): Updated to new convention,
+	B^{qn} R = U + QD.
+
+	* mpn/generic/sbpi1_bdiv_qr.c (mpn_sbpi1_bdiv_qr): Reimplemented,
+	for new bdiv convention.
+	* mpn/generic/sbpi1_bdiv_q.c (mpn_sbpi1_bdiv_q): Likewise.
+	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q_n)
+	(mpn_dcpi1_bdiv_q): Adapted to new bdiv convention.
+	* mpn/generic/dcpi1_bdiv_qr.c (mpn_dcpi1_bdiv_qr_n)
+	(mpn_dcpi1_bdiv_qr): Likewise.
+	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr): Adapted to new bdiv
+	convention, using a wrapper calling the old function.
+	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q): Likewise.
+
 2017-05-03  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/coreisbr/cnd_aors_n.asm: New file.
@@ -252,7 +277,7 @@
 	instead of mpn_divexact_1.
 
 	* gen-bases.c (binvert): New function, computing modular inverse and
-	low zero count.
+p	low zero count.
 	(header): Print MP_BASES_BIG_BASE_CTZ_10 and
 	MP_BASES_BIG_BASE_BINVERTED_10.
 

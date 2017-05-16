@@ -7,7 +7,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2006, 2007, 2009-2011 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2009-2011, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,7 +45,7 @@ mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
   return n;
 }
 
-/* Computes Q = N / D mod B^n, destroys N.
+/* Computes Q = - N / D mod B^n, destroys N.
 
    N = {np,n}
    D = {dp,n}
@@ -67,12 +67,12 @@ mpn_dcpi1_bdiv_q_n (mp_ptr qp,
       cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, lo, dinv, tp);
 
       mpn_mullo_n (tp, qp, dp + hi, lo);
-      mpn_sub_n (np + hi, np + hi, tp, lo);
+      mpn_add_n (np + hi, np + hi, tp, lo);
 
       if (lo < hi)
 	{
-	  cy += mpn_submul_1 (np + lo, qp, lo, dp[lo]);
-	  np[n - 1] -= cy;
+	  cy += mpn_addmul_1 (np + lo, qp, lo, dp[lo]);
+	  np[n - 1] += cy;
 	}
       qp += lo;
       np += lo;
@@ -81,7 +81,7 @@ mpn_dcpi1_bdiv_q_n (mp_ptr qp,
   mpn_sbpi1_bdiv_q (qp, np, n, dp, n, dinv);
 }
 
-/* Computes Q = N / D mod B^nn, destroys N.
+/* Computes Q = - N / D mod B^nn, destroys N.
 
    N = {np,nn}
    D = {dp,dn}
@@ -129,7 +129,7 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
 	    mpn_mul (tp, dp + qn, dn - qn, qp, qn);
 	  mpn_incr_u (tp + qn, cy);
 
-	  mpn_sub (np + qn, np + qn, nn - qn, tp, dn);
+	  mpn_add (np + qn, np + qn, nn - qn, tp, dn);
 	  cy = 0;
 	}
 
@@ -139,7 +139,7 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
       qn = nn - qn;
       while (qn > dn)
 	{
-	  mpn_sub_1 (np + dn, np + dn, qn - dn, cy);
+	  mpn_add_1 (np + dn, np + dn, qn - dn, cy);
 	  cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, dn, dinv, tp);
 	  qp += dn;
 	  np += dn;
