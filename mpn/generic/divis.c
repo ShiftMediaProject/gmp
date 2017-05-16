@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001, 2002, 2005, 2009, 2014 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2005, 2009, 2014, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -64,6 +64,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
   mp_size_t  i;
   mp_limb_t di;
   unsigned  twos;
+  int c;
   TMP_DECL;
 
   ASSERT (an >= 0);
@@ -181,18 +182,13 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
       mpn_mu_bdiv_qr (qp, rp, rp, an, dp, dn, tp);
     }
 
-  /* test for {rp,dn} zero or non-zero */
-  i = 0;
-  do
-    {
-      if (rp[i] != 0)
-	{
-	  TMP_FREE;
-	  return 0;
-	}
-    }
-  while (++i < dn);
+  /* In general, bdiv may return either R = 0 or R = D when D divides
+     A. But R = 0 can happen only when A = 0, which we already have
+     excluded. Furthermore, R == D (mod B^{dn}) implies no carry, so
+     we don't need to check the carry returned from bdiv. */
+
+  MPN_CMP (c, rp, dp, dn);
 
   TMP_FREE;
-  return 1;
+  return c == 0;
 }

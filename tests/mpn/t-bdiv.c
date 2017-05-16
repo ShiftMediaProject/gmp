@@ -1,4 +1,4 @@
-/* Copyright 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+/* Copyright 2006, 2007, 2009, 2010, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -60,7 +60,6 @@ check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
 	   mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, const char *fname)
 {
   mp_size_t qn;
-  int cmp;
   mp_ptr tp;
   mp_limb_t cy = 4711;		/* silence warnings */
   TMP_DECL;
@@ -79,15 +78,10 @@ check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
   else
     mpn_mul (tp, qp, qn, dp, dn);
 
-  if (rp != NULL)
-    {
-      cy = mpn_add_n (tp + qn, tp + qn, rp, dn);
-      cmp = cy != rh || mpn_cmp (tp, np, nn) != 0;
-    }
-  else
-    cmp = mpn_cmp (tp, np, nn - dn) != 0;
+  cy = mpn_add_n (tp, tp, np, nn);
 
-  if (cmp != 0)
+  if (! mpn_zero_p (tp, qn)
+      || (rp != NULL && (cy != rh || mpn_cmp (tp + qn, rp, dn) != 0)))
     {
       printf ("\r*******************************************************************************\n");
       printf ("%s inconsistent in test %lu\n", fname, test);
