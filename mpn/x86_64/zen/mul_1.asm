@@ -64,9 +64,13 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_1c)
+	FUNC_ENTRY(4)
+IFDOS(` mov	56(%rsp), %r8	')
 	jmp	L(ent)
 EPILOGUE()
+	ALIGN(16)
 PROLOGUE(mpn_mul_1)
+	FUNC_ENTRY(4)
 	xor	R32(%r8), R32(%r8)	C carry-in limb
 L(ent):	mov	(up), %r9
 
@@ -148,6 +152,7 @@ L(wd1):	adc	%r12, %rbx
 	pop	%r13
 	pop	%r12
 	pop	%rbx
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 ASM_END()

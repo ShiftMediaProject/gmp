@@ -71,12 +71,16 @@ ifdef(`OPERATION_submul_1',`
       define(`func',  `mpn_submul_1')
 ')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
+	FUNC_ENTRY(4)
 	mov	(up), %r8
 
 	push	%rbx
@@ -155,6 +159,7 @@ L(wd1):	ADCSBB	%rbx, 24(rp)
 	pop	%r13
 	pop	%r12
 	pop	%rbx
+	FUNC_EXIT()
 	ret
 EPILOGUE()
 ASM_END()
