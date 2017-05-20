@@ -31,24 +31,24 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9
-C AMD K10
-C AMD bull
-C AMD pile
-C AMD steam
-C AMD excavator
-C AMD bobcat
-C AMD jaguar
-C Intel P4
-C Intel core2
-C Intel NHM
-C Intel SBR
-C Intel IBR
-C Intel HWL
-C Intel BWL
-C Intel SKL
+C AMD K8,K9	 -
+C AMD K10	 2.0		=
+C AMD bd1	~4.4		=
+C AMD bd2	~4.4		=
+C AMD bd3
+C AMD bd4
+C AMD bobcat	 7.55		=
+C AMD jaguar	 2.32		+
+C Intel P4	 -
+C Intel core2	 -
+C Intel NHM	 2.16		-
+C Intel SBR	 2.30		-
+C Intel IBR	 2.22		-
+C Intel HWL	 1.64		=
+C Intel BWL	 1.51		+
+C Intel SKL	 1.52		=
 C Intel atom
-C Intel SLM	 2.7
+C Intel SLM	 2.7		+
 C VIA nano
 
 define(`ap',		`%rdi')
@@ -75,7 +75,7 @@ PROLOGUE(mpn_hamdist)
 
 L(1):	.byte	0xf3,0x49,0x0f,0xb8,0xc0	C popcnt %r8, %rax
 	xor	R32(%r10), R32(%r10)
-	add	$1, n
+	inc	n
 	js	L(top)
 	FUNC_EXIT()
 	ret
