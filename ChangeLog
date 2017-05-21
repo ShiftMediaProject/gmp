@@ -1,3 +1,11 @@
+2017-05-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/core2/com.asm: New grabber file.
+
+	* mpn/x86_64/core2/lshift.asm: Rewrite.
+	* mpn/x86_64/core2/rshift.asm: Rewrite.
+	* mpn/x86_64/core2/lshiftc.asm: Rewrite.
+
 2017-05-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/divis.c (mpn_divisible_p): Updated the divisibility
