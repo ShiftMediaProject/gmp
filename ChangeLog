@@ -1,3 +1,21 @@
+2017-05-31  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/core2/logops_n.asm: New file.
+
+2017-05-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreisbr/popcount.asm: Remove.
+
+2017-05-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreinhm/popcount.asm: Replace grabber code with
+	implementation proper.
+	* mpn/x86_64/coreinhm/hamdist.asm: Likewise.
+	* mpn/x86_64/bd1/popcount.asm: Likewise.
+	* mpn/x86_64/bd1/hamdist.asm: Likewise.
+	* mpn/x86_64/core2/popcount.asm: Likewise.
+	* mpn/x86_64/core2/hamdist.asm: New file.
+
 2017-05-22  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/core2/com.asm: New grabber file.
@@ -5,6 +23,12 @@
 	* mpn/x86_64/core2/lshift.asm: Rewrite.
 	* mpn/x86_64/core2/rshift.asm: Rewrite.
 	* mpn/x86_64/core2/lshiftc.asm: Rewrite.
+
+2017-05-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/mul_1.asm: Port to DOS64.
+	* mpn/x86_64/zen/aorsmul_1.asm: Likewise.
+	* mpn/x86_64/coreibwl/addmul_1.asm: Likewise.
 
 2017-05-16  Niels Möller  <nisse@lysator.liu.se>
 
