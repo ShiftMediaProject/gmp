@@ -1,4 +1,4 @@
-dnl  AMD64 SSSE3 mpn_popcount -- population count.
+dnl  AMD64 SSSE3 mpn_hamdist -- hamming distance.
 
 dnl  Copyright 2010-2017 Free Software Foundation, Inc.
 
@@ -34,23 +34,23 @@ include(`../config.m4')
 C		    cycles/limb	  good for cpu?
 C AMD K8,K9		n/a
 C AMD K10		n/a
-C AMD bd1		 ?
-C AMD bd2		 ?
+C AMD bd1	     1.79-1.91		n
+C AMD bd2	     1.73-1.85		n
 C AMD bd3		 ?
 C AMD bd4		 ?
-C AMD zen		 ?
-C AMD bobcat		 ?
-C AMD jaguar		 ?
+C AMD zen		 1.47		n
+C AMD bobcat		 8.0		n
+C AMD jaguar		 4.78		n
 C Intel P4		n/a
-C Intel PNR		 3.28		y
+C Intel PNR		 2.61		y
 C Intel NHM		 ?
 C Intel SBR		 ?
 C Intel IBR		 ?
-C Intel HWL		 ?
-C Intel BWL		 ?
-C Intel SKL		 ?
-C Intel atom		 ?
-C Intel SLM		 ?
+C Intel HWL	     1.52-1.58		n
+C Intel BWL	     1.52-1.58		n
+C Intel SKL		 1.51		n
+C Intel atom		12.3		n
+C Intel SLM		 9.1		n
 C VIA nano		 ?
 
 C TODO
@@ -59,12 +59,13 @@ C    selection; check to see of it can be improved.
 C  * Consider doing some instruction scheduling.
 
 define(`up',		`%rdi')
-define(`n',		`%rsi')
+define(`vp',		`%rsi')
+define(`n',		`%rdx')
 
 ASM_START()
 	TEXT
 	ALIGN(32)
-PROLOGUE(mpn_popcount)
+PROLOGUE(mpn_hamdist)
 	lea	L(cnsts)(%rip), %r9
 
 ifdef(`PIC', `define(`OFF1',32) define(`OFF2',48)',
@@ -87,31 +88,48 @@ ifdef(`PIC',`
 
 L(1):	movq	(up), %xmm1
 	add	$8, up
+	movq	(vp), %xmm10
+	add	$8, vp
+	pxor	%xmm10, %xmm1
 	jmp	L(e1)
 
 L(2):	add	$-48, up
+	add	$-48, vp
 	jmp	L(e2)
 
 L(3):	movq	(up), %xmm1
 	add	$-40, up
+	movq	(vp), %xmm10
+	add	$-40, vp
+	pxor	%xmm10, %xmm1
 	jmp	L(e3)
 
 L(4):	add	$-32, up
+	add	$-32, vp
 	jmp	L(e4)
 
 L(5):	movq	(up), %xmm1
 	add	$-24, up
+	movq	(vp), %xmm10
+	add	$-24, vp
+	pxor	%xmm10, %xmm1
 	jmp	L(e5)
 
 L(6):	add	$-16, up
+	add	$-16, vp
 	jmp	L(e6)
 
 L(7):	movq	(up), %xmm1
 	add	$-8, up
+	movq	(vp), %xmm10
+	add	$-8, vp
+	pxor	%xmm10, %xmm1
 	jmp	L(e7)
 
 	ALIGN(32)
 L(top):	lddqu	(up), %xmm1
+	lddqu	(vp), %xmm10
+	pxor	%xmm10, %xmm1
 L(e7):	movdqa	%xmm6, %xmm0		C copy mask register
 	movdqa	%xmm7, %xmm2		C copy count register
 	movdqa	%xmm7, %xmm3		C copy count register
@@ -123,6 +141,8 @@ L(e7):	movdqa	%xmm6, %xmm0		C copy mask register
 	paddb	%xmm2, %xmm3
 	paddb	%xmm3, %xmm4
 L(e6):	lddqu	16(up), %xmm1
+	lddqu	16(vp), %xmm10
+	pxor	%xmm10, %xmm1
 L(e5):	movdqa	%xmm6, %xmm0
 	movdqa	%xmm7, %xmm2
 	movdqa	%xmm7, %xmm3
@@ -134,6 +154,8 @@ L(e5):	movdqa	%xmm6, %xmm0
 	paddb	%xmm2, %xmm3
 	paddb	%xmm3, %xmm4
 L(e4):	lddqu	32(up), %xmm1
+	lddqu	32(vp), %xmm10
+	pxor	%xmm10, %xmm1
 L(e3):	movdqa	%xmm6, %xmm0
 	movdqa	%xmm7, %xmm2
 	movdqa	%xmm7, %xmm3
@@ -146,6 +168,9 @@ L(e3):	movdqa	%xmm6, %xmm0
 	paddb	%xmm3, %xmm4
 L(e2):	lddqu	48(up), %xmm1
 	add	$64, up
+	lddqu	48(vp), %xmm10
+	add	$64, vp
+	pxor	%xmm10, %xmm1
 L(e1):	movdqa	%xmm6, %xmm0
 	movdqa	%xmm7, %xmm2
 	movdqa	%xmm7, %xmm3
