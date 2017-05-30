@@ -83,7 +83,7 @@ ifdef(`PIC',`
 	jmp	*(%r9,%rax,8)
 ')
 
-L(1):	popcnt	(up), %rdx
+L(1):	.byte	0xf3,0x48,0x0f,0xb8,0x17	C popcnt (up),%rdx
 	add	$8, up
 	dec	n
 	jnz	L(top)
@@ -93,21 +93,21 @@ L(1):	popcnt	(up), %rdx
 L(2):	add	$-48, up
 	jmp	L(e2)
 
-L(3):	popcnt	(up), %rdx
+L(3):	.byte	0xf3,0x48,0x0f,0xb8,0x17	C popcnt (up), %rdx
 	add	$-40, up
 	jmp	L(e2)
 
 L(4):	add	$-32, up
 	jmp	L(e4)
 
-L(5):	popcnt	(up), %rdx
+L(5):	.byte	0xf3,0x48,0x0f,0xb8,0x17	C popcnt (up), %rdx
 	add	$-24, up
 	jmp	L(e4)
 
 L(6):	add	$-16, up
 	jmp	L(e6)
 
-L(7):	popcnt	(up), %rdx
+L(7):	.byte	0xf3,0x48,0x0f,0xb8,0x17	C popcnt (up), %rdx
 	add	$-8, up
 	jmp	L(e6)
 

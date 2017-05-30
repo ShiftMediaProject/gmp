@@ -88,7 +88,7 @@ L(1):	mov	(up), %r10
 	add	$8, up
 	xor	(vp), %r10
 	add	$8, vp
-	popcnt	%r10, %r10
+	.byte	0xf3,0x4d,0x0f,0xb8,0xd2	C popcnt %r10,%r10
 	dec	n
 	jnz	L(top)
 	mov	%r10, %rax
@@ -102,7 +102,7 @@ L(3):	mov	(up), %r10
 	add	$-40, up
 	xor	(vp), %r10
 	add	$-40, vp
-	popcnt	%r10, %r10
+	.byte	0xf3,0x4d,0x0f,0xb8,0xd2	C popcnt %r10,%r10
 	jmp	L(e2)
 
 L(4):	add	$-32, up
@@ -113,7 +113,7 @@ L(5):	mov	(up), %r10
 	add	$-24, up
 	xor	(vp), %r10
 	add	$-24, vp
-	popcnt	%r10, %r10
+	.byte	0xf3,0x4d,0x0f,0xb8,0xd2	C popcnt %r10,%r10
 	jmp	L(e4)
 
 L(6):	add	$-16, up
@@ -124,7 +124,7 @@ L(7):	mov	(up), %r10
 	add	$-8, up
 	xor	(vp), %r10
 	add	$-8, vp
-	popcnt	%r10, %r10
+	.byte	0xf3,0x4d,0x0f,0xb8,0xd2	C popcnt %r10,%r10
 	jmp	L(e6)
 
 	ALIGN(32)
