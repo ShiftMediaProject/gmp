@@ -34,23 +34,23 @@ include(`../config.m4')
 C		    cycles/limb	  good for cpu?
 C AMD K8,K9		n/a
 C AMD K10		n/a
-C AMD bd1	     1.79-1.91		n
-C AMD bd2	     1.73-1.85		n
+C AMD bd1		 ?
+C AMD bd2		 ?
 C AMD bd3		 ?
 C AMD bd4		 ?
-C AMD zen		 1.47		n
-C AMD bobcat		 8.0		n
-C AMD jaguar		 4.78		n
+C AMD zen		 ?
+C AMD bobcat		 ?
+C AMD jaguar		 ?
 C Intel P4		n/a
-C Intel PNR		 2.61		y
+C Intel PNR		 3.28		y
 C Intel NHM		 ?
 C Intel SBR		 ?
 C Intel IBR		 ?
-C Intel HWL	     1.52-1.58		n
-C Intel BWL	     1.52-1.58		n
-C Intel SKL		 1.51		n
-C Intel atom		12.3		n
-C Intel SLM		 9.1		n
+C Intel HWL		 ?
+C Intel BWL		 ?
+C Intel SKL		 ?
+C Intel atom		 ?
+C Intel SLM		 ?
 C VIA nano		 ?
 
 C TODO
