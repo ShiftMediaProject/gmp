@@ -53,6 +53,19 @@ C Intel atom		n/a
 C Intel SLM		n/a
 C VIA nano		n/a
 
+C TODO
+C  * Perform some load-use scheduling for a small speedup.
+C  * The innerloop takes around 13 cycles.  That means that we could do 3 plain
+C    popcnt instructions in parallel and thereby approach 1.17 c/l.
+
+C We use vpshlb and vpperm below, which are XOP extensions to AVX.  Some
+C systems, e.g., NetBSD, set OSXSAVE but nevertheless trigger SIGILL for AVX.
+C We fall back to the core2 code.
+ifdef(`GMP_AVX_NOT_REALLY_AVAILABLE',`
+MULFUNC_PROLOGUE(mpn_popcount)
+include_mpn(`x86_64/core2/popcount.asm')
+',`
+
 define(`up',		`%rdi')
 define(`n',		`%rsi')
 
@@ -173,3 +186,4 @@ DEF_OBJECT(L(cnsts),16)
 	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
 	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
 END_OBJECT(L(cnsts))
+')

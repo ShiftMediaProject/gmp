@@ -53,6 +53,14 @@ C Intel atom		n/a
 C Intel SLM		n/a
 C VIA nano		n/a
 
+C We use vpshlb and vpperm below, which are XOP extensions to AVX.  Some
+C systems, e.g., NetBSD, set OSXSAVE but nevertheless trigger SIGILL for AVX.
+C We fall back to the core2 code.
+ifdef(`GMP_AVX_NOT_REALLY_AVAILABLE',`
+MULFUNC_PROLOGUE(mpn_hamdist)
+include_mpn(`x86_64/core2/hamdist.asm')
+',`
+
 define(`up',		`%rdi')
 define(`vp',		`%rsi')
 define(`n',		`%rdx')
@@ -198,3 +206,4 @@ DEF_OBJECT(L(cnsts),16)
 	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
 	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
 END_OBJECT(L(cnsts))
+')
