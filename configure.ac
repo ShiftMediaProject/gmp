@@ -47,6 +47,7 @@ m4_pattern_allow(GMP_NAIL_BITS)
 m4_pattern_allow(GMP_NUMB_BITS)
 m4_pattern_allow(GMP_NONSTD_ABI)
 m4_pattern_allow(GMP_CPU_TYPE)
+m4_pattern_allow(GMP_AVX_NOT_REALLY_AVAILABLE)
 
 # If --target is not used then $target_alias is empty, but if say
 # "./configure athlon-pc-freebsd3.5" is used, then all three of
@@ -1905,7 +1906,9 @@ case $host in
       # unconditionally for NetBSD where they don't work but OSXSAVE is set
       # to claim the contrary.
       *noavx-*-* | *-*-netbsd*)
-	gcc_cflags_noavx="-mno-avx";;
+	gcc_cflags_noavx="-mno-avx"
+	GMP_DEFINE_RAW(["define(<GMP_AVX_NOT_REALLY_AVAILABLE>,1)"])
+	;;
     esac
 
     case $host in
