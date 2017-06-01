@@ -2,7 +2,8 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999-2005, 2008, 2009, 2011-2013 Free Software Foundation, Inc.
+dnl  Copyright 1999-2005, 2008, 2009, 2011-2013, 2017 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -144,9 +145,9 @@ ifdef(`PIC',
 
 
 define(`DEF_OBJECT',
-m4_assert_numargs_range(1,2)
-`	RODATA
-	ALIGN(ifelse($#,1,2,$2))
+m4_assert_numargs_range(2,3)
+`	ifelse($#,3,$3,`RODATA')
+	ALIGN($2)
 $1:
 ')
 
