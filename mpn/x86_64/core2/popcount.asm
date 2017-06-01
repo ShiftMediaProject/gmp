@@ -168,7 +168,7 @@ L(e1):	movdqa	%xmm6, %xmm0
 	movq	%xmm0, %rax
 	ret
 EPILOGUE()
-DEF_OBJECT(L(cnsts),16)
+DEF_OBJECT(L(cnsts),16,`JUMPTABSECT')
 	JMPENT(	L(top), L(cnsts))
 	JMPENT(	L(1), L(cnsts))
 	JMPENT(	L(2), L(cnsts))
