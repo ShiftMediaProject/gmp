@@ -2113,7 +2113,7 @@ public:
   // bool fits_ldouble_p() const { return mpf_fits_ldouble_p(mp); }
 
 #if __GMPXX_USE_CXX11
-  explicit operator bool() const { return mp->_mp_size != 0; }
+  explicit operator bool() const { return mpf_sgn(mp) != 0; }
 #endif
 
   // compound assignments

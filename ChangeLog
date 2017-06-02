@@ -1,3 +1,7 @@
+2017-06-02  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmpxx.h (mpf_class::operator bool): Use mpf_sgn to access _mp_size.
+
 2017-05-31  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/core2/logops_n.asm: New file.
