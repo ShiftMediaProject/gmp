@@ -1,8 +1,39 @@
+2017-06-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/x86_64-defs.m4 (DEF_OBJECT): Fix quoting (amends recent
+	change).
+	(JUMPTABSECT): Get rid of spurious "w".
+
 2017-06-02  Marc Glisse  <marc.glisse@inria.fr>
 
 	* gmpxx.h (mpf_class::operator bool): Use mpf_sgn to access _mp_size.
 
+2017-06-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bd1/popcount.asm: Use both SSE and XOP trickery, and
+	plain popcnt insn.
+	* mpn/x86_64/bd1/hamdist.asm: Likewise.
+
+2017-06-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/x86_64-defs.m4 (DEF_OBJECT): Allow 3rd argument defining
+	section, while making alignment argument non-optional.
+
+	* mpn/x86_64/core2/popcount.asm: Use 3-operand DEF_OBJECT.
+	* mpn/x86_64/core2/hamdist.asm: Likewise.
+	* mpn/x86_64/bd1/popcount.asm: Likewise.
+	* mpn/x86_64/bd1/hamdist.asm: Likewise.
+
+	* configure.ac (GMP_AVX_NOT_REALLY_AVAILABLE): New m4 define.
+	* mpn/x86_64/bd1/popcount.asm: Use GMP_AVX_NOT_REALLY_AVAILABLE.
+	* mpn/x86_64/bd1/hamdist.asm: Likewise.
+
+	* mpn/x86_64/silvermont/popcount.asm: Reinstate, grabbing nehalem code.
+	* mpn/x86_64/silvermont/hamdist.asm: Replace with grabber.
+
 2017-05-31  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/silvermont/popcount.asm: Remove.
 
 	* mpn/x86_64/core2/logops_n.asm: New file.
 
