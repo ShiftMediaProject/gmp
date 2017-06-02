@@ -146,7 +146,7 @@ ifdef(`PIC',
 
 define(`DEF_OBJECT',
 m4_assert_numargs_range(2,3)
-`	ifelse($#,3,$3,`RODATA')
+`	ifelse($#,3,`$3',`RODATA')
 	ALIGN($2)
 $1:
 ')
@@ -201,7 +201,7 @@ ifdef(`PIC',
 )')
 
 
-define(`JUMPTABSECT', `.section	.data.rel.ro.local,"aw",@progbits')
+define(`JUMPTABSECT', `.section	.data.rel.ro.local,"a",@progbits')
 
 
 dnl  Usage: JMPENT(targlabel,tablabel)
