@@ -130,28 +130,28 @@ L(7):	.byte	0xf3,0x48,0x0f,0xb8,0x17	C popcnt (up), %rdx
 
 	ALIGN(32)
 L(top):	lddqu	(up), %xmm0
-	vpshlb	%xmm6, %xmm0, %xmm1
+	.byte	0x8f,0xe9,0x48,0x94,0xc8	C vpshlb %xmm6, %xmm0, %xmm1
 	pand	%xmm9, %xmm0
 	pand	%xmm9, %xmm1
-	vpperm	%xmm0, %xmm7, %xmm7, %xmm2
-	vpperm	%xmm1, %xmm7, %xmm7, %xmm3
+	.byte	0x8f,0xe8,0x40,0xa3,0xd7,0x00	C vpperm %xmm0,%xmm7,%xmm7,%xmm2
+	.byte	0x8f,0xe8,0x40,0xa3,0xdf,0x10	C vpperm %xmm1, %xmm7, %xmm7, %xmm3
 	paddb	%xmm2, %xmm3
 	paddb	%xmm3, %xmm4
 L(e6):	lddqu	16(up), %xmm0
-	vpshlb	%xmm6, %xmm0, %xmm1
+	.byte	0x8f,0xe9,0x48,0x94,0xc8	C vpshlb %xmm6, %xmm0, %xmm1
 	pand	%xmm9, %xmm0
 	pand	%xmm9, %xmm1
-	vpperm	%xmm0, %xmm7, %xmm7, %xmm2
-	vpperm	%xmm1, %xmm7, %xmm7, %xmm3
+	.byte	0x8f,0xe8,0x40,0xa3,0xd7,0x00	C vpperm %xmm0,%xmm7,%xmm7,%xmm2
+	.byte	0x8f,0xe8,0x40,0xa3,0xdf,0x10	C vpperm %xmm1,%xmm7,%xmm7,%xmm3
 	paddb	%xmm2, %xmm3
 	paddb	%xmm3, %xmm4
 L(e4):	lddqu	32(up), %xmm0
-	vpshlb	%xmm6, %xmm0, %xmm1
+	.byte	0x8f,0xe9,0x48,0x94,0xc8	C vpshlb %xmm6, %xmm0, %xmm1
 	pand	%xmm9, %xmm0
 	pand	%xmm9, %xmm1
-	vpperm	%xmm0, %xmm7, %xmm7, %xmm2
-	vphaddubq %xmm4, %xmm5			C sum to 8 x 16-bit counts
-	vpperm	%xmm1, %xmm7, %xmm7, %xmm4
+	.byte	0x8f,0xe8,0x40,0xa3,0xd7,0x00	C vpperm %xmm0, %xmm7, %xmm7, %xmm2
+	.byte	0x8f,0xe9,0x78,0xd3,0xec	C vphaddubq %xmm4, %xmm5
+	.byte	0x8f,0xe8,0x40,0xa3,0xe7,0x10	C vpperm %xmm1,%xmm7,%xmm7,%xmm4
 	paddb	%xmm2, %xmm4
 L(e2):	popcnt	48(up), %r8
 	popcnt	56(up), %r9
@@ -162,7 +162,7 @@ L(e2):	popcnt	48(up), %r8
 	sub	$8, n
 	jg	L(top)
 
-	vphaddubq %xmm4, %xmm5			C sum to 8 x 16-bit counts
+	.byte	0x8f,0xe9,0x78,0xd3,0xec	C vphaddubq %xmm4, %xmm5
 	paddq	%xmm5, %xmm8
 	pshufd	$14, %xmm8, %xmm0
 	paddq	%xmm8, %xmm0
