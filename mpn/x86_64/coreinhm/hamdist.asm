@@ -58,6 +58,9 @@ C  * An AVX pshufb based variant should approach 0.5 c/l on Haswell and later
 C    Intel hardware.  Perhaps mix such a loop with popcnt instructions.
 C  * The random placement of the L0, L1, L2, etc blocks are due to branch
 C    shortening.  More work could be done there.
+C  * Combine the accumulators rax and rcx into one register to save some
+C    bookkeeping and a push/pop pair.  Unfortunately this cause a slight
+C    slowdown for at leat NHM and SBR.
 
 define(`up',		`%rdi')
 define(`vp',		`%rsi')

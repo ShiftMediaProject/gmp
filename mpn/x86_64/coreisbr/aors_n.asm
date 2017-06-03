@@ -36,14 +36,15 @@ include(`../config.m4')
 C	    cycles/limb
 C AMD K8,K9	 1.75\2.52
 C AMD K10	 1.5
-C AMD bull	 1.69\2.25
-C AMD pile	 1.65
-C AMD steam
-C AMD excavator
-C AMD bobcat	 2.67
-C AMD jaguar	 2.16
+C AMD bd1	 1.69\2.25
+C AMD bd2	 1.65
+C AMD bd3	 ?
+C AMD bd4	 ?
+C AMD zen	 1.5
+C AMD bt1	 2.67
+C AMD bt2	 2.16
 C Intel P4	11.54
-C Intel core2	 5
+C Intel PNR	 5
 C Intel NHM	 5.5
 C Intel SBR	 1.54
 C Intel IBR	 1.5
@@ -51,12 +52,12 @@ C Intel HWL	 1.32
 C Intel BWL	 1.07
 C Intel SKL	 1.21
 C Intel atom	 4.3
-C Intel SLM	 4
-C VIA nano
+C Intel SLM	 3
+C VIA nano	 ?
 
 C The loop of this code was manually written.  It runs close to optimally on
 C Intel SBR, IBR, and HWL far as we know, except for the fluctuation problems.
-C It also runs slightly faster on average on AMD bull and pile.
+C It also runs slightly faster on average on AMD bd1 and bd2.
 C
 C No micro-optimisation has been done.
 C

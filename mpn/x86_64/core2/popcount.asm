@@ -43,9 +43,9 @@ C AMD bobcat		 8.0		n
 C AMD jaguar		 4.78		n
 C Intel P4		n/a
 C Intel PNR		 2.61		y
-C Intel NHM		 ?
-C Intel SBR		 ?
-C Intel IBR		 ?
+C Intel NHM		 2.03		n
+C Intel SBR		 1.87		n
+C Intel IBR	     1.52-1.58		n
 C Intel HWL	     1.52-1.58		n
 C Intel BWL	     1.52-1.58		n
 C Intel SKL		 1.51		n

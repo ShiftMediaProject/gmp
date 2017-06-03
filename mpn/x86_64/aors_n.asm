@@ -33,12 +33,13 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9	 1.5
 C AMD K10	 1.5
-C AMD bull	 1.8
-C AMD pile	 1.74
-C AMD steam
-C AMD excavator
-C AMD bobcat	 2.54
-C AMD jaguar	 2.15
+C AMD bd1	 1.8
+C AMD bd2	 1.74
+C AMD bd3	 ?
+C AMD bd4	 ?
+C AMD zen	 1.5
+C AMD bt1	 2.54
+C AMD bt2	 2.15
 C Intel P4	11.5
 C Intel core2	 4.9
 C Intel NHM	 5.53
