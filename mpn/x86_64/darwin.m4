@@ -47,7 +47,7 @@ dnl  Usage: JUMPTABSECT
 dnl
 dnl  CAUTION: Do not put anything sensible here, like RODATA.  That works with
 dnl  some Darwin tool chains, but silently breaks with other.  (Note that
-dnl  putting jump tables in the text segment is a really poor idea for PC many
+dnl  putting jump tables in the text segment is a really poor idea for many PC
 dnl  processors, since they cannot cache the same thing in both L1D and L2I.)
 
 define(`JUMPTABSECT', `.text')
