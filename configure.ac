@@ -1796,14 +1796,14 @@ case $host in
       bobcat)
 	gcc_cflags_cpu="-mtune=btver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=btver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/bobcat x86/k7/mmx x86/k7 x86/mmx x86"
-	path_64="x86_64/bobcat x86_64/k10 x86_64/k8 x86_64"
+	path="x86/bt1 x86/k7/mmx x86/k7 x86/mmx x86"
+	path_64="x86_64/bt1 x86_64/k10 x86_64/k8 x86_64"
 	;;
       jaguar | jaguarnoavx)
 	gcc_cflags_cpu="-mtune=btver2 -mtune=btver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=btver2 -march=btver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
-	path="x86/jaguar x86/bobcat x86/k7/mmx x86/k7 x86/mmx x86"
-	path_64="x86_64/jaguar x86_64/bobcat x86_64/k10 x86_64/k8 x86_64"
+	path="x86/bt2 x86/bt1 x86/k7/mmx x86/k7 x86/mmx x86"
+	path_64="x86_64/bt2 x86_64/bt1 x86_64/k10 x86_64/k8 x86_64"
 	;;
       bulldozer | bd1 | bulldozernoavx | bd1noavx)
 	gcc_cflags_cpu="-mtune=bdver1 -mtune=amdfam10 -mtune=k8"
@@ -2221,7 +2221,7 @@ case $host in
 	fat_path="x86 x86/fat x86/i486
 		  x86/k6 x86/k6/mmx x86/k6/k62mmx
 		  x86/k7 x86/k7/mmx
-		  x86/k8 x86/k10 x86/bobcat
+		  x86/k8 x86/k10 x86/bt1
 		  x86/pentium x86/pentium/mmx
 		  x86/p6 x86/p6/mmx x86/p6/p3mmx x86/p6/sse2
 		  x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2
@@ -2234,7 +2234,7 @@ case $host in
 	extra_functions_64="$extra_functions_64 fat fat_entry"
 	path_64="x86_64/fat x86_64"
 	fat_path="x86_64 x86_64/fat
-		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bobcat x86_64/zen
+		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bt1 x86_64/zen
 		  x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr
 		  x86_64/coreihwl x86_64/coreibwl x86_64/skylake x86_64/atom
 		  x86_64/silvermont x86_64/nano"
