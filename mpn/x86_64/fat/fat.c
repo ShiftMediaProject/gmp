@@ -411,10 +411,16 @@ __gmpn_cpuvec_init (void)
 	  break;
 
 	case 0x14:		/* bobcat */
+	  CPUVEC_SETUP_k8;
+	  CPUVEC_SETUP_k10;
+	  CPUVEC_SETUP_bt1;
+	  break;
+
 	case 0x16:		/* jaguar */
 	  CPUVEC_SETUP_k8;
 	  CPUVEC_SETUP_k10;
-	  CPUVEC_SETUP_bobcat;
+	  CPUVEC_SETUP_bt1;
+	  CPUVEC_SETUP_bt2;
 	  break;
 
 	case 0x15:	    /* bulldozer, piledriver, steamroller, excavator */
@@ -424,8 +430,6 @@ __gmpn_cpuvec_init (void)
 	  break;
 
 	case 0x17:	    /* zen */
-	  CPUVEC_SETUP_k8;
-	  CPUVEC_SETUP_k10;
 	  CPUVEC_SETUP_zen;
 	  break;
 	}
