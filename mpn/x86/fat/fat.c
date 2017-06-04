@@ -434,7 +434,7 @@ __gmpn_cpuvec_init (void)
               TRACE (printf ("  bobcat\n"));
               CPUVEC_SETUP_k7;
               CPUVEC_SETUP_k7_mmx;
-              CPUVEC_SETUP_bobcat;
+              CPUVEC_SETUP_bt1;
 	      break;
 
             case 0x15:		/* bulldozer */
