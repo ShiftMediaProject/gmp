@@ -314,6 +314,44 @@ define(`oplist',
  `(%r8)', 24, `(%r9)', 25, `(%r10)',26,  `(%r11)',27,
  `(%r12)',28, `(%r13)',29, `(%r14)',30,  `(%r15)',31')
 
+dnl  Usage (by mulx, shlx, shrx)
+dnl
+dnl     reg1,reg2,reg3,opc1,opc2
+dnl
+dnl  or
+dnl
+dnl     (reg1),reg2,reg3,opc1,opc2
+dnl
+dnl  where reg1 is any register but rsp,rbp,r12,r13, or
+dnl
+dnl  or
+dnl
+dnl     off,(reg1),reg2,reg3,opc1,opc2
+dnl
+dnl  where reg1 is any register but rsp,r12.
+dnl
+dnl  The exceptions are due to special coding needed for some registers; rsp
+dnl  and r12 need an extra byte 0x24 at the end while rbp and r13 lack the
+dnl  offset-less form.
+dnl
+dnl  Other addressing forms are not handled.  Invalid forms are not properly
+dnl  detected.  Offsets that don't fit one byte are not handled correctly.
+
+define(`c4_helper',`dnl
+.byte	0xc4`'dnl
+ifelse(`$#',5,`dnl
+,eval(0xe2^32*regnumh($1)^128*regnumh($3))`'dnl
+,eval(0x$4-8*regnum($2))`'dnl
+,0x$5`'dnl
+,eval(0xc0+(7 & regnum($1))+8*(7 & regnum($3))-0xc0*ix($1))`'dnl
+',`$#',6,`dnl
+,eval(0xe2^32*regnumh($2)^128*regnumh($4))`'dnl
+,eval(0x$5-8*regnum($3))`'dnl
+,0x$6`'dnl
+,eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)))`'dnl
+,eval(($1 + 256) % 256)`'dnl
+')')
+
 
 dnl  Usage
 dnl
@@ -328,28 +366,43 @@ dnl
 dnl     mulx(off,(reg1),reg2,reg3)
 dnl
 dnl  where reg1 is any register but rsp,r12.
-dnl
-dnl  The exceptions are due to special coding needed for some registers; rsp
-dnl  and r12 need an extra byte 0x24 at the end while rbp and r13 lack the
-dnl  offset-less form.
-dnl
-dnl  Other addressing forms are not handled.  Invalid forms are not properly
-dnl  detected.  Offsets that don't fit one byte are not handled correctly.
 
 define(`mulx',`dnl
-.byte	0xc4`'dnl
 ifelse(`$#',3,`dnl
-,eval(0xe2^32*regnumh($1)^128*regnumh($3))`'dnl
-,eval(0xfb-8*regnum($2))`'dnl
-,0xf6`'dnl
-,eval(0xc0+(7 & regnum($1))+8*(7 & regnum($3))-0xc0*ix($1))`'dnl
-',`$#',4,`dnl
-,eval(0xe2^32*regnumh($2)^128*regnumh($4))`'dnl
-,eval(0xfb-8*regnum($3))`'dnl
-,0xf6`'dnl
-,eval(0x40+(7 & regnum($2))+8*(7 & regnum($4)))`'dnl
-,eval(($1 + 256) % 256)`'dnl
-')')
+c4_helper($1,$2,$3,fb,f6)',`dnl         format 1,2
+c4_helper($1,$2,$3,$4,fb,f6)',dnl	format 3
+)')
+
+
+dnl  Usage
+dnl
+dnl     shlx(reg1,reg2,reg3)
+dnl     shrx(reg1,reg2,reg3)
+dnl
+dnl  or
+dnl
+dnl     shlx(reg1,(reg2),reg3)
+dnl     shrx(reg1,(reg2),reg3)
+dnl
+dnl  where reg2 is any register but rsp,rbp,r12,r13, or
+dnl
+dnl     shlx(reg1,off,(reg2),reg3)
+dnl     shrx(reg1,off,(reg2),reg3)
+dnl
+dnl  where reg2 is any register but rsp,r12.
+
+define(`shlx',`dnl
+ifelse(`$#',3,`dnl
+c4_helper($2,$1,$3,f9,f7)',`dnl         format 1,2
+c4_helper($1,$3,$2,$4,f9,f7)',dnl       format 3
+)')
+
+define(`shrx',`dnl
+ifelse(`$#',3,`dnl
+c4_helper($2,$1,$3,fb,f7)',`dnl         format 1,2
+c4_helper($1,$3,$2,$4,fb,f7)',dnl       format 3
+)')
+
 
 dnl  Usage
 dnl
