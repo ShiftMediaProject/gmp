@@ -370,7 +370,7 @@ dnl  where reg1 is any register but rsp,r12.
 define(`mulx',`dnl
 ifelse(`$#',3,`dnl
 c4_helper($1,$2,$3,fb,f6)',`dnl         format 1,2
-c4_helper($1,$2,$3,$4,fb,f6)',dnl	format 3
+c4_helper($1,$2,$3,$4,fb,f6)'dnl	format 3
 )')
 
 
@@ -394,13 +394,13 @@ dnl  where reg2 is any register but rsp,r12.
 define(`shlx',`dnl
 ifelse(`$#',3,`dnl
 c4_helper($2,$1,$3,f9,f7)',`dnl         format 1,2
-c4_helper($1,$3,$2,$4,f9,f7)',dnl       format 3
+c4_helper($1,$3,$2,$4,f9,f7)'dnl        format 3
 )')
 
 define(`shrx',`dnl
 ifelse(`$#',3,`dnl
 c4_helper($2,$1,$3,fb,f7)',`dnl         format 1,2
-c4_helper($1,$3,$2,$4,fb,f7)',dnl       format 3
+c4_helper($1,$3,$2,$4,fb,f7)'dnl        format 3
 )')
 
 
