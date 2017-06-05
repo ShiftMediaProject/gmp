@@ -123,9 +123,9 @@ L(gen):	push	%r15
 
 	neg	un
 	mov	un, n
-	test	$1, R32(un)
+	test	$1, R8(un)
 	jz	L(mx0)
-L(mx1):	test	$2, R32(un)
+L(mx1):	test	$2, R8(un)
 	jz	L(mb3)
 
 L(mb1):	mulx(	%r9, %rbx, %rax)
@@ -142,7 +142,7 @@ L(mb3):	mulx(	%r9, %r11, %r10)
 	test	R32(%rdx), R32(%rdx)
 	jmp	L(mlo3)
 
-L(mx0):	test	$2, R32(un)
+L(mx0):	test	$2, R8(un)
 	jz	L(mb0)
 
 L(mb2):	mulx(	%r9, %r13, %r12)
@@ -187,10 +187,10 @@ L(mwd3):mov	%r11, 8(rp)
 
 C The rest of the file are 4 loops around addmul_1
 
-	test	$1, R32(un)
+	test	$1, R8(un)
 	jnz	L(0x1)
 
-L(0x0):	test	$2, R32(un)
+L(0x0):	test	$2, R8(un)
 	jnz	L(oloop2)
 
 L(oloop0):
@@ -273,7 +273,7 @@ L(lo2):	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
 	jne	L(oloop2)
 	jmp	L(end)
 
-L(0x1):	test	$2, R32(un)
+L(0x1):	test	$2, R8(un)
 	jz	L(oloop3)
 
 L(oloop1):
