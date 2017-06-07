@@ -49,8 +49,8 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "tests.h"
-/* #define STOP(x) return (x) */
-#define STOP(x) x
+#define STOP(x) return (x)
+/* #define STOP(x) x */
 #define SPINNER(v)					\
   do {							\
     MPN_SIZEINBASE_2EXP (spinner_count, q, v, 1);	\
@@ -115,9 +115,9 @@ check_all_values (int justone)
       ++er;
     q[1] += (++*q == 0);
   } while (1);
-  MPN_SIZEINBASE_2EXP (bits, q, 2, 1);
-  printf("\n%u\n", bits);
+  SPINNER(2);
   printf ("\nValues with at most a limb for reminder, tested.\n");
+  printf ("Testing more values not supported, jet.\n");
   return 0;
 }
 
@@ -148,7 +148,7 @@ upd1 (mp_limb_t *s, mp_limb_t k)
 int
 check_some_values (int justone)
 {
-  mp_limb_t es, mer, er, k, s[1], r[2], q[2];
+  mp_limb_t es, her, er, k, s[1], r[2], q[2];
   mp_size_t x;
   unsigned bits;
 
@@ -164,6 +164,8 @@ check_some_values (int justone)
 	  || UNLIKELY ((x == 1) && (er != *r)))
 	STOP (something_wrong (er, 0, es));
 
+      if (UNLIKELY ((es & 0xffff) == 0))
+	SPINNER(1);
       if ((*q & k) == 0) {
 	*q |= k;
 	er = upd (&es, k + er);
@@ -171,16 +173,79 @@ check_some_values (int justone)
 	++*q;
 	er = upd1 (&es, er);
       }
-      if (UNLIKELY ((es & 0xffff) == 0))
-	SPINNER(1);
     } while (es & k);
   } while (*q != 0);
   q[1] = 1;
   SPINNER(2);
   printf ("\nValues of a single limb, tested.\n");
   if (justone) return 0;
-  printf ("Testing more values not supported, jet.\n");
-  return -1;
+  printf ("High-half values tested, up to bits:\n");
+  do {
+    x = mpn_sqrtrem (s, r, q, 2);
+    if (UNLIKELY (x != (er != 0)) || UNLIKELY (*s != es)
+	|| UNLIKELY ((x == 1) && (er != *r)))
+      STOP (something_wrong (er, 0, es));
+
+    if (*q == 0) {
+      *q = GMP_NUMB_MAX;
+      if (UNLIKELY ((es & 0xffff) == 0)) {
+	if (UNLIKELY (es == GMP_NUMB_HIGHBIT))
+	  break;
+	SPINNER(2);
+      }
+      /* er = er + GMP_NUMB_MAX - 1 - es*2 // postponed */
+      ++es;
+      /* er = er + GMP_NUMB_MAX - 1 - 2*(es-1) =
+            = er +(GMP_NUMB_MAX + 1)- 2* es = er - 2*es */
+      er = upd (&es, er - 2 * es);
+    } else {
+      *q = 0;
+      ++q[1];
+      er = upd1 (&es, er);
+    }
+  } while (1);
+  SPINNER(2);
+  printf ("\nValues with at most a limb for reminder, tested.\n");
+  er = GMP_NUMB_MAX; her = 0;
+  
+  printf ("High-half values tested, up to bits:\n");
+  do {
+    x = mpn_sqrtrem (s, r, q, 2);
+    if (UNLIKELY (x != (her?2:(er != 0))) || UNLIKELY (*s != es)
+	|| UNLIKELY ((x != 0) && ((er != *r) || ((x == 2) && (r[1] != 1)))))
+      STOP (something_wrong (er, her, es));
+
+    if (*q == 0) {
+      *q = GMP_NUMB_MAX;
+      if (UNLIKELY ((es & 0xffff) == 0)) {
+	SPINNER(2);
+      }
+      if (her) {
+	++es;
+	her = 0;
+	er = er - 2 * es;
+      } else {
+	her = --er != GMP_NUMB_MAX;
+	if (her & (er > es * 2)) {
+	  er -= es * 2 + 1;
+	  her = 0;
+	  ++es;
+	}
+      }
+    } else {
+      *q = 0;
+      if (++q[1] == 0) break;
+      if ((her == 0) | (er < es * 2)) {
+	her += ++er == 0;
+      }	else {
+	  er -= es * 2;
+	  her = 0;
+	  ++es;
+      }
+    }
+  } while (1);
+  printf ("| %u\nValues of at most two limbs, tested.\n", GMP_NUMB_BITS*2);
+  return 0;
 }
 
 int
@@ -265,8 +330,7 @@ check_corner_cases (int justone)
       add_ssaaaa (q[1], *q, q[1], *q, 1, er);
     }
   } while (1);
-  MPN_SIZEINBASE_2EXP (bits, q, 2, 1);
-  printf ("\n%u\nValues of at most two limbs, tested.\n", bits);
+  printf ("| %u\nValues of at most two limbs, tested.\n", GMP_NUMB_BITS*2);
   return 0;
 }
 
