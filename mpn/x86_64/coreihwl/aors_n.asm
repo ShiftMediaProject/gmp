@@ -88,13 +88,12 @@ IFDOS(`	mov	56(%rsp), %r8	')
 	and	$7, R32(%rax)
 
 	lea	L(tab)(%rip), %r9
+	neg	%r8			C set carry
 ifdef(`PIC',`
 	movslq	(%r9,%rax,4), %rax
-	add	%r9, %rax
-	neg	%r8			C set carry
+	lea	(%r9,%rax), %rax	C lea not add to preserve carry
 	jmp	*%rax
 ',`
-	neg	%r8			C set carry
 	jmp	*(%r9,%rax,8)
 ')
 EPILOGUE()
@@ -105,12 +104,12 @@ PROLOGUE(func)
 
 	mov	R32(n), R32(%rax)
 	shr	$3, n
-	and	$7, R32(%rax)
+	and	$7, R32(%rax)		C clear cy as side-effect
 
 	lea	L(tab)(%rip), %r9
 ifdef(`PIC',`
 	movslq	(%r9,%rax,4), %rax
-	add	%r9, %rax
+	lea	(%r9,%rax), %rax	C lea not add to preserve carry
 	jmp	*%rax
 ',`
 	jmp	*(%r9,%rax,8)
@@ -159,6 +158,7 @@ L(7):	mov	(up), %r9
 	inc	n
 	jmp	L(e7)
 
+	ALIGN(16)
 L(top):
 L(e3):	mov	%r9, 40(rp)
 L(e2):	mov	%r10, 48(rp)
