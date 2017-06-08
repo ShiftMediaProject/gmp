@@ -844,7 +844,6 @@ case $host in
           # systems (GNU/Linux for instance), but lets assume they're ok.
           case $host in
             [*-*-hpux[1-9] | *-*-hpux[1-9].* | *-*-hpux10 | *-*-hpux10.*]) ;;
-	    [*-*-linux*])  abilist="1.0" ;; # due to linux permanent kernel bug
             *)    abilist="2.0w $abilist" ;;
           esac
 
