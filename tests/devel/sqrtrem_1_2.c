@@ -65,16 +65,20 @@ int something_wrong (mp_limb_t er, mp_limb_t ec, mp_limb_t es)
 }
 
 int
-check_all_values (int justone)
+check_all_values (int justone, int quick)
 {
   mp_limb_t es, mer, er, s[1], r[2], q[2];
   mp_size_t x;
   unsigned bits;
 
   es=1;
+  if (quick) {
+    printf ("Quick, skipping some... (%u)\n", GMP_NUMB_BITS - 2);
+    es <<= GMP_NUMB_BITS / 2 - 1;
+  }
   er=0;
-  mer=2;
-  *q = 1;
+  mer= es << 1;
+  *q = es * es;
   printf ("All values tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 1);
@@ -146,13 +150,17 @@ upd1 (mp_limb_t *s, mp_limb_t k)
 }
 
 int
-check_some_values (int justone)
+check_some_values (int justone, int quick)
 {
   mp_limb_t es, her, er, k, s[1], r[2], q[2];
   mp_size_t x;
   unsigned bits;
 
   es = 1 << 1;
+  if (quick) {
+    es <<= GMP_NUMB_BITS / 4 - 1;
+    printf ("Quick, skipping some... (%u)\n", GMP_NUMB_BITS / 2);
+  }
   er = 0;
   *q = es * es;
   printf ("High-half values tested, up to bits:\n");
@@ -179,6 +187,11 @@ check_some_values (int justone)
   SPINNER(2);
   printf ("\nValues of a single limb, tested.\n");
   if (justone) return 0;
+  if (quick) {
+    es <<= GMP_NUMB_BITS / 2 - 1;
+    q[1] <<= GMP_NUMB_BITS - 2;
+    printf ("Quick, skipping some... (%u)\n", GMP_NUMB_BITS - 2);
+  }
   printf ("High-half values tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 2);
@@ -249,15 +262,19 @@ check_some_values (int justone)
 }
 
 int
-check_corner_cases (int justone)
+check_corner_cases (int justone, int quick)
 {
   mp_limb_t es, er, s[1], r[2], q[2];
   mp_size_t x;
   unsigned bits;
 
   es = 1;
+  if (quick) {
+    es <<= GMP_NUMB_BITS / 2 - 1;
+    printf ("Quick, skipping some... (%u)\n", GMP_NUMB_BITS - 2);
+  }
   er = 0;
-  *q = 1;
+  *q = es*es;
   printf ("Corner cases tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 1);
@@ -280,6 +297,14 @@ check_corner_cases (int justone)
   SPINNER(2);
   printf ("\nValues of a single limb, tested.\n");
   if (justone) return 0;
+  if (quick) {
+    es <<= GMP_NUMB_BITS / 2 - 1;
+    q[1] <<= GMP_NUMB_BITS - 2;
+    printf ("Quick, skipping some... (%u)\n", GMP_NUMB_BITS - 2);
+    --es;
+    --q[1];
+    q[0] -= es*2+1;
+  }
   printf ("Corner cases tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 2);
@@ -339,11 +364,12 @@ main (int argc, char **argv)
 {
   int mode = 0;
   int justone = 0;
+  int quick = 0;
 
   for (;argc > 1;--argc,++argv)
     switch (*argv[1]) {
     default:
-      fprintf (stderr, "usage: sqrtrem_1_2 [x|c|s] [1|2]\n");
+      fprintf (stderr, "usage: sqrtrem_1_2 [x|c|s] [1|2] [q]\n");
       exit (1);
     case 'x':
       mode = 0;
@@ -354,6 +380,9 @@ main (int argc, char **argv)
     case 's':
       mode = 2;
       break;
+    case 'q':
+      quick = 1;
+      break;
     case '1':
       justone = 1;
       break;
@@ -363,10 +392,10 @@ main (int argc, char **argv)
 
   switch (mode) {
   default:
-    return check_all_values (justone);
+    return check_all_values (justone, quick);
   case 1:
-    return check_corner_cases (justone);
+    return check_corner_cases (justone, quick);
   case 2:
-    return check_some_values (justone);
+    return check_some_values (justone, quick);
   }
 }
