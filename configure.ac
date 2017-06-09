@@ -2318,12 +2318,12 @@ if test $found_compiler = yes; then
   CC="$cc"
   CFLAGS="$cflags"
   CPPFLAGS="$cppflags"
-  eval GMP_NONSTD_ABI=\"\$GMP_NONSTD_ABI_$ABI\"
 
   # Could easily have this in config.h too, if desired.
   ABI_nodots=`echo $ABI | sed 's/\./_/'`
   GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI_nodots')", POST)
 
+  eval GMP_NONSTD_ABI=\"\$GMP_NONSTD_ABI_$ABI_nodots\"
 
   # GMP_LDFLAGS substitution, selected according to ABI.
   # These are needed on libgmp.la and libmp.la, but currently not on
