@@ -1,4 +1,25 @@
+2017-06-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/mullo_basecase.asm: New file.
+	* mpn/x86_64/coreibwl/mullo_basecase.asm: New file.
+
+2017-06-11  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/popham.asm: Crossjump for code size and mix lead-in insns
+	for lower overhead.
+
+2017-06-09  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Set GMP_NONSTD_ABI protecting against dots in the abi.
+	(hppa): Remove old GNU/Linux restriction to 32-bit ABI.
+
+2017-06-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bd1/addmul_2.asm: New file.
+
 2017-06-06  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreihwl/aors_n.asm: New file.
 
 	* mpn/x86_64/x86_64-defs.m4 (c4_helper): New macro.
 	(mulx, shlx, shrx): Use c4_helper.
@@ -18,9 +39,9 @@
 	Make zen path correspond to non-fat path.
 	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Adapt to bt1/bt2 changes.
 
-	* mpn/x86_64/bt2/copyi.asm: New file.
-	* mpn/x86_64/bt2/copyd.asm: New file.
-	* mpn/x86_64/bt2/com.asm: New file.
+	* mpn/x86_64/bt2/copyi.asm: New grabber file.
+	* mpn/x86_64/bt2/copyd.asm: New grabber file.
+	* mpn/x86_64/bt2/com.asm: New grabber file.
 
 2017-06-03  Torbjörn Granlund  <tg@gmplib.org>
 
