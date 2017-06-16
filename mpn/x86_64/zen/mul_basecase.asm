@@ -32,14 +32,15 @@ include(`../config.m4')
 
 C TODO
 C  * Try 2x unrolling instead of current 4x, at least for mul_1.  Else consider
-C    shallower sw pipelining of mul_1/addmul_1 loops, allowing 4 instead of 8
-C    product registers.
+C    shallower sw pipelining of mul_1/addmul_1 loops, allowing 4 or 6 instead
+C    of 8 product registers.
 C  * Split up mul_1 into 4 loops in order to fall into the addmul_1 loops
-C    without braches.
-C  * Do overlapped software pipelining.
+C    without branch tree.
+C  * Improve the overlapped software pipelining.  The mulx in the osp block now
+C    suffers from write/read conflicts, in particular the 1 mod 4 case.  Also,
+C    mul_1 could osp into addmul_1.
 C  * Let vn_param be vn to save a copy.
 C  * Re-allocate to benefit more from 32-bit encoding.
-C  * Polish.
 
 define(`rp',       `%rdi')
 define(`up',       `%rsi')
@@ -185,23 +186,44 @@ L(mwd3):mov	%r11, 8(rp)
 	dec	vn
 	jz	L(end)
 
-C The rest of the file are 4 loops around addmul_1
+C The rest of the file are 4 osp loops around addmul_1
 
 	test	$1, R8(un)
 	jnz	L(0x1)
 
 L(0x0):	test	$2, R8(un)
-	jnz	L(oloop2)
+	jnz	L(oloop2_entry)
 
-L(oloop0):
+L(oloop0_entry):
+	C initial feed-in block
 	mov	(vp), %rdx
+	add	$8, vp
 	mov	un, n
 	add	$8, rp
 	.byte	0xc4,0x22,0xb3,0xf6,0x04,0xf6		C mulx (up,un,8), %r9, %r8
 	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0x08	C mulx 8(up,un,8), %r11, %r10
 	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0x10	C mulx 16(up,un,8), %r13, %r12
-	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0x18	C mulx 24(up,un,8), %rbx, %rax
 	add	%r8, %r11
+	jmp	L(lo0)
+
+L(oloop0):
+	C overlapped software pipelining block
+	mov	(vp), %rdx			C new
+	add	$8, vp
+	add	%r9, (rp)			C prev
+	.byte	0xc4,0x22,0xb3,0xf6,0x04,0xf6		C mulx (%rsi,%r14,8),%r9,%r8
+	adc	%r11, 8(rp)			C prev
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0x08	C mulx 0x8(%rsi,%r14,8),%r11,%r10
+	adc	%r13, 16(rp)			C prev
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0x10	C mulx 0x10(%rsi,%r14,8),%r13,%r12
+	adc	%rbx, 24(rp)			C prev
+	mov	un, n
+	adc	$0, %rax			C prev
+	mov	%rax, 32(rp)			C prev
+	add	$8, rp
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0x18	C mulx 0x18(%rsi,%r14,8),%rbx,%rax
+	add	%r8, %r11			C new
 	jmp	L(lo0)
 
 	ALIGN(16)
@@ -221,19 +243,14 @@ L(lo0):	adc	%r10, %r13
 	add	$4, n
 	jnz	L(tp0)
 
-	add	%r9, (rp)
-	adc	%r11, 8(rp)
-	adc	%r13, 16(rp)
-	adc	%rbx, 24(rp)
-	adc	$0, %rax
-	mov	%rax, 32(rp)
-	add	$8, vp
 	dec	vn
 	jne	L(oloop0)
-	jmp	L(end)
 
-L(oloop2):
+	jmp	L(final_wind_down)
+
+L(oloop2_entry):
 	mov	(vp), %rdx
+	add	$8, vp
 	lea	2(un), n
 	add	$8, rp
 	.byte	0xc4,0x22,0x93,0xf6,0x24,0xf6		C mulx (up,un,8), %r13, %r12
@@ -242,6 +259,26 @@ L(oloop2):
 	adc	$0, %rax
 	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0x10	C mulx 16(up,un,8), %r9, %r8
 	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	add	%r13, 16(rp,n,8)
+	jmp	L(lo2)
+
+L(oloop2):
+	mov	(vp), %rdx
+	add	$8, vp
+	add	%r9, (rp)
+	adc	%r11, 8(rp)
+	adc	%r13, 16(rp)
+	.byte	0xc4,0x22,0x93,0xf6,0x24,0xf6		C mulx (up,un,8), %r13, %r12
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0x08	C mulx 8(up,un,8), %rbx, %rax
+	lea	2(un), n
+	add	$8, rp
+	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0x10	C mulx 16(up,un,8), %r9, %r8
+	add	%r12, %rbx
+	adc	$0, %rax
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0x18	C mulx 0x18(%rsi,%r14,8),%r11,%r10
 	add	%r13, 16(rp,n,8)
 	jmp	L(lo2)
 
@@ -262,28 +299,41 @@ L(lo2):	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
 	add	$4, n
 	jnz	L(tp2)
 
-	add	%r9, (rp)
-	adc	%r11, 8(rp)
-	adc	%r13, 16(rp)
-	adc	%rbx, 24(rp)
-	adc	$0, %rax
-	mov	%rax, 32(rp)
-	add	$8, vp
 	dec	vn
 	jne	L(oloop2)
-	jmp	L(end)
+
+	jmp	L(final_wind_down)
 
 L(0x1):	test	$2, R8(un)
-	jz	L(oloop3)
+	jz	L(oloop3_entry)
 
-L(oloop1):
+L(oloop1_entry):
 	mov	(vp), %rdx
+	add	$8, vp
 	lea	1(un), n
 	add	$8, rp
 	.byte	0xc4,0xa2,0xe3,0xf6,0x04,0xf6		C mulx (up,un,8), %rbx, %rax
 	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0x08	C mulx 8(up,un,8), %r9, %r8
 	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0x10	C mulx 16(up,un,8), %r11, %r10
 	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
+	add	%rbx, 24(rp,n,8)
+	jmp	L(lo1)
+
+L(oloop1):
+	mov	(vp), %rdx
+	add	$8, vp
+	add	%r9, (rp)
+	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0x08	C mulx 8(up,un,8), %r9, %r8
+	adc	%r11, 8(rp)
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0x10	C mulx 16(up,un,8), %r11, %r10
+	adc	%r13, 16(rp)
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0x18	C mulx 0x18(%rsi,%r14,8),%r13,%r12
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+	.byte	0xc4,0xa2,0xe3,0xf6,0x04,0xf6		C mulx (up,un,8), %rbx, %rax
+	lea	1(un), n
+	add	$8, rp
 	add	%rbx, 24(rp,n,8)
 	jmp	L(lo1)
 
@@ -304,19 +354,14 @@ L(lo1):	adc	%rax, %r9
 	add	$4, n
 	jnz	L(tp1)
 
-	add	%r9, (rp)
-	adc	%r11, 8(rp)
-	adc	%r13, 16(rp)
-	adc	%rbx, 24(rp)
-	adc	$0, %rax
-	mov	%rax, 32(rp)
-	add	$8, vp
 	dec	vn
 	jne	L(oloop1)
-	jmp	L(end)
 
-L(oloop3):
+	jmp	L(final_wind_down)
+
+L(oloop3_entry):
 	mov	(vp), %rdx
+	add	$8, vp
 	lea	3(un), n
 	add	$8, rp
 	.byte	0xc4,0x22,0xa3,0xf6,0x14,0xf6		C mulx (up,un,8), %r11, %r10
@@ -328,6 +373,27 @@ L(oloop3):
 	test	n, n
 	jz	L(wd3)
 	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	add	%r11, 8(rp,n,8)
+	jmp	L(lo3)
+
+L(oloop3):
+	mov	(vp), %rdx
+	add	$8, vp
+	add	%r9, (rp)
+	adc	%r11, 8(rp)
+	.byte	0xc4,0x22,0xa3,0xf6,0x14,0xf6		C mulx (up,un,8), %r11, %r10
+	adc	%r13, 16(rp)
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0x08	C mulx 8(up,un,8), %r13, %r12
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0x10	C mulx 16(up,un,8), %rbx, %rax
+	lea	3(un), n
+	add	$8, rp
+	add	%r10, %r13
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	adc	%r12, %rbx
+	adc	$0, %rax
 	add	%r11, 8(rp,n,8)
 	jmp	L(lo3)
 
@@ -348,15 +414,16 @@ L(lo3):	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
 	add	$4, n
 	jnz	L(tp3)
 
+	dec	vn
+	jne	L(oloop3)
+
+L(final_wind_down):
 	add	%r9, (rp)
-L(wd3):	adc	%r11, 8(rp)
+	adc	%r11, 8(rp)
 	adc	%r13, 16(rp)
 	adc	%rbx, 24(rp)
 	adc	$0, %rax
 	mov	%rax, 32(rp)
-	add	$8, vp
-	dec	vn
-	jne	L(oloop3)
 
 L(end):	pop	%rbx
 	pop	%rbp
@@ -366,4 +433,22 @@ L(end):	pop	%rbx
 	pop	%r15
 	FUNC_EXIT()
 	ret
+
+L(3):	mov	(vp), %rdx
+	add	$8, vp
+	add	$8, rp
+	.byte	0xc4,0x22,0xa3,0xf6,0x14,0xf6		C mulx (up,un,8), %r11, %r10
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0x08	C mulx 8(up,un,8), %r13, %r12
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0x10	C mulx 16(up,un,8), %rbx, %rax
+	add	%r10, %r13
+	adc	%r12, %rbx
+	adc	$0, %rax
+L(wd3):	adc	%r11, 8(rp)
+	adc	%r13, 16(rp)
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+	dec	vn
+	jne	L(3)
+	jmp	L(end)
 EPILOGUE()
