@@ -50,7 +50,6 @@ C    code implodes, the blow-up will not be more than perhaps 2.5x.
 C  * Micro-optimise critical lead-in code blocks.
 C  * Clean up register use, e.g. r15 vs vp, disuse of nn, etc.
 C  * Write n < 4 code specifically for Zen (current code is for Haswell).
-C  * Fix `mulx' usage for the benefit of older assemblers.
 
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
@@ -137,30 +136,30 @@ L(mx1):	test	$2, R8(%r14)
 
 L(mb1):	mulx(	%r9, %rbx, %rax)
 	lea	-2(%r14), n
-	`mulx'	-16(up,%r14,8), %r9, %r8
-	`mulx'	-8(up,%r14,8), %r11, %r10
+	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0xf0	C mulx -0x10(%rsi,%r14,8),%r9,%r8
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%r11,%r10
 	jmp	L(mlo1)
 
 L(mb3):	mulx(	%r9, %r11, %r10)
-	`mulx'	-16(up,%r14,8), %r13, %r12
-	`mulx'	-8(up,%r14,8), %rbx, %rax
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0xf0	C mulx -0x10(%rsi,%r14,8),%r13,%r12
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%rbx,%rax
 	lea	(%r14), n
 	jrcxz	L(x)
 	jmp	L(mlo3)
 L(x):	jmp	L(mcor)
 
 L(mb2):	mulx(	%r9, %r13, %r12)
-	`mulx'	-16(up,%r14,8), %rbx, %rax
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0xf0	C mulx -0x10(%rsi,%r14,8),%rbx,%rax
 	lea	-1(%r14), n
-	`mulx'	-8(up,%r14,8), %r9, %r8
+	.byte	0xc4,0x22,0xb3,0xf6,0x44,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%r9,%r8
 	jmp	L(mlo2)
 
 L(mx0):	test	$2, R8(%r14)
 	jz	L(mb2)
 
 L(mb0):	mulx(	%r9, %r9, %r8)
-	`mulx'	-16(up,%r14,8), %r11, %r10
-	`mulx'	-8(up,%r14,8), %r13, %r12
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0xf0	C mulx -0x10(%rsi,%r14,8),%r11,%r10
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%r13,%r12
 	lea	-3(%r14), n
 	jmp	L(mlo0)
 
@@ -205,8 +204,8 @@ L(x1):	test	$2, R8(%r14)
 
 L(b1):	mulx(	%r8, %rbx, %rax)
 	lea	-1(%r14), n
-	`mulx'	-8(up,%r14,8), %r9, %r8
-	`mulx'	(up,%r14,8), %r11, %r10
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (%rsi,%rcx,8),%r9,%r8
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 0x8(%rsi,%rcx,8),%r11,%r10
 	jmp	L(lo1)
 
 L(x0):	test	$2, R8(%r14)
@@ -214,14 +213,14 @@ L(x0):	test	$2, R8(%r14)
 
 L(b0):	mulx(	%r8, %r9, %r8)
 	lea	-2(%r14), n
-	`mulx'	-8(up,%r14,8), %r11, %r10
-	`mulx'	(up,%r14,8), %r13, %r12
+	.byte	0xc4,0x22,0xa3,0xf6,0x54,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%r11,%r10
+	.byte	0xc4,0x22,0x93,0xf6,0x24,0xf6		C mulx (%rsi,%r14,8),%r13,%r12
 	jmp	L(lo0)
 
 L(b3):	mulx(	%r8, %r11, %r10)
 	lea	1(%r14), n
-	`mulx'	-8(up,%r14,8), %r13, %r12
-	`mulx'	(up,%r14,8), %rbx, %rax
+	.byte	0xc4,0x22,0x93,0xf6,0x64,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%r13,%r12
+	.byte	0xc4,0xa2,0xe3,0xf6,0x04,0xf6		C mulx (%rsi,%r14,8),%rbx,%rax
 	add	%r10, %r13
 	adc	%r12, %rbx
 	adc	$0, %rax
@@ -268,10 +267,10 @@ L(mcor):mov	%r11, 8(rp)
 
 L(b2):	mulx(	%r8, %r13, %r12)
 	lea	(%r14), n
-	`mulx'	-8(up,%r14,8), %rbx, %rax
+	.byte	0xc4,0xa2,0xe3,0xf6,0x44,0xf6,0xf8	C mulx -0x8(%rsi,%r14,8),%rbx,%rax
 	add	%r12, %rbx
 	adc	$0, %rax
-	`mulx'	(up,%r14,8), %r9, %r8
+	.byte	0xc4,0x22,0xb3,0xf6,0x04,0xf6		C mulx (%rsi,%r14,8),%r9,%r8
 	jmp	L(lo2)
 
 	ALIGN(16)
