@@ -53,8 +53,8 @@ C Intel SLM		n/a
 C VIA nano		n/a
 
 C TODO
-C  * The loop sustains 4 insn/cycle on zen.
-C  * Avoid using jrcxz by using dec n + jnz.
+C  * The loop sustains 4 insns/cycle on zen.
+C  * Perhaps avoid using jrcxz by using dec n + jnz.
 
 define(`rp',	`%rdi')
 define(`up',	`%rsi')
@@ -213,7 +213,6 @@ L(1):	mov	%r10, %r11
 	lea	40(rp), rp
 	xor	R32(%r10), R32(%r10)
 	jmp	L(e1)
-
 EPILOGUE()
 	JUMPTABSECT
 	ALIGN(8)
