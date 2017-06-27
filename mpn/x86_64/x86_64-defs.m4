@@ -403,6 +403,12 @@ c4_helper($2,$1,$3,fb,f7)',`dnl         format 1,2
 c4_helper($1,$3,$2,$4,fb,f7)'dnl        format 3
 )')
 
+define(`sarx',`dnl
+ifelse(`$#',3,`dnl
+c4_helper($2,$1,$3,fa,f7)',`dnl         format 1,2
+c4_helper($1,$3,$2,$4,fa,f7)'dnl        format 3
+)')
+
 
 dnl  Usage
 dnl
