@@ -31,19 +31,21 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C TODO
-C  * Polish.
-C  * Micro-schedule.
-C  * Perform CSE of corner code as indicated by FIXME comments.
-C  * Do overlapped software pipelining.
-C  * Consider shallower sw pipelining of mul_1/addmul_1 loops, allowing 4
-C    instead of 8 product registers.  Keep 4x unrolling or go to 2x.  This
-C    would allow leaner feed-in as the size congruence classes (mod 2) would
-C    share the same feed-in, except the final branch.
-C  * Expand inner loops 4x in the outer loop, to both save some (poorly branch
-C    predicted) bookkeeping, and to allow some overlapped sw pipelining.
-C  * It is tempting to use 32-bit loop counts, but it is tricky as we keep all
-C    counts negative, and 32-bit ops zero extend.  It would work if we first
-C    offset ptrs by 2^64-2^32...
+C  * Do overlapped software pipelining.  This should close the remaining gap to
+C    mul_basecase.
+C
+C  * Update un just once in the outer loop.
+C
+C  * Perhaps keep un and n pre-multiplied by 8, thus suppressing ",8" from
+C    loads and stores.  At least in some cases, the non-scaped form is faster.
+C
+C  * Optimise xit3 code, e.g., using shrx and sarx like in the main loop.
+C
+C  * The mul_1 feed-in code has gotten little attention and could probably be
+C    improved.  Perhaps even expand it to 4 separate loops to allow straight
+C    fall-through into the 4 addmul_1 loops.
+C
+C  * Clean up ad-hoc scratch register usage in the addmul_1 feed-in code blocks.
 
 define(`rp',      `%rdi')
 define(`up',      `%rsi')
@@ -181,7 +183,6 @@ L(mb3):	mulx(	%r9, %r11, %r10)
 L(n4):	mov	%r11, 8(rp)
 	adc	%r10, %r13
 	adc	%r12, %rbx
-	adc	$0, %rax
 	jmp	L(m)
 
 L(mx0):	test	$2, R8(un)
@@ -199,7 +200,7 @@ L(mb0):	mulx(	%r9, %r9, %r8)
 	add	%r15, %r9
 	jmp	L(mlo0)
 
-	ALIGN(64)
+	ALIGN(16)
 L(mtop):jrcxz	L(mend)
 	adc	%r8, %r11
 	mov	%r9, (rp,n,8)
@@ -226,85 +227,53 @@ L(mend):mov	%r9, (rp)
 	mov	%rbx, 24(rp)
 	mov	%rax, 32(rp)
 
-	lea	2(un), un		C FIXME: Incorporate above
+	lea	2(un), un
 
-L(outer):
-	mov	-8(up,un,8), %rdx	C up[0]
-	lea	3(un), n
-	and	$-4, n
-
-	mov	-16(up,un,8), %r9	C up[-1]
-	sar	$63, %r9
-	and	%rdx, %r9		C "ci" in C code
-	add	32(rp,un,8), %r9
-	mulx(	%rdx, %rax, %r15)	C up[0]^2
-	mov	(up,un,8), %r8		C up[1]
-	adc	$0, %r15
-	add	%rax, %r9
-	adc	$0, %r15		C "cin" in C code
-	mov	%r9, 32(rp,un,8)
-	lea	8(rp), rp
-
-	mov	-16(up,un,8), %r10	C up[-1]
-	shr	$63, %r10
-	lea	(%r10,%rdx,2), %rdx	C "u0" arg in C code
-
+	mov	$63, R32(%r15)			C keep at 63 for shrx/sarx.
 	test	$1, R8(un)
 	jz	L(x0)
 L(x1):	test	$2, R8(un)
-	jz	L(b3)
-
-L(b1):	mulx(	%r8, %rbx, %rax)
-	add	%r15, %rbx
-	adc	$0, %rax
-	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x08	C mulx 8(up,un,8), %r9, %r8
-	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x10	C mulx 16(up,un,8), %r11, %r10
-	jmp	L(lo1)
-
-L(b0):	mulx(	%r8, %r9, %r8)
-	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x08	C mulx 8(up,un,8), %r11, %r10
-	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x10	C mulx 16(up,un,8), %r13, %r12
-	add	%r15, %r9
-	jmp	L(lo0)
-
+	jz	L(f3)
+	jmp	L(f1)
 L(x0):	test	$2, R8(un)
-	jz	L(b0)
+	jz	L(f0)
+C	jmp	L(f2)
 
-L(b2):	mulx(	%r8, %r13, %r12)
+L(f2):	mov	-8(up,un,8), %rdx		C up[0]
+	lea	2(un), n
+	lea	8(rp), rp
+	.byte	0xc4,0x62,0x82,0xf7,0x5c,0xee,0xf0	C sarx %r15, -16(up,un,8), %r11
+	.byte	0xc4,0x62,0x83,0xf7,0x6c,0xee,0xf0	C shrx %r15, -16(up,un,8), %r13
+	and	%rdx, %r11			C "ci" in C code
+	mulx(	%rdx, %rax, %r10)		C up[0]^2
+	lea	(%r13,%rdx,2), %rdx		C "u0" arg in C code
+	add	%rax, %r11
+
+	.byte	0xc4,0x62,0x93,0xf6,0x24,0xee		C mulx (up,un,8), %r13, %r12
 	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x08	C mulx 8(up,un,8), %rbx, %rax
-	add	%r15, %r13
-	adc	%r12, %rbx
-	adc	$0, %rax
-	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %r9, %r8
-	jmp	L(lo2)
-
-L(b3):	mulx(	%r8, %r11, %r10)
-	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x08	C mulx 8(up,un,8), %r13, %r12
-	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x10	C mulx 16(up,un,8), %rbx, %rax
-	add	%r15, %r11
 	adc	%r10, %r13
 	adc	%r12, %rbx
 	adc	$0, %rax
-	jrcxz	L(xit3)
-	jmp	L(lo3)
+	jmp	L(b2)
 
-	ALIGN(64)
-L(top):	add	%r9, (rp,n,8)
-L(lo3):	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	ALIGN(16)
+L(top2):add	%r9, (rp,n,8)
+L(b2):	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
 	adc	%r11, 8(rp,n,8)
-L(lo2):	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
 	adc	%r13, 16(rp,n,8)
-L(lo1):	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
 	adc	%rbx, 24(rp,n,8)
 	adc	%rax, %r9
-L(lo0):	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
 	adc	%r8, %r11
 	adc	%r10, %r13
 	adc	%r12, %rbx
 	adc	$0, %rax
 	add	$4, n
-	jnz	L(top)
+	jnz	L(top2)
 
+	inc	un
 	add	%r9, (rp)
 	adc	%r11, 8(rp)
 	adc	%r13, 16(rp)
@@ -312,31 +281,157 @@ L(lo0):	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
 	adc	$0, %rax
 	mov	%rax, 32(rp)
 
-	inc	un
-	jmp	L(outer)
+L(f1):	mov	-8(up,un,8), %rdx		C up[0]
+	lea	1(un), n
+	lea	8(rp), rp
+	.byte	0xc4,0x62,0x82,0xf7,0x6c,0xee,0xf0	C sarx	%r15, -16(up,un,8), %r13
+	.byte	0xc4,0xe2,0x83,0xf7,0x5c,0xee,0xf0	C shrx	%r15, -16(up,un,8), %rbx
+	and	%rdx, %r13			C "ci" in C code
+	mulx(	%rdx, %rax, %r12)		C up[0]^2
+	lea	(%rbx,%rdx,2), %rdx		C "u0" arg in C code
+	add	%rax, %r13
 
-L(xit3):add	%r11, 8(rp)
+	.byte	0xc4,0xe2,0xe3,0xf6,0x04,0xee		C mulx (up,un,8), %rbx, %rax
+	adc	%r12, %rbx
+	adc	$0, %rax
+	.byte	0xc4,0x62,0xb3,0xf6,0x44,0xee,0x08	C mulx 8(up,un,8), %r9, %r8
+	jmp	L(b1)
+
+	ALIGN(16)
+L(top1):add	%r9, (rp,n,8)
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	adc	%r11, 8(rp,n,8)
+L(b1):	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	adc	%r13, 16(rp,n,8)
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
+	adc	%rbx, 24(rp,n,8)
+	adc	%rax, %r9
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
+	adc	%r8, %r11
+	adc	%r10, %r13
+	adc	%r12, %rbx
+	adc	$0, %rax
+	add	$4, n
+	jnz	L(top1)
+
+	inc	un
+	add	%r9, (rp)
+	adc	%r11, 8(rp)
+	adc	%r13, 16(rp)
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+
+L(f0):	mov	-8(up,un,8), %rdx		C up[0]
+	lea	(un), n
+	lea	8(rp), rp
+	.byte	0xc4,0xe2,0x82,0xf7,0x5c,0xee,0xf0	C sarx	%r15, -16(up,un,8), %rbx
+	.byte	0xc4,0x62,0x83,0xf7,0x4c,0xee,0xf0	C shrx	%r15, -16(up,un,8), %r9
+	and	%rdx, %rbx			C "ci" in C code
+	mulx(	%rdx, %r10, %rax)		C up[0]^2
+	lea	(%r9,%rdx,2), %rdx		C "u0" arg in C code
+	add	%r10, %rbx
+	adc	$0, %rax			C "cin" in C code
+
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,un,8), %r9, %r8
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xee,0x08	C mulx 8(up,un,8), %r11, %r10
+	jmp	L(b0)
+
+	ALIGN(16)
+L(top0):add	%r9, (rp,n,8)
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	adc	%r11, 8(rp,n,8)
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	adc	%r13, 16(rp,n,8)
+L(b0):	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
+	adc	%rbx, 24(rp,n,8)
+	adc	%rax, %r9
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
+	adc	%r8, %r11
+	adc	%r10, %r13
+	adc	%r12, %rbx
+	adc	$0, %rax
+	add	$4, n
+	jnz	L(top0)
+
+	inc	un
+	add	%r9, (rp)
+	adc	%r11, 8(rp)
+	adc	%r13, 16(rp)
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+
+L(f3):	mov	-8(up,un,8), %rdx		C up[0]
+	lea	3(un), n
+	lea	8(rp), rp
+	.byte	0xc4,0x62,0x82,0xf7,0x4c,0xee,0xf0	C sarx %r15, -16(up,un,8), %r9
+	.byte	0xc4,0x62,0x83,0xf7,0x5c,0xee,0xf0	C shrx %r15, -16(up,un,8), %r11
+	and	%rdx, %r9			C "ci" in C code
+	mulx(	%rdx, %rax, %r8)		C up[0]^2
+	lea	(%r11,%rdx,2), %rdx		C "u0" arg in C code
+	add	%rax, %r9
+
+	.byte	0xc4,0x62,0xa3,0xf6,0x14,0xee		C mulx (%rsi,%rbp,8),%r11,%r10
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xee,0x08	C mulx 0x8(%rsi,%rbp,8),%r13,%r12
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xee,0x10	C mulx 0x10(%rsi,%rbp,8),%rbx,%rax
+	adc	%r8, %r11
+	adc	%r10, %r13
+	adc	%r12, %rbx
+	adc	$0, %rax
+	jrcxz	L(xit3)
+	jmp	L(top3)			C FIXME perhaps fall through
+
+	ALIGN(16)
+L(top3):add	%r9, (rp,n,8)
+	.byte	0xc4,0x62,0xb3,0xf6,0x04,0xce		C mulx (up,n,8), %r9, %r8
+	adc	%r11, 8(rp,n,8)
+	.byte	0xc4,0x62,0xa3,0xf6,0x54,0xce,0x08	C mulx 8(up,n,8), %r11, %r10
+	adc	%r13, 16(rp,n,8)
+	.byte	0xc4,0x62,0x93,0xf6,0x64,0xce,0x10	C mulx 16(up,n,8), %r13, %r12
+	adc	%rbx, 24(rp,n,8)
+	adc	%rax, %r9
+	.byte	0xc4,0xe2,0xe3,0xf6,0x44,0xce,0x18	C mulx 24(up,n,8), %rbx, %rax
+	adc	%r8, %r11
+	adc	%r10, %r13
+	adc	%r12, %rbx
+	adc	$0, %rax
+	add	$4, n
+	jnz	L(top3)
+
+	inc	un
+	add	%r9, (rp)
+	adc	%r11, 8(rp)
+	adc	%r13, 16(rp)
+	adc	%rbx, 24(rp)
+	adc	$0, %rax
+	mov	%rax, 32(rp)
+	jmp	L(f2)
+
+
+L(xit3):add	%r9, (rp)
+	adc	%r11, 8(rp)
 	adc	16(rp), %r13
 	adc	24(rp), %rbx
-	adc	$0, %rax
-L(m):	mov	%rax, 32(rp)
+L(m):	adc	$0, %rax
+	mov	%rax, 32(rp)
 	mov	-24(up), %rdx		C FIXME: CSE
 	mov	-32(up), %r9		C FIXME: CSE
 	sar	$63, %r9
 	and	%rdx, %r9
 	add	%r13, %r9
-	mulx(	%rdx, %rax, %r15)
+	mulx(	%rdx, %rax, %r10)
 	mov	-16(up), %r8		C FIXME: CSE
-	adc	$0, %r15
+	adc	$0, %r10
 	add	%rax, %r9
-	adc	$0, %r15
+	adc	$0, %r10
 	mov	%r9, 16(rp)
-	mov	-32(up), %r10
-	shl	%r10
+	mov	-32(up), %rax
+	shl	%rax
 	adc	%rdx, %rdx
 	mulx(	%r8, %r13, %r12)
 	mulx(	-8,(up), %r11, %rax)	C FIXME: CSE
-	add	%r15, %r13
+	add	%r10, %r13
 	adc	%r12, %r11
 	adc	$0, %rax
 	add	%rbx, %r13
@@ -349,16 +444,16 @@ L(m):	mov	%rax, 32(rp)
 	sar	$63, %r9
 	and	%rdx, %r9
 	add	%r11, %r9
-	mulx(	%rdx, %rbp, %r15)
-	adc	$0, %r15
+	mulx(	%rdx, %rbp, %r10)
+	adc	$0, %r10
 	add	%rbp, %r9
-	adc	$0, %r15
+	adc	$0, %r10
 	mov	%r9, 32(rp)
-	mov	-24(up), %r10
-	shl	%r10
+	mov	-24(up), %rbp
+	shl	%rbp
 	adc	%rdx, %rdx
 	mulx(	%r8, %rbx, %rbp)
-	add	%r15, %rbx
+	add	%r10, %rbx
 	adc	$0, %rbp
 	adc	%rbx, %rax
 	mov	%rax, 40(rp)
@@ -368,12 +463,12 @@ L(m):	mov	%rax, 32(rp)
 	sar	$63, %r9
 	and	%rdx, %r9
 	add	%rbp, %r9
-	mulx(	%rdx, %rbp, %r15)
-	adc	$0, %r15
+	mulx(	%rdx, %rbp, %r10)
+	adc	$0, %r10
 	add	%rbp, %r9
-	adc	$0, %r15
+	adc	$0, %r10
 	mov	%r9, 48(rp)
-	mov	%r15, 56(rp)
+	mov	%r10, 56(rp)
 
 	pop	%rbx
 	pop	%rbp
