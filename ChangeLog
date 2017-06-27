@@ -1,3 +1,29 @@
+2017-06-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/sqr_basecase.asm: Expand to use 4 addmul_1 loops.
+
+	* mpn/x86_64/x86_64-defs.m4 (sarx): New macro.
+
+2017-06-26  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreibwl/sqr_basecase.asm: Rewrite to do 2x and limb
+	squaring in main loop.
+
+2017-06-20  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/atom/cnd_add_n.asm: New grabber file.
+	* mpn/x86_64/atom/cnd_sub_n.asm: Likewise.
+
+	* mpn/x86_64/coreihwl/aorrlsh_n.asm: New grabber file.
+
+2017-06-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/mul_basecase.asm: Do overlapped software pipelining.
+
+	* mpn/x86_64/silvermont/mul_basecase.asm: New grabber file.
+	* mpn/x86_64/silvermont/sqr_basecase.asm: Likewise.
+	* mpn/x86_64/silvermont/mullo_basecase.asm: Likewise.
+
 2017-06-14  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/zen/mullo_basecase.asm: New file.
@@ -395,7 +421,7 @@
 	instead of mpn_divexact_1.
 
 	* gen-bases.c (binvert): New function, computing modular inverse and
-p	low zero count.
+	low zero count.
 	(header): Print MP_BASES_BIG_BASE_CTZ_10 and
 	MP_BASES_BIG_BASE_BINVERTED_10.
 
