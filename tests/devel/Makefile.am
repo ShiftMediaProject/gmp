@@ -19,6 +19,7 @@
 
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/tests
+AM_LDFLAGS = -no-install
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 # add_n_sub_n add_n_sub_n_2 not yet built since mpn_add_n_sub_n doesn't yet exist

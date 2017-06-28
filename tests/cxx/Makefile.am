@@ -25,6 +25,7 @@
 # -lm is needed for t-ops2 which compares the results of trunc and mpf_trunc.
 #
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/tests
+AM_LDFLAGS = -no-install
 LDADD = -L$(top_builddir)/.libs \
   $(top_builddir)/tests/libtests.la \
   $(top_builddir)/libgmpxx.la \
