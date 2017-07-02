@@ -1408,7 +1408,7 @@ tune_mullo (void)
   param.function = speed_mpn_mullo_n;
 
   param.name = "MULLO_BASECASE_THRESHOLD";
-  param.min_size = 1;
+  param.min_size = 2;
   param.min_is_always = 1;
   param.max_size = MULLO_BASECASE_THRESHOLD_LIMIT-1;
   param.stop_factor = 1.5;
