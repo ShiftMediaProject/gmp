@@ -220,7 +220,7 @@ check_some_values (int justone, int quick)
   SPINNER(2);
   printf ("\nValues with at most a limb for reminder, tested.\n");
   er = GMP_NUMB_MAX; her = 0;
-  
+
   printf ("High-half values tested, up to bits:\n");
   do {
     x = mpn_sqrtrem (s, r, q, 2);

@@ -31,26 +31,26 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9	 
-C AMD K10	 
-C AMD bd1	 
-C AMD bd2	 
+C AMD K8,K9
+C AMD K10
+C AMD bd1
+C AMD bd2
 C AMD bd3
 C AMD bd4
 C AMD zen
-C AMD bobcat	 
-C AMD jaguar	 
-C Intel P4	 
+C AMD bobcat
+C AMD jaguar
+C Intel P4
 C Intel core2	 1.52
 C Intel NHM	 1.78	(just 2.15 for n < 256)
-C Intel SBR	 
-C Intel IBR	 
-C Intel HWL	 
-C Intel BWL	 
-C Intel SKL	 
-C Intel atom	 
-C Intel SLM	 
-C VIA nano	 
+C Intel SBR
+C Intel IBR
+C Intel HWL
+C Intel BWL
+C Intel SKL
+C Intel atom
+C Intel SLM
+C VIA nano
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

@@ -125,4 +125,3 @@ main (int argc, char **argv)
   tests_end ();
   return 0;
 }
-

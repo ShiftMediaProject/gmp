@@ -80,4 +80,3 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
   CHECK_ALL(Type,a,b,>=); \
   CHECK_ALL(Type,a,b,==); \
   CHECK_ALL(Type,a,b,!=)
-

@@ -148,4 +148,3 @@ PROLOGUE(func_nc)
 IFDOS(`	mov	56(%rsp), %r8	')
 	jmp	L(start)
 EPILOGUE()
-

@@ -279,4 +279,3 @@ mpn_mu_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
   itch_binvert = mpn_binvert_itch (in);
   return in + MAX (itches, itch_binvert);
 }
-
