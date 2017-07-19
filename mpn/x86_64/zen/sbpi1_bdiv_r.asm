@@ -68,14 +68,14 @@ IFDOS(`	mov	56(%rsp), dinv	')
 
 	sub	dn_param, un_param		C outer loop count
 	mov	dn_param, dn		C FIXME: Suppress by reg re-alloc
-	push	%r8				C keep dinv on stack
+	push	dinv				C keep dinv on stack
 	mov	un_param, un		C FIXME: Suppress by reg re-alloc
 	xor	R32(%rbp), R32(%rbp)
 
 	lea	(dp_param,dn_param,8), dp
 
-	mov	dinv, %rdx
-	imul	(up), %rdx			C first quotient limb
+	mov	(up), %rdx
+	imul	dinv, %rdx			C first quotient limb
 
 	neg	dn
 	lea	-32(up,dn_param,8), up
