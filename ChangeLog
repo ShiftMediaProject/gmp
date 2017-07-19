@@ -1,3 +1,28 @@
+2017-07-20  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-impl.h (mpn_sbpi1_bdiv_r): Declare.
+
+	* mpn/asm-defs.m4 (define_mpn): Add sbpi1_bdiv_q, sbpi1_bdiv_qr,
+	sbpi1_bdiv_r.
+
+	* mpn/generic/sbpi1_bdiv_r.c: New file.
+	* mpn/x86_64/zen/sbpi1_bdiv_r.asm: New file.
+
+2017-07-19  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86/p6/sse2/submul_1.asm: Get pentium4 code instead of k6 code
+	for better speed on modern Intel P6 cores.
+
+2017-07-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/tuneup.c (tune_mullo): For MULLO_BASECASE_THRESHOLD start at 2.
+	(tune_sqrlo): Likewise.
+
+2017-06-28  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/Makefile.am tests/*/Makefile.am tune/Makefile.am (AM_LDFLAGS):
+	Define.  (Thanks to Emmanuel Thomé and Vincent Lefevre.)
+
 2017-06-27  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/zen/sqr_basecase.asm: Expand to use 4 addmul_1 loops.
