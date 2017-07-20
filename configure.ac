@@ -2962,7 +2962,7 @@ gmp_mpn_functions="$extra_functions					   \
   dcpi1_div_q dcpi1_div_qr dcpi1_divappr_q				   \
   mu_div_qr mu_divappr_q mu_div_q					   \
   bdiv_q_1								   \
-  sbpi1_bdiv_q sbpi1_bdiv_qr						   \
+  sbpi1_bdiv_q sbpi1_bdiv_qr sbpi1_bdiv_r				   \
   dcpi1_bdiv_q dcpi1_bdiv_qr						   \
   mu_bdiv_q mu_bdiv_qr							   \
   bdiv_q bdiv_qr broot brootinv bsqrt bsqrtinv				   \
