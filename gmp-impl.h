@@ -1508,7 +1508,7 @@ __GMP_DECLSPEC mp_limb_t mpn_sbpi1_bdiv_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr
 __GMP_DECLSPEC void      mpn_sbpi1_bdiv_q (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 
 #define   mpn_sbpi1_bdiv_r __MPN(sbpi1_bdiv_r)
-__GMP_DECLSPEC void      mpn_sbpi1_bdiv_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
+__GMP_DECLSPEC mp_limb_t mpn_sbpi1_bdiv_r (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
 
 #define   mpn_dcpi1_bdiv_qr __MPN(dcpi1_bdiv_qr)
 __GMP_DECLSPEC mp_limb_t mpn_dcpi1_bdiv_qr (mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t);
