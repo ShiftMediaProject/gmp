@@ -225,8 +225,9 @@ speed_measure (double (*fun) (struct speed_params *s), struct speed_params *s)
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
 	   e, (TOLERANCE-1.0)*100.0);
   fprintf (stderr, "    unsorted         sorted\n");
-  fprintf (stderr, "  %.12f    %.12f    is about 0.5%%\n",
-	   t_unsorted[0]*(TOLERANCE-1.0), t[0]*(TOLERANCE-1.0));
+  fprintf (stderr, "  %.12f    %.12f    is about %.1f%%\n",
+	   t_unsorted[0]*(TOLERANCE-1.0), t[0]*(TOLERANCE-1.0),
+	   100*(TOLERANCE-1.0));
   for (i = 0; i < numberof (t); i++)
     fprintf (stderr, "  %.09f       %.09f\n", t_unsorted[i], t[i]);
 
@@ -893,6 +894,11 @@ double
 speed_mpn_dcpi1_bdiv_q (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_PI1_BDIV_Q (mpn_dcpi1_bdiv_q);
+}
+double
+speed_mpn_sbpi1_bdiv_r (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_PI1_BDIV_R (mpn_sbpi1_bdiv_r);
 }
 double
 speed_mpn_mu_bdiv_q (struct speed_params *s)

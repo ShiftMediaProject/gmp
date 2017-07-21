@@ -299,6 +299,7 @@ double speed_mpn_sbpi1_bdiv_qr (struct speed_params *);
 double speed_mpn_dcpi1_bdiv_qr (struct speed_params *);
 double speed_mpn_sbpi1_bdiv_q (struct speed_params *);
 double speed_mpn_dcpi1_bdiv_q (struct speed_params *);
+double speed_mpn_sbpi1_bdiv_r (struct speed_params *);
 double speed_mpn_mu_bdiv_q (struct speed_params *);
 double speed_mpn_mu_bdiv_qr (struct speed_params *);
 double speed_mpn_broot (struct speed_params *);
@@ -2027,6 +2028,46 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     do {								\
       MPN_COPY (tp, s->xp, s->size);					\
       function (qp, tp, s->size, dp, s->size, inv);			\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_PI1_BDIV_R(function)				\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, ap;						\
+    mp_limb_t  inv;							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size, s->align_wp2);		\
+									\
+    MPN_COPY (ap,         s->xp, s->size);				\
+    MPN_COPY (ap+s->size, s->xp, s->size);				\
+									\
+    /* divisor must be odd */						\
+    MPN_COPY (dp, s->yp, s->size);					\
+    dp[0] |= 1;								\
+    binvert_limb (inv, dp[0]);						\
+    inv = -inv;								\
+									\
+    speed_operand_src (s, ap, 2*s->size);				\
+    speed_operand_dst (s, tp, 2*s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, ap, 2*s->size);					\
+      function (tp, 2*s->size, dp, s->size, inv);			\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\

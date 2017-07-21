@@ -382,6 +382,7 @@ const struct routine_t {
   { "mpn_dcpi1_bdiv_qr",       speed_mpn_dcpi1_bdiv_qr       },
   { "mpn_sbpi1_bdiv_q",        speed_mpn_sbpi1_bdiv_q        },
   { "mpn_dcpi1_bdiv_q",        speed_mpn_dcpi1_bdiv_q        },
+  { "mpn_sbpi1_bdiv_r",        speed_mpn_sbpi1_bdiv_r        },
 
   { "mpn_broot",               speed_mpn_broot,    FLAG_R },
   { "mpn_broot_invm1",         speed_mpn_broot_invm1, FLAG_R },
