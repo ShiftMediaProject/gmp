@@ -256,10 +256,7 @@ main (int argc, char **argv)
 	      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	      ASSERT_ALWAYS (rp[-1] == rran0);
 	      check_one (qp, rp + nn - dn, rh, np, nn, dp, dn, "mpn_sbpi1_bdiv_qr");
-	    }
 
-	  if (nn > dn)
-	    {
 	      /* Test mpn_sbpi1_bdiv_q */
 	      MPN_COPY (rp, np, nn);
 	      MPN_ZERO (qp, nn - dn);
@@ -267,6 +264,12 @@ main (int argc, char **argv)
 	      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	      ASSERT_ALWAYS (rp[-1] == rran0);
 	      check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_sbpi1_bdiv_q");
+
+	      /* Test mpn_sbpi1_bdiv_r; we use mpn_sbpi1_bdiv_q's quotient. */
+	      MPN_COPY (rp, np, nn);
+	      mpn_sbpi1_bdiv_r (rp, nn - dn, dp, MIN(dn,nn-dn), -dinv);
+	      ASSERT_ALWAYS (rp[-1] == rran0);
+	      check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_sbpi1_bdiv_r");
 	    }
 	}
 
