@@ -1,10 +1,32 @@
+2017-07-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gcd_1.asm: Enforce PIC as GNU/Linux toolchain workaround.
+	* ultrasparct3/bdiv_q_1.asm: Likewise.
+	* ultrasparct3/dive_1.asm: Likewise.
+	* ultrasparct3/invert_limb.asm: Likewise.
+	* ultrasparct3/mode1o.asm: Likewise.
+
+	* gmp-impl.h: Reorganise foolshC_ip1 -> foolshC -> foolsh chain to make
+	it transitive.
+
 2017-07-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* longlong.h: Purge definitions of obsolete UMUL_TIME and
 	UDIV_TIME constants. Also mentioned (but unused) in
 	mpn/cray/gmp-mparam.h and tune/common.c.
 
+2017-07-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpn/t-bdiv.c (main): Test mpn_sbpi1_bdiv_r.
+
+	* tune/common.c (speed_mpn_sbpi1_bdiv_r): New function.
+	* tune/speed.h: Declare it.
+	(SPEED_ROUTINE_MPN_PI1_BDIV_R): New macro.
+	* tune/speed.c (routine): Add mpn_sbpi1_bdiv_r.
+
 2017-07-20  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (gmp_mpn_functions): Add sbpi1_bdiv_r.
 
 	* gmp-impl.h (mpn_sbpi1_bdiv_r): Declare.
 
@@ -10453,7 +10475,7 @@
 
 2009-10-29  Niels Möller  <nisse@lysator.liu.se>
 
-	* tune/speed.c: Added support for mpn_toom4_sqr,
+	* tune/speed.c: Added support for mpn_toom4_sqr.
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM4_SQR): New macro.
 	(SPEED_ROUTINE_MPN_KARA_MUL_N): Deleted.
