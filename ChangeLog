@@ -1,3 +1,9 @@
+2017-07-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* longlong.h: Purge definitions of obsolete UMUL_TIME and
+	UDIV_TIME constants. Also mentioned (but unused) in
+	mpn/cray/gmp-mparam.h and tune/common.c.
+
 2017-07-20  Torbjörn Granlund  <tg@gmplib.org>
 
 	* gmp-impl.h (mpn_sbpi1_bdiv_r): Declare.

@@ -204,7 +204,6 @@ see https://www.gnu.org/licenses/.  */
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
-#define UMUL_TIME 18
 #else /* ! __GNUC__ */
 #include <machine/builtins.h>
 #define umul_ppmm(ph, pl, m0, m1) \
@@ -222,7 +221,6 @@ see https://www.gnu.org/licenses/.  */
   } while (0)
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
-#define UDIV_TIME 220
 #endif /* LONGLONG_STANDALONE */
 
 /* clz_tab is required in all configurations, since mpn/alpha/cntlz.asm
@@ -285,7 +283,6 @@ long __MPN(count_leading_zeros) (UDItype);
 #include <intrinsics.h>
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
-#define UDIV_TIME 220
 long __MPN(count_leading_zeros) (UDItype);
 #define count_leading_zeros(count, x) \
   ((count) = _leadz ((UWtype) (x)))
@@ -329,7 +326,6 @@ long __MPN(count_leading_zeros) (UDItype);
     __asm__ ("xma.hu %0 = %2, %3, f0\n\txma.l %1 = %2, %3, f0"		\
 	     : "=&f" (ph), "=f" (pl)					\
 	     : "f" (m0), "f" (m1))
-#define UMUL_TIME 14
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype _x = (x), _y, _a, _c;					\
@@ -372,7 +368,6 @@ long __MPN(count_leading_zeros) (UDItype);
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #endif
-#define UDIV_TIME 220
 #endif
 
 
@@ -515,7 +510,6 @@ long __MPN(count_leading_zeros) (UDItype);
 	     "=&r" (__t0), "=&r" (__t1), "=r" (__t2)			\
 	   : "r" ((USItype) (a)), "r" ((USItype) (b)) __CLOBBER_CC);	\
   } while (0)
-#define UMUL_TIME 20
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UWtype __r;							\
@@ -523,12 +517,10 @@ long __MPN(count_leading_zeros) (UDItype);
     (r) = __r;								\
   } while (0)
 extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
-#define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
 #else /* ARMv4 or newer */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
-#define UMUL_TIME 5
 #define smul_ppmm(xh, xl, a, b) \
   __asm__ ("smull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
 #ifndef LONGLONG_STANDALONE
@@ -539,7 +531,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   } while (0)
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
-#define UDIV_TIME 70
 #endif /* LONGLONG_STANDALONE */
 #endif /* defined(__ARM_ARCH_2__) ... */
 #define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
@@ -687,11 +678,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     (wh) = __x.__i.__h;							\
     (wl) = __x.__i.__l;							\
   } while (0)
-#define UMUL_TIME 8
-#define UDIV_TIME 60
-#else
-#define UMUL_TIME 40
-#define UDIV_TIME 80
 #endif
 #define count_leading_zeros(count, x) \
   do {									\
@@ -1034,12 +1020,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 
 #endif /* ! pentium */
 
-#ifndef UMUL_TIME
-#define UMUL_TIME 10
-#endif
-#ifndef UDIV_TIME
-#define UDIV_TIME 40
-#endif
 #endif /* 80x86 */
 
 #if defined (__amd64__) && W_TYPE_SIZE == 64
@@ -1163,12 +1143,10 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   __asm__ ("mulu%.l %3,%1:%0"						\
 	   : "=d" (w0), "=d" (w1)					\
 	   : "%0" ((USItype)(u)), "dmi" ((USItype)(v)))
-#define UMUL_TIME 45
 #define udiv_qrnnd(q, r, n1, n0, d) \
   __asm__ ("divu%.l %4,%1:%0"						\
 	   : "=d" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "dmi" ((USItype)(d)))
-#define UDIV_TIME 90
 #define sdiv_qrnnd(q, r, n1, n0, d) \
   __asm__ ("divs%.l %4,%1:%0"						\
 	   : "=d" (q), "=d" (r)						\
@@ -1202,8 +1180,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 		"=d" (__umul_tmp1), "=&d" (__umul_tmp2)			\
 	      : "%2" ((USItype)(a)), "d" ((USItype)(b)));		\
   } while (0)
-#define UMUL_TIME 100
-#define UDIV_TIME 400
 #endif /* not mc68020 */
 /* The '020, '030, '040 and '060 have bitfield insns.
    GCC 3.4 defines __mc68020__ when in CPU32 mode, check for __mcpu32__ to
@@ -1256,11 +1232,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   __asm__ ("divu.d %0,%1,%2"						\
 	   : "=r" (__q.__ll) : "r" (__x.__ll), "r" (d));		\
   (r) = (n0) - __q.__l * (d); (q) = __q.__l; })
-#define UMUL_TIME 5
-#define UDIV_TIME 25
-#else
-#define UMUL_TIME 17
-#define UDIV_TIME 150
 #endif /* __m88110__ */
 #endif /* __m88000__ */
 
@@ -1282,8 +1253,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   __asm__ ("multu %2,%3\n\tmflo %0\n\tmfhi %1"				\
 	   : "=d" (w0), "=d" (w1) : "d" (u), "d" (v))
 #endif
-#define UMUL_TIME 10
-#define UDIV_TIME 100
 #endif /* __mips */
 
 #if (defined (__mips) && __mips >= 3) && W_TYPE_SIZE == 64
@@ -1308,8 +1277,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	   : "=d" (w0), "=d" (w1)					\
 	   : "d" ((UDItype)(u)), "d" ((UDItype)(v)))
 #endif
-#define UMUL_TIME 20
-#define UDIV_TIME 140
 #endif /* __mips */
 
 #if defined (__mmix__) && W_TYPE_SIZE == 64
@@ -1422,23 +1389,17 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
-#define UMUL_TIME 15
 #define smul_ppmm(ph, pl, m0, m1) \
   do {									\
     SItype __m0 = (m0), __m1 = (m1);					\
     __asm__ ("mulhw %0,%1,%2" : "=r" (ph) : "%r" (m0), "r" (m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
-#define SMUL_TIME 14
-#define UDIV_TIME 120
 #else
-#define UMUL_TIME 8
 #define smul_ppmm(xh, xl, m0, m1) \
   __asm__ ("mul %0,%2,%3" : "=r" (xh), "=q" (xl) : "r" (m0), "r" (m1))
-#define SMUL_TIME 4
 #define sdiv_qrnnd(q, r, nh, nl, d) \
   __asm__ ("div %0,%2,%4" : "=r" (q), "=q" (r) : "r" (nh), "1" (nl), "r" (d))
-#define UDIV_TIME 100
 #endif
 #endif /* 32-bit POWER architecture variants.  */
 
@@ -1545,15 +1506,12 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
-#define UMUL_TIME 15
 #define smul_ppmm(ph, pl, m0, m1) \
   do {									\
     DItype __m0 = (m0), __m1 = (m1);					\
     __asm__ ("mulhd %0,%1,%2" : "=r" (ph) : "%r" (__m0), "r" (__m1));	\
     (pl) = __m0 * __m1;							\
   } while (0)
-#define SMUL_TIME 14  /* ??? */
-#define UDIV_TIME 120 /* ??? */
 #endif /* 64-bit PowerPC.  */
 
 #if defined (__pyr__) && W_TYPE_SIZE == 32
@@ -1614,8 +1572,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	   : "=r" (ph), "=r" (pl)					\
 	   : "%r" ((USItype)(m0)), "r" ((USItype)(m1))			\
 	   : "r2")
-#define UMUL_TIME 20
-#define UDIV_TIME 200
 #define count_leading_zeros(count, x) \
   do {									\
     if ((x) >= 0x10000)							\
@@ -1643,7 +1599,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("dmulu.l %2,%3\n\tsts macl,%1\n\tsts mach,%0"		\
 	   : "=r" (w1), "=r" (w0) : "r" (u), "r" (v) : "macl", "mach")
-#define UMUL_TIME 5
 #endif
 
 #if defined (__sparc__) && W_TYPE_SIZE == 32
@@ -1691,10 +1646,8 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
    but INTERPRETED AS UNSIGNED.  */
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
-#define UMUL_TIME 5
 
 #if HAVE_HOST_CPU_supersparc
-#define UDIV_TIME 60		/* SuperSPARC timing */
 #else
 /* Don't use this on SuperSPARC because its udiv only handles 53 bit
    dividends and will trap to the kernel for the rest. */
@@ -1706,7 +1659,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     (r) = (n0) - __q * (d);						\
     (q) = __q;								\
   } while (0)
-#define UDIV_TIME 25
 #endif /* HAVE_HOST_CPU_supersparc */
 
 #else /* ! __sparc_v8__ */
@@ -1715,7 +1667,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
    instructions scan (ffs from high bit) and divscc.  */
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
-#define UMUL_TIME 5
 #define udiv_qrnnd(q, r, n1, n0, d) \
   __asm__ ("! Inlined udiv_qrnnd\n"					\
 "	wr	%%g0,%2,%%y	! Not a delayed write for sparclite\n"	\
@@ -1758,7 +1709,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 "1:	! End of inline udiv_qrnnd"					\
 	   : "=r" (q), "=r" (r) : "r" (n1), "r" (n0), "rI" (d)		\
 	   : "%g1" __AND_CLOBBER_CC)
-#define UDIV_TIME 37
 #define count_leading_zeros(count, x) \
   __asm__ ("scan %1,1,%0" : "=r" (count) : "r" (x))
 /* Early sparclites return 63 for an argument of 0, but they warn that future
@@ -1812,7 +1762,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 "	rd	%%y,%1"							\
 	   : "=r" (w1), "=r" (w0) : "%rI" (u), "r" (v)			\
 	   : "%g1", "%g2" __AND_CLOBBER_CC)
-#define UMUL_TIME 39		/* 39 instructions */
 #endif
 #ifndef udiv_qrnnd
 #ifndef LONGLONG_STANDALONE
@@ -1822,9 +1771,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
     (r) = __r;								\
   } while (0)
 extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
-#ifndef UDIV_TIME
-#define UDIV_TIME 140
-#endif
 #endif /* LONGLONG_STANDALONE */
 #endif /* udiv_qrnnd */
 #endif /* __sparc__ */
@@ -2259,13 +2205,4 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[129];
    that hence the latter should always be used.  */
 #ifndef UDIV_PREINV_ALWAYS
 #define UDIV_PREINV_ALWAYS 0
-#endif
-
-/* Give defaults for UMUL_TIME and UDIV_TIME.  */
-#ifndef UMUL_TIME
-#define UMUL_TIME 1
-#endif
-
-#ifndef UDIV_TIME
-#define UDIV_TIME UMUL_TIME
 #endif

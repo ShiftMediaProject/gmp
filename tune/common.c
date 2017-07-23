@@ -2196,9 +2196,6 @@ speed_mpz_mfac_uiui (struct speed_params *s)
 
    Limitations:
 
-   Don't blindly use this to set UMUL_TIME in gmp-mparam.h, check the code
-   generated first, especially on CPUs with low latency multipliers.
-
    The default umul_ppmm doing h*l will be getting increasing numbers of
    high zero bits in the calculation.  CPUs with data-dependent multipliers
    will want to use umul_ppmm.1 to get some randomization into the
