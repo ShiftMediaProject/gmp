@@ -1,3 +1,9 @@
+2017-07-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp.c (GMP_MPN_OVERLAP_P): New macro, copy of
+	MPN_OVERLAP_P, from gmp-impl.h.
+	(mpn_mul): Assert that output area doesn't overlap with the input.
+
 2017-02-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp.c (mpz_sizeinbase, mpz_get_str, mpz_set_str): Support

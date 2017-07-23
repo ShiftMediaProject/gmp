@@ -71,6 +71,12 @@ see https://www.gnu.org/licenses/.  */
 
 #define GMP_CMP(a,b) (((a) > (b)) - ((a) < (b)))
 
+/* Return non-zero if xp,xsize and yp,ysize overlap.
+   If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
+   overlap.  If both these are false, there's an overlap. */
+#define GMP_MPN_OVERLAP_P(xp, xsize, yp, ysize)				\
+  ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
+
 #define gmp_assert_nocarry(x) do { \
     mp_limb_t __cy = (x);	   \
     assert (__cy == 0);		   \
@@ -576,6 +582,8 @@ mpn_mul (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 {
   assert (un >= vn);
   assert (vn >= 1);
+  assert (!GMP_MPN_OVERLAP_P(rp, un + vn, up, un));
+  assert (!GMP_MPN_OVERLAP_P(rp, un + vn, vp, vn));
 
   /* We first multiply by the low order limb. This result can be
      stored, not added, to rp. We also avoid a loop for zeroing this
