@@ -267,7 +267,7 @@ main (int argc, char **argv)
 
 	      /* Test mpn_sbpi1_bdiv_r; we use mpn_sbpi1_bdiv_q's quotient. */
 	      MPN_COPY (rp, np, nn);
-	      mpn_sbpi1_bdiv_r (rp, nn - dn, dp, MIN(dn,nn-dn), -dinv);
+	      mpn_sbpi1_bdiv_r (rp, nn, dp, dn, -dinv);
 	      ASSERT_ALWAYS (rp[-1] == rran0);
 	      check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_sbpi1_bdiv_r");
 	    }
