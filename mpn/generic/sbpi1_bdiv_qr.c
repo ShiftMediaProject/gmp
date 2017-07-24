@@ -61,6 +61,7 @@ mpn_sbpi1_bdiv_qr (mp_ptr qp,
   ASSERT (dn > 0);
   ASSERT (un > dn);
   ASSERT ((dp[0] & 1) != 0);
+  ASSERT ((dp[0] * dinv) == 0);
   ASSERT (up == qp || !MPN_OVERLAP_P (up, un, qp, un - dn));
 
   for (i = un - dn, cy = 0; i != 0; i--)
