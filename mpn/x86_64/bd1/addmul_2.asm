@@ -55,11 +55,6 @@ C VIA nano
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
 
-C When playing with pointers, set this to $2 to fall back to conservative
-C indexing in wind-dowm code.
-define(`I',`$1')
-
-
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx
 define(`n_param', `%rdx')   C r8
