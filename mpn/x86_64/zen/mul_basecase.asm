@@ -41,6 +41,7 @@ C    suffers from write/read conflicts, in particular the 1 mod 4 case.  Also,
 C    mul_1 could osp into addmul_1.
 C  * Let vn_param be vn to save a copy.
 C  * Re-allocate to benefit more from 32-bit encoding.
+C  * Poor performance for e.g. n = 12,16.
 
 define(`rp',       `%rdi')
 define(`up',       `%rsi')
