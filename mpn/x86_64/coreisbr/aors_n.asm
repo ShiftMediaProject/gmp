@@ -126,7 +126,7 @@ L(b10):	neg	%r8
 	ADCSBB	16(vp), %r8
 	ADCSBB	24(vp), %r9
 	lea	16(vp), vp
-	lea	(rp), rp
+C	lea	(rp), rp
 	jmp	L(lo2)
 
 L(e2):	mov	%r10, (rp)
