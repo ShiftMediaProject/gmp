@@ -33,29 +33,29 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9      6.78
-C AMD K10        6.78
-C AMD bull       8.39    8.65
-C AMD pile       8.47
-C AMD steam
-C AMD excavator
-C AMD bobcat    12.1
-C AMD jaguar    11.5
-C Intel P4      24.0
-C Intel core2    8.14
-C Intel NHM      7.78
-C Intel SBR      6.34
-C Intel IBR      6.15
-C Intel HWL      6.04
-C Intel BWL      4.33
-C Intel SKL      4.41
-C Intel atom    39.5
-C Intel SLM     27.8
+C AMD K8,K9	 6.78
+C AMD K10	 6.78
+C AMD bd1	 8.39	 8.65
+C AMD bd2	 8.47
+C AMD bd3
+C AMD bd4
+C AMD zen
+C AMD bt1	12.1
+C AMD bt2	11.5
+C Intel P4	24.0
+C Intel PNR	 8.14
+C Intel NHM	 7.78
+C Intel SBR	 6.34
+C Intel IBR	 6.15
+C Intel HWL	 6.04
+C Intel BWL	 4.33
+C Intel SKL	 4.41
+C Intel atom	39.5
+C Intel SLM	27.8
 C VIA nano
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
-C Scheme: genxmul --mul
 
 define(`rp',      `%rdi')   C rcx
 define(`up',      `%rsi')   C rdx
@@ -179,13 +179,13 @@ L(lo2):	add	%rax, w3
 	add	$4, n
 	jnc	L(top)
 
-L(end):	mov	-8(up,n,8), %rax
+L(end):	mov	-8(up), %rax
 	mul	v1
-	mov	w2, -16(rp,n,8)
+	mov	w2, -16(rp)
 	add	%rax, w0
-	mov	w3, -8(rp,n,8)
+	mov	w3, -8(rp)
 	adc	%rdx, w1
-	mov	w0, (rp,n,8)
+	mov	w0, (rp)
 	mov	w1, %rax
 
 	pop	%rbp
