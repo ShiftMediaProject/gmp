@@ -1828,7 +1828,7 @@ case $host in
 	path="x86/bd4 x86/bd3 x86/bd2 x86/bd1 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/bd4 x86_64/bd3 x86_64/bd2 x86_64/bd1 x86_64/k10 x86_64/k8 x86_64"
 	;;
-      zen)
+      zen | zennoavx)
 	gcc_cflags_cpu="-mtune=znver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=znver1 -march=amdfam10 -march=k8"
 	path="x86/k7/mmx x86/k7 x86/mmx x86"
