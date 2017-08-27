@@ -60,7 +60,7 @@ mpn_sbpi1_bdiv_r (mp_ptr up, mp_size_t un,
   ASSERT (dn > 0);
   ASSERT (un > dn);
   ASSERT ((dp[0] & 1) != 0);
-  ASSERT ((dp[0] * dinv) == 0);
+  ASSERT (-(dp[0] * dinv) == 1);
 
   for (i = un - dn, cy = 0; i != 0; i--)
     {
