@@ -1428,8 +1428,8 @@
       <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1437,8 +1437,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1476,8 +1476,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1509,8 +1509,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1518,8 +1518,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1557,8 +1557,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1595,8 +1595,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <MinimumRequiredVersion>5.1</MinimumRequiredVersion>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1604,8 +1604,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1643,8 +1643,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1678,8 +1678,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1687,8 +1687,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1726,8 +1726,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1769,8 +1769,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1778,8 +1778,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1817,8 +1817,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1859,8 +1859,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <AdditionalOptions>/IGNORE:4042 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1868,8 +1868,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1907,8 +1907,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -1948,8 +1948,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1957,8 +1957,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -1996,8 +1996,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -2037,8 +2037,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <SubSystem>Windows</SubSystem>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2046,8 +2046,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -2085,8 +2085,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -2129,8 +2129,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <MinimumRequiredVersion>5.1</MinimumRequiredVersion>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2138,8 +2138,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -2177,8 +2177,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
@@ -2219,8 +2219,8 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(OutDir)\include
-copy .\gmp.h $(OutDir)\include\
+      <Command>mkdir "$(OutDir)"\include
+copy .\gmp.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2228,8 +2228,8 @@ copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
       <Command>if exist ..\config.h (
 del ..\config.h
 )
-if exist $(OutDir)\include\gmp.h (
-del $(OutDir)\include\gmp.h
+if exist "$(OutDir)"\include\gmp.h (
+del "$(OutDir)"\include\gmp.h
 )
 if exist ..\fac_table.h (
 del ..\fac_table.h
@@ -2267,8 +2267,8 @@ del ..\gmp-mparam.h
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>force_clean</Outputs>
-      <Command>if exist $(OutDir)\include\gmp.h (
-del /f /q $(OutDir)\include\gmp.h
+      <Command>if exist "$(OutDir)"\include\gmp.h (
+del /f /q "$(OutDir)"\include\gmp.h
 )
 if exist $(OutDir)\licenses\gmp.txt (
 del /f /q $(OutDir)\licenses\gmp.txt
