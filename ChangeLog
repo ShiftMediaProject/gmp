@@ -1,10 +1,36 @@
+2017-08-28  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/sparc64: Revert 2017-07-23 PIC changes.
+
+	* mpn/powerpc32/divrem_2.asm: Avoid bc+ insn form to accomodate clang.
+
+	* mpn/generic/sbpi1_bdiv_qr.c: Correct ASSERT.
+	* mpn/generic/sbpi1_bdiv_q.c: Likewise.
+	* mpn/generic/sbpi1_bdiv_r.c: Likewise.
+
+2017-08-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* acinclude.m4 (X86_64_PATTERN): Match zen*.
+
+	* configure.ac (x86): Support AVX challenged systems for Zen.
+
+2017-07-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/sbpi1_bdiv_q.c: Add ASSERT for inverse correctness.
+	* mpn/generic/sbpi1_bdiv_qr.c: Likewise.
+
+	* tests/mpn/t-bdiv.c (main): Amend last change.
+
+	* tests/devel/try.c (choice_array): Amend 2013-05-03 change to include
+	more functions.
+
 2017-07-23  Torbjörn Granlund  <tg@gmplib.org>
 
-	* gcd_1.asm: Enforce PIC as GNU/Linux toolchain workaround.
-	* ultrasparct3/bdiv_q_1.asm: Likewise.
-	* ultrasparct3/dive_1.asm: Likewise.
-	* ultrasparct3/invert_limb.asm: Likewise.
-	* ultrasparct3/mode1o.asm: Likewise.
+	* mpn/sparc64/gcd_1.asm: Enforce PIC as GNU/Linux toolchain workaround.
+	* mpn/sparc64/ultrasparct3/bdiv_q_1.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/dive_1.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/invert_limb.asm: Likewise.
+	* mpn/sparc64/ultrasparct3/mode1o.asm: Likewise.
 
 	* gmp-impl.h: Reorganise foolshC_ip1 -> foolshC -> foolsh chain to make
 	it transitive.
