@@ -30,8 +30,6 @@ dnl  You should have received copies of the GNU General Public License and the
 dnl  GNU Lesser General Public License along with the GNU MP Library.  If not,
 dnl  see https://www.gnu.org/licenses/.
 
-define(`PIC')			dnl FIXME work around toolchain problems
-
 include(`../config.m4')
 
 C                  cycles/limb
