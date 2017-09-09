@@ -1,3 +1,15 @@
+2017-09-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Set GMP_NONSTD_ABI protecting against dots in the abi.
+
+	* configure.ac (powerpc): Never use -O3.
+
+	* mpf/get_d_2exp.c: Include needed gmp.h.
+
+2017-03-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpf/get_d_2exp.c: Return negative value for negative input.
+
 2016-12-16  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.1.2 released.
