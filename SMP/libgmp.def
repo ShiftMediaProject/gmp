@@ -16,9 +16,11 @@ __gmp_randclear
 __gmp_urandomb_ui
 __gmp_urandomm_ui
 __gmp_asprintf
+__gmp_fprintf
 __gmp_printf
 __gmp_snprintf
 __gmp_sprintf
+__gmp_fscanf
 __gmp_scanf
 __gmp_sscanf
 __gmpz_realloc
@@ -102,6 +104,8 @@ __gmpz_init_set_d
 __gmpz_init_set_si
 __gmpz_init_set_str
 __gmpz_init_set_ui
+__gmpz_inp_raw
+__gmpz_inp_str
 __gmpz_invert
 __gmpz_ior
 __gmpz_jacobi
@@ -121,6 +125,8 @@ __gmpz_mul_si
 __gmpz_mul_ui
 __gmpz_neg
 __gmpz_nextprime
+__gmpz_out_raw
+__gmpz_out_str
 __gmpz_perfect_power_p
 __gmpz_perfect_square_p
 __gmpz_popcount
@@ -193,10 +199,12 @@ __gmpq_get_d
 __gmpq_get_str
 __gmpq_init
 __gmpq_inits
+__gmpq_inp_str
 __gmpq_inv
 __gmpq_mul
 __gmpq_mul_2exp
 __gmpq_neg
+__gmpq_out_str
 __gmpq_set
 __gmpq_set_d
 __gmpq_set_den
@@ -246,11 +254,13 @@ __gmpf_init_set_d
 __gmpf_init_set_si
 __gmpf_init_set_str
 __gmpf_init_set_ui
+__gmpf_inp_str
 __gmpf_integer_p
 __gmpf_mul
 __gmpf_mul_2exp
 __gmpf_mul_ui
 __gmpf_neg
+__gmpf_out_str
 __gmpf_pow_ui
 __gmpf_random2
 __gmpf_reldiff
