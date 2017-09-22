@@ -44,6 +44,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\assert.c" />
+    <ClCompile Include="..\cxx\isfuns.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpf.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpq.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpz.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpznw.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\limits.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osdoprnti.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osfuns.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpf.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpq.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpz.cc">
+      <UndefinePreprocessorDefinitions>inline;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="..\errno.c" />
     <ClCompile Include="..\extract-dbl.c" />
     <ClCompile Include="..\invalid.c" />
@@ -937,6 +970,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\gmp-impl.h" />
+    <ClInclude Include="..\gmpxx.h" />
+    <ClInclude Include="..\longlong.h" />
     <ClInclude Include="..\mpf\fits_s.h" />
     <ClInclude Include="..\mpf\fits_u.h" />
     <ClInclude Include="..\mpz\aors.h" />
@@ -1412,7 +1448,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutDir)\lib\x86\$(TargetName).pdb</ProgramDataBaseFileName>
@@ -1430,6 +1466,7 @@
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1494,7 +1531,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutDir)\lib\x64\$(TargetName).pdb</ProgramDataBaseFileName>
@@ -1511,6 +1548,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1575,7 +1613,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -1597,6 +1635,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1661,7 +1700,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;_DEBUG;DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -1680,6 +1719,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1751,7 +1791,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -1771,6 +1811,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1841,7 +1882,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -1861,6 +1902,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -1931,7 +1973,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -1950,6 +1992,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2020,7 +2063,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
@@ -2039,6 +2082,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2109,7 +2153,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0502;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -2131,6 +2175,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>
@@ -2201,7 +2246,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
-      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;__GMP_WITHIN_GMP;__GMP_WITHIN_GMPXX;HAVE_CONFIG_H;_WIN32_WINNT=0x0600;DLL_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4146;4018;4554;4090;4267;4101;4334;4723;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -2221,6 +2266,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)"\include
 copy .\gmp.h "$(OutDir)"\include\
+copy ..\gmpxx.h "$(OutDir)"\include\
 mkdir $(OutDir)\licenses
 copy ..\COPYING.LESSERv3 $(OutDir)\licenses\gmp.txt</Command>
     </PostBuildEvent>

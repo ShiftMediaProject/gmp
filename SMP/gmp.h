@@ -64,7 +64,7 @@ see https://www.gnu.org/licenses/.  */
 #if defined(__x86_64) || defined(_M_X64)
 #define _LONG_LONG_LIMB 1
 #endif
-#if defined(DLL_EXPORT) && defined(NO_ASM)
+#if defined(DLL_EXPORT)
 #define __GMP_LIBGMP_DLL 1
 #else
 #define __GMP_LIBGMP_DLL 0

@@ -64,6 +64,9 @@
     <Filter Include="Header Files\x86-64">
       <UniqueIdentifier>{a4c980ad-03c9-4f1a-9a3a-29d22bc39b00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cxx">
+      <UniqueIdentifier>{16be2467-e85c-4d91-abf5-345ebeef9b75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mpf\fits_sint.c">
@@ -1536,6 +1539,39 @@
     <ClCompile Include="..\mpn\generic\zero_p.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
+    <ClCompile Include="..\cxx\isfuns.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpf.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpq.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpz.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\ismpznw.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\limits.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osdoprnti.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osfuns.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpf.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpq.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cxx\osmpz.cc">
+      <Filter>Source Files\cxx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h">
@@ -1603,6 +1639,15 @@
     </ClInclude>
     <ClInclude Include="x86_64\trialdivtab.h">
       <Filter>Header Files\x86-64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gmp-impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gmpxx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\longlong.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
