@@ -36,7 +36,7 @@ C AMD K10		n/a
 C AMD bd1		n/a
 C AMD bd2		n/a
 C AMD bd3		n/a
-C AMD bd4		 ?
+C AMD bd4		 2.31
 C AMD zen		 1.69
 C AMD bt1		n/a
 C AMD bt2		n/a
