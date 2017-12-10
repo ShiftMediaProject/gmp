@@ -37,7 +37,7 @@ C
 C  * Update un just once in the outer loop.
 C
 C  * Perhaps keep un and n pre-multiplied by 8, thus suppressing ",8" from
-C    loads and stores.  At least in some cases, the non-scaped form is faster.
+C    loads and stores.  At least in some cases, the non-scaled form is faster.
 C
 C  * Optimise xit3 code, e.g., using shrx and sarx like in the main loop.
 C
