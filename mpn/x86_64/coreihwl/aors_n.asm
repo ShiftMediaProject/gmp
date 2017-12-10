@@ -33,10 +33,10 @@ include(`../config.m4')
 C	     cycles/limb
 C AMD K8,K9
 C AMD K10
-C AMD bd1
-C AMD bd2
+C AMD bd1	 1.5  with fluctuations
+C AMD bd2	 1.5  with fluctuations
 C AMD bd3
-C AMD bd4
+C AMD bd4	 1.6
 C AMD zen
 C AMD bt1
 C AMD bt2
