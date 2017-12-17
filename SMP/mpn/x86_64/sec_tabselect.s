@@ -107,6 +107,12 @@ __gmpn_sec_tabselect:
 
 	mov	56(%rsp), %r8d	
 
+	add	$-88, %rsp	
+	movdqu	%xmm6, (%rsp)	
+	movdqu	%xmm7, 16(%rsp)	
+	movdqu	%xmm8, 32(%rsp)	
+	movdqu	%xmm9, 48(%rsp)	
+
 	movd	%r8, %xmm8
 	pshufd	$0, %xmm8, %xmm8	
 	mov	$1, %eax
@@ -120,15 +126,15 @@ __gmpn_sec_tabselect:
 Louter_top:
 	mov	%rcx, %r10
 	mov	%rsi, %r11
-	pxor	%xmm13, %xmm13
+	pxor	%xmm1, %xmm1
 	pxor	%xmm4, %xmm4
 	pxor	%xmm5, %xmm5
 	pxor	%xmm6, %xmm6
 	pxor	%xmm7, %xmm7
 	.align	16, 0x90
 Ltop:	movdqa	%xmm8, %xmm0
-	pcmpeqd	%xmm13, %xmm0
-	paddd	%xmm9, %xmm13
+	pcmpeqd	%xmm1, %xmm0
+	paddd	%xmm9, %xmm1
 	movdqu	0(%rsi), %xmm2
 	movdqu	16(%rsi), %xmm3
 	pand	%xmm0, %xmm2
@@ -160,13 +166,13 @@ Louter_end:
 	je	Lb0xx
 Lb1xx:mov	%rcx, %r10
 	mov	%rsi, %r11
-	pxor	%xmm13, %xmm13
+	pxor	%xmm1, %xmm1
 	pxor	%xmm4, %xmm4
 	pxor	%xmm5, %xmm5
 	.align	16, 0x90
 Ltp4:	movdqa	%xmm8, %xmm0
-	pcmpeqd	%xmm13, %xmm0
-	paddd	%xmm9, %xmm13
+	pcmpeqd	%xmm1, %xmm0
+	paddd	%xmm9, %xmm1
 	movdqu	0(%rsi), %xmm2
 	movdqu	16(%rsi), %xmm3
 	pand	%xmm0, %xmm2
@@ -185,12 +191,12 @@ Lb0xx:test	$2, %dl
 	je	Lb00x
 Lb01x:mov	%rcx, %r10
 	mov	%rsi, %r11
-	pxor	%xmm13, %xmm13
+	pxor	%xmm1, %xmm1
 	pxor	%xmm4, %xmm4
 	.align	16, 0x90
 Ltp2:	movdqa	%xmm8, %xmm0
-	pcmpeqd	%xmm13, %xmm0
-	paddd	%xmm9, %xmm13
+	pcmpeqd	%xmm1, %xmm0
+	paddd	%xmm9, %xmm1
 	movdqu	0(%rsi), %xmm2
 	pand	%xmm0, %xmm2
 	por	%xmm2, %xmm4
@@ -205,12 +211,12 @@ Lb00x:test	$1, %dl
 	je	Lb000
 Lb001:mov	%rcx, %r10
 	mov	%rsi, %r11
-	pxor	%xmm13, %xmm13
+	pxor	%xmm1, %xmm1
 	pxor	%xmm4, %xmm4
 	.align	16, 0x90
 Ltp1:	movdqa	%xmm8, %xmm0
-	pcmpeqd	%xmm13, %xmm0
-	paddd	%xmm9, %xmm13
+	pcmpeqd	%xmm1, %xmm0
+	paddd	%xmm9, %xmm1
 	movq	0(%rsi), %xmm2
 	pand	%xmm0, %xmm2
 	por	%xmm2, %xmm4
@@ -219,7 +225,13 @@ Ltp1:	movdqa	%xmm8, %xmm0
 	jne	Ltp1
 	movq	%xmm4, 0(%rdi)
 
-Lb000:pop	%rsi
+Lb000:
+	movdqu	(%rsp), %xmm6	
+	movdqu	16(%rsp), %xmm7	
+	movdqu	32(%rsp), %xmm8	
+	movdqu	48(%rsp), %xmm9	
+	add	$88, %rsp	
+	pop	%rsi
 	pop	%rdi
 	ret
 	
