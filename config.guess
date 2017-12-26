@@ -393,27 +393,9 @@ rs6000-*-* | powerpc*-*-*)
   # development", so it doesn't seem wise to use it just yet, not while
   # there's an alternative.
 
-  # Grep the /proc/cpuinfo pseudo-file.
-  # Anything unrecognised is ignored, since of course we mustn't spit out
-  # a cpu type config.sub doesn't know.
-  if test -z "$exact_cpu" && test -f /proc/cpuinfo; then
-    x=`grep "^cpu[ 	]" /proc/cpuinfo | head -n 1`
-    x=`echo $x | sed -n 's/^cpu[ 	]*:[ 	]*\([A-Za-z0-9]*\).*/\1/p'`
-    x=`echo $x | sed 's/PPC//'`
-    case $x in
-      601)     exact_cpu="power" ;;
-      603ev)   exact_cpu="powerpc603e" ;;
-      604ev5)  exact_cpu="powerpc604e" ;;
-      970??)   exact_cpu="powerpc970" ;;
-      603 | 603e | 604 | 604e | 750 | 821 | 860)
-        exact_cpu="powerpc$x" ;;
-      POWER[4-9]*)
-        exact_cpu=`echo $x | sed -e "s;POWER;power;" -e "s;[a-zA-Z]*$;;"` ;;
-    esac
-  fi
-
-  # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
-  # and AIX don't allow it in user mode, but the Linux kernel does.
+  # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS and
+  # AIX don't allow it in user mode, but the Linux kernel does.  We prefer this
+  # to /proc/cpuinfo since the latter lags for newer CPUs.
   #
   # Note this is no good on AIX, since a C function there is the address of
   # a function descriptor, not actual code.  But this doesn't matter since
@@ -442,7 +424,10 @@ main ()
   case 0x000c: puts ("powerpc7400"); break;
   case 0x0041: puts ("powerpc630");  break;
   case 0x003f: puts ("power7");      break;
-  case 0x004b: puts ("power8");      break;
+  case 0x004b:
+  case 0x004c:
+  case 0x004d: puts ("power8");      break;
+  case 0x004e: puts ("power9");      break;
   case 0x0050: puts ("powerpc860");  break;
   case 0x8000: puts ("powerpc7450"); break;
   case 0x8001: puts ("powerpc7455"); break;
@@ -462,6 +447,27 @@ EOF
       fi
     fi
   fi
+
+
+  # Grep the /proc/cpuinfo pseudo-file.
+  # Anything unrecognised is ignored, since of course we mustn't spit out
+  # a cpu type config.sub doesn't know.
+  if test -z "$exact_cpu" && test -f /proc/cpuinfo; then
+    x=`grep "^cpu[ 	]" /proc/cpuinfo | head -n 1`
+    x=`echo $x | sed -n 's/^cpu[ 	]*:[ 	]*\([A-Za-z0-9]*\).*/\1/p'`
+    x=`echo $x | sed 's/PPC//'`
+    case $x in
+      601)     exact_cpu="power" ;;
+      603ev)   exact_cpu="powerpc603e" ;;
+      604ev5)  exact_cpu="powerpc604e" ;;
+      970??)   exact_cpu="powerpc970" ;;
+      603 | 603e | 604 | 604e | 750 | 821 | 860)
+        exact_cpu="powerpc$x" ;;
+      POWER[4-9]*)
+        exact_cpu=`echo $x | sed -e "s;POWER;power;" -e "s;[a-zA-Z]*$;;"` ;;
+    esac
+  fi
+
 
   if test -z "$exact_cpu"; then
     # On AIX, try looking at _system_configuration.  This is present in
@@ -513,6 +519,9 @@ main ()
 #endif
 #ifdef POWER_8
   case POWER_8:    puts ("power8"); break;
+#endif
+#ifdef POWER_9
+  case POWER_9:    puts ("power9"); break;
 #endif
   default:
     if (_system_configuration.architecture == POWER_RS)
