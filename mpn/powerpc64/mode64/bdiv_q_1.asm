@@ -56,7 +56,7 @@ EXTERN(binvert_limb_table)
 
 PROLOGUE(mpn_bdiv_q_1,toc)
 	addi	r7, n, -1
-	cmpi	cr1, n, 1
+	cmpdi	cr1, n, 1
 	ld	r12, 0(up)
 	li	cnt, 0
 	neg	r0, d
@@ -92,10 +92,10 @@ ifdef(`AIX',
 EPILOGUE()
 
 PROLOGUE(mpn_pi1_bdiv_q_1)
-	cmpi	cr0, cnt, 0
+	cmpdi	cr0, cnt, 0
 	ld	r12, 0(up)
 	addic	r0, n, -1		C set carry as side effect
-	cmpi	cr1, n, 1
+	cmpdi	cr1, n, 1
 	mtctr	r0
 	beq	cr0, L(norm)
 
