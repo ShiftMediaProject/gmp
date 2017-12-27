@@ -1,3 +1,8 @@
+2017-12-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* longlong.h (arm32/arm64): Leave COUNT_LEADING_ZEROS_0 undefined,
+	since we use gcc's __builtin_clzl, which doesn't allow zero inputs.
+
 2017-08-28  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/sparc64: Revert 2017-07-23 PIC changes.
