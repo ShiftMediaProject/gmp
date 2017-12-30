@@ -1,3 +1,7 @@
+2017-12-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/bin_ui.c: Rewrite, using Fredrik Johansson's suggestions.
+
 2017-12-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* longlong.h (arm32/arm64): Leave COUNT_LEADING_ZEROS_0 undefined,
