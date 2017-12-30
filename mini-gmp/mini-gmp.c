@@ -3352,11 +3352,24 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr p, mp_size_t n)
 /* Combinatorics */
 
 void
-mpz_fac_ui (mpz_t x, unsigned long n)
+mpz_mfac_uiui (mpz_t x, unsigned long n, unsigned long m)
 {
   mpz_set_ui (x, n + (n == 0));
-  while (n > 2)
-    mpz_mul_ui (x, x, --n);
+  if (m + 1 < 2) return;
+  while (n > m + 1)
+    mpz_mul_ui (x, x, n -= m);
+}
+
+void
+mpz_2fac_ui (mpz_t x, unsigned long n)
+{
+  mpz_mfac_uiui (x, n, 2);
+}
+
+void
+mpz_fac_ui (mpz_t x, unsigned long n)
+{
+  mpz_mfac_uiui (x, n, 1);
 }
 
 void
@@ -3372,7 +3385,7 @@ mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
   mpz_init (t);
   mpz_fac_ui (t, k);
 
-  for (; k > 0; k--)
+  for (; k > 0; --k)
       mpz_mul_ui (r, r, n--);
 
   mpz_divexact (r, r, t);
