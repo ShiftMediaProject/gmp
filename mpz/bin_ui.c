@@ -99,8 +99,8 @@ rek_raising_fac (mpz_ptr r, mpz_ptr n, unsigned long int k, unsigned long int lk
 }
 
 /* Computes (n+1)(n+2)...(n+k)/2^(k/2) using the helper function
-   rek_raising_fac, and exploiting an idea inspired by piece of code
-   that Fredrik Johansson wrote.
+   rek_raising_fac, and exploiting an idea inspired by a piece of
+   code that Fredrik Johansson wrote.
 
    Force an even k = 2i then compute:
      p  = (n+1)(n+2i)/2
@@ -150,13 +150,14 @@ mpz_raising_fac (mpz_ptr r, mpz_ptr n, unsigned long int k, mpz_ptr t, mpz_ptr p
 void
 mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 {
+  mpz_t      ni;
   mp_limb_t  i;
-  mpz_t      ni = MPZ_ROINIT_N (&i, 0);
   mp_size_t  negate;
 
   if (SIZ (n) < 0)
     {
       /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
+      mpz_init (ni);
       mpz_add_ui (ni, n, 1L);
       mpz_neg (ni, ni);
       negate = (k & 1);   /* (-1)^k */
@@ -172,6 +173,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	}
 
       /* set ni = n-k */
+      mpz_init (ni);
       mpz_sub_ui (ni, n, k);
       negate = 0;
     }
@@ -214,7 +216,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	  mpz_sub_ui (r, r, 1); /* (n+1)^2-1 */
 	  if (k == 3)
 	    {
-	      mpz_mul (r, r, ni); /* ((n+1)^2-1)(n-1) = n(n+1)(n+2) */
+	      mpz_mul (r, r, ni); /* ((n+1)^2-1)(n+1) = n(n+1)(n+2) */
 	      /* mpz_divexact_ui (r, r, 6); /\* 6=3<<1; div_by3 ? *\/ */
 	      mpn_pi1_bdiv_q_1 (PTR(r), PTR(r), SIZ(r), 3, GMP_NUMB_MASK/3*2+1, 1);
 	      MPN_NORMALIZE_NOT_ZERO (PTR(r), SIZ(r));
@@ -244,8 +246,10 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
   else
     {
       mp_limb_t count;
-      mpz_t num = MPZ_ROINIT_N (&i, 0);
-      mpz_t den = MPZ_ROINIT_N (&i, 0);
+      mpz_t num, den;
+
+      mpz_init (num);
+      mpz_init (den);
 
       mpz_raising_fac (num, ni, k, den, r);
       popc_limb (count, k);
