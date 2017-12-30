@@ -1,6 +1,6 @@
-/* mpz_bin_ui - compute n over k.
+/* mpz_bin_ui(RESULT, N, K) -- Set RESULT to N over K.
 
-Copyright 1998-2002, 2012, 2013, 2015 Free Software Foundation, Inc.
+Copyright 1998-2002, 2012, 2013, 2015, 2017 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,8 +29,116 @@ GNU Lesser General Public License along with the GNU MP Library.  If not,
 see https://www.gnu.org/licenses/.  */
 
 #include "gmp-impl.h"
-#include "longlong.h"
 
+/* How many special cases? Minimum is 2: 0 and 1;
+ * also 3 {0,1,2} and 5 {0,1,2,3,4} are implemented.
+ */
+#define APARTA_KALKULOJ 2
+
+/* Whether to use (1) or not (0) the function mpz_bin_uiui whenever
+ * the operands fit.
+ */
+#define UZU_BIN_UIUI 0
+
+static void
+posmpz_init (mpz_ptr r)
+{
+  mp_ptr rp;
+  ASSERT (SIZ (r) > 0);
+  rp = SIZ (r) + MPZ_REALLOC (r, SIZ (r) + 2);
+  *rp = 0;
+  *++rp = 0;
+}
+
+/* Equivalent to mpz_add_ui (r, r, in), but faster when
+   0 < SIZ (r) < ALLOC (r) and limbs above SIZ (r) contain 0. */
+static void
+posmpz_inc_ui (mpz_ptr r, mp_limb_t in)
+{
+  ASSERT (SIZ (r) > 0);
+  MPN_INCR_U (PTR (r), SIZ (r) + 1, in);
+  SIZ (r) += (PTR (r)[SIZ (r)] != 0);
+}
+
+static void
+rek_raising_fac (mpz_ptr r, mpz_ptr n, unsigned long int k, unsigned long int lk, mpz_ptr t1, mpz_ptr t2)
+{
+  /* Should the threshold depend on SIZ (n) ? */
+  if (k - lk < 10)
+    {
+      do {
+	posmpz_inc_ui (n, k);
+	mpz_mul (r, r, n);
+	--k;
+      } while (k > lk);
+    }
+  else
+    {
+      mpz_t t3;
+      unsigned long int m;
+
+      m = (k + lk) >> 1;
+      rek_raising_fac (r, n, k, m, t1, t2);
+
+      posmpz_inc_ui (n, m);
+      if (t1 == NULL)
+	{
+	  mpz_init_set (t3, n);
+	  t1 = t3;
+	}
+      else
+	{
+	  ALLOC (t3) = 0;
+	  mpz_set (t1, n);
+	}
+      rek_raising_fac (t1, n, m - 1, lk, t2, NULL);
+
+      mpz_mul (r, r, t1);
+      mpz_clear (t3);
+    }
+}
+
+/* Computes (n+1)(n+2)...(n+k)/2^(k/2) using the helper function
+   rek_raising_fac, and exploiting an idea inspired by piece of code
+   that Fredrik Johansson wrote.
+
+   Force an even k = 2i then compute:
+     p  = (n+1)(n+2i)/2
+     i' = i - 1
+     p == (n+1)(n+2i'+2)/2
+     p' = p + i' == (n+2)(n+2i'+1)/2
+     n' = n + 1
+     p'== (n'+1)(n'+2i')/2 == (n+1 +1)(n+2i -1)/2
+
+   And compute the product p * p' * p" ...
+ */
+static void
+mpz_raising_fac (mpz_ptr r, mpz_ptr n, unsigned long int k, mpz_ptr t, mpz_ptr p)
+{
+  ASSERT (k > 1);
+  mpz_add_ui (t, n, k);
+  mpz_add_ui (n, n, 1);
+  mpz_mul (p, n, t);
+
+  if ((k & 1) != 0)
+    {
+      mpz_sub (p, p, n);
+      mpz_fdiv_q_2exp (p, p, 1);
+      mpz_mul (r, t, p);
+    }
+  else
+    {
+      mpz_fdiv_q_2exp (p, p, 1);
+      mpz_set (r, p);
+    }
+
+  if ((APARTA_KALKULOJ > 3) || (k > 3))
+    {
+      k = (k >> 1) - 1;
+      posmpz_init (p);
+      rek_raising_fac (r, p, k, 0, t, n);
+    }
+}
 
 /* This is a poor implementation.  Look at bin_uiui.c for improvement ideas.
    In fact consider calling mpz_bin_uiui() when the arguments fit, leaving
@@ -39,27 +147,16 @@ see https://www.gnu.org/licenses/.  */
    The identity bin(n,k) = (-1)^k * bin(-n+k-1,k) can be found in Knuth vol
    1 section 1.2.6 part G. */
 
-
-#define DIVIDE()                                                              \
-  do {                                                                        \
-    ASSERT (SIZ(r) > 0);                                                      \
-    MPN_DIVREM_OR_DIVEXACT_1 (PTR(r), PTR(r), (mp_size_t) SIZ(r), kacc);      \
-    SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);                                        \
-  } while (0)
-
 void
 mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 {
-  mpz_t      ni;
   mp_limb_t  i;
-  mpz_t      nacc;
-  mp_limb_t  kacc;
+  mpz_t      ni = MPZ_ROINIT_N (&i, 0);
   mp_size_t  negate;
 
   if (SIZ (n) < 0)
     {
       /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
-      mpz_init (ni);
       mpz_add_ui (ni, n, 1L);
       mpz_neg (ni, ni);
       negate = (k & 1);   /* (-1)^k */
@@ -75,14 +172,12 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	}
 
       /* set ni = n-k */
-      mpz_init (ni);
       mpz_sub_ui (ni, n, k);
       negate = 0;
     }
 
   /* Now wanting bin(ni+k,k), with ni positive, and "negate" is the sign (0
      for positive, 1 for negative). */
-  SIZ (r) = 1; MPZ_NEWALLOC (r, 1)[0] = 1;
 
   /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller.  In this case it's
      whether ni+k-k < k meaning ni<k, and if so change to denominator ni+k-k
@@ -95,48 +190,75 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
       mpz_set_ui (ni, tmp);
     }
 
-  kacc = 1;
-  mpz_init_set_ui (nacc, 1L);
-
-  for (i = 1; i <= k; i++)
+  if (k < APARTA_KALKULOJ)
     {
-      mp_limb_t k1, k0;
-
-#if 0
-      mp_limb_t nacclow;
-      int c;
-
-      nacclow = PTR(nacc)[0];
-      for (c = 0; (((kacc | nacclow) & 1) == 0); c++)
+      if (k == 0)
 	{
-	  kacc >>= 1;
-	  nacclow >>= 1;
+	  SIZ (r) = 1;
+	  MPZ_NEWALLOC (r, 1)[0] = 1;
 	}
-      mpz_div_2exp (nacc, nacc, c);
+#if APARTA_KALKULOJ == 3 || APARTA_KALKULOJ == 5
+      else if (k == 2)
+	{
+	  mpz_add_ui (ni, ni, 1);
+	  mpz_mul (r, ni, ni);
+	  mpz_add (r, r, ni);
+	  mpz_fdiv_q_2exp (r, r, 1);
+	}
 #endif
-
-      mpz_add_ui (ni, ni, 1L);
-      mpz_mul (nacc, nacc, ni);
-      umul_ppmm (k1, k0, kacc, i << GMP_NAIL_BITS);
-      if (k1 != 0)
-	{
-	  /* Accumulator overflow.  Perform bignum step.  */
-	  mpz_mul (r, r, nacc);
-	  SIZ (nacc) = 1; PTR (nacc)[0] = 1;
-	  DIVIDE ();
-	  kacc = i;
+#if APARTA_KALKULOJ == 5
+      else if (k > 2)
+	{ /* k = 3, 4 */
+	  mpz_add_ui (ni, ni, 2); /* n+1 */
+	  mpz_mul (r, ni, ni); /* (n+1)^2 */
+	  mpz_sub_ui (r, r, 1); /* (n+1)^2-1 */
+	  if (k == 3)
+	    {
+	      mpz_mul (r, r, ni); /* ((n+1)^2-1)(n-1) = n(n+1)(n+2) */
+	      /* mpz_divexact_ui (r, r, 6); /\* 6=3<<1; div_by3 ? *\/ */
+	      mpn_pi1_bdiv_q_1 (PTR(r), PTR(r), SIZ(r), 3, GMP_NUMB_MASK/3*2+1, 1);
+	      MPN_NORMALIZE_NOT_ZERO (PTR(r), SIZ(r));
+	    }
+	  else /* k = 4 */
+	    {
+	      mpz_add (ni, ni, r); /* (n+1)^2+n */
+	      mpz_mul (r, ni, ni); /* ((n+1)^2+n)^2 */
+	      mpz_sub_ui (r, r, 1); /* ((n+1)^2+n)^2-1 = n(n+1)(n+2)(n+3) */
+	      /* mpz_divexact_ui (r, r, 24); /\* 24=3<<3; div_by3 ? *\/ */
+	      mpn_pi1_bdiv_q_1 (PTR(r), PTR(r), SIZ(r), 3, GMP_NUMB_MASK/3*2+1, 3);
+	      MPN_NORMALIZE_NOT_ZERO (PTR(r), SIZ(r));
+	    }
 	}
+#endif
       else
-	{
-	  /* Save new products in accumulators to keep accumulating.  */
-	  kacc = k0 >> GMP_NAIL_BITS;
+	{ /* k = 1 */ 
+	  mpz_add_ui (r, ni, 1);
 	}
     }
+#if UZU_BIN_UIUI
+  else if (mpz_cmp_ui (ni, ULONG_MAX - k) <= 0)
+    {
+      mpz_bin_uiui (r, mpz_get_ui (ni) + k, k);
+    }
+#endif
+  else
+    {
+      mp_limb_t count;
+      mpz_t num = MPZ_ROINIT_N (&i, 0);
+      mpz_t den = MPZ_ROINIT_N (&i, 0);
 
-  mpz_mul (r, r, nacc);
-  DIVIDE ();
-  SIZ(r) = (SIZ(r) ^ -negate) + negate;
+      mpz_raising_fac (num, ni, k, den, r);
+      popc_limb (count, k);
+      ASSERT (k - (k >> 1) - count >= 0);
+      mpz_fdiv_q_2exp (num, num, k - (k >> 1) - count);
 
-  mpz_clear (nacc);
+      mpz_oddfac_1(den, k, 0);
+
+      mpz_divexact(r, num, den);
+      mpz_clear (num);
+      mpz_clear (den);
+    }
   mpz_clear (ni);
+
+  SIZ(r) = (SIZ(r) ^ -negate) + negate;
 }
