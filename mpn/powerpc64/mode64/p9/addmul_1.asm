@@ -66,13 +66,13 @@ L(b0):	ld	r10, 0(rp)
 	ld	r12, 0(up)
 	ld	r11, 8(rp)
 	ld	r31, 8(up)
-	maddld	r0, r12, v0, r10
-	maddhdu	r7, r12, v0, r10
+	maddld(	r0, r12, v0, r10)
+	maddhdu(r7, r12, v0, r10)
 	ble	cr6, L(2)
 	ld	r10, 16(rp)
 	ld	r12, 16(up)
-	maddld	r8, r31, v0, r11
-	maddhdu	r5, r31, v0, r11
+	maddld(	r8, r31, v0, r11)
+	maddhdu(r5, r31, v0, r11)
 	addic	up, up, 16
 	addi	rp, rp, -8
 	b	L(mid)
@@ -82,12 +82,12 @@ L(b1):	ld	r11, 0(rp)
 	ble	cr6, L(1)
 	ld	r10, 8(rp)
 	ld	r12, 8(up)
-	maddld	r0, r31, v0, r11
-	maddhdu	r5, r31, v0, r11
+	maddld(	r0, r31, v0, r11)
+	maddhdu(r5, r31, v0, r11)
 	ld	r11, 16(rp)
 	ld	r31, 16(up)
-	maddld	r9, r12, v0, r10
-	maddhdu	r7, r12, v0, r10
+	maddld(	r9, r12, v0, r10)
+	maddhdu(r7, r12, v0, r10)
 	addic	up, up, 24
 	bdz	L(end)
 
@@ -95,23 +95,23 @@ L(b1):	ld	r11, 0(rp)
 L(top):	ld	r10, 24(rp)
 	ld	r12, 0(up)
 	std	r0, 0(rp)
-	maddld	r8, r31, v0, r11	C W:0,2,4
+	maddld(	r8, r31, v0, r11)	C W:0,2,4
 	adde	r0, r5, r9
-	maddhdu	r5, r31, v0, r11	C W:1,3,5
+	maddhdu(r5, r31, v0, r11)	C W:1,3,5
 L(mid):	ld	r11, 32(rp)
 	ld	r31, 8(up)
 	std	r0, 8(rp)
-	maddld	r9, r12, v0, r10	C W:1,3,5
+	maddld(	r9, r12, v0, r10)	C W:1,3,5
 	adde	r0, r7, r8
-	maddhdu	r7, r12, v0, r10	C W:2,4,6
+	maddhdu(r7, r12, v0, r10)	C W:2,4,6
 	addi	rp, rp, 16
 	addi	up, up, 16
 	bdnz	L(top)
 
 L(end):	std	r0, 0(rp)
-	maddld	r8, r31, v0, r11
+	maddld(	r8, r31, v0, r11)
 	adde	r0, r5, r9
-	maddhdu	r5, r31, v0, r11
+	maddhdu(r5, r31, v0, r11)
 	std	r0, 8(rp)
 	adde	r0, r7, r8
 	std	r0, 16(rp)
@@ -119,8 +119,8 @@ L(end):	std	r0, 0(rp)
 	ld	r31, -8(r1)
 	blr
 
-L(2):	maddld	r8, r31, v0, r11
-	maddhdu	r5, r31, v0, r11
+L(2):	maddld(	r8, r31, v0, r11)
+	maddhdu(r5, r31, v0, r11)
 	std	r0, 0(rp)
 	addc	r0, r7, r8
 	std	r0, 8(rp)
@@ -128,9 +128,9 @@ L(2):	maddld	r8, r31, v0, r11
 	ld	r31, -8(r1)
 	blr
 
-L(1):	maddld	r0,  r31, v0, r11
+L(1):	maddld(	r0,  r31, v0, r11)
 	std	r0, 0(rp)
-	maddhdu	r3, r31, v0, r11
+	maddhdu(r3, r31, v0, r11)
 	ld	r31, -8(r1)
 	blr
 EPILOGUE()
