@@ -1,3 +1,17 @@
+2018-01-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc32/powerpc-defs.m4: Define maddld, maddhdu, popcntd, and
+	divdeu.
+	* mpn/powerpc64/mode64/p8/invert_limb.asm: Use new insn defs.
+	* mpn/powerpc64/mode64/p9/addmul_1.asm: Use new insn defs.
+	* mpn/powerpc64/p7/hamdist.asm: Use new insn defs.
+	* mpn/powerpc64/p7/popcount.asm: Use new insn defs.
+
+2017-12-31  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/addmul_1.asm: Moved from
+	mpn/powerpc64/p9/addmul_1.asm.
+
 2017-12-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/bin_ui.c: Rewrite, using Fredrik Johansson's suggestions.
