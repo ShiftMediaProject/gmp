@@ -63,7 +63,7 @@ define(`cnt', `r6')
 define(`tnc', `r4')
 
 ASM_START()
-	.hidden	binvert_limb_table
+C	.hidden	binvert_limb_table
 PROLOGUE(mpn_bdiv_q_1)
 	push	{r6-r11}
 

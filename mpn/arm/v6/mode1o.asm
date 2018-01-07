@@ -54,7 +54,7 @@ define(`d',  `r2')
 define(`cy', `r3')
 
 ASM_START()
-	.hidden	binvert_limb_table
+C	.hidden	binvert_limb_table
 PROLOGUE(mpn_modexact_1c_odd)
 	stmfd	sp!, {r4, r5, r6, r7}
 
