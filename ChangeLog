@@ -1,3 +1,22 @@
+2018-01-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm: Revert last change, it hides a symbol needed for testing.
+
+2018-01-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* bdiv_q_1.asm (binvert_limb_table): Declare as ".hidden".
+	* v7a/cora8/bdiv_q_1.asm: Likewise.
+	* dive_1.asm: Likewise.
+	* v6/dive_1.asm: Likewise.
+
+	* mode1o.asm (binvert_limb_table): Remove ".protected", add ".hidden".
+	* v6/mode1o.asm: Likewise.
+	
+2018-01-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/divrem_2.asm: Use different rlwinm variant (to
+	appeace clang).
+
 2018-01-01  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc32/powerpc-defs.m4: Define maddld, maddhdu, popcntd, and
