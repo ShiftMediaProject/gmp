@@ -4,7 +4,8 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2011-2013, 2015 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2011-2013, 2015, 2017, 2018 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -260,7 +261,7 @@ __gmpn_cpuvec_init (void)
             case 5:
               TRACE (printf ("  pentium\n"));
               CPUVEC_SETUP_pentium;
-              if (model >= 4)
+              if (model == 4 || model == 8)
                 {
                   TRACE (printf ("  pentiummmx\n"));
                   CPUVEC_SETUP_pentium_mmx;
@@ -361,7 +362,19 @@ __gmpn_cpuvec_init (void)
 		case 0x2a:		/* SBR */
 		case 0x2d:		/* SBR-EP */
 		case 0x3a:		/* IBR */
-		case 0x3c:		/* Haswell */
+		case 0x3c:		/* Haswell client */
+		case 0x3f:		/* Haswell server */
+		case 0x45:		/* Haswell ULT */
+		case 0x46:		/* Crystal Well */
+		case 0x3d:		/* Broadwell */
+		case 0x47:		/* Broadwell */
+		case 0x4f:		/* Broadwell server */
+		case 0x56:		/* Broadwell microserver */
+		case 0x4e:		/* Skylake client */
+		case 0x55:		/* Skylake server */
+		case 0x5e:		/* Skylake */
+		case 0x8e:		/* Kabylake */
+		case 0x9e:		/* Kabylake */
 		  TRACE (printf ("  sandybridge\n"));
                   CPUVEC_SETUP_p6_mmx;
                   CPUVEC_SETUP_p6_p3mmx;
