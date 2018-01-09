@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2016 Free Software Foundation, Inc.
+# Copyright 2000-2006, 2008, 2011-2016, 2018 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -846,8 +846,8 @@ main ()
       switch (family)
 	{
 	case 5:
-	  if (model <= 2)	modelstr = "pentium";
-	  else if (model >= 4)	modelstr = "pentiummmx";
+          if (model == 4 || model == 8)               modelstr = "pentiummmx";
+	  else                                        modelstr = "pentium";
 	  break;
 	case 6:
           if (model <= 1)                                   modelstr = "pentiumpro";
