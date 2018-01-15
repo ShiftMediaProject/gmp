@@ -109,49 +109,42 @@ mul3 (mp_limb_t m)
 static mp_limb_t
 mul4 (mp_limb_t m)
 {
-  mp_limb_t m01 = (m + 0) * (m + 1) >> 1;
-  mp_limb_t m23 = (m + 2) * (m + 3) >> 1;
-  return m01 * m23;
+  mp_limb_t m03 = (m + 0) * (m + 3) >> 1;
+  return m03 * (m03 + 1); /* mul2 (m03) ? */
 }
 
 static mp_limb_t
 mul5 (mp_limb_t m)
 {
-  mp_limb_t m012 = (m + 0) * (m + 1) * (m + 2) >> 1;
-  mp_limb_t m34 = (m + 3) * (m + 4) >> 1;
-  return m012 * m34;
+  mp_limb_t m03 = (m + 0) * (m + 3) >> 1;
+  mp_limb_t m034 = m03 * (m + 4);
+  return (m03 + 1) * m034;
 }
 
 static mp_limb_t
 mul6 (mp_limb_t m)
 {
-  mp_limb_t m01 = (m + 0) * (m + 1);
-  mp_limb_t m23 = (m + 2) * (m + 3);
-  mp_limb_t m45 = (m + 4) * (m + 5) >> 1;
-  mp_limb_t m0123 = m01 * m23 >> 3;
-  return m0123 * m45;
+  mp_limb_t m05 = (m + 0) * (m + 5);
+  mp_limb_t m1234 = (m05 + 5) * (m05 + 5) >> 3;
+  return m1234 * (m05 >> 1);
 }
 
 static mp_limb_t
 mul7 (mp_limb_t m)
 {
-  mp_limb_t m01 = (m + 0) * (m + 1);
-  mp_limb_t m23 = (m + 2) * (m + 3);
-  mp_limb_t m456 = (m + 4) * (m + 5) * (m + 6) >> 1;
-  mp_limb_t m0123 = m01 * m23 >> 3;
-  return m0123 * m456;
+  mp_limb_t m05 = (m + 0) * (m + 5);
+  mp_limb_t m1234 = (m05 + 5) * (m05 + 5) >> 3;
+  mp_limb_t m056 = m05 * (m + 6) >> 1;
+  return m1234 * m056;
 }
 
 static mp_limb_t
 mul8 (mp_limb_t m)
 {
-  mp_limb_t m01 = (m + 0) * (m + 1);
-  mp_limb_t m23 = (m + 2) * (m + 3);
-  mp_limb_t m45 = (m + 4) * (m + 5);
-  mp_limb_t m67 = (m + 6) * (m + 7);
-  mp_limb_t m0123 = m01 * m23 >> 3;
-  mp_limb_t m4567 = m45 * m67 >> 3;
-  return m0123 * m4567;
+  mp_limb_t m07 = (m + 0) * (m + 7);
+  mp_limb_t m0257 = m07 * (m07 + 10) >> 3;
+  mp_limb_t m1346 = m07 + 9 + m0257;
+  return m0257 * m1346;
 }
 
 typedef mp_limb_t (* mulfunc_t) (mp_limb_t);
