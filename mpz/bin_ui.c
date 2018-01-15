@@ -81,7 +81,7 @@ posmpz_dec_ui (mpz_ptr r, unsigned long in)
 #if BITS_PER_ULONG > GMP_NUMB_BITS
   mpz_sub_ui (r, r, in);
 #else
-  ASSERT (mpz_cmp_ui (r, in) > 0);
+  ASSERT (mpz_cmp_ui (r, in) >= 0);
   MPN_DECR_U (PTR (r), SIZ (r), in);
   SIZ (r) -= (PTR (r)[SIZ (r)-1] == 0);
 #endif
