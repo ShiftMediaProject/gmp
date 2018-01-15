@@ -3870,10 +3870,10 @@ gmp_popcount_limb (mp_limb_t x)
   /* Do 16 bits at a time, to avoid limb-sized constants. */
   for (c = 0; x > 0; x >>= 16)
     {
-      unsigned w = ((x >> 1) & 0x5555) + (x & 0x5555);
+      unsigned w = x - ((x >> 1) & 0x5555);
       w = ((w >> 2) & 0x3333) + (w & 0x3333);
-      w = ((w >> 4) & 0x0f0f) + (w & 0x0f0f);
-      w = (w >> 8) + (w & 0x00ff);
+      w =  (w >> 4) + w;
+      w = ((w >> 8) & 0x000f) + (w & 0x000f);
       c += w;
     }
   return c;
