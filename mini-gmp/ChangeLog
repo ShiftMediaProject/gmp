@@ -1,3 +1,8 @@
+2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c (gmp_popcount_limb): Micro-optimisations.
+	* mini-gmp/tests/t-comb.c (checkWilson): Check also mpz_2fac_ui.
+
 2017-12-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp.c (mpz_mfac_ui, mpz_2fac_ui): New functions.

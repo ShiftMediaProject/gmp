@@ -1,3 +1,7 @@
+2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-bin.c: Extended tests for bin_ui and uint border cases.
+
 2018-01-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/arm: Revert last change, it hides a symbol needed for testing.
