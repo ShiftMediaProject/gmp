@@ -41,7 +41,6 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_size_t i;
   TMP_DECL;
 
-  TMP_MARK;
   op1_size = SIZ(op1);
   op2_size = SIZ(op2);
 
@@ -71,6 +70,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     }
   else
     {
+      TMP_MARK;
       if (op1_size < 0)
 	{
 	  mp_ptr opx, opy;
@@ -123,7 +123,6 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   {
     mp_ptr opx;
     mp_limb_t cy;
-    mp_size_t res_alloc;
     mp_size_t count;
 
     /* Operand 2 negative, so will be the result.
@@ -133,19 +132,13 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
     op2_size = -op2_size;
 
-    res_alloc = op2_size;
+    res_ptr = MPZ_REALLOC (res, op2_size);
+    op1_ptr = PTR(op1);
 
     opx = TMP_ALLOC_LIMBS (op2_size);
     mpn_sub_1 (opx, PTR(op2), op2_size, (mp_limb_t) 1);
     op2_ptr = opx;
     op2_size -= op2_ptr[op2_size - 1] == 0;
-
-    if (UNLIKELY (ALLOC(res) < res_alloc))
-      {
-	res_ptr = (mp_ptr) _mpz_realloc (res, res_alloc);
-	op1_ptr = PTR(op1);
-	/* op2_ptr points to temporary space.  */
-      }
 
     if (op1_size >= op2_size)
       {
