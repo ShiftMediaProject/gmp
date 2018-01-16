@@ -1,7 +1,7 @@
 /* mpz_ior -- Logical inclusive or.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2005, 2012, 2013,
-2015-2017 Free Software Foundation, Inc.
+2015-2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
