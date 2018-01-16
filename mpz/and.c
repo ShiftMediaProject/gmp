@@ -41,7 +41,6 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_size_t i;
   TMP_DECL;
 
-  TMP_MARK;
   op1_size = SIZ(op1);
   op2_size = SIZ(op2);
 
@@ -56,9 +55,8 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
   if (op2_size >= 0)
     {
-      res_size = op2_size;
       /* First loop finds the size of the result.  */
-      for (i = res_size; --i >= 0;)
+      for (i = op2_size; --i >= 0;)
 	if ((op1_ptr[i] & op2_ptr[i]) != 0)
 	  {
 	    res_size = i + 1;
@@ -77,10 +75,10 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     }
   else
     {
+      TMP_MARK;
       if (op1_size < 0)
 	{
 	  mp_ptr opx, opy;
-	  mp_limb_t cy;
 
 	  /* Both operands are negative, so will be the result.
 	     -((-OP1) & (-OP2)) = -(~(OP1 - 1) & ~(OP2 - 1)) =
@@ -110,14 +108,14 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size,
 		    op2_size - op1_size);
 	  mpn_ior_n (res_ptr, op1_ptr, op2_ptr, op1_size);
+	  TMP_FREE;
 	  res_size = op2_size;
 
-	  cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
-	  res_ptr[res_size] = cy;
-	  res_size += cy;
+	  res_ptr[res_size] = 0;
+	  MPN_INCR_U (res_ptr, res_size + 1, (mp_limb_t) 1);
+	  res_size += res_ptr[res_size];
 
 	  SIZ(res) = -res_size;
-	  TMP_FREE;
 	  return;
 	}
     }
