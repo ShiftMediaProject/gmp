@@ -38,7 +38,6 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_size_t op1_size, op2_size;
   mp_ptr res_ptr;
   mp_size_t res_size;
-  TMP_DECL;
 
   op1_size = SIZ(op1);
   op2_size = SIZ(op2);
@@ -66,14 +65,17 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
       MPN_NORMALIZE (res_ptr, res_size);
       SIZ(res) = res_size;
-      return;
     }
   else
     {
+      mp_ptr opx;
+      TMP_DECL;
+
+      op2_size = -op2_size;
       TMP_MARK;
       if (op1_size < 0)
 	{
-	  mp_ptr opx, opy;
+	  mp_ptr opy;
 
 	  /* Both operands are negative, the result will be positive.
 	      (-OP1) ^ (-OP2) =
@@ -81,7 +83,6 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	     = (OP1 - 1) ^ (OP2 - 1)  */
 
 	  op1_size = -op1_size;
-	  op2_size = -op2_size;
 
 	  /* Possible optimization: Decrease mpn_sub precision,
 	     as we won't use the entire res of both.  */
@@ -105,19 +106,13 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  MPN_NORMALIZE (res_ptr, res_size);
 	  SIZ(res) = res_size;
-	  return;
 	}
-    }
-
+      else
   {
-    mp_ptr opx;
-
     /* Operand 2 negative, so will be the result.
        -(OP1 ^ (-OP2)) = -(OP1 ^ ~(OP2 - 1)) =
        = ~(OP1 ^ ~(OP2 - 1)) + 1 =
        = (OP1 ^ (OP2 - 1)) + 1      */
-
-    op2_size = -op2_size;
 
     res_size = MAX (op1_size, op2_size);
     res_ptr = MPZ_REALLOC (res, res_size + 1);
@@ -147,4 +142,5 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     MPN_NORMALIZE_NOT_ZERO (res_ptr, res_size);
     SIZ(res) = -res_size;
   }
+    }
 }

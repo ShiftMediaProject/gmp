@@ -39,7 +39,6 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_ptr res_ptr;
   mp_size_t res_size;
   mp_size_t i;
-  TMP_DECL;
 
   op1_size = SIZ(op1);
   op2_size = SIZ(op2);
@@ -66,14 +65,16 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	mpn_ior_n (res_ptr, op1_ptr, PTR(op2), op2_size);
 
       SIZ(res) = op1_size;
-      return;
     }
   else
     {
+      mp_ptr opx;
+      TMP_DECL;
+
       TMP_MARK;
       if (op1_size < 0)
 	{
-	  mp_ptr opx, opy;
+	  mp_ptr opy;
 
 	  /* Both operands are negative, so will be the result.
 	     -((-OP1) | (-OP2)) = -(~(OP1 - 1) | ~(OP2 - 1)) =
@@ -115,13 +116,9 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    }
 
 	  SIZ(res) = -res_size;
-	  TMP_FREE;
-	  return;
 	}
-    }
-
+      else
   {
-    mp_ptr opx;
     mp_limb_t cy;
     mp_size_t count;
 
@@ -183,4 +180,5 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     SIZ(res) = -res_size;
   }
   TMP_FREE;
+      }
 }

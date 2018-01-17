@@ -39,7 +39,6 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_ptr res_ptr;
   mp_size_t res_size;
   mp_size_t i;
-  TMP_DECL;
 
   op1_size = SIZ(op1);
   op2_size = SIZ(op2);
@@ -71,10 +70,12 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  }
 
       SIZ (res) = 0;
-      return;
     }
   else
     {
+      TMP_DECL;
+
+      op2_size = -op2_size;
       TMP_MARK;
       if (op1_size < 0)
 	{
@@ -91,7 +92,6 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	     would get carry into the zero-limb in this situation...  */
 
 	  op1_size = -op1_size;
-	  op2_size = -op2_size;
 
 	  TMP_ALLOC_LIMBS_2 (opx, op1_size, opy, op2_size);
 	  mpn_sub_1 (opx, op1_ptr, op1_size, (mp_limb_t) 1);
@@ -116,9 +116,8 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  res_size += res_ptr[res_size];
 
 	  SIZ(res) = -res_size;
-	  return;
 	}
-    }
+      else
 
   {
 #if ANDNEW
@@ -141,8 +140,6 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     for (i = 0; op2_ptr[i] == 0; i++)
       res_ptr[i] = 0;
     op2_lim = i;
-
-    op2_size = -op2_size;
 
     if (op1_size <= op2_size)
       {
@@ -177,7 +174,6 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
     mp_ptr opx;
 
-    op2_size = -op2_size;
     opx = TMP_ALLOC_LIMBS (op2_size);
     mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
     op2_ptr = opx;
@@ -221,6 +217,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
       }
 #endif
     SIZ(res) = res_size;
+    TMP_FREE;
   }
-  TMP_FREE;
+      }
 }
