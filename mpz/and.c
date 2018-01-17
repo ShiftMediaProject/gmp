@@ -118,106 +118,105 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  SIZ(res) = -res_size;
 	}
       else
-
-  {
+	{
 #if ANDNEW
-    mp_size_t op2_lim;
-    mp_size_t count;
+	  mp_size_t op2_lim;
+	  mp_size_t count;
 
-    /* OP2 must be negated as with infinite precision.
+	  /* OP2 must be negated as with infinite precision.
 
-       Scan from the low end for a non-zero limb.  The first non-zero
-       limb is simply negated (two's complement).  Any subsequent
-       limbs are one's complemented.  Of course, we don't need to
-       handle more limbs than there are limbs in the other, positive
-       operand as the result for those limbs is going to become zero
-       anyway.  */
+	     Scan from the low end for a non-zero limb.  The first non-zero
+	     limb is simply negated (two's complement).  Any subsequent
+	     limbs are one's complemented.  Of course, we don't need to
+	     handle more limbs than there are limbs in the other, positive
+	     operand as the result for those limbs is going to become zero
+	     anyway.  */
 
-    /* Scan for the least significant non-zero OP2 limb, and zero the
-       result meanwhile for those limb positions.  (We will surely
-       find a non-zero limb, so we can write the loop with one
-       termination condition only.)  */
-    for (i = 0; op2_ptr[i] == 0; i++)
-      res_ptr[i] = 0;
-    op2_lim = i;
+	  /* Scan for the least significant non-zero OP2 limb, and zero the
+	     result meanwhile for those limb positions.  (We will surely
+	     find a non-zero limb, so we can write the loop with one
+	     termination condition only.)  */
+	  for (i = 0; op2_ptr[i] == 0; i++)
+	    res_ptr[i] = 0;
+	  op2_lim = i;
 
-    if (op1_size <= op2_size)
-      {
-	/* The ones-extended OP2 is >= than the zero-extended OP1.
-	   RES_SIZE <= OP1_SIZE.  Find the exact size.  */
-	for (i = op1_size - 1; i > op2_lim; i--)
-	  if ((op1_ptr[i] & ~op2_ptr[i]) != 0)
-	    break;
-	res_size = i + 1;
-	for (i = res_size - 1; i > op2_lim; i--)
-	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
-	res_ptr[op2_lim] = op1_ptr[op2_lim] & -op2_ptr[op2_lim];
-	/* Yes, this *can* happen!  */
-	MPN_NORMALIZE (res_ptr, res_size);
-      }
-    else
-      {
-	/* The ones-extended OP2 is < than the zero-extended OP1.
-	   RES_SIZE == OP1_SIZE, since OP1 is normalized.  */
-	res_size = op1_size;
-	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, op1_size - op2_size);
-	for (i = op2_size - 1; i > op2_lim; i--)
-	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
-	res_ptr[op2_lim] = op1_ptr[op2_lim] & -op2_ptr[op2_lim];
-      }
+	  if (op1_size <= op2_size)
+	    {
+	      /* The ones-extended OP2 is >= than the zero-extended OP1.
+		 RES_SIZE <= OP1_SIZE.  Find the exact size.  */
+	      for (i = op1_size - 1; i > op2_lim; i--)
+		if ((op1_ptr[i] & ~op2_ptr[i]) != 0)
+		  break;
+	      res_size = i + 1;
+	      for (i = res_size - 1; i > op2_lim; i--)
+		res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
+	      res_ptr[op2_lim] = op1_ptr[op2_lim] & -op2_ptr[op2_lim];
+	      /* Yes, this *can* happen!  */
+	      MPN_NORMALIZE (res_ptr, res_size);
+	    }
+	  else
+	    {
+	      /* The ones-extended OP2 is < than the zero-extended OP1.
+		 RES_SIZE == OP1_SIZE, since OP1 is normalized.  */
+	      res_size = op1_size;
+	      MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, op1_size - op2_size);
+	      for (i = op2_size - 1; i > op2_lim; i--)
+		res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
+	      res_ptr[op2_lim] = op1_ptr[op2_lim] & -op2_ptr[op2_lim];
+	    }
 #else
 
-    /* OP1 is positive and zero-extended,
-       OP2 is negative and ones-extended.
-       The result will be positive.
-       OP1 & -OP2 = OP1 & ~(OP2 - 1).  */
+	  /* OP1 is positive and zero-extended,
+	     OP2 is negative and ones-extended.
+	     The result will be positive.
+	     OP1 & -OP2 = OP1 & ~(OP2 - 1).  */
 
-    mp_ptr opx;
+	  mp_ptr opx;
 
-    opx = TMP_ALLOC_LIMBS (op2_size);
-    mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
-    op2_ptr = opx;
+	  opx = TMP_ALLOC_LIMBS (op2_size);
+	  mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
+	  op2_ptr = opx;
 
-    if (op1_size > op2_size)
-      {
-	/* The result has the same size as OP1, since OP1 is normalized
-	   and longer than the ones-extended OP2.  */
-	res_size = op1_size;
-
-	/* Handle allocation, now then we know exactly how much space is
-	   needed for the result.  */
-	res_ptr = MPZ_NEWALLOC (res, res_size);
-	/* Don't re-read OP1_PTR or OP2_PTR.  Since res_size = op1_size,
-	   op1 is not changed if it is identical to res.
-	   OP2_PTR points to temporary space.  */
-
-	mpn_andn_n (res_ptr, op1_ptr, op2_ptr, op2_size);
-	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, res_size - op2_size);
-      }
-    else
-      {
-	/* Find out the exact result size.  Ignore the high limbs of OP2,
-	   OP1 is zero-extended and would make the result zero.  */
-	res_size = 0;
-	for (i = op1_size; --i >= 0;)
-	  if ((op1_ptr[i] & ~op2_ptr[i]) != 0)
+	  if (op1_size > op2_size)
 	    {
-	      res_size = i + 1;
-	      /* Handle allocation, now then we know exactly how much
-		 space is needed for the result.  */
-	      /* Don't re-read OP1_PTR.  Since res_size <= op1_size,
-		 op1 is not changed if it is identical to res.  Don't
-		 re-read OP2_PTR.  It points to temporary space--never
-		 to the space PTR(res) used to point to before
-		 reallocation.  */
-	      mpn_andn_n (MPZ_NEWALLOC (res, res_size), op1_ptr, op2_ptr, res_size);
+	      /* The result has the same size as OP1, since OP1 is normalized
+		 and longer than the ones-extended OP2.  */
+	      res_size = op1_size;
 
-	      break;
+	      /* Handle allocation, now then we know exactly how much space is
+		 needed for the result.  */
+	      res_ptr = MPZ_NEWALLOC (res, res_size);
+	      /* Don't re-read OP1_PTR or OP2_PTR.  Since res_size = op1_size,
+		 op1 is not changed if it is identical to res.
+		 OP2_PTR points to temporary space.  */
+
+	      mpn_andn_n (res_ptr, op1_ptr, op2_ptr, op2_size);
+	      MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, res_size - op2_size);
 	    }
-      }
+	  else
+	    {
+	      /* Find out the exact result size.  Ignore the high limbs of OP2,
+		 OP1 is zero-extended and would make the result zero.  */
+	      res_size = 0;
+	      for (i = op1_size; --i >= 0;)
+		if ((op1_ptr[i] & ~op2_ptr[i]) != 0)
+		  {
+		    res_size = i + 1;
+		    /* Handle allocation, now then we know exactly how much
+		       space is needed for the result.  */
+		    /* Don't re-read OP1_PTR.  Since res_size <= op1_size,
+		       op1 is not changed if it is identical to res.  Don't
+		       re-read OP2_PTR.  It points to temporary space--never
+		       to the space PTR(res) used to point to before
+		       reallocation.  */
+		    mpn_andn_n (MPZ_NEWALLOC (res, res_size), op1_ptr, op2_ptr, res_size);
+
+		    break;
+		  }
+	    }
 #endif
-    SIZ(res) = res_size;
-    TMP_FREE;
-  }
-      }
+	  SIZ(res) = res_size;
+	  TMP_FREE;
+	}
+    }
 }

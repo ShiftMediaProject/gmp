@@ -118,67 +118,67 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	  SIZ(res) = -res_size;
 	}
       else
-  {
-    mp_limb_t cy;
-    mp_size_t count;
+	{
+	  mp_limb_t cy;
+	  mp_size_t count;
 
-    /* Operand 2 negative, so will be the result.
-       -(OP1 | (-OP2)) = -(OP1 | ~(OP2 - 1)) =
-       = ~(OP1 | ~(OP2 - 1)) + 1 =
-       = (~OP1 & (OP2 - 1)) + 1      */
+	  /* Operand 2 negative, so will be the result.
+	     -(OP1 | (-OP2)) = -(OP1 | ~(OP2 - 1)) =
+	     = ~(OP1 | ~(OP2 - 1)) + 1 =
+	     = (~OP1 & (OP2 - 1)) + 1      */
 
-    op2_size = -op2_size;
+	  op2_size = -op2_size;
 
-    res_ptr = MPZ_REALLOC (res, op2_size);
-    op1_ptr = PTR(op1);
+	  res_ptr = MPZ_REALLOC (res, op2_size);
+	  op1_ptr = PTR(op1);
 
-    opx = TMP_ALLOC_LIMBS (op2_size);
-    mpn_sub_1 (opx, PTR(op2), op2_size, (mp_limb_t) 1);
-    op2_ptr = opx;
-    op2_size -= op2_ptr[op2_size - 1] == 0;
+	  opx = TMP_ALLOC_LIMBS (op2_size);
+	  mpn_sub_1 (opx, PTR(op2), op2_size, (mp_limb_t) 1);
+	  op2_ptr = opx;
+	  op2_size -= op2_ptr[op2_size - 1] == 0;
 
-    if (op1_size >= op2_size)
-      {
-	/* We can just ignore the part of OP1 that stretches above OP2,
-	   because the result limbs are zero there.  */
+	  if (op1_size >= op2_size)
+	    {
+	      /* We can just ignore the part of OP1 that stretches above OP2,
+		 because the result limbs are zero there.  */
 
-	/* First loop finds the size of the result.  */
-	for (i = op2_size; --i >= 0;)
-	  if ((~op1_ptr[i] & op2_ptr[i]) != 0)
-	    break;
-	res_size = i + 1;
-	count = res_size;
-      }
-    else
-      {
-	res_size = op2_size;
+	      /* First loop finds the size of the result.  */
+	      for (i = op2_size; --i >= 0;)
+		if ((~op1_ptr[i] & op2_ptr[i]) != 0)
+		  break;
+	      res_size = i + 1;
+	      count = res_size;
+	    }
+	  else
+	    {
+	      res_size = op2_size;
 
-	/* Copy the part of OP2 that stretches above OP1, to RES.  */
-	MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size, op2_size - op1_size);
-	count = op1_size;
-      }
+	      /* Copy the part of OP2 that stretches above OP1, to RES.  */
+	      MPN_COPY (res_ptr + op1_size, op2_ptr + op1_size, op2_size - op1_size);
+	      count = op1_size;
+	    }
 
-    if (res_size != 0)
-      {
-	/* Second loop computes the real result.  */
-	if (LIKELY (count != 0))
-	  mpn_andn_n (res_ptr, op2_ptr, op1_ptr, count);
+	  if (res_size != 0)
+	    {
+	      /* Second loop computes the real result.  */
+	      if (LIKELY (count != 0))
+		mpn_andn_n (res_ptr, op2_ptr, op1_ptr, count);
 
-	cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
-	if (cy)
-	  {
-	    res_ptr[res_size] = cy;
-	    ++res_size;
-	  }
-      }
-    else
-      {
-	res_ptr[0] = 1;
-	res_size = 1;
-      }
+	      cy = mpn_add_1 (res_ptr, res_ptr, res_size, (mp_limb_t) 1);
+	      if (cy)
+		{
+		  res_ptr[res_size] = cy;
+		  ++res_size;
+		}
+	    }
+	  else
+	    {
+	      res_ptr[0] = 1;
+	      res_size = 1;
+	    }
 
-    SIZ(res) = -res_size;
-  }
-  TMP_FREE;
-      }
+	  SIZ(res) = -res_size;
+	}
+      TMP_FREE;
+    }
 }
