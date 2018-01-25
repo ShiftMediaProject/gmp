@@ -226,8 +226,7 @@ mpz_bdiv_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
      large.  */
   alloc = SOME_THRESHOLD - 1 + MAX (3 * maxn / 2, SOME_THRESHOLD);
   alloc = MIN (alloc, (mp_size_t) k) + 1;
-  np = TMP_ALLOC_LIMBS (alloc);
-  kp = TMP_ALLOC_LIMBS (SOME_THRESHOLD + 1);
+  TMP_ALLOC_LIMBS_2 (np, alloc, kp, SOME_THRESHOLD + 1);
 
   MAXFACS (nmax, n);
   ASSERT (nmax <= M);
