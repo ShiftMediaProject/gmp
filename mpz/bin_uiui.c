@@ -147,13 +147,31 @@ mul8 (mp_limb_t m)
   return m0257 * m1346;
 }
 
+/*
+static mp_limb_t
+mul9 (mp_limb_t m)
+{
+  return (m + 8) * (mul8 (m) >> 1) ;
+}
+
+static mp_limb_t
+mul10 (mp_limb_t m)
+{
+  mp_limb_t m09 = (m + 0) * (m + 9);
+  mp_limb_t m18 = (m09 >> 1) + 4;
+  mp_limb_t m0369 = m09 * (m09 + 18) >> 3;
+  mp_limb_t m2457 = m09 * 2 + 35 + m0369;
+  return ((m0369 * m2457) >> 1) * m18;
+}
+*/
+
 typedef mp_limb_t (* mulfunc_t) (mp_limb_t);
 
-static const mulfunc_t mulfunc[] = {mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8};
+static const mulfunc_t mulfunc[] = {mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8 /* ,mul9,mul10 */};
 #define M (numberof(mulfunc))
 
 /* Number of factors-of-2 removed by the corresponding mulN function.  */
-static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6};
+static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6 /*,7 ,8*/};
 
 #if 1
 /* This variant is inaccurate but share the code with other functions.  */
@@ -168,11 +186,11 @@ static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6};
 static const unsigned long ftab[] =
 #if GMP_NUMB_BITS == 64
   /* 1 to 8 factors per iteration */
-  {CNST_LIMB(0xffffffffffffffff),CNST_LIMB(0x100000000),0x32cbfe,0x16a0b,0x24c4,0xa16,0x34b,0x1b2 /*,0xdf,0x8d */};
+  {CNST_LIMB(0xffffffffffffffff),CNST_LIMB(0x16a09e667),0x32cbfc,0x16a08,0x24c0,0xa11,0x345,0x1ab /*,0xe9,0x8e */};
 #endif
 #if GMP_NUMB_BITS == 32
   /* 1 to 7 factors per iteration */
-  {0xffffffff,0x10000,0x801,0x16b,0x71,0x42,0x26 /* ,0x1e */};
+  {0xffffffff,0x16a09,0x7ff,0x168,0x6f,0x3d,0x20 /* ,0x17 */};
 #endif
 
 #define MAXFACS(max,l)							\
