@@ -382,7 +382,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
 	  memcpy (buf, s, copylen);
 	  buf[copylen] = '\0';
 	}
-      (*__gmp_free_func) (s, total_width);
+      __GMP_FREE_FUNC_TYPE (s, total_width, char);
     }
 
   /* If total_width was somehow wrong then chances are we've already
