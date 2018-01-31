@@ -584,7 +584,8 @@ static void
 mpz_goetgheluck_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
 {
   mp_limb_t *sieve, *factors, count;
-  mp_limb_t prod, max_prod, j;
+  mp_limb_t prod, max_prod;
+  mp_size_t j;
   TMP_DECL;
 
   ASSERT (BIN_GOETGHELUCK_THRESHOLD >= 13);

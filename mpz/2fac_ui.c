@@ -69,7 +69,8 @@ mpz_2fac_ui (mpz_ptr x, unsigned long n)
       MPZ_NEWALLOC (x, 1)[0] = __gmp_odd2fac_table[n >> 1];
       SIZ (x) = 1;
     } else if (BELOW_THRESHOLD (n, FAC_2DSC_THRESHOLD)) { /* odd basecase, */
-      mp_limb_t *factors, prod, max_prod, j;
+      mp_limb_t *factors, prod, max_prod;
+      mp_size_t j;
       TMP_SDECL;
 
       /* FIXME: we might alloc a fixed amount 1+FAC_2DSC_THRESHOLD/FACTORS_PER_LIMB */
