@@ -62,7 +62,8 @@ static int
 gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
                      va_list orig_ap)
 {
-  int      ret, step, alloc, avail;
+  int      ret;
+  size_t   step, alloc, avail;
   va_list  ap;
   char     *p;
 
