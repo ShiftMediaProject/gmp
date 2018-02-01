@@ -961,7 +961,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
       double    d;							\
       unsigned  a[2];							\
     } __u;								\
-    ASSERT ((n) != 0);							\
     __u.d = (UWtype) (n);						\
     (c) = 0x3FF + 31 - (__u.a[1] >> 20);				\
   } while (0)

@@ -1,3 +1,7 @@
+2018-02-01  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (i586): Remove assert.
+
 2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/t-bin.c: Extended tests for bin_ui and uint border cases.
