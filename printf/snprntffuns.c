@@ -102,7 +102,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
       p = __GMP_ALLOCATE_FUNC_TYPE (alloc, char);
       va_copy (ap, orig_ap);
       ret = vsnprintf (p, alloc, fmt, ap);
-      (*__gmp_free_func) (p, alloc);
+      __GMP_FREE_FUNC_TYPE (p, alloc, char);
     }
   while (ret == alloc-1 || ret == -1);
 
