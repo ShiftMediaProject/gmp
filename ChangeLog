@@ -2,6 +2,18 @@
 
 	* longlong.h (i586): Remove assert.
 
+2018-01-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/and.c: Rearrange the 3 cases, both <0, both >=0, one and one.
+	* mpz/ior.c: Likewise.
+	* mpz/xor.c: Likewise.
+
+	* mpz/bin_uiui.c (mul[4-8]): Reduce the number of multiplications.
+
+	* printf/doprnt.c: Use __GMP_FREE_FUNC_TYPE.
+	* printf/doprntf.c: Likewise.
+	* printf/snprntffuns.c: Likewise, and use size_t instead of int.
+
 2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/t-bin.c: Extended tests for bin_ui and uint border cases.
@@ -19,7 +31,7 @@
 
 	* mode1o.asm (binvert_limb_table): Remove ".protected", add ".hidden".
 	* v6/mode1o.asm: Likewise.
-	
+
 2018-01-02  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc64/mode64/divrem_2.asm: Use different rlwinm variant (to
