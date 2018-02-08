@@ -324,40 +324,47 @@ mpz_smallk_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
   mp_ptr rp;
   mp_size_t rn, alloc;
   mp_limb_t i, iii, cy;
-  mp_bitcnt_t i2cnt, cnt;
-
-  count_leading_zeros (cnt, (mp_limb_t) n);
-  cnt = GMP_LIMB_BITS - cnt;
-  alloc = cnt * k / GMP_NUMB_BITS + 3;	/* FIXME: ensure rounding is enough. */
-  rp = MPZ_NEWALLOC (r, alloc);
+  unsigned i2cnt, cnt;
 
   MAXFACS (nmax, n);
   nmax = MIN (nmax, M);
 
   i = n - k + 1;
 
-  nmax = MIN (nmax, k);
+  i2cnt = __gmp_fac2cnt_table[k / 2 - 1];		/* low zeros count */
+  if (nmax >= k)
+    {
+      MPZ_NEWALLOC (r, 1) [0] = mulfunc[k - 1] (i) * facinv[k - 2] >>
+	(i2cnt - tcnttab[k - 1]);
+      SIZ(r) = 1;
+      return;
+    }
+
+  count_leading_zeros (cnt, (mp_limb_t) n);
+  cnt = GMP_LIMB_BITS - cnt;
+  alloc = cnt * k / GMP_NUMB_BITS + 3;	/* FIXME: ensure rounding is enough. */
+  rp = MPZ_NEWALLOC (r, alloc);
+
   rp[0] = mulfunc[nmax - 1] (i);
   rn = 1;
   i += nmax;				/* number of factors used */
-  i2cnt = tcnttab[nmax - 1];		/* low zeros count */
+  i2cnt -= tcnttab[nmax - 1];		/* low zeros count */
   numfac = k - nmax;
-  while (numfac != 0)
+  do
     {
       nmax = MIN (nmax, numfac);
       iii = mulfunc[nmax - 1] (i);
       i += nmax;			/* number of factors used */
-      i2cnt += tcnttab[nmax - 1];	/* update low zeros count */
+      i2cnt -= tcnttab[nmax - 1];	/* update low zeros count */
       cy = mpn_mul_1 (rp, rp, rn, iii);	/* accumulate new factors */
       rp[rn] = cy;
       rn += cy != 0;
       numfac -= nmax;
-    }
+    } while (numfac != 0);
 
   ASSERT (rn < alloc);
 
-  mpn_pi1_bdiv_q_1 (rp, rp, rn, __gmp_oddfac_table[k], facinv[k - 2],
-		    __gmp_fac2cnt_table[k / 2 - 1] - i2cnt);
+  mpn_pi1_bdiv_q_1 (rp, rp, rn, __gmp_oddfac_table[k], facinv[k - 2], i2cnt);
   /* A two-fold, branch-free normalisation is possible :*/
   /* rn -= rp[rn - 1] == 0; */
   /* rn -= rp[rn - 1] == 0; */
