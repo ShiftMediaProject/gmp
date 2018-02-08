@@ -3711,9 +3711,9 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
     mp_limb_t  __x = (input);						\
     __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
     __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
-    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
-    __x = ((__x >> 8) + __x);						\
-    (result) = __x & 0xff;						\
+    __x += (__x >> 4);							\
+    __x = ((__x >> 8) & MP_LIMB_T_MAX/4369)+(__x & MP_LIMB_T_MAX/4369);	\
+    (result) = __x;							\
   } while (0)
 #endif
 
