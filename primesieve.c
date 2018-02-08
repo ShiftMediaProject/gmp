@@ -235,7 +235,7 @@ fill_bitpattern (mp_ptr bit_array, mp_size_t limbs, mp_limb_t offset)
   } while (--limbs != 0);
   return 2;
 #else
-  MPN_ZERO (bit_array, limbs);
+  MPN_FILL (bit_array, limbs, CNST_LIMB(0));
   return 0;
 #endif
 #endif
