@@ -151,7 +151,7 @@ mul8 (mp_limb_t m)
 static mp_limb_t
 mul9 (mp_limb_t m)
 {
-  return (m + 8) * (mul8 (m) >> 1) ;
+  return (m + 8) * mul8 (m) ;
 }
 
 static mp_limb_t
@@ -171,7 +171,7 @@ static const mulfunc_t mulfunc[] = {mul1,mul2,mul3,mul4,mul5,mul6,mul7,mul8 /* ,
 #define M (numberof(mulfunc))
 
 /* Number of factors-of-2 removed by the corresponding mulN function.  */
-static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6 /*,7 ,8*/};
+static const unsigned char tcnttab[] = {0, 1, 1, 2, 2, 4, 4, 6 /*,6,8*/};
 
 #if 1
 /* This variant is inaccurate but share the code with other functions.  */
