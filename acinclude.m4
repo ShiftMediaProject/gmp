@@ -3729,11 +3729,11 @@ check (const char *fmt, ...)
 
   ret = vsnprintf (buf, 4, fmt, ap);
 
-  if (strcmp (buf, "hel") != 0)
+  if (ret == -1 || strcmp (buf, "hel") != 0)
     return 1;
 
   /* allowed return values */
-  if (ret != -1 && ret != 3 && ret != 11)
+  if (ret != 3 && ret != 11)
     return 2;
 
   return 0;
