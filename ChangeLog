@@ -1,3 +1,7 @@
+2018-01-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm: Really revert 2018-01-04 changes.
+	
 2018-02-01  Marc Glisse  <marc.glisse@inria.fr>
 
 	* longlong.h (i586): Remove assert.
