@@ -59,7 +59,6 @@ define(`cnt', `r6')
 define(`tnc', `r10')
 
 ASM_START()
-C	.hidden	binvert_limb_table
 PROLOGUE(mpn_divexact_1)
 	push	{r4,r5,r6,r7,r8,r9}
 
