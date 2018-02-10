@@ -1,3 +1,8 @@
+2018-02-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp.c (mpn_div_qr_1_preinv): When qp is non-NULL, reuse
+	area for shifted input, to avoid an allocation.
+
 2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (gmp_popcount_limb): Micro-optimisations.
