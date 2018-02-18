@@ -180,3 +180,6 @@ fac_ui.c: $(top_builddir)/mpz/fac_ui.c
 	echo "#include \"mpz/fac_ui.c\""             >>fac_ui.c
 
 include ../mpn/Makeasm.am
+
+.NOTPARALLEL:
+
