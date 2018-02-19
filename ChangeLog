@@ -3,6 +3,7 @@
 	* tune/Makefile.am: Disallow parallel make (thanks Vincent Lefevre).
 	* mpq/swap.c: Use *_SWAP_* macros.
 	* mpq/cmp_ui.c: One more little shortcut, comparing fractions to 1.
+	* mpq/get_d.c: compare (zeros > 0) just once.
 
 2018-02-09  Torbjörn Granlund  <tg@gmplib.org>
 
