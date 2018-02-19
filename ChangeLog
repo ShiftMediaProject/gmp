@@ -1,7 +1,23 @@
-2018-01-07  Torbjörn Granlund  <tg@gmplib.org>
+2018-02-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/Makefile.am: Disallow parallel make (thanks Vincent Lefevre).
+	* mpq/swap.c: Use *_SWAP_* macros.
+	* mpq/cmp_ui.c: One more little shortcut, comparing fractions to 1.
+
+2018-02-09  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/arm: Really revert 2018-01-04 changes.
-	
+
+2018-02-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* printf/snprntffuns.c: Report -1 as an error.
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Refuse -1 as return value.
+
+	* mpz/bin_uiui.c (mpz_smallk_bin_uiui): One more shortcut for small k.
+	* gmp-impl.h (popc_limb): Use fewer constants (GMP_LIMB_BITS == 16).
+	* mpz/divegcd.c (mpz_divexact_limb): Use MPN_DIVREM_OR_DIVEXACT_1.
+	* primesieve.c (fill_bitpattern): Use MPN_FILL.
+
 2018-02-01  Marc Glisse  <marc.glisse@inria.fr>
 
 	* longlong.h (i586): Remove assert.
