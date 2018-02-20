@@ -1,6 +1,6 @@
 /* double mpq_get_d (mpq_t src) -- mpq to double, rounding towards zero.
 
-Copyright 1995, 1996, 2001-2005 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2001-2005, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -104,7 +104,7 @@ mpq_get_d (mpq_srcptr src)
 {
   double res;
   mp_srcptr np, dp;
-  mp_ptr remp;
+  mp_ptr temp;
   mp_size_t nsize = SIZ(NUM(src));
   mp_size_t dsize = SIZ(DEN(src));
   mp_size_t qsize, prospective_qsize, zeros;
@@ -127,8 +127,8 @@ mpq_get_d (mpq_srcptr src)
   np = PTR(NUM(src));
   dp = PTR(DEN(src));
 
-  prospective_qsize = nsize - dsize + 1;   /* from using given n,d */
-  qsize = N_QLIMBS + 1;                    /* desired qsize */
+  prospective_qsize = nsize - dsize;       /* from using given n,d */
+  qsize = N_QLIMBS;                        /* desired qsize */
 
   zeros = qsize - prospective_qsize;       /* padding n to get qsize */
   exp = (long) -zeros * GMP_NUMB_BITS;     /* relative to low of qp */
@@ -136,14 +136,13 @@ mpq_get_d (mpq_srcptr src)
   /* zero extend n into temporary space, if necessary */
   if (zeros > 0)
     {
-      mp_ptr tp;
       mp_size_t tsize;
-      tsize = nsize + zeros;                   /* size for copy of n */
+      tsize = nsize + zeros;               /* size for copy of n */
 
-      TMP_ALLOC_LIMBS_2 (remp, dsize, tp, tsize);
-      MPN_ZERO (tp, zeros);
-      MPN_COPY (tp+zeros, np, nsize);
-      np = tp;
+      temp = TMP_ALLOC_LIMBS (tsize + 1);
+      MPN_FILL (temp, zeros, 0);
+      MPN_COPY (temp + zeros, np, nsize);
+      np = temp;
       nsize = tsize;
     }
   else /* negative zeros means shorten n */
@@ -151,14 +150,14 @@ mpq_get_d (mpq_srcptr src)
       np -= zeros;
       nsize += zeros;
 
-      remp = TMP_ALLOC_LIMBS (dsize);
+      temp = TMP_ALLOC_LIMBS (nsize + 1);
     }
 
-  ASSERT (qsize == nsize - dsize + 1);
-  mpn_tdiv_qr (qp, remp, (mp_size_t) 0, np, nsize, dp, dsize);
+  ASSERT (qsize == nsize - dsize);
+  mpn_div_q (qp, np, nsize, dp, dsize, temp);
 
   /* strip possible zero high limb */
-  qsize -= (qp[qsize-1] == 0);
+  qsize += (qp[qsize] != 0);
 
   res = mpn_get_d (qp, qsize, sign_quotient, exp);
   TMP_FREE;
