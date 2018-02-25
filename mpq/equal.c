@@ -46,17 +46,17 @@ mpq_equal (mpq_srcptr op1, mpq_srcptr op2) __GMP_NOTHROW
   if (num1_size != num2_size)
     return 0;
 
+  den1_size = SIZ(DEN(op1));
+  den2_size = SIZ(DEN(op2));
+  if (den1_size != den2_size)
+    return 0;
+
   num1_ptr = PTR(NUM(op1));
   num2_ptr = PTR(NUM(op2));
   num1_size = ABS (num1_size);
   for (i = 0; i < num1_size; i++)
     if (num1_ptr[i] != num2_ptr[i])
       return 0;
-
-  den1_size = SIZ(DEN(op1));
-  den2_size = SIZ(DEN(op2));
-  if (den1_size != den2_size)
-    return 0;
 
   den1_ptr = PTR(DEN(op1));
   den2_ptr = PTR(DEN(op2));
