@@ -35,9 +35,6 @@ see https://www.gnu.org/licenses/.  */
 
 #include "config.h"
 
-#if ! HAVE_VSNPRINTF   /* only need this file if we don't have vsnprintf */
-
-
 #define _GNU_SOURCE    /* for strnlen prototype */
 
 #include <stdarg.h>
@@ -65,6 +62,8 @@ see https://www.gnu.org/licenses/.  */
 
 #include "gmp-impl.h"
 
+
+#if ! HAVE_VSNPRINTF   /* only need this file if we don't have vsnprintf */
 
 /* Autoconf notes that AIX 4.3 has a broken strnlen, but fortunately it
    doesn't affect us since __gmp_replacement_vsnprintf is not required on

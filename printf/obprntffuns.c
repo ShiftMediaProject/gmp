@@ -68,4 +68,6 @@ const struct doprnt_funs_t  __gmp_obstack_printf_funs = {
   (doprnt_reps_t)   gmp_obstack_reps
 };
 
+#else
+typedef int __gmp_dummy_typedef;
 #endif /* HAVE_OBSTACK_VPRINTF */

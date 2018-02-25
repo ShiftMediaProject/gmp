@@ -55,4 +55,6 @@ gmp_obstack_printf (struct obstack *ob, const char *fmt, ...)
   return ret;
 }
 
+#else
+typedef int __gmp_dummy_typedef;
 #endif /* HAVE_OBSTACK_VPRINTF */

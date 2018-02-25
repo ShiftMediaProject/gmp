@@ -48,4 +48,6 @@ gmp_obstack_vprintf (struct obstack *ob, const char *fmt, va_list ap)
   return __gmp_doprnt (&__gmp_obstack_printf_funs, ob, fmt, ap);
 }
 
+#else
+typedef int __gmp_dummy_typedef;
 #endif /* HAVE_OBSTACK_VPRINTF */
