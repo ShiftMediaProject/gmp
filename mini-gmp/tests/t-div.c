@@ -1,6 +1,6 @@
 /*
 
-Copyright 2012, 2013 Free Software Foundation, Inc.
+Copyright 2012, 2013, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -131,6 +131,7 @@ testmain (int argc, char **argv)
 		}
 	    }
 
+	  mpz_set_si (r, -6);
 	  if (j == 0 && mpz_sgn (b) < 0)  /* ceil, negative divisor */
 	    {
 	      mpz_mod (r, a, b);
@@ -163,6 +164,8 @@ testmain (int argc, char **argv)
 	    {
 	      mp_limb_t rl;
 
+	      mpz_set_si (r, -7);
+	      mpz_set_ui (q, ~7);
 	      rl = div_qr_ui[j] (q, r, a, mpz_get_ui (b));
 	      if (rl != mpz_get_ui (rr)
 		  || mpz_cmp (r, rr) || mpz_cmp (q, rq))
@@ -231,6 +234,7 @@ testmain (int argc, char **argv)
 
 	      if (j == 1)	/* floor */
 		{
+		  mpz_set_si (r, -2);
 		  mpz_mod_ui (r, a, mpz_get_ui (b));
 		  if (mpz_cmp (r, rr))
 		    {
