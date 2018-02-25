@@ -39,6 +39,13 @@
 
 	* tests/mpz/t-bin.c: Extended tests for bin_ui and uint border cases.
 
+2018-01-10  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Fix old pentium recog.
+	* config.guess: Likewise.
+
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Add many 64-bit CPUs.
+
 2018-01-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/arm: Revert last change, it hides a symbol needed for testing.
