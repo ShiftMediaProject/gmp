@@ -4,6 +4,12 @@
 	* mpq/swap.c: Use *_SWAP_* macros.
 	* mpq/cmp_ui.c: One more little shortcut, comparing fractions to 1.
 	* mpq/get_d.c: Compare (zeros > 0) once, replace tdiv_qr with div_q.
+	* mpq/equal.c: Check size early.
+
+	* printf/obprintf.c: Adda dummy typedef to avoid empty unit.
+	* b/printf/obvprintf.c: Likewise.
+	* b/printf/obprntffuns.c: Likewise.
+	* b/printf/repl-vsnprintf.c: Move #ifdef after #include gmp-impl.h .
 
 2018-02-09  Torbjörn Granlund  <tg@gmplib.org>
 
