@@ -55,7 +55,6 @@ ulog2 (unsigned int x)
 void
 binvert (int numb_bits)
 {
-  int i;
   mpz_t bbo;
 
   mpz_init_set (bbo, big_base);

@@ -61,7 +61,6 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
 {
   mp_limb_t  alow, dlow, dmask;
   mp_ptr     qp, rp, tp;
-  mp_size_t  i;
   mp_limb_t di;
   unsigned  twos;
   int c;
