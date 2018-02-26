@@ -59,7 +59,7 @@ mpz_t B;
 int
 main (int argc, char *argv[])
 {
-  unsigned long t, p;
+  int t, p;
   mpz_t ppp, acc, inv, gmp_numb_max, tmp, Bhalf;
   mpz_t pre[7];
   int i;
