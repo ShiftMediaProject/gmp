@@ -220,6 +220,11 @@ struct __gmp_binary_plus
     {
       if (q != r) mpq_set(q, r);
     }
+    else if (__GMPXX_CONSTANT(l) && l == 1)
+    {
+      mpz_add (mpq_numref(q), mpq_numref(r), mpq_denref(r));
+      if (q != r) mpz_set(mpq_denref(q), mpq_denref(r));
+    }
     else
     {
       if (q == r)
@@ -338,6 +343,11 @@ struct __gmp_binary_minus
     if (__GMPXX_CONSTANT(l) && l == 0)
     {
       if (q != r) mpq_set(q, r);
+    }
+    else if (__GMPXX_CONSTANT(l) && l == 1)
+    {
+      mpz_sub (mpq_numref(q), mpq_numref(r), mpq_denref(r));
+      if (q != r) mpz_set(mpq_denref(q), mpq_denref(r));
     }
     else
     {
