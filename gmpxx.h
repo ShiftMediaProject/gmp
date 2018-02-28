@@ -981,11 +981,11 @@ struct __gmp_binary_equal
   { return mpq_equal(q, r) != 0; }
 
   static bool eval(mpq_srcptr q, unsigned long int l)
-  { return mpq_cmp_ui(q, l, 1) == 0; }
+  { return mpz_cmp_ui(mpq_denref(q), 1) == 0 && mpz_cmp_ui(mpq_numref(q), l) == 0; }
   static bool eval(unsigned long int l, mpq_srcptr q)
   { return eval(q, l); }
   static bool eval(mpq_srcptr q, signed long int l)
-  { return mpq_cmp_si(q, l, 1) == 0; }
+  { return mpz_cmp_ui(mpq_denref(q), 1) == 0 && mpz_cmp_si(mpq_numref(q), l) == 0; }
   static bool eval(signed long int l, mpq_srcptr q)
   { return eval(q, l); }
   static bool eval(mpq_srcptr q, double d)
@@ -993,7 +993,7 @@ struct __gmp_binary_equal
   static bool eval(double d, mpq_srcptr q)
   { return eval(q, d); }
   static bool eval(mpq_srcptr q, mpz_srcptr z)
-  { return mpq_cmp_z(q, z) == 0; }
+  { return mpz_cmp_ui(mpq_denref(q), 1) == 0 && mpz_cmp(mpq_numref(q), z) == 0; }
   static bool eval(mpz_srcptr z, mpq_srcptr q)
   { return eval(q, z); }
 
