@@ -1,3 +1,9 @@
+2018-02-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmpxx.h (__gmp_binary_plus): Special case for mpq + 1.
+	(__gmp_binary_minus): Special case for mpq - 1.
+	(__gmp_binary_equal): Optimised comparison mpq == integer.
+
 2018-02-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/Makefile.am: Disallow parallel make (thanks Vincent Lefevre).
