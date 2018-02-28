@@ -21,6 +21,8 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 template<class T>
 void checkqf (){
+  CHECK_ALL(T,5.,0,+);
+  CHECK_ALL(T,5.,0,-);
   CHECK_ALL(T,5.,2,+); CHECK_MPZ(T,5.,2,+);
   CHECK_ALL(T,5.,2,-); CHECK_MPZ(T,5.,2,-);
   CHECK_ALL(T,5.,2,*); CHECK_MPZ(T,5.,2,*);
@@ -28,6 +30,8 @@ void checkqf (){
   CHECK_ALL(T,0.,2,/);
   CHECK_ALL_SIGNS(T,11.,3,+);
   CHECK_ALL_SIGNS(T,11.,3,-);
+  CHECK_ALL_SIGNS(T,13.,1,+);
+  CHECK_ALL_SIGNS(T,13.,1,-);
   CHECK_ALL_SIGNS(T,11.,3,*);
   CHECK_ALL_SIGNS(T,11.,4,/);
   CHECK_SI(T,LONG_MIN,1,*);
