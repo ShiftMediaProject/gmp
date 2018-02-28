@@ -3,6 +3,7 @@
 	* gmpxx.h (__gmp_binary_plus): Special case for mpq + 1.
 	(__gmp_binary_minus): Special case for mpq - 1.
 	(__gmp_binary_equal): Optimised comparison mpq == integer.
+	* tests/cxx/t-ops2qf.cc (checkqf): Some check for +/- 1, +/- 0.
 
 2018-02-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
