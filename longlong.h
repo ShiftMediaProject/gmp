@@ -534,7 +534,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #endif /* defined(__ARM_ARCH_2__) ... */
 #define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
 #define count_trailing_zeros(count, x)  count_trailing_zeros_gcc_ctz(count, x)
-#define COUNT_LEADING_ZEROS_0 32
 #endif /* __arm__ */
 
 #if defined (__aarch64__) && W_TYPE_SIZE == 64
@@ -558,7 +557,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   } while (0)
 #define count_leading_zeros(count, x)  count_leading_zeros_gcc_clz(count, x)
 #define count_trailing_zeros(count, x)  count_trailing_zeros_gcc_ctz(count, x)
-#define COUNT_LEADING_ZEROS_0 64
 #endif /* __aarch64__ */
 
 #if defined (__clipper__) && W_TYPE_SIZE == 32
@@ -940,7 +938,6 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
       double    d;							\
       unsigned  a[2];							\
     } __u;								\
-    ASSERT ((n) != 0);							\
     __u.d = (UWtype) (n);						\
     (c) = 0x3FF + 31 - (__u.a[1] >> 20);				\
   } while (0)

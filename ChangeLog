@@ -1,3 +1,25 @@
+2018-02-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/Makefile.am: Disallow parallel make (thanks Vincent Lefevre).
+
+2018-02-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* printf/snprntffuns.c: Report -1 as an error.
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Refuse -1 as return value.
+
+2018-02-01  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (i586): Remove assert.
+
+2018-01-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* printf/snprntffuns.c: Use size_t instead of int.
+
+2017-12-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* longlong.h (arm32/arm64): Leave COUNT_LEADING_ZEROS_0 undefined,
+	since we use gcc's __builtin_clzl, which doesn't allow zero inputs.
+
 2017-12-16  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/fastsse/com.asm: Adhere to DOS64 xmm callee-saves rules.

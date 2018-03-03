@@ -63,7 +63,8 @@ static int
 gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
                      va_list orig_ap)
 {
-  int      ret, step, alloc, avail;
+  int      ret;
+  size_t   step, alloc, avail;
   va_list  ap;
   char     *p;
 
@@ -75,10 +76,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
       va_copy (ap, orig_ap);
       ret = vsnprintf (d->buf, avail, fmt, ap);
       if (ret == -1)
-        {
-          ASSERT (strlen (d->buf) == avail-1);
-          ret = avail-1;
-        }
+        return ret;
 
       step = MIN (ret, avail-1);
       d->size -= step;
@@ -104,7 +102,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
       ret = vsnprintf (p, alloc, fmt, ap);
       (*__gmp_free_func) (p, alloc);
     }
-  while (ret == alloc-1 || ret == -1);
+  while (ret == alloc-1);
 
   return ret;
 }

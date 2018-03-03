@@ -63,7 +63,7 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-* | geode*-*-* | atom-*-*]])
 
 define(X86_64_PATTERN,
-[[athlon64-*-* | k8-*-* | k10-*-* | bobcat-*-* | jaguar*-*-* | bulldozer*-*-* | piledriver*-*-* | steamroller*-*-* | excavator*-*-* | pentium4-*-* | atom-*-* | silvermont-*-* | goldmont-*-* | core2-*-* | corei*-*-* | x86_64-*-* | nano-*-* | nehalem*-*-* | westmere*-*-* | sandybridge*-*-* | ivybridge*-*-* | haswell*-*-* | broadwell*-*-* | skylake*-*-* | kabylake*-*-*]])
+[[athlon64-*-* | k8-*-* | k10-*-* | bobcat-*-* | jaguar*-*-* | bulldozer*-*-* | piledriver*-*-* | steamroller*-*-* | excavator*-*-* | zen*-*-* | pentium4-*-* | atom-*-* | silvermont-*-* | goldmont-*-* | core2-*-* | corei*-*-* | x86_64-*-* | nano-*-* | nehalem*-*-* | westmere*-*-* | sandybridge*-*-* | ivybridge*-*-* | haswell*-*-* | broadwell*-*-* | skylake*-*-* | kabylake*-*-*]])
 
 dnl  GMP_FAT_SUFFIX(DSTVAR, DIRECTORY)
 dnl  ---------------------------------
@@ -741,7 +741,7 @@ main ()
   long i;
   for (i = 0; i < 88 + 1; i++)
     a[i] = ~0L;
-  r = malloc (10000 * sizeof (unsigned long));
+  r = calloc (10000, sizeof (unsigned long));
   r2 = r;
   for (i = 0; i < 528; i += 23)
     {
@@ -3729,11 +3729,11 @@ check (const char *fmt, ...)
 
   ret = vsnprintf (buf, 4, fmt, ap);
 
-  if (strcmp (buf, "hel") != 0)
+  if (ret == -1 || strcmp (buf, "hel") != 0)
     return 1;
 
   /* allowed return values */
-  if (ret != -1 && ret != 3 && ret != 11)
+  if (ret != 3 && ret != 11)
     return 2;
 
   return 0;
