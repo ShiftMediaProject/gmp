@@ -1629,11 +1629,19 @@ mpz_limbs_finish (mpz_t x, mp_size_t xs)
   x->_mp_size = xs < 0 ? -xn : xn;
 }
 
-mpz_srcptr
-mpz_roinit_n (mpz_t x, mp_srcptr xp, mp_size_t xs)
+static mpz_srcptr
+mpz_roinit_normal_n (mpz_t x, mp_srcptr xp, mp_size_t xs)
 {
   x->_mp_alloc = 0;
   x->_mp_d = (mp_ptr) xp;
+  x->_mp_size = xs;
+  return x;
+}
+
+mpz_srcptr
+mpz_roinit_n (mpz_t x, mp_srcptr xp, mp_size_t xs)
+{
+  mpz_roinit_normal_n (x, xp, xs);
   mpz_limbs_finish (x, xs);
   return x;
 }
@@ -3105,7 +3113,7 @@ void
 mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
 {
   mpz_t b;
-  mpz_pow_ui (r, mpz_roinit_n (b, &blimb, 1), e);
+  mpz_pow_ui (r, mpz_roinit_normal_n (b, &blimb, blimb != 0), e);
 }
 
 void
@@ -3217,7 +3225,7 @@ void
 mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
-  mpz_powm (r, b, mpz_roinit_n (e, &elimb, 1), m);
+  mpz_powm (r, b, mpz_roinit_normal_n (e, &elimb, elimb != 0), m);
 }
 
 /* x=trunc(y^(1/z)), r=y-x^z */
@@ -3324,7 +3332,7 @@ mpn_perfect_square_p (mp_srcptr p, mp_size_t n)
 
   assert (n > 0);
   assert (p [n-1] != 0);
-  return mpz_root (NULL, mpz_roinit_n (t, p, n), 2);
+  return mpz_root (NULL, mpz_roinit_normal_n (t, p, n), 2);
 }
 
 mp_size_t
@@ -3338,7 +3346,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr p, mp_size_t n)
 
   mpz_init (r);
   mpz_init (s);
-  mpz_rootrem (s, r, mpz_roinit_n (u, p, n), 2);
+  mpz_rootrem (s, r, mpz_roinit_normal_n (u, p, n), 2);
 
   assert (s->_mp_size == (n+1)/2);
   mpn_copyd (sp, s->_mp_d, s->_mp_size);
