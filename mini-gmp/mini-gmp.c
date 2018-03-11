@@ -985,13 +985,12 @@ mpn_div_qr_1 (mp_ptr qp, mp_srcptr np, mp_size_t nn, mp_limb_t d)
 }
 
 static void
-mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
+mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
 		     const struct gmp_div_inverse *inv)
 {
   unsigned shift;
   mp_size_t i;
   mp_limb_t d1, d0, di, r1, r0;
-  mp_ptr tp;
 
   assert (nn >= 2);
   shift = inv->shift;
@@ -1000,11 +999,7 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
   di = inv->di;
 
   if (shift > 0)
-    {
-      tp = gmp_xalloc_limbs (nn);
-      r1 = mpn_lshift (tp, np, nn, shift);
-      np = tp;
-    }
+    r1 = mpn_lshift (np, np, nn, shift);
   else
     r1 = 0;
 
@@ -1027,26 +1022,11 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
       assert ((r0 << (GMP_LIMB_BITS - shift)) == 0);
       r0 = (r0 >> shift) | (r1 << (GMP_LIMB_BITS - shift));
       r1 >>= shift;
-
-      gmp_free (tp);
     }
 
-  rp[1] = r1;
-  rp[0] = r0;
+  np[1] = r1;
+  np[0] = r0;
 }
-
-#if 0
-static void
-mpn_div_qr_2 (mp_ptr qp, mp_ptr rp, mp_srcptr np, mp_size_t nn,
-	      mp_limb_t d1, mp_limb_t d0)
-{
-  struct gmp_div_inverse inv;
-  assert (nn >= 2);
-
-  mpn_div_qr_2_invert (&inv, d1, d0);
-  mpn_div_qr_2_preinv (qp, rp, np, nn, &inv);
-}
-#endif
 
 static void
 mpn_div_qr_pi1 (mp_ptr qp,
@@ -1122,7 +1102,7 @@ mpn_div_qr_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
   if (dn == 1)
     np[0] = mpn_div_qr_1_preinv (qp, np, nn, inv);
   else if (dn == 2)
-    mpn_div_qr_2_preinv (qp, np, np, nn, inv);
+    mpn_div_qr_2_preinv (qp, np, nn, inv);
   else
     {
       mp_limb_t nh;

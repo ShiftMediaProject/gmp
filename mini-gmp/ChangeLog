@@ -1,3 +1,13 @@
+2018-03-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mini-gmp.c (mpn_div_qr_2_preinv): Drop separate rp argument.
+	Clobber input np, and store remainder in np[0] and np[1]. This is
+	all the current caller needs, and it eliminates one allocation in
+	the common case of un-normalized d.
+	(mpn_div_qr_2): Delete #if:ed out function.
+	(mpn_div_qr_preinv): Update the only call site for
+	mpn_div_qr_2_preinv.
+
 2018-02-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* mini-gmp.c (mpn_div_qr_1_preinv): When qp is non-NULL, reuse
