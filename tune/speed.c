@@ -887,6 +887,9 @@ run_gnuplot (int argc, char *argv[])
      interactively if it's not. */
   fprintf (fp, "set key left\n");
 
+  /* write underscores, not subscripts */
+  fprintf (fp, "set termoption noenhanced\n");
+
   /* designed to make it possible to see crossovers easily */
   fprintf (fp, "set style data lines\n");
 
