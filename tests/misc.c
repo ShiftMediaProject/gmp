@@ -283,7 +283,7 @@ byte_diff_lowest (const void *p1, const void *p2, mp_size_t size)
 }
 
 
-/* Find most significant limb position where p1,size and p2,size differ.  */
+/* Find most significant byte position where p1,size and p2,size differ.  */
 mp_size_t
 byte_diff_highest (const void *p1, const void *p2, mp_size_t size)
 {
