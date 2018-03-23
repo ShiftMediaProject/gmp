@@ -3,7 +3,7 @@
 
    Contributed to the GNU project by Torbjörn Granlund.
 
-Copyright 2007-2009, 2011-2014 Free Software Foundation, Inc.
+Copyright 2007-2009, 2011-2014, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -70,6 +70,7 @@ see https://www.gnu.org/licenses/.  */
     mpn_cnd_sub_n (cy, rp, rp, mp, n);					\
   } while (0)
 
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 #undef MPN_REDC_2_SEC
 #define MPN_REDC_2_SEC(rp, up, mp, n, mip)				\
   do {									\
@@ -77,9 +78,10 @@ see https://www.gnu.org/licenses/.  */
     cy = mpn_redc_2 (rp, up, mp, n, mip);				\
     mpn_cnd_sub_n (cy, rp, rp, mp, n);					\
   } while (0)
-
-#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
-#define WANT_REDC_2 1
+#else
+#define MPN_REDC_2_SEC(rp, up, mp, n, mip) /* empty */
+#undef REDC_1_TO_REDC_2_THRESHOLD
+#define REDC_1_TO_REDC_2_THRESHOLD MP_SIZE_T_MAX
 #endif
 
 /* Define our own mpn squaring function.  We do this since we cannot use a
@@ -219,7 +221,6 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   windowsize = win_size (enb);
 
-#if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
       mip = ip;
@@ -232,11 +233,6 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       mpn_binvert (mip, mp, 2, tp);
       mip[0] = -mip[0]; mip[1] = ~mip[1];
     }
-#else
-  mip = ip;
-  binvert_limb (mip[0], mp[0]);
-  mip[0] = -mip[0];
-#endif
 
   pp = tp;
   tp += (n << windowsize);	/* put tp after power table */
@@ -263,14 +259,10 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       mpn_mul_basecase (tp, this_pp, n, pp + n, n);
       this_pp += n;
-#if WANT_REDC_2
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
 	MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
       else
 	MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
-#else
-      MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
-#endif
     }
 
   expbits = getbits (ep, enb, windowsize);
@@ -310,7 +302,6 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       MPN_REDUCE (rp, tp, mp, n, mip);					\
     }
 
-#if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
 #undef MPN_REDUCE
@@ -323,23 +314,15 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_2_SEC (rp, tp, mp, n, mip)
       INNERLOOP;
     }
-#else
-#undef MPN_REDUCE
-#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1_SEC (rp, tp, mp, n, mip[0])
-  INNERLOOP;
-#endif
 
   MPN_COPY (tp, rp, n);
   MPN_ZERO (tp + n, n);
 
-#if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     MPN_REDC_1_SEC (rp, tp, mp, n, mip[0]);
   else
     MPN_REDC_2_SEC (rp, tp, mp, n, mip);
-#else
-  MPN_REDC_1_SEC (rp, tp, mp, n, mip[0]);
-#endif
+
   cnd = mpn_sub_n (tp, rp, mp, n);	/* we need just retval */
   mpn_cnd_sub_n (!cnd, rp, rp, mp, n);
 }
