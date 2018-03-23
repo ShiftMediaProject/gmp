@@ -208,7 +208,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   mp_limb_t ip[2], *mip;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
-  mp_ptr pp, this_pp;
+  mp_ptr pp, this_pp, ps;
   long i;
   int cnd;
 
@@ -255,14 +255,34 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   /* Precompute powers of b and put them in the temporary area at pp.  */
   /* scratch: |   n   |   n   | ...  |                    |   2n      |  */
   /*          | pp[0] | pp[1] | ...  | pp[2^windowsize-1] |  product  |  */
-  for (i = (1 << windowsize) - 2; i > 0; i--)
+  ps = pp + n;		/* initially B^1 */
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
-      mpn_mul_basecase (tp, this_pp, n, pp + n, n);
-      this_pp += n;
-      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-	MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
-      else
-	MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
+      for (i = (1 << windowsize) - 2; i > 0; i -= 2)
+	{
+	  mpn_sqr_basecase (tp, ps, n); /* FIXME: use mpn_local_sqr */
+	  ps += n;
+	  this_pp += n;
+	  MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
+
+	  mpn_mul_basecase (tp, this_pp, n, pp + n, n);
+	  this_pp += n;
+	  MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
+	}
+    }
+  else
+    {
+      for (i = (1 << windowsize) - 2; i > 0; i -= 2)
+	{
+	  mpn_sqr_basecase (tp, ps, n); /* FIXME: use mpn_local_sqr */
+	  ps += n;
+	  this_pp += n;
+	  MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
+
+	  mpn_mul_basecase (tp, this_pp, n, pp + n, n);
+	  this_pp += n;
+	  MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
+	}
     }
 
   expbits = getbits (ep, enb, windowsize);
