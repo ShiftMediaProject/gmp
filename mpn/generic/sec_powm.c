@@ -35,12 +35,15 @@ see https://www.gnu.org/licenses/.  */
 /*
   BASIC ALGORITHM, Compute U^E mod M, where M < B^n is odd.
 
-  1. T <- (B^n * U) mod M                Convert to REDC form
+  1. T <- (B^n * U) mod M; convert to REDC form
 
-  2. Compute table U^0, U^1, U^2... of E-dependent size
+  2. Compute table U^0, U^1, U^2... of floor(log(E))-dependent size
 
   3. While there are more bits in E
        W <- power left-to-right base-k
+
+  The article "Defeating modexp side-channel attacks with data-independent
+  execution traces", https://gmplib.org/~tege/modexp-silent.pdf, has details.
 
 
   TODO:
@@ -83,24 +86,6 @@ see https://www.gnu.org/licenses/.  */
    native mpn_sqr_basecase over TUNE_SQR_TOOM2_MAX, or a non-native one over
    SQR_TOOM2_THRESHOLD.  This is so because of fixed size stack allocations
    made inside mpn_sqr_basecase.  */
-
-#if HAVE_NATIVE_mpn_sqr_diagonal
-#define MPN_SQR_DIAGONAL(rp, up, n)					\
-  mpn_sqr_diagonal (rp, up, n)
-#else
-#define MPN_SQR_DIAGONAL(rp, up, n)					\
-  do {									\
-    mp_size_t _i;							\
-    for (_i = 0; _i < (n); _i++)					\
-      {									\
-	mp_limb_t ul, lpl;						\
-	ul = (up)[_i];							\
-	umul_ppmm ((rp)[2 * _i + 1], lpl, ul, ul << GMP_NAIL_BITS);	\
-	(rp)[2 * _i] = lpl >> GMP_NAIL_BITS;				\
-      }									\
-  } while (0)
-#endif
-
 
 #if ! HAVE_NATIVE_mpn_sqr_basecase
 /* The limit of the generic code is SQR_TOOM2_THRESHOLD.  */
@@ -328,30 +313,18 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
-#undef MPN_MUL_N
-#undef MPN_SQR
 #undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1_SEC (rp, tp, mp, n, mip[0])
       INNERLOOP;
     }
   else
     {
-#undef MPN_MUL_N
-#undef MPN_SQR
 #undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_2_SEC (rp, tp, mp, n, mip)
       INNERLOOP;
     }
 #else
-#undef MPN_MUL_N
-#undef MPN_SQR
 #undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_1_SEC (rp, tp, mp, n, mip[0])
   INNERLOOP;
 #endif
