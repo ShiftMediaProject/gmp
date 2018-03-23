@@ -1,3 +1,9 @@
+2018-03-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/sec_powm.c: Remove unused macros.
+	Simplify code for choosing between redc_1 and redc_2.
+	Compute power table with squaring for even powers.
+
 2018-02-28 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmpxx.h (__gmp_binary_plus): Special case for mpq + 1.
