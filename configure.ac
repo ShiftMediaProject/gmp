@@ -1299,7 +1299,7 @@ case $host in
 
 
   # RISC-V
-  [riscv-*-*])
+  [riscv64-*-*])
     cclist="gcc"
     path="riscv/64"
     ;;
