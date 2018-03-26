@@ -114,17 +114,17 @@ see https://www.gnu.org/licenses/.  */
 #ifndef SQR_BASECASE_LIM
 /* If SQR_BASECASE_LIM is now not defined, use mpn_sqr_basecase for any operand
    size.  */
-#define mpn_local_sqr(rp,up,n,tp) mpn_sqr_basecase(rp,up,n)
-#else
-/* Else use mpn_sqr_basecase for its allowed sizes, else mpn_mul_basecase.  */
+#define SQR_BASECASE_LIM  MP_SIZE_T_MAX
+#endif
+
 #define mpn_local_sqr(rp,up,n,tp) \
   do {									\
-    if (BELOW_THRESHOLD (n, SQR_BASECASE_LIM))				\
+    if (ABOVE_THRESHOLD (n, SQR_BASECASE_THRESHOLD)			\
+	&& BELOW_THRESHOLD (n, SQR_BASECASE_LIM))			\
       mpn_sqr_basecase (rp, up, n);					\
     else								\
       mpn_mul_basecase(rp, up, n, up, n);				\
   } while (0)
-#endif
 
 #define getbit(p,bi) \
   ((p[(bi - 1) / GMP_NUMB_BITS] >> (bi - 1) % GMP_NUMB_BITS) & 1)
