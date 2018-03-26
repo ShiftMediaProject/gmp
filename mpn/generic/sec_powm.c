@@ -117,7 +117,7 @@ see https://www.gnu.org/licenses/.  */
 #define SQR_BASECASE_LIM  MP_SIZE_T_MAX
 #endif
 
-#define mpn_local_sqr(rp,up,n,tp) \
+#define mpn_local_sqr(rp,up,n)						\
   do {									\
     if (ABOVE_THRESHOLD (n, SQR_BASECASE_THRESHOLD)			\
 	&& BELOW_THRESHOLD (n, SQR_BASECASE_LIM))			\
@@ -260,7 +260,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       for (i = (1 << windowsize) - 2; i > 0; i -= 2)
 	{
-	  mpn_local_sqr (tp, ps, n, tp + 2 * n);
+	  mpn_local_sqr (tp, ps, n);
 	  ps += n;
 	  this_pp += n;
 	  MPN_REDC_1_SEC (this_pp, tp, mp, n, mip[0]);
@@ -274,7 +274,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       for (i = (1 << windowsize) - 2; i > 0; i -= 2)
 	{
-	  mpn_local_sqr (tp, ps, n, tp + 2 * n);
+	  mpn_local_sqr (tp, ps, n);
 	  ps += n;
 	  this_pp += n;
 	  MPN_REDC_2_SEC (this_pp, tp, mp, n, mip);
@@ -310,7 +310,7 @@ mpn_sec_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 									\
       do								\
 	{								\
-	  mpn_local_sqr (tp, rp, n, tp + 2 * n);			\
+	  mpn_local_sqr (tp, rp, n);					\
 	  MPN_REDUCE (rp, tp, mp, n, mip);				\
 	  this_windowsize--;						\
 	}								\
@@ -353,6 +353,7 @@ mpn_sec_powm_itch (mp_size_t bn, mp_bitcnt_t enb, mp_size_t n)
   int windowsize;
   mp_size_t redcify_itch, itch;
 
+  /* FIXME: no more _local/_basecase difference. */
   /* The top scratch usage will either be when reducing B in the 2nd redcify
      call, or more typically n*2^windowsize + 3n or 4n, in the main loop.  (It
      is 3n or 4n depending on if we use mpn_local_sqr or a native
