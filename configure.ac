@@ -994,7 +994,7 @@ case $host in
     GMP_INCLUDE_MPN(mips32/mips-defs.m4)
 
     case $host in
-      [mips64*-*-* | mips*-*-irix[6789]*])
+      [mips64*-*-* | mipsisa64*-*-* | mips*-*-irix[6789]*])
         abilist="n32 64 o32"
 
         cclist_n32="gcc cc"
