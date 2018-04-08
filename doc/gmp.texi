@@ -1558,7 +1558,7 @@ system Cygwin, DJGPP and MINGW can be used.  All three are excellent ports of
 GCC and the various GNU tools.
 
 @display
-@uref{http://www.cygwin.com/}
+@uref{https://www.cygwin.com/}
 @uref{http://www.delorie.com/djgpp/}
 @uref{http://www.mingw.org/}
 @end display
@@ -2592,13 +2592,9 @@ Reference Manual}, or @samp{man 3 malloc}.  Other possibilities, in no
 particular order, include
 
 @display
-@uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
+@uref{http://cs.ecs.baylor.edu/~donahoo/tools/ccmalloc/}
 @uref{http://dmalloc.com/}
-@uref{http://www.perens.com/FreeSoftware/} @ (electric fence)
-@uref{http://packages.debian.org/stable/devel/fda}
-@uref{http://www.gnupdate.org/components/leakbug/}
-@uref{http://people.redhat.com/~otaylor/memprof/}
-@uref{http://www.cbmamiga.demon.co.uk/mpatrol/}
+@uref{https://wiki.gnome.org/Apps/MemProf}
 @end display
 
 The GMP default allocation routines in @file{memory.c} also have a simple
@@ -2797,7 +2793,7 @@ support from an external library, such as
 @cindex FunctionCheck
 @cindex fnccheck
 @display
-@uref{http://sourceforge.net/projects/fnccheck/}
+@uref{https://sourceforge.net/projects/fnccheck/}
 @end display
 
 This should be included in @samp{LIBS} during the GMP configure so that test
@@ -7458,10 +7454,7 @@ interface, expression templates to eliminate temporaries.
 ALP @spaceuref{https://www-sop.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
 polynomials using templates.
 @item
-Arithmos @spaceuref{http://cant.ua.ac.be/old/arithmos/} @* Rationals
-with infinities and square roots.
-@item
-CLN @spaceuref{http://www.ginac.de/CLN/} @* High level classes for arithmetic.
+CLN @spaceuref{https://www.ginac.de/CLN/} @* High level classes for arithmetic.
 @item
 Linbox @spaceuref{http://www.linalg.org/} @* Sparse vectors and matrices.
 @item
@@ -7508,17 +7501,8 @@ Librep @spaceuref{http://librep.sourceforge.net/}
 @item
 @c  FIXME: When there's a stable release with gmp support, just refer to it
 @c  rather than bothering to talk about betas.
-XEmacs (21.5.18 beta and up) @spaceuref{http://www.xemacs.org} @* Optional
+XEmacs (21.5.18 beta and up) @spaceuref{https://www.xemacs.org} @* Optional
 big integers, rationals and floats using GMP.
-@end itemize
-
-@item M4
-@itemize @bullet
-@item
-@c  FIXME: When there's a stable release with gmp support, just refer to it
-@c  rather than bothering to talk about betas.
-GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu/} @* Optionally provides
-an arbitrary precision @code{mpeval}.
 @end itemize
 
 @item ML
@@ -7530,7 +7514,7 @@ MLton compiler @spaceuref{http://mlton.org/}
 @item Objective Caml
 @itemize @bullet
 @item
-MLGMP @spaceuref{http://opam.ocamlpro.com/pkg/mlgmp.20120224.html}
+MLGMP @spaceuref{https://opam.ocaml.org/packages/mlgmp/}
 @item
 Numerix @spaceuref{http://pauillac.inria.fr/~quercia/} @* Optionally using
 GMP.
@@ -7539,7 +7523,7 @@ GMP.
 @item Oz
 @itemize @bullet
 @item
-Mozart @spaceuref{http://mozart.github.io/}
+Mozart @spaceuref{https://mozart.github.io/}
 @end itemize
 
 @item Pascal
@@ -7557,10 +7541,10 @@ optionally using GMP.
 GMP module, see @file{demos/perl} in the GMP sources (@pxref{Demonstration
 Programs}).
 @item
-Math::GMP @spaceuref{http://www.cpan.org/} @* Compatible with Math::BigInt, but
+Math::GMP @spaceuref{https://www.cpan.org/} @* Compatible with Math::BigInt, but
 not as many functions as the GMP module above.
 @item
-Math::BigInt::GMP @spaceuref{http://www.cpan.org/} @* Plug Math::GMP into
+Math::BigInt::GMP @spaceuref{https://www.cpan.org/} @* Plug Math::GMP into
 normal Math::BigInt operations.
 @end itemize
 
@@ -7568,7 +7552,7 @@ normal Math::BigInt operations.
 @item Pike
 @itemize @bullet
 @item
-mpz module in the standard distribution, @uref{http://pike.ida.liu.se/}
+pikempz module in the standard distribution, @uref{https://pike.lysator.liu.se/}
 @end itemize
 
 @need 500
@@ -7588,7 +7572,7 @@ GMPY @uref{https://code.google.com/p/gmpy/}
 @item Ruby
 @itemize @bullet
 @item
-http://rubygems.org/gems/gmp
+@uref{https://rubygems.org/gems/gmp}
 @end itemize
 
 @item Scheme
@@ -7596,7 +7580,7 @@ http://rubygems.org/gems/gmp
 @item
 GNU Guile @spaceuref{https://www.gnu.org/software/guile/guile.html}
 @item
-RScheme @spaceuref{http://www.rscheme.org/}
+RScheme @spaceuref{https://www.rscheme.org/}
 @item
 STklos @spaceuref{http://www.stklos.net/}
 @c
@@ -7609,7 +7593,7 @@ STklos @spaceuref{http://www.stklos.net/}
 @item Smalltalk
 @itemize @bullet
 @item
-GNU Smalltalk @spaceuref{http://www.smalltalk.org/versions/GNUSmalltalk.html}
+GNU Smalltalk @spaceuref{http://smalltalk.gnu.org/}
 @end itemize
 
 @item Other
@@ -7621,7 +7605,7 @@ using GCL.
 DrGenius @spaceuref{http://drgenius.seul.org/} @* Geometry system and
 mathematical programming language.
 @item
-GiNaC @spaceuref{http://www.ginac.de/} @* C++ computer algebra using CLN.
+GiNaC @spaceuref{httsp://www.ginac.de/} @* C++ computer algebra using CLN.
 @item
 GOO @spaceuref{https://www.eecs.berkeley.edu/~jrb/goo/} @* Dynamic object oriented
 language.
@@ -10774,17 +10758,17 @@ Analytic Number Theory and Computational Complexity'', Wiley, 1998.
 @item
 Richard Crandall and Carl Pomerance, ``Prime Numbers: A Computational
 Perspective'', 2nd edition, Springer-Verlag, 2005.
-@texlinebreak{} @uref{http://www.math.dartmouth.edu/~carlp/}
+@texlinebreak{} @uref{https://www.math.dartmouth.edu/~carlp/}
 
 @item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
-@texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen/}
+@texlinebreak{} @uref{https://www.math.u-bordeaux.fr/~cohen/}
 
 @item
 Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
 ``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1998.
-@texlinebreak{} @uref{http://www-cs-faculty.stanford.edu/~knuth/taocp.html}
+@texlinebreak{} @uref{https://www-cs-faculty.stanford.edu/~knuth/taocp.html}
 
 @item
 John D. Lipson, ``Elements of Algebra and Algebraic Computing'',
@@ -10808,12 +10792,12 @@ Collection'', Free Software Foundation, 2008, available online
 Yves Bertot, Nicolas Magaud and Paul Zimmermann, ``A Proof of GMP Square
 Root'', Journal of Automated Reasoning, volume 29, 2002, pp.@: 225-252.  Also
 available online as INRIA Research Report 4475, June 2002,
-@uref{http://hal.inria.fr/docs/00/07/21/13/PDF/RR-4475.pdf}
+@uref{https://hal.inria.fr/docs/00/07/21/13/PDF/RR-4475.pdf}
 
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
-@texlinebreak{} @uref{http://data.mpi-sb.mpg.de/internet/reports.nsf/NumberView/1998-1-022}
+@texlinebreak{} @uref{https://www.mpi-inf.mpg.de/~ziegler/TechRep.ps.gz}
 
 @item
 Torbj@"orn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
@@ -10869,7 +10853,7 @@ Makoto Matsumoto and Takuji Nishimura, ``Mersenne Twister: A 623-dimensionally
 equidistributed uniform pseudorandom number generator'', ACM Transactions on
 Modelling and Computer Simulation, volume 8, January 1998, pp.@: 3-30.
 Available online @texlinebreak{}
-@uref{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/mt.ps.gz} (or .pdf)
+@uref{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/mt.pdf}
 
 @item
 R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
@@ -10898,12 +10882,12 @@ volume 21, number 1, March 1995, pp.@: 111-122.
 
 @item
 Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
-November 1999, @uref{http://hal.inria.fr/inria-00072854/PDF/RR-3805.pdf}
+November 1999, @uref{https://hal.inria.fr/inria-00072854/PDF/RR-3805.pdf}
 
 @item
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
 Implementations'', @texlinebreak{}
-@uref{http://www.loria.fr/~zimmerma/papers/proof-div-sqrt.ps.gz}
+@uref{https://homepages.loria.fr/PZimmermann/papers/proof-div-sqrt.ps.gz}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
