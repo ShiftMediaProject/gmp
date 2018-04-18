@@ -1,3 +1,13 @@
+2018-04-18  Marc Glisse  <marc.glisse@inria.fr>
+
+	* mpq/clear.c: Handle lazy numerator.
+	* mpq/clears.c: Likewise.
+	* mpq/init.c: Likewise.
+	* mpq/set_si.c: Likewise.
+	* mpq/set_ui.c: Likewise.
+
+	* tests/cxx/t-ops2z.cc: Add parentheses to quiet a warning.
+
 2018-03-23  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/sec_powm.c: Remove unused macros.

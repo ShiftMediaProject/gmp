@@ -33,6 +33,7 @@ see https://www.gnu.org/licenses/.  */
 void
 mpq_clear (mpq_t x)
 {
-  __GMP_FREE_FUNC_LIMBS (PTR(NUM(x)), ALLOC(NUM(x)));
+  if (ALLOC (NUM(x)))
+    __GMP_FREE_FUNC_LIMBS (PTR(NUM(x)), ALLOC(NUM(x)));
   __GMP_FREE_FUNC_LIMBS (PTR(DEN(x)), ALLOC(DEN(x)));
 }

@@ -33,8 +33,9 @@ see https://www.gnu.org/licenses/.  */
 void
 mpq_init (mpq_t x)
 {
-  ALLOC(NUM(x)) = 1;
-  PTR(NUM(x)) = __GMP_ALLOCATE_FUNC_LIMBS (1);
+  static const mp_limb_t dummy_limb=0xc1a0;
+  ALLOC(NUM(x)) = 0;
+  PTR(NUM(x)) = (mp_ptr) &dummy_limb;
   SIZ(NUM(x)) = 0;
   ALLOC(DEN(x)) = 1;
   PTR(DEN(x)) = __GMP_ALLOCATE_FUNC_LIMBS (1);

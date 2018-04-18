@@ -55,7 +55,7 @@ mpq_set_si (mpq_t dest, signed long int num, unsigned long int den)
     }
   else
     {
-      PTR(NUM(dest))[0] = abs_num;
+      MPZ_NEWALLOC (NUM(dest), 1)[0] = abs_num;
       SIZ(NUM(dest)) = num > 0 ? 1 : -1;
     }
 
