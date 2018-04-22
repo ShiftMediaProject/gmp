@@ -602,8 +602,8 @@ case $host in
     CALLING_CONVENTIONS_OBJS='arm32call.lo arm32check.lo'
     CALLING_CONVENTIONS_OBJS_64=""
     cclist_64="gcc cc"
-    any_32_testlist="sizeof-long-4"
-    any_64_testlist="sizeof-long-8"
+    any_32_testlist="sizeof-void*-4"
+    any_64_testlist="sizeof-void*-8"
 
     # This is needed for clang, which is not content with flags like -mfpu=neon
     # alone.
@@ -612,6 +612,8 @@ case $host in
         gcc_cflags_fpmode="-mfloat-abi=softfp" ;;
       *-*-*eabihf)
         gcc_cflags_fpmode="-mfloat-abi=hard" ;;
+      *-*-mingw*)
+        limb_64=longlong ;;
     esac
 
     # FIXME: We make mandatory compiler options optional here.  We should

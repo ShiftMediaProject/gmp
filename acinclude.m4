@@ -907,8 +907,8 @@ dnl  a workaround for a HP compiler bug.
 
 AC_DEFUN([GMP_C_TEST_SIZEOF],
 [echo "configure: testlist $2" >&AC_FD_CC
-[gmp_sizeof_type=`echo "$2" | sed 's/sizeof-\([a-z]*\).*/\1/'`]
-[gmp_sizeof_want=`echo "$2" | sed 's/sizeof-[a-z]*-\([0-9]*\).*/\1/'`]
+[gmp_sizeof_type=`echo "$2" | sed 's/sizeof-\([a-z\*]*\).*/\1/'`]
+[gmp_sizeof_want=`echo "$2" | sed 's/sizeof-[a-z\*]*-\([0-9]*\).*/\1/'`]
 AC_MSG_CHECKING([compiler $1 has sizeof($gmp_sizeof_type)==$gmp_sizeof_want])
 cat >conftest.c <<EOF
 [int

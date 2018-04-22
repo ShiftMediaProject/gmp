@@ -1,3 +1,13 @@
+2018-04-22  Niels Möller  <nisse@lysator.liu.se>
+
+	From Martin Storsjö:
+	* configure.ac (aarch64): Just as on windows/x86_64, "long" still
+	is 32 bit on aarch64. To distinguish between 32-bit and 64-bit
+	ABI, test sizeof(void*) instead of sizeof(long). Use long long for
+	mp_limb_t for mingw targets.
+	* acinclude.m4 (GMP_C_TEST_SIZEOF): Allow '*' in the type name,
+	e.g., void*.
+
 2018-04-18  Marc Glisse  <marc.glisse@inria.fr>
 
 	* mpq/clear.c: Handle lazy numerator.
