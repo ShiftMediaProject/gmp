@@ -1,3 +1,8 @@
+2018-04-23 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom2_sqr.c: Handle the cy=-1 branch slightly faster.
+	* mpn/generic/toom22_mul.c: Likewise. (Thanks Paul and Raphaël!)
+
 2018-04-22  Niels Möller  <nisse@lysator.liu.se>
 
 	From Martin Storsjö:

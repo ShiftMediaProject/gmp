@@ -145,7 +145,7 @@ mpn_toom2_sqr (mp_ptr pp,
 #if WANT_ASSERT
     /* The borrow in cy stops the propagation of the carry cy2, */
     ASSERT (cy2 == 1);
-    cy += mpn_add_1 (pp + 2 * n, pp + 2 * n, n, 1);
+    cy += mpn_add_1 (pp + 2 * n, pp + 2 * n, n, cy2);
     ASSERT (cy == 0);
 #else
     /* we simply fill the area with zeros. */
