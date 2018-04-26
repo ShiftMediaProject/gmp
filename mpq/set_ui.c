@@ -45,7 +45,7 @@ mpq_set_ui (mpq_t dest, unsigned long int num, unsigned long int den)
 
   if (num == 0)
     {
-      /* Canonicalize 0/n to 0/1.  */
+      /* Canonicalize 0/d to 0/1.  */
       den = 1;
       SIZ(NUM(dest)) = 0;
     }
