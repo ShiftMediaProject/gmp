@@ -22,6 +22,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 /* Include it here, so we we could tweak, e.g., how MPZ_REALLOC
    works. */
 #include "../mini-gmp.c"
+#include "../mini-mpq.c"
 
 static size_t total_alloc = 0;
 

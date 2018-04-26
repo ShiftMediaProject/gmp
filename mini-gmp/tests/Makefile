@@ -30,7 +30,8 @@ LIBS = -lgmp -lm -lmcheck
 CHECK_PROGRAMS = t-add t-sub t-mul t-invert t-div t-div_2exp \
 	t-double t-cmp_d t-gcd t-lcm t-import t-comb t-signed \
 	t-sqrt t-root t-powm t-logops t-bitops t-scan t-str \
-	t-reuse t-aorsmul t-limbs t-cong t-pprime_p
+	t-reuse t-aorsmul t-limbs t-cong t-pprime_p \
+	t-mpq_addsub t-mpq_muldiv t-mpq_muldiv_2exp
 # Default TESTS to all tests, allowing overriding TESTS for building tests
 # without running them.
 TESTS = $(CHECK_PROGRAMS)
@@ -48,10 +49,10 @@ clean:
 # Keep object files
 .PRECIOUS: %.o
 
-%.o: %.c $(MINI_GMP_DIR)/mini-gmp.h hex-random.h mini-random.h
+%.o: %.c $(MINI_GMP_DIR)/mini-gmp.h $(MINI_GMP_DIR)/mini-mpq.h hex-random.h mini-random.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-testutils.o: $(MINI_GMP_DIR)/mini-gmp.c
+testutils.o: $(MINI_GMP_DIR)/mini-gmp.c $(MINI_GMP_DIR)/mini-mpq.c
 
 %: %.o $(MISC_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
