@@ -43,7 +43,7 @@ mpq_inp_str (mpq_ptr q, FILE *fp, int base)
     fp = stdin;
 
   SIZ(DEN(q)) = 1;
-  PTR(DEN(q))[0] = 1;
+  MPZ_NEWALLOC (DEN(q), 1)[0] = 1;
 
   nread = mpz_inp_str (mpq_numref(q), fp, base);
   if (nread == 0)

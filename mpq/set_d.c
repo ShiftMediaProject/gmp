@@ -76,7 +76,7 @@ mpq_set_d (mpq_ptr dest, double d)
 	{
 	  SIZ(NUM(dest)) = 0;
 	  SIZ(DEN(dest)) = 1;
-	  PTR(DEN(dest))[0] = 1;
+	  MPZ_NEWALLOC (DEN(dest), 1)[0] = 1;
 	  return;
 	}
 
@@ -157,7 +157,7 @@ mpq_set_d (mpq_ptr dest, double d)
 	  break;
 #endif
 	}
-      *PTR(DEN(dest)) = 1;
+      MPZ_NEWALLOC (DEN(dest), 1)[0] = 1;
       SIZ(DEN(dest)) = 1;
     }
   SIZ(NUM(dest)) = negative ? -nn : nn;

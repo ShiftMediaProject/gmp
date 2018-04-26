@@ -55,6 +55,6 @@ mpq_set_ui (mpq_t dest, unsigned long int num, unsigned long int den)
       SIZ(NUM(dest)) = 1;
     }
 
-  PTR(DEN(dest))[0] = den;
+  MPZ_NEWALLOC (DEN(dest), 1)[0] = den;
   SIZ(DEN(dest)) = (den != 0);
 }

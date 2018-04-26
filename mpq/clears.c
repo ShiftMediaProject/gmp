@@ -42,7 +42,8 @@ mpq_clears (mpq_ptr x, ...)
     {
       if (ALLOC (NUM(x)))
 	__GMP_FREE_FUNC_LIMBS (PTR(NUM(x)), ALLOC(NUM(x)));
-      __GMP_FREE_FUNC_LIMBS (PTR(DEN(x)), ALLOC(DEN(x)));
+      if (ALLOC (DEN(x)))
+	__GMP_FREE_FUNC_LIMBS (PTR(DEN(x)), ALLOC(DEN(x)));
       x = va_arg (ap, mpq_ptr);
     }
   while (x != NULL);

@@ -61,7 +61,7 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
       /* We special case this to simplify allocation logic; gcd(0,x) = x
 	 is a singular case for the allocations.  */
       SIZ(NUM(prod)) = 0;
-      PTR(DEN(prod))[0] = 1;
+      MPZ_NEWALLOC (DEN(prod), 1)[0] = 1;
       SIZ(DEN(prod)) = 1;
       return;
     }

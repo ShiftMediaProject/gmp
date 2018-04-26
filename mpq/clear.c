@@ -35,5 +35,6 @@ mpq_clear (mpq_t x)
 {
   if (ALLOC (NUM(x)))
     __GMP_FREE_FUNC_LIMBS (PTR(NUM(x)), ALLOC(NUM(x)));
-  __GMP_FREE_FUNC_LIMBS (PTR(DEN(x)), ALLOC(DEN(x)));
+  if (ALLOC (DEN(x)))
+    __GMP_FREE_FUNC_LIMBS (PTR(DEN(x)), ALLOC(DEN(x)));
 }

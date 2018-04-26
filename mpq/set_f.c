@@ -46,7 +46,7 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
       /* set q=0 */
       SIZ(NUM(q)) = 0;
       SIZ(DEN(q)) = 1;
-      PTR(DEN(q))[0] = 1;
+      MPZ_NEWALLOC (DEN(q), 1)[0] = 1;
       return;
     }
 
@@ -65,7 +65,7 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
 
       SIZ(NUM(q)) = fsize >= 0 ? fexp : -fexp;
       SIZ(DEN(q)) = 1;
-      PTR(DEN(q))[0] = 1;
+      MPZ_NEWALLOC (DEN(q), 1)[0] = 1;
     }
   else
     {

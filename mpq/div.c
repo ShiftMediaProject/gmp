@@ -48,12 +48,9 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
 
   if (UNLIKELY (quot == op2))
     {
-      if (op1 == op2)
+      if (UNLIKELY (op1 == op2))
 	{
-	  PTR(NUM(quot))[0] = 1;
-	  SIZ(NUM(quot)) = 1;
-	  PTR(DEN(quot))[0] = 1;
-	  SIZ(DEN(quot)) = 1;
+	  mpq_set_ui (quot, 1, 1);
 	  return;
 	}
 
@@ -82,7 +79,7 @@ mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
       /* We special case this to simplify allocation logic; gcd(0,x) = x
 	 is a singular case for the allocations.  */
       SIZ(NUM(quot)) = 0;
-      PTR(DEN(quot))[0] = 1;
+      MPZ_NEWALLOC (DEN(quot), 1)[0] = 1;
       SIZ(DEN(quot)) = 1;
       return;
     }

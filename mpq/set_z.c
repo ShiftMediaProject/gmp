@@ -43,6 +43,6 @@ mpq_set_z (mpq_ptr dest, mpz_srcptr src)
   dp = MPZ_NEWALLOC (NUM(dest), abs_num_size);
   MPN_COPY (dp, PTR(src), abs_num_size);
 
-  PTR(DEN(dest))[0] = 1;
+  MPZ_NEWALLOC (DEN(dest), 1)[0] = 1;
   SIZ(DEN(dest)) = 1;
 }

@@ -49,7 +49,7 @@ mpq_set_str (mpq_ptr q, const char *str, int base)
   if (slash == NULL)
     {
       SIZ(DEN(q)) = 1;
-      PTR(DEN(q))[0] = 1;
+      MPZ_NEWALLOC (DEN(q), 1)[0] = 1;
 
       return mpz_set_str (mpq_numref(q), str, base);
     }

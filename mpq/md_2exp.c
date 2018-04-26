@@ -102,7 +102,7 @@ mpq_div_2exp (mpq_ptr dst, mpq_srcptr src, mp_bitcnt_t n)
     {
       SIZ(NUM(dst)) = 0;
       SIZ(DEN(dst)) = 1;
-      PTR(DEN(dst))[0] = 1;
+      MPZ_NEWALLOC (DEN(dst), 1)[0] = 1;
       return;
     }
 
