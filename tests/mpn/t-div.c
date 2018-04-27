@@ -445,6 +445,7 @@ main (int argc, char **argv)
 	      alloc = itch + 1;
 	    }
 	  scratch[itch] = ran;
+	  MPN_COPY (qp, junkp, nn - dn + 1);
 	  mpn_div_q (qp, np, nn, dup, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);

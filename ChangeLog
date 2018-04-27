@@ -1,3 +1,8 @@
+2018-04-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-div.c (main): Fill quotient area with junk before
+	calling mpn_div_q.
+
 2018-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Makefile.am (EXTRA_DIST): Add mini-gmp/mini-mpq.[ch].
