@@ -1,5 +1,8 @@
 2018-04-27  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/div_q.c (mpn_div_q): Replace dead code with ASSERT.
+	Spotted by Paul Zimmermann and Raphaël Rieu-Hleft.
+
 	* tests/mpn/t-div.c (main): Fill quotient area with junk before
 	calling mpn_div_q.
 
