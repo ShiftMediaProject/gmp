@@ -2,6 +2,9 @@
 
    Contributed to the GNU project by Marco Bodrato
 
+   Acknowledgment: special thanks to Bradley Lucier for his comments
+   to the preliminary version of this code.
+
 Copyright 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
