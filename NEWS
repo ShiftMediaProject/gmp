@@ -1,4 +1,4 @@
-Copyright 1996, 1999-2016 Free Software Foundation, Inc.
+Copyright 1996, 1999-2016, 2018 Free Software Foundation, Inc.
 
 Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
@@ -6,8 +6,29 @@ medium, provided this notice is preserved.
 
 Changes between GMP version 6.1.* and 6.2.0
 
+  BUGS FIXED
+  * gmp_snprintf now correctly reports an error (returns -1) when
+    snprintf does.
+
   FEATURES
   * New C++ functions factorial and primorial for mpz_class.
+
+  * Mini-GMP: new functions mpz_2fac_ui and mpz_mfac_uiui.
+
+  * Mini-GMP: mpz_sizeinbase, mpz_get_str, and mpz_set_str now support
+  bases up to 62.
+
+  * Mini-GMP: added support for the mpq_t layer.
+
+  SPEEDUPS
+  * The n-over-k function have been reimplemented for great
+    speedups for large operands handled by mpz_bin_ui .
+
+  MISC
+  * Internal representation of the mpz_t variables now supports lazy
+    allocation; memory is allocated only when a value is stored.
+
+  * Small improvements and better coverage for the test suite.
 
 Changes between GMP version 6.1.1 and 6.1.2
 

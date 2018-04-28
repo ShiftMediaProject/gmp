@@ -63,8 +63,12 @@ Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			mulmod_bnm1.c, sqrmod_bnm1.c, nussbaumer_mul.c,
 			toom_eval_pm2.c, toom_eval_pm2rexp.c,
 			mullo_n.c, sqrlo.c, invert.c, invertappr.c;
+			mpn/x86/atom/aors_n.asm, aorslshC_n.asm,
+			aorrlsh{1,2,C}_n.asm, aorsmul_1.asm, logops_n.asm,
+			sublsh2_n.asm, rshift.asm; primesieve.c;
 			mpz/fac_ui.c, 2fac_ui.c, mfac_uiui.c, oddfac_1.c,
-			primorial_ui.c, prodlimbs.c, goetgheluck_bin_uiui.c.
+			primorial_ui.c, prodlimbs.c, bin_ui.c, 
+			goetgheluck_bin_uiui.c; mini-gmp/mini-mpq.c.
 
 David Harvey		mpn/generic/add_err1_n.c, add_err2_n.c,
 			add_err3_n.c, sub_err1_n.c, sub_err2_n.c,

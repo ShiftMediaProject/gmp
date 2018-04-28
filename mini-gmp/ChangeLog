@@ -1,10 +1,10 @@
 2018-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp/mini-mpq.c: New file, mini-implementation of mpq_t.
-	* mini-gmp/mini-mpq.h: New file, definitions for mpq_t.
-	* mini-gmp/tests/t-mpq_addsub: New tests for mpq_add and sub.
-	* mini-gmp/tests/t-mpq_muldiv: New tests for mpq_mul and div.
-	* mini-gmp/tests/t-mpq_muldiv_2exp: New tests for mpq_*_2exp.
+	* mini-mpq.c: New file, mini-implementation of mpq_t.
+	* mini-mpq.h: New file, definitions for mpq_t.
+	* tests/t-mpq_addsub: New tests for mpq_add and sub.
+	* tests/t-mpq_muldiv: New tests for mpq_mul and div.
+	* tests/t-mpq_muldiv_2exp: New tests for mpq_*_2exp.
 
 2018-03-11  Niels Möller  <nisse@lysator.liu.se>
 
@@ -23,8 +23,8 @@
 
 2018-01-15 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mini-gmp/mini-gmp.c (gmp_popcount_limb): Micro-optimisations.
-	* mini-gmp/tests/t-comb.c (checkWilson): Check also mpz_2fac_ui.
+	* mini-gmp.c (gmp_popcount_limb): Micro-optimisations.
+	* tests/t-comb.c (checkWilson): Check also mpz_2fac_ui.
 
 2017-12-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 

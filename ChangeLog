@@ -57,9 +57,9 @@
 	* mpq/equal.c: Check size early.
 
 	* printf/obprintf.c: Adda dummy typedef to avoid empty unit.
-	* b/printf/obvprintf.c: Likewise.
-	* b/printf/obprntffuns.c: Likewise.
-	* b/printf/repl-vsnprintf.c: Move #ifdef after #include gmp-impl.h .
+	* printf/obvprintf.c: Likewise.
+	* printf/obprntffuns.c: Likewise.
+	* printf/repl-vsnprintf.c: Move #ifdef after #include gmp-impl.h .
 
 2018-02-09  Torbjörn Granlund  <tg@gmplib.org>
 
