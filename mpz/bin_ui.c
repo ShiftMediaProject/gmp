@@ -105,11 +105,12 @@ posmpz_rsh1 (mpz_ptr r)
 /* Computes r = n(n+(2*k-1))/2
    It uses a sqare instead of a product, computing
    r = ((n+k-1)^2 + n - (k-1)^2)/2
-   As a side effect, sets t = n+k
+   As a side effect, sets t = n+k-1
  */
 static void
 mpz_hmul_nbnpk (mpz_ptr r, mpz_srcptr n, unsigned long int k, mpz_ptr t)
 {
+  ASSERT (k > 0 && SIZ(n) > 0);
   --k;
   mpz_add_ui (t, n, k);
   mpz_mul (r, t, t);
