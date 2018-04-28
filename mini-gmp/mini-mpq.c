@@ -158,8 +158,6 @@ mpq_set (mpq_t r, const mpq_t q)
 void
 mpq_set_ui (mpq_t r, unsigned long n, unsigned long d)
 {
-  assert (d != 0);
-
   mpz_set_ui (mpq_numref (r), n);
   mpz_set_ui (mpq_denref (r), d);
 }
@@ -167,8 +165,6 @@ mpq_set_ui (mpq_t r, unsigned long n, unsigned long d)
 void
 mpq_set_si (mpq_t r, signed long n, unsigned long d)
 {
-  assert (d != 0);
-
   mpz_set_si (mpq_numref (r), n);
   mpz_set_ui (mpq_denref (r), d);
 }
@@ -189,7 +185,6 @@ mpq_set_num (mpq_t r, const mpz_t z)
 void
 mpq_set_den (mpq_t r, const mpz_t z)
 {
-  assert (z->_mp_size != 0);
   mpz_set (mpq_denref (r), z);
 }
 
