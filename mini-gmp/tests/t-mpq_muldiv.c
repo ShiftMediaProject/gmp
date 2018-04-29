@@ -52,7 +52,6 @@ testmain (int argc, char **argv)
   unsigned i;
   mpz_t an, bn, rn, ad, bd, rd;
   mpq_t aq, bq, refq, resq;
-  int tst;
 
   mpz_init (an);
   mpz_init (bn);
@@ -145,6 +144,23 @@ testmain (int argc, char **argv)
 	      dump ("resd", mpq_denref (resq));
 	      abort ();
 	}
+
+      mpq_mul (resq, aq, aq);
+      mpq_mul (refq, aq, bq); /* now bq = - aq */
+      mpq_neg (refq, refq);
+      if (!mpq_equal (resq, refq))
+	{
+	  fprintf (stderr, "mpq_mul(sqr) failed [%i]:\n", i);
+	  dump ("an", an);
+	  dump ("ad", ad);
+	  dump ("bn", bn);
+	  dump ("bd", bd);
+	  dump ("refn", rn);
+	  dump ("refd", rd);
+	  dump ("resn", mpq_numref (resq));
+	  dump ("resd", mpq_denref (resq));
+	  abort ();
+	}      
     }
 
   mpz_clear (an);
