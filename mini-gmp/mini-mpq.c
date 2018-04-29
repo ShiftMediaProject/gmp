@@ -110,15 +110,15 @@ mpq_canonical_sign (mpq_t r)
 }
 
 static void
-mpq_helper_canonicalize (mpq_t r, const mpq_t c, mpz_t g)
+mpq_helper_canonicalize (mpq_t r, const mpz_t num, const mpz_t den, mpz_t g)
 {
-  if (mpq_numref (c)->_mp_size == 0)
+  if (num->_mp_size == 0)
     mpq_set_ui (r, 0, 1);
   else
     {
-      mpz_gcd (g, mpq_numref (c), mpq_denref (c));
-      mpz_tdiv_q (mpq_numref (r), mpq_numref (c), g);
-      mpz_tdiv_q (mpq_denref (r), mpq_denref (c), g);
+      mpz_gcd (g, num, den);
+      mpz_tdiv_q (mpq_numref (r), num, g);
+      mpz_tdiv_q (mpq_denref (r), den, g);
       mpq_canonical_sign (r);
     }
 }
@@ -129,7 +129,7 @@ mpq_canonicalize (mpq_t r)
   mpz_t t;
 
   mpz_init (t);
-  mpq_helper_canonicalize (r, r, t);
+  mpq_helper_canonicalize (r, mpq_numref (r), mpq_denref (r), t);
   mpz_clear (t);
 }
 
@@ -342,20 +342,23 @@ mpq_div (mpq_t r, const mpq_t a, const mpq_t b)
 void
 mpq_mul (mpq_t r, const mpq_t a, const mpq_t b)
 {
-  mpq_t t, d;
-  mpz_t g;
-  mpz_init (g);
+  mpq_t t;
   mpq_init (t);
 
-  mpq_roinit_z (d, mpq_numref (a), mpq_denref (b));
-  mpq_helper_canonicalize (t, d, g);
+  if (a != b) {
+    mpz_t g;
 
-  mpq_roinit_z (d, mpq_numref (b), mpq_denref (a));
-  mpq_helper_canonicalize (r, d, g);
-  mpz_clear (g);
+    mpz_init (g);
+    mpq_helper_canonicalize (t, mpq_numref (a), mpq_denref (b), g);
+    mpq_helper_canonicalize (r, mpq_numref (b), mpq_denref (a), g);
+    mpz_clear (g);
 
-  mpz_mul (mpq_numref (r), mpq_numref (r), mpq_numref (t));
-  mpz_mul (mpq_denref (r), mpq_denref (r), mpq_denref (t));
+    a = r;
+    b = t;
+  }
+
+  mpz_mul (mpq_numref (r), mpq_numref (a), mpq_numref (b));
+  mpz_mul (mpq_denref (r), mpq_denref (a), mpq_denref (b));
   mpq_clear (t);
 }
 
