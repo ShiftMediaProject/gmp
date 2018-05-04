@@ -14,7 +14,7 @@
 This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
-Copyright 1991, 1993-2016 Free Software Foundation, Inc.
+Copyright 1991, 1993-2016, 2018 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.3 or any later
@@ -4365,9 +4365,14 @@ is exact.
 @end deftypefun
 
 @deftypefun {char *} mpq_get_str (char *@var{str}, int @var{base}, const mpq_t @var{op})
-Convert @var{op} to a string of digits in base @var{base}.  The base may vary
-from 2 to 36.  The string will be of the form @samp{num/den}, or if the
-denominator is 1 then just @samp{num}.
+Convert @var{op} to a string of digits in base @var{base}.  The base argument
+may vary from 2 to 62 or from @minus{}2 to @minus{}36.  The string will be of
+the form @samp{num/den}, or if the denominator is 1 then just @samp{num}.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 If @var{str} is @code{NULL}, the result string is allocated using the current
 allocation function (@pxref{Custom Allocation}).  The block will be
@@ -4535,8 +4540,14 @@ See also @ref{Formatted Output} and @ref{Formatted Input}.
 
 @deftypefun size_t mpq_out_str (FILE *@var{stream}, int @var{base}, const mpq_t @var{op})
 Output @var{op} on stdio stream @var{stream}, as a string of digits in base
-@var{base}.  The base may vary from 2 to 36.  Output is in the form
+@var{base}.  The base argument may vary from 2 to 62 or from @minus{}2 to
+@minus{}36. Output is in the form
 @samp{num/den} or if the denominator is 1 then just @samp{num}.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 Return the number of bytes written, or if an error occurred, return 0.
 @end deftypefun
@@ -4553,9 +4564,10 @@ space is not permitted within the string.  If the input might not be in
 canonical form, then @code{mpq_canonicalize} must be called (@pxref{Rational
 Number Functions}).
 
-The @var{base} can be between 2 and 36, or can be 0 in which case the leading
+The @var{base} can be between 2 and 62, or can be 0 in which case the leading
 characters of the string determine the base, @samp{0x} or @samp{0X} for
-hexadecimal, @samp{0} for octal, or decimal otherwise.  The leading characters
+hexadecimal, @code{0b} and @code{0B} for binary, @samp{0} for octal, or
+decimal otherwise.  The leading characters
 are examined separately for the numerator and denominator of a fraction, so
 for instance @samp{0x10/11} is @math{16/11}, whereas @samp{0x10/0x11} is
 @math{16/17}.
