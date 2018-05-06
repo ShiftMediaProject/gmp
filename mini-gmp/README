@@ -50,6 +50,8 @@ as specified in the GMP manual, with a few exceptions:
   allocated block in the corresponding argument. mini-gmp always
   passes zero for these rarely used arguments.
 
+  When mpz_get_str allocates the block, it can be longer than needed.
+
 The performance target for mini-gmp is to be at most 10 times slower
 than the real GMP library, for numbers of size up to a few hundred
 bits. No asymptotically fast algorithms are included in mini-gmp, so

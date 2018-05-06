@@ -10155,7 +10155,7 @@ dynamically allocated and reallocated.  The fields are as follows.
 @item @code{_mp_size}
 The number of limbs, or the negative of that when representing a negative
 integer.  Zero is represented by @code{_mp_size} set to zero, in which case
-the @code{_mp_d} data is unused.
+the @code{_mp_d} data is undefined.
 
 @item @code{_mp_d}
 A pointer to an array of limbs which is the magnitude.  These are stored
@@ -10164,17 +10164,21 @@ least significant limb and @code{_mp_d[ABS(_mp_size)-1]} is the most
 significant.  Whenever @code{_mp_size} is non-zero, the most significant limb
 is non-zero.
 
-Currently there's always at least one limb allocated, so for instance
-@code{mpz_set_ui} never needs to reallocate, and @code{mpz_get_ui} can fetch
-@code{_mp_d[0]} unconditionally (though its value is then only wanted if
-@code{_mp_size} is non-zero).
+Currently there's always at least one readable limb, so for instance
+@code{mpz_get_ui} can fetch @code{_mp_d[0]} unconditionally (though its value
+is undefined if @code{_mp_size} is zero).
 
 @item @code{_mp_alloc}
 @code{_mp_alloc} is the number of limbs currently allocated at @code{_mp_d},
-and naturally @code{_mp_alloc >= ABS(_mp_size)}.  When an @code{mpz} routine
+and normally @code{_mp_alloc >= ABS(_mp_size)}.  When an @code{mpz} routine
 is about to (or might be about to) increase @code{_mp_size}, it checks
 @code{_mp_alloc} to see whether there's enough space, and reallocates if not.
 @code{MPZ_REALLOC} is generally used for this.
+
+@code{mpz_t} variables initialised with the @code{mpz_roinit_n} function or
+the @code{MPZ_ROINIT_N} macro have @code{_mp_alloc = 0} but can have a
+non-zero @code{_mp_size}.  They can only be used as read-only constants. See
+@ref{Integer Special Functions} for details.
 @end table
 
 The various bitwise logical functions like @code{mpz_and} behave as if

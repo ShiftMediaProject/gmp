@@ -3,6 +3,8 @@
 	* doc/gmp.texi (mpq_*_str): Document the full base allowed range.
 	* mpq/get_str.c: Make all bases either work or return an error.
 
+	* doc/gmp.texi (Integer Internals): Lazy allocation and read-only.
+
 2018-04-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/div_q.c (mpn_div_q): Replace dead code with ASSERT.
