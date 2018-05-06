@@ -384,7 +384,7 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
       else
 	{
 	  weight = 0.5;
-	  uexp = 1 - (unsigned long) (exp + 1);
+	  uexp = NEG_CAST (unsigned long, exp);
 	}
 #if 1
       /* Square-and-multiply exponentiation.  */

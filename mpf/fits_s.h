@@ -67,5 +67,5 @@ FUNCTION (mpf_srcptr f) __GMP_NOTHROW
   else
     return 0;
 
-  return fl <= (fs >= 0 ? (mp_limb_t) MAXIMUM : - (mp_limb_t) MINIMUM);
+  return fl <= (fs >= 0 ? (mp_limb_t) MAXIMUM : NEG_CAST (mp_limb_t, MINIMUM));
 }
