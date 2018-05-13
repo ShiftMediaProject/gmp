@@ -39,7 +39,7 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 
-mp_limb_t
+static mp_limb_t
 mpn_dcpi1_divappr_q_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
 		       gmp_pi1_t *dinv, mp_ptr tp)
 {

@@ -38,10 +38,10 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-mp_size_t
+static mp_size_t
 mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
 {
-  /* NOTE: Depends on mullo_n interface */
+  /* NOTE: Depends on mullo_n and mpn_dcpi1_bdiv_qr_n interface */
   return n;
 }
 
@@ -51,7 +51,7 @@ mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
    D = {dp,n}
 */
 
-void
+static void
 mpn_dcpi1_bdiv_q_n (mp_ptr qp,
 		    mp_ptr np, mp_srcptr dp, mp_size_t n,
 		    mp_limb_t dinv, mp_ptr tp)
