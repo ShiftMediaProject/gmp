@@ -1,3 +1,16 @@
+2018-05-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q_n): Decl. static.
+	(mpn_dcpi1_bdiv_q_n_itch): Declare static.
+	* mpn/generic/dcpi1_divappr_q.c (mpn_dcpi1_divappr_q_n): static.
+	* mpn/generic/matrix22_mul.c (mpn_matrix22_mul_strassen): static.
+	* mpn/generic/mu_div_qr.c (mpn_mu_div_qr_choose_in): static.
+	* mpn/generic/mu_divappr_q.c (mpn_preinv_mu_divappr_q): static.
+	(mpn_mu_divappr_q_choose_in): static.
+	* gmp-impl.h: Remove declaration of previous functions.
+
+	* mpn/generic/get_d.c: Enhance generic code using DBL_MANT_DIG.
+
 2018-05-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* doc/gmp.texi (mpq_*_str): Document the full base allowed range.

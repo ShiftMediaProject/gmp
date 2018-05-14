@@ -4,7 +4,8 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004, 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2007, 2009, 2010, 2012, 2018 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
