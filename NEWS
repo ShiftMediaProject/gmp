@@ -10,13 +10,16 @@ Changes between GMP version 6.1.* and 6.2.0
   * gmp_snprintf now correctly reports an error (returns -1) when
     snprintf does.
 
+  * conversion to double is now more robust even if the configuration
+    process does not recognize the float format.
+
   FEATURES
   * New C++ functions factorial and primorial for mpz_class.
 
   * Mini-GMP: new functions mpz_2fac_ui and mpz_mfac_uiui.
 
   * Mini-GMP: mpz_sizeinbase, mpz_get_str, and mpz_set_str now support
-  bases up to 62.
+    bases up to 62.
 
   * Mini-GMP: added support for the mpq_t layer.
 
