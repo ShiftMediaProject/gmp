@@ -242,7 +242,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
 	      }
 	    else
 	      (void) va_arg (ap, double);
-	    break;
+	    goto next;
 
 	  case 'f':
 	    /* Requested decimals, sign and point, and a margin for error,
@@ -263,7 +263,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
 		(void) va_arg (ap, double);
 		total_width += double_digits;
 	      }
-	    break;
+	    goto next;
 
 	  case 'h':  /* short or char */
 	  case 'j':  /* intmax_t */
