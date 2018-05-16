@@ -1,8 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2016 Free
-# Software Foundation, Inc.
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2016,
+# 2018 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #

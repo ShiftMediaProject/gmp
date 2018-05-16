@@ -1,6 +1,7 @@
 /* mpq_init -- Make a new rational number with value 0/1.
 
-Copyright 1991, 1994, 1995, 2000-2002, 2015 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000-2002, 2015, 2018 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

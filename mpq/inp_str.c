@@ -1,6 +1,6 @@
 /* mpq_inp_str -- read an mpq from a FILE.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

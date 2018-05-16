@@ -1,7 +1,7 @@
 /* mpq_mul_2exp, mpq_div_2exp - multiply or divide by 2^N */
 
 /*
-Copyright 2000, 2002, 2012 Free Software Foundation, Inc.
+Copyright 2000, 2002, 2012, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

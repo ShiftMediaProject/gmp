@@ -1,6 +1,7 @@
 /* mpq_clear -- free the space occupied by an mpq_t.
 
-Copyright 1991, 1994, 1995, 2000, 2001, 2015 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000, 2001, 2015, 2018 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for PowerPC assembler (32 and 64 bit).
 
-dnl  Copyright 2000, 2002, 2003, 2017 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003, 2017, 2018 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -3,7 +3,7 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
-Copyright 1991-2017 Free Software Foundation, Inc.
+Copyright 1991-2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2009, 2010, 2015 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2015, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

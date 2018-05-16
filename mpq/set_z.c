@@ -1,6 +1,6 @@
 /* mpq_set_z (dest,src) -- Set DEST to SRC.
 
-Copyright 1996, 2001, 2012, 2015 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2012, 2015, 2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* double mpq_get_d (mpq_t src) -- mpq to double, rounding towards zero.
 
-Copyright 1995, 1996, 2001-2005, 2018 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2001-2005, 2018, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,9 +73,6 @@ see https://www.gnu.org/licenses/.  */
 
    If/when mpn_tdiv_qr supports its qxn parameter we can use that instead of
    padding n with zeros in temporary space.
-
-   If/when a quotient-only division exists it can be used here immediately.
-   remp is only to satisfy mpn_tdiv_qr, the remainder is not used.
 
    Alternatives:
 
