@@ -82,6 +82,13 @@ mpq_roinit_z (mpq_t x, mpz_srcptr n, mpz_srcptr d)
 			      d->_mp_d, d->_mp_size);
 }
 
+static void
+mpq_nan_init (mpq_t x)
+{
+  mpz_init (mpq_numref (x));
+  mpz_init (mpq_denref (x));
+}
+
 void
 mpq_init (mpq_t x)
 {
@@ -343,7 +350,7 @@ void
 mpq_mul (mpq_t r, const mpq_t a, const mpq_t b)
 {
   mpq_t t;
-  mpq_init (t);
+  mpq_nan_init (t);
 
   if (a != b) {
     mpz_t g;
