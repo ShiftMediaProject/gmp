@@ -50,7 +50,7 @@ see https://www.gnu.org/licenses/.  */
 
 #include "mini-gmp.h"
 
-#if !defined(DONT_USE_FLOAT_H)
+#if !defined(MINI_GMP_DONT_USE_FLOAT_H)
 #include <float.h>
 #endif
 

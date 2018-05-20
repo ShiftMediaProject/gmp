@@ -29,7 +29,7 @@ GNU Lesser General Public License along with the GNU MP Library.  If not,
 see https://www.gnu.org/licenses/.  */
 
 
-#define DONT_USE_FLOAT_H 1
+#define MINI_GMP_DONT_USE_FLOAT_H 1
 #include "mini-gmp/mini-gmp.c"
 
 #define MIN(l,o) ((l) < (o) ? (l) : (o))

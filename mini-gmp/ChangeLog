@@ -5,6 +5,8 @@
 
 	* mini-mpq.c (mpq_mul): Use mpq_nan_init.
 
+	* tests/t-double.c (test_matissa): Tests converted bits.
+
 2018-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-mpq.c: New file, mini-implementation of mpq_t.
