@@ -50,6 +50,10 @@ see https://www.gnu.org/licenses/.  */
 
 #include "mini-gmp.h"
 
+#if !defined(DONT_USE_FLOAT_H)
+#include <float.h>
+#endif
+
 
 /* Macros */
 #define GMP_LIMB_BITS (sizeof(mp_limb_t) * CHAR_BIT)
@@ -70,6 +74,12 @@ see https://www.gnu.org/licenses/.  */
 #define GMP_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define GMP_CMP(a,b) (((a) > (b)) - ((a) < (b)))
+
+#if defined(DBL_MANT_DIG) && FLT_RADIX == 2
+#define GMP_DBL_MANT_BITS DBL_MANT_DIG
+#else
+#define GMP_DBL_MANT_BITS (53)
+#endif
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
@@ -1689,6 +1699,8 @@ mpz_init_set_d (mpz_t r, double x)
 double
 mpz_get_d (const mpz_t u)
 {
+  int m;
+  mp_limb_t l;
   mp_size_t un;
   double x;
   double B = 2.0 * (double) GMP_LIMB_HIGHBIT;
@@ -1698,9 +1710,23 @@ mpz_get_d (const mpz_t u)
   if (un == 0)
     return 0.0;
 
-  x = u->_mp_d[--un];
-  while (un > 0)
-    x = B*x + u->_mp_d[--un];
+  l = u->_mp_d[--un];
+  gmp_clz (m, l);
+  m = m + GMP_DBL_MANT_BITS - GMP_LIMB_BITS;
+  if (m < 0)
+    l &= GMP_LIMB_MAX << -m;
+
+  for (x = l; --un >= 0;)
+    {
+      x = B*x;
+      if (m > 0) {
+	l = u->_mp_d[un];
+	m -= GMP_LIMB_BITS;
+	if (m < 0)
+	  l &= GMP_LIMB_MAX << -m;
+	x += l;
+      }
+    }
 
   if (u->_mp_size < 0)
     x = -x;

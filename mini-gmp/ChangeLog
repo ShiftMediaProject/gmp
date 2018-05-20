@@ -1,3 +1,8 @@
+2018-05-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp.c (mpz_get_d): Convert a fixed number of
+	bits (GMP_DBL_MANT_BITS) to avoid rounding.
+
 2018-04-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-mpq.c: New file, mini-implementation of mpq_t.
