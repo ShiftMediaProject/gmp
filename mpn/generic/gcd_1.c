@@ -35,20 +35,6 @@ see https://www.gnu.org/licenses/.  */
 #define GCD_1_METHOD 2
 #endif
 
-#define USE_ZEROTAB 0
-
-#if USE_ZEROTAB
-#define MAXSHIFT 4
-#define MASK ((1 << MAXSHIFT) - 1)
-static const unsigned char zerotab[1 << MAXSHIFT] =
-{
-#if MAXSHIFT > 4
-  5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-#endif
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
-};
-#endif
-
 /* Does not work for U == 0 or V == 0.  It would be tough to make it work for
    V == 0 since gcd(x,0) = x, and U does not generally fit in an mp_limb_t.
 
@@ -161,21 +147,6 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
       /* u <-- |u - v| */
       ulimb = (t ^ vgtu) - vgtu;
 
-#if USE_ZEROTAB
-      /* Number of trailing zeros is the same no matter if we look at
-       * t or ulimb, but using t gives more parallelism. */
-      c = zerotab[t & MASK];
-
-      while (UNLIKELY (c == MAXSHIFT))
-	{
-	  ulimb >>= MAXSHIFT;
-	  if (0)
-	  strip_u_maybe:
-	    vlimb >>= 1;
-
-	  c = zerotab[ulimb & MASK];
-	}
-#else
       if (0)
 	{
 	strip_u_maybe:
@@ -183,7 +154,6 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
 	  t = ulimb;
 	}
       count_trailing_zeros (c, t);
-#endif
       ulimb = (ulimb >> c) >> 1;
     }
 

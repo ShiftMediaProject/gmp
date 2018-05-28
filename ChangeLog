@@ -1,3 +1,8 @@
+2018-05-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd_1.c (mpn_gcd_1) [USE_ZEROTAB]: Delete unused code
+	variant for USE_ZEROTAB != 0.
+
 2018-05-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* bootstrap.c: Define DONT_USE_FLOAT_H before including mini-gmp.
