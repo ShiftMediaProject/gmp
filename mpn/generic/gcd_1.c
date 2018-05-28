@@ -184,7 +184,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
 	}
       count_trailing_zeros (c, t);
 #endif
-      ulimb >>= (c + 1);
+      ulimb = (ulimb >> c) >> 1;
     }
 
   vlimb = (vlimb << 1) | 1;
