@@ -1889,7 +1889,7 @@ case $host in
 	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
 	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
-	path_64="x86_64/silvermont x86_64/atom x86_64"
+	path_64="x86_64/goldmont x86_64/silvermont x86_64/atom x86_64"
 	;;
       nano)
 	gcc_cflags_cpu="-mtune=nano"
