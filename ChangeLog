@@ -1,3 +1,7 @@
+2018-05-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (x86): Pass more exact arch/tune options for nehalem.
+
 2018-05-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_1.c (mpn_gcd_1) [USE_ZEROTAB]: Delete unused code
@@ -66,6 +70,10 @@
 	* mpq/set_ui.c: Likewise.
 
 	* tests/cxx/t-ops2z.cc: Add parentheses to quiet a warning.
+
+2018-03-28  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (mips): Recognise "mipsisa64*".
 
 2018-03-23  Torbjörn Granlund  <tg@gmplib.org>
 
