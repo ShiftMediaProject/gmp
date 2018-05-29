@@ -1,4 +1,4 @@
-/* AMD Silvermont gmp-mparam.h -- Compiler/machine parameter header file.
+/* Intel Silvermont gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright 2017 Free Software Foundation, Inc.
 
