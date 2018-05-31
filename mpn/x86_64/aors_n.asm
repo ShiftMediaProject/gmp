@@ -36,7 +36,7 @@ C AMD K10	 1.5
 C AMD bd1	 1.8
 C AMD bd2	 1.74
 C AMD bd3	 ?
-C AMD bd4	 ?
+C AMD bd4	 1.78
 C AMD zen	 1.5
 C AMD bt1	 2.54
 C AMD bt2	 2.15
