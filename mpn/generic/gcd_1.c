@@ -43,6 +43,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
 {
   mp_limb_t      ulimb;
   unsigned long  zero_bits, u_low_zero_bits;
+  int c;
 
   ASSERT (size >= 1);
   ASSERT (vlimb != 0);
@@ -68,37 +69,47 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
       if (ulimb == 0)
 	goto done;
 
-      goto strip_u_maybe;
+      count_trailing_zeros (c, ulimb);
+      ulimb = (ulimb >> 1) >> c;
     }
-
-  /* size==1, so up[0]!=0 */
-  count_trailing_zeros (u_low_zero_bits, ulimb);
-  ulimb >>= u_low_zero_bits;
-  zero_bits = MIN (zero_bits, u_low_zero_bits);
-
-  /* make u bigger */
-  if (vlimb > ulimb)
-    MP_LIMB_T_SWAP (ulimb, vlimb);
-
-  /* if u is much bigger than v, reduce using a division rather than
-     chipping away at it bit-by-bit */
-  if ((ulimb >> 16) > vlimb)
+  else
     {
-      ulimb %= vlimb;
-      if (ulimb == 0)
-	goto done;
-      goto strip_u_maybe;
+      /* size==1, so up[0]!=0 */
+      count_trailing_zeros (u_low_zero_bits, ulimb);
+      ulimb >>= u_low_zero_bits;
+      zero_bits = MIN (zero_bits, u_low_zero_bits);
+
+      /* make u bigger */
+      if (vlimb > ulimb)
+	MP_LIMB_T_SWAP (ulimb, vlimb);
+
+      /* if u is much bigger than v, reduce using a division rather than
+	 chipping away at it bit-by-bit */
+      if ((ulimb >> 16) > vlimb)
+	{
+	  ulimb %= vlimb;
+	  if (ulimb == 0)
+	    goto done;
+
+	  count_trailing_zeros (c, ulimb);
+	  ulimb = (ulimb >> 1) >> c;
+	}
+      else
+	{
+	  ASSERT (ulimb & 1);
+	  ulimb >>= 1;
+	}
     }
 
-  ASSERT (ulimb & 1);
   ASSERT (vlimb & 1);
-
-  ulimb >>= 1;
   vlimb >>= 1;
 
+  /* In this loop, we represent the odd numbers ulimb and vlimb
+     without the redundant least significant one bit. This reduction
+     in size by one bit ensures that the high bit of t, below, is set
+     if and only if vlimb > ulimb. */
   while (ulimb != vlimb)
     {
-      int c;
       mp_limb_t t;
       mp_limb_t vgtu;
 
@@ -111,14 +122,15 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
       /* u <-- |u - v| */
       ulimb = (t ^ vgtu) - vgtu;
 
-      if (0)
-	{
-	strip_u_maybe:
-	  vlimb >>= 1;
-	  t = ulimb;
-	}
       count_trailing_zeros (c, t);
-      ulimb = (ulimb >> c) >> 1;
+      /* We have c <= GMP_LIMB_BITS - 2 here, so that
+
+	   ulimb >>= (c + 1);
+
+	 would be safe. But unlike the addition c + 1, a separate
+	 shift by 1 is independent of c, and can be executed in
+	 parallel with count_trailing_zeros. */
+      ulimb = (ulimb >> 1) >> c;
     }
 
   vlimb = (vlimb << 1) | 1;
