@@ -31,10 +31,6 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef GCD_1_METHOD
-#define GCD_1_METHOD 2
-#endif
-
 /* Does not work for U == 0 or V == 0.  It would be tough to make it work for
    V == 0 since gcd(x,0) = x, and U does not generally fit in an mp_limb_t.
 
@@ -97,38 +93,6 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
   ASSERT (ulimb & 1);
   ASSERT (vlimb & 1);
 
-#if GCD_1_METHOD == 1
-  while (ulimb != vlimb)
-    {
-      ASSERT (ulimb & 1);
-      ASSERT (vlimb & 1);
-
-      if (ulimb > vlimb)
-	{
-	  ulimb -= vlimb;
-	  do
-	    {
-	      ulimb >>= 1;
-	      ASSERT (ulimb != 0);
-	    strip_u_maybe:
-	      ;
-	    }
-	  while ((ulimb & 1) == 0);
-	}
-      else /*  vlimb > ulimb.  */
-	{
-	  vlimb -= ulimb;
-	  do
-	    {
-	      vlimb >>= 1;
-	      ASSERT (vlimb != 0);
-	    }
-	  while ((vlimb & 1) == 0);
-	}
-    }
-#else
-# if GCD_1_METHOD  == 2
-
   ulimb >>= 1;
   vlimb >>= 1;
 
@@ -158,10 +122,6 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
     }
 
   vlimb = (vlimb << 1) | 1;
-# else
-#  error Unknown GCD_1_METHOD
-# endif
-#endif
 
  done:
   return vlimb << zero_bits;

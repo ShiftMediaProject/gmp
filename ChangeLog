@@ -1,3 +1,8 @@
+2018-06-13  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd_1.c (mpn_gcd_1): Delete unused code variant for
+	GCD_1_METHOD == 1, and delete GCD_1_METHOD macro.
+
 2018-05-29  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (x86): Pass more exact arch/tune options for nehalem.
