@@ -1,4 +1,4 @@
-dnl  X86-64 mpn_lshift optimised for Pentium 4.
+dnl  X86-64 mpn_mul_1 optimised for Intel Nocona.
 
 dnl  Copyright 2018 Free Software Foundation, Inc.
 
@@ -33,5 +33,5 @@ include(`../config.m4')
 ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
-MULFUNC_PROLOGUE(mpn_lshift)
-include_mpn(`x86_64/fastsse/lshift.asm')
+MULFUNC_PROLOGUE(mpn_mul_1 mpn_mul_1c)
+include_mpn(`x86_64/bd1/mul_1.asm')
