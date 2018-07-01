@@ -1,9 +1,28 @@
+2018-07-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* lshift.asm: Replace with grabber file.
+	* lshiftc.asm: Replace with grabber file.
+	* x86_64/pentium4/addmul_2.asm: New grabber file.
+	* x86_64/pentium4/aorsmul_1.asm: New grabber file.
+	* x86_64/pentium4/mul_1.asm: New grabber file.
+	* x86_64/pentium4/mul_2.asm: New grabber file.
+	* x86_64/pentium4/mul_basecase.asm: New grabber file.
+	* x86_64/pentium4/mullo_basecase.asm: New grabber file.
+	* x86_64/pentium4/redc_1.asm: New grabber file.
+	* x86_64/pentium4/sqr_basecase.asm: New grabber file.
+
 2018-06-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_1.c (mpn_gcd_1): Delete unused code variant for
 	GCD_1_METHOD == 1, and delete GCD_1_METHOD macro. Simplify the
 	structure of the remaining code variant, without gotos to the
 	mid-loop strip_u_maybe label.
+
+2018-05-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (x86): Provide goldmont specific path.
+
+	* mpn/x86_64/goldmont/gmp-mparam.h: New file.
 
 2018-05-29  Torbjörn Granlund  <tg@gmplib.org>
 
