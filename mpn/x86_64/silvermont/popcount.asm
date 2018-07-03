@@ -31,5 +31,8 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 MULFUNC_PROLOGUE(mpn_popcount)
 include_mpn(`x86_64/coreinhm/popcount.asm')

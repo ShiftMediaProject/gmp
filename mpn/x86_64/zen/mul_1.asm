@@ -60,6 +60,9 @@ define(`v0_param',`%rcx')   C r9
 define(`n',       `%rcx')
 define(`v0',      `%rdx')
 
+ABI_SUPPORT(DOS64)
+ABI_SUPPORT(STD64)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
