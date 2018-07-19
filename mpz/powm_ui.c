@@ -251,17 +251,12 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 	  cy = mpn_lshift (tp, xp, xn, m_zero_cnt);
 	  tp[xn] = cy; xn += cy != 0;
 
-	  if (xn < mn)
-	    {
-	      MPN_COPY (xp, tp, xn);
-	    }
-	  else
+	  if (xn >= mn)
 	    {
 	      mod (tp, xn, mp, mn, &dinv, scratch);
-	      MPN_COPY (xp, tp, mn);
 	      xn = mn;
 	    }
-	  mpn_rshift (xp, xp, xn, m_zero_cnt);
+	  mpn_rshift (xp, tp, xn, m_zero_cnt);
 	}
       MPN_NORMALIZE (xp, xn);
 
