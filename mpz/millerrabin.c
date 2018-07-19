@@ -105,7 +105,6 @@ mod_eq_m1 (mpz_srcptr x, mpz_srcptr m)
 {
   mp_size_t ms;
   mp_srcptr mp, xp;
-  TMP_DECL;
 
   ms = SIZ (m);
   if (SIZ (x) != ms)
