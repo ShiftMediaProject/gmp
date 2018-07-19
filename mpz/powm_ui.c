@@ -136,8 +136,13 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       if (UNLIKELY (mn == 0))
 	DIVIDE_BY_ZERO;
 
-      if (el == 0)
+      if (el <= 1)
 	{
+	  if (el == 1)
+	    {
+	      mpz_mod (r, b, m);
+	      return;
+	    }
 	  /* Exponent is zero, result is 1 mod M, i.e., 1 or 0 depending on if
 	     M equals 1.  */
 	  SIZ(r) = mn != 1 || mp[0] != 1;
@@ -193,16 +198,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       e = (e << c) << 1;		/* shift the exp bits to the left, lose msb */
       c = GMP_LIMB_BITS - 1 - c;
 
-      if (c == 0)
-	{
-	  /* If m is already normalized (high bit of high limb set), and b is
-	     the same size, but a bigger value, and e==1, then there's no
-	     modular reductions done and we can end up with a result out of
-	     range at the end. */
-	  if (xn == mn && mpn_cmp (xp, mp, mn) >= 0)
-	    mpn_sub_n (xp, xp, mp, mn);
-	}
-      else
+      ASSERT (c != 0); /* el > 1 */
 	{
 	  /* Main loop. */
 	  do
