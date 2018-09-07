@@ -199,7 +199,7 @@ testmain (int argc, char **argv)
 	      rl = div_r_ui[j] (r, a, mpz_get_ui (b));
 	      if (rl != mpz_get_ui (rr) || mpz_cmp (r, rr))
 		{
-		  fprintf (stderr, "mpz_%cdiv_qr_ui failed:\n", name[j]);
+		  fprintf (stderr, "mpz_%cdiv_r_ui failed:\n", name[j]);
 		  dump ("a", a);
 		  dump ("b", b);
 		  fprintf(stderr, "rl   = %lx\n", rl);
@@ -211,7 +211,7 @@ testmain (int argc, char **argv)
 	      rl = div_ui[j] (a, mpz_get_ui (b));
 	      if (rl != mpz_get_ui (rr))
 		{
-		  fprintf (stderr, "mpz_%cdiv_qr_ui failed:\n", name[j]);
+		  fprintf (stderr, "mpz_%cdiv_ui failed:\n", name[j]);
 		  dump ("a", a);
 		  dump ("b", b);
 		  fprintf(stderr, "rl   = %lx\n", rl);

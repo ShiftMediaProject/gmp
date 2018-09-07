@@ -827,7 +827,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
       r -= u1;
     }
 
-  /* Now m is the 2/1 invers of u1. If u0 > 0, adjust it to become a
+  /* Now m is the 2/1 inverse of u1. If u0 > 0, adjust it to become a
      3/2 inverse. */
   if (u0 > 0)
     {
