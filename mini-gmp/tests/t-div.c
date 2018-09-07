@@ -57,7 +57,7 @@ testmain (int argc, char **argv)
 	    {
 	      mpz_cdiv_qr, mpz_fdiv_qr, mpz_tdiv_qr
 	    };
-	  static div_qr_ui_func  *div_qr_ui[3] =
+	  static div_qr_ui_func * const div_qr_ui[3] =
 	    {
 	      mpz_cdiv_qr_ui, mpz_fdiv_qr_ui, mpz_tdiv_qr_ui
 	    };
@@ -65,7 +65,7 @@ testmain (int argc, char **argv)
 	    {
 	      mpz_cdiv_q, mpz_fdiv_q, mpz_tdiv_q
 	    };
-	  static div_x_ui_func  *div_q_ui[3] =
+	  static div_x_ui_func * const div_q_ui[3] =
 	    {
 	      mpz_cdiv_q_ui, mpz_fdiv_q_ui, mpz_tdiv_q_ui
 	    };
@@ -73,11 +73,11 @@ testmain (int argc, char **argv)
 	    {
 	      mpz_cdiv_r, mpz_fdiv_r, mpz_tdiv_r
 	    };
-	  static div_x_ui_func  *div_r_ui[3] =
+	  static div_x_ui_func * const div_r_ui[3] =
 	    {
 	      mpz_cdiv_r_ui, mpz_fdiv_r_ui, mpz_tdiv_r_ui
 	    };
-	  static div_ui_func  *div_ui[3] =
+	  static div_ui_func * const div_ui[3] =
 	    {
 	      mpz_cdiv_ui, mpz_fdiv_ui, mpz_tdiv_ui
 	    };

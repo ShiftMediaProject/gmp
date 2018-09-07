@@ -1,3 +1,7 @@
+2018-09-07  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/t-div.c (testmain): Add missing const declarations.
+
 2018-05-20 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp.c (mpz_get_d): Convert a fixed number of
