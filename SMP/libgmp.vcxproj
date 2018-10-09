@@ -306,12 +306,9 @@
     </ClCompile>
     <ClCompile Include="..\mpn\generic\add.c" />
     <ClCompile Include="..\mpn\generic\add_1.c" />
-    <ClCompile Include="..\mpn\generic\add_err1_n.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_err2_n.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\mpn\generic\add_err1_n.c" />
+    <ClCompile Include="..\mpn\generic\add_err2_n.c" />
+    <ClCompile Include="..\mpn\generic\add_err3_n.c" />
     <ClCompile Include="..\mpn\generic\add_n_sub_n.c" />
     <ClCompile Include="..\mpn\generic\bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\bdiv_qr.c" />
@@ -348,9 +345,7 @@
     <ClCompile Include="..\mpn\generic\div_qr_2n_pi1.c">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c" />
     <ClCompile Include="..\mpn\generic\dump.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -468,15 +463,9 @@
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\sub_1.c" />
-    <ClCompile Include="..\mpn\generic\sub_err1_n.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err2_n.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err3_n.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err1_n.c" />
+    <ClCompile Include="..\mpn\generic\sub_err2_n.c" />
+    <ClCompile Include="..\mpn\generic\sub_err3_n.c" />
     <ClCompile Include="..\mpn\generic\tdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\toom22_mul.c" />
     <ClCompile Include="..\mpn\generic\toom2_sqr.c" />
@@ -1021,9 +1010,6 @@
     <ClInclude Include="x86_64\trialdivtab.h" />
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
     <YASM Include="mpn\x86_64\addlsh1_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
@@ -1117,25 +1103,7 @@
     <YASM Include="mpn\x86_64\sublsh1_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
-    <YASM Include="mpn\x86_64\sub_err1_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\sub_err2_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\sub_err3_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
     <YASM Include="mpn\x86_64\sub_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\add_err1_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\add_err2_n.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\add_err3_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\invert_limb_table.s">
@@ -1166,9 +1134,6 @@
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\div_qr_2n_pi1.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\div_qr_2u_pi1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\addmul_1.s">
@@ -1673,7 +1638,7 @@
       <ProgramDataBaseFileName>$(OutDir)\lib\x86\$(TargetName).pdb</ProgramDataBaseFileName>
       <MinimalRebuild>false</MinimalRebuild>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\lib\x86\$(TargetName)$(TargetExt)</OutputFile>
@@ -1756,7 +1721,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Lib>
@@ -1838,7 +1803,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <ProgramDataBaseFileName>$(OutDir)\lib\x64\$(TargetName).pdb</ProgramDataBaseFileName>
       <MinimalRebuild>false</MinimalRebuild>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\lib\x64\$(TargetName)$(TargetExt)</OutputFile>
@@ -1920,7 +1885,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Lib>
@@ -2002,7 +1967,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <MinimalRebuild>false</MinimalRebuild>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)\bin\x86\$(TargetName)$(TargetExt)</OutputFile>
@@ -2092,7 +2057,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
@@ -2182,7 +2147,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <MinimalRebuild>false</MinimalRebuild>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)\bin\x64\$(TargetName)$(TargetExt)</OutputFile>
@@ -2269,7 +2234,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
@@ -2364,7 +2329,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
       <ProgramDataBaseFileName>$(OutDir)\lib\x86\$(TargetName).pdb</ProgramDataBaseFileName>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\lib\x86\$(TargetName)$(TargetExt)</OutputFile>
@@ -2453,7 +2418,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Lib>
@@ -2541,7 +2506,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
       <ProgramDataBaseFileName>$(OutDir)\lib\x64\$(TargetName).pdb</ProgramDataBaseFileName>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\lib\x64\$(TargetName)$(TargetExt)</OutputFile>
@@ -2629,7 +2594,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Lib>
@@ -2715,7 +2680,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86;.\x86\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -2811,7 +2776,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
@@ -2908,7 +2873,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <AdditionalIncludeDirectories>.\;..\;.\mpn;.\x86_64;.\x86_64\mpn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -3002,7 +2967,7 @@ del /f /q $(OutDir)\licenses\gmp.txt
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <TreatSpecificWarningsAsErrors>4113;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4146;4101;4018;4307;4267;4334;4554;4267;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>

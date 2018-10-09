@@ -1401,12 +1401,6 @@
     <ClCompile Include="..\mpn\generic\toom2_sqr.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="x86\mpn\mp_bases.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="x86\mpn\fib_table.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
     <ClCompile Include="x86_64\mpn\mp_bases.c">
       <Filter>Source Files\mpn\x86_64</Filter>
     </ClCompile>
@@ -1431,87 +1425,6 @@
     <ClCompile Include="..\mpn\generic\diveby3.c">
       <Filter>Source Files\mpn\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\mpn\generic\com.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mode1o.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\div_qr_1n_pi1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\div_qr_2n_pi1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\gcd_1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mullo_basecase.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mul_basecase.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\lshiftc.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\redc_1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_err2_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\add_err1_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_4.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\nand_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\nior_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\popcount.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\xnor_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\xor_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\and_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\andn_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\hamdist.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\ior_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="mpn\x86\iorn_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err1_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err2_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\sub_err3_n.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\pre_divrem_1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
     <ClCompile Include="mpn\sec_add_1.c">
       <Filter>Source Files\mpn</Filter>
     </ClCompile>
@@ -1529,12 +1442,6 @@
     </ClCompile>
     <ClCompile Include="mpn\sec_sub_1.c">
       <Filter>Source Files\mpn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_1.c">
-      <Filter>Source Files\mpn\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mpn\generic\mod_1_2.c">
-      <Filter>Source Files\mpn\x86</Filter>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\zero_p.c">
       <Filter>Source Files\mpn\generic</Filter>
@@ -1571,6 +1478,102 @@
     </ClCompile>
     <ClCompile Include="..\cxx\osmpz.cc">
       <Filter>Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\add_err3_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\add_err1_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\add_err2_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\com.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\div_qr_1n_pi1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\div_qr_2n_pi1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\div_qr_2u_pi1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\gcd_1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\lshiftc.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mod_1_1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mod_1_2.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mod_1_4.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mode1o.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mul_basecase.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\mullo_basecase.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\pre_divrem_1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\redc_1.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err1_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err2_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sub_err3_n.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\mpn\mp_bases.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\mpn\fib_table.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\and_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\andn_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\hamdist.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\ior_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\iorn_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\nand_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\nior_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\popcount.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\xnor_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="mpn\x86\xor_n.c">
+      <Filter>Source Files\mpn\x86</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1651,19 +1654,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="mpn\x86_64\add_err1_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\add_err2_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\add_err3_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
     <YASM Include="mpn\x86_64\add_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
     <YASM Include="mpn\x86_64\addlsh_n.s">
@@ -1753,15 +1744,6 @@
     <YASM Include="mpn\x86_64\sqr_diag_addlsh1.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
-    <YASM Include="mpn\x86_64\sub_err1_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\sub_err2_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\sub_err3_n.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
     <YASM Include="mpn\x86_64\sub_n.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
@@ -1784,9 +1766,6 @@
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
     <YASM Include="mpn\x86_64\div_qr_2n_pi1.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\div_qr_2u_pi1.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
     <YASM Include="mpn\x86_64\divrem_1.s">
