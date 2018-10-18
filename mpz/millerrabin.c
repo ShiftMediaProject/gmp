@@ -115,7 +115,7 @@ mod_eq_m1 (mpz_srcptr x, mpz_srcptr m)
   xp = PTR (x);
   ASSERT ((mp[0] - 1) == (mp[0] ^ 1)); /* n is odd */
 
-  if ((*xp ^ CNST_LIMB(1) ^ *mp) != CNST_LIMB(0)) /* xp[0] == mp[0] - 1 */
+  if ((*xp ^ CNST_LIMB(1) ^ *mp) != CNST_LIMB(0)) /* xp[0] != mp[0] - 1 */
     return 0;
   else
     {
