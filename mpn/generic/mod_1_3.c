@@ -1,6 +1,6 @@
 /* mpn_mod_1s_3p (ap, n, b, cps)
    Divide (ap,,n) by b.  Return the single-limb remainder.
-   Requires that d < B / 3.
+   Requires that b < B / 3.
 
    Contributed to the GNU project by Torbjorn Granlund.
    Based on a suggestion by Peter L. Montgomery.
