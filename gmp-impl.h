@@ -1133,6 +1133,9 @@ __GMP_DECLSPEC void mpn_dump (mp_srcptr, mp_size_t);
 #define mpn_fib2_ui __MPN(fib2_ui)
 __GMP_DECLSPEC mp_size_t mpn_fib2_ui (mp_ptr, mp_ptr, unsigned long);
 
+#define mpn_fib2m __MPN(fib2m)
+__GMP_DECLSPEC int mpn_fib2m (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+
 /* Remap names of internal mpn functions.  */
 #define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)

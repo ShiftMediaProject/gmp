@@ -2946,7 +2946,7 @@ gmp_mpn_functions="$extra_functions					   \
   mul_1 addmul_1 submul_1						   \
   add_err1_n add_err2_n add_err3_n sub_err1_n sub_err2_n sub_err3_n	   \
   lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2		   \
-  fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump		   \
+  fib2_ui fib2m mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump	   \
   mod_1_1 mod_1_2 mod_1_3 mod_1_4 lshiftc				   \
   mul mul_fft mul_n sqr mul_basecase sqr_basecase nussbaumer_mul	   \
   mulmid_basecase toom42_mulmid mulmid_n mulmid				   \
