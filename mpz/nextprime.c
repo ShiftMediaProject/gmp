@@ -88,7 +88,7 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
       prime = 3;
       for (i = 0; i < prime_limit; i++)
 	{
-	  moduli[i] = mpz_fdiv_ui (p, prime);
+	  moduli[i] = mpz_tdiv_ui (p, prime);
 	  prime += primegap[i];
 	}
 
