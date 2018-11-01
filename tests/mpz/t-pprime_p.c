@@ -147,6 +147,7 @@ check_primes (void)
 {
   static const char * const primes[] = {
     "2", "53", "1234567891",
+    "2055693949", "16412292043871650369",
     /* diffie-hellman-group1-sha1, also "Well known group 2" in RFC
        2412, 2^1024 - 2^960 - 1 + 2^64 * { [2^894 pi] + 129093 } */
     "0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1"
