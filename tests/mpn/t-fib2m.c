@@ -149,6 +149,15 @@ test_fib2_fib2m (int count, gmp_randstate_ptr rands)
 
       if (signflip != 0 && ! mpn_zero_p (fks1m, mn) && ! mpn_zero_p (fkm, mn))
 	{
+	  if ((mp [0] & 1) == 0) /* Should we test only odd modulus-es? */
+	    {
+	      if (! mpn_lshift (fks1m, fks1m, mn, 1) &&
+		  mpn_cmp (mp, fks1m, mn) == 0)
+		continue;
+	      if (! mpn_lshift (fkm, fkm, mn, 1) &&
+		  mpn_cmp (mp, fkm, mn) == 0)
+		continue;
+	    }
 	  printf ("ERROR(sign) in test %d, k = %lu, mn = %u\n",
 		  test, k, (unsigned) mn);
 	  abort();
@@ -283,7 +292,7 @@ test_fib2m_2exp (int count, gmp_randstate_ptr rands)
 	    }
 	  signflip ^= 1;
 	}
-      
+
       if (mpn_cmp (fka, fks1b, mn) != 0)
 	{
 	  if (mpn_sub_n (fks1b, mp, fks1b, mn) || mpn_cmp (fka, fks1b, mn) != 0)
@@ -299,6 +308,15 @@ test_fib2m_2exp (int count, gmp_randstate_ptr rands)
 
       if (signflip != 0 && ! mpn_zero_p (fks1b, mn) && ! mpn_zero_p (fkb, mn))
 	{
+	  if ((mp [0] & 1) == 0) /* Should we test only odd modulus-es? */
+	    {
+	      if (! mpn_lshift (fks1b, fks1b, mn, 1) &&
+		  mpn_cmp (mp, fks1b, mn) == 0)
+		continue;
+	      if (! mpn_lshift (fkb, fkb, mn, 1) &&
+		  mpn_cmp (mp, fkb, mn) == 0)
+		continue;
+	    }
 	  printf ("ERROR(sign) in test %d, exp2 = %lu\n",
 		  test, exp2);
 	  abort();
