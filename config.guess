@@ -204,14 +204,20 @@ arm*-*-* | aarch64-*-*)
 	0xc08)	exact_cpu="armcortexa8";;	# v7a
 	0xc09)	exact_cpu="armcortexa9";;	# v7a
 	0xc0f)	exact_cpu="armcortexa15";;	# v7a
+	0xc0d)	exact_cpu="armcortexa12";;	# v7a
+	0xc0e)	exact_cpu="armcortexa17";;	# v7a
 	0xc14)	exact_cpu="armcortexr4";;	# v7r
 	0xc15)	exact_cpu="armcortexr5";;	# v7r
 	0xc23)	exact_cpu="armcortexm3";;	# v7m
 
-	0xd04)	exact_cpu="armcortexa35";;	# v8-32
+	0xd04)	exact_cpu="armcortexa35";;	# v8
 	0xd03)	exact_cpu="armcortexa53";;	# v8
+	0xd05)	exact_cpu="armcortexa55";;	# v8.2
 	0xd07)	exact_cpu="armcortexa57";;	# v8
 	0xd08)	exact_cpu="armcortexa72";;	# v8
+	0xd09)	exact_cpu="armcortexa73";;	# v8
+	0xd0a)	exact_cpu="armcortexa75";;	# v8.2
+	0xd0b)	exact_cpu="armcortexa76";;	# v8.3
 	*)	exact_cpu=$guess_cpu;;
     esac
   fi
