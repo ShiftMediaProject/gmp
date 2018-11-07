@@ -36,10 +36,13 @@ include(`../config.m4')
 C	     cycles/bit (approx)
 C StrongARM	 -
 C XScale	 -
-C Cortex-A7	 ?
-C Cortex-A8	 ?
+C Cortex-A5	 5.75
+C Cortex-A7	 6.38
+C Cortex-A8	 5.0
 C Cortex-A9	 5.3
-C Cortex-A15	 3.5
+C Cortex-A15	 2.92
+C Cortex-A17	 5.63
+C Cortex-A53	 4.25
 C Numbers measured with: speed -CD -s8-32 -t24 mpn_gcd_1
 
 C TODO
