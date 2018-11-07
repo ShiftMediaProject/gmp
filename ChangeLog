@@ -1,3 +1,16 @@
+2018-11-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/lucnum2_ui.c: Use mpn_rsblsh1_n if available.
+	* tests/mpz/t-nextprime.c: Add one more interval.
+	* tests/mpz/t-pprime_p.c (check_fermat_mersenne): New tests.
+	* mpn/generic/mod_1_3.c: typo in a comment.
+
+	* mpn/generic/fib2m.c: New file, Fibonacci numbers modulo.
+	* configure.ac (gmp_mpn_functions): Add it.
+	* gmp-impl.h: Declare mpn_fib2m.
+	* tests/mpn/t-fib2m.c: New file, tests for mpn_fib2m.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-fib2m.
+
 2018-11-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (arm): Support a12 and a17.
@@ -13,6 +26,15 @@
 	* mpn/arm/v7a/cora17/mul_1.asm: New grabber file.
 	* mpn/arm/v7a/cora17/addmul_1.asm: Likewise.
 	* mpn/arm/v7a/cora17/submul_1.asm: Likewise.
+
+2018-10-18 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/fib2_ui.c: Simplify the possible -2 case.
+
+2018-07-19 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/millerrabin.c (mod_eq_m1): New function, equality with -1.
+	* mpz/powm_ui.c: Small optimisations.
 
 2018-07-03  Torbjörn Granlund  <tg@gmplib.org>
 
