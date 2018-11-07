@@ -1,3 +1,32 @@
+2018-11-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm): Support a12 and a17.
+	* config.sub: Generalise arm matching.
+	* config.guess: Recognise additional arm CPUs.
+
+	* mpn/arm/arm-defs.m4 (ASM_START): Provide local definition.
+
+2018-10-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm/v7a/cora17/mod_34lsub1.asm: New file.
+	* mpn/arm/v7a/cora17/gmp-mparam.h: New file.
+	* mpn/arm/v7a/cora17/mul_1.asm: New grabber file.
+	* mpn/arm/v7a/cora17/addmul_1.asm: Likewise.
+	* mpn/arm/v7a/cora17/submul_1.asm: Likewise.
+
+2018-07-03  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/lshift.asm: Remove cnt = 1 special code.
+
+	* mpn/x86_64/silvermont/popcount.asm: Add missing ABI_SUPPORT decls.
+	* mpn/x86_64/silvermont/hamdist.asm: Likewise.
+	* mpn/x86_64/zen/mul_1.asm: Likewise.
+
+	* mpn/x86_64/fastsse/lshift.asm: Support DOS64.
+	* mpn/x86_64/fastsse/lshiftc.asm: Likewise.
+
+	* mpn/x86_64/pentium4/gmp-mparam.h: Retune.
+
 2018-07-01  Torbjörn Granlund  <tg@gmplib.org>
 
 	* lshift.asm: Replace with grabber file.
