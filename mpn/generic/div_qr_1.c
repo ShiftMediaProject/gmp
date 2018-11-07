@@ -46,7 +46,7 @@ see https://www.gnu.org/licenses/.  */
 #endif
 
 /* Divides {up, n} by d. Writes the n-1 low quotient limbs at {qp,
- * n-1}, and the high quote limb at *qh. Returns remainder. */
+ * n-1}, and the high quotient limb at *qh. Returns remainder. */
 mp_limb_t
 mpn_div_qr_1 (mp_ptr qp, mp_limb_t *qh, mp_srcptr up, mp_size_t n,
 	      mp_limb_t d)
