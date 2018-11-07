@@ -4,6 +4,7 @@
 	* tests/mpz/t-nextprime.c: Add one more interval.
 	* tests/mpz/t-pprime_p.c (check_fermat_mersenne): New tests.
 	* mpn/generic/mod_1_3.c: typo in a comment.
+	* mpz/nextprime.c: Use tdiv instead of fdiv.
 
 	* mpn/generic/fib2m.c: New file, Fibonacci numbers modulo.
 	* configure.ac (gmp_mpn_functions): Add it.
