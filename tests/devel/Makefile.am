@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000-2002 Free Software Foundation, Inc.
+# Copyright 2000-2002, 2018 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library test suite.
 #
@@ -25,7 +25,7 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 # add_n_sub_n add_n_sub_n_2 not yet built since mpn_add_n_sub_n doesn't yet exist
 #
 EXTRA_PROGRAMS = \
-  aors_n anymul_1 copy divmod_1 divrem shift logops_n sqrtrem_1_2 tst-addsub try
+  aors_n anymul_1 copy divmod_1 divrem shift logops_n sqrtrem_1_2 tst-addsub try addmul_N mul_N cnd_aors_n
 
 allprogs: $(EXTRA_PROGRAMS)
 
