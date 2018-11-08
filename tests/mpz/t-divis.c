@@ -156,8 +156,7 @@ main (int argc, char *argv[])
 
   tests_start ();
 
-  if (argc == 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   check_data ();
   check_random (reps);

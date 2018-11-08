@@ -95,8 +95,7 @@ main (int argc, char **argv)
 
   tests_start ();
 
-  if (argc > 1)
-    reps = strtol (argv[1], 0, 0);
+  TESTS_REPS (reps, argv, argc);
 
   rands = RANDS;
 

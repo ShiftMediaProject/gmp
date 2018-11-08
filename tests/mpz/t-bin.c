@@ -312,18 +312,8 @@ main (int argc, char **argv)
 {
   int count;
 
-  if (argc > 1)
-    {
-      char *end;
-      count = strtol (argv[1], &end, 0);
-      if (*end || count <= 0)
-	{
-	  fprintf (stderr, "Invalid test count: %s.\n", argv[1]);
-	  return 1;
-	}
-    }
-  else
-    count = COUNT;
+  count = COUNT;
+  TESTS_REPS (count, argv, argc);
 
   tests_start ();
 

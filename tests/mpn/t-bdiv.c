@@ -143,17 +143,7 @@ main (int argc, char **argv)
   mp_limb_t rran0, rran1, qran0, qran1;
   TMP_DECL;
 
-  if (argc > 1)
-    {
-      char *end;
-      count = strtol (argv[1], &end, 0);
-      if (*end || count <= 0)
-	{
-	  fprintf (stderr, "Invalid test count: %s.\n", argv[1]);
-	  return 1;
-	}
-    }
-
+  TESTS_REPS (count, argv, argc);
 
   maxdbits = MAX_DN;
   maxnbits = MAX_NN;

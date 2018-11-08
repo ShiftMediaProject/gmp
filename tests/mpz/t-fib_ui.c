@@ -79,8 +79,8 @@ main (int argc, char *argv[])
   mp_trace_base = -16;
   if (argc > 1 && argv[1][0] == 'x')
     limit = ULONG_MAX;
-  else if (argc > 1)
-    limit = atoi (argv[1]);
+  else
+    TESTS_REPS (limit, argv, argc);
 
   check_fib_table ();
 
