@@ -1,6 +1,6 @@
 /* mpn_mod_1s_4p (ap, n, b, cps)
    Divide (ap,,n) by b.  Return the single-limb remainder.
-   Requires that d < B / 4.
+   Requires that b < B / 4.
 
    Contributed to the GNU project by Torbjorn Granlund.
    Based on a suggestion by Peter L. Montgomery.
