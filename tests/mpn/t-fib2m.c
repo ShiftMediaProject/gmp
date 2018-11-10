@@ -132,7 +132,7 @@ test_fib2_fib2m (int count, gmp_randstate_ptr rands)
 	    }
 	  signflip ^= 1;
 	}
-      
+
       if (mpn_cmp (fks1m, fks1, mn) != 0)
 	{
 	  if (mpn_sub_n (fks1, mp, fks1, mn) || mpn_cmp (fks1m, fks1, mn) != 0)

@@ -1,5 +1,8 @@
 /* mpn_fib2m -- calculate Fibonacci numbers, modulo m.
 
+Contributed to the GNU project by Marco Bodrato, based on the previous
+fib2_ui.c file.
+
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
@@ -81,7 +84,7 @@ abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
    In F[2k+1] with k odd, -2 is applied to F[k-1]^2 just by ORing into the
    low limb.
 
-   Should {tp, 2 * mn} be passed as a scratch pointer?
+   TODO: Should {tp, 2 * mn} be passed as a scratch pointer?
    Should the call to mpn_fib2_ui() obtain (up to) 2*mn limbs?
 */
 
@@ -98,6 +101,7 @@ mpn_fib2m (mp_ptr fp, mp_ptr f1p, mp_srcptr np, mp_size_t nn, mp_srcptr mp, mp_s
   ASSERT (! MPN_OVERLAP_P (fp, MAX(2*mn+1,5), f1p, MAX(2*mn+1,5)));
   ASSERT (nn > 0 && np[nn - 1] != 0);
 
+  /* Estimate the maximal n such that fibonacci(n) fits in mn limbs. */
 #if GMP_NUMB_BITS % 16 == 0
   if (UNLIKELY (ULONG_MAX / (23 * (GMP_NUMB_BITS / 16)) <= mn))
     nfirst = ULONG_MAX;
