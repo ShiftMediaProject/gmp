@@ -115,4 +115,7 @@ define(`popcntd',m4_assert_numargs(2)`dnl
 define(`divdeu',m4_assert_numargs(3)`dnl
 .long eval(0x7c000312+m4_lshift($1,21)+m4_lshift($2,16)+m4_lshift($3,11))')
 
+define(`addex',m4_assert_numargs(4)`dnl
+.long eval(0x7c000154+m4_lshift($1,21)+m4_lshift($2,16)+m4_lshift($3,11)+m4_lshift($4,9))')
+
 divert

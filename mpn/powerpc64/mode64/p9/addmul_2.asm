@@ -114,7 +114,7 @@ L(top):	ld	r9, 0(up)
 	std	r0, 0(rp)
 	maddld(	r5, r8, v1, r29)	C 1  5   -> addex
 	maddhdu(r10, r8, v1, r29)	C 2  6
-	addex	r0, r12, r30, 0		C    8 12
+	addex(	r0, r12, r30, 0)	C    8 12
 L(lo2):	ld	r8, 8(up)
 	maddld(	r27, r9, v0, r11)	C 1  5   -> adde
 	maddhdu(r30, r9, v0, r11)	C 2  6
@@ -123,7 +123,7 @@ L(lo2):	ld	r8, 8(up)
 	std	r0, 8(rp)
 	maddld(	r12, r9, v1, r28)	C 2  6   -> addex
 	maddhdu(r11, r9, v1, r28)	C 3  7
-	addex	r0, r5, r31, 0		C 5  9 13
+	addex(	r0, r5, r31, 0)		C 5  9 13
 L(lo1):	ld	r9, 16(up)
 	maddld(	r26, r8, v0, r10)	C 2  6   -> adde
 	maddhdu(r31, r8, v0, r10)	C 3  7
@@ -132,7 +132,7 @@ L(lo1):	ld	r9, 16(up)
 	std	r0, 16(rp)
 	maddld(	r5, r8, v1, r29)	C 3  7   -> addex
 	maddhdu(r10, r8, v1, r29)	C 4  8
-	addex	r0, r12, r30, 0		C    6 10
+	addex(	r0, r12, r30, 0)	C    6 10
 L(lo0):	ld	r8, 24(up)
 	maddld(	r27, r9, v0, r11)	C 3  7   -> adde
 	maddhdu(r30, r9, v0, r11)	C 4  8
@@ -141,7 +141,7 @@ L(lo0):	ld	r8, 24(up)
 	std	r0, 24(rp)
 	maddld(	r12, r9, v1, r28)	C 4  8   -> addex
 	maddhdu(r11, r9, v1, r28)	C 5  9
-	addex	r0, r5, r31, 0		C    7 11
+	addex(	r0, r5, r31, 0)		C    7 11
 	addi	up, up, 32
 	addi	rp, rp, 32
 	bdnz	L(top)
@@ -153,22 +153,22 @@ L(end):	ld	r9, 0(up)
 	std	r0, 0(rp)		C		-4
 	maddld(	r5, r8, v1, r29)	C 1  5
 	maddhdu(r10, r8, v1, r29)	C 2  6
-	addex	r0, r12, r30, 0		C    8 12
+	addex(	r0, r12, r30, 0)	C    8 12
 L(cj2):	maddld(	r27, r9, v0, r11)	C 1  5		-2
 	maddhdu(r30, r9, v0, r11)	C 2  6		-1
 	adde	r0, r26, r0		C    8 12	-3
 	std	r0, 8(rp)		C		-3
 	mulld	r12, r9, v1		C 2  6		-1
 	mulhdu	r11, r9, v1		C 3  7		0 = return limb
-	addex	r0, r5, r31, 0		C 5  9 13
+	addex(	r0, r5, r31, 0)		C 5  9 13
 	adde	r0, r27, r0		C    5  9 13	-2
 	std	r0, 16(rp)		C		-2
-	addex	r0, r12, r30, 0		C    6 10	-1
+	addex(	r0, r12, r30, 0)	C    6 10	-1
 	adde	r0, r0, r10		C		-1
 	std	r0, 24(rp)		C		-1
 	li	r4, 0
 	addze	r3, r11
-	addex	r3, r3, r4, 0
+	addex(	r3, r3, r4, 0)
 
 L(ret):	ld	r26, -48(r1)
 	ld	r27, -40(r1)
