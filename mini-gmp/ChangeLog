@@ -1,3 +1,14 @@
+2018-10-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp.c (mpz_probab_prime_p): BPSW test for primality.
+
+	* tests/hex-random.c (hex_random_lucm_op): New function.
+	* tests/hex-random.h: Declare it.
+	* tests/mini-random.c (mini_random_lucm_op): New function.
+	* tests/mini-random.h: Declare it.
+	* mini-gmp/tests/t-lucm.c: New test
+	* mini-gmp/tests/Makefile (CHECK_PROGRAMS): Add t-lucm.
+
 2018-09-07  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/t-div.c (testmain): Add missing const declarations.

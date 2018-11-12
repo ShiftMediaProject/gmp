@@ -12,6 +12,10 @@
 	* tests/mpn/t-fib2m.c: New file, tests for mpn_fib2m.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-fib2m.
 
+	* mpn/generic/mod_34lsub1.c: Initialise c[012] once.
+	* tests/mpz/t-pprime_p.c (check_primes): Two more primes.
+	* tests/mp?: Use TESTS_REPS in many files.
+
 2018-11-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (arm): Support a12 and a17.
