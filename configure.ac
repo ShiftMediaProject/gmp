@@ -2953,7 +2953,7 @@ gmp_mpn_functions="$extra_functions					   \
   random random2 pow_1							   \
   rootrem sqrtrem sizeinbase get_str set_str compute_powtab		   \
   scan0 scan1 popcount hamdist cmp zero_p				   \
-  perfsqr perfpow							   \
+  perfsqr perfpow strongfibo						   \
   gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step				   \
   gcdext_lehmer								   \
   div_q tdiv_qr jacbase jacobi_2 jacobi get_d				   \
