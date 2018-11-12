@@ -23,6 +23,9 @@ Changes between GMP version 6.1.* and 6.2.0
 
   * Mini-GMP: added support for the mpq_t layer.
 
+  * Functions to detect primality now substitute 24 Miller-Rabin
+    iterations with the BPSW test.
+
   SPEEDUPS
   * The n-over-k function have been reimplemented for great
     speedups for large operands handled by mpz_bin_ui .
