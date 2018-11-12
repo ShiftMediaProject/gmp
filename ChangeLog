@@ -42,6 +42,17 @@
 	* tests/mpz/t-pprime_p.c (check_primes): Two more primes.
 	* tests/mp?: Use TESTS_REPS in many files.
 
+	* mpn/generic/strongfibo.c: New file, Fibonacci primality test.
+	* configure.ac (gmp_mpn_functions): Add it.
+	* gmp-impl.h: Declare mpn_strongfibo.
+
+	* mpz/stronglucas.c: New file, strong Lucas primality test.
+	* Makefile.am (MPZ_OBJECTS): Add it.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add it.
+	* gmp-impl.h: Declare mpz_stronglucas.
+
+	* mpz/millerrabin.c: Implement BPSW test for primality.
+
 2018-11-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac (arm): Support a12 and a17.
