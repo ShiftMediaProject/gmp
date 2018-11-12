@@ -3653,7 +3653,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   /* BPSW test */
   mpz_init_set_ui (y, 2);
   is_prime = gmp_millerrabin (n, nm1, y, q, k) && gmp_stronglucas (n, y);
-  reps -= 25; /* skip the first 25 repetitions */
+  reps -= 24; /* skip the first 24 repetitions */
 
   /* Use Miller-Rabin, with a deterministic sequence of bases, a[j] =
      j^2 + j + 41 using Euler's polynomial. We potentially stop early,
