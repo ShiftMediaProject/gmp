@@ -29,7 +29,9 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 /* FIXME: gmp-impl.h included only for mpz_lucas_mod */
-#include "gmp-impl.h"
+/* #include "gmp-impl.h" */
+#define mpz_lucas_mod  __gmpz_lucas_mod
+__GMP_DECLSPEC int mpz_lucas_mod (mpz_ptr, mpz_ptr, long, mp_bitcnt_t, mpz_srcptr, mpz_ptr, mpz_ptr);
 
 #include "hex-random.h"
 
