@@ -1,6 +1,6 @@
 dnl  POWER9 mpn_addmul_1.
 
-dnl  Copyright 2017 Free Software Foundation, Inc.
+dnl  Copyright 2017, 2018 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -37,7 +37,7 @@ C POWER5		 -
 C POWER6		 -
 C POWER7		 -
 C POWER8		 -
-C POWER9		 ?
+C POWER9		 2.5
 
 C TODO
 C  * Schedule for POWER9 pipeline.
@@ -55,9 +55,9 @@ PROLOGUE(mpn_addmul_1)
 
 	cmpdi	cr6, n, 2
 
-	addi	r0, n, -1
-	srdi	r0, r0, 1
-	mtctr	r0
+	addi	r0, n, -1	C FIXME: postpone
+	srdi	r0, r0, 1	C FIXME: postpone
+	mtctr	r0		C FIXME: postpone
 
 	rldicl.	r0, n, 0,63	C r0 = n & 3, set cr0
 	bne	cr0, L(b1)
@@ -95,22 +95,22 @@ L(b1):	ld	r11, 0(rp)
 L(top):	ld	r10, 24(rp)
 	ld	r12, 0(up)
 	std	r0, 0(rp)
-	maddld(	r8, r31, v0, r11)	C W:0,2,4
 	adde	r0, r5, r9
+	maddld(	r8, r31, v0, r11)	C W:0,2,4
 	maddhdu(r5, r31, v0, r11)	C W:1,3,5
 L(mid):	ld	r11, 32(rp)
 	ld	r31, 8(up)
 	std	r0, 8(rp)
-	maddld(	r9, r12, v0, r10)	C W:1,3,5
 	adde	r0, r7, r8
+	maddld(	r9, r12, v0, r10)	C W:1,3,5
 	maddhdu(r7, r12, v0, r10)	C W:2,4,6
 	addi	rp, rp, 16
 	addi	up, up, 16
 	bdnz	L(top)
 
 L(end):	std	r0, 0(rp)
-	maddld(	r8, r31, v0, r11)
 	adde	r0, r5, r9
+	maddld(	r8, r31, v0, r11)
 	maddhdu(r5, r31, v0, r11)
 	std	r0, 8(rp)
 	adde	r0, r7, r8
