@@ -37,7 +37,7 @@ C POWER5		 -
 C POWER6		 -
 C POWER7		 -
 C POWER8		 -
-C POWER9		 2.4-2.6
+C POWER9		 2.5
 
 C TODO
 C  * Schedule for POWER9 pipeline.
@@ -109,8 +109,8 @@ L(mid):	ld	r11, 32(rp)
 	bdnz	L(top)
 
 L(end):	std	r0, 0(rp)
-	maddld(	r8, r31, v0, r11)
 	adde	r0, r5, r9
+	maddld(	r8, r31, v0, r11)
 	maddhdu(r5, r31, v0, r11)
 	std	r0, 8(rp)
 	adde	r0, r7, r8
