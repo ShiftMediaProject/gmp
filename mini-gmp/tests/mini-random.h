@@ -31,3 +31,5 @@ void mini_random_op3 (enum hex_random_op,  unsigned long, mpz_t, mpz_t, mpz_t);
 void mini_random_op4 (enum hex_random_op, unsigned long, mpz_t, mpz_t, mpz_t, mpz_t);
 void mini_random_scan_op (enum hex_random_op, unsigned long, mpz_t, mp_bitcnt_t *, mp_bitcnt_t *);
 void mini_random_bit_op (enum hex_random_op, unsigned long, mpz_t, mp_bitcnt_t *, mpz_t);
+void mini_random_lucm_op (unsigned long, mpz_t, mpz_t, mpz_t,
+			  long *, unsigned long *, int *);

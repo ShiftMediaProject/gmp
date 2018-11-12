@@ -140,3 +140,21 @@ mini_random_scan_op (enum hex_random_op op, unsigned long maxbits,
 
   free (ap);
 }
+
+void
+mini_random_lucm_op (unsigned long maxbits, mpz_t v, mpz_t q, mpz_t m,
+			  long *Q, unsigned long *b0, int *res)
+{
+  char *vp;
+  char *qp;
+  char *mp;
+
+  hex_random_lucm_op (maxbits, &vp, &qp, &mp, Q, b0, res);
+  set_str (v, vp);
+  set_str (q, qp);
+  set_str (m, mp);
+
+  free (vp);
+  free (qp);
+  free (mp);
+}

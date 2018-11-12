@@ -28,6 +28,8 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #endif
 
 #include "gmp.h"
+/* FIXME: gmp-impl.h included only for mpz_lucas_mod */
+#include "gmp-impl.h"
 
 #include "hex-random.h"
 
@@ -480,4 +482,50 @@ hex_random_str_op (unsigned long maxbits,
   *rp = mpz_get_str (NULL, base, a);
 
   mpz_clear (a);
+}
+
+void hex_random_lucm_op (unsigned long maxbits,
+			 char **vp, char **qp, char **mp,
+			 long *Q, unsigned long *b0, int *res)
+{
+  mpz_t m, v, q, t1, t2;
+  unsigned long mbits;
+
+  mpz_init (m);
+  mpz_init (v);
+  mpz_init (q);
+  mpz_init (t1);
+  mpz_init (t2);
+
+  *Q = gmp_urandomb_ui (state, 14) + 1;
+
+  do
+    {
+      mbits = gmp_urandomb_ui (state, 32) % maxbits + 5;
+
+      mpz_rrandomb (m, state, mbits);
+      *b0 = gmp_urandomb_ui (state, 32) % (mbits - 3) + 2;
+      /* The GMP  implementation uses the exponent (m >> b0) + 1. */
+      /* mini-gmp implementation uses the exponent (m >> b0) | 1. */
+      /* They are the same (and are used) only when (m >> b0) is even */
+      mpz_clrbit (m, *b0);
+      /* mini-gmp implementation only works if the modulus is odd. */
+      mpz_setbit (m, 0);
+    }
+  while (mpz_gcd_ui (NULL, m, *Q) != 1);
+
+  if (*Q == 1 || gmp_urandomb_ui (state, 1))
+    *Q = - *Q;
+
+  *res = mpz_lucas_mod (v, q, *Q, *b0, m, t1, t2);
+
+  gmp_asprintf (vp, "%Zx", v);
+  gmp_asprintf (qp, "%Zx", q);
+  gmp_asprintf (mp, "%Zx", m);
+
+  mpz_clear (m);
+  mpz_clear (v);
+  mpz_clear (q);
+  mpz_clear (t1);
+  mpz_clear (t2);
 }

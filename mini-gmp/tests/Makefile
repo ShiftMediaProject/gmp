@@ -30,7 +30,7 @@ LIBS = -lgmp -lm -lmcheck
 CHECK_PROGRAMS = t-add t-sub t-mul t-invert t-div t-div_2exp \
 	t-double t-cmp_d t-gcd t-lcm t-import t-comb t-signed \
 	t-sqrt t-root t-powm t-logops t-bitops t-scan t-str \
-	t-reuse t-aorsmul t-limbs t-cong t-pprime_p \
+	t-reuse t-aorsmul t-limbs t-cong t-pprime_p t-lucm \
 	t-mpq_addsub t-mpq_muldiv t-mpq_muldiv_2exp
 # Default TESTS to all tests, allowing overriding TESTS for building tests
 # without running them.
