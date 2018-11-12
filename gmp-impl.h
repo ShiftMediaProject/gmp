@@ -1136,6 +1136,9 @@ __GMP_DECLSPEC mp_size_t mpn_fib2_ui (mp_ptr, mp_ptr, unsigned long);
 #define mpn_fib2m __MPN(fib2m)
 __GMP_DECLSPEC int mpn_fib2m (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
+#define mpn_strongfibo __MPN(strongfibo)
+__GMP_DECLSPEC int mpn_strongfibo (mp_srcptr, mp_size_t, mp_ptr);
+
 /* Remap names of internal mpn functions.  */
 #define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
@@ -1703,6 +1706,9 @@ __GMP_DECLSPEC mp_size_t mpz_prodlimbs (mpz_ptr, mp_ptr, mp_size_t);
 
 #define mpz_oddfac_1  __gmpz_oddfac_1
 __GMP_DECLSPEC void mpz_oddfac_1 (mpz_ptr, mp_limb_t, unsigned);
+
+#define mpz_stronglucas  __gmpz_stronglucas
+__GMP_DECLSPEC int mpz_stronglucas (mpz_srcptr, mpz_ptr, mpz_ptr);
 
 #define mpz_lucas_mod  __gmpz_lucas_mod
 __GMP_DECLSPEC int mpz_lucas_mod (mpz_ptr, mpz_ptr, long, mp_bitcnt_t, mpz_srcptr, mpz_ptr, mpz_ptr);
