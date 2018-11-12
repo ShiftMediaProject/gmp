@@ -9,7 +9,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1996-2002, 2005, 2014 Free Software
+Copyright 1991, 1993, 1994, 1996-2002, 2005, 2014, 2018 Free Software
 Foundation, Inc.
 
 Contributed by John Amanatides.
@@ -49,7 +49,6 @@ static int millerrabin (mpz_srcptr,
 int
 mpz_millerrabin (mpz_srcptr n, int reps)
 {
-  int r;
   mpz_t nm, x, y, q;
   unsigned long int k;
   gmp_randstate_t rstate;
@@ -58,43 +57,39 @@ mpz_millerrabin (mpz_srcptr n, int reps)
   TMP_MARK;
 
   MPZ_TMP_INIT (nm, SIZ (n) + 1);
-  mpz_sub_ui (nm, n, 1L); /* nm = n - 1 */
+  mpz_tdiv_q_2exp (nm, n, 1);
 
   MPZ_TMP_INIT (x, SIZ (n) + 1);
   MPZ_TMP_INIT (y, 2 * SIZ (n)); /* mpz_powm_ui needs excessive memory!!! */
-
-  /* Perform a Fermat test.  */
-  mpz_set_ui (x, 210L);
-  mpz_powm (y, x, nm, n);
-  if (mpz_cmp_ui (y, 1L) != 0)
-    {
-      TMP_FREE;
-      return 0;
-    }
-
   MPZ_TMP_INIT (q, SIZ (n));
 
   /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
-  k = mpz_scan1 (nm, 0L); /* or mpz_scan1 (n, 1) */
-  mpz_tdiv_q_2exp (q, n, k);
+  k = mpz_scan1 (nm, 0L);
+  mpz_tdiv_q_2exp (q, nm, k);
+  ++k;
 
-  /* n-3 */
-  mpz_sub_ui (nm, nm, 2L); /* nm = n - 1 - 2 = n - 3 */
-  ASSERT (mpz_cmp_ui (nm, 1L) >= 0);
-
-  gmp_randinit_default (rstate);
-
-  is_prime = 1;
-  for (r = 0; r < reps && is_prime; r++)
+  /* BPSW test */
+  mpz_set_ui (x, 2);
+  is_prime = millerrabin (n, x, y, q, k) && mpz_stronglucas (n, x, y);
+  if (is_prime)
     {
-      /* 2 to n-2 inclusive, don't want 1, 0 or -1 */
-      mpz_urandomm (x, rstate, nm);
-      mpz_add_ui (x, x, 2L);
+      /* (n-5)/2 */
+      mpz_sub_ui (nm, nm, 2L);
+      ASSERT (mpz_cmp_ui (nm, 1L) >= 0);
 
-      is_prime = millerrabin (n, x, y, q, k);
+      gmp_randinit_default (rstate);
+
+      for (reps -= 24; reps > 0 && is_prime; --reps)
+	{
+	  /* 3 to (n-1)/2 inclusive, don't want 1, 0 or 2 */
+	  mpz_urandomm (x, rstate, nm);
+	  mpz_add_ui (x, x, 3L);
+
+	  is_prime = millerrabin (n, x, y, q, k);
+	}
+
+      gmp_randclear (rstate);
     }
-
-  gmp_randclear (rstate);
 
   TMP_FREE;
   return is_prime;
