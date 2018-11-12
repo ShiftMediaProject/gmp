@@ -1,3 +1,29 @@
+2018-11-12  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/aorsmul_1.asm: New file, providing fast
+	submul_1 (and redundant addmul_1).
+
+2018-11-11  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/addmul_1.asm: Tweak for slightly better
+	speed.
+
+	* mpn/powerpc32/powerpc-defs.m4: Define addex.
+	* mpn/powerpc64/mode64/p9/mul_2.asm: Use it.
+	* mpn/powerpc64/mode64/p9/addmul_2.asm: Likewise.
+
+2018-11-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/devel/cnd_aors_n.c: New file.
+
+	* mpn/arm/neon/lorrshift.asm: Declare use of neon insns.
+	* mpn/arm/neon/lshiftc.asm: Likewise + cleanup.
+
+	* tests/devel/Makefile.am (EXTRA_PROGRAMS): Add missing files.
+
+	* mpn/powerpc64/mode64/p9/mul_2.asm: New file.
+	* mpn/powerpc64/mode64/p9/addmul_2.asm: New file.
+
 2018-11-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/lucnum2_ui.c: Use mpn_rsblsh1_n if available.
@@ -241,7 +267,7 @@
 2018-01-02  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc64/mode64/divrem_2.asm: Use different rlwinm variant (to
-	appeace clang).
+	appease clang).
 
 2018-01-01  Torbjörn Granlund  <tg@gmplib.org>
 
@@ -310,7 +336,7 @@
 
 	* mpn/sparc64: Revert 2017-07-23 PIC changes.
 
-	* mpn/powerpc32/divrem_2.asm: Avoid bc+ insn form to accomodate clang.
+	* mpn/powerpc32/divrem_2.asm: Avoid bc+ insn form to accommodate clang.
 
 	* mpn/generic/sbpi1_bdiv_qr.c: Correct ASSERT.
 	* mpn/generic/sbpi1_bdiv_q.c: Likewise.
@@ -666,7 +692,7 @@
 
 2017-02-25  Torbjörn Granlund  <tg@gmplib.org>
 
-	* configure.ac: Allow MP_SIZE_T_MAX for threasholds exported to
+	* configure.ac: Allow MP_SIZE_T_MAX for thresholds exported to
 	config.m4.
 
 	* mpn/x86_64/gcd_1.asm: Handle BMOD_1_TO_MOD_1_THRESHOLD=MP_SIZE_T_MAX.
@@ -817,7 +843,7 @@
 	* mpn/generic/bdiv_q_1.c: Make return value consistent.
 
 	* mpn/x86/p6/mmx/gmp-mparam.h (SQR_TOOM2_THRESHOLD): Revert to bogus
-	value to accomodate p6/sqr_basecase.asm fragility.
+	value to accommodate p6/sqr_basecase.asm fragility.
 
 2017-01-29 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
@@ -1635,7 +1661,7 @@
 
 2015-06-24  Torbjörn Granlund  <torbjorng@google.com>
 
-	* mpn/x86_64/fastsse/com.asm: Disalllow zero size operands.
+	* mpn/x86_64/fastsse/com.asm: Disallow zero size operands.
 
 	* mpn/x86_64/fastsse/copyi.asm: Suppress looping in basecase code.
 
