@@ -3409,6 +3409,177 @@ mpz_bin_uiui (mpz_t r, unsigned long n, unsigned long k)
 
 
 /* Primality testing */
+
+/* Computes Kronecker (a/b) with odd b, a!=0 and GCD(a,b) = 1 */
+/* Adapted from JACOBI_BASE_METHOD==4 in mpn/generic/jacbase.c */
+static int
+gmp_jacobi_coprime (mp_limb_t a, mp_limb_t b)
+{
+  int c, bit = 0;
+
+  assert (b & 1);
+  assert (a != 0);
+  /* assert (mpn_gcd_11 (a, b) == 1); */
+
+  /* Below, we represent a and b shifted right so that the least
+     significant one bit is implicit. */
+  b >>= 1;
+
+  gmp_ctz(c, a);
+  a >>= 1;
+
+  do
+    {
+      a >>= c;
+      /* (2/b) = -1 if b = 3 or 5 mod 8 */
+      bit ^= c & (b ^ (b >> 1));
+      if (a < b)
+	{
+	  bit ^= a & b;
+	  a = b - a;
+	  b -= a;
+	}
+      else
+	{
+	  a -= b;
+	  assert (a != 0);
+	}
+
+      gmp_ctz(c, a);
+      ++c;
+    }
+  while (b > 0);
+
+  return bit & 1 ? -1 : 1;
+}
+
+static void
+gmp_lucas_step_k_2k (mpz_t V, mpz_t Qk, const mpz_t n)
+{
+  mpz_mod (Qk, Qk, n);
+  /* V_{2k} <- V_k ^ 2 - 2Q^k */
+  mpz_mul (V, V, V);
+  mpz_submul_ui (V, Qk, 2);
+  mpz_tdiv_r (V, V, n);
+  /* Q^{2k} = (Q^k)^2 */
+  mpz_mul (Qk, Qk, Qk);
+}
+
+/* Computes V_k, Q^k (mod n) for the Lucas' sequence */
+/* with P=1, Q=Q; k = (n>>b0)|1. */
+/* Requires an odd n > 4; b0 > 0; -2*Q must not overflow a long */
+/* Returns (U_k == 0) and sets V=V_k and Qk=Q^k. */
+int
+mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
+	       mp_bitcnt_t b0, const mpz_t n)
+{
+  mp_bitcnt_t bs;
+  mpz_t U;
+  int res;
+
+  assert (b0 > 0);
+  assert (Q <= (long) (GMP_LIMB_HIGHBIT >> 1));
+  assert (Q > -(long) (GMP_LIMB_HIGHBIT >> 1));
+  assert (mpz_cmp_ui (n, 4) > 0);
+  assert (mpz_odd_p (n));
+
+  mpz_init_set_ui (U, 1); /* U1 = 1 */
+  mpz_set_ui (V, 1); /* V1 = 1 */
+  mpz_set_si (Qk, Q);
+
+  for (bs = mpz_sizeinbase (n, 2) - 1; --bs >= b0;)
+    {
+      /* U_{2k} <- U_k * V_k */
+      mpz_mul (U, U, V);
+      /* V_{2k} <- V_k ^ 2 - 2Q^k */
+      /* Q^{2k} = (Q^k)^2 */
+      gmp_lucas_step_k_2k (V, Qk, n);
+
+      /* A step k->k+1 is performed if the bit in $n$ is 1	*/
+      /* mpz_tstbit(n,bs) or the the bit is 0 in $n$ but	*/
+      /* should be 1 in $n+1$ (bs == b0)			*/
+      if (b0 == bs || mpz_tstbit (n, bs))
+	{
+	  /* Q^{k+1} <- Q^k * Q */
+	  mpz_mul_si (Qk, Qk, Q);
+	  /* U_{k+1} <- (U_k + V_k) / 2 */
+	  mpz_swap (U, V); /* Keep in V the old value of U_k */
+	  mpz_add (U, U, V);
+	  /* We have to compute U/2, so we need an even value, */
+	  /* equivalent (mod n) */
+	  if (mpz_odd_p (U))
+	    mpz_add (U, U, n);
+	  mpz_tdiv_q_2exp (U, U, 1);
+	  /* V_{k+1} <-(D*U_k + V_k) / 2 =
+			U_{k+1} + (D-1)/2*U_k = U_{k+1} - 2Q*U_k */
+	  mpz_mul_si (V, V, -2*Q);
+	  mpz_add (V, U, V);
+	  mpz_tdiv_r (V, V, n);
+	}
+      mpz_tdiv_r (U, U, n);
+    }
+
+  res = U->_mp_size == 0;
+  mpz_clear (U);
+  return res;
+}
+
+/* Performs strong Lucas' test on x, with parameters suggested */
+/* for the BPSW test. Qk is only passed to recycle a variable. */
+/* Requires GCD (x,6) = 1.*/
+static int
+gmp_stronglucas (const mpz_t x, mpz_t Qk)
+{
+  mp_bitcnt_t b0;
+  mpz_t V, n;
+  mp_limb_t maxD, D; /* The absolute value is stored. */
+  long Q;
+  mp_limb_t tl;
+
+  /* Test on the absolute value. */
+  mpz_roinit_normal_n (n, x->_mp_d, GMP_ABS (x->_mp_size));
+
+  assert (mpz_odd_p (n));
+  /* assert (mpz_gcd_ui (NULL, n, 6) == 1); */
+  if (mpz_root (Qk, n, 2))
+    return 0; /* A square is composite. */
+
+  /* Check Ds up to square root (in case, n is prime)
+     or avoid overflows */
+  maxD = (Qk->_mp_size == 1) ? Qk->_mp_d [0] - 1 : GMP_LIMB_MAX;
+
+  D = 3;
+  /* Search a D such that (D/n) = -1 in the sequence 5,-7,9,-11,.. */
+  /* For those Ds we have (D/n) = (n/|D|) */
+  do
+    {
+      if (D >= maxD)
+	return 1 + (D != GMP_LIMB_MAX); /* (1 + ! ~ D) */
+      D += 2;
+      tl = mpz_tdiv_ui (n, D);
+      if (tl == 0)
+	return 0;
+    }
+  while (gmp_jacobi_coprime (tl, D) == 1);
+
+  mpz_init (V);
+
+  /* n-(D/n) = n+1 = d*2^{b0}, with d = (n>>b0) | 1 */
+  b0 = mpz_scan0 (n, 0);
+
+  /* D= P^2 - 4Q; P = 1; Q = (1-D)/4 */
+  Q = (D & 2) ? (D >> 2) + 1 : -(D >> 2);
+
+  if (! mpz_lucas_mod (V, Qk, Q, b0, n))	/* If Ud != 0 */
+    while (V->_mp_size != 0 && --b0 != 0)	/* while Vk != 0 */
+      /* V <- V ^ 2 - 2Q^k */
+      /* Q^{2k} = (Q^k)^2 */
+      gmp_lucas_step_k_2k (V, Qk, n);
+
+  mpz_clear (V);
+  return (b0 != 0);
+}
+
 static int
 gmp_millerrabin (const mpz_t n, const mpz_t nm1, mpz_t y,
 		 const mpz_t q, mp_bitcnt_t k)
@@ -3470,21 +3641,26 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   if (mpz_cmpabs_ui (n, 31*31) < 0)
     return 2;
 
+  mpz_init (nm1);
+  mpz_init (q);
+
+  /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
+  mpz_abs (nm1, n);
+  nm1->_mp_d[0] -= 1;
+  k = mpz_scan1 (nm1, 0);
+  mpz_tdiv_q_2exp (q, nm1, k);
+
+  /* BPSW test */
+  mpz_init_set_ui (y, 2);
+  is_prime = gmp_millerrabin (n, nm1, y, q, k) && gmp_stronglucas (n, y);
+  reps -= 25; /* skip the first 25 repetitions */
+
   /* Use Miller-Rabin, with a deterministic sequence of bases, a[j] =
      j^2 + j + 41 using Euler's polynomial. We potentially stop early,
      if a[j] >= n - 1. Since n >= 31*31, this can happen only if reps >
      30 (a[30] == 971 > 31*31 == 961). */
 
-  mpz_init (nm1);
-  mpz_init (q);
-  mpz_init (y);
-
-  /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
-  nm1->_mp_size = mpz_abs_sub_ui (nm1, n, 1);
-  k = mpz_scan1 (nm1, 0);
-  mpz_tdiv_q_2exp (q, nm1, k);
-
-  for (j = 0, is_prime = 1; is_prime & (j < reps); j++)
+  for (j = 0; is_prime & (j < reps); j++)
     {
       mpz_set_ui (y, (unsigned long) j*j+j+41);
       if (mpz_cmp (y, nm1) >= 0)
