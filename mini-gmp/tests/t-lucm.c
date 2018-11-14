@@ -48,6 +48,11 @@ testmain (int argc, char **argv)
   for (i = 0; i < COUNT; i++)
     {
       mini_random_lucm_op (MAXBITS, vr, qr, m, &Q, &b0, &resr);
+      if (b0 == 0)
+	{
+	  fprintf (stderr, "lucas_mod: test disabled (%u tests done).\n", i);
+	  break;
+	}
       resm = mpz_lucas_mod (vm, qm, Q, b0, m);
 
       if (resr != resm)

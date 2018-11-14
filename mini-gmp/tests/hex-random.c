@@ -28,12 +28,21 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #endif
 
 #include "gmp.h"
+
+#include "hex-random.h"
+
 /* FIXME: gmp-impl.h included only for mpz_lucas_mod */
 /* #include "gmp-impl.h" */
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 #define mpz_lucas_mod  __gmpz_lucas_mod
 __GMP_DECLSPEC int mpz_lucas_mod (mpz_ptr, mpz_ptr, long, mp_bitcnt_t, mpz_srcptr, mpz_ptr, mpz_ptr);
 
-#include "hex-random.h"
+#if defined (__cplusplus)
+}
+#endif
 
 static gmp_randstate_t state;
 
@@ -519,7 +528,11 @@ void hex_random_lucm_op (unsigned long maxbits,
   if (*Q == 1 || gmp_urandomb_ui (state, 1))
     *Q = - *Q;
 
+#if (__GNU_MP_VERSION == 6 && (__GNU_MP_VERSION_MINOR > 1 || __GNU_MP_VERSION_PATCHLEVEL > 9))
   *res = mpz_lucas_mod (v, q, *Q, *b0, m, t1, t2);
+#else
+  *b0 = 0;
+#endif
 
   gmp_asprintf (vp, "%Zx", v);
   gmp_asprintf (qp, "%Zx", q);
