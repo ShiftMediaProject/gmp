@@ -113,7 +113,7 @@ mpz_stronglucas (mpz_srcptr x, mpz_ptr V, mpz_ptr Qk)
     mp_limb_t maxD;
     int jac_bit1;
 
-    if (mpz_perfect_square_p (n))
+    if (UNLIKELY (mpz_perfect_square_p (n)))
       return 0; /* A square is composite. */
 
     /* Check Ds up to square root (in case, n is prime)
@@ -134,12 +134,12 @@ mpz_stronglucas (mpz_srcptr x, mpz_ptr V, mpz_ptr Qk)
     /* The only interesting composite D is 15.	*/
     do
       {
-	if (D >= maxD)
+	if (UNLIKELY (D >= maxD))
 	  return 1;
 	D += 2;
 	jac_bit1 = 0;
 	JACOBI_MOD_OR_MODEXACT_1_ODD (jac_bit1, tl, PTR (n), SIZ (n), D);
-	if (tl == 0)
+	if (UNLIKELY (tl == 0))
 	  return 0;
       }
     while (mpn_jacobi_base (tl, D, jac_bit1) == 1);
@@ -157,14 +157,14 @@ mpz_stronglucas (mpz_srcptr x, mpz_ptr V, mpz_ptr Qk)
 
   /* If Ud != 0 && Vd != 0 */
   if (mpz_lucas_mod (V, Qk, Q, b0, n, T1, T2) == 0)
-    if (--b0 != 0)
+    if (LIKELY (--b0 != 0))
       do
 	{
 	  /* V_{2k} <- V_k ^ 2 - 2Q^k */
 	  mpz_mul (T2, V, V);
 	  mpz_submul_ui (T2, Qk, 2);
 	  mpz_tdiv_r (V, T2, n);
-	  if (SIZ (V) == 0 || --b0 == 0)
+	  if (SIZ (V) == 0 || UNLIKELY (--b0 == 0))
 	    break;
 	  /* Q^{2k} = (Q^k)^2 */
 	  mpz_mul (T2, Qk, Qk);

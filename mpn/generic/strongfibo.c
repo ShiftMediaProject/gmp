@@ -139,7 +139,7 @@ mpn_lucm (mp_ptr lp, mp_srcptr np, mp_size_t nn, mp_srcptr mp, mp_size_t mn, mp_
 	cy += mpn_add_n (lp, lp, mp, mn);
 #else
       cy = mpn_lshift (scratch, scratch, mn, 1); /* 2F[n-1] */
-      if (cy)
+      if (UNLIKELY (cy))
 	cy -= mpn_sub_n (lp, scratch, lp, mn); /* L[n] = +/-(2F[n-1]-(-F[n])) */
       else
 	abs_sub_n (lp, lp, scratch, mn);
@@ -201,7 +201,7 @@ mpn_strongfibo (mp_srcptr mp, mp_size_t mn, mp_ptr scratch)
   lp = TMP_ALLOC_LIMBS (4 * mn + 6);
   sp = lp + 2 * mn + 3;
   en = mpn_lucm (sp, scratch, en, mp, mn, lp);
-  if (en != 0 && --b0 != 0)
+  if (en != 0 && LIKELY (--b0 != 0))
     {
       mpn_sqr (lp, sp, en);
       lp [0] |= 2; /* V^2 + 2 */
@@ -209,7 +209,7 @@ mpn_strongfibo (mp_srcptr mp, mp_size_t mn, mp_ptr scratch)
 	mpn_tdiv_qr (sp, lp, 0, lp, 2 * en, mp, mn);
       else
 	MPN_ZERO (lp + 2 * en, mn - 2 * en);
-      if (! mpn_zero_p (lp, mn) && --b0 != 0)
+      if (! mpn_zero_p (lp, mn) && LIKELY (--b0 != 0))
 	b0 = mpn_llriter (lp, mp, mn, b0, lp + mn + 1);
     }
   TMP_FREE;
