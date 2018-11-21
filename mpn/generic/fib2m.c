@@ -55,12 +55,12 @@ abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
           ++n;
           if (x > y)
             {
-              mpn_sub_n (rp, ap, bp, n);
+              ASSERT_NOCARRY (mpn_sub_n (rp, ap, bp, n));
               return 1;
             }
           else
             {
-              mpn_sub_n (rp, bp, ap, n);
+              ASSERT_NOCARRY (mpn_sub_n (rp, bp, ap, n));
               return -1;
             }
         }

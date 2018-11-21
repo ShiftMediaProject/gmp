@@ -52,12 +52,12 @@ abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
           ++n;
           if (x > y)
             {
-              mpn_sub_n (rp, ap, bp, n);
+              ASSERT_NOCARRY (mpn_sub_n (rp, ap, bp, n));
               return 1;
             }
           else
             {
-              mpn_sub_n (rp, bp, ap, n);
+              ASSERT_NOCARRY (mpn_sub_n (rp, bp, ap, n));
               return -1;
             }
         }
@@ -178,7 +178,7 @@ mpn_strongfibo (mp_srcptr mp, mp_size_t mn, mp_ptr scratch)
     mpz_t m = MPZ_ROINIT_N(mp, mn);
     b0 = mpz_scan0 (m, 0);
   }
-  if (b0 == mn * GMP_NUMB_BITS)
+  if (UNLIKELY (b0 == mn * GMP_NUMB_BITS))
     {
       en = 1;
       scratch [0] = 1;
@@ -188,7 +188,7 @@ mpn_strongfibo (mp_srcptr mp, mp_size_t mn, mp_ptr scratch)
     {
       int cnt = b0 % GMP_NUMB_BITS;
       en = b0 / GMP_NUMB_BITS;
-      if (cnt)
+      if (LIKELY (cnt != 0))
 	mpn_rshift (scratch, mp + en, mn - en, cnt);
       else
 	MPN_COPY (scratch, mp + en, mn - en);
