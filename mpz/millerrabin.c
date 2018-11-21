@@ -71,7 +71,9 @@ mpz_millerrabin (mpz_srcptr n, int reps)
   /* BPSW test */
   mpz_set_ui (x, 2);
   is_prime = millerrabin (n, x, y, q, k) && mpz_stronglucas (n, x, y);
-  if (is_prime)
+
+  reps -= 24;
+  if (reps > 0 && is_prime)
     {
       /* (n-5)/2 */
       mpz_sub_ui (nm, nm, 2L);
@@ -79,14 +81,14 @@ mpz_millerrabin (mpz_srcptr n, int reps)
 
       gmp_randinit_default (rstate);
 
-      for (reps -= 24; reps > 0 && is_prime; --reps)
+      do
 	{
 	  /* 3 to (n-1)/2 inclusive, don't want 1, 0 or 2 */
 	  mpz_urandomm (x, rstate, nm);
 	  mpz_add_ui (x, x, 3L);
 
 	  is_prime = millerrabin (n, x, y, q, k);
-	}
+	} while (--reps > 0 && is_prime);
 
       gmp_randclear (rstate);
     }
