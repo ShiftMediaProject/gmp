@@ -28,6 +28,7 @@ C STATUS
 C  * Not written with any power9 pipeline understanding.
 C  * The 4x unrolling was not motivated by any timing tests.
 C  * No local scheduling for performance tweaking has been done.
+C  * Decrease load scheduling!
 
 define(`rp', `r3')
 define(`up', `r4')
