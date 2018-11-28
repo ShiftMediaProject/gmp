@@ -84,6 +84,20 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#undef MPN_REDC_0
+#define MPN_REDC_0(rp, up, mp, invm)					\
+  do {									\
+    mp_limb_t p1, r0, u0, _dummy;					\
+    u0 = *(up);								\
+    umul_ppmm (p1, _dummy, *(mp), (u0 * (invm)) & GMP_NUMB_MASK);	\
+    ASSERT (((u0 + _dummy) & GMP_NUMB_MASK) == 0);			\
+    p1 += (u0 != 0);							\
+    r0 = (up)[1] + p1;							\
+    if (p1 > r0)							\
+      r0 -= *(mp);							\
+    *(rp) = r0;								\
+  } while (0)
+
 #undef MPN_REDC_1
 #define MPN_REDC_1(rp, up, mp, n, invm)					\
   do {									\
@@ -236,6 +250,11 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   /* Store b^2 at rp.  */
   mpn_sqr (tp, this_pp, n);
+#if 0
+  if (n == 1) {
+    MPN_REDC_0 (rp, tp, mp, mip[0]);
+  } else
+#endif
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     MPN_REDC_1 (rp, tp, mp, n, mip[0]);
@@ -250,6 +269,13 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   /* Precompute odd powers of b and put them in the temporary area at pp.  */
   for (i = (1 << (windowsize - 1)) - 1; i > 0; i--)
+#if 1
+    if (n == 1) {
+      umul_ppmm((tp)[1], *(tp), *(this_pp), *(rp));
+      ++this_pp ;
+      MPN_REDC_0 (this_pp, tp, mp, mip[0]);
+    } else
+#endif
     {
       mpn_mul_n (tp, this_pp, rp, n);
       this_pp += n;
@@ -285,8 +311,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	{								\
 	  MPN_SQR (tp, rp, n);						\
 	  MPN_REDUCE (rp, tp, mp, n, mip);				\
-	  ebi--;							\
-	  if (ebi == 0)							\
+	  if (--ebi == 0)						\
 	    goto done;							\
 	}								\
 									\
@@ -313,15 +338,25 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	{								\
 	  MPN_SQR (tp, rp, n);						\
 	  MPN_REDUCE (rp, tp, mp, n, mip);				\
-	  this_windowsize--;						\
 	}								\
-      while (this_windowsize != 0);					\
+      while (--this_windowsize != 0);					\
 									\
       MPN_MUL_N (tp, rp, pp + n * (expbits >> 1), n);			\
       MPN_REDUCE (rp, tp, mp, n, mip);					\
     }
 
 
+  if (n == 1)
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		umul_ppmm((r)[1], *(r), *(a), *(b))
+#define MPN_SQR(r,a,n)			umul_ppmm((r)[1], *(r), *(a), *(a))
+#define MPN_REDUCE(rp,tp,mp,n,mip)	MPN_REDC_0(rp, tp, mp, mip[0])
+      INNERLOOP;
+    }
+  else
 #if WANT_REDC_2
   if (REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD)
     {
