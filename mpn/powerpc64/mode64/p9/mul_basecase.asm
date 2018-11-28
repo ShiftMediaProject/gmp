@@ -282,8 +282,6 @@ L(m2_end):
 	mulld	r5, r8, v1
 	mulhdu	r10, r8, v1
 	b	L(cj)
-L(do_outer):
-	beq	cr0, L(ret)		C taken means vn = 1. We're done.
 
 L(outer):
 	ld	v0, 0(vp)
@@ -399,6 +397,7 @@ L(cj):	addex(	r12, r12, r30, 0)
 	cmpdi	cr0, r23, 0
 	addi	rp2, rp2, 16
 	addi	vp, vp, 16
+L(do_outer):
 	bne	cr0, L(outer)
 L(ret):
 	ld	r22, -80(r1)
