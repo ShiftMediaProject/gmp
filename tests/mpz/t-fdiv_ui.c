@@ -48,8 +48,7 @@ main (int argc, char **argv)
 
   mpz_init (bs);
 
-  if (argc == 2)
-     reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   mpz_init (dividend);
   mpz_init (quotient);

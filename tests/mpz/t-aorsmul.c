@@ -382,8 +382,7 @@ check_random (int argc, char *argv[])
   mpz_init (x);
   mpz_init (y);
 
-  if (argc == 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   for (i = 0; i < reps; i++)
     {

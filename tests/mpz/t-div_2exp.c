@@ -191,8 +191,7 @@ check_random (int argc, char *argv[])
   unsigned long  d;
   int            i;
 
-  if (argc == 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   mpz_init (a);
 

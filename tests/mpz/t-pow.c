@@ -206,8 +206,7 @@ main (int argc, char **argv)
   tests_start ();
   mp_trace_base = -16;
 
-  if (argc == 2)
-     reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   check_various ();
   check_random (reps);

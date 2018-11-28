@@ -43,8 +43,7 @@ main (int argc, char **argv)
   tests_start ();
   rands = RANDS;
 
-  if (argc == 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   mpz_inits (bs, t, dest, refdest, dividend, divisor, NULL);
 

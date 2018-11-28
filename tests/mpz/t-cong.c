@@ -141,8 +141,7 @@ check_random (int argc, char *argv[])
   mpz_t bs;
   unsigned long size_range, size;
 
-  if (argc >= 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   mpz_init (bs);
 

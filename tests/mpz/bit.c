@@ -289,8 +289,7 @@ check_random (int argc, char *argv[])
   unsigned long int bitindex;
   const char  *s = "";
 
-  if (argc == 2)
-    reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   mpz_init (x);
   mpz_init (s0);
