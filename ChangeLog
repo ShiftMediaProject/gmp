@@ -1,3 +1,20 @@
+2018-11-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/gmp-mparam.h: New file.
+
+	* mpn/powerpc64/mode64/p9/add_n_sub_n.asm: New file.
+
+2018-11-28  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/sqr_basecase.asm: New file.
+	* mpn/powerpc64/mode64/p9/mul_1.asm: New file.
+
+2018-11-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/mul_basecase.asm: New file.
+
+	* mpn/powerpc64/mode64/p9/addmul_1.asm: Optimise.
+
 2018-11-12  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc64/mode64/p9/aorsmul_1.asm: New file, providing fast
