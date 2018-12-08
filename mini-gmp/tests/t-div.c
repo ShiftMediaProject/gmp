@@ -162,7 +162,7 @@ testmain (int argc, char **argv)
 
 	  if (mpz_fits_ulong_p (b))
 	    {
-	      mp_limb_t rl;
+	      unsigned long rl;
 
 	      mpz_set_si (r, -7);
 	      mpz_set_ui (q, ~7);
