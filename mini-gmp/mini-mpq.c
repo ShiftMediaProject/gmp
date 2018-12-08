@@ -252,7 +252,18 @@ mpq_cmp_ui (const mpq_t q, unsigned long n, unsigned long d)
 {
   mpq_t t;
   assert (d != 0);
-  return mpq_cmp (q, mpq_roinit_normal_n (t, &n, n != 0, &d, 1));
+  if (sizeof (unsigned long) == sizeof (mp_limb_t))
+    return mpq_cmp (q, mpq_roinit_normal_n (t, (mp_srcptr) &n, n != 0, (mp_srcptr) &d, 1));
+  else {
+    int ret;
+
+    mpq_init (t);
+    mpq_set_ui (t, n, d);
+    ret = mpq_cmp (q, t);
+    mpq_clear (t);
+
+    return ret;
+  }
 }
 
 int
@@ -267,7 +278,12 @@ mpq_cmp_si (const mpq_t q, signed long n, unsigned long d)
       mpq_t t;
       unsigned long l_n = GMP_NEG_CAST (unsigned long, n);
 
-      return mpq_cmp (q, mpq_roinit_normal_n (t, &l_n, -1, &d, 1));
+      if (sizeof (unsigned long) == sizeof (mp_limb_t))
+	return mpq_cmp (q, mpq_roinit_normal_n (t, (mp_srcptr) &l_n, -1, (mp_srcptr) &d, 1));
+
+      mpq_roinit_normal_n (t, mpq_numref (q)->_mp_d, - mpq_numref (q)->_mp_size,
+		       mpq_denref (q)->_mp_d, mpq_denref (q)->_mp_size);
+      return - mpq_cmp_ui (t, l_n, d);
     }
 }
 
