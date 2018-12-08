@@ -55,7 +55,8 @@ main (int argc, char **argv)
 
   mpz_init (bs);
 
-  TESTS_REPS (reps, argv, argc);
+  if (argc == 2)
+    reps = atoi (argv[1]);
 
   mpz_init (op1);
   mpz_init (op2);

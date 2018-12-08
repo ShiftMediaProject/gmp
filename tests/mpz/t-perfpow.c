@@ -238,8 +238,8 @@ main (int argc, char **argv)
   check_tests ();
 
   n_tests = 500;
-  TESTS_REPS (n_tests, argv, argc);
-
+  if (argc == 2)
+    n_tests = atoi (argv[1]);
   check_random (n_tests);
 
   tests_end ();

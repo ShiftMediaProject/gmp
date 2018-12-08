@@ -143,7 +143,8 @@ main (int argc, char **argv)
   tests_start ();
   mp_trace_base = -16;
 
-  TESTS_REPS (reps, argv, argc);
+  if (argc == 2)
+     reps = atoi (argv[1]);
 
   check_modulo ();
   check_sqrt (reps);
