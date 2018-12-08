@@ -58,7 +58,7 @@ see https://www.gnu.org/licenses/.  */
 /* Macros */
 #define GMP_LIMB_BITS (sizeof(mp_limb_t) * CHAR_BIT)
 
-#define GMP_LIMB_MAX (~ (mp_limb_t) 0)
+#define GMP_LIMB_MAX ((mp_limb_t) ~ (mp_limb_t) 0)
 #define GMP_LIMB_HIGHBIT ((mp_limb_t) 1 << (GMP_LIMB_BITS - 1))
 
 #define GMP_HLIMB_BIT ((mp_limb_t) 1 << (GMP_LIMB_BITS / 2))
@@ -1029,7 +1029,7 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   if (shift > 0)
     {
-      assert ((r0 << (GMP_LIMB_BITS - shift)) == 0);
+      assert ((r0 & GMP_LIMB_MAX >> GMP_LIMB_BITS - shift) == 0);
       r0 = (r0 >> shift) | (r1 << (GMP_LIMB_BITS - shift));
       r1 >>= shift;
     }
@@ -1252,7 +1252,7 @@ mpn_limb_get_str (unsigned char *sp, mp_limb_t w,
       l = w << binv->shift;
 
       gmp_udiv_qrnnd_preinv (w, r, h, l, binv->d1, binv->di);
-      assert ( (r << (GMP_LIMB_BITS - binv->shift)) == 0);
+      assert ((r & GMP_LIMB_MAX >> GMP_LIMB_BITS - binv->shift) == 0);
       r >>= binv->shift;
 
       sp[i] = r;
@@ -1420,7 +1420,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *sp, size_t sn, int base)
 void
 mpz_init (mpz_t r)
 {
-  static const mp_limb_t dummy_limb = 0xc1a0;
+  static const mp_limb_t dummy_limb = GMP_LIMB_MAX & 0xc1a0;
 
   r->_mp_alloc = 0;
   r->_mp_size = 0;
@@ -1540,9 +1540,9 @@ mpz_fits_slong_p (const mpz_t u)
   mp_size_t us = u->_mp_size;
 
   if (us == 1)
-    return u->_mp_d[0] < GMP_LIMB_HIGHBIT;
+    return u->_mp_d[0] <= LONG_MAX;
   else if (us == -1)
-    return u->_mp_d[0] <= GMP_LIMB_HIGHBIT;
+    return u->_mp_d[0] <= GMP_NEG_CAST (mp_limb_t, LONG_MIN);
   else
     return (us == 0);
 }
@@ -1558,11 +1558,13 @@ mpz_fits_ulong_p (const mpz_t u)
 long int
 mpz_get_si (const mpz_t u)
 {
+  unsigned long r = mpz_get_ui (u);
+
   if (u->_mp_size < 0)
-    /* This expression is necessary to properly handle 0x80000000 */
-    return -1 - (long) ((u->_mp_d[0] - 1) & ~GMP_LIMB_HIGHBIT);
+    /* This expression is necessary to properly handle -LONG_MIN */
+    return -(long) 1 - (long) ((r - 1) & LONG_MAX);
   else
-    return (long) (mpz_get_ui (u) & ~GMP_LIMB_HIGHBIT);
+    return (long) (r & LONG_MAX);
 }
 
 unsigned long int
@@ -1807,14 +1809,18 @@ mpz_cmp_si (const mpz_t u, long v)
 {
   mp_size_t usize = u->_mp_size;
 
-  if (usize < -1)
-    return -1;
-  else if (v >= 0)
+  if (v >= 0)
     return mpz_cmp_ui (u, v);
   else if (usize >= 0)
     return 1;
+  else if (usize < -1)
+    return -1;
   else /* usize == -1 */
-    return GMP_CMP (GMP_NEG_CAST (mp_limb_t, v), u->_mp_d[0]);
+    {
+      unsigned long uu = mpz_get_ui (u);
+      unsigned long vv = GMP_NEG_CAST (mp_limb_t, v);
+      return GMP_CMP(vv, uu);
+    }
 }
 
 int
@@ -1822,12 +1828,15 @@ mpz_cmp_ui (const mpz_t u, unsigned long v)
 {
   mp_size_t usize = u->_mp_size;
 
-  if (usize > 1)
-    return 1;
-  else if (usize < 0)
+  if (usize < 0)
     return -1;
+  else if (usize > 1)
+    return 1;
   else
-    return GMP_CMP (mpz_get_ui (u), v);
+    {
+      unsigned long uu = mpz_get_ui (u);
+      return GMP_CMP(uu, v);
+    }
 }
 
 int
@@ -1850,7 +1859,10 @@ mpz_cmpabs_ui (const mpz_t u, unsigned long v)
   if (GMP_ABS (u->_mp_size) > 1)
     return 1;
   else
-    return GMP_CMP (mpz_get_ui (u), v);
+    {
+      unsigned long uu = mpz_get_ui (u);
+      return GMP_CMP(uu, v);
+    }
 }
 
 int
@@ -2046,7 +2058,7 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
       mpz_neg (r, r);
     }
   else
-    mpz_mul_ui (r, u, (unsigned long int) v);
+    mpz_mul_ui (r, u, v);
 }
 
 void
@@ -3478,8 +3490,8 @@ mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
   int res;
 
   assert (b0 > 0);
-  assert (Q <= (long) (GMP_LIMB_HIGHBIT >> 1));
-  assert (Q > -(long) (GMP_LIMB_HIGHBIT >> 1));
+  assert (Q <= - (LONG_MIN / 2));
+  assert (Q >= - (LONG_MAX / 2));
   assert (mpz_cmp_ui (n, 4) > 0);
   assert (mpz_odd_p (n));
 
@@ -3728,7 +3740,7 @@ mpz_tstbit (const mpz_t d, mp_bitcnt_t bit_index)
     {
       /* d < 0. Check if any of the bits below is set: If so, our bit
 	 must be complemented. */
-      if (shift > 0 && (w << (GMP_LIMB_BITS - shift)) > 0)
+      if (shift > 0 && (mp_limb_t) (w << (GMP_LIMB_BITS - shift)) > 0)
 	return bit ^ 1;
       while (--limb_index >= 0)
 	if (d->_mp_d[limb_index] > 0)
