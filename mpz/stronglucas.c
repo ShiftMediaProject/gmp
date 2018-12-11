@@ -1,5 +1,5 @@
-/* mpz_stronglucas(n,reps) -- An implementation of the strong Lucas
-   primality test, using parameters as suggested by the BPSW test.
+/* mpz_stronglucas(n, t1, t2) -- An implementation of the strong Lucas
+   primality test on n, using parameters as suggested by the BPSW test.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
