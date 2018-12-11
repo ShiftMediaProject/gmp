@@ -136,8 +136,17 @@ mpz_invert_2exp (mpz_t r, const mpz_t a, unsigned long n)
 
 /* Calculate inv satisfying r*a == 1 mod 2^n. */
 void
-mpz_invert_ui_2exp (mpz_t r, mp_limb_t a, unsigned long n)
+mpz_invert_ui_2exp (mpz_t r, unsigned long a, unsigned long n)
 {
   mpz_t  az;
-  mpz_invert_2exp (r, mpz_roinit_n (az, &a, 1), n);
+
+  if (sizeof (mp_limb_t) == sizeof (unsigned long))
+    mpz_invert_2exp (r, mpz_roinit_n (az, (mp_srcptr) &a, 1), n);
+  else
+    {
+      mpz_init_set_ui (az, a);
+      mpz_invert_2exp (r, az, n);
+      mpz_clear (az);
+    }
+
 }
