@@ -47,6 +47,45 @@ _mpq_set_zz (mpq_t q, mpz_t n, mpz_t d)
 }
 
 void
+testcmpui ()
+{
+  unsigned d1, d2, n1, n2;
+  mpq_t q1, q2;
+
+  mpq_init (q1);
+  mpq_init (q2);
+
+  for (d1 = 1; d1 < 6; d1 += 2)
+    for (n1 = 1; n1 < 6; n1 *= 2)
+      {
+	mpq_set_ui (q1, n1, d1);
+	for (d2 = 1; d2 < 6; d2 += 2)
+	  for (n2 = 1; n2 < 6; n2 *= 2)
+	    {
+	      int fres = mpq_cmp_ui (q1, n2, d2);
+	      int ref = (d1*n2 < d2*n1) - (d1*n2 > d2*n1);
+
+	      mpq_set_ui (q2, n2, d2);
+
+	      if (!ref != mpq_equal (q1, q2))
+		{
+		  fprintf (stderr, "mpz_equal failed: %i / %i = %i / %i ? %i\n", n1, d1, n2, d2, ref);
+		  abort ();
+		}
+
+	      if (ref != fres)
+		{
+		  fprintf (stderr, "mpz_cmp_ui failed: %i / %i = %i / %i ? %i != %i\n", n1, d1, n2, d2, ref, fres);
+		  abort ();
+		}
+	    }
+      }
+
+  mpq_clear (q1);
+  mpq_clear (q2);
+}
+
+void
 testmain (int argc, char **argv)
 {
   unsigned i;
@@ -54,6 +93,7 @@ testmain (int argc, char **argv)
   mpq_t rr, ii, ff;
   int tst;
 
+  testcmpui ();
   mpz_init (a);
   mpz_init (b);
   mpz_init (r);
