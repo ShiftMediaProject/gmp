@@ -106,8 +106,7 @@ main (int argc, char **argv)
   mpz_init (nxtp);
   mpz_init (ref_nxtp);
 
-  if (argc == 2)
-     reps = atoi (argv[1]);
+  TESTS_REPS (reps, argv, argc);
 
   for (i = 0; i < reps; i++)
     {
