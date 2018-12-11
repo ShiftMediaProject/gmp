@@ -1029,7 +1029,7 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   if (shift > 0)
     {
-      assert ((r0 & GMP_LIMB_MAX >> GMP_LIMB_BITS - shift) == 0);
+      assert ((r0 & GMP_LIMB_MAX >> (GMP_LIMB_BITS - shift)) == 0);
       r0 = (r0 >> shift) | (r1 << (GMP_LIMB_BITS - shift));
       r1 >>= shift;
     }
@@ -1252,7 +1252,7 @@ mpn_limb_get_str (unsigned char *sp, mp_limb_t w,
       l = w << binv->shift;
 
       gmp_udiv_qrnnd_preinv (w, r, h, l, binv->d1, binv->di);
-      assert ((r & GMP_LIMB_MAX >> GMP_LIMB_BITS - binv->shift) == 0);
+      assert ((r & GMP_LIMB_MAX >> (GMP_LIMB_BITS - binv->shift)) == 0);
       r >>= binv->shift;
 
       sp[i] = r;
