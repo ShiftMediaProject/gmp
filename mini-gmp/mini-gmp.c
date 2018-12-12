@@ -1029,7 +1029,7 @@ mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   if (shift > 0)
     {
-      assert ((r0 & GMP_LIMB_MAX >> (GMP_LIMB_BITS - shift)) == 0);
+      assert ((r0 & (GMP_LIMB_MAX >> (GMP_LIMB_BITS - shift))) == 0);
       r0 = (r0 >> shift) | (r1 << (GMP_LIMB_BITS - shift));
       r1 >>= shift;
     }
@@ -1252,7 +1252,7 @@ mpn_limb_get_str (unsigned char *sp, mp_limb_t w,
       l = w << binv->shift;
 
       gmp_udiv_qrnnd_preinv (w, r, h, l, binv->d1, binv->di);
-      assert ((r & GMP_LIMB_MAX >> (GMP_LIMB_BITS - binv->shift)) == 0);
+      assert ((r & (GMP_LIMB_MAX >> (GMP_LIMB_BITS - binv->shift))) == 0);
       r >>= binv->shift;
 
       sp[i] = r;
@@ -2866,7 +2866,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
       signed long sign = mpz_sgn (v);
       mpz_abs (g, v);
       if (s)
-	mpz_set_ui (s, 0);
+	s->_mp_size = 0;
       if (t)
 	mpz_set_si (t, sign);
       return;
@@ -2880,7 +2880,7 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
       if (s)
 	mpz_set_si (s, sign);
       if (t)
-	mpz_set_ui (t, 0);
+	t->_mp_size = 0;
       return;
     }
 
@@ -3005,8 +3005,9 @@ mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t u, const mpz_t v)
 	  mpz_sub (s0, s0, s1);
 	  mpz_add (t0, t0, t1);
 	}
-      mpz_divexact_ui (s0, s0, 2);
-      mpz_divexact_ui (t0, t0, 2);
+      assert (mpz_even_p (t0) && mpz_even_p (s0));
+      mpz_tdiv_q_2exp (s0, s0, 1);
+      mpz_tdiv_q_2exp (t0, t0, 1);
     }
 
   /* Arrange so that |s| < |u| / 2g */
@@ -4188,7 +4189,7 @@ mpz_scan1 (const mpz_t u, mp_bitcnt_t starting_bit)
 	}
 
       /* Mask to 0 all bits before starting_bit, thus ignoring them. */
-      limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
+      limb &= GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS);
     }
 
   return mpn_common_scan (limb, i, up, un, ux);
@@ -4218,7 +4219,7 @@ mpz_scan0 (const mpz_t u, mp_bitcnt_t starting_bit)
     limb -= mpn_zero_p (up, i); /* limb = ~(~limb + zero_p) */
 
   /* Mask all bits before starting_bit, thus ignoring them. */
-  limb &= (GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS));
+  limb &= GMP_LIMB_MAX << (starting_bit % GMP_LIMB_BITS);
 
   return mpn_common_scan (limb, i, up, un, ux);
 }
