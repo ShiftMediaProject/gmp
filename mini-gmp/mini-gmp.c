@@ -3581,7 +3581,7 @@ gmp_stronglucas (const mpz_t x, mpz_t Qk)
   b0 = mpz_scan0 (n, 0);
 
   /* D= P^2 - 4Q; P = 1; Q = (1-D)/4 */
-  Q = (D & 2) ? (D >> 2) + 1 : -(D >> 2);
+  Q = (D & 2) ? (D >> 2) + 1 : -(long) (D >> 2);
 
   if (! mpz_lucas_mod (V, Qk, Q, b0, n))	/* If Ud != 0 */
     while (V->_mp_size != 0 && --b0 != 0)	/* while Vk != 0 */
@@ -3848,8 +3848,8 @@ mpz_combit (mpz_t d, mp_bitcnt_t bit_index)
 void
 mpz_com (mpz_t r, const mpz_t u)
 {
-  mpz_neg (r, u);
-  mpz_sub_ui (r, r, 1);
+  mpz_add_ui (r, u, 1);
+  mpz_neg (r, r);
 }
 
 void
