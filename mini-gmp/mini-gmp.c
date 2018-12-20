@@ -1897,81 +1897,58 @@ mpz_swap (mpz_t u, mpz_t v)
 
 /* MPZ addition and subtraction */
 
-/* Adds to the absolute value. Returns new size, but doesn't store it. */
-static mp_size_t
-mpz_abs_add_ui (mpz_t r, const mpz_t a, unsigned long b)
-{
-  mp_size_t an;
-  mp_ptr rp;
-  mp_limb_t cy;
-
-  an = GMP_ABS (a->_mp_size);
-  if (an == 0)
-    {
-      MPZ_REALLOC (r, 1)[0] = b;
-      return b > 0;
-    }
-
-  rp = MPZ_REALLOC (r, an + 1);
-
-  cy = mpn_add_1 (rp, a->_mp_d, an, b);
-  rp[an] = cy;
-  an += cy;
-
-  return an;
-}
-
-/* Subtract from the absolute value. Returns new size, (or -1 on underflow),
-   but doesn't store it. */
-static mp_size_t
-mpz_abs_sub_ui (mpz_t r, const mpz_t a, unsigned long b)
-{
-  mp_size_t an = GMP_ABS (a->_mp_size);
-  mp_ptr rp;
-
-  if (an == 0)
-    {
-      MPZ_REALLOC (r, 1)[0] = b;
-      return -(b > 0);
-    }
-  rp = MPZ_REALLOC (r, an);
-  if (an == 1 && a->_mp_d[0] < b)
-    {
-      rp[0] = b - a->_mp_d[0];
-      return -1;
-    }
-  else
-    {
-      gmp_assert_nocarry (mpn_sub_1 (rp, a->_mp_d, an, b));
-      return mpn_normalized_size (rp, an);
-    }
-}
 
 void
 mpz_add_ui (mpz_t r, const mpz_t a, unsigned long b)
 {
-  if (a->_mp_size >= 0)
-    r->_mp_size = mpz_abs_add_ui (r, a, b);
+  if (b > GMP_LIMB_MAX)
+    {
+      mpz_t bb;
+      mpz_init_set_ui (bb, b);
+      mpz_add (r, a, bb);
+      mpz_clear (bb);
+    }
   else
-    r->_mp_size = -mpz_abs_sub_ui (r, a, b);
+    {
+      mp_size_t an = a->_mp_size;
+
+      if (an == 0)
+        mpz_set_ui (r, b);
+      else if (an > 0)
+        {
+          mp_ptr rp = MPZ_REALLOC (r, an + 1);
+          mp_limb_t cy = mpn_add_1 (rp, a->_mp_d, an, b);
+          rp[an] = cy;
+          r->_mp_size = an + cy;
+        }
+      else
+        {
+          mp_ptr rp = MPZ_REALLOC (r, -an);
+          an = -an;
+
+          if (mpn_sub_1 (rp, a->_mp_d, an, b) != 0)
+            {
+              *rp = - *rp;
+              r->_mp_size = 1;
+            }
+          else
+            r->_mp_size = - mpn_normalized_size (rp, an);
+        }
+    }
 }
 
 void
 mpz_sub_ui (mpz_t r, const mpz_t a, unsigned long b)
 {
-  if (a->_mp_size < 0)
-    r->_mp_size = -mpz_abs_add_ui (r, a, b);
-  else
-    r->_mp_size = mpz_abs_sub_ui (r, a, b);
+  mpz_ui_sub (r, b, a);
+  mpz_neg (r, r);
 }
 
 void
 mpz_ui_sub (mpz_t r, unsigned long a, const mpz_t b)
 {
-  if (b->_mp_size < 0)
-    r->_mp_size = mpz_abs_add_ui (r, b, a);
-  else
-    r->_mp_size = -mpz_abs_sub_ui (r, b, a);
+  mpz_neg (r, b);
+  mpz_add_ui (r, r, a);
 }
 
 static mp_size_t
