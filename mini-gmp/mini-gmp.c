@@ -129,6 +129,20 @@ see https://www.gnu.org/licenses/.  */
 
 #define gmp_umul_ppmm(w1, w0, u, v)					\
   do {									\
+    int LOCAL_GMP_LIMB_BITS = GMP_LIMB_BITS;				\
+    if (sizeof (unsigned int) >= 2 * sizeof (mp_limb_t))		\
+      {									\
+	unsigned int __ww = (unsigned int) (u) * (v);			\
+	w0 = (mp_limb_t) __ww;						\
+	w1 = (mp_limb_t) (__ww >> LOCAL_GMP_LIMB_BITS);			\
+      }									\
+    else if (sizeof (unsigned long int) >= 2 * sizeof (mp_limb_t))	\
+      {									\
+	unsigned long int __ww = (unsigned long int) (u) * (v);		\
+	w0 = (mp_limb_t) __ww;						\
+	w1 = (mp_limb_t) (__ww >> LOCAL_GMP_LIMB_BITS);			\
+      }									\
+    else {								\
     mp_limb_t __x0, __x1, __x2, __x3;					\
     unsigned __ul, __vl, __uh, __vh;					\
     mp_limb_t __u = (u), __v = (v);					\
@@ -150,6 +164,7 @@ see https://www.gnu.org/licenses/.  */
 									\
     (w1) = __x3 + (__x1 >> (GMP_LIMB_BITS / 2));			\
     (w0) = (__x1 << (GMP_LIMB_BITS / 2)) + (__x0 & GMP_LLIMB_MASK);	\
+    }									\
   } while (0)
 
 #define gmp_udiv_qrnnd_preinv(q, r, nh, nl, d, di)			\
@@ -753,6 +768,18 @@ mpn_neg (mp_ptr rp, mp_srcptr up, mp_size_t n)
 mp_limb_t
 mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 {
+  int GMP_LIMB_BITS_MUL_3 = GMP_LIMB_BITS * 3;
+  if (sizeof (unsigned) * CHAR_BIT > GMP_LIMB_BITS_MUL_3)
+    {
+      return (((unsigned) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
+	(((unsigned) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
+    }
+  else if (GMP_ULONG_BITS > GMP_LIMB_BITS_MUL_3)
+    {
+      return (((unsigned long) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
+	(((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
+    }
+  else {
   mp_limb_t r, p, m, ql;
   unsigned ul, uh, qh;
 
@@ -854,6 +881,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
     }
 
   return m;
+  }
 }
 
 struct gmp_div_inverse
@@ -1478,6 +1506,12 @@ mpz_set_si (mpz_t r, signed long int x)
   if (x >= 0)
     mpz_set_ui (r, x);
   else /* (x < 0) */
+    if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+      {
+	mpz_set_ui (r, GMP_NEG_CAST (unsigned long int, x));
+	mpz_neg (r, r);
+      }
+  else
     {
       r->_mp_size = -1;
       MPZ_REALLOC (r, 1)[0] = GMP_NEG_CAST (unsigned long int, x);
@@ -1491,6 +1525,15 @@ mpz_set_ui (mpz_t r, unsigned long int x)
     {
       r->_mp_size = 1;
       MPZ_REALLOC (r, 1)[0] = x;
+      if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+	{
+	  int LOCAL_GMP_LIMB_BITS = GMP_LIMB_BITS;
+	  while (x >>= LOCAL_GMP_LIMB_BITS)
+	    {
+	      ++ r->_mp_size;
+	      MPZ_REALLOC (r, r->_mp_size)[r->_mp_size - 1] = x;
+	    }
+	}
     }
   else
     r->_mp_size = 0;
@@ -1539,7 +1582,10 @@ mpz_fits_slong_p (const mpz_t u)
 {
   mp_size_t us = u->_mp_size;
 
-  if (us == 1)
+  if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+    return (LONG_MAX + LONG_MIN == 0 || mpz_cmp_ui (u, LONG_MAX) <= 0) &&
+      mpz_cmpabs_ui (u, GMP_NEG_CAST (unsigned long int, LONG_MIN)) <= 0;
+  else if (us == 1)
     return u->_mp_d[0] <= LONG_MAX;
   else if (us == -1)
     return u->_mp_d[0] <= GMP_NEG_CAST (mp_limb_t, LONG_MIN);
@@ -1547,10 +1593,25 @@ mpz_fits_slong_p (const mpz_t u)
     return (us == 0);
 }
 
+static int
+mpn_absfits_ulong_p (mp_srcptr up, mp_size_t un)
+{
+  int ulongsize = GMP_ULONG_BITS / GMP_LIMB_BITS;
+  mp_limb_t ulongrem = 0;
+
+  if (GMP_ULONG_BITS % GMP_LIMB_BITS != 0)
+    ulongrem = (mp_limb_t) (ULONG_MAX >> GMP_LIMB_BITS * ulongsize) + 1;
+
+  return un <= ulongsize || (up[ulongsize] < ulongrem && un == ulongsize + 1);
+}
+
 int
 mpz_fits_ulong_p (const mpz_t u)
 {
   mp_size_t us = u->_mp_size;
+
+  if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+    return us >= 0 && mpn_absfits_ulong_p (u->_mp_d, us);
 
   return (us == (us > 0));
 }
@@ -1559,10 +1620,11 @@ long int
 mpz_get_si (const mpz_t u)
 {
   unsigned long r = mpz_get_ui (u);
+  unsigned long c = -LONG_MAX - LONG_MIN;
 
   if (u->_mp_size < 0)
     /* This expression is necessary to properly handle -LONG_MIN */
-    return -(long) 1 - (long) ((r - 1) & LONG_MAX);
+    return -(long) c - (long) ((r - c) & LONG_MAX);
   else
     return (long) (r & LONG_MAX);
 }
@@ -1570,6 +1632,17 @@ mpz_get_si (const mpz_t u)
 unsigned long int
 mpz_get_ui (const mpz_t u)
 {
+  if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+    {
+      int LOCAL_GMP_LIMB_BITS = GMP_LIMB_BITS;
+      unsigned long r = 0;
+      mp_size_t n = GMP_ABS (u->_mp_size);
+      n = GMP_MIN (n, 1 + (GMP_ULONG_BITS - 1) / GMP_LIMB_BITS);
+      while (--n >= 0)
+	r = (r << LOCAL_GMP_LIMB_BITS) + u->_mp_d[n];
+      return r;
+    }
+
   return u->_mp_size == 0 ? 0 : u->_mp_d[0];
 }
 
@@ -1667,7 +1740,7 @@ mpz_set_d (mpz_t r, double x)
       r->_mp_size = 0;
       return;
     }
-  B = 2.0 * (double) GMP_LIMB_HIGHBIT;
+  B = 4.0 * (double) (GMP_LIMB_HIGHBIT >> 1);
   Bi = 1.0 / B;
   for (rn = 1; x >= B; rn++)
     x *= Bi;
@@ -1705,7 +1778,7 @@ mpz_get_d (const mpz_t u)
   mp_limb_t l;
   mp_size_t un;
   double x;
-  double B = 2.0 * (double) GMP_LIMB_HIGHBIT;
+  double B = 4.0 * (double) (GMP_LIMB_HIGHBIT >> 1);
 
   un = GMP_ABS (u->_mp_size);
 
@@ -1750,7 +1823,7 @@ mpz_cmpabs_d (const mpz_t x, double d)
     {
       xn = GMP_ABS (xn);
 
-      B = 2.0 * (double) GMP_LIMB_HIGHBIT;
+      B = 4.0 * (double) (GMP_LIMB_HIGHBIT >> 1);
       Bi = 1.0 / B;
 
       /* Scale d so it can be compared with the top limb. */
@@ -1813,6 +1886,8 @@ mpz_cmp_si (const mpz_t u, long v)
     return mpz_cmp_ui (u, v);
   else if (usize >= 0)
     return 1;
+  else if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+    return - mpz_cmpabs_ui (u, GMP_NEG_CAST (unsigned long int, v));
   else if (usize < -1)
     return -1;
   else /* usize == -1 */
@@ -1830,6 +1905,8 @@ mpz_cmp_ui (const mpz_t u, unsigned long v)
 
   if (usize < 0)
     return -1;
+  else if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+    return mpz_cmpabs_ui (u, v);
   else if (usize > 1)
     return 1;
   else
@@ -1856,7 +1933,9 @@ mpz_cmp (const mpz_t a, const mpz_t b)
 int
 mpz_cmpabs_ui (const mpz_t u, unsigned long v)
 {
-  if (GMP_ABS (u->_mp_size) > 1)
+  mp_size_t un = GMP_ABS (u->_mp_size);
+
+  if (! mpn_absfits_ulong_p (u->_mp_d, un))
     return 1;
   else
     {
@@ -2050,6 +2129,15 @@ mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
   if (us == 0 || v == 0)
     {
       r->_mp_size = 0;
+      return;
+    }
+
+  if (v > GMP_LIMB_MAX)
+    {
+      mpz_t vv;
+      mpz_init_set_ui (vv, v);
+      mpz_mul (r, u, vv);
+      mpz_clear (vv);
       return;
     }
 
@@ -2561,6 +2649,24 @@ mpz_div_qr_ui (mpz_t q, mpz_t r,
       return 0;
     }
 
+  if (d > GMP_LIMB_MAX)
+    {
+      unsigned long ret;
+      mpz_t rr, dd;
+
+      mpz_init (rr);
+      mpz_init_set_ui (dd, d);
+      mpz_div_qr (q, rr, n, dd, mode);
+      mpz_clear (dd);
+      ret = mpz_get_ui (rr);
+
+      if (r)
+	mpz_swap (r, rr);
+      mpz_clear (rr);
+
+      return ret;
+    }
+
   qn = GMP_ABS (ns);
   if (q)
     qp = MPZ_REALLOC (q, qn);
@@ -2745,7 +2851,19 @@ mpz_gcd_ui (mpz_t g, const mpz_t u, unsigned long v)
     {
       un = GMP_ABS (u->_mp_size);
       if (un != 0)
-	v = mpn_gcd_11 (mpn_div_qr_1 (NULL, u->_mp_d, un, v), v);
+	{
+	  if (v > GMP_LIMB_MAX)
+	    {
+	      mpz_t vv;
+
+	      mpz_init_set_ui (vv, v);
+	      mpz_gcd (vv, u, vv);
+	      v = mpz_get_ui (vv);
+	      mpz_clear (vv);
+	    }
+	  else
+	    v = mpn_gcd_11 (mpn_div_qr_1 (NULL, u->_mp_d, un, v), v);
+	}
 
       if (g)
 	mpz_set_ui (g, v);
@@ -3109,7 +3227,15 @@ void
 mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
 {
   mpz_t b;
-  mpz_pow_ui (r, mpz_roinit_normal_n (b, &blimb, blimb != 0), e);
+
+  if (sizeof (mp_limb_t) == sizeof (unsigned long))
+    mpz_pow_ui (r, mpz_roinit_normal_n (b, (mp_srcptr) &blimb, blimb != 0), e);
+  else
+    {
+      mpz_init_set_ui (b, blimb);
+      mpz_pow_ui (r, b, e);
+      mpz_clear (b);
+    }
 }
 
 void
@@ -3221,7 +3347,15 @@ void
 mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
-  mpz_powm (r, b, mpz_roinit_normal_n (e, &elimb, elimb != 0), m);
+
+  if (sizeof (mp_limb_t) == sizeof (unsigned long))
+    mpz_powm (r, b, mpz_roinit_normal_n (e, (mp_srcptr) &elimb, elimb != 0), m);
+  else
+    {
+      mpz_init_set_ui (e, elimb);
+      mpz_powm (r, b, e, m);
+      mpz_clear (e);
+    }
 }
 
 /* x=trunc(y^(1/z)), r=y-x^z */
