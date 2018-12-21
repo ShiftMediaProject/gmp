@@ -3593,6 +3593,9 @@ gmp_lucas_step_k_2k (mpz_t V, mpz_t Qk, const mpz_t n)
 /* with P=1, Q=Q; k = (n>>b0)|1. */
 /* Requires an odd n > 4; b0 > 0; -2*Q must not overflow a long */
 /* Returns (U_k == 0) and sets V=V_k and Qk=Q^k. */
+#ifndef __MINI_GMP_TESTING
+static
+#endif
 int
 mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
 	       mp_bitcnt_t b0, const mpz_t n)
