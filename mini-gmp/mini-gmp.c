@@ -1580,17 +1580,8 @@ mpz_init_set (mpz_t r, const mpz_t x)
 int
 mpz_fits_slong_p (const mpz_t u)
 {
-  mp_size_t us = u->_mp_size;
-
-  if (GMP_LIMB_BITS < GMP_ULONG_BITS)
     return (LONG_MAX + LONG_MIN == 0 || mpz_cmp_ui (u, LONG_MAX) <= 0) &&
       mpz_cmpabs_ui (u, GMP_NEG_CAST (unsigned long int, LONG_MIN)) <= 0;
-  else if (us == 1)
-    return u->_mp_d[0] <= LONG_MAX;
-  else if (us == -1)
-    return u->_mp_d[0] <= GMP_NEG_CAST (mp_limb_t, LONG_MIN);
-  else
-    return (us == 0);
 }
 
 static int
@@ -1610,10 +1601,7 @@ mpz_fits_ulong_p (const mpz_t u)
 {
   mp_size_t us = u->_mp_size;
 
-  if (GMP_LIMB_BITS < GMP_ULONG_BITS)
     return us >= 0 && mpn_absfits_ulong_p (u->_mp_d, us);
-
-  return (us == (us > 0));
 }
 
 long int
@@ -1886,16 +1874,8 @@ mpz_cmp_si (const mpz_t u, long v)
     return mpz_cmp_ui (u, v);
   else if (usize >= 0)
     return 1;
-  else if (GMP_LIMB_BITS < GMP_ULONG_BITS)
+  else
     return - mpz_cmpabs_ui (u, GMP_NEG_CAST (unsigned long int, v));
-  else if (usize < -1)
-    return -1;
-  else /* usize == -1 */
-    {
-      unsigned long uu = mpz_get_ui (u);
-      unsigned long vv = GMP_NEG_CAST (mp_limb_t, v);
-      return GMP_CMP(vv, uu);
-    }
 }
 
 int
@@ -1905,15 +1885,8 @@ mpz_cmp_ui (const mpz_t u, unsigned long v)
 
   if (usize < 0)
     return -1;
-  else if (GMP_LIMB_BITS < GMP_ULONG_BITS)
-    return mpz_cmpabs_ui (u, v);
-  else if (usize > 1)
-    return 1;
   else
-    {
-      unsigned long uu = mpz_get_ui (u);
-      return GMP_CMP(uu, v);
-    }
+    return mpz_cmpabs_ui (u, v);
 }
 
 int
@@ -1980,40 +1953,10 @@ mpz_swap (mpz_t u, mpz_t v)
 void
 mpz_add_ui (mpz_t r, const mpz_t a, unsigned long b)
 {
-  if (b > GMP_LIMB_MAX)
-    {
       mpz_t bb;
       mpz_init_set_ui (bb, b);
       mpz_add (r, a, bb);
       mpz_clear (bb);
-    }
-  else
-    {
-      mp_size_t an = a->_mp_size;
-
-      if (an == 0)
-        mpz_set_ui (r, b);
-      else if (an > 0)
-        {
-          mp_ptr rp = MPZ_REALLOC (r, an + 1);
-          mp_limb_t cy = mpn_add_1 (rp, a->_mp_d, an, b);
-          rp[an] = cy;
-          r->_mp_size = an + cy;
-        }
-      else
-        {
-          mp_ptr rp = MPZ_REALLOC (r, -an);
-          an = -an;
-
-          if (mpn_sub_1 (rp, a->_mp_d, an, b) != 0)
-            {
-              *rp = - *rp;
-              r->_mp_size = 1;
-            }
-          else
-            r->_mp_size = - mpn_normalized_size (rp, an);
-        }
-    }
 }
 
 void
@@ -2120,35 +2063,11 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 void
 mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 {
-  mp_size_t un, us;
-  mp_ptr tp;
-  mp_limb_t cy;
-
-  us = u->_mp_size;
-
-  if (us == 0 || v == 0)
-    {
-      r->_mp_size = 0;
-      return;
-    }
-
-  if (v > GMP_LIMB_MAX)
-    {
       mpz_t vv;
       mpz_init_set_ui (vv, v);
       mpz_mul (r, u, vv);
       mpz_clear (vv);
       return;
-    }
-
-  un = GMP_ABS (us);
-
-  tp = MPZ_REALLOC (r, un + 1);
-  cy = mpn_mul_1 (tp, u->_mp_d, un, v);
-  tp[un] = cy;
-
-  un += (cy > 0);
-  r->_mp_size = (us < 0) ? - un : un;
 }
 
 void
@@ -2634,23 +2553,6 @@ static unsigned long
 mpz_div_qr_ui (mpz_t q, mpz_t r,
 	       const mpz_t n, unsigned long d, enum mpz_div_round_mode mode)
 {
-  mp_size_t ns, qn;
-  mp_ptr qp;
-  mp_limb_t rl;
-  mp_size_t rs;
-
-  ns = n->_mp_size;
-  if (ns == 0)
-    {
-      if (q)
-	q->_mp_size = 0;
-      if (r)
-	r->_mp_size = 0;
-      return 0;
-    }
-
-  if (d > GMP_LIMB_MAX)
-    {
       unsigned long ret;
       mpz_t rr, dd;
 
@@ -2665,43 +2567,6 @@ mpz_div_qr_ui (mpz_t q, mpz_t r,
       mpz_clear (rr);
 
       return ret;
-    }
-
-  qn = GMP_ABS (ns);
-  if (q)
-    qp = MPZ_REALLOC (q, qn);
-  else
-    qp = NULL;
-
-  rl = mpn_div_qr_1 (qp, n->_mp_d, qn, d);
-  assert (rl < d);
-
-  rs = rl > 0;
-  rs = (ns < 0) ? -rs : rs;
-
-  if (rl > 0 && ( (mode == GMP_DIV_FLOOR && ns < 0)
-		  || (mode == GMP_DIV_CEIL && ns >= 0)))
-    {
-      if (q)
-	gmp_assert_nocarry (mpn_add_1 (qp, qp, qn, 1));
-      rl = d - rl;
-      rs = -rs;
-    }
-
-  if (r)
-    {
-      MPZ_REALLOC (r, 1)[0] = rl;
-      r->_mp_size = rs;
-    }
-  if (q)
-    {
-      qn -= (qp[qn-1] == 0);
-      assert (qn == 0 || qp[qn-1] > 0);
-
-      q->_mp_size = (ns < 0) ? - qn : qn;
-    }
-
-  return rl;
 }
 
 unsigned long
@@ -3228,14 +3093,9 @@ mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
 {
   mpz_t b;
 
-  if (sizeof (mp_limb_t) == sizeof (unsigned long))
-    mpz_pow_ui (r, mpz_roinit_normal_n (b, (mp_srcptr) &blimb, blimb != 0), e);
-  else
-    {
       mpz_init_set_ui (b, blimb);
       mpz_pow_ui (r, b, e);
       mpz_clear (b);
-    }
 }
 
 void
@@ -3348,14 +3208,9 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
 
-  if (sizeof (mp_limb_t) == sizeof (unsigned long))
-    mpz_powm (r, b, mpz_roinit_normal_n (e, (mp_srcptr) &elimb, elimb != 0), m);
-  else
-    {
       mpz_init_set_ui (e, elimb);
       mpz_powm (r, b, e, m);
       mpz_clear (e);
-    }
 }
 
 /* x=trunc(y^(1/z)), r=y-x^z */
