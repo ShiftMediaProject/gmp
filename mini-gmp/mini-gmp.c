@@ -992,36 +992,6 @@ mpn_div_qr_1_preinv (mp_ptr qp, mp_srcptr np, mp_size_t nn,
   return r >> inv->shift;
 }
 
-static mp_limb_t
-mpn_div_qr_1 (mp_ptr qp, mp_srcptr np, mp_size_t nn, mp_limb_t d)
-{
-  assert (d > 0);
-
-  /* Special case for powers of two. */
-  if ((d & (d-1)) == 0)
-    {
-      mp_limb_t r = np[0] & (d-1);
-      if (qp)
-	{
-	  if (d <= 1)
-	    mpn_copyi (qp, np, nn);
-	  else
-	    {
-	      unsigned shift;
-	      gmp_ctz (shift, d);
-	      mpn_rshift (qp, np, nn, shift);
-	    }
-	}
-      return r;
-    }
-  else
-    {
-      struct gmp_div_inverse inv;
-      mpn_div_qr_1_invert (&inv, d);
-      return mpn_div_qr_1_preinv (qp, np, nn, &inv);
-    }
-}
-
 static void
 mpn_div_qr_2_preinv (mp_ptr qp, mp_ptr np, mp_size_t nn,
 		     const struct gmp_div_inverse *inv)
@@ -2146,8 +2116,8 @@ void
 mpz_addmul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 {
   mpz_t t;
-  mpz_init (t);
-  mpz_mul_ui (t, u, v);
+  mpz_init_set_ui (t, v);
+  mpz_mul (t, u, t);
   mpz_add (r, r, t);
   mpz_clear (t);
 }
@@ -2156,8 +2126,8 @@ void
 mpz_submul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 {
   mpz_t t;
-  mpz_init (t);
-  mpz_mul_ui (t, u, v);
+  mpz_init_set_ui (t, v);
+  mpz_mul (t, u, t);
   mpz_sub (r, r, t);
   mpz_clear (t);
 }
@@ -2705,34 +2675,16 @@ mpn_gcd_11 (mp_limb_t u, mp_limb_t v)
 unsigned long
 mpz_gcd_ui (mpz_t g, const mpz_t u, unsigned long v)
 {
-  mp_size_t un;
+  mpz_t t;
+  mpz_init_set_ui(t, v);
+  mpz_gcd (t, u, t);
+  if (v > 0)
+    v = mpz_get_ui (t);
 
-  if (v == 0)
-    {
-      if (g)
-	mpz_abs (g, u);
-    }
-  else
-    {
-      un = GMP_ABS (u->_mp_size);
-      if (un != 0)
-	{
-	  if (v > GMP_LIMB_MAX)
-	    {
-	      mpz_t vv;
+  if (g)
+    mpz_swap (t, g);
 
-	      mpz_init_set_ui (vv, v);
-	      mpz_gcd (vv, u, vv);
-	      v = mpz_get_ui (vv);
-	      mpz_clear (vv);
-	    }
-	  else
-	    v = mpn_gcd_11 (mpn_div_qr_1 (NULL, u->_mp_d, un, v), v);
-	}
-
-      if (g)
-	mpz_set_ui (g, v);
-    }
+  mpz_clear (t);
 
   return v;
 }
