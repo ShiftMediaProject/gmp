@@ -1923,10 +1923,10 @@ mpz_swap (mpz_t u, mpz_t v)
 void
 mpz_add_ui (mpz_t r, const mpz_t a, unsigned long b)
 {
-      mpz_t bb;
-      mpz_init_set_ui (bb, b);
-      mpz_add (r, a, bb);
-      mpz_clear (bb);
+  mpz_t bb;
+  mpz_init_set_ui (bb, b);
+  mpz_add (r, a, bb);
+  mpz_clear (bb);
 }
 
 void
@@ -2033,11 +2033,11 @@ mpz_mul_si (mpz_t r, const mpz_t u, long int v)
 void
 mpz_mul_ui (mpz_t r, const mpz_t u, unsigned long int v)
 {
-      mpz_t vv;
-      mpz_init_set_ui (vv, v);
-      mpz_mul (r, u, vv);
-      mpz_clear (vv);
-      return;
+  mpz_t vv;
+  mpz_init_set_ui (vv, v);
+  mpz_mul (r, u, vv);
+  mpz_clear (vv);
+  return;
 }
 
 void
@@ -2523,20 +2523,20 @@ static unsigned long
 mpz_div_qr_ui (mpz_t q, mpz_t r,
 	       const mpz_t n, unsigned long d, enum mpz_div_round_mode mode)
 {
-      unsigned long ret;
-      mpz_t rr, dd;
+  unsigned long ret;
+  mpz_t rr, dd;
 
-      mpz_init (rr);
-      mpz_init_set_ui (dd, d);
-      mpz_div_qr (q, rr, n, dd, mode);
-      mpz_clear (dd);
-      ret = mpz_get_ui (rr);
+  mpz_init (rr);
+  mpz_init_set_ui (dd, d);
+  mpz_div_qr (q, rr, n, dd, mode);
+  mpz_clear (dd);
+  ret = mpz_get_ui (rr);
 
-      if (r)
-	mpz_swap (r, rr);
-      mpz_clear (rr);
+  if (r)
+    mpz_swap (r, rr);
+  mpz_clear (rr);
 
-      return ret;
+  return ret;
 }
 
 unsigned long
@@ -3045,9 +3045,9 @@ mpz_ui_pow_ui (mpz_t r, unsigned long blimb, unsigned long e)
 {
   mpz_t b;
 
-      mpz_init_set_ui (b, blimb);
-      mpz_pow_ui (r, b, e);
-      mpz_clear (b);
+  mpz_init_set_ui (b, blimb);
+  mpz_pow_ui (r, b, e);
+  mpz_clear (b);
 }
 
 void
@@ -3160,9 +3160,9 @@ mpz_powm_ui (mpz_t r, const mpz_t b, unsigned long elimb, const mpz_t m)
 {
   mpz_t e;
 
-      mpz_init_set_ui (e, elimb);
-      mpz_powm (r, b, e, m);
-      mpz_clear (e);
+  mpz_init_set_ui (e, elimb);
+  mpz_powm (r, b, e, m);
+  mpz_clear (e);
 }
 
 /* x=trunc(y^(1/z)), r=y-x^z */
