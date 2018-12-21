@@ -67,7 +67,7 @@ testcmpui ()
 
 	      mpq_set_ui (q2, n2, d2);
 
-	      if (!ref != mpq_equal (q1, q2))
+	      if ((!ref) != mpq_equal (q1, q2))
 		{
 		  fprintf (stderr, "mpz_equal failed: %i / %i = %i / %i ? %i\n", n1, d1, n2, d2, ref);
 		  abort ();
