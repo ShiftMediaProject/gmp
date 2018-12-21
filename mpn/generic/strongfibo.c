@@ -168,7 +168,6 @@ mpn_strongfibo (mp_srcptr mp, mp_size_t mn, mp_ptr scratch)
   mp_ptr	lp, sp;
   mp_size_t	en;
   mp_bitcnt_t	b0;
-  int	neg;
   TMP_DECL;
 
 #if GMP_NUMB_BITS % 4 == 0

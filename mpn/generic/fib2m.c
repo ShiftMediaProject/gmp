@@ -93,10 +93,9 @@ mpn_fib2m (mp_ptr fp, mp_ptr f1p, mp_srcptr np, mp_size_t nn, mp_srcptr mp, mp_s
 {
   unsigned long	nfirst;
   mp_limb_t	nh;
-  mp_bitcnt_t	mbi, nbi;
+  mp_bitcnt_t	nbi;
   mp_size_t	sn, fn;
   int		fcnt, ncnt;
-  unsigned	pb;
 
   ASSERT (! MPN_OVERLAP_P (fp, MAX(2*mn+1,5), f1p, MAX(2*mn+1,5)));
   ASSERT (nn > 0 && np[nn - 1] != 0);
@@ -108,18 +107,22 @@ mpn_fib2m (mp_ptr fp, mp_ptr f1p, mp_srcptr np, mp_size_t nn, mp_srcptr mp, mp_s
   else
     nfirst = mn * (23 * (GMP_NUMB_BITS / 16));
 #else
-  mbi = (mp_bitcnt_t) mn * GMP_NUMB_BITS;
+  {
+    mp_bitcnt_t	mbi;
+    mbi = (mp_bitcnt_t) mn * GMP_NUMB_BITS;
 
-  if (UNLIKELY (ULONG_MAX / 23 < mbi))
-    {
-      if (UNLIKELY (ULONG_MAX / 23 * 16 <= mbi))
-	nfirst = ULONG_MAX;
-      else
-	nfirst = mbi / 16 * 23;
-    }
-  else
-    nfirst = mbi * 23 / 16;
+    if (UNLIKELY (ULONG_MAX / 23 < mbi))
+      {
+	if (UNLIKELY (ULONG_MAX / 23 * 16 <= mbi))
+	  nfirst = ULONG_MAX;
+	else
+	  nfirst = mbi / 16 * 23;
+      }
+    else
+      nfirst = mbi * 23 / 16;
+  }
 #endif
+
   sn = nn - 1;
   nh = np[sn];
   count_leading_zeros (ncnt, nh);
@@ -167,7 +170,7 @@ mpn_fib2m (mp_ptr fp, mp_ptr f1p, mp_srcptr np, mp_size_t nn, mp_srcptr mp, mp_s
     }
   else
     {
-      mp_ptr	xp, yp, zp, tp;
+      mp_ptr	tp;
       unsigned	pb = nh & 1;
       int	neg;
       TMP_DECL;
