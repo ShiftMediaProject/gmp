@@ -769,12 +769,12 @@ mp_limb_t
 mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 {
   int GMP_LIMB_BITS_MUL_3 = GMP_LIMB_BITS * 3;
-  if (sizeof (unsigned) * CHAR_BIT > GMP_LIMB_BITS_MUL_3)
+  if (sizeof (unsigned) * CHAR_BIT > GMP_LIMB_BITS * 3)
     {
       return (((unsigned) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
 	(((unsigned) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
     }
-  else if (GMP_ULONG_BITS > GMP_LIMB_BITS_MUL_3)
+  else if (GMP_ULONG_BITS > GMP_LIMB_BITS * 3)
     {
       return (((unsigned long) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
 	(((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
