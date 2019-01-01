@@ -130,13 +130,13 @@ see https://www.gnu.org/licenses/.  */
 #define gmp_umul_ppmm(w1, w0, u, v)					\
   do {									\
     int LOCAL_GMP_LIMB_BITS = GMP_LIMB_BITS;				\
-    if (sizeof (unsigned int) >= 2 * sizeof (mp_limb_t))		\
+    if (sizeof(unsigned int) * CHAR_BIT >= 2 * GMP_LIMB_BITS)		\
       {									\
 	unsigned int __ww = (unsigned int) (u) * (v);			\
 	w0 = (mp_limb_t) __ww;						\
 	w1 = (mp_limb_t) (__ww >> LOCAL_GMP_LIMB_BITS);			\
       }									\
-    else if (sizeof (unsigned long int) >= 2 * sizeof (mp_limb_t))	\
+    else if (GMP_ULONG_BITS >= 2 * GMP_LIMB_BITS)			\
       {									\
 	unsigned long int __ww = (unsigned long int) (u) * (v);		\
 	w0 = (mp_limb_t) __ww;						\
