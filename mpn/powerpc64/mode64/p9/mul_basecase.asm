@@ -46,7 +46,7 @@ C  * Could we schedule loads less in addmul_2/mul_2? That would save some regs
 C    and make the tail code more manageable.
 C  * Postpone some register saves to main loop.
 C  * Perhaps write more small operands (3x1, 3x2, 3x3) code.
-C  * Consider restoring rp,up after loop using arithmetic, eliminating r20,r21.
+C  * Consider restoring rp,up after loop using arithmetic, eliminating rp2, up2.
 C    On the other hand, the current rp,up restore register are useful for OSP.
 C  * Do OSP. This should save a lot with the current deep addmul_2 pipeline.
 
