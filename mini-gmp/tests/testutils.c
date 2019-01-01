@@ -172,3 +172,10 @@ mpz_set_str_or_abort (mpz_ptr z, const char *str, int base)
       abort();
     }
 }
+
+int
+mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
+	       mp_bitcnt_t b0, const mpz_t n)
+{
+  return gmp_lucas_mod (V, Qk, Q, b0, n);
+}

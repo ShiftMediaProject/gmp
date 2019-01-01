@@ -36,9 +36,7 @@ dump (const char *label, const mpz_t x);
 void
 mpz_set_str_or_abort (mpz_ptr z, const char *str, int base);
 
-/* Prototype for functions that have one only for the tests. */
-#define __MINI_GMP_TESTING 1
-
+/* Prototype for wrappers to internal functions to be tested. */
 int
 mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
 	       mp_bitcnt_t b0, const mpz_t n);

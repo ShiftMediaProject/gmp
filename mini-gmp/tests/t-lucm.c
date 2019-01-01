@@ -24,8 +24,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 #include "testutils.h"
 
-int mpz_lucas_mod (mpz_t, mpz_t, long, mp_bitcnt_t, const mpz_t);
-
 #define MAXBITS 100
 #define COUNT 1000
 

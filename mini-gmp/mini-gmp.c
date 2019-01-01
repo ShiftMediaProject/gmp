@@ -3400,11 +3400,8 @@ gmp_lucas_step_k_2k (mpz_t V, mpz_t Qk, const mpz_t n)
 /* with P=1, Q=Q; k = (n>>b0)|1. */
 /* Requires an odd n > 4; b0 > 0; -2*Q must not overflow a long */
 /* Returns (U_k == 0) and sets V=V_k and Qk=Q^k. */
-#ifndef __MINI_GMP_TESTING
-static
-#endif
-int
-mpz_lucas_mod (mpz_t V, mpz_t Qk, long Q,
+static int
+gmp_lucas_mod (mpz_t V, mpz_t Qk, long Q,
 	       mp_bitcnt_t b0, const mpz_t n)
 {
   mp_bitcnt_t bs;
@@ -3504,7 +3501,7 @@ gmp_stronglucas (const mpz_t x, mpz_t Qk)
   /* D= P^2 - 4Q; P = 1; Q = (1-D)/4 */
   Q = (D & 2) ? (D >> 2) + 1 : -(long) (D >> 2);
 
-  if (! mpz_lucas_mod (V, Qk, Q, b0, n))	/* If Ud != 0 */
+  if (! gmp_lucas_mod (V, Qk, Q, b0, n))	/* If Ud != 0 */
     while (V->_mp_size != 0 && --b0 != 0)	/* while Vk != 0 */
       /* V <- V ^ 2 - 2Q^k */
       /* Q^{2k} = (Q^k)^2 */
