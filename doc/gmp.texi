@@ -5802,7 +5802,7 @@ and @var{E} = @{@var{ep},@math{@GMPceil{@var{enb} /
 @code{GMP\_NUMB\_BITS}}}@}.
 
 It is required that @math{@var{B} > 0}, that @math{@var{M} > 0} is odd, and
-that @m{0 < @var{E} < 2@GMPraise{@var{enb}}, 0 < @var{E} < 2^@var{enb}}.
+that @m{@var{E} < 2@GMPraise{@var{enb}}, @var{E} < 2^@var{enb}}, with @math{@var{enb} > 0}.
 
 No overlapping between @var{R} and the input operands is allowed.
 
