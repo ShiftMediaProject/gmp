@@ -140,7 +140,7 @@ check_pprime (unsigned long begin, unsigned long end)
 
 	size_s = BLOCK_SIZE * 2;
 	sieve = __GMP_ALLOCATE_FUNC_LIMBS (size_s);
-	off = n_to_bit(begin);
+	off = n_to_bit(begin) + (begin % 3 == 0);
 
 	do {
 	  TRACE (printf ("off =%li\n", off),3);
@@ -158,7 +158,7 @@ check_pprime (unsigned long begin, unsigned long end)
 	      {
 		spinner();
 		if ((begin & 0xfffffff) == 0)
-		  printf ("%li (%lx)\n", begin, begin);
+		  printf ("%li (0x%lx)\n", begin, begin);
 	      }
 	  } while (++begin < prime);
 
@@ -198,7 +198,7 @@ check_pprime (unsigned long begin, unsigned long end)
 	    {
 	      spinner();
 	      if ((begin & 0xfffffff) == 0)
-		printf ("%li (%lx)\n", begin, begin);
+		printf ("%li (0x%lx)\n", begin, begin);
 	    }
 	} while (++begin < prime);
 
@@ -273,7 +273,7 @@ check_nprime (unsigned long begin, unsigned long end)
 	    if (prime - begin > 0xfffffff)
 	      {
 		begin = prime;
-		printf ("%li (%lx)\n", begin, begin);
+		printf ("%li (0x%lx)\n", begin, begin);
 	      }
 	  }
 
@@ -331,6 +331,6 @@ main (int argc, char **argv)
   mpz_clear (g);
 
   if (ret == 0)
-    printf ("Prime tests checked in [%lu - %lu] [%lx - %lx].\n", begin, end, begin, end);
+    printf ("Prime tests checked in [%lu - %lu] [0x%lx - 0x%lx].\n", begin, end, begin, end);
   return ret;
 }
