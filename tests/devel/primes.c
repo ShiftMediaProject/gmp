@@ -18,12 +18,14 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 /* Usage:
 
-   ./primes [p] [n0] <nMax>
+   ./primes [p|c] [n0] <nMax>
 
      Checks mpz_probab_prime_p(n, r) exhaustively, starting from n=n0
      up to nMax.
      If n0 * n0 > nMax, the intervall is sieved piecewise, else the
      full intervall [0..nMax] is sieved at once.
+     With the parameter "p" (or nothing), tests all numbers. With "c"
+     only composites are tested.
 
    ./primes n [n0] <nMax>
 
@@ -106,7 +108,7 @@ int something_wrong (mpz_t er, int exp)
 }
 
 int
-check_pprime (unsigned long begin, unsigned long end)
+check_pprime (unsigned long begin, unsigned long end, int composites)
 {
   begin = (begin / 6U) * 6U;
   for (;(begin < 2) & (begin <= end); ++begin)
@@ -120,7 +122,7 @@ check_pprime (unsigned long begin, unsigned long end)
     {
       *(g->_mp_d) = begin;
       TRACE(printf ("+%li ", begin),2);
-      if (!mpz_probab_prime_p (g, REPS))
+      if (!composites && !mpz_probab_prime_p (g, REPS))
 	STOP (something_wrong (g, 1));
     }
   if (end > 4) {
@@ -164,7 +166,7 @@ check_pprime (unsigned long begin, unsigned long end)
 
 	  *(g->_mp_d) = begin;
 	  TRACE(printf ("+%li ", begin),2);
-	  if (! mpz_probab_prime_p (g, REPS))
+	  if (!composites && ! mpz_probab_prime_p (g, REPS))
 	    STOP (something_wrong (g, 1));
 	  ++begin;
 
@@ -204,7 +206,7 @@ check_pprime (unsigned long begin, unsigned long end)
 
 	*(g->_mp_d) = begin;
 	TRACE(printf ("+%li ", begin),2);
-	if (! mpz_probab_prime_p (g, REPS))
+	if (!composites && ! mpz_probab_prime_p (g, REPS))
 	  STOP (something_wrong (g, 1));
 	++begin;
 
@@ -304,6 +306,9 @@ main (int argc, char **argv)
     case 'p':
       mode = 0;
       break;
+    case 'c':
+      mode = 2;
+      break;
     case 'n':
       mode = 1;
       break;
@@ -314,7 +319,7 @@ main (int argc, char **argv)
 
   if (begin >= end)
     {
-      fprintf (stderr, "usage: primes [n|p] [n0] <nMax>\n");
+      fprintf (stderr, "usage: primes [n|p|c] [n0] <nMax>\n");
       exit (1);
     }
 
@@ -325,7 +330,7 @@ main (int argc, char **argv)
     ret = check_nprime (begin, end);
     break;
   default:
-    ret = check_pprime (begin, end);
+    ret = check_pprime (begin, end, mode);
   }
 
   mpz_clear (g);
