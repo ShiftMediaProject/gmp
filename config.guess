@@ -3,7 +3,8 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2016, 2018 Free Software Foundation, Inc.
+# Copyright 2000-2006, 2008, 2011-2016, 2018, 2019 Free Software Foundation,
+# Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -897,6 +898,7 @@ main ()
           else if (model == 0x5c) cpu_64bit = 1,            modelstr = "goldmont";   /* Goldmont */
           else if (model == 0x5e) cpu_64bit = 1, cpu_avx=1, modelstr = "skylake";    /* Skylake */
           else if (model == 0x5f) cpu_64bit = 1,            modelstr = "goldmont";   /* Goldmont */
+          else if (model == 0x7a) cpu_64bit = 1,            modelstr = "goldmont";   /* Goldmont Plus */
           else if (model == 0x8e) cpu_64bit = 1, cpu_avx=1, modelstr = "kabylake";   /* Kabylake Y/U */
           else if (model == 0x9e) cpu_64bit = 1, cpu_avx=1, modelstr = "kabylake";   /* Kabylake desktop */
           else                    cpu_64bit = 1,            modelstr = "nehalem";    /* default */
@@ -1001,8 +1003,8 @@ main ()
   else if (cpu_avx && ! (cpuid_avx && cpuid_osxsave))
     /* For CPUs nominally capable of executing AVX, append "noavx" when not
        both the AVX and OSXSAVE cpuid bits are set.  We tolerate weirdness
-       here, as some virtualisers set a broken cpuid state here, while other
-       virtualisers allow users to set a broken state.  */
+       here, as some virtualisers set a broken cpuid state, while other
+       virtualisers allow guests to set a broken state.  */
     suffix = "noavx";
 
   printf ("%s%s", modelstr, suffix);
