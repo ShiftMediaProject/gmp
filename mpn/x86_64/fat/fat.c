@@ -325,15 +325,25 @@ __gmpn_cpuvec_init (void)
 	    case 0x2c:		/* WSM Gulftown */
 	    case 0x2e:		/* NHM Beckton */
 	    case 0x2f:		/* WSM Eagleton */
+	      CPUVEC_SETUP_core2;
+	      CPUVEC_SETUP_coreinhm;
+	      break;
+
 	    case 0x37:		/* Silvermont */
 	    case 0x4a:		/* Silvermont */
 	    case 0x4c:		/* Airmont */
 	    case 0x4d:		/* Silvermont/Avoton */
 	    case 0x5a:		/* Silvermont */
+	      CPUVEC_SETUP_atom;
+	      CPUVEC_SETUP_silvermont;
+	      break;
+
 	    case 0x5c:		/* Goldmont */
 	    case 0x5f:		/* Goldmont */
-	      CPUVEC_SETUP_core2;
-	      CPUVEC_SETUP_coreinhm;
+	    case 0x7a:		/* Goldmont Plus */
+	      CPUVEC_SETUP_atom;
+	      CPUVEC_SETUP_silvermont;
+	      CPUVEC_SETUP_goldmont;
 	      break;
 
 	    case 0x2a:		/* SB */
