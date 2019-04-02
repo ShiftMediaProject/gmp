@@ -1,3 +1,18 @@
+2019-04-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/fat/fat.c (__gmpn_cpuvec_init):
+	Split out silvermont handling, add handling of goldmont.
+
+	* configure.ac: Setup distinct paths for silvermont and goldmont.
+	(fat_path): Add missing x86_64/goldmont.
+
+	* config.guess: Recognise "Goldmont Plus".
+
+2018-12-09  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/mul_fft.c (mpn_fft_add_sub_modF): New function.
+	(mpn_fft_fft, mpn_fft_fftinv): Use it.
+
 2018-11-30  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/powerpc64/mode64/p9/gmp-mparam.h: New file.
