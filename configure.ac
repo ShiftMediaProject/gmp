@@ -1896,7 +1896,13 @@ case $host in
 	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
 	path_64="x86_64/atom x86_64"
 	;;
-      silvermont | goldmont)	# out-of-order pipeline atom
+      silvermont)		# out-of-order pipeline atom
+	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
+	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
+	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
+	path_64="x86_64/silvermont x86_64/atom x86_64"
+	;;
+      goldmont)			# out-of-order pipeline atom
 	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
 	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
@@ -2252,7 +2258,7 @@ case $host in
 		  x86_64/k8 x86_64/k10 x86_64/bd1 x86_64/bt1 x86_64/bt2 x86_64/zen
 		  x86_64/pentium4 x86_64/core2 x86_64/coreinhm x86_64/coreisbr
 		  x86_64/coreihwl x86_64/coreibwl x86_64/skylake x86_64/atom
-		  x86_64/silvermont x86_64/nano"
+		  x86_64/silvermont x86_64/goldmont x86_64/nano"
 	fat_functions="$fat_functions addmul_2 addlsh1_n addlsh2_n sublsh1_n"
       fi
 
