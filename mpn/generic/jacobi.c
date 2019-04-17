@@ -174,7 +174,7 @@ mpn_jacobi_n (mp_ptr ap, mp_ptr bp, mp_size_t n, unsigned bits)
      storage etc. */
   scratch = MPN_GCD_SUBDIV_STEP_ITCH(n);
 
-  if (ABOVE_THRESHOLD (n, GCD_DC_THRESHOLD))
+  if (ABOVE_THRESHOLD (n, JACOBI_DC_THRESHOLD))
     {
       mp_size_t hgcd_scratch;
       mp_size_t update_scratch;
