@@ -1,3 +1,9 @@
+2019-04-19  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/invert_limb.asm: Simplify mpn_invert_limb_table ref.
+
+	* mpn/x86_64/x86_64-defs.m4 (LEA): Use rip addressing for non-PIC.
+
 2019-04-17  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/jacobi.c (mpn_jacobi_n): Use JACOBI_DC_THRESHOLD,
