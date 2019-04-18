@@ -56,14 +56,11 @@ PROLOGUE(mpn_invert_limb)		C			Kn	C2	Ci
 	FUNC_ENTRY(1)
 	mov	%rdi, %rax		C			 0	 0	 0
 	shr	$55, %rax		C			 1	 1	 1
-ifdef(`PIC',`
 ifdef(`DARWIN',`
-	mov	mpn_invert_limb_table@GOTPCREL(%rip), %r8
+	lea	mpn_invert_limb_table(%rip), %r8
 	add	$-512, %r8
 ',`
 	lea	-512+mpn_invert_limb_table(%rip), %r8
-')',`
-	movabs	$-512+mpn_invert_limb_table, %r8
 ')
 	movzwl	(%r8,%rax,2), R32(%rcx)	C	%rcx = v0
 
