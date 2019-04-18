@@ -136,11 +136,17 @@ define(`ASSERT_counter',incr(ASSERT_counter))')')')
 
 define(ASSERT_counter,1)
 
+dnl LEA - load effective address
+dnl
+dnl FIXME: We should never create a GOT entry and therefore use the simpler 2nd
+dnl variant always. We need to understand what happens for not-yet-hidden
+dnl symbols first.
+dnl
 define(`LEA',`dnl
 ifdef(`PIC',
 	`mov	$1@GOTPCREL(%rip), $2'
 ,
-	`movabs	`$'$1, $2')
+	`lea	$1(%rip), $2')
 ')
 
 
