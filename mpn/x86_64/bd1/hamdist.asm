@@ -191,7 +191,7 @@ L(tp):	mov	8(up), %r8
 L(ed):	FUNC_EXIT()
 	ret
 EPILOGUE()
-DEF_OBJECT(L(cnsts),16)
+DEF_OBJECT(L(cnsts),16,`JUMPTABSECT')
 	JMPENT(	L(0), L(cnsts))
 	JMPENT(	L(2), L(cnsts))
 	JMPENT(	L(4), L(cnsts))
