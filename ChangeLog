@@ -1,3 +1,7 @@
+2019-04-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (References): Link to paper on subquadratic GCD.
+
 2019-04-19  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/invert_limb.asm: Simplify mpn_invert_limb_table ref.

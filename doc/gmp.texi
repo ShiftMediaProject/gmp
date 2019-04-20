@@ -10881,7 +10881,7 @@ pp.@: 366-386.
 @item
 Niels M@"oller, ``On Sch@"onhage's algorithm and subquadratic integer GCD
   computation'', in Mathematics of Computation, volume 77, January 2008, pp.@:
-  589-607.
+  589-607, @uref{https://www.ams.org/journals/mcom/2008-77-261/S0025-5718-07-02017-0/home.html}
 
 @item
 Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
