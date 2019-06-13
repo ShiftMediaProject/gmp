@@ -1,3 +1,14 @@
+2019-06-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (mips64): Provide r6 asm code as default expression yields
+	libcall.
+
+	* configure.ac (mips64): Use separate paths for r6 and non-r6 as these
+	architectures are mutually incompatible.
+
+	* mpn/mips64/{addmul_1,mul_1,sqr_diagonal,submul_1,umul}.asm:
+	Move into hilo subdir.
+
 2019-04-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (References): Link to paper on subquadratic GCD.
