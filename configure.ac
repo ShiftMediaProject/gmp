@@ -1016,7 +1016,6 @@ case $host in
         gcc_n32_cflags_abi="-mabi=n32 -mn32"
         cc_n32_cflags="-O2 -n32"	# no -g, it disables all optimizations
         limb_n32=longlong
-        path_n32="mips64"
 
         cclist_64="gcc cc"
         gcc_64_cflags_optlist="abi"
@@ -1025,7 +1024,18 @@ case $host in
         gcc_64_ldflags="-Wc,-mabi=64"
         cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
         cc_64_ldflags="-Wc,-64"
-        path_64="mips64"
+
+	case $host_cpu in
+	  [mips64r[6789]* | mipsisa64r[6789]*])
+	    path_n32="mips64/r6 mips64"
+	    path_64="mips64/r6 mips64"
+	    ;;
+	  *)
+	    path_n32="mips64/hilo mips64"
+	    path_64="mips64/hilo mips64"
+	    ;;
+	esac
+
         ;;
     esac
     ;;
