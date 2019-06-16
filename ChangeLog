@@ -1,3 +1,8 @@
+2019-06-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* config.guess: Work around upstream configfsf.guess's regression wrt
+	mips vs mips64.
+
 2019-06-14  Torbjörn Granlund  <tg@gmplib.org>
 
 	* longlong.h (mips64): Provide r6 asm code as default expression yields
