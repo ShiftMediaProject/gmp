@@ -3,8 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000-2006, 2008, 2011-2016, 2018, 2019 Free Software Foundation,
-# Inc.
+# Copyright 2000-2019 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -279,6 +278,18 @@ EOF
 mips-*-irix[6789]*)
   # IRIX 6 and up always has a 64-bit mips cpu
   exact_cpu=mips64
+  ;;
+
+mips-*-*)
+  case $(uname -m) in
+    mips64)	exact_cpu=mips64;;
+  esac
+  ;;
+
+mipsel-*-*)
+  case $(uname -m) in
+    mips64)	exact_cpu=mips64el;;
+  esac
   ;;
 
 m68k-*-*)
