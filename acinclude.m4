@@ -3306,9 +3306,16 @@ struct foo foo = {
   { '\001', '\043', '\105', '\147', '\211', '\253', '\315', '\357' },
   -123456789.0,
   { '\376', '\334', '\272', '\230', '\166', '\124', '\062', '\020' },
-};]
+};
+int main(){
+  int i;
+  for (i = 0; i < 8; i++) {
+    printf ("%d %d %f\n", foo.before[i] + foo.after[i], foo.x);
+  }
+  return 0;
+}]
 EOF
-gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
+gmp_compile="$CC $CFLAGS $CPPFLAGS conftest.c -o conftest >&AC_FD_CC 2>&1"
 if AC_TRY_EVAL(gmp_compile); then
 cat >conftest.awk <<\EOF
 [
@@ -3461,11 +3468,11 @@ END {
 }
 ]
 EOF
-  gmp_cv_c_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
+  gmp_cv_c_double_format=`od -b conftest | $AWK -f conftest.awk`
   case $gmp_cv_c_double_format in
   unknown*)
-    echo "cannot match anything, conftest.$OBJEXT contains" >&AC_FD_CC
-    od -b conftest.$OBJEXT >&AC_FD_CC
+    echo "cannot match anything, conftest contains" >&AC_FD_CC
+    od -b conftest >&AC_FD_CC
     ;;
   esac
 else
