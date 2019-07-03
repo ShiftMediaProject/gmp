@@ -3296,7 +3296,8 @@ AC_CACHE_CHECK([format of `double' floating point],
                 gmp_cv_c_double_format,
 [gmp_cv_c_double_format=unknown
 cat >conftest.c <<\EOF
-[struct foo {
+[#include <stdio.h>
+struct foo {
   char    before[8];
   double  x;
   char    after[8];
@@ -3310,7 +3311,7 @@ struct foo foo = {
 int main(){
   int i;
   for (i = 0; i < 8; i++) {
-    printf ("%d %d %f\n", foo.before[i] + foo.after[i], foo.x);
+    printf ("%d %f\n", foo.before[i] + foo.after[i], foo.x);
   }
   return 0;
 }]
