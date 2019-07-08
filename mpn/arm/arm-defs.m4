@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for ARM assembler.
 
-dnl  Copyright 2001, 2012-2016, 2018 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2012-2016, 2018-2019 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -36,9 +36,10 @@ dnl  don't want to disable macro expansions in or after them.
 
 changecom(@&*$)
 
-define(`ASM_START',`
-ifelse($1,`neon',`.fpu	neon',
-m4_assert_numargs(0))')
+define(`ASM_START',
+m4_assert_numargs_range(0,1)
+`ifelse($1,`neon',`.fpu	neon',
+        $#,1,`m4_error(`$0 got invalid argument $1')')')
 
 dnl  APCS register names.
 
