@@ -39,7 +39,8 @@ changecom(@&*$)
 define(`ASM_START',
 m4_assert_numargs_range(0,1)
 `ifelse($1,`neon',`.fpu	neon',
-        $#,1,`m4_error(`$0 got invalid argument $1')')')
+        $1,,`',
+        1,1,`m4_error(`$0 got invalid argument $1')')')
 
 dnl  APCS register names.
 
