@@ -8934,23 +8934,64 @@ current size of the cofactors.
 @subsection Jacobi Symbol
 @cindex Jacobi symbol algorithm
 
-[This section is obsolete.  The current Jacobi code actually uses a very
-efficient algorithm.]
+@c Editor Note: I don't see other people defining the inputs, it would be nice
+@c here because the code uses (a/b) where other references use (n/k)
 
-@code{mpz_jacobi} and @code{mpz_kronecker} are currently implemented with a
-simple binary algorithm similar to that described for the GCDs (@pxref{Binary
-GCD}).  They're not very fast when both inputs are large.  Lehmer's multi-step
-improvement or a binary based multi-step algorithm is likely to be better.
+Jacobi symbol @m{\left(a \over b\right), (@var{a}/@var{b})}
 
-When one operand fits a single limb, and that includes @code{mpz_kronecker_ui}
-and friends, an initial reduction is done with either @code{mpn_mod_1} or
-@code{mpn_modexact_1_odd}, followed by the binary algorithm on a single limb.
-The binary algorithm is well suited to a single limb, and the whole
-calculation in this case is quite efficient.
+Initially if either operand fits in a single limb, a reduction is done with
+either @code{mpn_mod_1} or @code{mpn_modexact_1_odd}, followed by the binary
+algorithm on a single limb.  The binary algorithm is well suited to a single limb,
+and the whole calculation in this case is quite efficient.
 
-In all the routines sign changes for the result are accumulated using some bit
-twiddling, avoiding table lookups or conditional jumps.
+For inputs larger than @code{GCD_DC_THRESHOLD}, @code{mpz_jacobi},
+@code{mpz_legendre} and @code{mpz_kronecker} are computed via the HGCD (Half
+GCD) function, as a generalization to Lehmer's algorithm.
 
+Most GCD algorithms reduce @math{a} and @math{b} by repeatatily computing the
+quotient @m{q = \lfloor a/b \rfloor, q = floor(a/b)} and iteratively replacing
+
+@c Couldn't figure out macros with commas.
+@tex
+$$ a, b = b, a - q * b$$
+@end tex
+@ifnottex
+@math{a, b = b, a - q * b}
+@end ifnottex
+
+Different algorithms use different methods for calculating q, but the core
+algorithm is the same if we use @ref{Lehmer's Algorithm} or
+@ref{Subquadratic GCD, HGCD}.
+
+At each step it is possible to compute if the reduction inverts the Jacobi
+symbol based on the two least significant bits of @var{a} and @var{b}.  For
+more details see ``Efficient computation of the Jacobi symbol'' by
+M@"oller (@pxref{References}).
+
+A small set of bits is thus used to track state
+@itemize
+@item
+current sign of result (1 bit)
+
+@item
+two least significant bits of @var{a} and @var{b} (4 bits)
+
+@item
+a pointer to which input is currently the denominator (1 bit)
+@end itemize
+
+In all the routines sign changes for the result are accumulated using fast bit
+twiddling which avoids conditional jumps.
+
+The final result is calculated after verifying the inputs are coprime (GCD = 1)
+by raising @m{(-1)^e,(-1)^e}
+
+Much of the HGCD code is shared directly with the HGCD implementations, such
+as the 2x2 matrix calculation, @xref{Lehmer's Algorithm} basecase and
+@code{GCD_DC_THRESHOLD}.
+
+The asymptotic running time is @m{O(M(N)\log N),O(M(N)*log(N))}, where
+@math{M(N)} is the time for multiplying two @math{N}-limb numbers.
 
 @need 1000
 @node Powering Algorithms, Root Extraction Algorithms, Greatest Common Divisor Algorithms, Algorithms
@@ -10910,8 +10951,11 @@ Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
 Symposium on Computer Arithmetic, 1993, pp.@: 260 to 271.  Reprinted as ``More
 on Multiplying and Squaring Large Integers'', IEEE Transactions on Computers,
 volume 43, number 8, August 1994, pp.@: 899-908.
-@end itemize
 
+@item
+Niels M@"oller, ``Efficient computation of the Jacobi symbol'', @texlinebreak{}
+@uref{https://arxiv.org/abs/1907.07795}
+@end itemize
 
 @node GNU Free Documentation License, Concept Index, References, Top
 @appendix GNU Free Documentation License

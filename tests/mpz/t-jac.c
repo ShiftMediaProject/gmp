@@ -25,9 +25,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 	   t-jac -p | gp -q
 
-   It takes a while because the output from "t-jac -p" is big.
-
-
    Enhancements:
 
    More big test cases than those given by check_squares_zi would be good.  */
