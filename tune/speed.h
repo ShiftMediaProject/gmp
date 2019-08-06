@@ -223,6 +223,7 @@ double speed_mpn_hgcd_reduce_1 (struct speed_params *);
 double speed_mpn_hgcd_reduce_2 (struct speed_params *);
 double speed_mpn_gcd (struct speed_params *);
 double speed_mpn_gcd_1 (struct speed_params *);
+double speed_mpn_gcd_11 (struct speed_params *);
 double speed_mpn_gcd_1N (struct speed_params *);
 double speed_mpn_gcdext (struct speed_params *);
 double speed_mpn_gcdext_double (struct speed_params *);
@@ -2819,6 +2820,10 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 
 #define SPEED_ROUTINE_MPN_GCD_1(function)				\
   SPEED_ROUTINE_MPN_GCD_1_CALL( , function (&px[j-1], 1, py[j-1]))
+
+#define SPEED_ROUTINE_MPN_GCD_11(function)				\
+  SPEED_ROUTINE_MPN_GCD_1_CALL((px[i] |= 1, py[i] |= 1),		\
+			       function (px[j-1], py[j-1]))
 
 #define SPEED_ROUTINE_MPN_JACBASE(function)				\
   SPEED_ROUTINE_MPN_GCD_1_CALL						\

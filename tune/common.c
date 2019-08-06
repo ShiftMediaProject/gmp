@@ -1717,6 +1717,11 @@ speed_mpn_gcd_1 (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCD_1 (mpn_gcd_1);
 }
 double
+speed_mpn_gcd_11 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD_11 (mpn_gcd_11);
+}
+double
 speed_mpn_gcd_1N (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD_1N (mpn_gcd_1);

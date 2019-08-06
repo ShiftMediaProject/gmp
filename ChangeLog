@@ -1,5 +1,10 @@
 2019-08-06  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c (speed_mpn_gcd_11): New function.
+	* tune/speed.h (speed_mpn_gcd_11): Declare it.
+	(SPEED_ROUTINE_MPN_GCD_11): New macro.
+	* tune/speed.c (routine): Add mpn_gcd_11.
+
 	* configure.ac (gmp_mpn_functions): Added gcd_11. Also add
 	HAVE_NATIVE_mpn_gcd_11.
 	* mpn/generic/gcd_11.c (mpn_gcd_11): New file and function,
