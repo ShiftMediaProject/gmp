@@ -1,3 +1,12 @@
+2019-08-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.ac (gmp_mpn_functions): Added gcd_11. Also add
+	HAVE_NATIVE_mpn_gcd_11.
+	* mpn/generic/gcd_11.c (mpn_gcd_11): New file and function,
+	extracted from mpn_gcd_1.
+	* gmp-h.in (mpn_gcd_11): Declare it.
+	* mpn/generic/gcd_1.c (mpn_gcd_1): Adapted to call mpn_gcd_11.
+
 2019-07-30  Niels Möller  <nisse@lysator.liu.se>
 
 	From Seth Troisi:

@@ -2970,7 +2970,7 @@ gmp_mpn_functions="$extra_functions					   \
   rootrem sqrtrem sizeinbase get_str set_str compute_powtab		   \
   scan0 scan1 popcount hamdist cmp zero_p				   \
   perfsqr perfpow strongfibo						   \
-  gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step				   \
+  gcd_11 gcd_1 gcd gcdext_1 gcdext gcd_subdiv_step			   \
   gcdext_lehmer								   \
   div_q tdiv_qr jacbase jacobi_2 jacobi get_d				   \
   matrix22_mul matrix22_mul1_inverse_vector				   \
@@ -3559,6 +3559,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_divrem_1c
 #undef HAVE_NATIVE_mpn_divrem_2
 #undef HAVE_NATIVE_mpn_gcd_1
+#undef HAVE_NATIVE_mpn_gcd_11
 #undef HAVE_NATIVE_mpn_hamdist
 #undef HAVE_NATIVE_mpn_invert_limb
 #undef HAVE_NATIVE_mpn_ior_n
