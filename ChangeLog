@@ -1,3 +1,19 @@
+2019-08-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/alpha/ev67/gcd_11.asm: New file, mostly extracted from gcd_1.asm.
+	* mpn/arm/v5/gcd_11.asm: Likewise.
+	* mpn/arm/v6t2/gcd_11.asm: Likewise.
+	* mpn/arm64/gcd_11.asm: Likewise.
+	* mpn/powerpc64/mode64/gcd_11.asm: Likewise.
+	* mpn/powerpc64/mode64/p7/gcd_11.asm: Likewise.
+	* mpn/powerpc64/mode64/p9/gcd_11.asm: Likewise.
+	* mpn/sparc64/gcd_11.asm: Likewise.
+	* mpn/x86/k7/gcd_11.asm: Likewise.
+	* mpn/x86/p6/gcd_11.asm: Likewise.
+	* mpn/x86_64/bd2/gcd_11.asm: Likewise.
+	* mpn/x86_64/core2/gcd_11.asm: Likewise.
+	* mpn/x86_64/gcd_11.asm: Likewise.
+
 2019-08-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_gcd_11): New function.
@@ -12,11 +28,44 @@
 	* gmp-h.in (mpn_gcd_11): Declare it.
 	* mpn/generic/gcd_1.c (mpn_gcd_1): Adapted to call mpn_gcd_11.
 
+2019-08-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bt2/gcd_1.asm: New grabber file.
+	* mpn/x86_64/zen/gcd_1.asm: Grab from "bd2" directory, was "core2".
+
+2019-08-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bd2/gcd_1.asm: New file.
+
+2019-08-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpf/t-conv.c: Add several more fixed test cases.
+
+	* mpf/set_str.c: Ignore leading zeros including ones after radix point
+	to avoid invalid output formats.
+
+2019-07-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/powerpc64/mode64/p9/gcd_1.asm: New file.
+
 2019-07-30  Niels Möller  <nisse@lysator.liu.se>
 
 	From Seth Troisi:
 	* doc/gmp.texi (Jacobi Symbol): Update algorithm documentation.
 	* tests/mpz/t-jac.c: Comment update.
+
+2019-07-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm): Generalise arm a72 pattern to match a73...a79.
+
+2019-07-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm/arm-defs.m4 (ASM_START): Rewrite (fix broken error handling).
+
+2019-07-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Compile conftest.c to executable
+	in order to trigger final compile in case of LTO.
 
 2019-06-17  Torbjörn Granlund  <tg@gmplib.org>
 
