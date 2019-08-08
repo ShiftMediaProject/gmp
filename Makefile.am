@@ -123,6 +123,7 @@ EXTRA_DIST += asl.h
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h
+pkgconfig_DATA += gmpxx.pc
 endif
 EXTRA_DIST += gmpxx.h
 
