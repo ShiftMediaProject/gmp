@@ -1980,6 +1980,28 @@ refmpn_mul_any (mp_ptr prodp,
 
 
 mp_limb_t
+refmpn_gcd_11 (mp_limb_t x, mp_limb_t y)
+{
+  /* The non-ref function also requires input operands to be odd, but
+     below refmpn_gcd_1 doesn't guarantee that. */
+  ASSERT (x > 0);
+  ASSERT (y > 0);
+  do
+    {
+      while ((x & 1) == 0)  x >>= 1;
+      while ((y & 1) == 0)  y >>= 1;
+
+      if (x < y)
+	MP_LIMB_T_SWAP (x, y);
+
+      x -= y;
+    }
+  while (x != 0);
+
+  return y;
+}
+
+mp_limb_t
 refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
 {
   mp_limb_t  x;
@@ -2002,20 +2024,7 @@ refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
       twos++;
     }
 
-  for (;;)
-    {
-      while ((x & 1) == 0)  x >>= 1;
-      while ((y & 1) == 0)  y >>= 1;
-
-      if (x < y)
-	MP_LIMB_T_SWAP (x, y);
-
-      x -= y;
-      if (x == 0)
-	break;
-    }
-
-  return y << twos;
+  return refmpn_gcd_11 (x, y) << twos;
 }
 
 

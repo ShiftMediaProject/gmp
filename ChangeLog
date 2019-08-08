@@ -1,3 +1,10 @@
+2019-08-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/refmpn.c (refmpn_gcd_11): New function, based on refmpn_gcd_1.
+	(refmpn_gcd_1): Use it.
+	* tests/mpn/t-gcd_11.c: New file, test mpn_gcd_11.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-gcd_11.
+
 2019-08-07  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/alpha/ev67/gcd_11.asm: New file, mostly extracted from gcd_1.asm.

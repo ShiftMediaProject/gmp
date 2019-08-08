@@ -230,6 +230,7 @@ int refmpn_equal_anynail (mp_srcptr, mp_srcptr, mp_size_t);
 
 void refmpn_fill (mp_ptr, mp_size_t, mp_limb_t);
 
+mp_limb_t refmpn_gcd_11 (mp_limb_t, mp_limb_t);
 mp_limb_t refmpn_gcd_1 (mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t refmpn_gcd (mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t);
 
