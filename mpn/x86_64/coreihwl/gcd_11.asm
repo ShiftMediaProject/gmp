@@ -79,10 +79,10 @@ PROLOGUE(mpn_gcd_11)
 
 	ALIGN(16)		C
 L(top):	bsf	v0, %rcx	C
+	mov	u0, %r9		C
 	sub	%rax, u0	C u - v
 	cmovc	v0, u0		C u = |u - v|
 	cmovc	%r9, %rax	C v = min(u,v)
-	shrx(	%rcx, u0, %r9)	C
 	shrx(	%rcx, u0, u0)	C
 	mov	%rax, v0	C
 	sub	u0, v0		C v - u
