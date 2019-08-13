@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_gcd_11 optimised for AMD BD2-BD4, Zen.
+dnl  AMD64 mpn_gcd_11 optimised for AMD BD2, BD3, BT2.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
@@ -36,30 +36,31 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 ?
-C AMD K10	 ?
-C AMD bd1	 ?
-C AMD bd2	 ?
+C AMD K8,K9	 -
+C AMD K10	 -
+C AMD bd1	 -
+C AMD bd2	 3.27 *
 C AMD bd3	 ?
-C AMD bd4	 3.65
-C AMD bt1	 ?
-C AMD bt2	 ?
-C AMD zn1	 3.5
-C AMD zn2	 3.8
-C Intel P4	 ?
-C Intel core2	 ?
-C Intel NHM	 ?
-C Intel SBR	 ?
-C Intel IBR	 ?
+C AMD bd4	 3.79
+C AMD bt1	 -
+C AMD bt2	 3.64 *
+C AMD zn1	 3.25
+C AMD zn2	 3.50
+C Intel P4	 -
+C Intel CNR	 -
+C Intel PNR	 -
+C Intel NHM	 -
+C Intel WSM	 -
+C Intel SBR	 -
+C Intel IBR	 -
 C Intel HWL	 ?
 C Intel BWL	 ?
 C Intel SKL	 ?
-C Intel atom	 ?
-C Intel SLM	 ?
-C Intel GLM	 ?
-C Intel GLM+	 ?
-C VIA nano	 ?
-C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
+C Intel atom	 -
+C Intel SLM	 -
+C Intel GLM	 -
+C Intel GLM+	 -
+C VIA nano	 -
 
 define(`u0',    `%rdi')
 define(`v0',    `%rsi')
@@ -76,16 +77,16 @@ PROLOGUE(mpn_gcd_11)
 	sub	u0, v0		C
 	jz	L(end)		C
 
-	ALIGN(16)		C              K10 BD1 BD2 ZEN CNR NHM SBR
-L(top):	rep;bsf	v0, %rcx	C tzcnt!       3   3   3   2   6   5   5	(TODO)
-	mov	u0, %r9		C              2   2   2   2   3   3   4
-	sub	%rax, u0	C              2   2   2   2   4   3   4	(TODO)
-	cmovc	v0, u0		C if x-y < 0   0,3 0,3 0,3 0,3 0,6 0,5 0,5	(TODO)
-	cmovc	%r9, %rax	C use x,y-x    0,3 0,3 0,3 0,3 2,8 1,7 1,7	(TODO)
-	shr	R8(%rcx), u0	C              1,7 1,6 1,5 1,4 2,8 2,8 2,8
-	mov	%rax, v0	C              1   1   1   1   4   3   3	(TODO)
-	sub	u0, v0		C              2   2   2   1   5   4   4	(TODO)
-	jnz	L(top)		C	(TODO: registers was changed, cycles not updated)
+	ALIGN(16)		C
+L(top):	rep;bsf	v0, %rcx	C tzcnt!
+	mov	u0, %r9		C
+	sub	%rax, u0	C u - v
+	cmovc	v0, u0		C u = |u - v|
+	cmovc	%r9, %rax	C v = min(u,v)
+	shr	R8(%rcx), u0	C
+	mov	%rax, v0	C
+	sub	u0, v0		C v - u
+	jnz	L(top)		C
 
 L(end):	FUNC_EXIT()
 	ret

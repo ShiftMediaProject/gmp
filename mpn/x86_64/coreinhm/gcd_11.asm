@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_gcd_11 optimised for Intel CNR, PNR, SBR, IBR.
+dnl  AMD64 mpn_gcd_11 optimised for Intel NHM, WSM.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
@@ -47,15 +47,15 @@ C AMD bt2	 ?
 C AMD zn1	 ?
 C AMD zn2	 ?
 C Intel P4	 ?
-C Intel CNR	 4.22  *
-C Intel PNR	 4.22  *
-C Intel NHM	 4.97
-C Intel WSM	 5.17
-C Intel SBR	 4.83  *
-C Intel IBR	 4.16  *
-C Intel HWL	 3.84
-C Intel BWL	 3.76
-C Intel SKL	 3.83
+C Intel CNR	 5.05
+C Intel PNR	 5.05
+C Intel NHM	 5.09  *
+C Intel WSM	 5.09  *
+C Intel SBR	 4.83
+C Intel IBR	 ?
+C Intel HWL	 4.49
+C Intel BWL	 4.09
+C Intel SKL	 4.09
 C Intel atom	 ?
 C Intel SLM	 ?
 C Intel GLM	 ?
@@ -74,17 +74,18 @@ ASM_START()
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
 	mov	v0, %rax	C
-	jmp	L(odd)		C
+	sub	u0, v0		C
+	jz	L(end)		C
 
 	ALIGN(16)		C
-L(top):	cmovc	v0, u0		C u = |u - v|
+L(top):	bsf	v0, %rcx	C
+	mov	u0, %r9		C
+	sub	%rax, u0	C
+	cmovc	v0, u0		C u = |u - v|
 	cmovc	%r9, %rax	C v = min(u,v)
 	shr	R8(%rcx), u0	C
 	mov	%rax, v0	C
-L(odd):	sub	u0, v0		C
-	bsf	v0, %rcx	C
-	mov	u0, %r9		C
-	sub	%rax, u0	C
+	sub	u0, v0		C
 	jnz	L(top)		C
 
 L(end):	FUNC_EXIT()
