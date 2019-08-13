@@ -3548,12 +3548,16 @@ Determine whether @var{n} is prime.  Return 2 if @var{n} is definitely prime,
 return 1 if @var{n} is probably prime (without being certain), or return 0 if
 @var{n} is definitely non-prime.
 
-This function performs some trial divisions, then @var{reps} Miller-Rabin
-probabilistic primality tests.  A higher @var{reps} value will reduce the
-chances of a non-prime being identified as ``probably prime''.  A composite
-number will be identified as a prime with a probability of less than
-@m{4^{-reps},4^(-@var{reps})}.  Reasonable values of @var{reps} are between 15
-and 50.
+This function performs some trial divisions, a Baillie-PSW probable prime
+test, then @var{reps-24} Miller-Rabin probabilistic primality tests.  A
+higher @var{reps} value will reduce the chances of a non-prime being
+identified as ``probably prime''.  A composite number will be identified as a
+prime with a probability of less than @m{4^{-reps},4^(-@var{reps})}.
+Reasonable values of @var{reps} are between 15 and 50.
+
+GMP versions up to and including 6.1.2 did not use the Baillie-PSW
+primality test. In those older versions of GMP, this function performed
+@var{reps} Miller-Rabin tests.
 @end deftypefun
 
 @deftypefun void mpz_nextprime (mpz_t @var{rop}, const mpz_t @var{op})
