@@ -1,6 +1,6 @@
 /* Miscellaneous test program support routines.
 
-Copyright 2000-2003, 2005, 2013, 2015 Free Software Foundation, Inc.
+Copyright 2000-2003, 2005, 2013, 2015, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
