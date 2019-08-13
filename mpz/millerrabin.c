@@ -139,26 +139,26 @@ mpz_millerrabin (mpz_srcptr n, int reps)
 	is_prime = 2;
       else
 	{
-  reps -= 24;
-  if (reps > 0)
-    {
-      /* (n-5)/2 */
-      mpz_sub_ui (nm, nm, 2L);
-      ASSERT (mpz_cmp_ui (nm, 1L) >= 0);
+	  reps -= 24;
+	  if (reps > 0)
+	    {
+	      /* (n-5)/2 */
+	      mpz_sub_ui (nm, nm, 2L);
+	      ASSERT (mpz_cmp_ui (nm, 1L) >= 0);
 
-      gmp_randinit_default (rstate);
+	      gmp_randinit_default (rstate);
 
-      do
-	{
-	  /* 3 to (n-1)/2 inclusive, don't want 1, 0 or 2 */
-	  mpz_urandomm (x, rstate, nm);
-	  mpz_add_ui (x, x, 3L);
+	      do
+		{
+		  /* 3 to (n-1)/2 inclusive, don't want 1, 0 or 2 */
+		  mpz_urandomm (x, rstate, nm);
+		  mpz_add_ui (x, x, 3L);
 
-	  is_prime = millerrabin (n, x, y, q, k);
-	} while (--reps > 0 && is_prime);
+		  is_prime = millerrabin (n, x, y, q, k);
+		} while (--reps > 0 && is_prime);
 
-      gmp_randclear (rstate);
-    }
+	      gmp_randclear (rstate);
+	    }
 	}
     }
   TMP_FREE;
