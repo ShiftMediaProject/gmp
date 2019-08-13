@@ -41,10 +41,10 @@ C AMD K10	 -
 C AMD bd1	 -
 C AMD bd2	 -
 C AMD bd3	 -
-C AMD bd4	 2.86 *
+C AMD bd4	 2.86  *
 C AMD bt1	 -
 C AMD bt2	 -
-C AMD zn1	 2.66 *
+C AMD zn1	 2.66  *
 C AMD zn2	 3.48
 C Intel P4	 -
 C Intel CNR	 -
@@ -76,6 +76,7 @@ PROLOGUE(mpn_gcd_11)
 	mov	v0, %rax	C
 	sub	u0, v0		C
 	jz	L(end)		C
+	mov	u0, %r9
 
 	ALIGN(16)		C
 L(top):	rep;bsf	v0, %rcx	C

@@ -45,7 +45,7 @@ C AMD bd4	 3.07
 C AMD bt1	 -
 C AMD bt2	 -
 C AMD zn1	 3.10
-C AMD zn2	 3.17 *
+C AMD zn2	 3.17  *
 C Intel P4	 -
 C Intel CNR	 -
 C Intel PNR	 -
@@ -73,6 +73,7 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
+	mov	u0, %r9
 	jmp	L(ent)		C
 
 	ALIGN(16)		C
