@@ -3552,7 +3552,7 @@ This function performs some trial divisions, a Baillie-PSW probable prime
 test, then @var{reps-24} Miller-Rabin probabilistic primality tests.  A
 higher @var{reps} value will reduce the chances of a non-prime being
 identified as ``probably prime''.  A composite number will be identified as a
-prime with a probability of less than @m{4^{-reps},4^(-@var{reps})}.
+prime with an asymptotic probability of less than @m{4^{-reps},4^(-@var{reps})}.
 Reasonable values of @var{reps} are between 15 and 50.
 
 GMP versions up to and including 6.1.2 did not use the Baillie-PSW
