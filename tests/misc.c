@@ -209,7 +209,7 @@ strtoupper (char *s_orig)
 {
   char  *s;
   for (s = s_orig; *s != '\0'; s++)
-    if (isascii (*s))
+    if (islower (*s))
       *s = toupper (*s);
   return s_orig;
 }
