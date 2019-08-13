@@ -72,22 +72,21 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
-	mov	v0, %r10	C
-	sub	u0, %r10	C
+	mov	v0, %rax	C
+	sub	u0, v0		C
 	jz	L(end)		C
 
 	ALIGN(16)		C              K10 BD1 BD2 ZEN CNR NHM SBR
-L(top):	rep;bsf	%r10, %rcx	C tzcnt!       3   3   3   2   6   5   5
+L(top):	rep;bsf	v0, %rcx	C tzcnt!       3   3   3   2   6   5   5	(TODO)
 	mov	u0, %r9		C              2   2   2   2   3   3   4
-	sub	v0, u0		C              2   2   2   2   4   3   4
-	cmovc	%r10, u0	C if x-y < 0   0,3 0,3 0,3 0,3 0,6 0,5 0,5
-	cmovc	%r9, v0		C use x,y-x    0,3 0,3 0,3 0,3 2,8 1,7 1,7
+	sub	%rax, u0	C              2   2   2   2   4   3   4	(TODO)
+	cmovc	v0, u0		C if x-y < 0   0,3 0,3 0,3 0,3 0,6 0,5 0,5	(TODO)
+	cmovc	%r9, %rax	C use x,y-x    0,3 0,3 0,3 0,3 2,8 1,7 1,7	(TODO)
 	shr	R8(%rcx), u0	C              1,7 1,6 1,5 1,4 2,8 2,8 2,8
-	mov	v0, %r10	C              1   1   1   1   4   3   3
-	sub	u0, %r10	C              2   2   2   1   5   4   4
-	jnz	L(top)		C
+	mov	%rax, v0	C              1   1   1   1   4   3   3	(TODO)
+	sub	u0, v0		C              2   2   2   1   5   4   4	(TODO)
+	jnz	L(top)		C	(TODO: registers was changed, cycles not updated)
 
-L(end):	mov	v0, %rax
-	FUNC_EXIT()
+L(end):	FUNC_EXIT()
 	ret
 EPILOGUE()
