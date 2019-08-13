@@ -1,4 +1,9 @@
-2018-11-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2019-08-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64: Add more gcd_11 variants of of x86_64 gcd_11.asm and
+	tweak existing ones.
+
+2019-08-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	From Seth Troisi:
 	* doc/gmp.texi: Update mpz_millerrabin documentation.
@@ -8,6 +13,12 @@
 	* tests/misc.c: Silence a warning.
 	* tests/mpz/t-pprime_p.c (const primes): One more prime in the list.
 	* mpz/millerrabin.c: Return 2 for surely prime numbers (BPSW checked).
+
+2019-08-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86/gcd_11.asm: New file.
+
+	* config.sub: Make arm cpu types match what config.guess returns.
 
 2019-08-08  Niels Möller  <nisse@lysator.liu.se>
 
