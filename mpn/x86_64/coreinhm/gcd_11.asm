@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_gcd_11 optimised for AMD BD2, BD3, BT2.
+dnl  AMD64 mpn_gcd_11 optimised for Intel NHM, WSM.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
@@ -36,31 +36,31 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 -
-C AMD K10	 -
-C AMD bd1	 -
-C AMD bd2	 3.27 *
+C AMD K8,K9	 ?
+C AMD K10	 ?
+C AMD bd1	 ?
+C AMD bd2	 ?
 C AMD bd3	 ?
-C AMD bd4	 3.79
-C AMD bt1	 -
-C AMD bt2	 3.64 *
-C AMD zn1	 3.25
-C AMD zn2	 3.50
-C Intel P4	 -
-C Intel CNR	 -
-C Intel PNR	 -
-C Intel NHM	 -
-C Intel WSM	 -
-C Intel SBR	 -
-C Intel IBR	 -
-C Intel HWL	 ?
-C Intel BWL	 ?
-C Intel SKL	 ?
-C Intel atom	 -
-C Intel SLM	 -
-C Intel GLM	 -
-C Intel GLM+	 -
-C VIA nano	 -
+C AMD bd4	 ?
+C AMD bt1	 ?
+C AMD bt2	 ?
+C AMD zn1	 ?
+C AMD zn2	 ?
+C Intel P4	 ?
+C Intel CNR	 5.05
+C Intel PNR	 5.05
+C Intel NHM	 5.09  *
+C Intel WSM	 5.09  *
+C Intel SBR	 4.83
+C Intel IBR	 ?
+C Intel HWL	 4.49
+C Intel BWL	 4.09
+C Intel SKL	 4.09
+C Intel atom	 ?
+C Intel SLM	 ?
+C Intel GLM	 ?
+C Intel GLM+	 ?
+C VIA nano	 ?
 
 define(`u0',    `%rdi')
 define(`v0',    `%rsi')
@@ -78,7 +78,7 @@ PROLOGUE(mpn_gcd_11)
 	jz	L(end)		C
 
 	ALIGN(16)		C
-L(top):	rep;bsf	v0, %rcx	C tzcnt!
+L(top):	bsf	v0, %rcx	C
 	mov	u0, %r9		C
 	sub	%rax, u0	C
 	cmovc	v0, u0		C u = |u - v|

@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_gcd_11 optimised for Intel C2, NHM, SBR and AMD K10, BD1.
+dnl  AMD64 mpn_gcd_11 optimised for Intel CNR, PNR, SBR, IBR.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
@@ -36,30 +36,31 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 8.50
-C AMD K10	 4.30
-C AMD bd1	 5.00
+C AMD K8,K9	 ?
+C AMD K10	 ?
+C AMD bd1	 ?
 C AMD bd2	 ?
 C AMD bd3	 ?
 C AMD bd4	 ?
-C AMD bt1	10.0
+C AMD bt1	 ?
 C AMD bt2	 ?
 C AMD zn1	 ?
 C AMD zn2	 ?
-C Intel P4	18.6
-C Intel core2	 3.83
-C Intel NHM	 5.17
-C Intel SBR	 4.69
-C Intel IBR	 ?
-C Intel HWL	 ?
-C Intel BWL	 ?
-C Intel SKL	 ?
-C Intel atom	17.0
+C Intel P4	 ?
+C Intel CNR	 4.22  *
+C Intel PNR	 4.22  *
+C Intel NHM	 4.97
+C Intel WSM	 5.17
+C Intel SBR	 4.83  *
+C Intel IBR	 4.16  *
+C Intel HWL	 3.84
+C Intel BWL	 3.76
+C Intel SKL	 3.83
+C Intel atom	 ?
 C Intel SLM	 ?
 C Intel GLM	 ?
 C Intel GLM+	 ?
-C VIA nano	 5.44
-C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
+C VIA nano	 ?
 
 define(`u0',    `%rdi')
 define(`v0',    `%rsi')
@@ -72,22 +73,20 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
-	mov	v0, %r10	C
-	sub	u0, %r10	C
-	jz	L(end)		C
+	mov	v0, %rax	C
+	jmp	L(odd)		C
 
-	ALIGN(16)		C              K10 BD1 CNR NHM SBR
-L(top):	bsf	%r10, %rcx	C              3   3   6   5   5
-	mov	u0, %r9		C              2   2   3   3   4
-	sub	v0, u0		C              2   2   4   3   4
-	cmovc	%r10, u0	C if x-y < 0   0,3 0,3 0,6 0,5 0,5
-	cmovc	%r9, v0		C use x,y-x    0,3 0,3 2,8 1,7 1,7
-	shr	R8(%rcx), u0	C              1,7 1,6 2,8 2,8 2,8
-	mov	v0, %r10	C              1   1   4   3   3
-	sub	u0, %r10	C              2   2   5   4   4
+	ALIGN(16)		C
+L(top):	cmovc	v0, u0		C u = |u - v|
+	cmovc	%r9, %rax	C v = min(u,v)
+	shr	R8(%rcx), u0	C
+	mov	%rax, v0	C
+L(odd):	sub	u0, v0		C
+	bsf	v0, %rcx	C
+	mov	u0, %r9		C
+	sub	%rax, u0	C
 	jnz	L(top)		C
 
-L(end):	mov	v0, %rax
-	FUNC_EXIT()
+L(end):	FUNC_EXIT()
 	ret
 EPILOGUE()

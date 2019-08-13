@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_gcd_11 optimised for AMD BD2, BD3, BT2.
+dnl  AMD64 mpn_gcd_11 optimised for AMD ZN2.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for AMD64 by Torbjorn
 dnl  Granlund.
@@ -39,13 +39,13 @@ C	     cycles/bit (approx)
 C AMD K8,K9	 -
 C AMD K10	 -
 C AMD bd1	 -
-C AMD bd2	 3.27 *
-C AMD bd3	 ?
-C AMD bd4	 3.79
+C AMD bd2	 -
+C AMD bd3	 -
+C AMD bd4	 3.07
 C AMD bt1	 -
-C AMD bt2	 3.64 *
-C AMD zn1	 3.25
-C AMD zn2	 3.50
+C AMD bt2	 -
+C AMD zn1	 3.10
+C AMD zn2	 3.17 *
 C Intel P4	 -
 C Intel CNR	 -
 C Intel PNR	 -
@@ -73,21 +73,30 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
-	mov	v0, %rax	C
-	sub	u0, v0		C
-	jz	L(end)		C
+	jmp	L(ent)		C
 
 	ALIGN(16)		C
-L(top):	rep;bsf	v0, %rcx	C tzcnt!
-	mov	u0, %r9		C
-	sub	%rax, u0	C
-	cmovc	v0, u0		C u = |u - v|
+L(top):	cmovc	%rax, u0	C u = |v - u|
+	cmovc	%r9, v0		C v = min(u,v)
+	rep;bsf	%rax, %rcx	C
+	shrx(	%rcx, u0, %r9)	C
+	shrx(	%rcx, u0, u0)	C
+L(ent):	mov	v0, %rax	C
+	sub	u0, v0		C v - u
+	sub	%rax, u0	C u - v
+	jz	L(end)		C
+
+	cmovc	v0, u0		C u = |v - u|
 	cmovc	%r9, %rax	C v = min(u,v)
-	shr	R8(%rcx), u0	C
+	rep;bsf	v0, %rcx	C
+	shrx(	%rcx, u0, %r9)	C
+	shrx(	%rcx, u0, u0)	C
 	mov	%rax, v0	C
-	sub	u0, v0		C
+	sub	u0, %rax	C v - u
+	sub	v0, u0		C u - v
 	jnz	L(top)		C
 
+	mov	v0, %rax
 L(end):	FUNC_EXIT()
 	ret
 EPILOGUE()
