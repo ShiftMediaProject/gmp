@@ -34,4 +34,4 @@ ABI_SUPPORT(DOS64)
 ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_gcd_11)
-include_mpn(`x86_64/bd4/gcd_11.asm')
+include_mpn(`x86_64/bd2/gcd_11.asm')
