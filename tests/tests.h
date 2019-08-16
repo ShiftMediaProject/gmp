@@ -356,6 +356,7 @@ void refmpq_sub (mpq_ptr, mpq_srcptr, mpq_srcptr);
 
 void refmpz_combit (mpz_ptr, unsigned long);
 unsigned long refmpz_hamdist (mpz_srcptr, mpz_srcptr);
+void refmpz_gcd (mpz_ptr, mpz_srcptr, mpz_srcptr);
 int refmpz_kronecker (mpz_srcptr, mpz_srcptr);
 int refmpz_jacobi (mpz_srcptr, mpz_srcptr);
 int refmpz_legendre (mpz_srcptr, mpz_srcptr);

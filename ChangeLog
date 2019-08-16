@@ -1,3 +1,15 @@
+2019-08-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd.c (gcd_2): Moved to gcd_22.c below.
+	(mpn_gcd): Adapt for calling gcd_22.
+	* mpn/generic/gcd_22.c (mpn_gcd_22): New file and function.
+	* gmp-impl.h (mp_double_limb_t): New (typedef) struct.
+	* configure.ac (gmp_mpn_functions): Added gcd_22.
+
+	* tests/mpn/t-gcd_22.c: New test.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-gcd_22.
+	* tests/refmpz.c (refmpz_gcd): New function (plain binary gcd).
+
 2019-08-13  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64: Add more gcd_11 variants of of x86_64 gcd_11.asm and

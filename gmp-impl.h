@@ -3968,6 +3968,14 @@ __GMP_DECLSPEC void __gmp_invalid_operation (void) ATTRIBUTE_NORETURN;
 #define PP_FIRST_OMITTED 3
 #endif
 
+typedef struct
+{
+  mp_limb_t d0, d1;
+} mp_double_limb_t;
+
+#define mpn_gcd_22 __MPN (gcd_22)
+__GMP_DECLSPEC mp_double_limb_t mpn_gcd_22 (mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t);
+
 /* BIT1 means a result value in bit 1 (second least significant bit), with a
    zero bit representing +1 and a one bit representing -1.  Bits other than
    bit 1 are garbage.  These are meant to be kept in "int"s, and casts are
