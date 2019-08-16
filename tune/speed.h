@@ -225,6 +225,7 @@ double speed_mpn_gcd (struct speed_params *);
 double speed_mpn_gcd_1 (struct speed_params *);
 double speed_mpn_gcd_11 (struct speed_params *);
 double speed_mpn_gcd_1N (struct speed_params *);
+double speed_mpn_gcd_22 (struct speed_params *);
 double speed_mpn_gcdext (struct speed_params *);
 double speed_mpn_gcdext_double (struct speed_params *);
 double speed_mpn_gcdext_one_double (struct speed_params *);
@@ -2824,6 +2825,12 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 #define SPEED_ROUTINE_MPN_GCD_11(function)				\
   SPEED_ROUTINE_MPN_GCD_1_CALL((px[i] |= 1, py[i] |= 1),		\
 			       function (px[j-1], py[j-1]))
+
+/* Multiply limbs by (B+1). Then we get a gcd exceeding one limb, so
+   we can measure gcd_22 loop only, without gcd_11. */
+#define SPEED_ROUTINE_MPN_GCD_22(function)				\
+  SPEED_ROUTINE_MPN_GCD_1_CALL((px[i] |= 1, py[i] |= 1),		\
+			       function (px[j-1], px[j-1], py[j-1], py[j-1]))
 
 #define SPEED_ROUTINE_MPN_JACBASE(function)				\
   SPEED_ROUTINE_MPN_GCD_1_CALL						\

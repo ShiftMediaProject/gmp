@@ -1,5 +1,11 @@
 2019-08-16  Niels Möller  <nisse@lysator.liu.se>
 
+	Speed support for gcd_22. Calls mpn_gcd_22(al, al, bl, bl), so
+	that B+1 is a common factor.
+	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_22): New macro.
+	* tune/speed.c (routine): Add mpn_gcd_22.
+	* tune/common.c (speed_mpn_gcd_22): New function.
+
 	* mpn/generic/gcd.c (gcd_2): Moved to gcd_22.c below.
 	(mpn_gcd): Adapt for calling gcd_22.
 	* mpn/generic/gcd_22.c (mpn_gcd_22): New file and function.
