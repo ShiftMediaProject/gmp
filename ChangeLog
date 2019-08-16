@@ -1,3 +1,8 @@
+2019-08-16 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/brootinv.c: Shorten computations, using even exponent.
+	* mpn/generic/powlo.c: Avoid copies with a flipflop.
+
 2019-08-16  Niels Möller  <nisse@lysator.liu.se>
 
 	Speed support for gcd_22. Calls mpn_gcd_22(al, al, bl, bl), so
