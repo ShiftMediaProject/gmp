@@ -232,6 +232,7 @@ void refmpn_fill (mp_ptr, mp_size_t, mp_limb_t);
 
 mp_limb_t refmpn_gcd_11 (mp_limb_t, mp_limb_t);
 mp_limb_t refmpn_gcd_1 (mp_srcptr, mp_size_t, mp_limb_t);
+mp_double_limb_t refmpn_gcd_22 (mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t);
 mp_limb_t refmpn_gcd (mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t);
 
 size_t refmpn_get_str (unsigned char *, int, mp_ptr, mp_size_t);
