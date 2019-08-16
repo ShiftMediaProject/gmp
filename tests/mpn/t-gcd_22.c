@@ -59,16 +59,17 @@ main (int argc, char **argv)
   mpz_init (ref);
   for (test = 0; test < count; test++)
     {
-      mp_bitcnt_t size = 1 + gmp_urandomm_ui(rands, 2*GMP_NUMB_BITS);
+      mp_bitcnt_t asize = 1 + gmp_urandomm_ui(rands, 2*GMP_NUMB_BITS);
+      mp_bitcnt_t bsize = 1 + gmp_urandomm_ui(rands, 2*GMP_NUMB_BITS);
       if (test & 1)
 	{
-	  mpz_urandomb (a, rands, size);
-	  mpz_urandomb (b, rands, size);
+	  mpz_urandomb (a, rands, asize);
+	  mpz_urandomb (b, rands, bsize);
 	}
       else
 	{
-	  mpz_rrandomb (a, rands, size);
-	  mpz_rrandomb (b, rands, size);
+	  mpz_rrandomb (a, rands, asize);
+	  mpz_rrandomb (b, rands, bsize);
 	}
 
       mpz_setbit (a, 0);
