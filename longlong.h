@@ -446,11 +446,43 @@ long __MPN(count_leading_zeros) (UDItype);
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC);	\
   } while (0)
-/* FIXME: Extend the immediate range for the low word by using both
-   ADDS and SUBS, since they set carry in the same way.  */
+/* FIXME: Extend the immediate range for the low word by using both ADDS and
+   SUBS, since they set carry in the same way.  Note: We need separate
+   definitions for thumb and non-thumb to to th absense of RSC under thumb.  */
+#if defined (__thumb__)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   do {									\
-    if (__builtin_constant_p (al))					\
+    if (__builtin_constant_p (ah) && __builtin_constant_p (bh)		\
+	&& (ah) == (bh))						\
+      __asm__ ("subs\t%1, %2, %3\n\tsbc\t%0, %0, %0"			\
+	       : "=r" (sh), "=r" (sl)					\
+	       : "r" (al), "rI" (bl) __CLOBBER_CC);			\
+    else if (__builtin_constant_p (al))					\
+      {									\
+	__asm__ ("rsbs\t%1, %5, %4\n\tsbc\t%0, %2, %3"			\
+		 : "=r" (sh), "=&r" (sl)				\
+		 : "r" (ah), "rI" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
+      }									\
+    else if (__builtin_constant_p (bl))					\
+      {									\
+	__asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+		 : "=r" (sh), "=&r" (sl)				\
+		 : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+      }									\
+    else								\
+      __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
+    } while (0)
+#else
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  do {									\
+    if (__builtin_constant_p (ah) && __builtin_constant_p (bh)		\
+	&& (ah) == (bh))						\
+      __asm__ ("subs\t%1, %2, %3\n\tsbc\t%0, %0, %0"			\
+	       : "=r" (sh), "=r" (sl)					\
+	       : "r" (al), "rI" (bl) __CLOBBER_CC);			\
+    else if (__builtin_constant_p (al))					\
       {									\
 	if (__builtin_constant_p (ah))					\
 	  __asm__ ("rsbs\t%1, %5, %4\n\trsc\t%0, %3, %2"		\
@@ -474,20 +506,16 @@ long __MPN(count_leading_zeros) (UDItype);
       }									\
     else if (__builtin_constant_p (bl))					\
       {									\
-	if (__builtin_constant_p (bh))					\
-	  __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"		\
-		   : "=r" (sh), "=&r" (sl)				\
-		   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
-	else								\
-	  __asm__ ("subs\t%1, %4, %5\n\trsc\t%0, %3, %2"		\
-		   : "=r" (sh), "=&r" (sl)				\
-		   : "rI" (ah), "r" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+	__asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+		 : "=r" (sh), "=&r" (sl)				\
+		 : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
       }									\
     else /* only bh might be a constant */				\
       __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
     } while (0)
+#endif
 #if defined (__ARM_ARCH_2__) || defined (__ARM_ARCH_2A__) \
     || defined (__ARM_ARCH_3__)
 #define umul_ppmm(xh, xl, a, b)						\
