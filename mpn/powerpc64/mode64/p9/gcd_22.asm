@@ -107,8 +107,8 @@ L(odd):	subf	r10, u0, v0		C r10 = v - u
 	bne	cr7, L(top1)
 
 ifdef(`SLOW',`
-	std	r3, 0(r3)
-	std	r4, 8(r3)
+	std	v0, 0(r3)
+	std	r10, 8(r3)
 ',`
 	mr	r3, v0
 	li	r4, 0
