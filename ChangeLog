@@ -1,3 +1,38 @@
+2019-08-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/core2/gcd_22.asm: New file.
+	* mpn/x86_64/k8/gcd_22.asm: New file.
+	* mpn/x86_64/k10/gcd_22.asm: New file.
+	* mpn/x86_64/coreihwl/gcd_22.asm: New file.
+	* mpn/x86_64/bt1/gcd_22.asm: New file.
+	* mpn/x86_64/bd4/gcd_22.asm: New grabber.
+	* mpn/x86_64/zen/gcd_22.asm: New grabber.
+	* mpn/x86_64/atom/gcd_22.asm: New grabber.
+
+2019-08-19  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Check for ELFv1 ABI on PowerPC.
+
+2019-08-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (arm32 sub_ddmmss): Define separately for thumb and
+	non-thumb as rsc instruction is missing for thumb.
+
+	* mpn/powerpc64/mode64/p7/gcd_22.asm: New file.
+	* mpn/powerpc64/mode64/p9/gcd_22.asm: New file.
+
+2019-08-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* demos/expr/t-expr.c: #include gmp-impl.h as it includes tests.h.
+
+	* mpn/asm-defs.m4: Add gcd_22.
+
+	* tests/refmpn.c (refmpn_gcd_22): New function.
+	* tests/tests.h: Declare it.
+
+	* tests/t-constants.c: #include gmp-impl.h.
+	* tests/mpf/t-get_d.c: Likewise.
+
 2019-08-17  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_22.c (mpn_gcd_22): New implementation with less
@@ -25,6 +60,10 @@
 	* tests/mpn/t-gcd_22.c: New test.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-gcd_22.
 	* tests/refmpz.c (refmpz_gcd): New function (plain binary gcd).
+
+2019-08-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/zen/gcd_11.asm: Use bd2 instead of bd4 code.
 
 2019-08-13  Torbjörn Granlund  <tg@gmplib.org>
 
@@ -70,6 +109,7 @@
 	* mpn/x86_64/bd2/gcd_11.asm: Likewise.
 	* mpn/x86_64/core2/gcd_11.asm: Likewise.
 	* mpn/x86_64/gcd_11.asm: Likewise.
+	* mpn/asm-defs.m4: Add gcd_11.
 
 2019-08-06  Niels Möller  <nisse@lysator.liu.se>
 
@@ -910,7 +950,7 @@
 2017-02-24  Torbjörn Granlund  <tg@gmplib.org>
 
 	* longlong.h (arm32/arm64 add_ssaaaa): Use "subs" for some immediates.
-	* longlong.h (arm32/arm64 sub_ssaaaa): Use "adds" for some immediates.
+	* longlong.h (arm32/arm64 sub_ddmmss): Use "adds" for some immediates.
 
 	* mpn/arm64/copyi.asm: Avoid branching on flags.
 	* mpn/arm64/copyd.asm: Likewise.
