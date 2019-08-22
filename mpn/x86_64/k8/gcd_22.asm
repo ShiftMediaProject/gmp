@@ -33,25 +33,25 @@ include(`../config.m4')
 
 C	     cycles/bit
 C AMD K8,K9	 9.0
-C AMD K10	 ?
-C AMD bd1	 ?
-C AMD bd2	 ?
+C AMD K10	 8.9
+C AMD bd1	10.1
+C AMD bd2	 9.5
 C AMD bd3	 ?
-C AMD bd4	 ?
+C AMD bd4	 7.6
 C AMD bt1	 ?
-C AMD bt2	 ?
-C AMD zn1	 ?
-C AMD zn2	 ?
+C AMD bt2	 9.6
+C AMD zn1	 7.7
+C AMD zn2	 7.6
 C Intel P4	 ?
-C Intel CNR	 ?
-C Intel PNR	 ?
-C Intel NHM	 ?
-C Intel WSM	 ?
-C Intel SBR	 ?
+C Intel CNR	10.1
+C Intel PNR	10.1
+C Intel NHM	10.1
+C Intel WSM	10.1
+C Intel SBR	11.8
 C Intel IBR	 ?
-C Intel HWL	 ?
-C Intel BWL	 ?
-C Intel SKL	 ?
+C Intel HWL	10.6
+C Intel BWL	10.2
+C Intel SKL	10.1
 C Intel atom	19.0
 C Intel SLM	14.0
 C Intel GLM	 9.9
@@ -86,7 +86,7 @@ define(`s1',    `%r9')
 define(`t0',    `%r10')
 define(`t1',    `%r11')
 
-ABI_SUPPORT(DOS64)
+dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
 
 ASM_START()
@@ -138,7 +138,7 @@ L(gcd_11):
 	mov	u0, %rsi
 	xor	R32(%rdx), R32(%rdx)
 	pop	%r12
-	jmp	mpn_gcd_11
+	TCALL(	mpn_gcd_11)
 
 L(count_better):
 	bsf	u0, cnt

@@ -72,7 +72,7 @@ define(`s1',    `%r9')
 define(`t0',    `%r10')
 define(`t1',    `%r11')
 
-ABI_SUPPORT(DOS64)
+dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
 
 ASM_START()
@@ -118,7 +118,7 @@ L(gcd_11):
 	mov	v0, %rdi
 	mov	u0, %rsi
 	xor	R32(%rdx), R32(%rdx)
-	jmp	mpn_gcd_11
+	TCALL(	mpn_gcd_11)
 
 L(lowz):C We come here when v0 - u0 = 0
 	C 1. If v1 - u1 = 0, then gcd is u = v.

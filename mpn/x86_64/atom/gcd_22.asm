@@ -30,7 +30,7 @@ dnl  see https://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-ABI_SUPPORT(DOS64)
+dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_gcd_22)

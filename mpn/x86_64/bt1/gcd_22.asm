@@ -86,7 +86,7 @@ define(`s1',    `%r9')
 define(`t0',    `%r10')
 define(`t1',    `%r11')
 
-ABI_SUPPORT(DOS64)
+dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
 
 ASM_START()
@@ -138,7 +138,7 @@ L(gcd_11):
 	mov	u0, %rsi
 	xor	R32(%rdx), R32(%rdx)
 	pop	%r12
-	jmp	mpn_gcd_11
+	TCALL(	mpn_gcd_11)
 
 L(count_better):
 	rep;bsf	u0, cnt		C tzcnt!
