@@ -206,6 +206,13 @@ ifdef(`PIC',
 	`call	GSYM_PREFIX`'$1'
 )')
 
+define(`TCALL',`dnl
+ifdef(`PIC',
+	`jmp	GSYM_PREFIX`'$1@PLT'
+,
+	`jmp	GSYM_PREFIX`'$1'
+)')
+
 
 define(`JUMPTABSECT', `.section	.data.rel.ro.local,"a",@progbits')
 
