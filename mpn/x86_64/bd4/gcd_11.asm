@@ -41,11 +41,11 @@ C AMD K10	 -
 C AMD bd1	 -
 C AMD bd2	 -
 C AMD bd3	 -
-C AMD bd4	 2.86  *
+C AMD bd4	 4.0   *
 C AMD bt1	 -
 C AMD bt2	 -
-C AMD zn1	 2.66  *
-C AMD zn2	 3.48
+C AMD zn1	 3.25  *
+C AMD zn2	 3.50
 C Intel P4	 -
 C Intel CNR	 -
 C Intel PNR	 -
@@ -73,22 +73,24 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
-	mov	v0, %rax	C
-	sub	u0, v0		C
-	jz	L(end)		C
-	mov	u0, %r9
+	mov	u0, %rax
+	mov	v0, %rdx
+	sub	u0, %rdx		C v - u
+	jz	L(end)
 
-	ALIGN(16)		C
-L(top):	rep;bsf	v0, %rcx	C
-	sub	%rax, u0	C u - v
-	cmovc	v0, u0		C u = |u - v|
-	cmovc	%r9, %rax	C v = min(u,v)
-	shrx(	%rcx, u0, %r9)	C
-	shrx(	%rcx, u0, u0)	C
-	mov	%rax, v0	C
-	sub	u0, v0		C v - u
-	jnz	L(top)		C
+	ALIGN(16)
+L(top):	rep;bsf	%rdx, %rcx		C tzcnt!
+	sub	v0, u0			C u - v
+	cmovc	%rdx, u0		C u = |u - v|
+	cmovc	%rax, v0		C v = min(u,v)
+	shrx(	%rcx, u0, %rax)
+	shrx(	%rcx, u0, u0)
+	mov	v0, %rdx
+	sub	%rax, %rdx		C v - u
+	jnz	L(top)
 
-L(end):	FUNC_EXIT()
+L(end):	C rax = result
+	C rdx = 0 for the benefit of internal gcd_22 call
+	FUNC_EXIT()
 	ret
 EPILOGUE()

@@ -73,30 +73,29 @@ ASM_START()
 	ALIGN(16)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
-	mov	u0, %rax
-
-	LEA(	ctz_table, %rdx)
+	LEA(	ctz_table, %r8)
 	jmp	L(ent)
 
-	ALIGN(16)			C              K8
-L(top):	cmovc	%rcx, %rax		C if x-y < 0   0
-	cmovc	%rdi, v0		C use x,y-x    0
-L(mid):	and	$MASK, R32(%rcx)	C	       0
-	movzbl	(%rdx,%rcx), R32(%rcx)	C	       1
-	jz	L(shift_alot)		C	       1
-	shr	R8(%rcx), %rax		C	       3
-	mov	%rax, %rdi		C	       4
-L(ent):	mov	v0, %rcx		C	       3
-	sub	%rax, %rcx		C	       4
-	sub	v0, %rax		C	       4
-	jnz	L(top)			C
+	ALIGN(16)
+L(top):	cmovc	%rdx, u0		C u = |u - v|
+	cmovc	%rax, v0		C v = min(u,v)
+L(mid):	and	$MASK, R32(%rdx)
+	movzbl	(%r8,%rdx), R32(%rcx)
+	jz	L(shift_alot)
+	shr	R8(%rcx), u0
+L(ent):	mov	u0, %rax
+	mov	v0, %rdx
+	sub	u0, %rdx
+	sub	v0, u0
+	jnz	L(top)
 
-L(end):	mov	v0, %rax
+L(end):	C rax = result
+	C rdx = 0 for the benefit of internal gcd_22 call
 	FUNC_EXIT()
 	ret
 
 L(shift_alot):
-	shr	$MAXSHIFT, %rax
-	mov	%rax, %rcx
+	shr	$MAXSHIFT, u0
+	mov	u0, %rdx
 	jmp	L(mid)
 EPILOGUE()
