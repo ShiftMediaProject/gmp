@@ -1,3 +1,12 @@
+2019-08-22  Niels Möller  <nisse@lysator.liu.se>
+
+	From Hugh McMaster:
+	* gmp.pc.in, gmpxx.pc.in: New files.
+	* configure.ac: New output files gmp.pc and gmpxx.pc.
+	* Makefile.am (pkgconfigdir, pkgconfig_DATA): New automake
+	settings, to install gmp.pc and optionally gmpxx.pc for use with
+	pkg-config.
+
 2019-08-21  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/core2/gcd_22.asm: New file.
