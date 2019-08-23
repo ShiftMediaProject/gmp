@@ -49,8 +49,8 @@ C Intel NHM	 -
 C Intel WSM	 -
 C Intel SBR	 -
 C Intel IBR	 -
-C Intel HWL	 7.4
-C Intel BWL	 6.1
+C Intel HWL	 7.1
+C Intel BWL	 6.0
 C Intel SKL	 6.3
 C Intel atom	 -
 C Intel SLM	 -
@@ -77,7 +77,7 @@ ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_gcd_22)
 	FUNC_ENTRY(2)
 	mov	v0_param, v0
@@ -125,17 +125,14 @@ L(lowz):C We come here when v0 - u0 = 0
 	mov	v1, t0
 	sub	u1, t0
 	je	L(end)
-	mov	$0, t1
 
+	xor	t1, t1
 	mov	u0, s0
 	mov	u1, s1
-
 	rep;bsf	t0, cnt		C tzcnt!
-
 	mov	u1, u0
+	xor	u1, u1
 	sub	v1, u0
-	mov	$0, u1
-
 	jmp	L(bck)
 
 L(end):	C mov	v0, %rax
