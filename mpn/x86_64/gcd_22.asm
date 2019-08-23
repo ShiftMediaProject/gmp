@@ -1,4 +1,6 @@
-dnl  AMD64 mpn_gcd_22.  Assumes useless bsf, useless shrd, tzcnt, no shlx.
+dnl  AMD64 mpn_gcd_22.  Assumes useless bsf, useless shrd, no tzcnt, no shlx.
+dnl  We actually use tzcnt here, when table cannot count bits, as tzcnt always
+dnl  works for our use, and helps a lot for certain CPUs.
 
 dnl  Copyright 2019 Free Software Foundation, Inc.
 
@@ -32,36 +34,36 @@ include(`../config.m4')
 
 
 C	     cycles/bit
-C AMD K8,K9	 ?
-C AMD K10	 ?
-C AMD bd1	 9.83
-C AMD bd2	 7.81
+C AMD K8,K9	 8.9
+C AMD K10	 8.8
+C AMD bd1	 9.7
+C AMD bd2	 7.8
 C AMD bd3	 ?
-C AMD bd4	 ?
-C AMD bt1	 9.0
-C AMD bt2	 9.2
-C AMD zn1	 ?
-C AMD zn2	 ?
+C AMD bd4	 7.4
+C AMD bt1	 9.2
+C AMD bt2	 9.1
+C AMD zn1	 7.5
+C AMD zn2	 7.5
 C Intel P4	 ?
-C Intel CNR	 ?
-C Intel PNR	 ?
-C Intel NHM	 ?
-C Intel WSM	 ?
-C Intel SBR	 ?
+C Intel CNR	10.5
+C Intel PNR	10.5
+C Intel NHM	 9.7
+C Intel WSM	 9.7
+C Intel SBR	10.7
 C Intel IBR	 ?
-C Intel HWL	 ?
-C Intel BWL	 ?
-C Intel SKL	 ?
-C Intel atom	 ?
-C Intel SLM	 ?
-C Intel GLM	 ?
-C Intel GLM+	 ?
+C Intel HWL	 9.5
+C Intel BWL	 8.7
+C Intel SKL	 8.6
+C Intel atom	18.9
+C Intel SLM	14.0
+C Intel GLM	 9.8
+C Intel GLM+	 8.8
 C VIA nano	 ?
 
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
-deflit(MAXSHIFT, 7)
+deflit(MAXSHIFT, 8)
 deflit(MASK, eval((m4_lshift(1,MAXSHIFT))-1))
 
 PROTECT(`ctz_table')
@@ -83,7 +85,7 @@ define(`cnt',   `%rcx')
 
 define(`s0',    `%r8')
 define(`s1',    `%r9')
-define(`t0',    `%r10')
+define(`t0',    `%rcx')
 define(`t1',    `%r11')
 
 dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
@@ -91,13 +93,12 @@ ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_gcd_22)
 	FUNC_ENTRY(2)
-	push	%r12
 	mov	v0_param, v0
 
-	LEA(	ctz_table, %r12)
+	LEA(	ctz_table, %r10)
 
 	ALIGN(16)
 L(top):	mov	v0, t0
@@ -113,31 +114,29 @@ L(top):	mov	v0, t0
 	sbb	v1, u1
 
 L(bck):	cmovc	t0, u0		C u = |u - v|
-	cmovnc	u1, t1		C u = |u - v|
+	cmovc	t1, u1		C u = |u - v|
 	cmovc	s0, v0		C v = min(u,v)
 	cmovc	s1, v1		C v = min(u,v)
 
 	and	$MASK, R32(t0)
-	movzbl	(%r12,t0), R32(%rcx)
+	movzbl	(%r10,t0), R32(cnt)
 	jz	L(count_better)
-C Rightshift (t1,,u0) into (u1,,u0)
+C Rightshift (u1,,u0) into (u1,,u0)
 L(shr):	shr	R8(cnt), u0
-	mov	t1, u1
+	mov	u1, t1
 	shr	R8(cnt), u1
 	neg	cnt
 	shl	R8(cnt), t1
 	or	t1, u0
 
-	test	u1, u1
-	jnz	L(top)
 	test	v1, v1
+	jnz	L(top)
+	test	u1, u1
 	jnz	L(top)
 
 L(gcd_11):
 	mov	v0, %rdi
 	mov	u0, %rsi
-	xor	R32(%rdx), R32(%rdx)
-	pop	%r12
 	TCALL(	mpn_gcd_11)
 
 L(count_better):
@@ -150,22 +149,17 @@ L(lowz):C We come here when v0 - u0 = 0
 	mov	v1, t0
 	sub	u1, t0
 	je	L(end)
-	mov	$0, t1
 
+	xor	t1, t1
 	mov	u0, s0
 	mov	u1, s1
-
-	rep;bsf	t0, cnt		C tzcnt!
-
 	mov	u1, u0
+	xor	u1, u1
 	sub	v1, u0
-	mov	$0, u1
-
 	jmp	L(bck)
 
 L(end):	C mov	v0, %rax
 	C mov	v1, %rdx
-	pop	%r12
 	FUNC_EXIT()
 	ret
 EPILOGUE()
