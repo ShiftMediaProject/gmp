@@ -34,4 +34,4 @@ dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
 
 MULFUNC_PROLOGUE(mpn_gcd_22)
-include_mpn(`x86_64/coreihwl/gcd_22.asm')
+include_mpn(`x86_64/bd2/gcd_22.asm')
