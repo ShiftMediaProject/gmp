@@ -43,8 +43,11 @@ C POWER9		10.6
 C We define SLOW if this target uses a slow struct return mechanism, with
 C r3 as an implicit parameter for the struct pointer.
 undefine(`SLOW')dnl
-ifdef(`AIX',       `define(`SLOW',`due to AIX')')dnl
-ifdef(`ELFv1_ABI', `define(`SLOW',`due to ELFv1')')dnl
+ifdef(`AIX',`define(`SLOW',`due to AIX')',`
+  ifdef(`DARWIN',,`
+    ifdef(`ELFv2_ABI',,`define(`SLOW',`due to ELFv1')')dnl
+  ')
+')
 
 ifdef(`SLOW',`
 define(`IFSLOW', `$1')
@@ -91,7 +94,7 @@ L(bck):	and	tmp, s0, t0		C 2
 	srd	u1, u1, cnt		C 8
 	or	u0, u0, tmp		C 10
 
-	or.	r0, u1, v1		C 12
+	or.	r0, u1, v1		C 10
 	bne	L(top)
 
 
