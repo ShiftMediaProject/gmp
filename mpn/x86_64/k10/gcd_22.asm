@@ -117,7 +117,6 @@ L(bck):	cmovc	t0, u0		C u = |u - v|
 L(gcd_11):
 	mov	v0, %rdi
 	mov	u0, %rsi
-	xor	R32(%rdx), R32(%rdx)
 	TCALL(	mpn_gcd_11)
 
 L(lowz):C We come here when v0 - u0 = 0
