@@ -119,10 +119,6 @@ L(gcd_11):
 	mov	u0, %rsi
 	TCALL(	mpn_gcd_11)
 
-L(count_better):
-	rep;bsf	u0, cnt		C tzcnt!
-	jmp	L(shr)
-
 L(lowz):C We come here when v0 - u0 = 0
 	C 1. If v1 - u1 = 0, then gcd is u = v.
 	C 2. Else compute gcd_21({v1,v0}, |u1-v1|)
@@ -131,6 +127,7 @@ L(lowz):C We come here when v0 - u0 = 0
 	je	L(end)
 
 	xor	t1, t1
+	rep;bsf	t0, cnt		C tzcnt!
 	mov	u0, s0
 	mov	u1, s1
 	mov	u1, u0
