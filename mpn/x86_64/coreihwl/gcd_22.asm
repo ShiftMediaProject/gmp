@@ -37,11 +37,11 @@ C AMD K10	 -
 C AMD bd1	 -
 C AMD bd2	 -
 C AMD bd3	 -
-C AMD bd4	 6.8
+C AMD bd4	 6.7
 C AMD bt1	 -
 C AMD bt2	 -
-C AMD zn1	 5.7
-C AMD zn2	 5.9
+C AMD zn1	 5.4
+C AMD zn2	 5.5
 C Intel P4	 -
 C Intel CNR	 -
 C Intel PNR	 -
@@ -50,8 +50,8 @@ C Intel WSM	 -
 C Intel SBR	 -
 C Intel IBR	 -
 C Intel HWL	 7.1
-C Intel BWL	 6.0
-C Intel SKL	 6.3
+C Intel BWL	 5.5
+C Intel SKL	 5.6
 C Intel atom	 -
 C Intel SLM	 -
 C Intel GLM	 -
@@ -62,15 +62,13 @@ C VIA nano	 -
 define(`u1',    `%rdi')
 define(`u0',    `%rsi')
 define(`v1',    `%rdx')
-define(`v0_param', `%rcx')
-
-define(`v0',    `%rax')
-define(`cnt',   `%rcx')
+define(`v0',    `%rcx')
 
 define(`s0',    `%r8')
 define(`s1',    `%r9')
 define(`t0',    `%r10')
 define(`t1',    `%r11')
+define(`cnt',   `%rax')
 
 dnl ABI_SUPPORT(DOS64)	C returns mp_double_limb_t in memory
 ABI_SUPPORT(STD64)
@@ -79,8 +77,7 @@ ASM_START()
 	TEXT
 	ALIGN(64)
 PROLOGUE(mpn_gcd_22)
-	FUNC_ENTRY(2)
-	mov	v0_param, v0
+	FUNC_ENTRY(4)
 
 	ALIGN(16)
 L(top):	mov	v0, t0
@@ -89,12 +86,11 @@ L(top):	mov	v0, t0
 	mov	v1, t1
 	sbb	u1, t1
 
-	mov	u0, s0
-	mov	u1, s1
-
 	rep;bsf	t0, cnt		C tzcnt!
 
+	mov	u0, s0
 	sub	v0, u0
+	mov	u1, s1
 	sbb	v1, u1
 
 L(bck):	cmovc	t0, u0		C u = |u - v|
@@ -104,18 +100,19 @@ L(bck):	cmovc	t0, u0		C u = |u - v|
 
 	xor	R32(t0), R32(t0)
 	sub	cnt, t0
+	shlx(	t0, u1, s1)
 	shrx(	cnt, u0, u0)
-	shlx(	t0, u1, t0)
-	or	t0, u0
-	shr	R8(cnt), u1
-	jnz	L(top)
+	shrx(	cnt, u1, u1)
+	or	s1, u0
 
 	test	v1, v1
+	jnz	L(top)
+	test	u1, u1
 	jnz	L(top)
 
 L(gcd_11):
 	mov	v0, %rdi
-	mov	u0, %rsi
+C	mov	u0, %rsi
 	TCALL(	mpn_gcd_11)
 
 L(lowz):C We come here when v0 - u0 = 0
@@ -134,8 +131,8 @@ L(lowz):C We come here when v0 - u0 = 0
 	sub	v1, u0
 	jmp	L(bck)
 
-L(end):	C mov	v0, %rax
+L(end):	mov	v0, %rax
 	C mov	v1, %rdx
-	FUNC_EXIT()
+L(ret):	FUNC_EXIT()
 	ret
 EPILOGUE()
