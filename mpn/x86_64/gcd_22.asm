@@ -93,7 +93,7 @@ ASM_START()
 	TEXT
 	ALIGN(64)
 PROLOGUE(mpn_gcd_22)
-	FUNC_ENTRY(2)
+	FUNC_ENTRY(4)
 	mov	v0_param, v0
 
 	LEA(	ctz_table, %r10)
@@ -134,7 +134,7 @@ L(shr):	shr	R8(cnt), u0
 
 L(gcd_11):
 	mov	v0, %rdi
-	mov	u0, %rsi
+C	mov	u0, %rsi
 	TCALL(	mpn_gcd_11)
 
 L(count_better):
