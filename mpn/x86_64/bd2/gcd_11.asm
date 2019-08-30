@@ -36,31 +36,31 @@ include(`../config.m4')
 
 
 C	     cycles/bit (approx)
-C AMD K8,K9	 -
-C AMD K10	 -
-C AMD bd1	 -
-C AMD bd2	 3.27  *
+C AMD K8,K9	 ?
+C AMD K10	 ?
+C AMD bd1	 5.4
+C AMD bd2	 3.72
 C AMD bd3	 ?
-C AMD bd4	 3.79
-C AMD bt1	 -
-C AMD bt2	 3.64  *
-C AMD zn1	 3.25  *
-C AMD zn2	 3.25  *
-C Intel P4	 -
-C Intel CNR	 -
-C Intel PNR	 -
-C Intel NHM	 -
-C Intel WSM	 -
-C Intel SBR	 -
-C Intel IBR	 -
+C AMD bd4	 4.12
+C AMD bt1	 9.0
+C AMD bt2	 3.97
+C AMD zn1	 3.36
+C AMD zn2	 3.33
+C Intel P4	 ?
+C Intel CNR	 ?
+C Intel PNR	 ?
+C Intel NHM	 ?
+C Intel WSM	 ?
+C Intel SBR	 ?
+C Intel IBR	 ?
 C Intel HWL	 ?
 C Intel BWL	 ?
 C Intel SKL	 ?
-C Intel atom	 -
-C Intel SLM	 -
-C Intel GLM	 -
-C Intel GLM+	 -
-C VIA nano	 -
+C Intel atom	 ?
+C Intel SLM	 ?
+C Intel GLM	 ?
+C Intel GLM+	 ?
+C VIA nano	 ?
 
 define(`u0',    `%rdi')
 define(`v0',    `%rsi')

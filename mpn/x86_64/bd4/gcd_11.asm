@@ -41,11 +41,11 @@ C AMD K10	 -
 C AMD bd1	 -
 C AMD bd2	 -
 C AMD bd3	 -
-C AMD bd4	 4.0   *
+C AMD bd4	 3.73
 C AMD bt1	 -
 C AMD bt2	 -
-C AMD zn1	 3.25  *
-C AMD zn2	 3.50
+C AMD zn1	 3.33
+C AMD zn2	 3.48
 C Intel P4	 -
 C Intel CNR	 -
 C Intel PNR	 -
