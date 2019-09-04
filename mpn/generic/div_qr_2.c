@@ -114,20 +114,18 @@ see https://www.gnu.org/licenses/.  */
   do {									\
     mp_limb_t _q3, _q2a, _q2, _q1, _q2c, _q1c, _q1d, _q0;		\
     mp_limb_t _t1, _t0;							\
-    mp_limb_t _c, _mask;						\
+    mp_limb_t _mask;							\
 									\
-    umul_ppmm (_q3,_q2a, n3, di1);					\
+    /* [q3,q2,q1,q0] = [n3,n2]*[di1,di0] + [n3,n2,n1,n0] + [0,1,0,0] */	\
     umul_ppmm (_q2,_q1, n2, di1);					\
+    umul_ppmm (_q3,_q2a, n3, di1);					\
+    ++_q2;	/* _q2 cannot overflow */				\
+    add_ssaaaa (_q3,_q2, _q3,_q2, n3,_q2a);				\
     umul_ppmm (_q2c,_q1c, n3, di0);					\
-    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, _q2c,_q1c);			\
+    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, n2,_q1c);			\
     umul_ppmm (_q1d,_q0, n2, di0);					\
-    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, _q2a,_q1d);			\
-									\
-    /* [q3,q2,q1,q0] += [n3,n2,n1,n0] + [ 0, 1, 0, 0] */		\
-    _q3 += n3;								\
-    _q0 += n0; _c = n0 > _q0;						\
-    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, n2, _c);				\
-    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, CNST_LIMB(1), n1);		\
+    add_sssaaaa (_q2c,_q1d,_q0, _q1d,_q0, n1,n0); /* _q2c cannot overflow */ \
+    add_sssaaaa (_q3,_q2,_q1, _q2,_q1, _q2c,_q1d);			\
 									\
     umul_ppmm (_t1,_t0, _q2, d0);					\
     _t1 += _q2 * d1 + _q3 * d0;						\
