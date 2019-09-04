@@ -214,6 +214,7 @@ double speed_mpn_div_qr_2n (struct speed_params *);
 double speed_mpn_div_qr_2u (struct speed_params *);
 double speed_mpn_fib2_ui (struct speed_params *);
 double speed_mpn_matrix22_mul (struct speed_params *);
+double speed_mpn_hgcd2 (struct speed_params *);
 double speed_mpn_hgcd (struct speed_params *);
 double speed_mpn_hgcd_lehmer (struct speed_params *);
 double speed_mpn_hgcd_appr (struct speed_params *);
@@ -2843,6 +2844,40 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
      },									\
      function (px[j-1], py[j-1], 0))
 
+#define SPEED_ROUTINE_MPN_HGCD2(function)				\
+  {									\
+    unsigned   i, j;							\
+    struct hgcd_matrix1 m = {{{0,0},{0,0}}};				\
+    double     t;							\
+									\
+    speed_operand_src (s, s->xp_block, SPEED_BLOCK_SIZE);		\
+    speed_operand_src (s, s->yp_block, SPEED_BLOCK_SIZE);		\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    mp_limb_t chain = 0;						\
+    do									\
+      {									\
+	for (j = 0; j < SPEED_BLOCK_SIZE; j+= 2)			\
+	  {								\
+	    /* randomized but successively dependent */			\
+	    function (s->xp_block[j] | GMP_NUMB_HIGHBIT,		\
+		      s->xp_block[j+1] + chain,				\
+		      s->yp_block[j] | GMP_NUMB_HIGHBIT,		\
+		      s->yp_block[j+1], &m);				\
+	    chain += m.u[0][0];						\
+	  }								\
+      }									\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    /* make sure the compiler won't optimize away chain */		\
+    noop_1 (chain);							\
+									\
+    s->time_divisor = SPEED_BLOCK_SIZE / 2;				\
+    return t;								\
+  }
 
 #define SPEED_ROUTINE_MPN_HGCD_CALL(func, itchfunc)			\
   {									\
