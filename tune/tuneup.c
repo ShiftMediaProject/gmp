@@ -1899,6 +1899,32 @@ tune_matrix22_mul (void)
 }
 
 void
+tune_hgcd2 (void)
+{
+  static struct param_t  param;
+  double   t1, t2;
+  int      method;
+
+  s.size = 1;
+  t1 = tuneup_measure (speed_mpn_hgcd2_1, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_hgcd2_1 %.9f\n", (long) s.size, t1);
+
+  t2 = tuneup_measure (speed_mpn_hgcd2_2, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_hgcd2_2 %.9f\n", (long) s.size, t2);
+
+  if (t1 == -1.0 || t2 == -1.0)
+    {
+      printf ("Oops, can't measure all mpn_hgcd2 methods\n");
+      abort ();
+    }
+
+  method = (t1 < t2) ? 1 : 2;
+  print_define ("HGCD2_METHOD", method);
+}
+
+void
 tune_hgcd (void)
 {
   static struct param_t  param;
@@ -2973,6 +2999,7 @@ all (void)
   printf("\n");
 
   tune_matrix22_mul ();
+  tune_hgcd2 ();
   tune_hgcd ();
   tune_hgcd_appr ();
   tune_hgcd_reduce();

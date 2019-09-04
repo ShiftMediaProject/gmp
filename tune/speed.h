@@ -215,6 +215,8 @@ double speed_mpn_div_qr_2u (struct speed_params *);
 double speed_mpn_fib2_ui (struct speed_params *);
 double speed_mpn_matrix22_mul (struct speed_params *);
 double speed_mpn_hgcd2 (struct speed_params *);
+double speed_mpn_hgcd2_1 (struct speed_params *);
+double speed_mpn_hgcd2_2 (struct speed_params *);
 double speed_mpn_hgcd (struct speed_params *);
 double speed_mpn_hgcd_lehmer (struct speed_params *);
 double speed_mpn_hgcd_appr (struct speed_params *);
@@ -480,6 +482,11 @@ int mpn_jacobi_base_1 (mp_limb_t, mp_limb_t, int);
 int mpn_jacobi_base_2 (mp_limb_t, mp_limb_t, int);
 int mpn_jacobi_base_3 (mp_limb_t, mp_limb_t, int);
 int mpn_jacobi_base_4 (mp_limb_t, mp_limb_t, int);
+
+int mpn_hgcd2_1 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
+		 struct hgcd_matrix1 *M);
+int mpn_hgcd2_2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
+		 struct hgcd_matrix1 *M);
 
 mp_limb_t mpn_mod_1_div (mp_srcptr, mp_size_t, mp_limb_t);
 mp_limb_t mpn_mod_1_inv (mp_srcptr, mp_size_t, mp_limb_t);

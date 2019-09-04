@@ -1,5 +1,14 @@
 2019-09-04  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd2.c (HGCD2_METHOD): New parameter.
+	(DIV1): New macro, using either the div1 function or plain
+	division, depending on the value of HGCD2_METHOD.
+	(mpn_hgcd2): Use DIV1.
+	* tune/speed.c, tune/speed.h, tune/common.c, tune/Makefile.am: Add
+	measuring of mpn_hgcd2 methods.
+	* tune/hgcd2-1.c, tune/hgcd2-2.c: New files.
+	* tune/tuneup.c: Tune HGCD2_METHOD.
+
 	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD2): New macro.
 	* tune/common.c (speed_mpn_hgcd2): New function.
 	* tune/speed.c (routine): Add mpn_hgcd2.

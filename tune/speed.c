@@ -286,6 +286,8 @@ const struct routine_t {
   { "mpn_matrix22_mul",  speed_mpn_matrix22_mul     },
 
   { "mpn_hgcd2",         speed_mpn_hgcd2, FLAG_NODATA },
+  { "mpn_hgcd2_1",       speed_mpn_hgcd2_1, FLAG_NODATA },
+  { "mpn_hgcd2_2",       speed_mpn_hgcd2_2, FLAG_NODATA },
   { "mpn_hgcd",          speed_mpn_hgcd             },
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
   { "mpn_hgcd_appr",     speed_mpn_hgcd_appr        },

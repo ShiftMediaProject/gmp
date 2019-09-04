@@ -35,7 +35,22 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if GMP_NAIL_BITS == 0
+#ifndef HGCD2_METHOD
+#define HGCD2_METHOD 2
+#endif
+
+#if GMP_NAIL_BITS != 0
+#error Nails not implemented
+#endif
+
+#if HGCD2_METHOD == 1
+
+#define DIV1(q, r, a, b) do { \
+    (q) = (a)/(b);	      \
+    (r) = (a) - (q)*(b);      \
+  } while (0)
+
+#elif HGCD2_METHOD == 2
 
 /* Copied from the old mpn/generic/gcdext.c, and modified slightly to return
    the remainder. */
@@ -93,6 +108,14 @@ div1 (mp_ptr rp,
   *rp = n0;
   return q;
 }
+#define DIV1(q, r, a, b) do {			\
+    mp_limb_t __div1_r;				\
+    (q) = div1 (&__div1_r, a, b);		\
+    (r) = __div1_r;				\
+  } while (0)
+#else
+#error Unknown HGCD2_METHOD
+#endif
 
 /* Two-limb division optimized for small quotients.  */
 static inline mp_limb_t
@@ -196,15 +219,6 @@ div2 (mp_ptr rp,
   return q;
 }
 #endif
-
-#else /* GMP_NAIL_BITS != 0 */
-/* Check all functions for nail support. */
-/* hgcd2 should be defined to take inputs including nail bits, and
-   produce a matrix with elements also including nail bits. This is
-   necessary, for the matrix elements to be useful with mpn_mul_1,
-   mpn_addmul_1 and friends. */
-#error Not implemented
-#endif /* GMP_NAIL_BITS != 0 */
 
 /* Reduces a,b until |a-b| (almost) fits in one limb + 1 bit. Constructs
    matrix M. Returns 1 if we make progress, i.e. can perform at least
@@ -360,9 +374,8 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
       else
 	{
-	  mp_limb_t r;
-	  mp_limb_t q = div1 (&r, ah, bh);
-	  ah = r;
+	  mp_limb_t q;
+	  DIV1 (q, ah, ah, bh);
 	  if (ah < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
 	    {
 	      /* A is too small, but q is correct. */
@@ -389,9 +402,8 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
       else
 	{
-	  mp_limb_t r;
-	  mp_limb_t q = div1 (&r, bh, ah);
-	  bh = r;
+	  mp_limb_t q;
+	  DIV1 (q, bh, bh, ah);
 	  if (bh < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
 	    {
 	      /* B is too small, but q is correct. */
