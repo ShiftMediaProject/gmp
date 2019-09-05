@@ -36,7 +36,7 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #ifndef HGCD2_METHOD
-#define HGCD2_METHOD 3
+#define HGCD2_METHOD 2
 #endif
 
 #if GMP_NAIL_BITS != 0
