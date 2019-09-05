@@ -1,3 +1,9 @@
+2019-09-05  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/gcd_22.asm: Rewrite to make better use of Arm conditional
+	execution.
+	* mpn/arm32/gcd_22.asm: Likewise.
+
 2019-09-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd2.c (div1): Return both r and q as a
@@ -26,6 +32,66 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_HGCD2): New macro.
 	* tune/common.c (speed_mpn_hgcd2): New function.
 	* tune/speed.c (routine): Add mpn_hgcd2.
+
+2019-09-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm/v6t2/gcd_22.asm: New file.
+	* mpn/arm64/gcd_22.asm: New file.
+	* mpn/ia64/gcd_11.asm: New file.
+
+2019-09-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bt1/gcd_11.asm: Replace grabber with bt1 optimised code.
+
+2019-08-30  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bd4/gcd_22.asm: New grabber file.
+
+	* mpn/x86_64/zen/gcd_22.asm: Use coreihwl instead of bd2 gcd_22.
+
+	* mpn/x86_64/bd2/gcd_22.asm: Fix typo in FUNC_ENTRY (currently unused).
+	Avoid a register copy before return.
+	* mpn/x86_64/core2/gcd_22.asm: Likewise.
+	* mpn/x86_64/k10/gcd_22.asm: Likewise.
+	* mpn/x86_64/gcd_22.asm: Likewise.
+
+	* mpn/x86_64/coreihwl/gcd_22.asm: Optimise, now runs well on more CPUs.
+
+	* mpn/x86_64/gcd_11.asm: Remove PROTECT from symbols as they are
+	actually local.
+	* mpn/x86_64/gcd_22.asm: Likewise.
+
+2019-08-25  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bd2/gcd_22.asm: Repeat tzcnt for exceptional lowz case.
+	Remove dead code.
+
+	* mpn/powerpc64/mode64/p7/gcd_22.asm: Make logic for determining ABI
+	wrt struct return more robust.
+	* mpn/powerpc64/mode64/p9/gcd_22.asm: Likewise.
+
+2019-08-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bt1/gcd_11.asm: New grabber.
+	* mpn/x86_64/bt1/gcd_22.asm: New grabber.
+	* mpn/x86_64/bt2/gcd_22.asm: New grabber.
+
+	* mpn/x86_64/atom/gcd_22.asm: Remove stale grabber file.
+	* mpn/x86_64/zen/gcd_22.asm: Grab bd2 instead of hwl code.
+	* mpn/x86_64/bd2/gcd_22.asm: New file.
+	* mpn/x86_64/k8/gcd_22.asm: Remove, rely on top-level code instead.
+	* mpn/x86_64/bt1/gcd_22.asm: Remove.
+	* x86_64/gcd_22.asm: New file, improved version of removed bt1 code.
+
+2019-08-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/coreihwl/gcd_11.asm: Remove as it was never beneficial.
+
+	* mpn/x86_64/bd2/gcd_11.asm: Make sure rdx is zero on return to benefit
+	gcd_22's private calls. Make gcd_11 files more similar in register use.
+	* mpn/x86_64/bd4/gcd_11.asm: Likewise.
+	* mpn/x86_64/core2/gcd_11.asm: Likewise.
+	* mpn/x86_64/gcd_11.asm:: Likewise.
 
 2019-08-22  Niels Möller  <nisse@lysator.liu.se>
 
