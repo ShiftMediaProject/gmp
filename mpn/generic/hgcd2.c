@@ -55,7 +55,7 @@ div1 (mp_limb_t n0, mp_limb_t d0)
 {
   mp_double_limb_t res;
   res.d1 = n0 / d0;
-  res.d0 = n0 - q * d0;
+  res.d0 = n0 - res.d1 * d0;
 
   return res;
 }
@@ -124,7 +124,6 @@ static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
 {
   mp_double_limb_t res;
-  mp_limb_t q;
   if (UNLIKELY ((d0 >> (GMP_LIMB_BITS - 3)) != 0)
       || UNLIKELY (n0 >= (d0 << 3)))
     {
