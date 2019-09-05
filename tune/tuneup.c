@@ -518,6 +518,15 @@ print_define_remark (const char *name, mp_size_t value, const char *remark)
   print_define_end_remark (name, value, remark);
 }
 
+void
+print_define_with_margin (const char *name, mp_size_t value,
+			  mp_size_t runner_up, double speedup)
+{
+  char buf[100];
+  snprintf (buf, sizeof(buf), "%.2f%% faster than %ld",
+	    100.0 * (speedup - 1), runner_up);
+  print_define_remark (name, value, buf);
+}
 
 void
 one (mp_size_t *threshold, struct param_t *param)
@@ -1902,26 +1911,47 @@ void
 tune_hgcd2 (void)
 {
   static struct param_t  param;
-  double   t1, t2;
+  double   t[3+1];
   int      method;
+  int      runner_up_method;
+  double   runner_up_ratio;
 
   s.size = 1;
-  t1 = tuneup_measure (speed_mpn_hgcd2_1, &param, &s);
+  t[1] = tuneup_measure (speed_mpn_hgcd2_1, &param, &s);
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_hgcd2_1 %.9f\n", (long) s.size, t1);
+    printf ("size=%ld, mpn_hgcd2_1 %.9f\n", (long) s.size, t[1]);
 
-  t2 = tuneup_measure (speed_mpn_hgcd2_2, &param, &s);
+  t[2] = tuneup_measure (speed_mpn_hgcd2_2, &param, &s);
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_hgcd2_2 %.9f\n", (long) s.size, t2);
+    printf ("size=%ld, mpn_hgcd2_2 %.9f\n", (long) s.size, t[2]);
 
-  if (t1 == -1.0 || t2 == -1.0)
+  t[3] = tuneup_measure (speed_mpn_hgcd2_3, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_hgcd2_3 %.9f\n", (long) s.size, t[3]);
+
+  if (t[1] == -1.0 || t[2] == -1.0 || t[3] == -1.0)
     {
       printf ("Oops, can't measure all mpn_hgcd2 methods\n");
       abort ();
     }
 
-  method = (t1 < t2) ? 1 : 2;
-  print_define ("HGCD2_METHOD", method);
+  if (t[1] < t[2] && t[1] < t[3])
+    {
+      method = 1;
+      runner_up_method = (t[2] < t[3]) ? 2 : 3;
+    }
+  else if (t[2] < t[3])
+    {
+      method = 2;
+      runner_up_method = (t[1] < t[3]) ? 1 : 3;
+    }
+  else
+    {
+      method = 3;
+      runner_up_method = (t[1] < t[2]) ? 1 : 2;
+    }
+  print_define_with_margin ("HGCD2_METHOD", method, runner_up_method,
+			    t[runner_up_method] / t[method]);
 }
 
 void

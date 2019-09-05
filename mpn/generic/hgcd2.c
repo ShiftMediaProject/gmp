@@ -36,32 +36,40 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #ifndef HGCD2_METHOD
-#define HGCD2_METHOD 2
+#define HGCD2_METHOD 3
 #endif
 
 #if GMP_NAIL_BITS != 0
 #error Nails not implemented
 #endif
 
+/* Single-limb division optimized for small quotients. Returned value
+   holds d0 = r, d1 = q */
+static inline mp_double_limb_t
+div1 (mp_limb_t n0, mp_limb_t d0);
+
 #if HGCD2_METHOD == 1
 
-#define DIV1(q, r, a, b) do { \
-    (q) = (a)/(b);	      \
-    (r) = (a) - (q)*(b);      \
-  } while (0)
+static inline mp_double_limb_t
+div1 (mp_limb_t n0, mp_limb_t d0)
+{
+  mp_double_limb_t res;
+  res.d1 = n0 / d0;
+  res.d0 = n0 - q * d0;
+
+  return res;
+}
 
 #elif HGCD2_METHOD == 2
 
 /* Copied from the old mpn/generic/gcdext.c, and modified slightly to return
    the remainder. */
 
-/* Single-limb division optimized for small quotients. */
-static inline mp_limb_t
-div1 (mp_ptr rp,
-      mp_limb_t n0,
-      mp_limb_t d0)
+static inline mp_double_limb_t
+div1 (mp_limb_t n0, mp_limb_t d0)
 {
-  mp_limb_t q = 0;
+  mp_double_limb_t res;
+  mp_limb_t q;
 
   if ((mp_limb_signed_t) n0 < 0)
     {
@@ -105,14 +113,49 @@ div1 (mp_ptr rp,
 	  cnt--;
 	}
     }
-  *rp = n0;
-  return q;
+  res.d0 = n0;
+  res.d1 = q;
+  return res;
 }
-#define DIV1(q, r, a, b) do {			\
-    mp_limb_t __div1_r;				\
-    (q) = div1 (&__div1_r, a, b);		\
-    (r) = __div1_r;				\
-  } while (0)
+
+#elif HGCD2_METHOD == 3
+
+static inline mp_double_limb_t
+div1 (mp_limb_t n0, mp_limb_t d0)
+{
+  mp_double_limb_t res;
+  mp_limb_t q;
+  if (UNLIKELY ((d0 >> (GMP_LIMB_BITS - 3)) != 0)
+      || UNLIKELY (n0 >= (d0 << 3)))
+    {
+      res.d1 = n0 / d0;
+      res.d0 = n0 - res.d1 * d0;
+    }
+  else
+    {
+      mp_limb_t q, mask;
+
+      d0 <<= 2;
+
+      mask = -(mp_limb_t) (n0 >= d0);
+      q = 4 & mask;
+      n0 -= d0 & mask;
+
+      d0 >>= 1;
+      mask = -(mp_limb_t) (n0 >= d0);
+      q += 2 & mask;
+      n0 -= d0 & mask;
+
+      d0 >>= 1;
+      mask = -(mp_limb_t) (n0 >= d0);
+      q += 1 & mask;
+      n0 -= d0 & mask;
+
+      res.d0 = n0;
+      res.d1 = q;
+    }
+  return res;
+}
 #else
 #error Unknown HGCD2_METHOD
 #endif
@@ -374,8 +417,10 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
       else
 	{
-	  mp_limb_t q;
-	  DIV1 (q, ah, ah, bh);
+	  mp_double_limb_t rq = div1 (ah, bh);
+	  mp_limb_t q = rq.d1;
+	  ah = rq.d0;
+
 	  if (ah < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
 	    {
 	      /* A is too small, but q is correct. */
@@ -402,8 +447,10 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
       else
 	{
-	  mp_limb_t q;
-	  DIV1 (q, bh, bh, ah);
+	  mp_double_limb_t rq = div1 (bh, ah);
+	  mp_limb_t q = rq.d1;
+	  bh = rq.d0;
+
 	  if (bh < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
 	    {
 	      /* B is too small, but q is correct. */

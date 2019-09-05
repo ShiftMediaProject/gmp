@@ -1,3 +1,17 @@
+2019-09-05  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd2.c (div1): Return both r and q as a
+	mp_double_limb_t, replacing the DIV1 macro.
+	(div1) [HGCD2_METHOD == 3]: New implementation handling q <= 7
+	specially and without branches. Based on Torbjörn's mail to the
+	gmp-devel list.
+	* tune/speed.c, tune/speed.h, tune/common.c, tune/Makefile.am: Add
+	corresponding speed support.
+	* tune/hgcd2-3.c: New file.
+	* tune/tuneup.c (print_define_with_speedup): New function, to
+	output a comment with speedup compared to next-best method.
+	(tune_hgcd2): Update tuning.
+
 2019-09-04  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd2.c (HGCD2_METHOD): New parameter.
