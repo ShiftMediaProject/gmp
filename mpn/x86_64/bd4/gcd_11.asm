@@ -70,7 +70,7 @@ ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
 	mov	u0, %rax

@@ -35,18 +35,33 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	     cycles/bit (approx)
-C AMD K8,K9	 5.21                 (4.95)
-C AMD K10	 5.15                 (5.00)
-C AMD bd1	 5.42                 (5.14)
-C AMD bobcat	 6.71                 (6.56)
-C Intel P4	13.5                 (12.75)
-C Intel core2	 6.20                 (6.16)
-C Intel NHM	 6.49                 (6.25)
-C Intel SBR	 7.75                 (7.57)
-C Intel atom	 8.77                 (8.54)
-C VIA nano	 6.60                 (6.20)
-C Numbers measured with: speed -CD -s16-64 -t48 mpn_gcd_1
+C	     cycles/bit
+C AMD K8,K9	 5.5
+C AMD K10	 ?
+C AMD bd1	 ?
+C AMD bd2	 ?
+C AMD bd3	 ?
+C AMD bd4	 ?
+C AMD bt1	 7.1
+C AMD bt2	 ?
+C AMD zn1	 ?
+C AMD zn2	 ?
+C Intel P4	 ?
+C Intel CNR	 ?
+C Intel PNR	 ?
+C Intel NHM	 ?
+C Intel WSM	 ?
+C Intel SBR	 ?
+C Intel IBR	 ?
+C Intel HWL	 ?
+C Intel BWL	 ?
+C Intel SKL	 ?
+C Intel atom	 9.1
+C Intel SLM	 6.9
+C Intel GLM	 6.0
+C Intel GLM+	 5.8
+C VIA nano	 ?
+
 
 C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
@@ -68,7 +83,7 @@ ABI_SUPPORT(STD64)
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_gcd_11)
 	FUNC_ENTRY(2)
 	LEA(	ctz_table, %r8)
