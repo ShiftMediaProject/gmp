@@ -3316,7 +3316,7 @@ int main(){
   return 0;
 }]
 EOF
-gmp_compile="$CC $CFLAGS $CPPFLAGS conftest.c -o conftest >&AC_FD_CC 2>&1"
+gmp_compile="$CC $CFLAGS $CPPFLAGS conftest.c -o conftest$EXEEXT >&AC_FD_CC 2>&1"
 if AC_TRY_EVAL(gmp_compile); then
 cat >conftest.awk <<\EOF
 [
@@ -3469,11 +3469,11 @@ END {
 }
 ]
 EOF
-  gmp_cv_c_double_format=`od -b conftest | $AWK -f conftest.awk`
+  gmp_cv_c_double_format=`od -b conftest$EXEEXT | $AWK -f conftest.awk`
   case $gmp_cv_c_double_format in
   unknown*)
-    echo "cannot match anything, conftest contains" >&AC_FD_CC
-    od -b conftest >&AC_FD_CC
+    echo "cannot match anything, conftest$EXEEXT contains" >&AC_FD_CC
+    od -b conftest$EXEEXT >&AC_FD_CC
     ;;
   esac
 else
