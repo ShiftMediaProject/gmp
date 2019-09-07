@@ -18,6 +18,8 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
   - MSVC_VER: 15
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+  - MSVC_VER: 16
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
 install:
 # Install GitLink
@@ -30,7 +32,9 @@ before_build:
 
 # Setup msvc environment for required compiler version (specified by MSVC_VER)
 - ps: >-
-    if ($env:MSVC_VER -eq 15) {
+    if ($env:MSVC_VER -eq 16) {
+        $env:VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    } elseif ($env:MSVC_VER -eq 15) {
         $env:VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat"
     } else {
         $env:VSCOMNTOOLS=(Get-Content ("env:VS" + "$env:MSVC_VER" + "0COMNTOOLS"))
@@ -100,18 +104,20 @@ before_build:
 # Set Targets path so that gitlink works correctly
 - ps: $env:MSBUILDDIR=((Get-Command msbuild.exe).Path | Split-Path -parent)
 - ps: >-
-    if ($env:MSVC_VER -eq 15) {
+    if ($env:MSVC_VER -eq 16) {
+        $env:VCTargetsPath="$env:MSBUILDDIR\..\..\Microsoft\VC\v160\"
+    } elseif ($env:MSVC_VER -eq 15) {
         $env:VCTargetsPath="$env:MSBUILDDIR\..\..\..\Common7\IDE\VC\VCTargets"
     } else {
         $env:VCTargetsPath="$env:MSBUILDDIR\..\..\..\Microsoft.Cpp\v4.0\V${env:MSVC_VER}0"
     }
 
 # Download and install yasm integration
-- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSYASM/releases/download/0.3/VSYASM.zip', "$pwd\yasm.zip")
+- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSYASM/releases/download/0.5/VSYASM.zip', "$pwd\yasm.zip")
 - ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory("$pwd\yasm.zip", "$pwd\TempYASMUnpack")
 - cmd: call ".\TempYASMUnpack\install_script.bat"
 # Additional yasm location in order to fix gitlink error
-- ps: if ($env:MSVC_VER -ne 15) { Copy-Item -Force "TempYASMUnpack\*.*" "$env:VCTargetsPath\..\BuildCustomizations" }
+- ps: if ($env:MSVC_VER -lt 15) { Copy-Item -Force "TempYASMUnpack\*.*" "$env:VCTargetsPath\..\BuildCustomizations" }
 
 build:
   project: build.vcxproj
