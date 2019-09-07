@@ -137,18 +137,18 @@ div1 (mp_limb_t n0, mp_limb_t d0)
       d0 <<= 2;
 
       mask = -(mp_limb_t) (n0 >= d0);
+      n0 -= d0 & mask;
       q = 4 & mask;
-      n0 -= d0 & mask;
 
       d0 >>= 1;
       mask = -(mp_limb_t) (n0 >= d0);
+      n0 -= d0 & mask;
       q += 2 & mask;
-      n0 -= d0 & mask;
 
       d0 >>= 1;
       mask = -(mp_limb_t) (n0 >= d0);
-      q += 1 & mask;
       n0 -= d0 & mask;
+      q -= mask;
 
       res.d0 = n0;
       res.d1 = q;
