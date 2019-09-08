@@ -51,3 +51,5 @@ void hex_random_str_op (unsigned long maxbits,
 void hex_random_lucm_op (unsigned long maxbits,
 			 char **vp, char **qp, char **mp,
 			 long *Q, unsigned long *b0, int *res);
+void hex_mpq_random_str_op (unsigned long maxbits,
+			    int base, char **ap, char **rp);

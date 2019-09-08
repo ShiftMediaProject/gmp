@@ -37,6 +37,7 @@ see https://www.gnu.org/licenses/.  */
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mini-mpq.h"
 
@@ -67,7 +68,7 @@ gmp_die (const char *msg)
 
 /* MPQ helper functions */
 static mpq_srcptr
-mpq_roinit_normal_n (mpq_t x, mp_srcptr np, mp_size_t ns,
+mpq_roinit_normal_nn (mpq_t x, mp_srcptr np, mp_size_t ns,
 		     mp_srcptr dp, mp_size_t ds)
 {
   mpz_roinit_normal_n (mpq_numref(x), np, ns);
@@ -76,10 +77,10 @@ mpq_roinit_normal_n (mpq_t x, mp_srcptr np, mp_size_t ns,
 }
 
 static mpq_srcptr
-mpq_roinit_z (mpq_t x, mpz_srcptr n, mpz_srcptr d)
+mpq_roinit_zz (mpq_t x, mpz_srcptr n, mpz_srcptr d)
 {
-  return mpq_roinit_normal_n (x, n->_mp_d, n->_mp_size,
-			      d->_mp_d, d->_mp_size);
+  return mpq_roinit_normal_nn (x, n->_mp_d, n->_mp_size,
+			       d->_mp_d, d->_mp_size);
 }
 
 static void
@@ -253,7 +254,7 @@ mpq_cmp_ui (const mpq_t q, unsigned long n, unsigned long d)
   mpq_t t;
   assert (d != 0);
   if (sizeof (unsigned long) == sizeof (mp_limb_t))
-    return mpq_cmp (q, mpq_roinit_normal_n (t, (mp_srcptr) &n, n != 0, (mp_srcptr) &d, 1));
+    return mpq_cmp (q, mpq_roinit_normal_nn (t, (mp_srcptr) &n, n != 0, (mp_srcptr) &d, 1));
   else {
     int ret;
 
@@ -279,9 +280,9 @@ mpq_cmp_si (const mpq_t q, signed long n, unsigned long d)
       unsigned long l_n = GMP_NEG_CAST (unsigned long, n);
 
       if (sizeof (unsigned long) == sizeof (mp_limb_t))
-	return mpq_cmp (q, mpq_roinit_normal_n (t, (mp_srcptr) &l_n, -1, (mp_srcptr) &d, 1));
+	return mpq_cmp (q, mpq_roinit_normal_nn (t, (mp_srcptr) &l_n, -1, (mp_srcptr) &d, 1));
 
-      mpq_roinit_normal_n (t, mpq_numref (q)->_mp_d, - mpq_numref (q)->_mp_size,
+      mpq_roinit_normal_nn (t, mpq_numref (q)->_mp_d, - mpq_numref (q)->_mp_size,
 		       mpq_denref (q)->_mp_d, mpq_denref (q)->_mp_size);
       return - mpq_cmp_ui (t, l_n, d);
     }
@@ -350,8 +351,8 @@ mpq_sub (mpq_t r, const mpq_t a, const mpq_t b)
 {
   mpq_t t;
 
-  mpq_roinit_normal_n (t, mpq_numref (b)->_mp_d, - mpq_numref (b)->_mp_size,
-		       mpq_denref (b)->_mp_d, mpq_denref (b)->_mp_size);
+  mpq_roinit_normal_nn (t, mpq_numref (b)->_mp_d, - mpq_numref (b)->_mp_size,
+			mpq_denref (b)->_mp_d, mpq_denref (b)->_mp_size);
   mpq_add (r, a, t);
 }
 
@@ -359,7 +360,7 @@ void
 mpq_div (mpq_t r, const mpq_t a, const mpq_t b)
 {
   mpq_t t;
-  mpq_mul (r, a, mpq_roinit_z (t, mpq_denref (b), mpq_numref (b)));
+  mpq_mul (r, a, mpq_roinit_zz (t, mpq_denref (b), mpq_numref (b)));
 }
 
 void
@@ -409,4 +410,138 @@ mpq_inv (mpq_t r, const mpq_t q)
   mpq_set (r, q);
   mpz_swap (mpq_denref (r), mpq_numref (r));
   mpq_canonical_sign (r);
+}
+
+
+/* MPQ to/from double. */
+void
+mpq_set_d (mpq_t r, double x)
+{
+  mpz_set_ui (mpq_denref (r), 1);
+
+  /* x != x is true when x is a NaN, and x == x * 0.5 is true when x is
+     zero or infinity. */
+  if (x == x * 0.5 || x != x)
+    mpq_numref (r)->_mp_size = 0;
+  else
+    {
+      double B;
+      mp_bitcnt_t e;
+
+      B = 4.0 * (double) (GMP_LIMB_HIGHBIT >> 1);
+      for (e = 0; x != x + 0.5; e += GMP_LIMB_BITS)
+	x *= B;
+
+      mpz_set_d (mpq_numref (r), x);
+      mpq_div_2exp (r, r, e);
+    }
+}
+
+double
+mpq_get_d (const mpq_t u)
+{
+  mp_bitcnt_t ne, de, ee;
+  mpz_t z;
+  double B, ret;
+
+  ne = mpz_sizeinbase (mpq_numref (u), 2);
+  de = mpz_sizeinbase (mpq_denref (u), 2);
+
+  ee = 8 * sizeof (double);
+  if (de == 1 || ne > de + ee)
+    ee = 0;
+  else
+    ee = (ee + de - ne) / GMP_LIMB_BITS + 1;
+
+  mpz_init (z);
+  mpz_mul_2exp (z, mpq_numref (u), ee * GMP_LIMB_BITS);
+  mpz_tdiv_q (z, z, mpq_denref (u));
+  ret = mpz_get_d (z);
+  mpz_clear (z);
+
+  B = 4.0 * (double) (GMP_LIMB_HIGHBIT >> 1);
+  for (B = 1 / B; ee != 0; --ee)
+    ret *= B;
+
+  return ret;
+}
+
+
+/* MPQ and strings/streams. */
+char *
+mpq_get_str (char *sp, int base, const mpq_t q)
+{
+  char *res;
+  char *rden;
+  size_t len;
+
+  res = mpz_get_str (sp, base, mpq_numref (q));
+  if (res == NULL || mpz_cmp_ui (mpq_denref (q), 1) == 0)
+    return res;
+
+  len = strlen (res) + 1;
+  rden = sp ? sp + len : NULL;
+  rden = mpz_get_str (rden, base, mpq_denref (q));
+  assert (rden != NULL);
+
+  if (sp == NULL) {
+    void * (*gmp_reallocate_func) (void *, size_t, size_t);
+    void (*gmp_free_func) (void *, size_t);
+    size_t lden;
+
+    mp_get_memory_functions (NULL, &gmp_reallocate_func, &gmp_free_func);
+    lden = strlen (rden) + 1;
+    res = (char *) gmp_reallocate_func (res, 0, (lden + len) * sizeof (char));
+    memcpy (res + len, rden, lden);
+    gmp_free_func (rden, 0);
+  }
+
+  res [len - 1] = '/';
+  return res;
+}
+
+size_t
+mpq_out_str (FILE *stream, int base, const mpq_t x)
+{
+  char * str;
+  size_t len;
+  void (*gmp_free_func) (void *, size_t);
+
+  str = mpq_get_str (NULL, base, x);
+  len = strlen (str);
+  len = fwrite (str, 1, len, stream);
+  mp_get_memory_functions (NULL, NULL, &gmp_free_func);
+  gmp_free_func (str, 0);
+  return len;
+}
+
+int
+mpq_set_str (mpq_t r, const char *sp, int base)
+{
+  const char *slash;
+
+  slash = strchr (sp, '/');
+  if (slash == NULL) {
+    mpz_set_ui (mpq_denref(r), 1);
+    return mpz_set_str (mpq_numref(r), sp, base);
+  } else {
+    char *num;
+    size_t numlen;
+    int ret;
+    void * (*gmp_allocate_func) (size_t);
+    void (*gmp_free_func) (void *, size_t);
+
+    mp_get_memory_functions (&gmp_allocate_func, NULL, &gmp_free_func);
+    numlen = slash - sp;
+    num = (char *) gmp_allocate_func ((numlen + 1) * sizeof (char));
+    memcpy (num, sp, numlen);
+    num[numlen] = '\0';
+    ret = mpz_set_str (mpq_numref(r), num, base);
+    gmp_free_func (num, 0);
+
+    if (ret != 0)
+      return ret;
+
+    return mpz_set_str (mpq_denref(r), slash + 1, base);
+  }
 }

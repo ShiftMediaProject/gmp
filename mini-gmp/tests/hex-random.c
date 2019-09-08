@@ -544,3 +544,30 @@ void hex_random_lucm_op (unsigned long maxbits,
   mpz_clear (t1);
   mpz_clear (t2);
 }
+
+void
+hex_mpq_random_str_op (unsigned long maxbits,
+		       int base, char **ap, char **rp)
+{
+  mpq_t a;
+  unsigned long abits;
+  unsigned signs;
+
+  mpq_init (a);
+
+  abits = gmp_urandomb_ui (state, 32) % maxbits;
+
+  mpz_rrandomb (mpq_numref (a), state, abits);
+  mpz_rrandomb (mpq_denref (a), state, abits);
+  mpz_add_ui (mpq_denref (a), mpq_denref (a), 1);
+
+  mpq_canonicalize (a);
+  signs = gmp_urandomb_ui (state, 2);
+  if (signs & 1)
+    mpq_neg (a, a);
+
+  *ap = mpq_get_str (NULL, 16, a);
+  *rp = mpq_get_str (NULL, base, a);
+
+  mpq_clear (a);
+}
