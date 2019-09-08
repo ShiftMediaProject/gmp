@@ -37,11 +37,12 @@ C AMD K10		n/a
 C AMD bd1	     1.79-1.91		n
 C AMD bd2	     1.73-1.85		n
 C AMD bd3		 ?
-C AMD bd4		 ?
+C AMD bd4	     1.73-1.85		n
 C AMD zen		 1.47		n
 C AMD bobcat		 8.0		n
 C AMD jaguar		 4.78		n
 C Intel P4		n/a
+C Intel CNR		 3.75
 C Intel PNR		 2.61		y
 C Intel NHM		 2.03		n
 C Intel SBR		 1.87		n
