@@ -80,7 +80,7 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
   TMP_SMARK;
 
   /* Compute residues modulo small odd primes */
-  moduli = TMP_SALLOC_TYPE (prime_limit * sizeof moduli[0], unsigned short);
+  moduli = TMP_SALLOC_TYPE (prime_limit, unsigned short);
 
   for (;;)
     {
