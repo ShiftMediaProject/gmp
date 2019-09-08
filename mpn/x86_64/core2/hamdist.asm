@@ -42,6 +42,7 @@ C AMD zen		 ?
 C AMD bobcat		 ?
 C AMD jaguar		 ?
 C Intel P4		n/a
+C Intel CNR		 4.50		y
 C Intel PNR		 3.28		y
 C Intel NHM		 ?
 C Intel SBR		 ?
