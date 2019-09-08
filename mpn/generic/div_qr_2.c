@@ -124,7 +124,7 @@ see https://www.gnu.org/licenses/.  */
     umul_ppmm (_q2c,_q1c, n3, di0);					\
     add_sssaaaa (_q3,_q2,_q1, _q2,_q1, n2,_q1c);			\
     umul_ppmm (_q1d,_q0, n2, di0);					\
-    add_sssaaaa (_q2c,_q1d,_q0, _q1d,_q0, n1,n0); /* _q2c cannot overflow */ \
+    add_sssaaaa (_q2c,_q1,_q0, _q1,_q0, n1,n0); /* _q2c cannot overflow */ \
     add_sssaaaa (_q3,_q2,_q1, _q2,_q1, _q2c,_q1d);			\
 									\
     umul_ppmm (_t1,_t0, _q2, d0);					\
