@@ -239,16 +239,16 @@ div2 (mp_ptr rp,
 
   do
     {
-      mp_limb_t bit;
+      mp_limb_t mask;
       q <<= 1;
       if (UNLIKELY (nh == dh))
-	bit = (nl >= dl);
+	mask = -(nl >= dl);
       else
-	bit = (nh > dh);
+	mask = -(nh > dh);
 
-      q |= bit;
+      q -= mask;
 
-      sub_ddmmss (nh, nl, nh, nl, (-bit) & dh, (-bit) & dl);
+      sub_ddmmss (nh, nl, nh, nl, mask & dh, mask & dl);
 
       dl = (dh << (GMP_LIMB_BITS - 1)) | (dl >> 1);
       dh = dh >> 1;
@@ -396,9 +396,8 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	}
     }
 
-  /* NOTE: Since we discard the least significant half limb, we don't
-     get a truly maximal M (corresponding to |a - b| <
-     2^{GMP_LIMB_BITS +1}). */
+  /* NOTE: Since we discard the least significant half limb, we don't get a
+     truly maximal M (corresponding to |a - b| < 2^{GMP_LIMB_BITS +1}). */
   /* Single precision loop */
   for (;;)
     {
