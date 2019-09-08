@@ -1,4 +1,4 @@
-dnl  ARM v6t2 mpn_gcd_1.
+dnl  ARM v8a mpn_gcd_1.
 
 dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for ARM by Torbjorn
 dnl  Granlund.
