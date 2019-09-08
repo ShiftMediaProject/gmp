@@ -1,4 +1,4 @@
-dnl  Alpha ev67 mpn_gcd_1 -- Nx1 greatest common divisor.
+dnl  Alpha ev67 mpn_gcd_11 -- Nx1 greatest common divisor.
 
 dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
