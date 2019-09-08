@@ -37,11 +37,12 @@ C AMD K10		n/a
 C AMD bd1		 1.27		y
 C AMD bd2		 1.24		y
 C AMD bd3		 ?
-C AMD bd4		 ?
+C AMD bd4		 1.22
 C AMD zen		n/a
 C AMD bobcat		n/a
 C AMD jaguar		n/a
 C Intel P4		n/a
+C Intel CNR		n/a
 C Intel PNR		n/a
 C Intel NHM		n/a
 C Intel SBR		n/a
