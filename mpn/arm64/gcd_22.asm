@@ -100,7 +100,7 @@ L(lowz):C We come here when v0 - u0 = 0
 	C 1. If v1 - u1 = 0, then gcd is u = v.
 	C 2. Else compute gcd_21({v1,v0}, |u1-v1|)
 	subs	t0, u1, v1
-	beq	L(end)
+	b.eq	L(end)
 	mov	t1, #0
 	rbit	cnt, t0			C 1
 	cneg	t0, t0, cc		C 2
