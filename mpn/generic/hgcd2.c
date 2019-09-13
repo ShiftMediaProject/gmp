@@ -4,7 +4,8 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 1996, 1998, 2000-2004, 2008, 2012 Free Software Foundation, Inc.
+Copyright 1996, 1998, 2000-2004, 2008, 2012, 2019 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -62,57 +63,35 @@ div1 (mp_limb_t n0, mp_limb_t d0)
 
 #elif HGCD2_METHOD == 2
 
-/* Copied from the old mpn/generic/gcdext.c, and modified slightly to return
-   the remainder. */
-
-static inline mp_double_limb_t
+static mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
 {
   mp_double_limb_t res;
+  int ncnt, dcnt, cnt;
   mp_limb_t q;
+  mp_limb_t mask;
 
-  if ((mp_limb_signed_t) n0 < 0)
+  ASSERT (n0 >= d0);
+
+  count_leading_zeros (ncnt, n0);
+  count_leading_zeros (dcnt, d0);
+  cnt = dcnt - ncnt;
+
+  d0 <<= cnt;
+
+  q = -(mp_limb_t) (n0 >= d0);
+  n0 -= d0 & q;
+  d0 >>= 1;
+  q = -q;
+
+  while (--cnt >= 0)
     {
-      int cnt;
-      for (cnt = 1; (mp_limb_signed_t) d0 >= 0; cnt++)
-	{
-	  d0 = d0 << 1;
-	}
-
-      q = 0;
-      while (cnt)
-	{
-	  q <<= 1;
-	  if (n0 >= d0)
-	    {
-	      n0 = n0 - d0;
-	      q |= 1;
-	    }
-	  d0 = d0 >> 1;
-	  cnt--;
-	}
+      mask = -(mp_limb_t) (n0 >= d0);
+      n0 -= d0 & mask;
+      d0 >>= 1;
+      q = (q << 1) - mask;
     }
-  else
-    {
-      int cnt;
-      for (cnt = 0; n0 >= d0; cnt++)
-	{
-	  d0 = d0 << 1;
-	}
 
-      q = 0;
-      while (cnt)
-	{
-	  d0 = d0 >> 1;
-	  q <<= 1;
-	  if (n0 >= d0)
-	    {
-	      n0 = n0 - d0;
-	      q |= 1;
-	    }
-	  cnt--;
-	}
-    }
   res.d0 = n0;
   res.d1 = q;
   return res;
@@ -219,8 +198,7 @@ div2 (mp_ptr rp,
 }
 
 #if 0
-/* This div2 uses less branches, but it seems to nevertheless be
-   slightly slower than the above code. */
+/* This div2 uses less branches, but relies on fast count_leading_zeros. */
 static inline mp_limb_t
 div2 (mp_ptr rp,
       mp_limb_t nh, mp_limb_t nl,
