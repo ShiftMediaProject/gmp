@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2018 Free Software Foundation, Inc.
+Copyright 1996-2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -322,6 +322,26 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #undef HAVE_HOST_CPU_pentiumpro
 #undef HAVE_HOST_CPU_pentium2
 #undef HAVE_HOST_CPU_pentium3
+#undef HAVE_HOST_CPU_pentium4
+#undef HAVE_HOST_CPU_core2
+#undef HAVE_HOST_CPU_nehalem
+#undef HAVE_HOST_CPU_westmere
+#undef HAVE_HOST_CPU_sandybridge
+#undef HAVE_HOST_CPU_ivybridge
+#undef HAVE_HOST_CPU_haswell
+#undef HAVE_HOST_CPU_broadwell
+#undef HAVE_HOST_CPU_skylake
+#undef HAVE_HOST_CPU_silvermont
+#undef HAVE_HOST_CPU_goldmont
+#undef HAVE_HOST_CPU_k8
+#undef HAVE_HOST_CPU_k10
+#undef HAVE_HOST_CPU_bulldozer
+#undef HAVE_HOST_CPU_piledriver
+#undef HAVE_HOST_CPU_steamroller
+#undef HAVE_HOST_CPU_excavator
+#undef HAVE_HOST_CPU_zen
+#undef HAVE_HOST_CPU_bobcat
+#undef HAVE_HOST_CPU_jaguar
 #undef HAVE_HOST_CPU_s390_z900
 #undef HAVE_HOST_CPU_s390_z990
 #undef HAVE_HOST_CPU_s390_z9
