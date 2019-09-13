@@ -519,8 +519,8 @@ print_define_remark (const char *name, mp_size_t value, const char *remark)
 }
 
 void
-print_define_with_margin (const char *name, mp_size_t value,
-			  mp_size_t runner_up, double speedup)
+print_define_with_speedup (const char *name, mp_size_t value,
+			   mp_size_t runner_up, double speedup)
 {
   char buf[100];
   snprintf (buf, sizeof(buf), "%.2f%% faster than %ld",
@@ -710,6 +710,48 @@ one (mp_size_t *threshold, struct param_t *param)
 
   if (! param->noprint || option_trace)
     print_define_end (param->name, *threshold);
+}
+
+void
+one_method (int n, speed_function_t *functions,
+	    const char *name, const char *define,
+	    const struct param_t *param)
+{
+  double *t;
+  int i;
+  int method;
+  int method_runner_up;
+
+  TMP_DECL;
+  TMP_MARK;
+  t = TMP_ALLOC (n * sizeof (*t));
+
+  for (i = 0; i < n; i++)
+    {
+      t[i] = tuneup_measure (functions[i], param, &s);
+      if (option_trace >= 1)
+	printf ("size=%ld, %s, method %d %.9f\n",
+		(long) s.size, name, i + 1, t[i]);
+      if (t[i] == -1.0)
+	{
+	  printf ("Oops, can't measure all %s methods\n", name);
+	  abort ();
+	}
+    }
+  method = 0;
+  for (i = 1; i < n; i++)
+    if (t[i] < t[method])
+      method = i;
+
+  method_runner_up = (method == 0);
+  for (i = 0; i < n; i++)
+    if (i != method && t[i] < t[method_runner_up])
+      method_runner_up = i;
+
+  print_define_with_speedup (define, method + 1, method_runner_up + 1,
+			     t[method_runner_up] / t[method]);
+
+  TMP_FREE;
 }
 
 
@@ -1911,47 +1953,15 @@ void
 tune_hgcd2 (void)
 {
   static struct param_t  param;
-  double   t[3+1];
-  int      method;
-  int      runner_up_method;
-  double   runner_up_ratio;
+  speed_function_t f[3] =
+    {
+     speed_mpn_hgcd2_1,
+     speed_mpn_hgcd2_2,
+     speed_mpn_hgcd2_3,
+    };
 
   s.size = 1;
-  t[1] = tuneup_measure (speed_mpn_hgcd2_1, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_hgcd2_1 %.9f\n", (long) s.size, t[1]);
-
-  t[2] = tuneup_measure (speed_mpn_hgcd2_2, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_hgcd2_2 %.9f\n", (long) s.size, t[2]);
-
-  t[3] = tuneup_measure (speed_mpn_hgcd2_3, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_hgcd2_3 %.9f\n", (long) s.size, t[3]);
-
-  if (t[1] == -1.0 || t[2] == -1.0 || t[3] == -1.0)
-    {
-      printf ("Oops, can't measure all mpn_hgcd2 methods\n");
-      abort ();
-    }
-
-  if (t[1] < t[2] && t[1] < t[3])
-    {
-      method = 1;
-      runner_up_method = (t[2] < t[3]) ? 2 : 3;
-    }
-  else if (t[2] < t[3])
-    {
-      method = 2;
-      runner_up_method = (t[1] < t[3]) ? 1 : 3;
-    }
-  else
-    {
-      method = 3;
-      runner_up_method = (t[1] < t[2]) ? 1 : 2;
-    }
-  print_define_with_margin ("HGCD2_METHOD", method, runner_up_method,
-			    t[runner_up_method] / t[method]);
+  one_method (3, f, "mpn_hgcd2", "HGCD2_METHOD", &param);
 }
 
 void
@@ -2227,22 +2237,16 @@ tune_div_qr_1 (void)
   if (!HAVE_NATIVE_mpn_div_qr_1n_pi1)
     {
       static struct param_t  param;
-      double   t1, t2;
+      speed_function_t f[2] =
+	{
+	 speed_mpn_div_qr_1n_pi1_1,
+	 speed_mpn_div_qr_1n_pi1_2,
+	};
 
       s.size = 10;
       s.r = randlimb_norm ();
 
-      t1 = tuneup_measure (speed_mpn_div_qr_1n_pi1_1, &param, &s);
-      t2 = tuneup_measure (speed_mpn_div_qr_1n_pi1_2, &param, &s);
-
-      if (t1 == -1.0 || t2 == -1.0)
-	{
-	  printf ("Oops, can't measure all mpn_div_qr_1n_pi1 methods at %ld\n",
-		  (long) s.size);
-	  abort ();
-	}
-      div_qr_1n_pi1_method = (t1 < t2) ? 1 : 2;
-      print_define ("DIV_QR_1N_PI1_METHOD", div_qr_1n_pi1_method);
+      one_method (2, f, "mpn_div_qr_1n_pi1", "DIV_QR_1N_PI1_METHOD", &param);
     }
 
   {
@@ -2289,22 +2293,15 @@ tune_mod_1 (void)
   if (!HAVE_NATIVE_mpn_mod_1_1p)
     {
       static struct param_t  param;
-      double   t1, t2;
+      speed_function_t f[2] =
+	{
+	 speed_mpn_mod_1_1_1,
+	 speed_mpn_mod_1_1_2,
+	};
 
       s.size = 10;
       s.r = randlimb_half ();
-
-      t1 = tuneup_measure (speed_mpn_mod_1_1_1, &param, &s);
-      t2 = tuneup_measure (speed_mpn_mod_1_1_2, &param, &s);
-
-      if (t1 == -1.0 || t2 == -1.0)
-	{
-	  printf ("Oops, can't measure all mpn_mod_1_1 methods at %ld\n",
-		  (long) s.size);
-	  abort ();
-	}
-      mod_1_1p_method = (t1 < t2) ? 1 : 2;
-      print_define ("MOD_1_1P_METHOD", mod_1_1p_method);
+      one_method (2, f, "mpn_mod_1_1", "MOD_1_1P_METHOD", &param);
     }
 
   if (UDIV_PREINV_ALWAYS)
@@ -2680,44 +2677,17 @@ void
 tune_jacobi_base (void)
 {
   static struct param_t  param;
-  double   t1, t2, t3, t4;
-  int      method;
+  speed_function_t f[4] =
+    {
+     speed_mpn_jacobi_base_1,
+     speed_mpn_jacobi_base_2,
+     speed_mpn_jacobi_base_3,
+     speed_mpn_jacobi_base_4,
+    };
 
   s.size = GMP_LIMB_BITS * 3 / 4;
 
-  t1 = tuneup_measure (speed_mpn_jacobi_base_1, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_1 %.9f\n", (long) s.size, t1);
-
-  t2 = tuneup_measure (speed_mpn_jacobi_base_2, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_2 %.9f\n", (long) s.size, t2);
-
-  t3 = tuneup_measure (speed_mpn_jacobi_base_3, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_3 %.9f\n", (long) s.size, t3);
-
-  t4 = tuneup_measure (speed_mpn_jacobi_base_4, &param, &s);
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_4 %.9f\n", (long) s.size, t4);
-
-  if (t1 == -1.0 || t2 == -1.0 || t3 == -1.0 || t4 == -1.0)
-    {
-      printf ("Oops, can't measure all mpn_jacobi_base methods at %ld\n",
-              (long) s.size);
-      abort ();
-    }
-
-  if (t1 < t2 && t1 < t3 && t1 < t4)
-    method = 1;
-  else if (t2 < t3 && t2 < t4)
-    method = 2;
-  else if (t3 < t4)
-    method = 3;
-  else
-    method = 4;
-
-  print_define ("JACOBI_BASE_METHOD", method);
+  one_method (4, f, "mpn_jacobi_base", "JACOBI_BASE_METHOD", &param);
 }
 
 
