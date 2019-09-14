@@ -1873,11 +1873,13 @@ case $host in
 	gcc_cflags_arch="-march=bdver4 -march=bdver3 -march=bdver2 -march=bdver1 -march=amdfam10 -march=k8 -march=k8~-mno-sse2"
 	path="x86/bd4 x86/bd3 x86/bd2 x86/bd1 x86/k7/mmx x86/k7 x86/mmx x86"
 	path_64="x86_64/bd4 x86_64/bd3 x86_64/bd2 x86_64/bd1 x86_64/k10 x86_64/k8 x86_64"
+	x86_have_mulx=1
 	;;
       zen | zennoavx)
 	gcc_cflags_cpu="-mtune=znver1 -mtune=amdfam10 -mtune=k8"
 	gcc_cflags_arch="-march=znver1 -march=amdfam10 -march=k8"
 	path="x86/k7/mmx x86/k7 x86/mmx x86"
+	x86_have_mulx=1
 	path_64="x86_64/zen x86_64"
 	;;
       core2)
@@ -1904,6 +1906,7 @@ case $host in
 	gcc_cflags_arch="-march=haswell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
+	x86_have_mulx=1
 	;;
       coreibwl | coreibwlnoavx | broadwell | broadwellnoavx)
 	gcc_cflags_cpu="-mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
@@ -1911,6 +1914,7 @@ case $host in
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
+	x86_have_mulx=1
 	;;
       skylake | skylakenoavx | kabylake | kabylakenoavx)
 	gcc_cflags_cpu="-mtune=skylake -mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
@@ -1919,6 +1923,7 @@ case $host in
 	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/skylake x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
+	x86_have_mulx=1
 	;;
       atom)			# in-order pipeline atom
 	gcc_cflags_cpu="-mtune=atom -mtune=pentium3"
@@ -2581,12 +2586,6 @@ case $host in
         *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
       esac
     fi
-    case "$path $fat_path" in
-      *mulx*)  GMP_ASM_X86_MULX( , [GMP_STRIP_PATH(mulx)]) ;;
-    esac
-    case "$path $fat_path" in
-      *adx*)   GMP_ASM_X86_ADX( , [GMP_STRIP_PATH(adx)]) ;;
-    esac
     ;;
 esac
 
@@ -3756,6 +3755,9 @@ yes
       ;;
     X86_PATTERN | X86_64_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
+      if test $x86_have_mulx = 1; then
+        GMP_ASM_X86_MULX
+      fi
       case $ABI in
         32)
           GMP_INCLUDE_MPN(x86/x86-defs.m4)
