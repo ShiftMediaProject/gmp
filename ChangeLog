@@ -1,8 +1,50 @@
+2019-09-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Remove obsolete path-triggered invocation of
+	GMP_ASM_X86_ADX and GMP_ASM_X86_MULX.
+
+	* acinclude.m4 (GMP_ASM_X86_MULX): Set X86_ASM_MULX to config.h.
+	* configure.ac (x86): Set x86_have_mulx for relevant CPUs.
+	Use if to conditionally invoke GMP_ASM_X86_MULX.
+	* longlong.h (x86 umul_ppmm): Test also X86_ASM_MULX for when to use
+	mulx variant.
+
 2019-09-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (one_method): New helper function, to measure
 	several functions for a fix size.
 	(tune_hgcd2, tune_div_qr_1, tune_mod_1, tune_jacobi_base): Use it.
+
+2019-09-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (HAVE_HOST_CPU_1): Add many x86_64 CPU types.
+	* longlong.h (x86 umul_ppmm): Fix criterion for when to use mulx.
+	(count_leading_zeros): Use lzcnt for appropriate CPUs.
+	(count_trailing_zeros): Use tzcnt for appropriate CPUs.
+
+	* mpn/generic/hgcd2.c (HGCD2_METHOD=2 div1): Rewrite.
+
+2019-09-09  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/mul.c: Call mpn_mul_basecase early when in range.  Never
+	call mpn_sqr.
+
+	* mpn/generic/gcd.c: Rewrite tail of function, for n <= 2.
+
+2019-09-08  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm): Select arch armv7ve for a7, a12, a15, and a17,
+	this enables the use of the udiv instruction.
+
+	* mpn/generic/hgcd2.c (disabled div2): Micro-optimise.
+
+2019-09-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c (HGCD2_METHOD=3 div1): Micro-optimise.
+
+2019-09-07  Vincent Lefevre <vincent@vinc17.net>
+
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Append EXEEXT for executable.
 
 2019-09-05  Torbjörn Granlund  <tg@gmplib.org>
 
@@ -13549,7 +13591,7 @@
 
 	* demos/primes.c (find_primes): Increase mpz_probab_prime_p cnt to 10.
 
-	* mpn/generic/addsub_n.c: Fix criteria form when to call _nc functions.
+	* mpn/generic/addsub_n.c: Fix criteria for when to call _nc functions.
 
 2006-05-12  Torbjorn Granlund  <tege@swox.com>
 
