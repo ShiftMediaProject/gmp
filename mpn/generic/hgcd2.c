@@ -36,8 +36,8 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef HGCD2_METHOD
-#define HGCD2_METHOD 2
+#ifndef HGCD2_DIV1_METHOD
+#define HGCD2_DIV1_METHOD 3
 #endif
 
 #if GMP_NAIL_BITS != 0
@@ -49,7 +49,7 @@ see https://www.gnu.org/licenses/.  */
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0);
 
-#if HGCD2_METHOD == 1
+#if HGCD2_DIV1_METHOD == 1
 
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -61,7 +61,7 @@ div1 (mp_limb_t n0, mp_limb_t d0)
   return res;
 }
 
-#elif HGCD2_METHOD == 2
+#elif HGCD2_DIV1_METHOD == 2
 
 static mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -97,7 +97,7 @@ div1 (mp_limb_t n0, mp_limb_t d0)
   return res;
 }
 
-#elif HGCD2_METHOD == 3
+#elif HGCD2_DIV1_METHOD == 3
 
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -135,7 +135,7 @@ div1 (mp_limb_t n0, mp_limb_t d0)
   return res;
 }
 #else
-#error Unknown HGCD2_METHOD
+#error Unknown HGCD2_DIV1_METHOD
 #endif
 
 /* Two-limb division optimized for small quotients.  */

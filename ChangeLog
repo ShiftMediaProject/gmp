@@ -1,3 +1,9 @@
+2019-09-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd2.c (HGCD2_DIV1_METHOD): Rename, and change
+	default to 3. Updated all usage.
+	(HGCD2_METHOD): ... the old name, deleted.
+
 2019-09-14  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac: Remove obsolete path-triggered invocation of

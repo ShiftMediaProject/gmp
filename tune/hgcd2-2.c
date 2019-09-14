@@ -30,8 +30,8 @@ see https://www.gnu.org/licenses/.  */
 
 #include "gmp-impl.h"
 
-#undef HGCD2_METHOD
-#define HGCD2_METHOD 2
+#undef HGCD2_DIV1_METHOD
+#define HGCD2_DIV1_METHOD 2
 #define __gmpn_hgcd2 mpn_hgcd2_2
 /* Not used, but renamed to not get duplicate definitions */
 #define __gmpn_hgcd_mul_matrix1_vector mpn_hgcd_mul_matrix1_vector_2

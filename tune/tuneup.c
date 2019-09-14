@@ -1961,7 +1961,7 @@ tune_hgcd2 (void)
     };
 
   s.size = 1;
-  one_method (3, f, "mpn_hgcd2", "HGCD2_METHOD", &param);
+  one_method (3, f, "mpn_hgcd2", "HGCD2_DIV1_METHOD", &param);
 }
 
 void
