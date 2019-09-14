@@ -1058,8 +1058,8 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
 	     "1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
-#if X86_ASM_MULX
-   && (HAVE_HOST_CPU_haswell || HAVE_HOST_CPU_broadwell
+#if X86_ASM_MULX \
+   && (HAVE_HOST_CPU_haswell || HAVE_HOST_CPU_broadwell \
        || HAVE_HOST_CPU_skylake || HAVE_HOST_CPU_bd4 || HAVE_HOST_CPU_zen)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("mulx\t%3, %0, %1"						\
