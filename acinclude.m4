@@ -2659,6 +2659,8 @@ AC_DEFUN([GMP_ASM_X86_MULX],
 ])
 case $gmp_cv_asm_x86_mulx in
 yes)
+  AC_DEFINE(X86_ASM_MULX, 1,
+  [Define to 1 if the assembler understands the mulx instruction])
   ifelse([$1],,:,[$1])
   ;;
 *)
