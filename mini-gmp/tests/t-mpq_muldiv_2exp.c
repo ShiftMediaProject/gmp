@@ -54,7 +54,7 @@ testmain (int argc, char **argv)
   mpq_t aq, rq, tq;
   mp_bitcnt_t e;
   long int e2, t1, t2;
-  
+
   mpz_init (a);
   mpz_init (b);
   mpz_init (t);
@@ -116,7 +116,7 @@ testmain (int argc, char **argv)
       if (!mpq_equal (tq, rq))
 	{
 	  fprintf (stderr, "mpq_div_2exp failed on zero: %lu\n", e);
-	  abort ();	  
+	  abort ();
 	}
 
       mpq_set_ui (rq, 7, 6);
@@ -125,7 +125,7 @@ testmain (int argc, char **argv)
       if (!mpq_equal (rq, tq))
 	{
 	  fprintf (stderr, "mpq_mul_2exp failed on zero: %lu\n", e);
-	  abort ();	  
+	  abort ();
 	}
     }
 
