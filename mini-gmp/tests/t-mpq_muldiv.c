@@ -70,7 +70,7 @@ testmain (int argc, char **argv)
       do {
 	mini_random_op3 (OP_MUL, MAXBITS, ad, bd, rd);
       } while (mpz_sgn (rd) == 0);
-      
+
       _mpq_set_zz (aq, an, ad);
       _mpq_set_zz (bq, bn, bd);
       _mpq_set_zz (refq, rn, rd);
@@ -160,7 +160,7 @@ testmain (int argc, char **argv)
 	  dump ("resn", mpq_numref (resq));
 	  dump ("resd", mpq_denref (resq));
 	  abort ();
-	}      
+	}
     }
 
   mpz_clear (an);
