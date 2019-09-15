@@ -2678,45 +2678,6 @@ esac
 ])
 
 
-dnl  GMP_ASM_X86_ADX([ACTION-IF-YES][,ACTION-IF-NO])
-dnl  ------------------------------------------------
-dnl  Determine whether the assembler supports the adcx and adox instructions
-dnl  which debut with the Haswell shrink Broadwell.
-dnl
-dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
-dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
-dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
-dnl  needed at all, at least for just checking instruction syntax.
-
-AC_DEFUN([GMP_ASM_X86_ADX],
-[AC_CACHE_CHECK([if the assembler knows about the adox instruction],
-		gmp_cv_asm_x86_adx,
-[GMP_TRY_ASSEMBLE(
-[	.text
-	adox	%r8, %r9
-	adcx	%r8, %r9],
-  [gmp_cv_asm_x86_adx=yes],
-  [gmp_cv_asm_x86_adx=no])
-])
-case $gmp_cv_asm_x86_adx in
-yes)
-  ifelse([$1],,:,[$1])
-  ;;
-*)
-  AC_MSG_WARN([+----------------------------------------------------------])
-  AC_MSG_WARN([| WARNING WARNING WARNING])
-  AC_MSG_WARN([| Host CPU has the adcx and adox instructions, but they])
-  AC_MSG_WARN([| can't be assembled by])
-  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
-  AC_MSG_WARN([| Older x86 instructions will be used.])
-  AC_MSG_WARN([| This will be an inferior build.])
-  AC_MSG_WARN([+----------------------------------------------------------])
-  ifelse([$2],,:,[$2])
-  ;;
-esac
-])
-
-
 dnl  GMP_ASM_X86_MCOUNT
 dnl  ------------------
 dnl  Find out how to call mcount for profiling on an x86 system.
