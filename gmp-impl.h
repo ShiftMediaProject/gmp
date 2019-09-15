@@ -341,10 +341,10 @@ extern "C" {
    TMP_MARK was made, but then no TMP_ALLOCs.  */
 
 /* The alignment in bytes, used for TMP_ALLOCed blocks, when alloca or
-   __gmp_allocate_func doesn't already determine it.  Currently TMP_ALLOC
-   isn't used for "double"s, so that's not in the union.  */
+   __gmp_allocate_func doesn't already determine it.  */
 union tmp_align_t {
   mp_limb_t  l;
+  double     d;
   char       *p;
 };
 #define __TMP_ALIGN  sizeof (union tmp_align_t)

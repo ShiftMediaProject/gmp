@@ -724,7 +724,7 @@ one_method (int n, speed_function_t *functions,
 
   TMP_DECL;
   TMP_MARK;
-  t = TMP_ALLOC (n * sizeof (*t));
+  t = (double*) TMP_ALLOC (n * sizeof (*t));
 
   for (i = 0; i < n; i++)
     {
