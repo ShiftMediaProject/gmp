@@ -326,7 +326,7 @@ mpq_add (mpq_t r, const mpq_t a, const mpq_t b)
     }
   else
     {
-      mpz_t x, y; 
+      mpz_t x, y;
       mpz_init (x);
       mpz_init (y);
 
