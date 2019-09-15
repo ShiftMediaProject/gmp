@@ -75,7 +75,7 @@ mpz_lucas_mod (mpz_ptr V, mpz_ptr Qk, long Q,
       /* We note that U_{2k+2} = P*U_{2k+1} - Q*U_{2k}	*/
       /* The formulas are specialized for P=1, and only squares:	*/
       /* U_{2k}   = U_{k+1}^2 - |U_{k+1} - U_k|^2	*/
-      /* U_{2k+1} = U_{k+1}^2 - Q*U_k^2 	*/
+      /* U_{2k+1} = U_{k+1}^2 - Q*U_k^2		*/
       /* U_{2k+2} = U_{2k+1}  - Q*U_{2k}	*/
       mpz_mul (T1, Qk, Qk);	/* U_{k+1}^2		*/
       mpz_sub (Qk, V, Qk);	/* |U_{k+1} - U_k|	*/
