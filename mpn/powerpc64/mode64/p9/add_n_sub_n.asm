@@ -97,7 +97,7 @@ L(lo1):	ld	r10, 24(up)
 	addi	arp, arp, 16
 	addi	srp, srp, 16
 	bdnz	L(top)
-	
+
 L(end):	std	r0, -8(arp)
 	std	r12, -8(srp)
 L(1):	addex(	r0, r10, r11, 0)
