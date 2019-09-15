@@ -152,7 +152,7 @@ testmain (int argc, char **argv)
 	      dump ("q", q);
 	      abort ();
 	    }
-       	}
+	}
       else
 	{
 	  if (mpz_fits_ulong_p (b) && mpz_fits_slong_p (r))
