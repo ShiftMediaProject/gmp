@@ -712,6 +712,11 @@ one (mp_size_t *threshold, struct param_t *param)
     print_define_end (param->name, *threshold);
 }
 
+/* Time N different FUNCTIONS with the same parameters and size, to
+   select the fastest. Since *_METHOD defines start numbering from
+   one, if functions[i] is fastest, the value of the define is i+1.
+   Also output a comment with speedup compared to the next fastest
+   function. The NAME argument is used only for trace output.*/
 void
 one_method (int n, speed_function_t *functions,
 	    const char *name, const char *define,
