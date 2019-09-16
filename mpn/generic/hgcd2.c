@@ -40,6 +40,10 @@ see https://www.gnu.org/licenses/.  */
 #define HGCD2_DIV1_METHOD 3
 #endif
 
+#ifndef HGCD2_DIV2_METHOD
+#define HGCD2_DIV2_METHOD 2
+#endif
+
 #if GMP_NAIL_BITS != 0
 #error Nails not implemented
 #endif
@@ -48,6 +52,12 @@ see https://www.gnu.org/licenses/.  */
    holds d0 = r, d1 = q */
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0);
+
+/* Two-limb division optimized for small quotients.  */
+static mp_limb_t
+div2 (mp_ptr rp,
+      mp_limb_t n1, mp_limb_t n0,
+      mp_limb_t d1, mp_limb_t d0);
 
 #if HGCD2_DIV1_METHOD == 1
 
@@ -138,68 +148,66 @@ div1 (mp_limb_t n0, mp_limb_t d0)
 #error Unknown HGCD2_DIV1_METHOD
 #endif
 
-/* Two-limb division optimized for small quotients.  */
-static inline mp_limb_t
+#if HGCD2_DIV2_METHOD == 1
+
+static mp_limb_t
 div2 (mp_ptr rp,
-      mp_limb_t nh, mp_limb_t nl,
-      mp_limb_t dh, mp_limb_t dl)
+      mp_limb_t n1, mp_limb_t n0,
+      mp_limb_t d1, mp_limb_t d0)
 {
-  mp_limb_t q = 0;
-
-  if ((mp_limb_signed_t) nh < 0)
+  mp_double_limb_t rq = div1 (n1, d1);
+  if (UNLIKELY (rq.d1 > d1))
     {
-      int cnt;
-      for (cnt = 1; (mp_limb_signed_t) dh >= 0; cnt++)
-	{
-	  dh = (dh << 1) | (dl >> (GMP_LIMB_BITS - 1));
-	  dl = dl << 1;
-	}
+      mp_limb_t n2, q, t1, t0;
+      int c;
 
-      while (cnt)
+      /* Normalize */
+      count_leading_zeros (c, d1);
+      ASSERT (c > 0);
+
+      n2 = n1 >> (GMP_LIMB_BITS - c);
+      n1 = (n1 << c) | (n0 >> (GMP_LIMB_BITS - c));
+      n0 <<= c;
+      d1 = (d1 << c) | (d0 >> (GMP_LIMB_BITS - c));
+      d0 <<= c;
+
+      udiv_qrnnd (q, n1, n2, n1, d1);
+      umul_ppmm (t1, t0, q, d0);
+      if (t1 > n1 || (t1 == n1 && t0 > n0))
 	{
-	  q <<= 1;
-	  if (nh > dh || (nh == dh && nl >= dl))
-	    {
-	      sub_ddmmss (nh, nl, nh, nl, dh, dl);
-	      q |= 1;
-	    }
-	  dl = (dh << (GMP_LIMB_BITS - 1)) | (dl >> 1);
-	  dh = dh >> 1;
-	  cnt--;
+	  ASSERT (q > 0);
+	  q--;
+	  sub_ddmmss (t1, t0, t1, t0, d1, d0);
 	}
+      sub_ddmmss (n1, n0, n1, n0, t1, t0);
+
+      /* Undo normalization */
+      rp[0] = (n0 >> c) | (n1 << (GMP_LIMB_BITS - c));
+      rp[1] = n1 >> c;
+
+      return q;
     }
   else
     {
-      int cnt;
-      for (cnt = 0; nh > dh || (nh == dh && nl >= dl); cnt++)
+      mp_limb_t q, t1, t0;
+      n1 = rq.d0;
+      q = rq.d1;
+      umul_ppmm (t1, t0, q, d0);
+      if (UNLIKELY (t1 >= n1) && (t1 > n1 || t0 > n0))
 	{
-	  dh = (dh << 1) | (dl >> (GMP_LIMB_BITS - 1));
-	  dl = dl << 1;
+	  ASSERT (q > 0);
+	  q--;
+	  sub_ddmmss (t1, t0, t1, t0, d1, d0);
 	}
-
-      while (cnt)
-	{
-	  dl = (dh << (GMP_LIMB_BITS - 1)) | (dl >> 1);
-	  dh = dh >> 1;
-	  q <<= 1;
-	  if (nh > dh || (nh == dh && nl >= dl))
-	    {
-	      sub_ddmmss (nh, nl, nh, nl, dh, dl);
-	      q |= 1;
-	    }
-	  cnt--;
-	}
+      sub_ddmmss (rp[1], rp[0], n1, n0, t1, t0);
+      return q;
     }
-
-  rp[0] = nl;
-  rp[1] = nh;
-
-  return q;
 }
 
-#if 0
-/* This div2 uses less branches, but relies on fast count_leading_zeros. */
-static inline mp_limb_t
+#elif HGCD2_DIV2_METHOD == 2
+
+/* Bit-wise div2. Relies on fast count_leading_zeros. */
+static mp_limb_t
 div2 (mp_ptr rp,
       mp_limb_t nh, mp_limb_t nl,
       mp_limb_t dh, mp_limb_t dl)
@@ -238,6 +246,8 @@ div2 (mp_ptr rp,
 
   return q;
 }
+#else
+#error Unknown HGCD2_DIV2_METHOD
 #endif
 
 /* Reduces a,b until |a-b| (almost) fits in one limb + 1 bit. Constructs

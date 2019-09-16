@@ -1,3 +1,15 @@
+2019-09-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd2.c (HGCD2_DIV2_METHOD): New define.
+	(div2): Replaced, since the old implementation had lots of poorly
+	predicted and expensive branches. Two new implementaions, selected
+	by HGCD2_DIV2_METHOD.
+	(div2) [HGCD2_DIV2_METHOD == 1]: Calls div1 on the high limbs,
+	with unlikely case handling large quotients.
+	(div2) [HGCD2_DIV2_METHOD == 2]: The previously #if:ed out
+	version. A bitwise division, relying on fast count_leading_zeros,
+	and with fewer branches than the previous code.
+
 2019-09-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd2.c (HGCD2_DIV1_METHOD): Rename, and change
