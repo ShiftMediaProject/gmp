@@ -211,40 +211,40 @@ div2 (mp_ptr rp,
 /* Bit-wise div2. Relies on fast count_leading_zeros. */
 static mp_limb_t
 div2 (mp_ptr rp,
-      mp_limb_t nh, mp_limb_t nl,
-      mp_limb_t dh, mp_limb_t dl)
+      mp_limb_t n1, mp_limb_t n0,
+      mp_limb_t d1, mp_limb_t d0)
 {
   mp_limb_t q = 0;
   int ncnt;
   int dcnt;
 
-  count_leading_zeros (ncnt, nh);
-  count_leading_zeros (dcnt, dh);
+  count_leading_zeros (ncnt, n1);
+  count_leading_zeros (dcnt, d1);
   dcnt -= ncnt;
 
-  dh = (dh << dcnt) + (dl >> 1 >> (GMP_LIMB_BITS - 1 - dcnt));
-  dl <<= dcnt;
+  d1 = (d1 << dcnt) + (d0 >> 1 >> (GMP_LIMB_BITS - 1 - dcnt));
+  d0 <<= dcnt;
 
   do
     {
       mp_limb_t mask;
       q <<= 1;
-      if (UNLIKELY (nh == dh))
-	mask = -(nl >= dl);
+      if (UNLIKELY (n1 == d1))
+	mask = -(n0 >= d0);
       else
-	mask = -(nh > dh);
+	mask = -(n1 > d1);
 
       q -= mask;
 
-      sub_ddmmss (nh, nl, nh, nl, mask & dh, mask & dl);
+      sub_ddmmss (n1, n0, n1, n0, mask & d1, mask & d0);
 
-      dl = (dh << (GMP_LIMB_BITS - 1)) | (dl >> 1);
-      dh = dh >> 1;
+      d0 = (d1 << (GMP_LIMB_BITS - 1)) | (d0 >> 1);
+      d1 = d1 >> 1;
     }
   while (dcnt--);
 
-  rp[0] = nl;
-  rp[1] = nh;
+  rp[0] = n0;
+  rp[1] = n1;
 
   return q;
 }
