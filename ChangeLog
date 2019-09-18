@@ -1,3 +1,9 @@
+2019-09-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c (div1, div2): Rearrange things to allow for asm.
+	(div2): Avoid out-of-specs shift.
+	(div2): Use same variable naming in all variants.
+
 2019-09-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd2.c (HGCD2_DIV2_METHOD): New define.
@@ -9,6 +15,12 @@
 	(div2) [HGCD2_DIV2_METHOD == 2]: The previously #if:ed out
 	version. A bitwise division, relying on fast count_leading_zeros,
 	and with fewer branches than the previous code.
+
+2019-09-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* acinclude.m4 (GMP_ASM_X86_ADX): Remove unused.
+
+	* configure.ac (x86): Amend last change.
 
 2019-09-14  Niels Möller  <nisse@lysator.liu.se>
 
