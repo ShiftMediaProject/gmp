@@ -222,7 +222,7 @@ div2 (mp_ptr rp,
   count_leading_zeros (dcnt, dh);
   dcnt -= ncnt;
 
-  dh = (dh << dcnt) + (-(dcnt > 0) & (dl >> (GMP_LIMB_BITS - dcnt)));
+  dh = (dh << dcnt) + (dl >> 1 >> (GMP_LIMB_BITS - 1 - dcnt));
   dl <<= dcnt;
 
   do
