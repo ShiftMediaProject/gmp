@@ -48,18 +48,14 @@ see https://www.gnu.org/licenses/.  */
 #error Nails not implemented
 #endif
 
-/* Single-limb division optimized for small quotients. Returned value
-   holds d0 = r, d1 = q */
-static inline mp_double_limb_t
-div1 (mp_limb_t n0, mp_limb_t d0);
+#if HAVE_NATIVE_mpn_div_11
 
-/* Two-limb division optimized for small quotients.  */
-static mp_limb_t
-div2 (mp_ptr rp,
-      mp_limb_t n1, mp_limb_t n0,
-      mp_limb_t d1, mp_limb_t d0);
+#define div1 mpn_div_11
+/* Single-limb division optimized for small quotients.
+   Returned value holds d0 = r, d1 = q. */
+mp_double_limb_t div1 (mp_limb_t, mp_limb_t);
 
-#if HGCD2_DIV1_METHOD == 1
+#elif HGCD2_DIV1_METHOD == 1
 
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -148,7 +144,13 @@ div1 (mp_limb_t n0, mp_limb_t d0)
 #error Unknown HGCD2_DIV1_METHOD
 #endif
 
-#if HGCD2_DIV2_METHOD == 1
+#if HAVE_NATIVE_mpn_div_22
+
+#define div2 mpn_div_22
+/* Two-limb division optimized for small quotients.  */
+mp_limb_t div2 (mp_ptr, mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t);
+
+#elif HGCD2_DIV2_METHOD == 1
 
 static mp_limb_t
 div2 (mp_ptr rp,
