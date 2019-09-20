@@ -83,10 +83,8 @@ main (int argc, char **argv)
       p_after = pp[n];
 
       itch = mpn_sqrlo_itch (n);
-#if 0
       ASSERT_ALWAYS (itch <= mpn_sqrlo_itch (MAX_N));
       mpn_random2 (scratch-1, itch+2);
-#endif
       s_before = scratch[-1];
       s_after = scratch[itch];
 
