@@ -108,13 +108,11 @@ primesieve_size (mp_limb_t n) { return n_to_bit(n) / GMP_LIMB_BITS + 1; }
 void
 mpz_primorial_ui (mpz_ptr x, unsigned long n)
 {
-  static const mp_limb_t table[] = { 1, 1, 2, 6, 6 };
-
   ASSERT (n <= GMP_NUMB_MAX);
 
-  if (n < numberof (table))
+  if (n < 5)
     {
-      MPZ_NEWALLOC (x, 1)[0] = table[n];
+      MPZ_NEWALLOC (x, 1)[0] = (066211 >> (n*3)) & 7;
       SIZ (x) = 1;
     }
   else
@@ -135,7 +133,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 
       j = 0;
 
-      prod = table[numberof (table)-1];
+      prod = 6;
 
       /* Store primes from 5 to n */
       {
@@ -143,7 +141,7 @@ mpz_primorial_ui (mpz_ptr x, unsigned long n)
 
 	max_prod = GMP_NUMB_MAX / n;
 
-	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit(numberof (table)), n_to_bit (n), 0, sieve);
+	LOOP_ON_SIEVE_BEGIN (prime, n_to_bit(5), n_to_bit (n), 0, sieve);
 	FACTOR_LIST_STORE (prime, prod, max_prod, factors, j);
 	LOOP_ON_SIEVE_END;
       }
