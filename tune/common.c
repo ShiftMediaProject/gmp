@@ -1653,6 +1653,16 @@ speed_mpn_hgcd2_3 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_HGCD2 (mpn_hgcd2_3);
 }
+double
+speed_mpn_hgcd2_4 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD2 (mpn_hgcd2_4);
+}
+double
+speed_mpn_hgcd2_5 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HGCD2 (mpn_hgcd2_5);
+}
 
 double
 speed_mpn_hgcd (struct speed_params *s)

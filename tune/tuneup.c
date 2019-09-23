@@ -1962,14 +1962,22 @@ void
 tune_hgcd2 (void)
 {
   static struct param_t  param;
-  hgcd2_func_t *f[3] =
-    { mpn_hgcd2_1, mpn_hgcd2_2, mpn_hgcd2_3 };
-  speed_function_t speed_f[3] =
-    { speed_mpn_hgcd2_1, speed_mpn_hgcd2_2, speed_mpn_hgcd2_3 };
+  hgcd2_func_t *f[5] =
+    { mpn_hgcd2_1,
+      mpn_hgcd2_2,
+      mpn_hgcd2_3,
+      mpn_hgcd2_4,
+      mpn_hgcd2_5 };
+  speed_function_t speed_f[5] =
+    { speed_mpn_hgcd2_1,
+      speed_mpn_hgcd2_2,
+      speed_mpn_hgcd2_3,
+      speed_mpn_hgcd2_4,
+      speed_mpn_hgcd2_5 };
   int best;
 
   s.size = 1;
-  best = one_method (3, speed_f, "mpn_hgcd2", "HGCD2_DIV1_METHOD", &param);
+  best = one_method (5, speed_f, "mpn_hgcd2", "HGCD2_DIV1_METHOD", &param);
 
   /* Use selected function when tuning hgcd and gcd */
   hgcd2_func = f[best];
