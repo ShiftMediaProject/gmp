@@ -258,7 +258,7 @@ static const unsigned char tab[2048] = {
 
 static const unsigned char *tabp = tab - (1 << (NBITS - 1) << NBITS);
 
-mp_double_limb_t
+static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
 {
   int ncnt;
@@ -348,7 +348,7 @@ static const unsigned short *tabp = tab - (1 << (NBITS - 1));
 #error No table for provided NBITS
 #endif
 
-mp_double_limb_t
+static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
 {
   int ncnt, dcnt;
