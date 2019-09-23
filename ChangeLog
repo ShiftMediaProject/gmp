@@ -1,3 +1,19 @@
+2019-09-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (hgcd2_func_t) [TUNE_PROGRAM_BUILD]: New typedef.
+	(hgcd2_func) [TUNE_PROGRAM_BUILD]: New function pointer.
+
+	* tune/hgcd2.c (mpn_hgcd2): New file, with a redefined function to
+	invoke an implementation via the hgcd2_func function pointer.
+	Initially points to the default implementation in
+	mpn/generic/hgcd2.c.
+	* tune/Makefile.am (tuneup_SOURCES): Add hgcd2.c.
+
+	* tune/tuneup.c (one_method): Return index of selected function.
+	(tune_hgcd2): Set hgcd2_func to point to selected function. So
+	that the later tuning of mpn_hgcd and mpn_gcd uses the right
+	implementation of hgcd2.
+
 2019-09-18  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/hgcd2.c (div1, div2): Rearrange things to allow for asm.

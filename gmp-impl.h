@@ -4949,6 +4949,10 @@ extern mp_size_t			redc_1_to_redc_n_threshold;
 #define MATRIX22_STRASSEN_THRESHOLD	matrix22_strassen_threshold
 extern mp_size_t			matrix22_strassen_threshold;
 
+typedef int hgcd2_func_t (mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t,
+			  struct hgcd_matrix1 *);
+extern hgcd2_func_t *hgcd2_func;
+
 #undef	HGCD_THRESHOLD
 #define HGCD_THRESHOLD			hgcd_threshold
 extern mp_size_t			hgcd_threshold;

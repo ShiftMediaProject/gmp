@@ -716,8 +716,11 @@ one (mp_size_t *threshold, struct param_t *param)
    select the fastest. Since *_METHOD defines start numbering from
    one, if functions[i] is fastest, the value of the define is i+1.
    Also output a comment with speedup compared to the next fastest
-   function. The NAME argument is used only for trace output.*/
-void
+   function. The NAME argument is used only for trace output.
+
+   Returns the index of the fastest function.
+*/
+int
 one_method (int n, speed_function_t *functions,
 	    const char *name, const char *define,
 	    const struct param_t *param)
@@ -757,6 +760,7 @@ one_method (int n, speed_function_t *functions,
 			     t[method_runner_up] / t[method]);
 
   TMP_FREE;
+  return method;
 }
 
 
@@ -1958,15 +1962,17 @@ void
 tune_hgcd2 (void)
 {
   static struct param_t  param;
-  speed_function_t f[3] =
-    {
-     speed_mpn_hgcd2_1,
-     speed_mpn_hgcd2_2,
-     speed_mpn_hgcd2_3,
-    };
+  hgcd2_func_t *f[3] =
+    { mpn_hgcd2_1, mpn_hgcd2_2, mpn_hgcd2_3 };
+  speed_function_t speed_f[3] =
+    { speed_mpn_hgcd2_1, speed_mpn_hgcd2_2, speed_mpn_hgcd2_3 };
+  int best;
 
   s.size = 1;
-  one_method (3, f, "mpn_hgcd2", "HGCD2_DIV1_METHOD", &param);
+  best = one_method (3, speed_f, "mpn_hgcd2", "HGCD2_DIV1_METHOD", &param);
+
+  /* Use selected function when tuning hgcd and gcd */
+  hgcd2_func = f[best];
 }
 
 void
@@ -2236,9 +2242,6 @@ tune_divrem_1 (void)
 void
 tune_div_qr_1 (void)
 {
-  static struct param_t  param;
-  double            t1, t2;
-
   if (!HAVE_NATIVE_mpn_div_qr_1n_pi1)
     {
       static struct param_t  param;

@@ -96,7 +96,7 @@ speed_dynamic_SOURCES = speed.c
 speed_ext_SOURCES = speed-ext.c
 speed_ext_LDFLAGS = $(STATIC)
 
-tuneup_SOURCES = tuneup.c
+tuneup_SOURCES = tuneup.c hgcd2.c
 nodist_tuneup_SOURCES = sqr_basecase.c fac_ui.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES) $(TUNE_LIBS)
