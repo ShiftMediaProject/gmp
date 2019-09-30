@@ -1,3 +1,7 @@
+2019-09-30  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-gcdext_1.c: New test.
+
 2019-09-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (hgcd2_func_t) [TUNE_PROGRAM_BUILD]: New typedef.
