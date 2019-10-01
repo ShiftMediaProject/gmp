@@ -1,3 +1,8 @@
+2019-10-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Fix
+	canonicalization condition.
+
 2019-09-30  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-gcdext_1.c: New test.
