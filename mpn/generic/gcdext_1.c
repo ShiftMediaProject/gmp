@@ -248,8 +248,11 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
       s0 += mask & vgh;
       t0 += mask & ugh;
     }
-  /* FIXME: Try simplifying this condition. */
-  if ( (s0 > 1 && 2*s0 >= vg) || (t0 > 1 && 2*t0 >= ug) )
+
+  ASSERT_ALWAYS (s0 <= vg);
+  ASSERT_ALWAYS (t0 <= ug);
+
+  if (s0 > vg - s0)
     {
       s0 -= vg;
       t0 -= ug;
