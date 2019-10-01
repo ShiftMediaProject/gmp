@@ -741,10 +741,10 @@ case $host in
       [armcortexa7[2-9] | armcortexa7[2-9]neon])
         abilist="64 32"
 	path="arm/v7a/cora15/neon arm/neon arm/v7a/cora15 arm/v6t2 arm/v6 arm/v5 arm"
-	path_64="arm64/cora72 arm64"
+	path_64="arm64/cora57 arm64"
 	gcc_cflags_arch="-march=armv8-a"
 	gcc_cflags_neon="-mfpu=neon"
-	gcc_cflags_tune="-mtune=cortex-a72"
+	gcc_cflags_tune="-mtune=cortex-a72 -mtune=cortex-a57"
 	;;
       armexynosm1)
         abilist="64 32"
