@@ -3,6 +3,10 @@
 	* configure.ac: Make more path distinctions for the benefit of
 	gmp-mparam.h.
 
+2019-10-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm64): Let cortex-a7x look in a57 folder.
+
 2019-10-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Fix
@@ -11,6 +15,14 @@
 2019-09-30  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-gcdext_1.c: New test.
+
+2019-09-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c: Mark added div1 variants as static.
+
+	* tune/tuneup.c, tune/speed.c, tune/speed.h, tune/common.c,
+	tune/Makefile.am: Add measuring of mpn_hgcd2 method 4 and 5.
+	* tune/hgcd2-4.c, tune/hgcd2-5.c: New files.
 
 2019-09-23  Niels Möller  <nisse@lysator.liu.se>
 
@@ -27,6 +39,15 @@
 	(tune_hgcd2): Set hgcd2_func to point to selected function. So
 	that the later tuning of mpn_hgcd and mpn_gcd uses the right
 	implementation of hgcd2.
+
+2019-09-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c: Improve method 4 and 5 by using the division
+	free methods optimistically, detecting errors.  Tweak table values.
+
+2019-09-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c: Add a 4th and 5th div1 method.
 
 2019-09-18  Torbjörn Granlund  <tg@gmplib.org>
 
