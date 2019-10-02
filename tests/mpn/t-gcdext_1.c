@@ -24,7 +24,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 #ifndef COUNT
-#define COUNT 10000
+#define COUNT 250000
 #endif
 
 static void
