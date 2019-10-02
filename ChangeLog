@@ -1,3 +1,8 @@
+2019-10-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Make more path distinctions for the benefit of
+	gmp-mparam.h.
+
 2019-10-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Fix
