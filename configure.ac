@@ -1593,8 +1593,10 @@ case $host in
 	    path_64="sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64" ;;
 	  [ultrasparct[12]])
 	    path_64="sparc64/ultrasparct1 sparc64" ;;
-	  [ultrasparct[345]])
+	  [ultrasparct3])
 	    path_64="sparc64/ultrasparct3 sparc64" ;;
+	  [ultrasparct[45]])
+	    path_64="sparc64/ultrasparct45 sparc64/ultrasparct3 sparc64" ;;
 	  *)
 	    path_64="sparc64"
 	esac
@@ -1909,14 +1911,14 @@ case $host in
       coreihwl | coreihwlnoavx | haswell | haswellnoavx)
 	gcc_cflags_cpu="-mtune=haswell -mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=haswell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
+	path="x86/coreihwl x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	x86_have_mulx=yes
 	;;
       coreibwl | coreibwlnoavx | broadwell | broadwellnoavx)
 	gcc_cflags_cpu="-mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=broadwell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
+	path="x86/coreihwl x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
 	x86_have_mulx=yes
@@ -1925,7 +1927,7 @@ case $host in
 	gcc_cflags_cpu="-mtune=skylake -mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
 	# Don't pass -march=skylake for now as then some compilers emit AVX512.
 	gcc_cflags_arch="-march=broadwell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
-	path="x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
+	path="x86/coreihwl x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86"
 	path_64="x86_64/skylake x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
 	x86_have_mulx=yes
@@ -1939,13 +1941,13 @@ case $host in
       silvermont)		# out-of-order pipeline atom
 	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
-	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
+	path="x86/silvermont x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
 	path_64="x86_64/silvermont x86_64/atom x86_64"
 	;;
       goldmont)			# out-of-order pipeline atom
 	gcc_cflags_cpu="-mtune=slm -mtune=atom -mtune=pentium3"
 	gcc_cflags_arch="-march=slm -march=atom -march=pentium3"
-	path="x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
+	path="x86/goldmont x86/atom/sse2 x86/atom/mmx x86/atom x86/mmx x86"
 	path_64="x86_64/goldmont x86_64/silvermont x86_64/atom x86_64"
 	;;
       nano)
