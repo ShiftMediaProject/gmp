@@ -24,7 +24,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 #ifndef COUNT
-#define COUNT 10000
+#define COUNT 250000
 #endif
 
 static void
@@ -68,8 +68,8 @@ one_test (mp_limb_t a, mp_limb_t b)
 	  mp_limb_t abs_t = ABS_CAST(mp_limb_t, t);
 	  mpz_mul_ui (sz, sz, 2);
 	  mpz_mul_ui (tz, tz, 2);
-	  if ((abs_s == 1 || mpz_cmpabs_ui (sz, b_div_g) < 0)
-	      && (abs_t == 1 || mpz_cmpabs_ui (tz, a_div_g) < 0))
+	  if ((abs_s == 1 || mpz_cmpabs (sz, mpz_roinit_n (tmp, &b_div_g, 1)) < 0)
+	       && (abs_t == 1 || mpz_cmpabs (tz, mpz_roinit_n (tmp, &a_div_g, 1)) < 0))
 	    {
 	      mpz_clear (d);
 	      mpz_clear (sz);
