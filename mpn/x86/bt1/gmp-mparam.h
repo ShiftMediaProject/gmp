@@ -69,7 +69,7 @@ see https://www.gnu.org/licenses/.  */
 #define MUL_TOOM43_TO_TOOM54_THRESHOLD     143
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
-#define SQR_TOOM2_THRESHOLD                 52
+#define SQR_TOOM2_THRESHOLD                 50
 #define SQR_TOOM3_THRESHOLD                 89
 #define SQR_TOOM4_THRESHOLD                248
 #define SQR_TOOM6_THRESHOLD                342
