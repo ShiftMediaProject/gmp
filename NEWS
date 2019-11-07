@@ -14,7 +14,7 @@ Changes between GMP version 6.1.* and 6.2.0
     process does not recognize the float format.
 
   FEATURES
-  * New C++ functions factorial and primorial for mpz_class.
+  * New C++ functions factorial, primorial and fibonacci for mpz_class.
 
   * Mini-GMP: new functions mpz_2fac_ui and mpz_mfac_uiui.
 
