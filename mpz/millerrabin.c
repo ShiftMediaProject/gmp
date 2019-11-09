@@ -101,12 +101,12 @@ mpz_millerrabin (mpz_srcptr n, int reps)
 	  || SIZ (n) - 64 / GMP_NUMB_BITS == (PTR (n) [64 / GMP_NUMB_BITS] < CNST_LIMB(1) << 64 % GMP_NUMB_BITS)
 #endif
 #else
-	  /* Consider numbers up to 37*2^45 that pass the BPSW test as primes.
-	     This implementation was tested up to 37*2^45 = 2^50+2^47+2^45 */
-	  /* 2^5 < 37 = 0b100101 < 2^6 */
-#define GMP_BPSW_LIMB_CONST CNST_LIMB(37)
-#define GMP_BPSW_BITS_CONST (LOG2C(37) - 1)
-#define GMP_BPSW_BITS_LIMIT (45 + GMP_BPSW_BITS_CONST)
+	  /* Consider numbers up to 19*2^46 that pass the BPSW test as primes.
+	     This implementation was tested up to 19*2^46 = 2^50+2^47+2^46 */
+	  /* 2^4 < 19 = 0b10011 < 2^5 */
+#define GMP_BPSW_LIMB_CONST CNST_LIMB(19)
+#define GMP_BPSW_BITS_CONST (LOG2C(19) - 1)
+#define GMP_BPSW_BITS_LIMIT (46 + GMP_BPSW_BITS_CONST)
 
 #define GMP_BPSW_LIMBS_LIMIT (GMP_BPSW_BITS_LIMIT / GMP_NUMB_BITS)
 #define GMP_BPSW_BITS_MOD (GMP_BPSW_BITS_LIMIT % GMP_NUMB_BITS)
