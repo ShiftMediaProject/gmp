@@ -237,7 +237,7 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
   ugh = ug/2 + (ug & 1);
   vgh = vg/2 + (vg & 1);
 
-  /* Now ±2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
+  /* Now 2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
      s0 U - t0 V = (s0 + V/g) U - (t0 + U/g) V. */
   for (i = 0; i < shift; i++)
     {
