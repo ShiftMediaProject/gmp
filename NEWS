@@ -47,6 +47,8 @@ Changes between GMP version 6.1.* and 6.2.0
   * mpn_mul no longer diverts to mpn_sqr, users should call mpn_sqr directly
     when applicable.
 
+  * New installed files gmp.pc and gmpxx.pc, for use with pkg-config.
+    Contributed by Hugh McMaster.
 
 Changes between GMP version 6.1.1 and 6.1.2
 
