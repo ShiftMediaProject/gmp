@@ -94,11 +94,13 @@ see https://www.gnu.org/licenses/.  */
 
 #define gmp_clz(count, x) do {						\
     mp_limb_t __clz_x = (x);						\
-    unsigned __clz_c;							\
-    for (__clz_c = 0;							\
-	 (__clz_x & ((mp_limb_t) 0xff << (GMP_LIMB_BITS - 8))) == 0;	\
-	 __clz_c += 8)							\
-      __clz_x <<= 8;							\
+    unsigned __clz_c = 0;						\
+    int LOCAL_SHIFT_BITS = 8;						\
+    if (sizeof(mp_limb_t) * CHAR_BIT > LOCAL_SHIFT_BITS)				\
+      for (;								\
+	   (__clz_x & ((mp_limb_t) 0xff << (GMP_LIMB_BITS - 8))) == 0;	\
+	   __clz_c += 8)						\
+	{ __clz_x <<= LOCAL_SHIFT_BITS;	}				\
     for (; (__clz_x & GMP_LIMB_HIGHBIT) == 0; __clz_c++)		\
       __clz_x <<= 1;							\
     (count) = __clz_c;							\
@@ -3990,13 +3992,18 @@ gmp_popcount_limb (mp_limb_t x)
   unsigned c;
 
   /* Do 16 bits at a time, to avoid limb-sized constants. */
-  for (c = 0; x > 0; x >>= 16)
+  int LOCAL_SHIFT_BITS = 16;
+  for (c = 0; x > 0;)
     {
       unsigned w = x - ((x >> 1) & 0x5555);
       w = ((w >> 2) & 0x3333) + (w & 0x3333);
       w =  (w >> 4) + w;
       w = ((w >> 8) & 0x000f) + (w & 0x000f);
       c += w;
+      if (sizeof(mp_limb_t) * CHAR_BIT > LOCAL_SHIFT_BITS)
+	x >>= LOCAL_SHIFT_BITS;
+      else
+	x = 0;
     }
   return c;
 }
@@ -4503,10 +4510,15 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
       limb = u->_mp_d[un-1];
       assert (limb != 0);
 
-      k = 0;
-      do {
-	k++; limb >>= CHAR_BIT;
-      } while (limb != 0);
+      k = (sizeof (mp_limb_t) == 1); 
+      if (!k)
+	{
+	  do {
+	    int LOCAL_CHAR_BIT = CHAR_BIT;
+	    k++; limb >>= LOCAL_CHAR_BIT;
+	  } while (limb != 0);
+	}
+      /* else limb = 0; */
 
       count = (k + (un-1) * sizeof (mp_limb_t) + size - 1) / size;
 
@@ -4535,17 +4547,28 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
       for (bytes = 0, i = 0, k = 0; k < count; k++, p += word_step)
 	{
 	  size_t j;
-	  for (j = 0; j < size; j++, p -= (ptrdiff_t) endian)
+	  for (j = 0; j < size; ++j, p -= (ptrdiff_t) endian)
 	    {
-	      if (bytes == 0)
+	      if (sizeof (mp_limb_t) == 1)
 		{
 		  if (i < un)
-		    limb = u->_mp_d[i++];
-		  bytes = sizeof (mp_limb_t);
+		    *p = u->_mp_d[i++];
+		  else
+		    *p = 0;
 		}
-	      *p = limb;
-	      limb >>= CHAR_BIT;
-	      bytes--;
+	      else
+		{
+		  int LOCAL_CHAR_BIT = CHAR_BIT;
+		  if (bytes == 0)
+		    {
+		      if (i < un)
+			limb = u->_mp_d[i++];
+		      bytes = sizeof (mp_limb_t);
+		    }
+		  *p = limb;
+		  limb >>= LOCAL_CHAR_BIT;
+		  bytes--;
+		}
 	    }
 	}
       assert (i == un);
