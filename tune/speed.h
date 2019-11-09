@@ -2638,7 +2638,10 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     SPEED_RESTRICT_COND (s->size >= 1);					\
 									\
     mpz_init (r);							\
-    mpz_init_set_n (b, s->xp, s->size);					\
+    if (s->r < 2)							\
+      mpz_init_set_n (b, s->xp, s->size);				\
+    else								\
+      mpz_init_set_ui (b, s->r);					\
     mpz_init_set_n (m, s->yp, s->size);					\
     mpz_setbit (m, 0);	/* force m to odd */				\
     mpz_init_set_n (e, s->xp_block, 6);					\
