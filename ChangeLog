@@ -1,3 +1,8 @@
+2019-10-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tune/speed.c (routine_t): Add R flago to mpz_powm
+	* tune/speed.h (SPEED_ROUTINE_MPZ_POWM): Use R flag as the base.
+
 2019-10-02  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac: Make more path distinctions for the benefit of
