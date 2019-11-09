@@ -10754,8 +10754,9 @@ implemented most of the new Toom multiply and squaring code for 5.0.
 He is the main author of the current mpn_mulmod_bnm1, mpn_mullo_n, and
 mpn_sqrlo.  Marco also wrote the functions mpn_invert and mpn_invertappr,
 and improved the speed of integer root extraction.  He is the author of
-the current combinatorial functions: binomial, factorial, multifactorial,
-primorial.
+mini-mpq, an additional layer to mini-gmp; of most of the combinatorial
+functions and the BPSW primality testing implementation, for both the
+main library and the mini-gmp package.
 
 David Harvey suggested the internal function @code{mpn_bdiv_dbm1}, implementing
 division relevant to Toom multiplication.  He also worked on fast assembly
