@@ -33,7 +33,7 @@ Jason Moxham		Previous versions of mpz/fac_ui.c and gen-fac_ui.c
 Niels Möller		gen-jacobitab.c,
 			mpn/generic/hgcd2.c, hgcd.c, hgcd_step.c,
 			hgcd_appr.c, hgcd_matrix.c, hgcd_reduce.c,
-			gcd.c, gcdext.c, matrix22_mul.c,
+			gcd.c, gcd_11.c, gcd_22.c, gcdext.c, matrix22_mul.c,
 			gcdext_1.c, gcd_subdiv_step.c, gcd_lehmer.c,
 			gcdext_subdiv_step.c, gcdext_lehmer.c,
 			jacobi_2.c, jacbase.c, hgcd_jacobi.c, hgcd2_jacobi.c,
