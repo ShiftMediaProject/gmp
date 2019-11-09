@@ -8,7 +8,7 @@
    With the current implementation, the first 24 MR-tests are substituted by a
    Baillie-PSW probable prime test.
 
-   This implementation the Baillie-PSW test was checked up to 37*2^45,
+   This implementation the Baillie-PSW test was checked up to 19*2^46,
    for smaller values no MR-test is performed, regardless of reps, and
    2 ("surely prime") is returned if the number was not proved composite.
 
@@ -19,8 +19,8 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1996-2002, 2005, 2014, 2018 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996-2002, 2005, 2014, 2018, 2019 Free
+Software Foundation, Inc.
 
 Contributed by John Amanatides.
 

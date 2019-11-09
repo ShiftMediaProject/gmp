@@ -1,4 +1,4 @@
-2019-10-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2019-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/speed.c (routine_t): Add R flago to mpz_powm
 	* tune/speed.h (SPEED_ROUTINE_MPZ_POWM): Use R flag as the base.
