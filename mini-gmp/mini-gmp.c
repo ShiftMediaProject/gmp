@@ -96,7 +96,7 @@ see https://www.gnu.org/licenses/.  */
     mp_limb_t __clz_x = (x);						\
     unsigned __clz_c = 0;						\
     int LOCAL_SHIFT_BITS = 8;						\
-    if (sizeof(mp_limb_t) * CHAR_BIT > LOCAL_SHIFT_BITS)				\
+    if (GMP_LIMB_BITS > LOCAL_SHIFT_BITS)				\
       for (;								\
 	   (__clz_x & ((mp_limb_t) 0xff << (GMP_LIMB_BITS - 8))) == 0;	\
 	   __clz_c += 8)						\
@@ -4000,7 +4000,7 @@ gmp_popcount_limb (mp_limb_t x)
       w =  (w >> 4) + w;
       w = ((w >> 8) & 0x000f) + (w & 0x000f);
       c += w;
-      if (sizeof(mp_limb_t) * CHAR_BIT > LOCAL_SHIFT_BITS)
+      if (GMP_LIMB_BITS > LOCAL_SHIFT_BITS)
 	x >>= LOCAL_SHIFT_BITS;
       else
 	x = 0;
