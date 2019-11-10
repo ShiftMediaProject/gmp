@@ -1,4 +1,4 @@
-2018-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
+2019-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-gmp/mini-gmp.c (gmp_clz, gmp_popcount_limb, mpz_export):
 	Avoid undefined behaviour with small limb sizes.
@@ -7,6 +7,10 @@
 
 	* tests/t-gcd.c (gcdext_valid_p): Stricter checks for gcdext
 	corner cases.
+
+2018-12-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mini-gmp/mini-gmp.c: Support for micro-gmp.
 
 2018-11-07 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
