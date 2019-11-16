@@ -1,6 +1,7 @@
 /* Header for speed and threshold things.
 
-Copyright 1999-2003, 2005, 2006, 2008-2016 Free Software Foundation, Inc.
+Copyright 1999-2003, 2005, 2006, 2008-2017, 2019 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -3478,17 +3479,16 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
    Worst case is multiple prime factors larger than trial div limit. */
 #define SPEED_ROUTINE_MPN_PERFECT_POWER(function)		 	\
   {									\
-    mpz_t     r, p;							\
+    mpz_t     r;							\
     unsigned  i, power;							\
     double    t;							\
 									\
     SPEED_RESTRICT_COND (s->size >= 10);				\
 									\
-    mpz_init_set_ui (p, (1 << 16) + 1);	/* larger than 1000th prime */	\
-    mpz_init_set_ui (r, (1 << 17) - 1);					\
+    mpz_init (r);							\
     power = s->size * GMP_NUMB_BITS / 17;				\
-    mpz_pow_ui(r, r, power - 1);					\
-    mpz_mul(r, r, p);							\
+    mpz_ui_pow_ui(r, (1 << 17) - 1, power - 1);				\
+    mpz_mul_ui(r, r, (1 << 16) + 1);	/* larger than 1000th prime */	\
 									\
     speed_starttime ();							\
     i = s->reps;							\
@@ -3498,7 +3498,6 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     t = speed_endtime ();						\
 									\
     mpz_clear (r);							\
-    mpz_clear (p);							\
     return t;								\
   }
 
@@ -3506,12 +3505,13 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
 #define SPEED_ROUTINE_MPN_PERFECT_SQUARE(function)			\
   {									\
     mpz_t     r;							\
-    unsigned  i, power;							\
+    unsigned  i;							\
     double    t;							\
 									\
     SPEED_RESTRICT_COND (s->size >= 2);					\
     mpz_init_set_n (r, s->xp, s->size / 2);				\
-    mpz_pow_ui(r, r, 2);						\
+    mpz_setbit (r, s->size * GMP_NUMB_BITS / 2 - 1);			\
+    mpz_mul (r, r, r);							\
 									\
     speed_starttime ();							\
     i = s->reps;							\

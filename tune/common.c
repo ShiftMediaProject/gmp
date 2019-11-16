@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999-2006, 2008-2017 Free Software Foundation, Inc.
+Copyright 1999-2006, 2008-2017, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
