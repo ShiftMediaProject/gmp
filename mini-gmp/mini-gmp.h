@@ -53,7 +53,11 @@ void mp_get_memory_functions (void *(**) (size_t),
 			      void *(**) (void *, size_t, size_t),
 			      void (**) (void *, size_t));
 
-typedef unsigned long mp_limb_t;
+#ifndef MINI_GMP_LIMB_TYPE
+#define MINI_GMP_LIMB_TYPE unsigned long
+#endif
+
+typedef MINI_GMP_LIMB_TYPE mp_limb_t;
 typedef long mp_size_t;
 typedef unsigned long mp_bitcnt_t;
 

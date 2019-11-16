@@ -442,7 +442,7 @@ check-mini-gmp:
 		MINI_GMP_DIR="$$abs_srcdir/mini-gmp" \
 		LDFLAGS="-L../../.libs" \
 		LIBS="-lgmp -lm" \
-		CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="-I../.." check
+		CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS) -I../.." check
 
 clean-mini-gmp:
 	if [ -d mini-gmp/tests ] ; then \
