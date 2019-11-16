@@ -313,6 +313,9 @@ const struct routine_t {
 #if 0
   { "mpn_gcdext_lehmer",     speed_mpn_gcdext_lehmer     },
 #endif
+
+  { "mpz_nextprime",     speed_mpz_nextprime        },
+
   { "mpz_jacobi",        speed_mpz_jacobi           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
   { "mpn_jacobi_base_1", speed_mpn_jacobi_base_1    },

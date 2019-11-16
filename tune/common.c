@@ -1763,6 +1763,11 @@ speed_mpn_gcd_22 (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCD_22 (mpn_gcd_22);
 }
 
+double
+speed_mpz_nextprime (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_NEXTPRIME (mpz_nextprime);
+}
 
 double
 speed_mpz_jacobi (struct speed_params *s)
