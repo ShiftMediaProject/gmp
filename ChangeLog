@@ -1,3 +1,14 @@
+2019-11-16 Seth Troisi <sethtroisi@google.com>
+
+	* tune/common.c (speed_mpn_perfect_power_p): New function.
+	(speed_mpn_perfect_power_p): New function.
+	* tune/speed.h: Declare both.
+	* tune/speed.c (routine): Add mpn_perfect_{power,square}_p.
+
+	* tune/common.c (speed_mpz_nextprime): New function.
+	* tune/speed.h: Declare it.
+	* tune/speed.c (routine): Add mpz_nextprime.
+
 2019-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/speed.c (routine_t): Add R flago to mpz_powm
