@@ -1822,6 +1822,19 @@ speed_mpn_root (struct speed_params *s)
 
 
 double
+speed_mpn_perfect_power_p (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_PERFECT_POWER (mpn_perfect_power_p);
+}
+
+double
+speed_mpn_perfect_square_p (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_PERFECT_SQUARE (mpn_perfect_square_p);
+}
+
+
+double
 speed_mpz_fac_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_FAC_UI (mpz_fac_ui);

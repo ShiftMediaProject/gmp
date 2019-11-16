@@ -403,6 +403,9 @@ const struct routine_t {
   { "mpn_sqrt",          speed_mpn_sqrt             },
   { "mpn_root",          speed_mpn_root, FLAG_R     },
 
+  { "mpn_perfect_power_p",  speed_mpn_perfect_power_p,       },
+  { "mpn_perfect_square_p", speed_mpn_perfect_square_p,      },
+
   { "mpn_fib2_ui",       speed_mpn_fib2_ui,    FLAG_NODATA },
   { "mpz_fib_ui",        speed_mpz_fib_ui,     FLAG_NODATA },
   { "mpz_fib2_ui",       speed_mpz_fib2_ui,    FLAG_NODATA },

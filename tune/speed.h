@@ -342,6 +342,8 @@ double speed_mpn_sqrtrem (struct speed_params *);
 double speed_mpn_rootrem (struct speed_params *);
 double speed_mpn_sqrt (struct speed_params *);
 double speed_mpn_root (struct speed_params *);
+double speed_mpn_perfect_power_p (struct speed_params *);
+double speed_mpn_perfect_square_p (struct speed_params *);
 double speed_mpn_sub_n (struct speed_params *);
 double speed_mpn_sub_1 (struct speed_params *);
 double speed_mpn_sub_1_inplace (struct speed_params *);
@@ -3426,6 +3428,57 @@ int speed_routine_count_zeros_setup (struct speed_params *, mp_ptr, int, int);
     t = speed_endtime ();						\
 									\
     TMP_FREE;								\
+    return t;								\
+  }
+
+
+/* Calculate worst case for perfect_power
+   Worst case is multiple prime factors larger than trial div limit. */
+#define SPEED_ROUTINE_MPN_PERFECT_POWER(function)		 	\
+  {									\
+    mpz_t     r, p;							\
+    unsigned  i, power;							\
+    double    t;							\
+									\
+    SPEED_RESTRICT_COND (s->size >= 10);				\
+									\
+    mpz_init_set_ui (p, (1 << 16) + 1);	/* larger than 1000th prime */	\
+    mpz_init_set_ui (r, (1 << 17) - 1);					\
+    power = s->size * GMP_NUMB_BITS / 17;				\
+    mpz_pow_ui(r, r, power - 1);					\
+    mpz_mul(r, r, p);							\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      function (PTR(r), SIZ(r));					\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    mpz_clear (r);							\
+    mpz_clear (p);							\
+    return t;								\
+  }
+
+/* Calculate worst case (larger prime) for perfect_square */
+#define SPEED_ROUTINE_MPN_PERFECT_SQUARE(function)			\
+  {									\
+    mpz_t     r;							\
+    unsigned  i, power;							\
+    double    t;							\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+    mpz_init_set_n (r, s->xp, s->size / 2);				\
+    mpz_pow_ui(r, r, 2);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      function (PTR(r), SIZ(r));					\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    mpz_clear (r);							\
     return t;								\
   }
 
