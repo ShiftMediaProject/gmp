@@ -1,6 +1,7 @@
-dnl  AMD64 mpn_mul_1 optimised for AMD bobcat.
+dnl  AMD64 mpn_mul_1 optimised for AMD bt1/bt2.
 
-dnl  Copyright 2003-2005, 2007, 2008, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2003-2005, 2007, 2008, 2011, 2012, 2019 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -31,25 +32,27 @@ dnl  see https://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C AMD K8,K9      4.53
-C AMD K10        4.53
-C AMD bull       4.56
-C AMD pile       4.47
-C AMD steam
-C AMD excavator
-C AMD bobcat     5.07
-C AMD jaguar     5.23    5.82
-C Intel P4      12.6
-C Intel core2    4.53
-C Intel NHM      4.36
-C Intel SBR      3.0
-C Intel IBR      2.55
-C Intel HWL      2.28
-C Intel BWL      2.36
-C Intel SKL      2.39
-C Intel atom    21.0
-C Intel SLM      9
-C VIA nano
+C AMD K8,K9	 4.53		old measurement
+C AMD K10	 4.53		old measurement
+C AMD bd1	 4.56		old measurement
+C AMD bd2	 4.47		old measurement
+C AMD bd3	 ?
+C AMD bd4	 ?
+C AMD zen	 ?
+C AMD bt1	 5.12
+C AMD bt2	 5.17
+C Intel P4	12.6		old measurement
+C Intel PNR	 4.53		old measurement
+C Intel NHM	 4.36		old measurement
+C Intel SBR	 3.0		old measurement
+C Intel IBR	 2.55		old measurement
+C Intel HWL	 2.28		old measurement
+C Intel BWL	 2.36		old measurement
+C Intel SKL	 2.39		old measurement
+C Intel atom	21.0		old measurement
+C Intel SLM	 9		old measurement
+C Intel GLM	 ?
+C VIA nano	 ?
 
 C The loop of this code is the result of running a code generation and
 C optimisation tool suite written by David Harvey and Torbjorn Granlund.
@@ -83,112 +86,154 @@ IFDOS(` define(`w1',      `%rdi')    ') dnl
 IFDOS(` define(`w2',      `%r10')    ') dnl
 IFDOS(` define(`w3',      `%r11')    ') dnl
 
-ASM_START()
-	TEXT
-	ALIGN(16)
-PROLOGUE(mpn_mul_1c)
-IFDOS(`	push	%rsi		')
-IFDOS(`	push	%rdi		')
-IFDOS(`	mov	%rdx, %rsi	')
-	mov	cy, w2
-	jmp	L(com)
-EPILOGUE()
-
+	ALIGN(64)
 PROLOGUE(mpn_mul_1)
 IFDOS(`	push	%rsi		')
 IFDOS(`	push	%rdi		')
 IFDOS(`	mov	%rdx, %rsi	')
-	xor	w2, w2
-L(com):	push	%rbx
+
+	push	%rbx
 	mov	(up), %rax
 
-	lea	-16(rp,n_param,8), rp
-	lea	-16(up,n_param,8), up
-
+	lea	(rp,n_param,8), rp
+	lea	(up,n_param,8), up
 	mov	n_param, n
-	and	$3, R32(n_param)
-	jz	L(b0)
-	cmp	$2, R32(n_param)
-	ja	L(b3)
-	jz	L(b2)
 
-L(b1):	mul	v0
-	cmp	$1, n
-	jz	L(n1)
+	test	$1, R8(n_param)
+	jne	L(bx1)
+
+L(bx0):	mul	v0
 	neg	n
-	add	$3, n
-	add	%rax, w2
-	mov	%rdx, w3
-	jmp	L(L1)
-L(n1):	add	%rax, w2
-	mov	%rdx, %rax
-	mov	w2, 8(rp)
-	adc	$0, %rax
-	pop	%rbx
-IFDOS(`	pop	%rdi		')
-IFDOS(`	pop	%rsi		')
-	ret
-
-L(b3):	mul	v0
-	neg	n
-	inc	n
-	add	%rax, w2
-	mov	%rdx, w3
-	jmp	L(L3)
-
-L(b0):	mul	v0
 	mov	%rax, w0
 	mov	%rdx, w1
-	neg	n
-	add	$2, n
-	add	w2, w0
+	test	$2, R8(n)
+	jne	L(L2)
+
+L(b00):	add	$2, n
 	jmp	L(L0)
 
-L(b2):	mul	v0
-	mov	%rax, w0
-	mov	%rdx, w1
+	ALIGN(16)
+L(b11):	mov	%rax, w2
+	mov	%rdx, w3
 	neg	n
-	add	w2, w0
-	jmp	L(L2)
+	inc	n
+	jmp	L(L3)
 
 	ALIGN(16)
-L(top):	mov	w0, -16(rp,n,8)
+L(bx1):	mul	v0
+	test	$2, R8(n)
+	jne	L(b11)
+
+L(b01):	sub	$3, n
+	jc	L(n1)
+	mov	%rax, w2
+	mov	%rdx, w3
+	neg	n
+
+	ALIGN(16)
+L(top):	mov	-16(up,n,8), %rax
+	mul	v0
+	mov	%rax, w0
+	mov	%rdx, w1
+	mov	w2, -24(rp,n,8)
+	add	w3, w0
+	adc	$0, w1
+L(L0):	mov	-8(up,n,8), %rax
+	mul	v0
+	mov	%rax, w2
+	mov	%rdx, w3
+	mov	w0, -16(rp,n,8)
 	add	w1, w2
-L(L1):	adc	$0, w3
-	mov	0(up,n,8), %rax
+	adc	$0, w3
+L(L3):	mov	(up,n,8), %rax
 	mul	v0
 	mov	%rax, w0
 	mov	%rdx, w1
 	mov	w2, -8(rp,n,8)
 	add	w3, w0
-L(L0):	adc	$0, w1
-	mov	8(up,n,8), %rax
+	adc	$0, w1
+L(L2):	mov	8(up,n,8), %rax
 	mul	v0
 	mov	%rax, w2
 	mov	%rdx, w3
-	mov	w0, 0(rp,n,8)
+	mov	w0, (rp,n,8)
 	add	w1, w2
-L(L3):	adc	$0, w3
-	mov	16(up,n,8), %rax
-	mul	v0
-	mov	%rax, w0
-	mov	%rdx, w1
-	mov	w2, 8(rp,n,8)
-	add	w3, w0
-L(L2):	adc	$0, w1
-	mov	24(up,n,8), %rax
-	mul	v0
-	mov	%rax, w2
-	mov	%rdx, w3
+	adc	$0, w3
 	add	$4, n
 	js	L(top)
 
-L(end):	mov	w0, (rp)
-	add	w1, w2
-	adc	$0, w3
-	mov	w2, 8(rp)
+L(end):	mov	w2, -8(rp)
 	mov	w3, %rax
+	pop	%rbx
+IFDOS(`	pop	%rdi		')
+IFDOS(`	pop	%rsi		')
+	ret
 
+	ALIGN(32)
+L(n1):	mov	%rax, -8(rp)
+	mov	%rdx, %rax
+	pop	%rbx
+IFDOS(`	pop	%rdi		')
+IFDOS(`	pop	%rsi		')
+	ret
+EPILOGUE()
+
+ASM_START()
+	TEXT
+	ALIGN(64)
+PROLOGUE(mpn_mul_1c)
+IFDOS(`	push	%rsi		')
+IFDOS(`	push	%rdi		')
+IFDOS(`	mov	%rdx, %rsi	')
+	mov	cy, w2
+	push	%rbx
+	mov	(up), %rax
+
+	lea	(rp,n_param,8), rp
+	lea	(up,n_param,8), up
+	mov	n_param, n
+
+	test	$1, R8(n_param)
+	jne	L(cx1)
+
+L(cx0):	mul	v0
+	neg	n
+	mov	%rax, w0
+	mov	%rdx, w1
+	add	w2, w0
+	adc	$0, w1
+	test	$2, R8(n)
+	jne	L(L2)
+
+L(c00):	add	$2, n
+	jmp	L(L0)
+
+	ALIGN(16)
+L(cx1):	mul	v0
+	test	$2, R8(n)
+	je	L(c01)
+
+L(c11):	neg	n
+	inc	n
+	add	%rax, w2
+	mov	%rdx, w3
+	adc	$0, w3
+	jmp	L(L3)
+
+L(c01):	cmp	$1, n
+	jz	L(m1)
+	neg	n
+	add	$3, n
+	add	%rax, w2
+	mov	%rdx, w3
+	adc	$0, w3
+	jmp	L(top)
+
+	ALIGN(32)
+L(m1):	add	%rax, w2
+	mov	%rdx, %rax
+	mov	w2, -8(rp)
+	adc	$0, %rax
 	pop	%rbx
 IFDOS(`	pop	%rdi		')
 IFDOS(`	pop	%rsi		')
