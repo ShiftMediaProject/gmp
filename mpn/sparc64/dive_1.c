@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2000, 2001, 2003 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2003, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -87,16 +87,20 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
     {
       count_trailing_zeros (rshift, divisor);
       divisor >>= rshift;
+      lshift = 64 - rshift;
+
+      lshift_mask = MP_LIMB_T_MAX;
     }
   else
-    rshift = 0;
+    {
+      rshift = 0;
+
+      /* rshift==0 means no shift, so must mask out other part in this case */
+      lshift = 0;
+      lshift_mask = 0;
+    }
 
   binvert_limb (inverse, divisor);
-
-  lshift = 64 - rshift;
-
-  /* lshift==64 means no shift, so must mask out other part in this case */
-  lshift_mask = (rshift == 0 ? 0 : MP_LIMB_T_MAX);
 
   c = 0;
   divisor_h = HIGH32 (divisor);
