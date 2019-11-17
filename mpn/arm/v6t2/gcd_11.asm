@@ -1,9 +1,7 @@
 dnl  ARM v6t2 mpn_gcd_11.
 
-dnl  Based on the K7 gcd_1.asm, by Kevin Ryde.  Rehacked for ARM by Torbjörn
-dnl  Granlund.
-
-dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012 Free Software Foundation, Inc.
+dnl  Copyright 2000-2002, 2005, 2009, 2011, 2012, 2019 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -36,21 +34,20 @@ include(`../config.m4')
 C	     cycles/bit (approx)
 C StrongARM	 -
 C XScale	 -
-C Cortex-A5	 5.75	obsolete
-C Cortex-A7	 6.38	obsolete
-C Cortex-A8	 5.0	obsolete
-C Cortex-A9	 5.3	obsolete
-C Cortex-A15	 2.92	obsolete
-C Cortex-A17	 5.63	obsolete
-C Cortex-A53	 4.25	obsolete
-C Numbers measured with: speed -CD -s8-32 -t24 mpn_gcd_1
+C Cortex-A5	 5.2
+C Cortex-A7	 5.04
+C Cortex-A8	 3.59
+C Cortex-A9	 9.5
+C Cortex-A15	 3.2
+C Cortex-A17	 5.25
+C Cortex-A53	 3.57
 
 define(`u0',    `r0')
 define(`v0',    `r1')
 
 ASM_START()
 	TEXT
-	ALIGN(16)
+	ALIGN(64)
 PROLOGUE(mpn_gcd_11)
 	subs	r3, u0, v0	C			0
 	beq	L(end)		C
