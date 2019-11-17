@@ -980,8 +980,19 @@ main ()
 	  cpu_64bit = 1, cpu_avx = 1, modelstr = "jaguar";
 	  break;
 	case 23:		/* Zen */
-	  cpu_64bit = 1, cpu_avx = 1, modelstr = "zen";
-	  break;
+	  cpu_64bit = 1, cpu_avx = 1;
+	  switch (model)
+	    {
+	    case 1:
+	    case 8:
+	    case 17:
+	    case 24:
+	      modelstr = "zen";
+	      break;
+	    default:
+	      modelstr = "zen2";
+	      break;
+	  }
 	}
     }
   else if (strcmp (vendor_string, "CyrixInstead") == 0)

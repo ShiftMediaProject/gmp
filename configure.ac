@@ -1889,6 +1889,13 @@ case $host in
 	x86_have_mulx=yes
 	path_64="x86_64/zen x86_64"
 	;;
+      zen2 | zen2noavx)
+	gcc_cflags_cpu="-mtune=znver2 -mtune=znver1 -mtune=amdfam10 -mtune=k8"
+	gcc_cflags_arch="-march=znver2 -march=znver1 -march=amdfam10 -march=k8"
+	path="x86/k7/mmx x86/k7 x86/mmx x86"
+	x86_have_mulx=yes
+	path_64="x86_64/zen2 x86_64/zen x86_64"
+	;;
       core2)
 	gcc_cflags_cpu="-mtune=core2 -mtune=k8"
 	gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
