@@ -782,7 +782,17 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 	(((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
     }
   else {
-  mp_limb_t r, p, m, ql;
+  mp_limb_t r, m;
+
+  if (GMP_ULONG_BITS >= GMP_LIMB_BITS * 2)
+    {
+      /* Set m to the 2/1 inverse of u1. */
+      m = ~((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) / u1;
+      r = ~(m * u1);
+    }
+  else
+    {
+  mp_limb_t p, ql;
   unsigned ul, uh, qh;
 
   assert (u1 >= GMP_LIMB_HIGHBIT);
@@ -855,6 +865,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
       m++;
       r -= u1;
     }
+  }
 
   /* Now m is the 2/1 inverse of u1. If u0 > 0, adjust it to become a
      3/2 inverse. */
