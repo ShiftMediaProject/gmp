@@ -144,7 +144,7 @@ testmain (int argc, char **argv)
   char *ap;
   char *bp;
   char *rp;
-  size_t bn, rn, arn;
+  size_t rn, arn;
 
   mpq_t a, b;
 
