@@ -771,6 +771,8 @@ mp_limb_t
 mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 {
   int GMP_LIMB_BITS_MUL_3 = GMP_LIMB_BITS * 3;
+  assert (u1 >= GMP_LIMB_HIGHBIT);
+
   if (sizeof (unsigned) * CHAR_BIT > GMP_LIMB_BITS * 3)
     {
       return (((unsigned) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
@@ -794,8 +796,6 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
     {
   mp_limb_t p, ql;
   unsigned ul, uh, qh;
-
-  assert (u1 >= GMP_LIMB_HIGHBIT);
 
   /* For notation, let b denote the half-limb base, so that B = b^2.
      Split u1 = b uh + ul. */
