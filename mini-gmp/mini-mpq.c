@@ -5,7 +5,7 @@
    Acknowledgment: special thanks to Bradley Lucier for his comments
    to the preliminary version of this code.
 
-Copyright 2018 Free Software Foundation, Inc.
+Copyright 2018, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

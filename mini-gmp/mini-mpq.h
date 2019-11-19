@@ -1,6 +1,6 @@
 /* mini-mpq, a minimalistic implementation of a GNU GMP subset.
 
-Copyright 2018 Free Software Foundation, Inc.
+Copyright 2018, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
