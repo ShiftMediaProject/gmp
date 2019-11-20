@@ -789,7 +789,8 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
     if (GMP_ULONG_BITS >= GMP_LIMB_BITS * 2)
       {
 	/* Set m to the 2/1 inverse of u1. */
-	m = ~((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) / u1;
+	m = (((unsigned long) (u1 ^ GMP_LIMB_MAX) << GMP_LIMB_BITS_MUL_3 / 3)
+	     | GMP_LIMB_MAX ) / u1;
 	r = ~(m * u1);
       }
     else
@@ -805,7 +806,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 	/* Approximation of the high half of quotient. Differs from the 2/1
 	   inverse of the half limb uh, since we have already subtracted
 	   u0. */
-	qh = ~u1 / uh;
+	qh = (u1 ^ GMP_LIMB_MAX) / uh;
 
 	/* Adjust to get a half-limb 3/2 inverse, i.e., we want
 
