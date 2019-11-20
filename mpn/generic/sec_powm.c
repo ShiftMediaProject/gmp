@@ -3,7 +3,7 @@
 
    Contributed to the GNU project by Torbjörn Granlund.
 
-Copyright 2007-2009, 2011-2014, 2018 Free Software Foundation, Inc.
+Copyright 2007-2009, 2011-2014, 2018-2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -63,12 +63,21 @@ see https://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #undef MPN_REDC_1_SEC
+#if HAVE_NATIVE_mpn_sbpi1_bdiv_r
+#define MPN_REDC_1_SEC(rp, up, mp, n, invm)				\
+  do {									\
+    mp_limb_t cy;							\
+    cy = mpn_sbpi1_bdiv_r (up, 2 * n, mp, n, invm);			\
+    mpn_cnd_sub_n (cy, rp, up + n, mp, n);				\
+  } while (0)
+#else
 #define MPN_REDC_1_SEC(rp, up, mp, n, invm)				\
   do {									\
     mp_limb_t cy;							\
     cy = mpn_redc_1 (rp, up, mp, n, invm);				\
     mpn_cnd_sub_n (cy, rp, rp, mp, n);					\
   } while (0)
+#endif
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 #undef MPN_REDC_2_SEC

@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007-2012 Free Software Foundation, Inc.
+Copyright 2007-2012, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -99,6 +99,17 @@ see https://www.gnu.org/licenses/.  */
   } while (0)
 
 #undef MPN_REDC_1
+#if HAVE_NATIVE_mpn_sbpi1_bdiv_r
+#define MPN_REDC_1(rp, up, mp, n, invm)					\
+  do {									\
+    mp_limb_t cy;							\
+    cy = mpn_sbpi1_bdiv_r (up, 2 * n, mp, n, invm);			\
+    if (cy != 0)							\
+      mpn_sub_n (rp, up + n, mp, n);					\
+    else								\
+      MPN_COPY (rp, up + n, n);						\
+  } while (0)
+#else
 #define MPN_REDC_1(rp, up, mp, n, invm)					\
   do {									\
     mp_limb_t cy;							\
@@ -106,6 +117,7 @@ see https://www.gnu.org/licenses/.  */
     if (cy != 0)							\
       mpn_sub_n (rp, rp, mp, n);					\
   } while (0)
+#endif
 
 #undef MPN_REDC_2
 #define MPN_REDC_2(rp, up, mp, n, mip)					\
