@@ -1,6 +1,7 @@
 /* mpn_gcd_11 -- limb greatest common divisor.
 
-Copyright 1994, 1996, 2000, 2001, 2009, 2012, 2019 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2000, 2001, 2009, 2012, 2019 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,7 +32,6 @@ see https://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if !HAVE_NATIVE_mpn_gcd_11
 mp_limb_t
 mpn_gcd_11 (mp_limb_t u, mp_limb_t v)
 {
@@ -72,4 +72,3 @@ mpn_gcd_11 (mp_limb_t u, mp_limb_t v)
     }
   return (u << 1) + 1;
 }
-#endif /* !HAVE_NATIVE_mpn_gcd_11 */
