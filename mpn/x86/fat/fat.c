@@ -175,7 +175,6 @@ struct cpuvec_t __gmpn_cpuvec = {
   __MPN(divexact_1_init),
   __MPN(divrem_1_init),
   __MPN(gcd_11_init),
-  __MPN(gcd_22_init),
   __MPN(lshift_init),
   __MPN(lshiftc_init),
   __MPN(mod_1_init),

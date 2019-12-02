@@ -91,8 +91,8 @@ see https://www.gnu.org/licenses/.  */
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, mp_limb_t)
 #define DECL_divrem_1(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t)
-#define DECL_gcd_1(name) \
-  __GMP_DECLSPEC mp_limb_t name (mp_srcptr, mp_size_t, mp_limb_t)
+#define DECL_gcd_11(name) \
+  __GMP_DECLSPEC mp_limb_t name (mp_limb_t, mp_limb_t)
 #define DECL_lshift(name) \
   __GMP_DECLSPEC mp_limb_t name (mp_ptr, mp_srcptr, mp_size_t, unsigned)
 #define DECL_lshiftc(name) \
@@ -4667,7 +4667,7 @@ struct cpuvec_t {
   DECL_copyi           ((*copyi));
   DECL_divexact_1      ((*divexact_1));
   DECL_divrem_1        ((*divrem_1));
-  DECL_gcd_1           ((*gcd_1));
+  DECL_gcd_11          ((*gcd_11));
   DECL_lshift          ((*lshift));
   DECL_lshiftc         ((*lshiftc));
   DECL_mod_1           ((*mod_1));

@@ -2280,7 +2280,7 @@ case $host in
 
       fat_functions="add_n addmul_1 bdiv_dbm1c com cnd_add_n cnd_sub_n
 		     copyd copyi dive_1 divrem_1
-		     gcd_1 lshift lshiftc mod_1 mod_1_1 mod_1_1_cps mod_1_2
+		     gcd_11 lshift lshiftc mod_1 mod_1_1 mod_1_1_cps mod_1_2
 		     mod_1_2_cps mod_1_4 mod_1_4_cps mod_34lsub1 mode1o mul_1
 		     mul_basecase mullo_basecase pre_divrem_1 pre_mod_1 redc_1
 		     redc_2 rshift sqr_basecase sub_n submul_1"
@@ -3593,6 +3593,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_divrem_2
 #undef HAVE_NATIVE_mpn_gcd_1
 #undef HAVE_NATIVE_mpn_gcd_11
+#undef HAVE_NATIVE_mpn_gcd_22
 #undef HAVE_NATIVE_mpn_hamdist
 #undef HAVE_NATIVE_mpn_invert_limb
 #undef HAVE_NATIVE_mpn_ior_n
