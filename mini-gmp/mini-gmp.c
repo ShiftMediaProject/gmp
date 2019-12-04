@@ -770,109 +770,109 @@ mpn_neg (mp_ptr rp, mp_srcptr up, mp_size_t n)
 mp_limb_t
 mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 {
-    mp_limb_t r, m;
+  mp_limb_t r, m;
 
-      {
-	mp_limb_t p, ql;
-	unsigned ul, uh, qh;
+  {
+    mp_limb_t p, ql;
+    unsigned ul, uh, qh;
 
-	/* For notation, let b denote the half-limb base, so that B = b^2.
-	   Split u1 = b uh + ul. */
-	ul = u1 & GMP_LLIMB_MASK;
-	uh = u1 >> (GMP_LIMB_BITS / 2);
+    /* For notation, let b denote the half-limb base, so that B = b^2.
+       Split u1 = b uh + ul. */
+    ul = u1 & GMP_LLIMB_MASK;
+    uh = u1 >> (GMP_LIMB_BITS / 2);
 
-	/* Approximation of the high half of quotient. Differs from the 2/1
-	   inverse of the half limb uh, since we have already subtracted
-	   u0. */
-	qh = (u1 ^ GMP_LIMB_MAX) / uh;
+    /* Approximation of the high half of quotient. Differs from the 2/1
+       inverse of the half limb uh, since we have already subtracted
+       u0. */
+    qh = (u1 ^ GMP_LIMB_MAX) / uh;
 
-	/* Adjust to get a half-limb 3/2 inverse, i.e., we want
+    /* Adjust to get a half-limb 3/2 inverse, i.e., we want
 
-	   qh' = floor( (b^3 - 1) / u) - b = floor ((b^3 - b u - 1) / u
+       qh' = floor( (b^3 - 1) / u) - b = floor ((b^3 - b u - 1) / u
 	   = floor( (b (~u) + b-1) / u),
+	   
+       and the remainder
 
-	   and the remainder
+       r = b (~u) + b-1 - qh (b uh + ul)
+       = b (~u - qh uh) + b-1 - qh ul
 
-	   r = b (~u) + b-1 - qh (b uh + ul)
-	   = b (~u - qh uh) + b-1 - qh ul
+       Subtraction of qh ul may underflow, which implies adjustments.
+       But by normalization, 2 u >= B > qh ul, so we need to adjust by
+       at most 2.
+    */
 
-	   Subtraction of qh ul may underflow, which implies adjustments.
-	   But by normalization, 2 u >= B > qh ul, so we need to adjust by
-	   at most 2.
-	*/
+    r = ((~u1 - (mp_limb_t) qh * uh) << (GMP_LIMB_BITS / 2)) | GMP_LLIMB_MASK;
 
-	r = ((~u1 - (mp_limb_t) qh * uh) << (GMP_LIMB_BITS / 2)) | GMP_LLIMB_MASK;
-
-	p = (mp_limb_t) qh * ul;
-	/* Adjustment steps taken from udiv_qrnnd_c */
-	if (r < p)
-	  {
-	    qh--;
-	    r += u1;
-	    if (r >= u1) /* i.e. we didn't get carry when adding to r */
-	      if (r < p)
-		{
-		  qh--;
-		  r += u1;
-		}
-	  }
-	r -= p;
-
-	/* Low half of the quotient is
-
-	   ql = floor ( (b r + b-1) / u1).
-
-	   This is a 3/2 division (on half-limbs), for which qh is a
-	   suitable inverse. */
-
-	p = (r >> (GMP_LIMB_BITS / 2)) * qh + r;
-	/* Unlike full-limb 3/2, we can add 1 without overflow. For this to
-	   work, it is essential that ql is a full mp_limb_t. */
-	ql = (p >> (GMP_LIMB_BITS / 2)) + 1;
-
-	/* By the 3/2 trick, we don't need the high half limb. */
-	r = (r << (GMP_LIMB_BITS / 2)) + GMP_LLIMB_MASK - ql * u1;
-
-	if (r >= (GMP_LIMB_MAX & (p << (GMP_LIMB_BITS / 2))))
-	  {
-	    ql--;
-	    r += u1;
-	  }
-	m = ((mp_limb_t) qh << (GMP_LIMB_BITS / 2)) + ql;
-	if (r >= u1)
-	  {
-	    m++;
-	    r -= u1;
-	  }
-      }
-
-    /* Now m is the 2/1 inverse of u1. If u0 > 0, adjust it to become a
-       3/2 inverse. */
-    if (u0 > 0)
+    p = (mp_limb_t) qh * ul;
+    /* Adjustment steps taken from udiv_qrnnd_c */
+    if (r < p)
       {
-	mp_limb_t th, tl;
-	r = ~r;
-	r += u0;
-	if (r < u0)
-	  {
-	    m--;
-	    if (r >= u1)
-	      {
-		m--;
-		r -= u1;
-	      }
-	    r -= u1;
-	  }
-	gmp_umul_ppmm (th, tl, u0, m);
-	r += th;
-	if (r < th)
-	  {
-	    m--;
-	    m -= ((r > u1) | ((r == u1) & (tl > u0)));
-	  }
+	qh--;
+	r += u1;
+	if (r >= u1) /* i.e. we didn't get carry when adding to r */
+	  if (r < p)
+	    {
+	      qh--;
+	      r += u1;
+	    }
       }
+    r -= p;
 
-    return m;
+    /* Low half of the quotient is
+
+       ql = floor ( (b r + b-1) / u1).
+
+       This is a 3/2 division (on half-limbs), for which qh is a
+       suitable inverse. */
+
+    p = (r >> (GMP_LIMB_BITS / 2)) * qh + r;
+    /* Unlike full-limb 3/2, we can add 1 without overflow. For this to
+       work, it is essential that ql is a full mp_limb_t. */
+    ql = (p >> (GMP_LIMB_BITS / 2)) + 1;
+
+    /* By the 3/2 trick, we don't need the high half limb. */
+    r = (r << (GMP_LIMB_BITS / 2)) + GMP_LLIMB_MASK - ql * u1;
+
+    if (r >= (GMP_LIMB_MAX & (p << (GMP_LIMB_BITS / 2))))
+      {
+	ql--;
+	r += u1;
+      }
+    m = ((mp_limb_t) qh << (GMP_LIMB_BITS / 2)) + ql;
+    if (r >= u1)
+      {
+	m++;
+	r -= u1;
+      }
+  }
+
+  /* Now m is the 2/1 inverse of u1. If u0 > 0, adjust it to become a
+     3/2 inverse. */
+  if (u0 > 0)
+    {
+      mp_limb_t th, tl;
+      r = ~r;
+      r += u0;
+      if (r < u0)
+	{
+	  m--;
+	  if (r >= u1)
+	    {
+	      m--;
+	      r -= u1;
+	    }
+	  r -= u1;
+	}
+      gmp_umul_ppmm (th, tl, u0, m);
+      r += th;
+      if (r < th)
+	{
+	  m--;
+	  m -= ((r > u1) | ((r == u1) & (tl > u0)));
+	}
+    }
+
+  return m;
 }
 
 struct gmp_div_inverse
