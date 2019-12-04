@@ -770,30 +770,8 @@ mpn_neg (mp_ptr rp, mp_srcptr up, mp_size_t n)
 mp_limb_t
 mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 {
-  int GMP_LIMB_BITS_MUL_3 = GMP_LIMB_BITS * 3;
-  assert (u1 >= GMP_LIMB_HIGHBIT);
-
-  if (sizeof (unsigned) * CHAR_BIT > GMP_LIMB_BITS * 3)
-    {
-      return (((unsigned) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
-	(((unsigned) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
-    }
-  else if (GMP_ULONG_BITS > GMP_LIMB_BITS * 3)
-    {
-      return (((unsigned long) 1 << GMP_LIMB_BITS_MUL_3) - 1) /
-	(((unsigned long) u1 << GMP_LIMB_BITS_MUL_3 / 3) + u0);
-    }
-  else {
     mp_limb_t r, m;
 
-    if (GMP_ULONG_BITS >= GMP_LIMB_BITS * 2)
-      {
-	/* Set m to the 2/1 inverse of u1. */
-	m = (((unsigned long) (u1 ^ GMP_LIMB_MAX) << GMP_LIMB_BITS_MUL_3 / 3)
-	     | GMP_LIMB_MAX ) / u1;
-	r = ~(m * u1);
-      }
-    else
       {
 	mp_limb_t p, ql;
 	unsigned ul, uh, qh;
@@ -895,7 +873,6 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
       }
 
     return m;
-  }
 }
 
 struct gmp_div_inverse
