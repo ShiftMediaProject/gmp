@@ -855,7 +855,7 @@ mpn_invert_3by2 (mp_limb_t u1, mp_limb_t u0)
 	/* By the 3/2 trick, we don't need the high half limb. */
 	r = (r << (GMP_LIMB_BITS / 2)) + GMP_LLIMB_MASK - ql * u1;
 
-	if (r >= (p << (GMP_LIMB_BITS / 2)))
+	if (r >= (GMP_LIMB_MAX & (p << (GMP_LIMB_BITS / 2))))
 	  {
 	    ql--;
 	    r += u1;
