@@ -253,9 +253,10 @@ mpq_cmp_ui (const mpq_t q, unsigned long n, unsigned long d)
 {
   mpq_t t;
   assert (d != 0);
-  if (sizeof (unsigned long) == sizeof (mp_limb_t))
-    return mpq_cmp (q, mpq_roinit_normal_nn (t, (mp_srcptr) &n, n != 0, (mp_srcptr) &d, 1));
-  else {
+  if (ULONG_MAX <= GMP_LIMB_MAX) {
+    mp_limb_t nl = n, dl = d;
+    return mpq_cmp (q, mpq_roinit_normal_nn (t, &nl, n != 0, &dl, 1));
+  } else {
     int ret;
 
     mpq_init (t);
@@ -277,14 +278,20 @@ mpq_cmp_si (const mpq_t q, signed long n, unsigned long d)
   else
     {
       mpq_t t;
-      unsigned long l_n = GMP_NEG_CAST (unsigned long, n);
 
-      if (sizeof (unsigned long) == sizeof (mp_limb_t))
-	return mpq_cmp (q, mpq_roinit_normal_nn (t, (mp_srcptr) &l_n, -1, (mp_srcptr) &d, 1));
+      if (ULONG_MAX <= GMP_LIMB_MAX)
+	{
+	  mp_limb_t nl = GMP_NEG_CAST (unsigned long, n), dl = d;
+	  return mpq_cmp (q, mpq_roinit_normal_nn (t, &nl, -1, &dl, 1));
+	}
+      else
+	{
+	  unsigned long l_n = GMP_NEG_CAST (unsigned long, n);
 
-      mpq_roinit_normal_nn (t, mpq_numref (q)->_mp_d, - mpq_numref (q)->_mp_size,
-		       mpq_denref (q)->_mp_d, mpq_denref (q)->_mp_size);
-      return - mpq_cmp_ui (t, l_n, d);
+	  mpq_roinit_normal_nn (t, mpq_numref (q)->_mp_d, - mpq_numref (q)->_mp_size,
+				mpq_denref (q)->_mp_d, mpq_denref (q)->_mp_size);
+	  return - mpq_cmp_ui (t, l_n, d);
+	}
     }
 }
 

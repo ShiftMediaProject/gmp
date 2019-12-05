@@ -4499,7 +4499,7 @@ mpz_export (void *r, size_t *countp, int order, size_t size, int endian,
       limb = u->_mp_d[un-1];
       assert (limb != 0);
 
-      k = (sizeof (mp_limb_t) == 1); 
+      k = (GMP_LIMB_BITS <= CHAR_BIT);
       if (!k)
 	{
 	  do {
