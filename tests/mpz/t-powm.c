@@ -71,6 +71,29 @@ main (int argc, char **argv)
   mpz_init (exp2);
   mpz_init (base2);
 
+  mpz_set_ui (exp, 1);
+  mpz_set_ui (mod, 1);
+  mpz_setbit (mod, 10 * GMP_NUMB_BITS);
+  mpz_ui_sub (base, 3, mod);
+  mpz_powm (r1, base, exp, mod);
+  MPZ_CHECK_FORMAT (r1);
+  mpz_powm_sec (r2, base, exp, mod);
+  MPZ_CHECK_FORMAT (r2);
+
+  if (mpz_cmp_ui (r1, 3) != 0 || mpz_cmp_ui (r2, 3) != 0)
+    {
+      fprintf (stderr, "\nIncorrect results in first test for operands:\n", i);
+      debug_mp (base, -16);
+      debug_mp (exp, -16);
+      debug_mp (mod, -16);
+      fprintf (stderr, "mpz_powm result:\n");
+      debug_mp (r1, -16);
+      fprintf (stderr, "mpz_powm_sec result:\n");
+      debug_mp (r2, -16);
+      fprintf (stderr, "reference result: 3\n");
+      abort ();
+    }
+
   memset (allsizes, 0, (1 << (SIZEM + 2 - 1)) * sizeof (int));
 
   for (i = 0; i < reps || ! allsizes_seen (allsizes); i++)
