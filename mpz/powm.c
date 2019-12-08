@@ -138,7 +138,7 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 	    {
 	      mpn_sub (rp, mp, n, bp, bn);
 	      rn = n;
-	      rn -= (rp[rn - 1] == 0);
+	      MPN_NORMALIZE_NOT_ZERO (rp, rn);
 	    }
 	  else
 	    {
