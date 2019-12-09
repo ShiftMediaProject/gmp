@@ -3,7 +3,7 @@
    Contributed to the GNU project by Torbjorn Granlund.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000-2002, 2005, 2008, 2009,
-2011, 2012, 2015 Free Software Foundation, Inc.
+2011, 2012, 2015, 2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
