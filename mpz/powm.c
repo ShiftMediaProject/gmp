@@ -125,11 +125,11 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 	  rn = n;
 	  MPN_NORMALIZE (rp, rn);
 
-	  if (SIZ(b) < 0 && rn != 0)
+	  if (rn != 0 && SIZ(b) < 0)
 	    {
 	      mpn_sub (rp, mp, n, rp, rn);
 	      rn = n;
-	      MPN_NORMALIZE (rp, rn);
+	      MPN_NORMALIZE_NOT_ZERO (rp, rn);
 	    }
 	}
       else
