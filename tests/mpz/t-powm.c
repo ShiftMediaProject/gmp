@@ -1,7 +1,7 @@
 /* Test mpz_powm, mpz_mul, mpz_mod, mpz_mod_ui, mpz_div_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1999-2001, 2009, 2012 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1999-2001, 2009, 2012, 2019 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -71,36 +71,41 @@ main (int argc, char **argv)
   mpz_init (exp2);
   mpz_init (base2);
 
-  mpz_set_ui (exp, 1);
-  mpz_set_ui (mod, 1);
-  mpz_setbit (mod, 10 * GMP_NUMB_BITS);
-  mpz_ui_sub (base, 3, mod);
-  mpz_powm (r1, base, exp, mod);
-  MPZ_CHECK_FORMAT (r1);
-  mpz_powm_sec (r2, base, exp, mod);
-  MPZ_CHECK_FORMAT (r2);
-
-  if (mpz_cmp_ui (r1, 3) != 0 || mpz_cmp_ui (r2, 3) != 0)
-    {
-      fprintf (stderr, "\nIncorrect results in first test for operands:\n", i);
-      debug_mp (base, -16);
-      debug_mp (exp, -16);
-      debug_mp (mod, -16);
-      fprintf (stderr, "mpz_powm result:\n");
-      debug_mp (r1, -16);
-      fprintf (stderr, "mpz_powm_sec result:\n");
-      debug_mp (r2, -16);
-      fprintf (stderr, "reference result: 3\n");
-      abort ();
-    }
-
   memset (allsizes, 0, (1 << (SIZEM + 2 - 1)) * sizeof (int));
 
+  reps += reps >> 3;
   for (i = 0; i < reps || ! allsizes_seen (allsizes); i++)
     {
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % SIZEM + 2;
 
+      if ((i & 7) == 0)
+	{
+	  mpz_set_ui (exp, 1);
+
+	  do  /* Loop until mathematically well-defined.  */
+	    {
+	      mpz_urandomb (bs, rands, size_range / 2 + 2);
+	      base_size = mpz_get_ui (bs);
+	      mpz_rrandomb (base, rands, base_size);
+	    }
+	  while (mpz_cmp_ui (base, 0) == 0);
+
+	  mpz_urandomb (bs, rands, size_range / 2);
+	  mod_size = mpz_get_ui (bs);
+	  mod_size = MIN (mod_size, base_size);
+	  mpz_rrandomb (mod, rands, mod_size);
+
+	  mpz_urandomb (bs, rands, size_range);
+	  mod_size = mpz_get_ui (bs) + base_size + 2;
+	  if ((i & 8) == 0)
+	    mod_size += (GMP_NUMB_BITS - mod_size) % GMP_NUMB_BITS;
+	  mpz_setbit (mod, mod_size);
+
+	  mpz_sub (base, base, mod);
+	}
+      else
+	{
       do  /* Loop until mathematically well-defined.  */
 	{
 	  mpz_urandomb (bs, rands, size_range);
@@ -129,6 +134,7 @@ main (int argc, char **argv)
 	mpz_neg (base, base);
 
       /* printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod)); */
+	}
 
       mpz_set_ui (r2, 1);
       mpz_mod (base2, base, mod);
