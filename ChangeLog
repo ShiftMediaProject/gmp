@@ -1,3 +1,8 @@
+2019-12-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/powm.c: Full normalisation when e=1 & b<0.
+	* tests/mpz/t-powm.c: More tests for the e=1 case.
+
 2019-11-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c [USE_ZEROTAB]: Delete code variant for
@@ -17,7 +22,7 @@
 
 2019-11-09 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* tune/speed.c (routine_t): Add R flago to mpz_powm
+	* tune/speed.c (routine_t): Add R flag to mpz_powm
 	* tune/speed.h (SPEED_ROUTINE_MPZ_POWM): Use R flag as the base.
 
 2019-10-02  Torbjörn Granlund  <tg@gmplib.org>
