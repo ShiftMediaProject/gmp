@@ -850,7 +850,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_addlsh_nc && ! HAVE_NATIVE_mpn_addlsh1_nc
-#define mpn_addlsh1_nc(a,b,c,d)         mpn_addlsh_nc(a,b,c,d,1)
+#define mpn_addlsh1_nc(a,b,c,d,x)       mpn_addlsh_nc(a,b,c,d,1,x)
 #define HAVE_NATIVE_mpn_addlsh1_nc      2
 #endif
 
@@ -870,7 +870,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_addlsh_nc && ! HAVE_NATIVE_mpn_addlsh2_nc
-#define mpn_addlsh2_nc(a,b,c,d)         mpn_addlsh_nc(a,b,c,d,2)
+#define mpn_addlsh2_nc(a,b,c,d,x)       mpn_addlsh_nc(a,b,c,d,2,x)
 #define HAVE_NATIVE_mpn_addlsh2_nc      2
 #endif
 
@@ -890,7 +890,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_nc && ! HAVE_NATIVE_mpn_sublsh1_nc
-#define mpn_sublsh1_nc(a,b,c,d)         mpn_sublsh_nc(a,b,c,d,1)
+#define mpn_sublsh1_nc(a,b,c,d,x)       mpn_sublsh_nc(a,b,c,d,1,x)
 #define HAVE_NATIVE_mpn_sublsh1_nc      2
 #endif
 
@@ -910,7 +910,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_nc && ! HAVE_NATIVE_mpn_sublsh2_nc
-#define mpn_sublsh2_nc(a,b,c,d)         mpn_sublsh_nc(a,b,c,d,2)
+#define mpn_sublsh2_nc(a,b,c,d,x)       mpn_sublsh_nc(a,b,c,d,2,x)
 #define HAVE_NATIVE_mpn_sublsh2_nc      2
 #endif
 
@@ -930,7 +930,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_rsblsh_nc && ! HAVE_NATIVE_mpn_rsblsh1_nc
-#define mpn_rsblsh1_nc(a,b,c,d)         mpn_rsblsh_nc(a,b,c,d,1)
+#define mpn_rsblsh1_nc(a,b,c,d,x)       mpn_rsblsh_nc(a,b,c,d,1,x)
 #define HAVE_NATIVE_mpn_rsblsh1_nc      2
 #endif
 
@@ -950,7 +950,7 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_2s (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr)
 #endif
 
 #if HAVE_NATIVE_mpn_rsblsh_nc && ! HAVE_NATIVE_mpn_rsblsh2_nc
-#define mpn_rsblsh2_nc(a,b,c,d)         mpn_rsblsh_nc(a,b,c,d,2)
+#define mpn_rsblsh2_nc(a,b,c,d,x)       mpn_rsblsh_nc(a,b,c,d,2,x)
 #define HAVE_NATIVE_mpn_rsblsh2_nc      2
 #endif
 
