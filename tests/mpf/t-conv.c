@@ -190,14 +190,15 @@ main (int argc, char **argv)
         {
           /* exercise the special case in get_str for for x==0 */
           mpf_set_ui (x, 0L);
-          base = 10;
+          base = 0;
         }
       else
         {
           size = urandom () % (2 * SIZE) - SIZE;
           exp = urandom () % EXPO;
           mpf_random2 (x, size, exp);
-          base = urandom () % 61 + 2;
+          base = urandom () % 62;
+          base += base > 0;
         }
 
       str = mpf_get_str (0, &bexp, base, 0, x);
