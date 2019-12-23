@@ -47,7 +47,7 @@ mpf_mul (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       mp_size_t usize;
 
       usize = u->_mp_size;
-      sign_product = usize;
+      sign_product = 0;
 
       usize = ABS (usize);
 
