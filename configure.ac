@@ -4016,15 +4016,3 @@ AC_MSG_NOTICE([summary of build options:
   Static libraries:  ${enable_static}
   Shared libraries:  ${enable_shared}
 ])
-
-if test x$cross_compiling = xyes ; then
-   case "$host" in
-     *-*-mingw* | *-*-cygwin)
-     if test x$ABI = x64 ; then
-	AC_MSG_NOTICE([If wine64 is installed, use make check TESTS_ENVIRONMENT=wine64.])
-     else
-	AC_MSG_NOTICE([If wine is installed, use make check TESTS_ENVIRONMENT=wine.])
-     fi
-     ;;
-   esac
-fi

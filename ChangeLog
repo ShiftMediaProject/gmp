@@ -1,3 +1,8 @@
+2020-01-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.ac: Delete suggestion to use TESTS_ENVIRONMENT to run
+	wine. It worked only with older versions of automake.
+
 2019-12-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/powm.c: Full normalisation when e=1 & b<0.
