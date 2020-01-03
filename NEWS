@@ -39,6 +39,8 @@ Changes between GMP version 6.1.* and 6.2.0
   * The n-over-k function mpz_bin_ui has been reimplemented for great speedups
     for large operands.
 
+  * Speedup for the worst case of mpz_perfect_power_p.
+
   * Speedup for gcd for small and medium size operands.
 
   MISC
