@@ -1,8 +1,7 @@
-Copyright 1996, 1999-2016, 2018-2019 Free Software Foundation, Inc.
+Copyright 1996, 1999-2016, 2018-2020 Free Software Foundation, Inc.
 
 Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
-
 
 Changes between GMP version 6.1.* and 6.2.0
 
@@ -16,11 +15,14 @@ Changes between GMP version 6.1.* and 6.2.0
   * mpz_powm could return a not completely normalised value, when the
     exponent was 1 and the base < 0.
 
+  * mpf_set_str could create invalid mpf_t variables for input strings with
+    many leading zeros.
+
   FEATURES
   * New C++ functions factorial, primorial and fibonacci for mpz_class.
 
-  * Functions to detect primality now substitute 24 Miller-Rabin iterations
-    with the BPSW test.
+  * Functions to detect primality now substitute the first 24 Miller-Rabin
+    iterations with the BPSW test.
 
   * Mini-GMP: new functions mpz_2fac_ui and mpz_mfac_uiui.
 
@@ -29,12 +31,16 @@ Changes between GMP version 6.1.* and 6.2.0
 
   * Mini-GMP: added support for the mpq_t layer.
 
+  * MIPS r6 cores are now supported.
+
   SPEEDUPS
-  * Major speedup for AMD Ryzen and Epyc through extensive set of assembly
+  * Major speedup for AMD Ryzen and Epyc thanks to an extensive set of assembly
     code.
 
-  * Speedup for IBM POWER9 through assembly code making use of new madd
+  * Major speedup for IBM POWER9 thanks to assembly code making use of new madd
     instruction.
+
+  * Speedup for 64-bit ARM CPUs thanks to new/improved assembly code.
 
   * The n-over-k function mpz_bin_ui has been reimplemented for great speedups
     for large operands.
@@ -42,6 +48,8 @@ Changes between GMP version 6.1.* and 6.2.0
   * Speedup for the worst case of mpz_perfect_power_p.
 
   * Speedup for gcd for small and medium size operands.
+
+  * Speedup for really huge multiplies thanks to much larger FFT tables.
 
   MISC
   * Internal representation of the mpz_t variables now supports lazy
@@ -51,8 +59,8 @@ Changes between GMP version 6.1.* and 6.2.0
 
   * The tune/speed program can measure some more functions.
 
-  * mpn_mul no longer diverts to mpn_sqr, users should call mpn_sqr directly
-    when applicable.
+  * The low-level function mpn_mul no longer diverts to mpn_sqr, users should
+    call mpn_sqr directly when applicable.
 
   * New installed files gmp.pc and gmpxx.pc, for use with pkg-config.
     Contributed by Hugh McMaster.
