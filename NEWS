@@ -13,6 +13,9 @@ Changes between GMP version 6.1.* and 6.2.0
   * Conversion to double is now more robust even if the configuration process
     does not recognize the float format.
 
+  * mpz_powm could return a not completely normalised value, when the
+    exponent was 1 and the base < 0.
+
   FEATURES
   * New C++ functions factorial, primorial and fibonacci for mpz_class.
 
@@ -43,6 +46,8 @@ Changes between GMP version 6.1.* and 6.2.0
     allocation; memory is allocated only when a value is stored.
 
   * Small improvements and better coverage for the test suite.
+
+  * The tune/speed program can measure some more functions.
 
   * mpn_mul no longer diverts to mpn_sqr, users should call mpn_sqr directly
     when applicable.
