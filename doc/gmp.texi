@@ -5493,8 +5493,9 @@ Set @{@var{rp}, @var{retval}@} to the greatest common divisor of @{@var{xp},
 the return value is the actual number produced.  Both source operands are
 destroyed.
 
-It is required that @math{@var{xn} @ge @var{yn} > 0}, and the most significant
-limb of @{@var{yp}, @var{yn}@} must be non-zero.  No overlap is permitted
+It is required that @math{@var{xn} @ge @var{yn} > 0}, the most significant
+limb of @{@var{yp}, @var{yn}@} must be non-zero, and at least one of
+the two operands must be odd.  No overlap is permitted
 between @{@var{xp}, @var{xn}@} and @{@var{yp}, @var{yn}@}.
 @end deftypefun
 
