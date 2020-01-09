@@ -42,7 +42,7 @@ see https://www.gnu.org/licenses/.  */
 /* Requires n > 4; b0 > 0; -2*Q must not overflow a long.	*/
 /* If U_{k+1}==0 (mod n) or V_{k+1}==0 (mod n), it returns 1,	*/
 /* otherwise it returns 0 and sets V=V_{k+1} and Qk=Q^{k+1}.	*/
-/* V will never grow beyond SIZ(n), Qk not beyon 2*SIZ(n).	*/
+/* V will never grow beyond SIZ(n), Qk not beyond 2*SIZ(n).	*/
 int
 mpz_lucas_mod (mpz_ptr V, mpz_ptr Qk, long Q,
 	       mp_bitcnt_t b0, mpz_srcptr n, mpz_ptr T1, mpz_ptr T2)
