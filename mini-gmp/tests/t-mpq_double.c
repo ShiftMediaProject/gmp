@@ -19,6 +19,7 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 #include <math.h>
 #include <float.h>
+#include <limits.h>
 
 #include "testutils.h"
 #include "../mini-mpq.h"
@@ -87,7 +88,7 @@ check_random (void)
       unsigned long m;
       int e, c;
 
-      mini_rrandomb (x, 8 * sizeof (unsigned long));
+      mini_rrandomb (x, CHAR_BIT * sizeof (unsigned long));
       m = mpz_get_ui (x);
       mini_urandomb (x, 8);
       e = mpz_get_ui (x) - 128;
@@ -119,7 +120,7 @@ check_random (void)
 	  abort ();
 	}
 
-      mini_rrandomb (x, 8 * sizeof (unsigned long));
+      mini_rrandomb (x, CHAR_BIT * sizeof (unsigned long));
       m = mpz_get_ui (x);
       mini_urandomb (x, 8);
       e = mpz_get_ui (x) - 128;

@@ -454,7 +454,7 @@ mpq_get_d (const mpq_t u)
   ne = mpz_sizeinbase (mpq_numref (u), 2);
   de = mpz_sizeinbase (mpq_denref (u), 2);
 
-  ee = 8 * sizeof (double);
+  ee = CHAR_BIT * sizeof (double);
   if (de == 1 || ne > de + ee)
     ee = 0;
   else
