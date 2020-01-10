@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996-2019 Free Software Foundation, Inc.
+Copyright 1996-2020 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -3636,6 +3636,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_rsh1sub_n
 #undef HAVE_NATIVE_mpn_rsh1sub_nc
 #undef HAVE_NATIVE_mpn_rshift
+#undef HAVE_NATIVE_mpn_sbpi1_bdiv_r
 #undef HAVE_NATIVE_mpn_sqr_basecase
 #undef HAVE_NATIVE_mpn_sqr_diagonal
 #undef HAVE_NATIVE_mpn_sqr_diag_addlsh1
