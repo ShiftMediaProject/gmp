@@ -35,7 +35,7 @@ include(`../config.m4')
 dnl  Rudimentary code for x86-32, i.e. for CPUs without cmov.  Also, the bsf
 dnl  instruction is assumed to be so slow it is useless.  Instead a teble is
 dnl  used.
-dnl  
+dnl
 dnl  The loop benefits from OoO, in-order CPUs might want a different loop.
 dnl  The ebx and ecx registers could be combined if the assigment of ecx were
 dnl  postponed until ebx died, but that would at least hurt in-order CPUs.
