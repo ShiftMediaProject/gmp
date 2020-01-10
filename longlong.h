@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2019 Free Software
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2020 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -458,21 +458,17 @@ long __MPN(count_leading_zeros) (UDItype);
 	       : "=r" (sh), "=r" (sl)					\
 	       : "r" (al), "rI" (bl) __CLOBBER_CC);			\
     else if (__builtin_constant_p (al))					\
-      {									\
-	__asm__ ("rsbs\t%1, %5, %4\n\tsbc\t%0, %2, %3"			\
-		 : "=r" (sh), "=&r" (sl)				\
-		 : "r" (ah), "rI" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
-      }									\
+      __asm__ ("rsbs\t%1, %5, %4\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rI" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
     else if (__builtin_constant_p (bl))					\
-      {									\
-	__asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
-		 : "=r" (sh), "=&r" (sl)				\
-		 : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
-      }									\
+      __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
     else								\
       __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
     } while (0)
 #else
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
@@ -505,15 +501,13 @@ long __MPN(count_leading_zeros) (UDItype);
 		   : "rI" (ah), "r" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
       }									\
     else if (__builtin_constant_p (bl))					\
-      {									\
-	__asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
-		 : "=r" (sh), "=&r" (sl)				\
-		 : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
-      }									\
+      __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
     else /* only bh might be a constant */				\
       __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
     } while (0)
 #endif
 #if defined (__ARM_ARCH_2__) || defined (__ARM_ARCH_2A__) \
@@ -1399,33 +1393,41 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
       __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"			\
-	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));	\
+	       : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl)	\
+		 __CLOBBER_CC);						\
     else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
       __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"			\
-	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));	\
+	       : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl)	\
+		 __CLOBBER_CC);						\
     else								\
       __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"			\
-	     : "=r" (sh), "=&r" (sl)					\
-	     : "r" (ah), "r" (bh), "%r" (al), "rI" (bl));		\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "r" (bh), "%r" (al), "rI" (bl)		\
+		 __CLOBBER_CC);						\
   } while (0)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (ah) && (ah) == 0)				\
       __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"			\
-	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
+	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl)	\
+		 __CLOBBER_CC);						\
     else if (__builtin_constant_p (ah) && (ah) == ~(USItype) 0)		\
       __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"			\
-	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
+	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl)	\
+		 __CLOBBER_CC);						\
     else if (__builtin_constant_p (bh) && (bh) == 0)			\
       __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"			\
-	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
+	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl)	\
+		 __CLOBBER_CC);						\
     else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
       __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"			\
-	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
+	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl)	\
+		 __CLOBBER_CC);						\
     else								\
       __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"			\
 	       : "=r" (sh), "=&r" (sl)					\
-	       : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		\
+	       : "r" (ah), "r" (bh), "rI" (al), "r" (bl)		\
+		 __CLOBBER_CC);						\
   } while (0)
 #define count_leading_zeros(count, x) \
   __asm__ ("cntlzw %0,%1" : "=r" (count) : "r" (x))
@@ -1470,20 +1472,23 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
-      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"			\
+      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2 // X"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r"  ((UDItype)(ah)),					\
-		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl))		\
+		 __CLOBBER_CC);						\
     else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
       __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r"  ((UDItype)(ah)),					\
-		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl))		\
+		 __CLOBBER_CC);						\
     else								\
       __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r"  ((UDItype)(ah)), "r"  ((UDItype)(bh)),		\
-		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl)));		\
+		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl))		\
+		 __CLOBBER_CC);						\
   } while (0)
 /* We use "*rI" for the constant operand here, since with just "I", gcc barfs.
    This might seem strange, but gcc folds away the dead code late.  */
@@ -1494,53 +1499,63 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 	  __asm__ ("addic %1,%3,%4\n\tsubfze %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   :                       "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl)))	\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	\
 	  __asm__ ("addic %1,%3,%4\n\tsubfme %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   :                       "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl)))	\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (bh) && (bh) == 0)		\
 	  __asm__ ("addic %1,%3,%4\n\taddme %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)),				\
-		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl)))	\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	\
 	  __asm__ ("addic %1,%3,%4\n\taddze %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)),				\
-		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl)))	\
+		     __CLOBBER_CC);					\
 	else								\
 	  __asm__ ("addic %1,%4,%5\n\tsubfe %0,%3,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl))));	\
+		     "rI" ((UDItype)(al)), "*rI" (-((UDItype)(bl)))	\
+		     __CLOBBER_CC);					\
     } else {								\
 	if (__builtin_constant_p (ah) && (ah) == 0)			\
 	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   :                       "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl))		\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)	\
 	  __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   :                       "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl))		\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (bh) && (bh) == 0)		\
 	  __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)),				\
-		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl))		\
+		     __CLOBBER_CC);					\
 	else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)	\
 	  __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"			\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)),				\
-		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl))		\
+		     __CLOBBER_CC);					\
 	else								\
 	  __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"		\
 		   : "=r" (sh), "=&r" (sl)				\
 		   : "r"  ((UDItype)(ah)), "r" ((UDItype)(bh)),		\
-		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl)));	\
+		     "rI" ((UDItype)(al)), "r" ((UDItype)(bl))		\
+		     __CLOBBER_CC);					\
     }									\
   } while (0)
 #endif /* ! _LONG_LONG_LIMB */
