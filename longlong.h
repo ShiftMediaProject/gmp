@@ -1472,7 +1472,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
-      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2 // X"			\
+      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"			\
 	       : "=r" (sh), "=&r" (sl)					\
 	       : "r"  ((UDItype)(ah)),					\
 		 "%r" ((UDItype)(al)), "rI" ((UDItype)(bl))		\
