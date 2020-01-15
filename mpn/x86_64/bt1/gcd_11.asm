@@ -110,6 +110,7 @@ L(shr):	shr	R8(cnt), u0
 
 L(end):	mov	v0, %rax
 	C rdx = 0 for the benefit of internal gcd_22 call
+	FUNC_EXIT()
 	ret
 
 L(count_better):
