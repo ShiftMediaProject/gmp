@@ -114,7 +114,8 @@ see https://www.gnu.org/licenses/.  */
 	     "subfe	%0, %0, %0\n\t"					\
 	     "nor	%0, %0, %0"					\
 	   : "=r" (m), "=r" (s1), "=&r" (s0)				\
-	   : "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0))
+	   : "r"  (a1), "r" (b1), "%r" (a0), "rI" (b0)			\
+	   __CLOBBER_CC)
 #endif
 
 #if defined (__s390x__) && W_TYPE_SIZE == 64
