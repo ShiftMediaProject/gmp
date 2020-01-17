@@ -1,3 +1,13 @@
+2020-01-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* Version 6.2.0 released.
+
+	* gmp-h.in (__GNU_MP__): Bump.
+	(__GNU_MP_VERSION,__GNU_MP_VERSION_MINOR,__GNU_MP_VERSION_PATCHLEVEL):
+	Bump version info.
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
+	Bump version info.
+
 2020-01-15  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/x86_64/bt1/gcd_11.asm: Add missing FUNC_EXIT.
