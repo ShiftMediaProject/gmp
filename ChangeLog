@@ -1,18 +1,59 @@
+2020-01-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/x86_64/bt1/gcd_11.asm: Add missing FUNC_EXIT.
+
+2020-01-10  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (powerpc): Add clobbers, make formatting cleanups.
+
+	* configure.ac (HAVE_NATIVE): Add mpn_sbpi1_bdiv_r.
+
+	* tune/tune-gcd-p.c (main): Use %zu for size_t printing.
+
+	* configfsf.guess: Update from upstream.
+
+	* mpn/x86/pentium4/sse2/popcount.asm: For simplicity and correctness
+	use LEAL directly.
+
 2020-01-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.ac: Delete suggestion to use TESTS_ENVIRONMENT to run
 	wine. It worked only with older versions of automake.
+
+2019-12-23  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpf/mul.c: Rewrite to invoke mpn_sqr when appropriate.
 
 2019-12-08 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/powm.c: Full normalisation when e=1 & b<0.
 	* tests/mpz/t-powm.c: More tests for the e=1 case.
 
+2019-12-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/gcd_11.c: Remove check for NATIVE_ implementation.
+
 2019-11-24  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c [USE_ZEROTAB]: Delete code variant for
 	USE_ZEROTAB != 0. Was used in the currently disabled binary
 	gcdext.
+
+2019-11-20  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/powm.c (MPN_REDC_1): Prefer mpn_sbpi1_bdiv_r when it is
+	provided.
+	* mpn/generic/sec_powm.c (MPN_REDC_1_SEC): Likewise.
+
+2019-11-17  Torbjörn Granlund  <tg@gmplib.org>
+
+	* config.guess: Recognise zen2.
+	* configure.ac: Likewise.
+
+	* mpn/x86_64/bt1/aorsmul_1.asm: Rewrite.
+	* mpn/x86_64/bt1/mul_1.asm: Rewrite.
+
+	* mpn/arm/v6t2/gcd_11.asm: Increase alignment; update x/l table.
 
 2019-11-16 Seth Troisi <sethtroisi@google.com>
 
