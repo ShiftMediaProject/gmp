@@ -2,7 +2,7 @@
 
 
 # Copyright 1991, 1993, 1994, 1996, 1997, 1999-2004, 2006-2009, 2011-2016,
-# 2018 Free Software Foundation, Inc.
+# 2018, 2020 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -89,6 +89,7 @@
 #        6.1.0   13:0:3    9:0:5     -
 #        6.1.1   13:1:3    9:1:5     -
 #        6.1.2   13:2:3    9:2:5     -
+#        6.2.0   14:0:4   10:0:6     -
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -101,13 +102,13 @@
 # it's still good to get the shared library filename (like
 # libgmpxx.so.3.0.4) incrementing, to make it clear which GMP it's from.
 
-LIBGMP_LT_CURRENT    = 13
+LIBGMP_LT_CURRENT    = 14
 LIBGMP_LT_REVISION   = 0
-LIBGMP_LT_AGE        = 3
+LIBGMP_LT_AGE        = 4
 
-LIBGMPXX_LT_CURRENT  = 9
+LIBGMPXX_LT_CURRENT  = 10
 LIBGMPXX_LT_REVISION = 0
-LIBGMPXX_LT_AGE      = 5
+LIBGMPXX_LT_AGE      = 6
 
 
 SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
