@@ -139,6 +139,26 @@
 /* #undef HAVE_HOST_CPU_pentiumpro */
 /* #undef HAVE_HOST_CPU_pentium2 */
 /* #undef HAVE_HOST_CPU_pentium3 */
+/* #undef HAVE_HOST_CPU_pentium4 */
+/* #undef HAVE_HOST_CPU_core2 */
+/* #undef HAVE_HOST_CPU_nehalem */
+/* #undef HAVE_HOST_CPU_westmere */
+/* #undef HAVE_HOST_CPU_sandybridge */
+/* #undef HAVE_HOST_CPU_ivybridge */
+/* #undef HAVE_HOST_CPU_haswell */
+/* #undef HAVE_HOST_CPU_broadwell */
+/* #undef HAVE_HOST_CPU_skylake */
+/* #undef HAVE_HOST_CPU_silvermont */
+/* #undef HAVE_HOST_CPU_goldmont */
+/* #undef HAVE_HOST_CPU_k8 */
+/* #undef HAVE_HOST_CPU_k10 */
+/* #undef HAVE_HOST_CPU_bulldozer */
+/* #undef HAVE_HOST_CPU_piledriver */
+/* #undef HAVE_HOST_CPU_steamroller */
+/* #undef HAVE_HOST_CPU_excavator */
+/* #undef HAVE_HOST_CPU_zen */
+/* #undef HAVE_HOST_CPU_bobcat */
+/* #undef HAVE_HOST_CPU_jaguar */
 /* #undef HAVE_HOST_CPU_s390_z900 */
 /* #undef HAVE_HOST_CPU_s390_z990 */
 /* #undef HAVE_HOST_CPU_s390_z9 */
@@ -201,8 +221,8 @@
 #define HAVE_NATIVE_mpn_add_n 1
 /* #undef HAVE_NATIVE_mpn_add_n_sub_n */
 #define HAVE_NATIVE_mpn_add_nc 1
-/* #undef HAVE_NATIVE_mpn_addaddmul_1msb0 */
 #if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_addaddmul_1msb0 1
 #define HAVE_NATIVE_mpn_addlsh1_n 1
 #define HAVE_NATIVE_mpn_addlsh2_n 1
 #define HAVE_NATIVE_mpn_addlsh_n 1
@@ -260,6 +280,10 @@
 #if defined(__x86_64) || defined(_M_X64)
 #define HAVE_NATIVE_mpn_divrem_2 1
 #define HAVE_NATIVE_mpn_gcd_1 1
+#endif
+#define HAVE_NATIVE_mpn_gcd_11 1
+#if defined(__x86_64) || defined(_M_X64)
+#define HAVE_NATIVE_mpn_gcd_22 1
 #define HAVE_NATIVE_mpn_hamdist 1
 #define HAVE_NATIVE_mpn_invert_limb 1
 #define HAVE_NATIVE_mpn_ior_n 1
@@ -313,6 +337,7 @@
 #define HAVE_NATIVE_mpn_rsh1sub_nc 1
 #endif
 #define HAVE_NATIVE_mpn_rshift 1
+/* #undef HAVE_NATIVE_mpn_sbpi1_bdiv_r */
 #define HAVE_NATIVE_mpn_sqr_basecase 1
 /* #undef HAVE_NATIVE_mpn_sqr_diagonal */
 #if defined(__x86_64) || defined(_M_X64)
@@ -508,6 +533,8 @@
 
 /* Define to 1 for Windos/64 */
 #define HOST_DOS64 1
+
+#define GMP_ASM_X86_MULX
 
 /* Assembler local label prefix */
 #define LSYM_PREFIX "L"

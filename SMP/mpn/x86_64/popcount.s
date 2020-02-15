@@ -63,74 +63,136 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_popcount
 	
 __gmpn_popcount:
 
-	push	%rdi
-	push	%rsi
-	mov	%rcx, %rdi
-	mov	%rdx, %rsi
+	lea	Lcnsts(%rip), %r9
+
+ 
+	movdqa	32(%r9), %xmm7
+	movdqa	48(%r9), %xmm6
+	pxor	%xmm4, %xmm4
+	pxor	%xmm5, %xmm5
+	pxor	%xmm8, %xmm8
+
+	mov	%esi, %eax
+	and	$7, %eax
+
+	movslq	(%r9,%rax,4), %rax
+	add	%r9, %rax
+	jmp	*%rax
 
 
-	lea	(%rdi,%rsi,8), %rdi
-	xor	%eax, %eax
+L1:	movq	(%rdi), %xmm1
+	add	$8, %rdi
+	jmp	Le1
 
-	test	$1, %sil
-	jnz	Lbx1
+L2:	add	$-48, %rdi
+	jmp	Le2
 
-Lbx0:	test	$2, %sil
-	jnz	Lb10
+L3:	movq	(%rdi), %xmm1
+	add	$-40, %rdi
+	jmp	Le3
 
-Lb00:	mov	$0, %ecx
-	sub	%rsi, %rcx
-	.byte	0xf3,0x4c,0x0f,0xb8,0x04,0xcf		
-	.byte	0xf3,0x4c,0x0f,0xb8,0x4c,0xcf,0x08	
-	jmp	Llo0
+L4:	add	$-32, %rdi
+	jmp	Le4
 
-Lb10:	mov	$2, %ecx
-	sub	%rsi, %rcx
-	.byte	0xf3,0x4c,0x0f,0xb8,0x54,0xcf,0xf0	
-	.byte	0xf3,0x4c,0x0f,0xb8,0x5c,0xcf,0xf8	
-	test	%rcx, %rcx
-	jz	Lcj2
-	jmp	Llo2
+L5:	movq	(%rdi), %xmm1
+	add	$-24, %rdi
+	jmp	Le5
 
-Lbx1:	test	$2, %sil
-	jnz	Lb11
+L6:	add	$-16, %rdi
+	jmp	Le6
 
-Lb01:	mov	$1, %ecx
-	sub	%rsi, %rcx
-	.byte	0xf3,0x4c,0x0f,0xb8,0x5c,0xcf,0xf8	
-	test	%rcx, %rcx
-	jz	Lcj1
-	.byte	0xf3,0x4c,0x0f,0xb8,0x04,0xcf		
-	jmp	Llo1
-
-Lb11:	mov	$-1, %rcx
-	sub	%rsi, %rcx
-	.byte	0xf3,0x4c,0x0f,0xb8,0x4c,0xcf,0x08	
-	.byte	0xf3,0x4c,0x0f,0xb8,0x54,0xcf,0x10	
-	jmp	Llo3
+L7:	movq	(%rdi), %xmm1
+	add	$-8, %rdi
+	jmp	Le7
 
 	.align	32, 0x90
-Ltop:	add	%r9, %rax
-Llo2:	.byte	0xf3,0x4c,0x0f,0xb8,0x04,0xcf		
-	add	%r10, %rax
-Llo1:	.byte	0xf3,0x4c,0x0f,0xb8,0x4c,0xcf,0x08	
-	add	%r11, %rax
-Llo0:	.byte	0xf3,0x4c,0x0f,0xb8,0x54,0xcf,0x10	
-	add	%r8, %rax
-Llo3:	.byte	0xf3,0x4c,0x0f,0xb8,0x5c,0xcf,0x18	
-	add	$4, %rcx
-	js	Ltop
+Ltop:	lddqu	(%rdi), %xmm1
+Le7:	movdqa	%xmm6, %xmm0		
+	movdqa	%xmm7, %xmm2		
+	movdqa	%xmm7, %xmm3		
+	pand	%xmm1, %xmm0
+	psrlw	$4, %xmm1
+	pand	%xmm6, %xmm1
+	pshufb	%xmm0, %xmm2
+	pshufb	%xmm1, %xmm3
+	paddb	%xmm2, %xmm3
+	paddb	%xmm3, %xmm4
+Le6:	lddqu	16(%rdi), %xmm1
+Le5:	movdqa	%xmm6, %xmm0
+	movdqa	%xmm7, %xmm2
+	movdqa	%xmm7, %xmm3
+	pand	%xmm1, %xmm0
+	psrlw	$4, %xmm1
+	pand	%xmm6, %xmm1
+	pshufb	%xmm0, %xmm2
+	pshufb	%xmm1, %xmm3
+	paddb	%xmm2, %xmm3
+	paddb	%xmm3, %xmm4
+Le4:	lddqu	32(%rdi), %xmm1
+Le3:	movdqa	%xmm6, %xmm0
+	movdqa	%xmm7, %xmm2
+	movdqa	%xmm7, %xmm3
+	pand	%xmm1, %xmm0
+	psrlw	$4, %xmm1
+	pand	%xmm6, %xmm1
+	pshufb	%xmm0, %xmm2
+	pshufb	%xmm1, %xmm3
+	paddb	%xmm2, %xmm3
+	paddb	%xmm3, %xmm4
+Le2:	lddqu	48(%rdi), %xmm1
+	add	$64, %rdi
+Le1:	movdqa	%xmm6, %xmm0
+	movdqa	%xmm7, %xmm2
+	movdqa	%xmm7, %xmm3
+	pand	%xmm1, %xmm0
+	psrlw	$4, %xmm1
+	pand	%xmm6, %xmm1
+	pshufb	%xmm0, %xmm2
+	pshufb	%xmm1, %xmm3
+	psadbw	%xmm5, %xmm4		
+	paddb	%xmm2, %xmm3
+	paddq	%xmm4, %xmm8		
+	movdqa	%xmm3, %xmm4
+	sub	$8, %rsi
+	jg	Ltop
 
-Lend:	add	%r9, %rax
-Lcj2:	add	%r10, %rax
-Lcj1:	add	%r11, %rax
-	pop	%rsi
-	pop	%rdi
+	psadbw	%xmm5, %xmm4
+	paddq	%xmm4, %xmm8
+	pshufd	$14, %xmm8, %xmm0
+	paddq	%xmm8, %xmm0
+	movq	%xmm0, %rax
 	ret
+	
+	.section .rdata,"dr"
+	.align	16, 0x90
+Lcnsts:
+
+	.long	Ltop-Lcnsts
+	.long	L1-Lcnsts
+	.long	L2-Lcnsts
+	.long	L3-Lcnsts
+	.long	L4-Lcnsts
+	.long	L5-Lcnsts
+	.long	L6-Lcnsts
+	.long	L7-Lcnsts
+	.byte	0x00,0x01,0x01,0x02,0x01,0x02,0x02,0x03
+	.byte	0x01,0x02,0x02,0x03,0x02,0x03,0x03,0x04
+	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
+	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
 	

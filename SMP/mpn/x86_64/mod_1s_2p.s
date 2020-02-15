@@ -209,8 +209,10 @@ __gmpn_mod_1s_2p_cps:
 	sal	%cl, %r12		
 	
 	mov	%r12, %rcx		
+	sub	$32, %rsp	
 	
 	call	__gmpn_invert_limb
+	add	$32, %rsp	
 	mov	%r12, %r8
 	mov	%rax, %r11
 	mov	%rax, (%rbx)		

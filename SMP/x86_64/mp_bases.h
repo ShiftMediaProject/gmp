@@ -6,6 +6,8 @@ Error, error, this data is for 64 bits
 
 /* mp_bases[10] data, as literal values */
 #define MP_BASES_CHARS_PER_LIMB_10      19
+#define MP_BASES_BIG_BASE_CTZ_10        19
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0x8ac7230489e80000)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0xd83c94fb6d2ac34a)
+#define MP_BASES_BIG_BASE_BINVERTED_10  CNST_LIMB(0x26b172506559ce15)
 #define MP_BASES_NORMALIZATION_STEPS_10 0

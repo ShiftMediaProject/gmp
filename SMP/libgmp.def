@@ -298,6 +298,7 @@ __gmpn_divrem_2
 __gmpn_div_qr_1
 __gmpn_div_qr_2
 __gmpn_gcd
+__gmpn_gcd_11
 __gmpn_gcd_1
 __gmpn_gcdext_1
 __gmpn_gcdext

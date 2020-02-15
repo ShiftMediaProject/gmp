@@ -72,23 +72,8 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	.text
-	.align	64, 0x90
+	.align	16, 0x90
 	.globl	__gmpn_lshift
 	
 __gmpn_lshift:
@@ -100,118 +85,81 @@ __gmpn_lshift:
 	mov	%r8, %rdx
 	mov	%r9, %rcx
 
-	movd	%ecx, %xmm4
-	mov	$64, %eax
-	sub	%ecx, %eax
-	movd	%eax, %xmm5
 
-	neg	%ecx
-	mov	-8(%rsi,%rdx,8), %rax
-	shr	%cl, %rax
+	xor	%eax, %eax
 
-	cmp	$3, %rdx
-	jle	Lbc
+	test	$1, %dl
+	jnz	Lbx1
+Lbx0:	test	$2, %dl
+	jnz	Lb10
 
-	lea	(%rdi,%rdx,8), %ecx
-	test	$8, %cl
-	jz	Lrp_aligned
+Lb00:	lea	-8(%rsi,%rdx,8), %rsi
+	lea	16(%rdi,%rdx,8), %rdi
+	mov	(%rsi), %r10
+	mov	-8(%rsi), %r11
+	shld	%cl, %r10, %rax
+	mov	-16(%rsi), %r8
+	shr	$2, %rdx
+	jmp	L00
 
+Lbx1:	test	$2, %dl
+	jnz	Lb11
 
-	movq	-8(%rsi,%rdx,8), %xmm0
-	movq	-16(%rsi,%rdx,8), %xmm1
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movq	%xmm0, -8(%rdi,%rdx,8)
+Lb01:	lea	-16(%rsi,%rdx,8), %rsi
+	lea	8(%rdi,%rdx,8), %rdi
+	mov	8(%rsi), %r9
+	shld	%cl, %r9, %rax
+	shr	$2, %rdx
+	jz	L1
+	mov	(%rsi), %r10
+	mov	-8(%rsi), %r11
+	jmp	L01
+
+Lb10:	lea	-24(%rsi,%rdx,8), %rsi
+	lea	(%rdi,%rdx,8), %rdi
+	mov	16(%rsi), %r8
+	mov	8(%rsi), %r9
+	shld	%cl, %r8, %rax
+	shr	$2, %rdx
+	jz	L2
+	mov	(%rsi), %r10
+	jmp	L10
+
+	.align	16, 0x90
+Lb11:	lea	-32(%rsi,%rdx,8), %rsi
+	lea	-8(%rdi,%rdx,8), %rdi
+	mov	24(%rsi), %r11
+	mov	16(%rsi), %r8
+	mov	8(%rsi), %r9
+	shld	%cl, %r11, %rax
+	shr	$2, %rdx
+	jz	Lend
+
+	.align	16, 0x90
+Ltop:	shld	%cl, %r8, %r11
+	mov	(%rsi), %r10
+	mov	%r11, (%rdi)
+L10:	shld	%cl, %r9, %r8
+	mov	-8(%rsi), %r11
+	mov	%r8, -8(%rdi)
+L01:	shld	%cl, %r10, %r9
+	mov	-16(%rsi), %r8
+	mov	%r9, -16(%rdi)
+L00:	shld	%cl, %r11, %r10
+	mov	-24(%rsi), %r9
+	add	$-32, %rsi
+	mov	%r10, -24(%rdi)
+	add	$-32, %rdi
 	dec	%rdx
+	jnz	Ltop
 
-Lrp_aligned:
-	lea	1(%rdx), %r8d
-
-	and	$6, %r8d
-	jz	Lba0
-	cmp	$4, %r8d
-	jz	Lba4
-	jc	Lba2
-Lba6:	add	$-4, %rdx
-	jmp	Li56
-Lba0:	add	$-6, %rdx
-	jmp	Li70
-Lba4:	add	$-2, %rdx
-	jmp	Li34
-Lba2:	add	$-8, %rdx
-	jle	Lend
-
-	.align	16, 0x90
-Ltop:	movdqu	40(%rsi,%rdx,8), %xmm1
-	movdqu	48(%rsi,%rdx,8), %xmm0
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, 48(%rdi,%rdx,8)
-Li70:
-	movdqu	24(%rsi,%rdx,8), %xmm1
-	movdqu	32(%rsi,%rdx,8), %xmm0
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, 32(%rdi,%rdx,8)
-Li56:
-	movdqu	8(%rsi,%rdx,8), %xmm1
-	movdqu	16(%rsi,%rdx,8), %xmm0
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, 16(%rdi,%rdx,8)
-Li34:
-	movdqu	-8(%rsi,%rdx,8), %xmm1
-	movdqu	(%rsi,%rdx,8), %xmm0
-	psllq	%xmm4, %xmm0
-	psrlq	%xmm5, %xmm1
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, (%rdi,%rdx,8)
-	sub	$8, %rdx
-	jg	Ltop
-
-Lend:	test	$1, %dl
-	jnz	Lend8
-
-	movdqu	(%rsi), %xmm1
-	pxor	%xmm0, %xmm0
-	punpcklqdq  %xmm1, %xmm0
-	psllq	%xmm4, %xmm1
-	psrlq	%xmm5, %xmm0
-	por	%xmm1, %xmm0
-	movdqa	%xmm0, (%rdi)
-	pop	%rsi
-	pop	%rdi
-	ret
-
-
-	.align	16, 0x90
-Lbc:	dec	%edx
-	jz	Lend8
-
-	movq	(%rsi,%rdx,8), %xmm1
-	movq	-8(%rsi,%rdx,8), %xmm0
-	psllq	%xmm4, %xmm1
-	psrlq	%xmm5, %xmm0
-	por	%xmm1, %xmm0
-	movq	%xmm0, (%rdi,%rdx,8)
-	sub	$2, %edx
-	jl	Lend8
-	movq	8(%rsi), %xmm1
-	movq	(%rsi), %xmm0
-	psllq	%xmm4, %xmm1
-	psrlq	%xmm5, %xmm0
-	por	%xmm1, %xmm0
-	movq	%xmm0, 8(%rdi)
-
-Lend8:movq	(%rsi), %xmm0
-	psllq	%xmm4, %xmm0
-	movq	%xmm0, (%rdi)
+Lend:	shld	%cl, %r8, %r11
+	mov	%r11, (%rdi)
+L2:	shld	%cl, %r9, %r8
+	mov	%r8, -8(%rdi)
+L1:	shl	%cl, %r9
+	mov	%r9, -16(%rdi)
 	pop	%rsi
 	pop	%rdi
 	ret
 	
-

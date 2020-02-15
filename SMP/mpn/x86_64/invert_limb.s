@@ -72,7 +72,6 @@ __gmpn_invert_limb:
 	mov	%rdi, %rax		
 	shr	$55, %rax		
 
-
 	lea	-512+__gmpn_invert_limb_table(%rip), %r8
 
 	movzwl	(%r8,%rax,2), %ecx	

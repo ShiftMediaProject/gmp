@@ -325,6 +325,7 @@
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\comb_tables.c" />
+    <ClCompile Include="..\mpn\generic\compute_powtab.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_bdiv_qr.c" />
     <ClCompile Include="..\mpn\generic\dcpi1_divappr_q.c" />
@@ -349,12 +350,14 @@
     <ClCompile Include="..\mpn\generic\dump.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\mpn\generic\fib2m.c" />
     <ClCompile Include="..\mpn\generic\fib2_ui.c" />
     <ClCompile Include="..\mpn\generic\gcd.c" />
     <ClCompile Include="..\mpn\generic\gcdext.c" />
     <ClCompile Include="..\mpn\generic\gcdext_1.c" />
     <ClCompile Include="..\mpn\generic\gcdext_lehmer.c" />
-    <ClCompile Include="..\mpn\generic\gcd_1.c">
+    <ClCompile Include="..\mpn\generic\gcd_1.c" />
+    <ClCompile Include="..\mpn\generic\gcd_22.c">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\mpn\generic\gcd_subdiv_step.c" />
@@ -441,6 +444,7 @@
     <ClCompile Include="..\mpn\generic\rootrem.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_q.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_bdiv_qr.c" />
+    <ClCompile Include="..\mpn\generic\sbpi1_bdiv_r.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_divappr_q.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_div_q.c" />
     <ClCompile Include="..\mpn\generic\sbpi1_div_qr.c" />
@@ -459,6 +463,7 @@
     <ClCompile Include="..\mpn\generic\sqrlo_basecase.c" />
     <ClCompile Include="..\mpn\generic\sqrmod_bnm1.c" />
     <ClCompile Include="..\mpn\generic\sqrtrem.c" />
+    <ClCompile Include="..\mpn\generic\strongfibo.c" />
     <ClCompile Include="..\mpn\generic\sub.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -748,6 +753,7 @@
     <ClCompile Include="..\mpz\limbs_modify.c" />
     <ClCompile Include="..\mpz\limbs_read.c" />
     <ClCompile Include="..\mpz\limbs_write.c" />
+    <ClCompile Include="..\mpz\lucmod.c" />
     <ClCompile Include="..\mpz\lucnum2_ui.c" />
     <ClCompile Include="..\mpz\lucnum_ui.c" />
     <ClCompile Include="..\mpz\mfac_uiui.c" />
@@ -852,6 +858,7 @@
     <ClCompile Include="..\mpz\sqrtrem.c">
       <ObjectFileName>$(IntDir)\mpz_%(Filename).obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\mpz\stronglucas.c" />
     <ClCompile Include="..\mpz\sub.c">
       <ObjectFileName>$(IntDir)\mpz_%(Filename).obj</ObjectFileName>
     </ClCompile>
@@ -983,6 +990,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\asl.h" />
     <ClInclude Include="..\gmp-impl.h" />
     <ClInclude Include="..\gmpxx.h" />
     <ClInclude Include="..\longlong.h" />
@@ -1010,6 +1018,9 @@
     <ClInclude Include="x86_64\trialdivtab.h" />
   </ItemGroup>
   <ItemGroup>
+    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
     <YASM Include="mpn\x86_64\addlsh1_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
@@ -1046,7 +1057,10 @@
     <YASM Include="mpn\x86_64\divexact_1.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
-    <YASM Include="mpn\x86_64\gcd_1.s">
+    <YASM Include="mpn\x86_64\gcd_11.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86_64\gcd_22.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\hamdist.s">
@@ -1213,6 +1227,9 @@
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86\divrem_2.s">
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="mpn\x86\gcd_11.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86\lshift.s">

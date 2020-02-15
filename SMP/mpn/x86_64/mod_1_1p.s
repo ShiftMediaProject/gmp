@@ -217,8 +217,10 @@ __gmpn_mod_1_1p_cps:
 	sal	%cl, %r12
 	
 	mov	%r12, %rcx		
+	sub	$32, %rsp	
 	
 	call	__gmpn_invert_limb
+	add	$32, %rsp	
 	neg	%r12
 	mov	%r12, %r8
 	mov	%rax, (%rbx)		

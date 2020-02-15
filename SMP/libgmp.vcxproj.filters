@@ -1575,6 +1575,27 @@
     <ClCompile Include="mpn\x86\xor_n.c">
       <Filter>Source Files\mpn\x86</Filter>
     </ClCompile>
+    <ClCompile Include="..\mpz\lucmod.c">
+      <Filter>Source Files\mpz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpz\stronglucas.c">
+      <Filter>Source Files\mpz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\compute_powtab.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\fib2m.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\gcd_22.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\sbpi1_bdiv_r.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mpn\generic\strongfibo.c">
+      <Filter>Source Files\mpn\generic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mpf\fits_s.h">
@@ -1652,6 +1673,9 @@
     <ClInclude Include="..\longlong.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\asl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <YASM Include="mpn\x86_64\add_n.s">
@@ -1688,9 +1712,6 @@
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
     <YASM Include="mpn\x86_64\divexact_1.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
-    <YASM Include="mpn\x86_64\gcd_1.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
     <YASM Include="mpn\x86_64\hamdist.s">
@@ -1887,6 +1908,18 @@
     </YASM>
     <YASM Include="mpn\x86\umul_ppmm.s">
       <Filter>Source Files\mpn\x86</Filter>
+    </YASM>
+    <YASM Include="mpn\x86\gcd_11.s">
+      <Filter>Source Files\mpn\x86</Filter>
+    </YASM>
+    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
+      <Filter>Source Files\mpn\x86_64</Filter>
+    </YASM>
+    <YASM Include="mpn\x86_64\gcd_11.s">
+      <Filter>Source Files\mpn\x86_64</Filter>
+    </YASM>
+    <YASM Include="mpn\x86_64\gcd_22.s">
+      <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
   </ItemGroup>
   <ItemGroup>

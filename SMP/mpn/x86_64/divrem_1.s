@@ -65,20 +65,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		
 
 
@@ -126,12 +112,9 @@ __gmpn_preinv_divrem_1:
 
 	lea	-8(%rdi,%rcx,8), %rdi
 
-	test	%r8, %r8
-	js	Lnent
-
 	mov	104(%rsp), %cl
 	shl	%cl, %r8
-	jmp	Luent
+	jmp	Lent
 	
 
 	.align	16, 0x90
@@ -162,68 +145,6 @@ __gmpn_divrem_1:
 	lea	-8(%rdi,%rcx,8), %rdi
 	xor	%ebp, %ebp
 
-	test	%r8, %r8
-	jns	Lunnormalized
-
-Lnormalized:
-	test	%rbx, %rbx
-	je	L8			
-	mov	-8(%rsi,%rbx,8), %rbp
-	dec	%rbx
-	mov	%rbp, %rax
-	sub	%r8, %rbp
-	cmovc	%rax, %rbp
-	sbb	%eax, %eax
-	inc	%eax
-	mov	%rax, (%rdi)
-	lea	-8(%rdi), %rdi
-L8:
-
-
-	push	%r8
-
-	sub	$32, %rsp	
-	mov	%r8, %rcx		
-	
-	call	__gmpn_invert_limb
-	add	$32, %rsp	
-	pop	%r8
-
-
-
-	mov	%rax, %r9
-	mov	%rbp, %rax
-	jmp	Lnent
-
-	.align	16, 0x90
-Lntop:mov	(%rsi,%rbx,8), %r10		
-	mul	%r9			
-	add	%r10, %rax		
-	adc	%rbp, %rdx		
-	mov	%rax, %rbp		
-	mov	%rdx, %r13		
-	imul	%r8, %rdx			
-	sub	%rdx, %r10		
-	mov	%r8, %rax			
-	add	%r10, %rax		
-	cmp	%rbp, %r10		
-	cmovc	%r10, %rax		
-	adc	$-1, %r13		
-	cmp	%r8, %rax			
-	jae	Lnfx			
-Lnok:	mov	%r13, (%rdi)		
-	sub	$8, %rdi			
-Lnent:lea	1(%rax), %rbp		
-	dec	%rbx			
-	jns	Lntop			
-
-	xor	%ecx, %ecx
-	jmp	Lfrac
-
-Lnfx:	sub	%r8, %rax
-	inc	%r13
-	jmp	Lnok
-
 Lunnormalized:
 	test	%rbx, %rbx
 	je	L44
@@ -238,8 +159,8 @@ Lunnormalized:
 L44:
 	bsr	%r8, %rcx
 	not	%ecx
-	shl	%cl, %r8
-	shl	%cl, %rbp
+	sal	%cl, %r8
+	sal	%cl, %rbp
 
 	push	%rcx
 
@@ -263,43 +184,37 @@ L44:
 	test	%rbx, %rbx
 	je	Lfrac
 
-Luent:dec	%rbx
-	mov	(%rsi,%rbx,8), %rbp
-	neg	%ecx
-	shr	%cl, %rbp
-	neg	%ecx
-	or	%rbp, %rax
-	jmp	Lent
+Lent:	mov	-8(%rsi,%rbx,8), %rbp
+	shr	%cl, %rax
+	shld	%cl, %rbp, %rax
+	sub	$2, %rbx
+	js	Lend
 
 	.align	16, 0x90
-Lutop:mov	(%rsi,%rbx,8), %r10
-	shl	%cl, %rbp
-	neg	%ecx
-	shr	%cl, %r10
-	neg	%ecx
-	or	%r10, %rbp
+Ltop:	lea	1(%rax), %r11
 	mul	%r9
-	add	%rbp, %rax
+	mov	(%rsi,%rbx,8), %r10
+	shld	%cl, %r10, %rbp
+	mov	%rbp, %r13
+	add	%rax, %r13
 	adc	%r11, %rdx
-	mov	%rax, %r11
-	mov	%rdx, %r13
+	mov	%rdx, %r11
 	imul	%r8, %rdx
 	sub	%rdx, %rbp
-	mov	%r8, %rax
-	add	%rbp, %rax
-	cmp	%r11, %rbp
+	lea	(%r8,%rbp), %rax
+	sub	$8, %rdi
+	cmp	%r13, %rbp
 	cmovc	%rbp, %rax
-	adc	$-1, %r13
+	adc	$-1, %r11
 	cmp	%r8, %rax
 	jae	Lufx
-Luok:	mov	%r13, (%rdi)
-	sub	$8, %rdi
-Lent:	mov	(%rsi,%rbx,8), %rbp
-	dec	%rbx
-	lea	1(%rax), %r11
-	jns	Lutop
+Luok:	dec	%rbx
+	mov	%r11, 8(%rdi)
+	mov	%r10, %rbp
+	jns	Ltop
 
-Luend:shl	%cl, %rbp
+Lend:	lea	1(%rax), %r11
+	sal	%cl, %rbp
 	mul	%r9
 	add	%rbp, %rax
 	adc	%r11, %rdx
@@ -319,7 +234,7 @@ Leok:	mov	%r13, (%rdi)
 	jmp	Lfrac
 
 Lufx:	sub	%r8, %rax
-	inc	%r13
+	inc	%r11
 	jmp	Luok
 Lefx:	sub	%r8, %rax
 	inc	%r13
@@ -355,4 +270,3 @@ Lret:	pop	%rbx
 	pop	%rdi
 	ret
 	
-

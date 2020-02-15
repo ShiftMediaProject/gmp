@@ -94,6 +94,13 @@
 
 
 
+
+
+
+
+
+
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_mullo_basecase
@@ -114,205 +121,241 @@ __gmpn_mullo_basecase:
 	cmp	$4, %rcx
 	jb	Lsmall
 
-	mov	(%rdx), %r9
+	mov	(%rdx), %r10
 	push	%rbx
-	lea	(%rdi,%rcx,8), %rdi		
+	lea	(%rdi,%rcx,8), %rdi	
 	push	%rbp
-	lea	(%rsi,%rcx,8), %rsi		
+	lea	(%rsi,%rcx,8), %rsi	
 	push	%r12
-	neg	%rcx
+	mov	$0, %r9d		
+	sub	%rcx, %r9
 	push	%r13
-	mul	%r9
-	mov	8(%r8), %rbx
+	mul	%r10
+	mov	8(%r8), %r11
 
 	test	$1, %cl
-	jnz	Lm2b1
+	jnz	Lm2x1
 
-Lm2b0:lea	(%rcx), %rbp
-	xor	%r10, %r10
-	mov	%rax, %r12
-	mov	%rdx, %r11
-	jmp	Lm2l0
+Lm2x0:test	$2, %cl
+	jnz	Lm2b2
 
-Lm2b1:lea	1(%rcx), %rbp
-	xor	%r11, %r11
-	xor	%r12, %r12
-	mov	%rax, %r10
-	mov	%rdx, %r13
-	jmp	Lm2l1
+Lm2b0:lea	(%r9), %r13
+	mov	%rax, (%rdi,%r9,8)
+	mov	%rdx, %rcx
+	mov	(%rsi,%r9,8), %rax
+	xor	%ebp, %ebp
+	jmp	Lm2e0
 
-	.align	32, 0x90
-Lm2tp:mul	%r9
-	add	%rax, %r10
-	mov	%rdx, %r13
-	adc	$0, %r13
-Lm2l1:mov	-8(%rsi,%rbp,8), %rax
-	mul	%rbx
-	add	%r11, %r10
-	adc	$0, %r13
+Lm2b2:lea	-2(%r9), %r13
+	mov	%rax, %rbp
+	mov	(%rsi,%r9,8), %rax
+	mov	%rdx, %r12
+	xor	%ebx, %ebx
+	jmp	Lm2e2
+
+Lm2x1:test	$2, %cl
+	jnz	Lm2b3
+
+Lm2b1:lea	1(%r9), %r13
+	mov	%rax, (%rdi,%r9,8)
+	mov	(%rsi,%r9,8), %rax
+	mov	%rdx, %rbx
+	xor	%ecx, %ecx
+	jmp	Lm2e1
+
+Lm2b3:lea	-1(%r9), %r13
+	xor	%r12d, %r12d
+	mov	%rax, %rcx
+	mov	%rdx, %rbp
+	mov	(%rsi,%r9,8), %rax
+	jmp	Lm2e3
+
+	.align	16, 0x90
+Lm2tp:mul	%r10
 	add	%rax, %r12
-	mov	%r10, -8(%rdi,%rbp,8)
-	mov	%rdx, %r10
-	adc	$0, %r10
-	mov	(%rsi,%rbp,8), %rax
-	mul	%r9
+	mov	-8(%rsi,%r13,8), %rax
+	mov	%r12, -8(%rdi,%r13,8)
+	adc	%rdx, %rbx
+	adc	$0, %ecx
+Lm2e1:mul	%r11
+	add	%rax, %rbx
+	adc	%rdx, %rcx
+	mov	$0, %ebp
+	mov	(%rsi,%r13,8), %rax
+	mul	%r10
+	add	%rax, %rbx
+	mov	%rbx, (%rdi,%r13,8)
+	adc	%rdx, %rcx
+	mov	(%rsi,%r13,8), %rax
+	adc	$0, %ebp
+Lm2e0:mul	%r11
+	add	%rax, %rcx
+	adc	%rdx, %rbp
+	mov	8(%rsi,%r13,8), %rax
+	mul	%r10
+	mov	$0, %r12d
+	add	%rax, %rcx
+	adc	%rdx, %rbp
+	adc	$0, %r12d
+	mov	8(%rsi,%r13,8), %rax
+Lm2e3:mul	%r11
+	add	%rax, %rbp
+	mov	%rcx, 8(%rdi,%r13,8)
+	adc	%rdx, %r12
+	mov	$0, %ebx
+	mov	16(%rsi,%r13,8), %rax
+	mul	%r10
+	add	%rax, %rbp
+	mov	16(%rsi,%r13,8), %rax
+	adc	%rdx, %r12
+	adc	$0, %ebx
+Lm2e2:mul	%r11
+	mov	$0, %ecx		
 	add	%rax, %r12
-	mov	%rdx, %r11
-	adc	$0, %r11
-	add	%r13, %r12
-Lm2l0:mov	(%rsi,%rbp,8), %rax
-	adc	$0, %r11
-	mul	%rbx
-	mov	%r12, (%rdi,%rbp,8)
-	add	%rax, %r10
-	mov	%rdx, %r12		
-	mov	8(%rsi,%rbp,8), %rax
-	adc	$0, %r12			
-	add	$2, %rbp
-	jnc	Lm2tp
+	mov	24(%rsi,%r13,8), %rax
+	mov	%rbp, 16(%rdi,%r13,8)
+	adc	%rdx, %rbx		
+	add	$4, %r13
+	js	Lm2tp
 
-Lm2ed:imul	%r9, %rax
-	add	%r10, %rax
-	add	%r11, %rax
+Lm2ed:imul	%r10, %rax
+	add	%r12, %rax
 	mov	%rax, -8(%rdi)
 
-	add	$2, %rcx
+	add	$2, %r9
 	lea	16(%r8), %r8
 	lea	-16(%rsi), %rsi
-	cmp	$-2, %rcx
+	cmp	$-2, %r9
 	jge	Lcor1
 
 	push	%r14
 	push	%r15
 
 Louter:
-	mov	(%r8), %r9
-	mov	8(%r8), %rbx
-	mov	(%rsi,%rcx,8), %rax
-	mul	%r9
-	test	$1, %cl
+	mov	(%r8), %r10
+	mov	8(%r8), %r11
+	mov	(%rsi,%r9,8), %rax
+	mul	%r10
+	test	$1, %r9b
 	jnz	La1x1
 
-La1x0:mov	(%rdi,%rcx,8), %r15
-	xor	%r12, %r12
-	xor	%r11, %r11
-	test	$2, %cl
+La1x0:mov	%rax, %r15
+	mov	%rdx, %r14
+	mov	(%rsi,%r9,8), %rax
+	mul	%r11
+	test	$2, %r9b
 	jnz	La110
 
-La100:lea	1(%rcx), %rbp
+La100:lea	(%r9), %r13
+	mov	(%rdi,%r9,8), %r12
+	mov	%rax, %rbx
+	lea	(%rdx), %rcx
 	jmp	Llo0
 
-La110:lea	3(%rcx), %rbp
-	mov	%rdx, %r13
-	add	%rax, %r15
-	mov	(%rsi,%rcx,8), %rax
-	mov	8(%rdi,%rcx,8), %r14
-	adc	$0, %r13
+La110:lea	2(%r9), %r13
+	mov	(%rdi,%r9,8), %rcx
+	mov	%rax, %rbp
+	mov	8(%rsi,%r9,8), %rax
+	lea	(%rdx), %r12
 	jmp	Llo2
 
-La1x1:mov	(%rdi,%rcx,8), %r14
-	xor	%r10, %r10
-	mov	%rdx, %r11
-	test	$2, %cl
+La1x1:mov	%rax, %r14
+	mov	%rdx, %r15
+	mov	(%rsi,%r9,8), %rax
+	mul	%r11
+	test	$2, %r9b
 	jz	La111
 
-La101:lea	2(%rcx), %rbp
-	add	%rax, %r14
-	adc	$0, %r11
-	mov	(%rsi,%rcx,8), %rax
-	mul	%rbx
-	mov	8(%rdi,%rcx,8), %r15
+La101:lea	1(%r9), %r13
+	lea	(%rdx), %rbx
+	mov	(%rdi,%r9,8), %rbp
+	mov	%rax, %r12
 	jmp	Llo1
 
-La111:lea	(%rcx), %rbp
-	xor	%r13, %r13
+La111:lea	-1(%r9), %r13
+	lea	(%rdx), %rbp
+	mov	%rax, %rcx
+	mov	(%rdi,%r9,8), %rbx
+	mov	8(%rsi,%r9,8), %rax
 	jmp	Llo3
 
-	.align	32, 0x90
-Ltop:
-Llo2:	mul	%rbx
-	mov	%rdx, %r10
-	add	%rax, %r14
-	adc	$0, %r10
-	add	%r11, %r15
-	adc	$0, %r13
-	add	%r12, %r14
-	adc	$0, %r10
-	mov	-16(%rsi,%rbp,8), %rax
-	mul	%r9
-	add	%rax, %r14
-	mov	%rdx, %r11
-	adc	$0, %r11
-	mov	-16(%rsi,%rbp,8), %rax
-	mul	%rbx
-	mov	%r15, -24(%rdi,%rbp,8)
-	mov	-8(%rdi,%rbp,8), %r15
-	add	%r13, %r14
-	adc	$0, %r11
-Llo1:	mov	%rdx, %r12
-	mov	%r14, -16(%rdi,%rbp,8)
-	add	%rax, %r15
+	.align	16, 0x90
+Ltop:	mul	%r11
+	add	%rbx, %rcx
+	adc	%rax, %rbp
+	mov	-8(%rsi,%r13,8), %rax
+	lea	(%rdx), %r12
 	adc	$0, %r12
-	mov	-8(%rsi,%rbp,8), %rax
-	add	%r10, %r15
-	adc	$0, %r12
-	mul	%r9
-Llo0:	add	%rax, %r15
-	mov	%rdx, %r13
-	adc	$0, %r13
-	mov	-8(%rsi,%rbp,8), %rax
-	mul	%rbx
-	add	%r11, %r15
-	mov	(%rdi,%rbp,8), %r14
-	adc	$0, %r13
-	mov	%rdx, %r10
-	add	%rax, %r14
-	adc	$0, %r10
-	mov	(%rsi,%rbp,8), %rax
-	mul	%r9
-	add	%r12, %r14
-	mov	%r15, -8(%rdi,%rbp,8)
-	mov	%rdx, %r11
-	adc	$0, %r10
-Llo3:	add	%rax, %r14
-	adc	$0, %r11
-	mov	(%rsi,%rbp,8), %rax
-	add	%r13, %r14
-	adc	$0, %r11
-	mul	%rbx
-	mov	8(%rdi,%rbp,8), %r15
-	add	%rax, %r15
-	mov	%rdx, %r12
-	adc	$0, %r12
-	mov	8(%rsi,%rbp,8), %rax
-	mov	%r14, (%rdi,%rbp,8)
-	mul	%r9
-	add	%r10, %r15
-	mov	%rdx, %r13
-	adc	$0, %r12
-	add	%rax, %r15
-	mov	8(%rsi,%rbp,8), %rax
-	mov	16(%rdi,%rbp,8), %r14
-	adc	$0, %r13
-	add	$4, %rbp
+Llo2:	mul	%r10
+	add	%rcx, %r15
+	mov	%r15, -16(%rdi,%r13,8)
+	adc	%rax, %r14
+	mov	%rdx, %r15
+	adc	$0, %r15
+	mov	-8(%rsi,%r13,8), %rax
+	mul	%r11
+	lea	(%rdx), %rbx
+	mov	-8(%rdi,%r13,8), %rcx
+	add	%rcx, %rbp
+	adc	%rax, %r12
+	adc	$0, %rbx
+Llo1:	mov	(%rsi,%r13,8), %rax
+	mul	%r10
+	add	%rbp, %r14
+	adc	%rax, %r15
+	mov	%r14, -8(%rdi,%r13,8)
+	mov	%rdx, %r14
+	adc	$0, %r14
+	mov	(%rsi,%r13,8), %rax
+	mov	(%rdi,%r13,8), %rbp
+	mul	%r11
+	add	%rbp, %r12
+	adc	%rax, %rbx
+	lea	(%rdx), %rcx
+	adc	$0, %rcx
+Llo0:	mov	8(%rsi,%r13,8), %rax
+	mul	%r10
+	add	%r12, %r15
+	mov	%r15, (%rdi,%r13,8)
+	adc	%rax, %r14
+	mov	%rdx, %r15
+	mov	8(%rdi,%r13,8), %r12
+	adc	$0, %r15
+	mov	8(%rsi,%r13,8), %rax
+	mul	%r11
+	add	%r12, %rbx
+	lea	(%rdx), %rbp
+	adc	%rax, %rcx
+	mov	16(%rsi,%r13,8), %rax
+	adc	$0, %rbp
+Llo3:	mul	%r10
+	add	%rbx, %r14
+	mov	%r14, 8(%rdi,%r13,8)
+	mov	%rdx, %r14
+	adc	%rax, %r15
+	mov	16(%rsi,%r13,8), %rax
+	mov	16(%rdi,%r13,8), %rbx
+	adc	$0, %r14
+	add	$4, %r13
 	jnc	Ltop
 
-Lend:	imul	%rbx, %rax
-	add	%rax, %r14
-	add	%r11, %r15
-	adc	$0, %r13
-	add	%r12, %r14
+Lend:	imul	%r11, %rax
+	add	%rbx, %rcx
+	adc	%rax, %rbp
 	mov	-8(%rsi), %rax
-	imul	%r9, %rax
-	add	%r14, %rax
+	imul	%r10, %rax
+	add	%rcx, %r15
 	mov	%r15, -16(%rdi)
-	add	%r13, %rax
+	adc	%r14, %rax
+	mov	-8(%rdi), %rcx
+	add	%rcx, %rbp
+	add	%rbp, %rax
 	mov	%rax, -8(%rdi)
 
-	add	$2, %rcx
+	add	$2, %r9
 	lea	16(%r8), %r8
 	lea	-16(%rsi), %rsi
-	cmp	$-2, %rcx
+	cmp	$-2, %r9
 	jl	Louter
 
 	pop	%r15
@@ -320,20 +363,20 @@ Lend:	imul	%rbx, %rax
 
 	jnz	Lcor0
 
-Lcor1:mov	(%r8), %r9
-	mov	8(%r8), %rbx
+Lcor1:mov	(%r8), %r10
+	mov	8(%r8), %r11
 	mov	-16(%rsi), %rax
-	mul	%r9			
+	mul	%r10			
 	add	-16(%rdi), %rax		
 	adc	-8(%rdi), %rdx		
-	mov	-8(%rsi), %r10
-	imul	%r9, %r10
-	mov	-16(%rsi), %r11
-	imul	%rbx, %r11
+	mov	-8(%rsi), %rbx
+	imul	%r10, %rbx
+	mov	-16(%rsi), %rcx
+	imul	%r11, %rcx
 	mov	%rax, -16(%rdi)
-	add	%r10, %r11
-	add	%rdx, %r11
-	mov	%r11, -8(%rdi)
+	add	%rbx, %rcx
+	add	%rdx, %rcx
+	mov	%rcx, -8(%rdi)
 	pop	%r13
 	pop	%r12
 	pop	%rbp

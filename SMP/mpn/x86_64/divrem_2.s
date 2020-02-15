@@ -119,8 +119,10 @@ L2:
 	push	%r11
 
 	mov	%r11, %rcx	
+	sub	$32, %rsp	
 	
 	call	__gmpn_invert_limb
+	add	$32, %rsp	
 	pop	%r11
 	pop	%r10
 	pop	%r8
