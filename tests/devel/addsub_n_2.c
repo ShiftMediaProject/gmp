@@ -18,7 +18,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "gmp.h"
 #include "gmp-impl.h"
 
 #if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
