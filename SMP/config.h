@@ -221,8 +221,8 @@
 #define HAVE_NATIVE_mpn_add_n 1
 /* #undef HAVE_NATIVE_mpn_add_n_sub_n */
 #define HAVE_NATIVE_mpn_add_nc 1
+/* #undef HAVE_NATIVE_mpn_addaddmul_1msb0 */
 #if defined(__x86_64) || defined(_M_X64)
-#define HAVE_NATIVE_mpn_addaddmul_1msb0 1
 #define HAVE_NATIVE_mpn_addlsh1_n 1
 #define HAVE_NATIVE_mpn_addlsh2_n 1
 #define HAVE_NATIVE_mpn_addlsh_n 1

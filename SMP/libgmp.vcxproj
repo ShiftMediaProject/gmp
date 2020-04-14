@@ -1018,9 +1018,6 @@
     <ClInclude Include="x86_64\trialdivtab.h" />
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
     <YASM Include="mpn\x86_64\addlsh1_n.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>

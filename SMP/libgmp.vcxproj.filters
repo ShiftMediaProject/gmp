@@ -1912,9 +1912,6 @@
     <YASM Include="mpn\x86\gcd_11.s">
       <Filter>Source Files\mpn\x86</Filter>
     </YASM>
-    <YASM Include="mpn\x86_64\addaddmul_1msb0.s">
-      <Filter>Source Files\mpn\x86_64</Filter>
-    </YASM>
     <YASM Include="mpn\x86_64\gcd_11.s">
       <Filter>Source Files\mpn\x86_64</Filter>
     </YASM>
