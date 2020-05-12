@@ -1,3 +1,24 @@
+2020-05-12  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/compute_powtab.c: Avoid C99 constructs.
+	* mpn/generic/get_str.c: Likewise.
+	* mpn/generic/set_str.c: Likewise.
+
+	* gmp-impl.h (memset): Move ASSERT to before decls.
+	* tests/refmpn.c: Likewise.
+
+	* mpn/generic/hgcd2.c: Set up tabp differently to avoid undefined C.
+
+	* mpn/generic/strongfibo.c: Avoid defining helper function when unused.
+
+	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q_n_itch): Away by #if.
+
+	* mpz/mul.c: Add some {} to suppress warning.
+
+	* tests/mpn/t-gcd_11.c: Exit main() properly.
+	* tests/mpn/t-gcd_22.c: Likewise.
+	* tests/mpn/t-gcdext_1.c: Likewise.
+
 2020-01-17  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.2.0 released.
