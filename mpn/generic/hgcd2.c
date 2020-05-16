@@ -256,7 +256,15 @@ static const unsigned char tab[2048] = {
 #error No table for provided NBITS
 #endif
 
-static const unsigned char *tabp = tab - (1 << (NBITS - 1) << NBITS);
+/* Doing tabp with a #define makes compiler warnings about pointing outside an
+   object go away.  We used to define this as a variable.  It is not clear if
+   e.g.  (vector[100] - 10) + 10 is well- defined as per the C standard;
+   (vector[100] + 10) - 10 surely is and there is no sequence point so the
+   expressions should be equivalent.  To make this safe, we might want to
+   define tabp as a macro with the index as an argument.  Depending on the
+   platform, relocs might allow for assembly-time or linker-time resolution to
+   take place. */
+#define tabp (tab - (1 << (NBITS - 1) << NBITS))
 
 static inline mp_double_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -340,11 +348,18 @@ static const unsigned short tab[128] = {
 291,290,288,287,286,285,283,282,281,280,279,277,276,275,274,273,
 272,270,269,268,267,266,265,264,263,262,261,260,259,258,257,256
 };
-static const unsigned short *tabp = tab - (1 << (NBITS - 1));
 #else
 #error No table for provided NBITS
 #endif
 
+/* Doing tabp with a #define makes compiler warnings about pointing outside an
+   object go away.  We used to define this as a variable.  It is not clear if
+   e.g.  (vector[100] - 10) + 10 is well- defined as per the C standard;
+   (vector[100] + 10) - 10 surely is and there is no sequence point so the
+   expressions should be equivalent.  To make this safe, we might want to
+   define tabp as a macro with the index as an argument.  Depending on the
+   platform, relocs might allow for assembly-time or linker-time resolution to
+   take place. */
 #define tabp (tab - (1 << (NBITS - 1)))
 
 static inline mp_double_limb_t
