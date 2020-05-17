@@ -3,6 +3,11 @@ Copyright 1996, 1999-2016, 2018-2020 Free Software Foundation, Inc.
 Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
+Changes between GMP version 6.2.0 and 6.2.1
+
+  BUGS FIXED
+  * A possible overflow of type int is avoided for mpz_cmp on huge operands.
+
 Changes between GMP version 6.1.* and 6.2.0
 
   BUGS FIXED
