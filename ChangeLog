@@ -1,3 +1,9 @@
+2020-05-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/cmp.c: Avoid overflow on int even for huge sizes.
+	* mpn/generic/mul_fft.c (mpn_fft_mul_modF_K):
+	Fully handle carry propagation in basecase multiplication.
+
 2020-05-16  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpn/generic/hgcd2.c (tabp): Combine several undefined tabp
