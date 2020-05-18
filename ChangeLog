@@ -1,3 +1,9 @@
+2020-05-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/toom_interpolate_12pts.c (DO_mpn_addlsh_n): Define only
+	when needed.
+	* mpn/generic/toom_interpolate_16pts.c: Likewise.
+
 2020-05-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpz/cmp.c: Avoid overflow on int even for huge sizes.
