@@ -244,7 +244,7 @@ main (int argc, char **argv)
   for (pass = 1; pass <= reps; pass++)
     {
 #ifndef VERBOSE
-      if (isatty (fileno (stdout)))
+      if (isatty (STDOUT_FILENO))
 	{
 	  printf ("\r%d/%d passes", pass, reps);
 	  fflush (stdout);
@@ -743,7 +743,7 @@ main (int argc, char **argv)
 	}
     }
 
-  if (isatty (fileno (stdout)))
+  if (isatty (STDOUT_FILENO))
     printf ("\r%20s", "");
 
   mpz_clear (bs);
@@ -758,7 +758,7 @@ main (int argc, char **argv)
   mpz_clear (res3);
   mpz_clear (t);
 
-  if (isatty (fileno (stdout)))
+  if (isatty (STDOUT_FILENO))
     printf ("\r");
 
   tests_end ();
