@@ -76,7 +76,7 @@
 
 
 
-	.section .rdata,"dr"
+		.section .rdata,"dr"
 	.align	64, 0x90
 ctz_table:
 

@@ -179,7 +179,7 @@ Le1:	movdqa	%xmm6, %xmm0
 	movq	%xmm0, %rax
 	ret
 	
-	.section .rdata,"dr"
+		.section .rdata,"dr"
 	.align	16, 0x90
 Lcnsts:
 
