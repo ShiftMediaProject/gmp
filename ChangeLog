@@ -1,3 +1,92 @@
+2020-05-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/freq.c (_POSIX_C_SOURCE): Define.
+
+	* tune/tuneup.c (print_define_with_speedup): Fall back from snprintf to
+	sprintf for C90.
+	(_POSIX_C_SOURCE): Define.
+	(max_opsize): Set by #define instead of const size_t to please C90.
+	(n_measurements): Likewise.
+	(speed_mpn_pre_set_str): Adhere to C90 declaration rules.
+
+	* tune/tune-gcd-p.c: Back out 2020-01-10 change to comply to C90.
+
+	* tune/time.c (speed_endtime): Cast printf args to right type.
+	(_POSIX_C_SOURCE): Define.
+
+	* tune/speed.h (CACHE_LINE_SIZE): Do #undef before defining.
+	(SPEED_ROUTINE_MPN_GCD_1): Provide dummy first argument for standard
+	compliance.
+	(SPEED_ROUTINE_MPN_HGCD2): Adhere to C90 declaration rules.
+
+	* tune/speed.c (main): Cast printf args to right type.
+	(_POSIX_C_SOURCE): Define.
+
+	* tests/mpz/reuse.c: Avoid using non-standard function fileno().
+	* tests/spinner.c: Likewise.
+
+	* tests/mpz/convert.c (str_casecmp): New function.
+	(main): Use it instead of non-standard strcasecmp.
+
+	* tests/misc.c (tests_start): Fall back from snprintf to sprintf for
+	C90.
+
+	* tests/devel/try.c: Avoid getpagesize and use POSIX sysconf instead.
+	(_POSIX_C_SOURCE): Define.
+
+	* mpn/generic/mod_1_1.c: Don't use C++ comments.
+
+	* mpn/generic/get_d.c: Add clarifying parens.
+
+2020-05-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/toom_interpolate_12pts.c (DO_mpn_addlsh_n): Define only
+	when needed.
+	* mpn/generic/toom_interpolate_16pts.c: Likewise.
+
+2020-05-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpz/cmp.c: Avoid overflow on int even for huge sizes.
+	* mpq/cmp.c: Likewise.
+
+	* mpn/generic/mul_fft.c (mpn_fft_mul_modF_K):
+	Fully handle carry propagation in basecase multiplication.
+
+2020-05-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/hgcd2.c (tabp): Combine several undefined tabp
+	variable definitions with a macro.
+
+	* mpn/generic/gcd_22.c: Avoid C99 constructs.
+
+2020-05-12  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/compute_powtab.c: Avoid C99 constructs.
+	* mpn/generic/get_str.c: Likewise.
+	* mpn/generic/set_str.c: Likewise.
+
+	* gmp-impl.h (memset): Move ASSERT to before decls.
+	* tests/refmpn.c: Likewise.
+
+	* mpn/generic/hgcd2.c (tabp): Combine several undefined tabp variable
+	definitions with a macro.
+
+	* mpn/generic/strongfibo.c: Avoid defining helper function when unused.
+
+	* mpn/generic/dcpi1_bdiv_q.c (mpn_dcpi1_bdiv_q_n_itch): Disable unused
+	static function.
+
+	* mpz/mul.c: Add some {} to suppress warning.
+
+	* tests/mpn/t-gcd_11.c: Exit main() properly.
+	* tests/mpn/t-gcd_22.c: Likewise.
+	* tests/mpn/t-gcdext_1.c: Likewise.
+
+2020-04-28  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpz/reuse.c (realloc_if_reducing): New function.
+	(INVOKE_RRS, etc): Use realloc_if_reducing.
+
 2020-01-17  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.2.0 released.
