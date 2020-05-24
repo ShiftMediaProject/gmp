@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000-2006, 2008, 2009, 2011, 2012, 2020 Free Software Foundation, Inc.
+Copyright 2000-2006, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library test suite.
 
@@ -106,8 +106,6 @@ the GNU MP Library test suite.  If not, see https://www.gnu.org/licenses/.  */
 
 /* always do assertion checking */
 #define WANT_ASSERT 1
-
-#define _POSIX_C_SOURCE 199309L		/* for getopt, _SC_PAGE_SIZE */
 
 #include "config.h"
 
@@ -3415,6 +3413,11 @@ trap (int sig)
 void
 try_init (void)
 {
+#if HAVE_GETPAGESIZE
+  /* Prefer getpagesize() over sysconf(), since on SunOS 4 sysconf() doesn't
+     know _SC_PAGESIZE. */
+  pagesize = getpagesize ();
+#else
 #if HAVE_SYSCONF
   if ((pagesize = sysconf (_SC_PAGESIZE)) == -1)
     {
@@ -3425,7 +3428,7 @@ try_init (void)
 #else
 Error, error, cannot get page size
 #endif
-
+#endif
 
   printf ("pagesize is 0x%lX bytes\n", pagesize);
 
