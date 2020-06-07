@@ -1,3 +1,19 @@
+2020-05-25  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/cxx/t-assign.cc: Use reference parameter for 'catch'.
+	* tests/cxx/t-constr.cc: Likewise.
+	* tests/cxx/t-ops2z.cc: Likewise.
+	* tests/cxx/t-rand.cc: Likewise.
+	* tests/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc: Likewise.
+
+	* tune/speed.c: Undo 2020-05-24 _POSIX_C_SOURCE change, it breaks on
+	many broken systems.
+	* tune/freq.c: Likewise.
+	* tune/time.c: Likewise.
+	* tune/tuneup.c: Likewise.
+
+	* tests/devel/try.c: Revert 2020-05-24 changes.
+
 2020-05-21  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tune/freq.c (_POSIX_C_SOURCE): Define.

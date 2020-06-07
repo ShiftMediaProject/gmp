@@ -110,8 +110,6 @@ see https://www.gnu.org/licenses/.  */
 
 #define TUNE_PROGRAM_BUILD  1   /* for gmp-impl.h */
 
-#define _POSIX_C_SOURCE 2
-
 #include "config.h"
 
 #include <math.h>

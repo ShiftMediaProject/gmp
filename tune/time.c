@@ -151,8 +151,6 @@ see https://www.gnu.org/licenses/.  */
    speed, on 4xx chips it's either that or an external clock.  Measuring
    against gettimeofday might be ok.  */
 
-#define _POSIX_C_SOURCE 199309L
-
 #include "config.h"
 
 #include <errno.h>

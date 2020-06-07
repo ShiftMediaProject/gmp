@@ -60,8 +60,6 @@ see https://www.gnu.org/licenses/.  */
 
 */
 
-#define _POSIX_C_SOURCE 2	/* for popen */
-
 #include "config.h"
 
 #if HAVE_INVENT_H

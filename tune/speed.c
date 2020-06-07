@@ -38,8 +38,6 @@ see https://www.gnu.org/licenses/.  */
    The routines don't have help messages or descriptions, but most have
    suggestive names.  See the source code for full details. */
 
-#define _POSIX_C_SOURCE 2
-
 #include "config.h"
 
 #include <limits.h>
