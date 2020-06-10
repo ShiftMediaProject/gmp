@@ -722,7 +722,7 @@ case $host in
 	gcc_cflags_neon="-mfpu=neon"
 	gcc_cflags_tune="-mtune=cortex-a15 -mtune=cortex-a9"
 	;;
-      armcortexa53 | armcortexa53neon)
+      armcortexa53 | armcortexa53neon | armcortexa55 | armcortexa55neon)
         abilist="64 32"
 	path="arm/neon arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm"
 	path_64="arm64/cora53 arm64"
