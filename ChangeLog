@@ -1,3 +1,7 @@
+2020-06-10  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Recognise armcortexa53.
+
 2020-05-25  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/cxx/t-assign.cc: Use reference parameter for 'catch'.

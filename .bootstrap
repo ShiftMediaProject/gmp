@@ -7,6 +7,13 @@ rm -rf autom4te.cache
 autoreconf -i -s
 # aclocal && libtoolize && autoconf && autoheader && automake -a
 
+cp -L ltmain.sh foo;  rm ltmain.sh;  mv foo ltmain.sh
+cp -L ylwrap foo;     rm ylwrap;     mv foo ylwrap
+cp -L install-sh foo; rm install-sh; mv foo install-sh
+cp -L missing foo;    rm missing;    mv foo missing
+cp -L test-driver foo;rm test-driver;mv foo test-driver
+rm -rf autom4te.cache
+
 cat >doc/version.texi <<EOF
 @set UPDATED 19 January 2038
 @set UPDATED-MONTH January 2038
