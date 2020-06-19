@@ -23,7 +23,7 @@ AM_LDFLAGS = -no-install
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 EXTRA_PROGRAMS = \
-  sqrtrem_1_2 primes try
+  sqrtrem_1_2 primes try test-add_ssaaaa test-sub_ddmmss
 
 BUILT_SOURCES =
 DISTCLEANFILES = $(BUILT_SOURCES)
