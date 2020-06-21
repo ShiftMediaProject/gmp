@@ -25,11 +25,7 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 EXTRA_PROGRAMS = \
   sqrtrem_1_2 primes try test-add_ssaaaa test-sub_ddmmss
 
-BUILT_SOURCES =
-DISTCLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST =
-
-nodist_SOURCES = test-add_ssaaaa.c test-sub_ddmmss.c
 
 allprogs: $(EXTRA_PROGRAMS) test-add_ssaaaa test-sub_ddmmss
 
@@ -40,13 +36,13 @@ $(top_builddir)/tests/libtests.la:
 
 test-add_ssaaaa.c: gen-test-longlong_h$(EXEEXT_FOR_BUILD)
 	./gen-test-longlong_h add >test-add_ssaaaa.c || (rm -f test-add_ssaaaa.c; exit 1)
-#BUILT_SOURCES += test-add_ssaaaa.c
+CLEANFILES += test-add_ssaaaa.c
 
 test-sub_ddmmss.c: gen-test-longlong_h$(EXEEXT_FOR_BUILD)
 	./gen-test-longlong_h sub >test-sub_ddmmss.c || (rm -f test-sub_ddmmss.c; exit 1)
-#BUILT_SOURCES += test-sub_ddmmss.c
+CLEANFILES += test-sub_ddmmss.c
 
 gen-test-longlong_h$(EXEEXT_FOR_BUILD): gen-test-longlong_h.c
 	$(CC_FOR_BUILD) `test -f 'gen-test-longlong_h.c' || echo '$(srcdir)/'`gen-test-longlong_h.c -o gen-test-longlong_h$(EXEEXT_FOR_BUILD)
-DISTCLEANFILES += gen-test-longlong_h$(EXEEXT_FOR_BUILD)
+CLEANFILES += gen-test-longlong_h$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-test-longlong_h.c
