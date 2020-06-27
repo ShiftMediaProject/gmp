@@ -1,6 +1,20 @@
+2020-06-20  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h (add_sssaaaa arm32/arm64): Generalise allowed operands
+	when using adds for sub and subs for add, while disallowing 0.
+	(sub_ddmmss ppc64): Disallow 0 when using addic.  Also disallow
+	constants for register-only middle addic operand.
+	(C add_sssaaaa and sub_ddmmss): Use more temps to make operation more
+	well-defined.
+
+2020-06-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/devel/gen-test-longlong_h.c: New file.
+	* tests/devel/Makefile.am: Compile and use gen-test-longlong_h.c.
+
 2020-06-10  Torbjörn Granlund  <tg@gmplib.org>
 
-	* configure.ac: Recognise armcortexa53.
+	* configure.ac: Recognise armcortexa55.
 
 2020-05-25  Torbjörn Granlund  <tg@gmplib.org>
 
