@@ -3699,6 +3699,14 @@ if test "$gmp_asm_syntax_testing" != no; then
       case $ABI in
         32)
 	  GMP_INCLUDE_MPN(arm/arm-defs.m4) ;;
+        64)
+	  case $host in
+	    *-*-darwin*)
+	      GMP_INCLUDE_MPN(arm64/darwin.m4) ;;
+	    *)
+	      GMP_INCLUDE_MPN(arm64/arm64-defs.m4) ;;
+          esac
+	  ;;
       esac
       ;;
     hppa*-*-*)
