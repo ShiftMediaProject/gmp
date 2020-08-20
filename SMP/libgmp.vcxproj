@@ -357,9 +357,7 @@
     <ClCompile Include="..\mpn\generic\gcdext_1.c" />
     <ClCompile Include="..\mpn\generic\gcdext_lehmer.c" />
     <ClCompile Include="..\mpn\generic\gcd_1.c" />
-    <ClCompile Include="..\mpn\generic\gcd_22.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\mpn\generic\gcd_22.c" />
     <ClCompile Include="..\mpn\generic\gcd_subdiv_step.c" />
     <ClCompile Include="..\mpn\generic\get_d.c">
       <ObjectFileName>$(IntDir)\mpn_%(Filename).obj</ObjectFileName>
@@ -1055,9 +1053,6 @@
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\gcd_11.s">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="mpn\x86_64\gcd_22.s">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
     </YASM>
     <YASM Include="mpn\x86_64\hamdist.s">
