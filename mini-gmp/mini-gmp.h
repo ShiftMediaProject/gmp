@@ -291,7 +291,8 @@ int mpz_init_set_str (mpz_t, const char *, int);
   || defined (_MSL_STDIO_H)           /* Metrowerks */          \
   || defined (_STDIO_H_INCLUDED)      /* QNX4 */		\
   || defined (_ISO_STDIO_ISO_H)       /* Sun C++ */		\
-  || defined (__STDIO_LOADED)         /* VMS */
+  || defined (__STDIO_LOADED)         /* VMS */			\
+  || defined (__DEFINED_FILE)         /* musl */
 size_t mpz_out_str (FILE *, int, const mpz_t);
 #endif
 
