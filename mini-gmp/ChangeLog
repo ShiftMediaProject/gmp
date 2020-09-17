@@ -2,6 +2,8 @@
 
 	* tests/t-mpq_double.c (mpq_get_d_exact_p): Cleanup.
 
+	* mini-gmp.h: Update FILE tests from gmp-h (tx Vincent Lefèvre).
+
 2020-05-21  Torbjörn Granlund  <tg@gmplib.org>
 
 	* tests/t-mpq_muldiv_2exp.c (testmain): Cast printf args to right type.
