@@ -123,7 +123,7 @@ check_random (void)
       mpq_set_d (y, d);
 
       if (i == 0)
-       mpq_neg (z, y);
+	mpq_neg (z, y);
 
       mpq_add (y, y, z);
       mpq_set_d (z, mpq_get_d (y));
