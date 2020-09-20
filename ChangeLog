@@ -1,3 +1,16 @@
+2020-09-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpz/n_pow_ui.c: Detect and report overflow.
+
+2020-07-04  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/arm64/bdiv_q_1.asm: Use LEA_HI/LEA_LO
+	* mpn/arm64/invert_limb.asm: Likewise.
+
+	* mpn/arm64/arm64-defs.m4: New file.
+	* mpn/arm64/darwin.m4: New file.
+	* configure.ac: Use arm64/arm64-defs.m4 and arm64/darwin.m4.
+
 2020-06-20  Torbjörn Granlund  <tg@gmplib.org>
 
 	* longlong.h (add_sssaaaa arm32/arm64): Generalise allowed operands
