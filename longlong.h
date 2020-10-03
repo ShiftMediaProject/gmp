@@ -1054,7 +1054,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
    && (HAVE_HOST_CPU_haswell || HAVE_HOST_CPU_broadwell \
        || HAVE_HOST_CPU_skylake || HAVE_HOST_CPU_bd4 || HAVE_HOST_CPU_zen)
 #define umul_ppmm(w1, w0, u, v) \
-  __asm__ ("mulx\t%3, %0, %1"						\
+  __asm__ ("mulx\t%3, %q0, %q1"						\
 	   : "=r" (w0), "=r" (w1)					\
 	   : "%d" ((UDItype)(u)), "rm" ((UDItype)(v)))
 #else
