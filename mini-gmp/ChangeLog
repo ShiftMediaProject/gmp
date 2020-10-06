@@ -1,3 +1,7 @@
+2020-10-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/run-tests: Better support for make check on wine or cygwin.
+
 2020-09-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/t-mpq_double.c (mpq_get_d_exact_p): Cleanup.
