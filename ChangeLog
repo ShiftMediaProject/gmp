@@ -1,6 +1,12 @@
-2020-10-06  Niels M\xc3\xb6ller  <nisse@lysator.liu.se>
+2020-10-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am: Better support for make check-mini-gmp on wine or cygwin.
+
+2020-09-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpz/t-mul.c: Print GMP_CHECK_FFT.
+
+	* longlong.h (x86 umul_ppmm): Fix typo.
 
 2020-09-21  Torbjörn Granlund  <tg@gmplib.org>
 
