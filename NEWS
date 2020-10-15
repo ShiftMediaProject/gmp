@@ -8,6 +8,15 @@ Changes between GMP version 6.2.0 and 6.2.1
   BUGS FIXED
   * A possible overflow of type int is avoided for mpz_cmp on huge operands.
 
+  * Overflows are more carefully detected and reported for mpz_pow_ui.
+
+  FEATURES
+  * C90 compliance.
+
+  * Initial support for Darwin on arm64.
+
+  * Support for more 64-bit arm processors.
+
 Changes between GMP version 6.1.* and 6.2.0
 
   BUGS FIXED
