@@ -1,3 +1,8 @@
+2020-10-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Recognise zen3.
+	* config.guess: Recognise zen3.
+
 2020-10-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am: Better support for make check-mini-gmp on wine or cygwin.
