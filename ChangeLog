@@ -2,6 +2,8 @@
 
 	* tests/devel/Makefile.am: Remove redundancies.
 
+	* tests/mpz/io.c: Test out-of-range bases for mpz_out_str.
+
 2020-10-15  Torbjörn Granlund  <tg@gmplib.org>
 
 	* configure.ac: Recognise zen3.
