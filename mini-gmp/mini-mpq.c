@@ -515,6 +515,8 @@ mpq_out_str (FILE *stream, int base, const mpq_t x)
   void (*gmp_free_func) (void *, size_t);
 
   str = mpq_get_str (NULL, base, x);
+  if (!str)
+    return 0;
   len = strlen (str);
   len = fwrite (str, 1, len, stream);
   mp_get_memory_functions (NULL, NULL, &gmp_free_func);
