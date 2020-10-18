@@ -10,12 +10,17 @@ Changes between GMP version 6.2.0 and 6.2.1
 
   * Overflows are more carefully detected and reported for mpz_pow_ui.
 
+  * A bug in longlong.h for aarch64 sub_ddmmss, not affecting GMP, was healed.
+
+  * mini-gmp: mpz_out_str and mpq_out_str now correctly handle out of
+    range bases.
+
   FEATURES
   * C90 compliance.
 
   * Initial support for Darwin on arm64.
 
-  * Support for more 64-bit arm processors.
+  * Support for more processors.
 
 Changes between GMP version 6.1.* and 6.2.0
 
