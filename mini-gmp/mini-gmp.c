@@ -4381,6 +4381,8 @@ mpz_out_str (FILE *stream, int base, const mpz_t x)
   size_t len;
 
   str = mpz_get_str (NULL, base, x);
+  if (!str)
+    return 0;
   len = strlen (str);
   len = fwrite (str, 1, len, stream);
   gmp_free (str);
