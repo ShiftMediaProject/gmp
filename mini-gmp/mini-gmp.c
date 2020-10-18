@@ -32,7 +32,7 @@ see https://www.gnu.org/licenses/.  */
 
 /* NOTE: All functions in this file which are not declared in
    mini-gmp.h are internal, and are not intended to be compatible
-   neither with GMP nor with future versions of mini-gmp. */
+   with GMP or with future versions of mini-gmp. */
 
 /* Much of the material copied from GMP files, including: gmp-impl.h,
    longlong.h, mpn/generic/add_n.c, mpn/generic/addmul_1.c,

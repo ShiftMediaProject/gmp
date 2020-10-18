@@ -9,7 +9,7 @@
 
 2020-10-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* doc/gmp.texi (Number sequences): Remove redundancie. (spotted: TonyMcC)
+	* doc/gmp.texi (Number sequences): Remove redundancy. (spotted: TonyMcC)
 
 	* configfsf.sub: Updated to version 2020-10-13, from gnulib.
 	* configfsf.guess: Updated to version 2020-09-19, from gnulib.
