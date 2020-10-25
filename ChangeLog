@@ -1,3 +1,7 @@
+2020-10-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configfsf.guess: Updated to version 2020-10-22, from gnulib.
+
 2020-10-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/Makefile.am: Remove redundancies.
