@@ -1,3 +1,9 @@
+2020-10-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpf/t-get_d_2exp.c: Test also the case zero.
+	* tests/mpz/t-get_d.c: Likewise.
+	* tests/mpf/t-trunc.c: Use mpf_size.
+
 2020-10-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configfsf.guess: Updated to version 2020-10-22, from gnulib.
