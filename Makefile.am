@@ -412,7 +412,7 @@ EXTRA_DIST += gen-psqr.c
 
 # Distribute mini-gmp. Test sources copied by dist-hook.
 EXTRA_DIST += mini-gmp/README mini-gmp/mini-gmp.c mini-gmp/mini-gmp.h \
-	      mini-gmp/mini-mpq.c mini-gmp/mini-mpq.h \
+	      mini-gmp/ChangeLog mini-gmp/mini-mpq.c mini-gmp/mini-mpq.h \
 	      mini-gmp/tests/Makefile mini-gmp/tests/run-tests
 
 # Avoid: CVS - cvs directories
