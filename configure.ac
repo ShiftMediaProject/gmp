@@ -3782,11 +3782,11 @@ yes
       if test "$x86_have_mulx" = yes; then
         GMP_ASM_X86_MULX
       fi
+      GMP_ASM_COFF_TYPE
       case $ABI in
         32)
           GMP_INCLUDE_MPN(x86/x86-defs.m4)
           AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86)
-          GMP_ASM_COFF_TYPE
           GMP_ASM_X86_GOT_UNDERSCORE
           GMP_ASM_X86_SHLDL_CL
 	  case $enable_profiling in
