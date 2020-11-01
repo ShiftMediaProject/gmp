@@ -1,3 +1,15 @@
+2020-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.ac: X86_{,64_}PATTERN: GMP_ASM_COFF_TYPE for all ABIs;
+	* mpn/x86_64/x86_64-defs.m4 (COFF_TYPE): Copy from mpn/x86/x86-defs.m4
+	as suggested by Jeremy Drake.
+
+	* tests/misc/t-locale.c (nl_langinfo): No redefine on __TERMUX__,
+	spotted by Sanselme and Glisse.
+	* configure.ac: Consider *-*-msys as *-*-mingw* (except on arm* |
+	aarch64*), as suggested by Ralph Peterson.
+	* Makefile.am (EXTRA_DIST): Add mini-gmp/ChangeLog.
+
 2020-10-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpf/t-get_d_2exp.c: Test also the case zero.
