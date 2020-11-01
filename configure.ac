@@ -2011,7 +2011,7 @@ case $host in
 	    # Sun cc.
 	    cc_64_cflags="-xO3 -m64"
 	    ;;
-	  *-*-mingw* | *-*-cygwin)
+	  *-*-mingw* | *-*-msys | *-*-cygwin)
 	    limb_64=longlong
 	    CALLING_CONVENTIONS_OBJS_64=""
 	    AC_DEFINE(HOST_DOS64,1,[Define to 1 for Windos/64])
@@ -2037,7 +2037,7 @@ esac
 # x86s, but allow any CPU here so as to catch "none" too.
 #
 case $host in
-  *-*-mingw*)
+  *-*-mingw* | *-*-msys)
     gcc_cflags_optlist="$gcc_cflags_optlist nocygwin"
     gcc_cflags_nocygwin="-mno-cygwin"
     ;;
@@ -2664,7 +2664,7 @@ AC_LIBTOOL_WIN32_DLL
 
 AC_SUBST(LIBGMP_DLL,0)
 case $host in
-  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+  *-*-cygwin* | *-*-mingw* | *-*-msys | *-*-pw32* | *-*-os2*)
     # By default, build only static.
     if test -z "$enable_shared"; then
       enable_shared=no
@@ -3803,7 +3803,7 @@ yes
 	  case $host in
 	    *-*-darwin*)
 	      GMP_INCLUDE_MPN(x86_64/darwin.m4) ;;
-	    *-*-mingw* | *-*-cygwin)
+	    *-*-mingw* | *-*-msys | *-*-cygwin)
 	      GMP_INCLUDE_MPN(x86_64/dos64.m4) ;;
 	    *-openbsd*)
 	      GMP_DEFINE_RAW(["define(<OPENBSD>,1)"]) ;;
