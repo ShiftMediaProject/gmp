@@ -42,7 +42,7 @@ check_data (void)
   got = mpf_get_d_2exp (&got_exp, f);
   if (got != 0 || got_exp != 0)
     {
-      printf    ("mpf_get_d_2exp wrong on zero\n", exp);
+      printf    ("mpf_get_d_2exp wrong on zero\n");
       mpf_trace ("   f    ", f);
       d_trace   ("   got  ", got);
       printf    ("   got exp  %ld\n", got_exp);
