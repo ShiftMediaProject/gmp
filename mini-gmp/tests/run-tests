@@ -36,7 +36,7 @@ if [ -n "$TEST_SHLIB_DIR" ] ; then
   # For Windows
   PATH="${TEST_SHLIB_DIR}:${PATH}"
   # For Wine
-  WINEPATH="${TEST_SHLIB_DIR}"
+  WINEPATH="${TEST_SHLIB_DIR}${WINEPATH:+;$WINEPATH}"
 
   export LD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH
