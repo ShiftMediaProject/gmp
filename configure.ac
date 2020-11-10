@@ -2291,11 +2291,12 @@ case $host in
 	fat_path="x86 x86/fat x86/i486
 		  x86/k6 x86/k6/mmx x86/k6/k62mmx
 		  x86/k7 x86/k7/mmx
-		  x86/k8 x86/k10 x86/bt1
+		  x86/k8 x86/k10 x86/bt1 x86/bd1
 		  x86/pentium x86/pentium/mmx
 		  x86/p6 x86/p6/mmx x86/p6/p3mmx x86/p6/sse2
 		  x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2
 		  x86/core2 x86/coreinhm x86/coreisbr
+		  x86/goldmont x86/silvermont
 		  x86/atom x86/atom/mmx x86/atom/sse2 x86/nano"
       fi
 
