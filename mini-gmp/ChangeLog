@@ -1,3 +1,7 @@
+2020-11-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/run-tests: Update WINEPATH, instead of overwriting it.
+
 2020-10-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mini-mpq.c (mpq_canonical_sign): Use the correct type for size.

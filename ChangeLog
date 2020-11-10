@@ -1,3 +1,11 @@
+2020-11-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.ac (fat_path): Add bd1, goldmont,silvermont for CPUVEC.
+	* mpn/x86_64/fat/fat.c: Add more CPUs.
+	* mpn/x86/fat/fat.c: Add more CPUs.
+
+	* tests/mpf/t-conv.c: Some more tests on zero.
+
 2020-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configure.ac: X86_{,64_}PATTERN: GMP_ASM_COFF_TYPE for all ABIs;
