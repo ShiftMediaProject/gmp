@@ -1,10 +1,15 @@
+2020-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Version 6.2.1 released.
+
+	* gmp-h.in (__GNU_MP_VERSION_PATCHLEVEL): Bump version info.
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump revision info.
+
 2020-11-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* configure.ac (fat_path): Add bd1, goldmont,silvermont for CPUVEC.
 	* mpn/x86_64/fat/fat.c: Add more CPUs.
 	* mpn/x86/fat/fat.c: Add more CPUs.
-
-	* tests/mpf/t-conv.c: Some more tests on zero.
 
 2020-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
@@ -23,6 +28,8 @@
 	* tests/mpf/t-get_d_2exp.c: Test also the case zero.
 	* tests/mpz/t-get_d.c: Likewise.
 	* tests/mpf/t-trunc.c: Use mpf_size.
+
+	* tests/mpf/t-conv.c: Some more tests on zero.
 
 2020-10-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
