@@ -18,9 +18,15 @@ Changes between GMP version 6.2.0 and 6.2.1
   FEATURES
   * C90 compliance.
 
-  * Initial support for Darwin on arm64, and imporved portability.
+  * Initial support for Darwin on arm64, and improved portability.
 
   * Support for more processors.
+
+  SPEEDUPS
+  * None, except indirectly through recognition of new CPUs.
+
+  MISC
+  * None.
 
 Changes between GMP version 6.1.* and 6.2.0
 
