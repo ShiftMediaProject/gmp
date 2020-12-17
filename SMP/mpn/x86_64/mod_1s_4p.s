@@ -54,10 +54,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_mod_1s_4p
 	
+	.def	__gmpn_mod_1s_4p
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1s_4p:
 
 	push	%rdi
@@ -198,6 +203,10 @@ Lend:	mov	8(%r14), %esi
 	.align	16, 0x90
 	.globl	__gmpn_mod_1s_4p_cps
 	
+	.def	__gmpn_mod_1s_4p_cps
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1s_4p_cps:
 
 	push	%rdi

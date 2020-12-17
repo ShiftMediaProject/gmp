@@ -60,6 +60,7 @@
 
 
 
+
 	
 	
 	
@@ -76,6 +77,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_rsh1add_nc
 	
+	.def	__gmpn_rsh1add_nc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_rsh1add_nc:
 
 	push	%rdi
@@ -98,6 +103,10 @@ __gmpn_rsh1add_nc:
 	.align	16, 0x90
 	.globl	__gmpn_rsh1add_n
 	
+	.def	__gmpn_rsh1add_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_rsh1add_n:
 
 	push	%rdi

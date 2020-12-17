@@ -69,6 +69,7 @@
 
 
 
+
       
       
       
@@ -88,6 +89,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_submul_1c
 	
+	.def	__gmpn_submul_1c
+	.scl	2
+	.type	32
+	.endef
 __gmpn_submul_1c:
 
 	push	%rdi
@@ -116,6 +121,10 @@ __gmpn_submul_1c:
 	.align	16, 0x90
 	.globl	__gmpn_submul_1
 	
+	.def	__gmpn_submul_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_submul_1:
 
 	push	%rdi

@@ -69,6 +69,7 @@
 
 
 
+
 	
 	
 	
@@ -84,6 +85,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_add_n
 	
+	.def	__gmpn_add_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_add_n:
 
 	push	%rdi
@@ -162,6 +167,10 @@ Le10:	mov	-8(%rsi,%rcx,8), %r10
 
 	.globl	__gmpn_add_nc
 	
+	.def	__gmpn_add_nc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_add_nc:
 
 	push	%rdi

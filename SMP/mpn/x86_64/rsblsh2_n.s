@@ -46,6 +46,7 @@
 
 
 
+
 	
 	
 	
@@ -97,6 +98,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_rsblsh2_n
 	
+	.def	__gmpn_rsblsh2_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_rsblsh2_n:
 
 	push	%rdi

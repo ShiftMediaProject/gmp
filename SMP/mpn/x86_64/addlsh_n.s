@@ -76,6 +76,7 @@
 
 
 
+
 			
 
 
@@ -98,6 +99,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_addlsh_n
 	
+	.def	__gmpn_addlsh_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_addlsh_n:
 
 	push	%rdi
@@ -218,6 +223,10 @@ Lwd1:	shrd	%cl, %r8, %r11
 	
 	.globl	__gmpn_addlsh_nc
 	
+	.def	__gmpn_addlsh_nc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_addlsh_nc:
 
 	push	%rdi

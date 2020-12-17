@@ -74,10 +74,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_sqr_diag_addlsh1
 	
+	.def	__gmpn_sqr_diag_addlsh1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sqr_diag_addlsh1:
 
 	push	%rdi

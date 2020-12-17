@@ -66,6 +66,7 @@
 
 
 
+
    
    
    
@@ -89,6 +90,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_addmul_2
 	
+	.def	__gmpn_addmul_2
+	.scl	2
+	.type	32
+	.endef
 __gmpn_addmul_2:
 
 	push	%rdi

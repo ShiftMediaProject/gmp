@@ -73,10 +73,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_popcount
 	
+	.def	__gmpn_popcount
+	.scl	2
+	.type	32
+	.endef
 __gmpn_popcount:
 
 	lea	Lcnsts(%rip), %r9

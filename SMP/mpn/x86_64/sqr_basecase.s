@@ -141,10 +141,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_sqr_basecase
 	
+	.def	__gmpn_sqr_basecase
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sqr_basecase:
 
 	push	%rdi

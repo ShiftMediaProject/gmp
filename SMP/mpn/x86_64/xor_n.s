@@ -71,6 +71,7 @@
 
 
 
+
   
   
   
@@ -96,6 +97,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_xor_n
 	
+	.def	__gmpn_xor_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_xor_n:
 
 	push	%rdi

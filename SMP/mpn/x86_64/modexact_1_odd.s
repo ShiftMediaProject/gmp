@@ -76,10 +76,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_modexact_1_odd
 	
+	.def	__gmpn_modexact_1_odd
+	.scl	2
+	.type	32
+	.endef
 __gmpn_modexact_1_odd:
 
 	push	%rdi
@@ -93,6 +98,10 @@ __gmpn_modexact_1_odd:
 
 	.globl	__gmpn_modexact_1c_odd
 	
+	.def	__gmpn_modexact_1c_odd
+	.scl	2
+	.type	32
+	.endef
 __gmpn_modexact_1c_odd:
 
 	push	%rdi

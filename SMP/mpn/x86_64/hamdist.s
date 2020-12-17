@@ -74,10 +74,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_hamdist
 	
+	.def	__gmpn_hamdist
+	.scl	2
+	.type	32
+	.endef
 __gmpn_hamdist:
 
 	lea	Lcnsts(%rip), %r9

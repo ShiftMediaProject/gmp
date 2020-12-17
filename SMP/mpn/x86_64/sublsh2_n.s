@@ -74,10 +74,15 @@
 
 
 
+
 	.text
 	.align	8, 0x90
 	.globl	__gmpn_sublsh2_n
 	
+	.def	__gmpn_sublsh2_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sublsh2_n:
 
 	push	%rdi

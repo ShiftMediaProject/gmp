@@ -55,10 +55,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_mod_1s_2p
 	
+	.def	__gmpn_mod_1s_2p
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1s_2p:
 
 	push	%rdi
@@ -191,6 +196,10 @@ Lone:
 	.align	16, 0x90
 	.globl	__gmpn_mod_1s_2p_cps
 	
+	.def	__gmpn_mod_1s_2p_cps
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1s_2p_cps:
 
 	push	%rdi

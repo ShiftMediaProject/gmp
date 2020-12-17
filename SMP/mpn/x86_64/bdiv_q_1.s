@@ -67,6 +67,7 @@
 
 
 
+
 		
 		
 
@@ -78,6 +79,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_bdiv_q_1
 	
+	.def	__gmpn_bdiv_q_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_bdiv_q_1:
 
 	push	%rdi
@@ -132,6 +137,10 @@ Levn:	bsf	%rax, %rcx
 
 	.globl	__gmpn_pi1_bdiv_q_1
 	
+	.def	__gmpn_pi1_bdiv_q_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_pi1_bdiv_q_1:
 
 	push	%rdi

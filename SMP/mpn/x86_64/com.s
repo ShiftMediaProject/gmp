@@ -83,10 +83,15 @@
 
 
 
+
 	.text
 	.align	64, 0x90
 	.globl	__gmpn_com
 	
+	.def	__gmpn_com
+	.scl	2
+	.type	32
+	.endef
 __gmpn_com:
 
 	push	%rdi

@@ -58,6 +58,7 @@
 
 
 
+
  
   
 
@@ -95,6 +96,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_mod_1_1p
 	
+	.def	__gmpn_mod_1_1p
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1_1p:
 
 	push	%rdi
@@ -199,6 +204,10 @@ Lfix:	sub	%rbx, %rax
 	.align	16, 0x90
 	.globl	__gmpn_mod_1_1p_cps
 	
+	.def	__gmpn_mod_1_1p_cps
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_1_1p_cps:
 
 	push	%rdi

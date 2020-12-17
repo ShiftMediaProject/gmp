@@ -76,6 +76,7 @@
 
 
 
+
 			
 
 
@@ -98,6 +99,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_rsblsh_n
 	
+	.def	__gmpn_rsblsh_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_rsblsh_n:
 
 	push	%rdi
@@ -218,6 +223,10 @@ neg	%rax
 	
 	.globl	__gmpn_rsblsh_nc
 	
+	.def	__gmpn_rsblsh_nc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_rsblsh_nc:
 
 	push	%rdi

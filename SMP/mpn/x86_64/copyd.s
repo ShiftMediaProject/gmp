@@ -94,10 +94,15 @@
 
 
 
+
 	.text
 	.align	64, 0x90
 	.globl	__gmpn_copyd
 	
+	.def	__gmpn_copyd
+	.scl	2
+	.type	32
+	.endef
 __gmpn_copyd:
 
 	push	%rdi

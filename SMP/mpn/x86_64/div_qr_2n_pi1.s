@@ -68,10 +68,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_div_qr_2n_pi1
 	
+	.def	__gmpn_div_qr_2n_pi1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_div_qr_2n_pi1:
 
 	push	%rdi

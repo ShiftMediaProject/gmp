@@ -66,10 +66,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_bdiv_dbm1c
 	
+	.def	__gmpn_bdiv_dbm1c
+	.scl	2
+	.type	32
+	.endef
 __gmpn_bdiv_dbm1c:
 
 	push	%rdi

@@ -72,6 +72,7 @@
 
 
 
+
    
    
    
@@ -96,6 +97,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_redc_1
 	
+	.def	__gmpn_redc_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_redc_1:
 
 	push	%rdi

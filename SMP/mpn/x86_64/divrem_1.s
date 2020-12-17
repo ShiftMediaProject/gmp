@@ -65,6 +65,7 @@
 
 
 
+
 		
 
 
@@ -88,6 +89,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_preinv_divrem_1
 	
+	.def	__gmpn_preinv_divrem_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_preinv_divrem_1:
 
 	push	%rdi
@@ -120,6 +125,10 @@ __gmpn_preinv_divrem_1:
 	.align	16, 0x90
 	.globl	__gmpn_divrem_1
 	
+	.def	__gmpn_divrem_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_divrem_1:
 
 	push	%rdi

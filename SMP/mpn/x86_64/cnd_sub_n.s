@@ -65,6 +65,7 @@
 
 
 
+
 					
 
 
@@ -82,6 +83,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_cnd_sub_n
 	
+	.def	__gmpn_cnd_sub_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_cnd_sub_n:
 
 	push	%rdi

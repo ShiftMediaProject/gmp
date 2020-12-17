@@ -59,10 +59,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_invert_limb
 	
+	.def	__gmpn_invert_limb
+	.scl	2
+	.type	32
+	.endef
 __gmpn_invert_limb:
 		
 	push	%rdi

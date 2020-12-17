@@ -89,10 +89,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_mul_2
 	
+	.def	__gmpn_mul_2
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mul_2:
 
 	push	%rdi

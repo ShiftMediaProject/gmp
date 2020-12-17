@@ -101,10 +101,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_mullo_basecase
 	
+	.def	__gmpn_mullo_basecase
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mullo_basecase:
 
 	push	%rdi

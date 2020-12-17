@@ -72,6 +72,7 @@
 
 
 
+
   
   
   
@@ -98,6 +99,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_xnor_n
 	
+	.def	__gmpn_xnor_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_xnor_n:
 
 	push	%rdi

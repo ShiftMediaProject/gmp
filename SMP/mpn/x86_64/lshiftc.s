@@ -76,10 +76,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_lshiftc
 	
+	.def	__gmpn_lshiftc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_lshiftc:
 
 	push	%rdi

@@ -68,6 +68,7 @@
 
 
 
+
   
   
   
@@ -96,6 +97,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_ior_n
 	
+	.def	__gmpn_ior_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_ior_n:
 
 	push	%rdi

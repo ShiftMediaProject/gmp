@@ -69,10 +69,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	mpn_lshsub_n
 	
+	.def	mpn_lshsub_n
+	.scl	2
+	.type	32
+	.endef
 mpn_lshsub_n:
 
 	push	%rdi

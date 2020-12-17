@@ -65,6 +65,7 @@
 
 
 
+
   
   
   
@@ -96,6 +97,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_and_n
 	
+	.def	__gmpn_and_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_and_n:
 
 	push	%rdi

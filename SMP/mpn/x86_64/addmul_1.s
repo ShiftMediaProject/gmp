@@ -68,6 +68,7 @@
 
 
 
+
       
       
       
@@ -88,6 +89,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_addmul_1c
 	
+	.def	__gmpn_addmul_1c
+	.scl	2
+	.type	32
+	.endef
 __gmpn_addmul_1c:
 
 	push	%rdi
@@ -116,6 +121,10 @@ __gmpn_addmul_1c:
 	.align	16, 0x90
 	.globl	__gmpn_addmul_1
 	
+	.def	__gmpn_addmul_1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_addmul_1:
 
 	push	%rdi

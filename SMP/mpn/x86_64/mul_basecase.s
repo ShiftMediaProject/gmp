@@ -99,6 +99,7 @@
 
 
 
+
 	
 
 
@@ -133,6 +134,10 @@
 	.align	32, 0x90
 	.globl	__gmpn_mul_basecase
 	
+	.def	__gmpn_mul_basecase
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mul_basecase:
 
 	push	%rdi

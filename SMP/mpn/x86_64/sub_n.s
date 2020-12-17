@@ -70,6 +70,7 @@
 
 
 
+
 	
 	
 	
@@ -84,6 +85,10 @@
 	.align	16, 0x90
 	.globl	__gmpn_sub_n
 	
+	.def	__gmpn_sub_n
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sub_n:
 
 	push	%rdi
@@ -162,6 +167,10 @@ Le10:	mov	-8(%rsi,%rcx,8), %r10
 
 	.globl	__gmpn_sub_nc
 	
+	.def	__gmpn_sub_nc
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sub_nc:
 
 	push	%rdi

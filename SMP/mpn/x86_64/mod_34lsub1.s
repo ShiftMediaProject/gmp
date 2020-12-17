@@ -67,10 +67,15 @@
 
 
 
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_mod_34lsub1
 	
+	.def	__gmpn_mod_34lsub1
+	.scl	2
+	.type	32
+	.endef
 __gmpn_mod_34lsub1:
 
 	push	%rdi

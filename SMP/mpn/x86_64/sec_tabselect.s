@@ -92,10 +92,15 @@
 
 
 
+
 	.text
 	.align	16, 0x90
 	.globl	__gmpn_sec_tabselect
 	
+	.def	__gmpn_sec_tabselect
+	.scl	2
+	.type	32
+	.endef
 __gmpn_sec_tabselect:
 
 	push	%rdi
