@@ -25,9 +25,9 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 EXTRA_PROGRAMS = \
   sqrtrem_1_2 primes try test-add_ssaaaa test-sub_ddmmss
 
-EXTRA_DIST =
+EXTRA_DIST = gen-test-longlong_h.c
 
-allprogs: $(EXTRA_PROGRAMS) test-add_ssaaaa test-sub_ddmmss
+allprogs: $(EXTRA_PROGRAMS)
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 
@@ -45,4 +45,3 @@ CLEANFILES += test-sub_ddmmss.c
 gen-test-longlong_h$(EXEEXT_FOR_BUILD): gen-test-longlong_h.c
 	$(CC_FOR_BUILD) `test -f 'gen-test-longlong_h.c' || echo '$(srcdir)/'`gen-test-longlong_h.c -o gen-test-longlong_h$(EXEEXT_FOR_BUILD)
 CLEANFILES += gen-test-longlong_h$(EXEEXT_FOR_BUILD)
-EXTRA_DIST += gen-test-longlong_h.c

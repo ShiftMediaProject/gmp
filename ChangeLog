@@ -1,3 +1,68 @@
+2020-11-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Version 6.2.1 released.
+
+	* gmp-h.in (__GNU_MP_VERSION_PATCHLEVEL): Bump version info.
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump revision info.
+
+2020-11-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.ac (fat_path): Add bd1, goldmont,silvermont for CPUVEC.
+	* mpn/x86_64/fat/fat.c: Add more CPUs.
+	* mpn/x86/fat/fat.c: Add more CPUs.
+
+2020-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configure.ac: X86_{,64_}PATTERN: GMP_ASM_COFF_TYPE for all ABIs;
+	* mpn/x86_64/x86_64-defs.m4 (COFF_TYPE): Copy from mpn/x86/x86-defs.m4
+	as suggested by Jeremy Drake.
+
+	* tests/misc/t-locale.c (nl_langinfo): No redefine on __TERMUX__,
+	spotted by Sanselme and Glisse.
+	* configure.ac: Consider *-*-msys as *-*-mingw* (except on arm* |
+	aarch64*), as suggested by Ralph Peterson.
+	* Makefile.am (EXTRA_DIST): Add mini-gmp/ChangeLog.
+
+2020-10-30 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpf/t-get_d_2exp.c: Test also the case zero.
+	* tests/mpz/t-get_d.c: Likewise.
+	* tests/mpf/t-trunc.c: Use mpf_size.
+
+	* tests/mpf/t-conv.c: Some more tests on zero.
+
+2020-10-25 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* configfsf.guess: Updated to version 2020-10-22, from gnulib.
+
+2020-10-17 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/devel/Makefile.am: Remove redundancies.
+
+	* tests/mpz/io.c: Test out-of-range bases for mpz_out_str.
+
+2020-10-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac: Recognise zen3.
+	* config.guess: Recognise zen3.
+
+2020-10-14 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* doc/gmp.texi (Number sequences): Remove redundancy. (spotted: TonyMcC)
+
+	* configfsf.sub: Updated to version 2020-10-13, from gnulib.
+	* configfsf.guess: Updated to version 2020-09-19, from gnulib.
+
+2020-10-06  Niels Möller  <nisse@lysator.liu.se>
+
+	* Makefile.am: Better support for make check-mini-gmp on wine or cygwin.
+
+2020-09-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/mpz/t-mul.c: Print GMP_CHECK_FFT.
+
+	* longlong.h (x86 umul_ppmm): Fix typo.
+
 2020-09-21  Torbjörn Granlund  <tg@gmplib.org>
 
 	* mpz/n_pow_ui.c: Detect and report overflow.
