@@ -1964,6 +1964,78 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 
 #endif /* NO_ASM */
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#include <immintrin.h>
+#if W_TYPE_SIZE == 32
+#ifndef count_leading_zeros
+#define count_leading_zeros(count, x)			\
+  do {											\
+    USItype __cbtmp;							\
+    ASSERT ((x) != 0);							\
+	_BitScanReverse(&__cbtmp, x);				\
+    (count) = __cbtmp ^ 31;						\
+  } while (0)
+#endif
+
+#ifndef count_trailing_zeros
+#define count_trailing_zeros(count, x)			\
+  do {											\
+    ASSERT ((x) != 0);							\
+	_BitScanForward(&(count), x);				\
+  } while (0)
+#endif
+
+#elif W_TYPE_SIZE == 64
+#ifndef count_leading_zeros
+#define count_leading_zeros(count, x)			\
+  do {											\
+    USItype __cbtmp;							\
+    ASSERT ((x) != 0);							\
+	_BitScanReverse64(&__cbtmp, x);				\
+    (count) = __cbtmp ^ 63;						\
+  } while (0)
+#endif
+
+#ifndef count_trailing_zeros
+#define count_trailing_zeros(count, x)			\
+  do {											\
+    ASSERT ((x) != 0);							\
+	_BitScanForward64(&(count), x);				\
+  } while (0)
+#endif
+
+#ifndef umul_ppmm
+#define umul_ppmm(w1, w0, u, v)					\
+  do {											\
+	(w0) = _umul128(u, v, &(w1));				\
+  } while (0)
+#endif
+
+#ifndef smul_ppmm
+#define smul_ppmm(w1, w0, u, v)					\
+  do {											\
+	(w0) = _mul128(u, v, &(w1));				\
+  } while (0)
+#endif
+
+#if _MSC_VER >= 1920
+#ifndef udiv_qrnnd
+#define udiv_qrnnd(q, r, n1, n0, dx)			\
+  do {											\
+	(q) = _udiv128(n1, n0, dx, &(r));			\
+  } while (0)
+#endif
+
+#ifndef sdiv_qrnnd
+#define sdiv_qrnnd(q, r, n1, n0, dx)			\
+  do {											\
+	(q) = _div128(n1, n0, dx, &(r));			\
+  } while (0)
+#endif
+#endif
+#endif
+#endif
 
 /* FIXME: "sidi" here is highly doubtful, should sometimes be "diti".  */
 #if !defined (umul_ppmm) && defined (__umulsidi3)
