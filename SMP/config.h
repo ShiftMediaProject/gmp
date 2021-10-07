@@ -118,6 +118,11 @@
 
 /* Define one of the following to 1 for the host CPU, as per the output of
    ./config.guess.  If your CPU is not listed here, leave all undefined.  */
+#if defined(__x86_64) || defined(_M_X64)
+#   define HAVE_HOST_CPU_core2 1
+#else
+#   define HAVE_HOST_CPU_i686 1
+#endif
 /* #undef HAVE_HOST_CPU_alphaev67 */
 /* #undef HAVE_HOST_CPU_alphaev68 */
 /* #undef HAVE_HOST_CPU_alphaev7 */
