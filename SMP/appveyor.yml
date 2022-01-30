@@ -119,7 +119,7 @@ before_build:
     }
 
 # Download and install yasm integration
-- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSYASM/releases/download/0.5/VSYASM.zip', "$pwd\yasm.zip")
+- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/ShiftMediaProject/VSYASM/releases/download/0.7/VSYASM.zip', "$pwd\yasm.zip")
 - ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory("$pwd\yasm.zip", "$pwd\TempYASMUnpack")
 - cmd: call ".\TempYASMUnpack\install_script.bat"
 # Additional yasm location in order to fix gitlink error
