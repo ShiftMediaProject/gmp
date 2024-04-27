@@ -74,6 +74,11 @@
 
 
 
+
+
+
+
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_popcount
@@ -84,120 +89,116 @@
 	.endef
 __gmpn_popcount:
 
-	lea	Lcnsts(%rip), %r9
-
- 
-	movdqa	32(%r9), %xmm7
-	movdqa	48(%r9), %xmm6
-	pxor	%xmm4, %xmm4
-	pxor	%xmm5, %xmm5
-	pxor	%xmm8, %xmm8
-
-	mov	%esi, %eax
-	and	$7, %eax
-
-	movslq	(%r9,%rax,4), %rax
-	add	%r9, %rax
-	jmp	*%rax
+	push	%rdi
+	push	%rsi
+	mov	%rcx, %rdi
+	mov	%rdx, %rsi
 
 
-L1:	movq	(%rdi), %xmm1
+	mov	%esi, %r8d
+	and	$7, %r8d
+
+	.byte	0xf3,0x48,0x0f,0xb8,0x07	
+	xor	%ecx, %ecx
+
+	lea	Ltab(%rip), %r9
+
+	movslq	(%r9,%r8,4), %r8
+	add	%r9, %r8
+	jmp	*%r8
+
+
+L3:	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x10	
+	add	$24, %rdi
+	sub	$8, %rsi
+	jg	Le34
+	add	%r10, %rax
+	add	%r11, %rax
+Ls1:	pop	%rsi
+	pop	%rdi
+	ret
+
+L1:	sub	$8, %rsi
+	jle	Ls1
+	.byte	0xf3,0x4c,0x0f,0xb8,0x47,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x10	
 	add	$8, %rdi
-	jmp	Le1
+	jmp	Le12
 
-L2:	add	$-48, %rdi
-	jmp	Le2
-
-L3:	movq	(%rdi), %xmm1
-	add	$-40, %rdi
-	jmp	Le3
-
-L4:	add	$-32, %rdi
-	jmp	Le4
-
-L5:	movq	(%rdi), %xmm1
-	add	$-24, %rdi
-	jmp	Le5
-
-L6:	add	$-16, %rdi
-	jmp	Le6
-
-L7:	movq	(%rdi), %xmm1
+L7:	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x10	
 	add	$-8, %rdi
-	jmp	Le7
+	jmp	Le07
 
-	.align	32, 0x90
-Ltop:	lddqu	(%rdi), %xmm1
-Le7:	movdqa	%xmm6, %xmm0		
-	movdqa	%xmm7, %xmm2		
-	movdqa	%xmm7, %xmm3		
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le6:	lddqu	16(%rdi), %xmm1
-Le5:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le4:	lddqu	32(%rdi), %xmm1
-Le3:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le2:	lddqu	48(%rdi), %xmm1
+L0:	.byte	0xf3,0x48,0x0f,0xb8,0x4f,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x10	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x18	
+	jmp	Le07
+
+L4:	.byte	0xf3,0x48,0x0f,0xb8,0x4f,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x10	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x18	
+	add	$32, %rdi
+	sub	$8, %rsi
+	jle	Lx4
+
+	.align	16, 0x90
+Ltop:
+Le34:	.byte	0xf3,0x4c,0x0f,0xb8,0x07	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x08	
+	add	%r10, %rcx
+	add	%r11, %rax
+Le12:	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x10	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x18	
+	add	%r8, %rcx
+	add	%r9, %rax
+Le07:	.byte	0xf3,0x4c,0x0f,0xb8,0x47,0x20	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x28	
+	add	%r10, %rcx
+	add	%r11, %rax
+Le56:	.byte	0xf3,0x4c,0x0f,0xb8,0x57,0x30	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x5f,0x38	
 	add	$64, %rdi
-Le1:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	psadbw	%xmm5, %xmm4		
-	paddb	%xmm2, %xmm3
-	paddq	%xmm4, %xmm8		
-	movdqa	%xmm3, %xmm4
+	add	%r8, %rcx
+	add	%r9, %rax
 	sub	$8, %rsi
 	jg	Ltop
 
-	psadbw	%xmm5, %xmm4
-	paddq	%xmm4, %xmm8
-	pshufd	$14, %xmm8, %xmm0
-	paddq	%xmm8, %xmm0
-	movq	%xmm0, %rax
+Lx4:	add	%r10, %rcx
+	add	%r11, %rax
+Lx2:	add	%rcx, %rax
+
+	pop	%rsi
+	pop	%rdi
 	ret
+
+L2:	.byte	0xf3,0x48,0x0f,0xb8,0x4f,0x08	
+	sub	$8, %rsi
+	jle	Lx2
+	.byte	0xf3,0x4c,0x0f,0xb8,0x47,0x10	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x18	
+	add	$16, %rdi
+	jmp	Le12
+
+L5:	.byte	0xf3,0x4c,0x0f,0xb8,0x47,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x10	
+	add	$-24, %rdi
+	jmp	Le56
+
+L6:	.byte	0xf3,0x48,0x0f,0xb8,0x4f,0x08	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x47,0x10	
+	.byte	0xf3,0x4c,0x0f,0xb8,0x4f,0x18	
+	add	$-16, %rdi
+	jmp	Le56
 	
 		.section .rdata,"dr"
-	.align	16, 0x90
-Lcnsts:
-
-	.long	Ltop-Lcnsts
-	.long	L1-Lcnsts
-	.long	L2-Lcnsts
-	.long	L3-Lcnsts
-	.long	L4-Lcnsts
-	.long	L5-Lcnsts
-	.long	L6-Lcnsts
-	.long	L7-Lcnsts
-	.byte	0x00,0x01,0x01,0x02,0x01,0x02,0x02,0x03
-	.byte	0x01,0x02,0x02,0x03,0x02,0x03,0x03,0x04
-	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
-	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
-	
+	.align	8, 0x90
+Ltab:	.long	L0-Ltab
+	.long	L1-Ltab
+	.long	L2-Ltab
+	.long	L3-Ltab
+	.long	L4-Ltab
+	.long	L5-Ltab
+	.long	L6-Ltab
+	.long	L7-Ltab

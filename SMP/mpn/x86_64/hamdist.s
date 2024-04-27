@@ -75,6 +75,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
 	.text
 	.align	32, 0x90
 	.globl	__gmpn_hamdist
@@ -85,144 +94,125 @@
 	.endef
 __gmpn_hamdist:
 
-	lea	Lcnsts(%rip), %r9
+	push	%rdi
+	push	%rsi
+	mov	%rcx, %rdi
+	mov	%rdx, %rsi
+	mov	%r8, %rdx
 
- 
-	movdqa	32(%r9), %xmm7
-	movdqa	48(%r9), %xmm6
-	pxor	%xmm4, %xmm4
-	pxor	%xmm5, %xmm5
-	pxor	%xmm8, %xmm8
+	push	%rbx
+	push	%rbp
 
-	mov	%edx, %eax
-	and	$7, %eax
+	mov	(%rdi), %r10
+	xor	(%rsi), %r10
 
-	movslq	(%r9,%rax,4), %rax
-	add	%r9, %rax
-	jmp	*%rax
+	mov	%edx, %r8d
+	and	$3, %r8d
+
+	xor	%ecx, %ecx
+	.byte	0xf3,0x49,0x0f,0xb8,0xc2	
+
+	lea	Ltab(%rip), %r9
+
+	movslq	(%r9,%r8,4), %r8
+	add	%r9, %r8
+	jmp	*%r8
 
 
-L1:	movq	(%rdi), %xmm1
-	add	$8, %rdi
-	movq	(%rsi), %xmm10
-	add	$8, %rsi
-	pxor	%xmm10, %xmm1
-	jmp	Le1
-
-L2:	add	$-48, %rdi
-	add	$-48, %rsi
-	jmp	Le2
-
-L3:	movq	(%rdi), %xmm1
-	add	$-40, %rdi
-	movq	(%rsi), %xmm10
-	add	$-40, %rsi
-	pxor	%xmm10, %xmm1
+L3:	mov	8(%rdi), %r10
+	mov	16(%rdi), %r11
+	xor	8(%rsi), %r10
+	xor	16(%rsi), %r11
+	xor	%ebp, %ebp
+	sub	$4, %rdx
+	jle	Lx3
+	mov	24(%rdi), %r8
+	mov	32(%rdi), %r9
+	add	$24, %rdi
+	add	$24, %rsi
 	jmp	Le3
 
-L4:	add	$-32, %rdi
-	add	$-32, %rsi
-	jmp	Le4
+L0:	mov	8(%rdi), %r9
+	xor	8(%rsi), %r9
+	mov	16(%rdi), %r10
+	mov	24(%rdi), %r11
+	xor	%ebx, %ebx
+	xor	16(%rsi), %r10
+	xor	24(%rsi), %r11
+	add	$32, %rdi
+	add	$32, %rsi
+	sub	$4, %rdx
+	jle	Lx4
 
-L5:	movq	(%rdi), %xmm1
-	add	$-24, %rdi
-	movq	(%rsi), %xmm10
-	add	$-24, %rsi
-	pxor	%xmm10, %xmm1
-	jmp	Le5
-
-L6:	add	$-16, %rdi
-	add	$-16, %rsi
-	jmp	Le6
-
-L7:	movq	(%rdi), %xmm1
-	add	$-8, %rdi
-	movq	(%rsi), %xmm10
-	add	$-8, %rsi
-	pxor	%xmm10, %xmm1
-	jmp	Le7
-
-	.align	32, 0x90
-Ltop:	lddqu	(%rdi), %xmm1
-	lddqu	(%rsi), %xmm10
-	pxor	%xmm10, %xmm1
-Le7:	movdqa	%xmm6, %xmm0		
-	movdqa	%xmm7, %xmm2		
-	movdqa	%xmm7, %xmm3		
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le6:	lddqu	16(%rdi), %xmm1
-	lddqu	16(%rsi), %xmm10
-	pxor	%xmm10, %xmm1
-Le5:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le4:	lddqu	32(%rdi), %xmm1
-	lddqu	32(%rsi), %xmm10
-	pxor	%xmm10, %xmm1
-Le3:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	paddb	%xmm2, %xmm3
-	paddb	%xmm3, %xmm4
-Le2:	lddqu	48(%rdi), %xmm1
-	add	$64, %rdi
-	lddqu	48(%rsi), %xmm10
-	add	$64, %rsi
-	pxor	%xmm10, %xmm1
-Le1:	movdqa	%xmm6, %xmm0
-	movdqa	%xmm7, %xmm2
-	movdqa	%xmm7, %xmm3
-	pand	%xmm1, %xmm0
-	psrlw	$4, %xmm1
-	pand	%xmm6, %xmm1
-	pshufb	%xmm0, %xmm2
-	pshufb	%xmm1, %xmm3
-	psadbw	%xmm5, %xmm4		
-	paddb	%xmm2, %xmm3
-	paddq	%xmm4, %xmm8		
-	movdqa	%xmm3, %xmm4
-	sub	$8, %rdx
+	.align	16, 0x90
+Ltop:
+Le0:	.byte	0xf3,0x49,0x0f,0xb8,0xe9	
+	mov	(%rdi), %r8
+	mov	8(%rdi), %r9
+	add	%rbx, %rax
+Le3:	.byte	0xf3,0x49,0x0f,0xb8,0xda	
+	xor	(%rsi), %r8
+	xor	8(%rsi), %r9
+	add	%rbp, %rcx
+Le2:	.byte	0xf3,0x49,0x0f,0xb8,0xeb	
+	mov	16(%rdi), %r10
+	mov	24(%rdi), %r11
+	add	$32, %rdi
+	add	%rbx, %rax
+Le1:	.byte	0xf3,0x49,0x0f,0xb8,0xd8	
+	xor	16(%rsi), %r10
+	xor	24(%rsi), %r11
+	add	$32, %rsi
+	add	%rbp, %rcx
+	sub	$4, %rdx
 	jg	Ltop
 
-	psadbw	%xmm5, %xmm4
-	paddq	%xmm4, %xmm8
-	pshufd	$14, %xmm8, %xmm0
-	paddq	%xmm8, %xmm0
-	movq	%xmm0, %rax
+Lx4:	.byte	0xf3,0x49,0x0f,0xb8,0xe9	
+	add	%rbx, %rax
+Lx3:	.byte	0xf3,0x49,0x0f,0xb8,0xda	
+	add	%rbp, %rcx
+	.byte	0xf3,0x49,0x0f,0xb8,0xeb	
+	add	%rbx, %rax
+	add	%rbp, %rcx
+Lx2:	add	%rcx, %rax
+Lx1:	pop	%rbp
+	pop	%rbx
+	pop	%rsi
+	pop	%rdi
 	ret
+
+L2:	mov	8(%rdi), %r11
+	xor	8(%rsi), %r11
+	sub	$2, %rdx
+	jle	Ln2
+	mov	16(%rdi), %r8
+	mov	24(%rdi), %r9
+	xor	%ebx, %ebx
+	xor	16(%rsi), %r8
+	xor	24(%rsi), %r9
+	add	$16, %rdi
+	add	$16, %rsi
+	jmp	Le2
+Ln2:	.byte	0xf3,0x49,0x0f,0xb8,0xcb	
+	jmp	Lx2
+
+L1:	dec	%rdx
+	jle	Lx1
+	mov	8(%rdi), %r8
+	mov	16(%rdi), %r9
+	xor	8(%rsi), %r8
+	xor	16(%rsi), %r9
+	xor	%ebp, %ebp
+	mov	24(%rdi), %r10
+	mov	32(%rdi), %r11
+	add	$40, %rdi
+	add	$8, %rsi
+	jmp	Le1
+
 	
 		.section .rdata,"dr"
-	.align	16, 0x90
-Lcnsts:
-
-	.long	Ltop-Lcnsts
-	.long	L1-Lcnsts
-	.long	L2-Lcnsts
-	.long	L3-Lcnsts
-	.long	L4-Lcnsts
-	.long	L5-Lcnsts
-	.long	L6-Lcnsts
-	.long	L7-Lcnsts
-	.byte	0x00,0x01,0x01,0x02,0x01,0x02,0x02,0x03
-	.byte	0x01,0x02,0x02,0x03,0x02,0x03,0x03,0x04
-	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
-	.byte	0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f
-	
+	.align	8, 0x90
+Ltab:	.long	L0-Ltab
+	.long	L1-Ltab
+	.long	L2-Ltab
+	.long	L3-Ltab
